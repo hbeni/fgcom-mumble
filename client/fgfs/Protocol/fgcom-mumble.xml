@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+ <comment>
+  <![CDATA[
+    This is the protocol definition for fgcom-mumble - a realtime communication
+    middleware based on Mumble for FlightGear
+    See http://<someYetNonExistingAddress>
+
+    Usage:
+    # fgfs --generic=socket,out,<hz>,<host>,16661,udp,fgcom-mumble
+
+    Check data with:
+    #  netcat -u -l -p 16661
+  ]]>
+ </comment>
+
+ <generic>
+
+  <!-- The fopllowing output is expected to be parsed from the mumble-plugin.
+       It will be designed so that order or occurrence of the fields does not matter:
+       The fields are parsed from left to right and the values updated accordingly.
+       If a field is missing, the previous value will stay intact.
+  -->
+  <output>
+   <line_separator>newline</line_separator>
+   <var_separator>,</var_separator>
+
+   <!--  ###############  -->
+   <!--  #    RADIOS   #  -->
+   <!--  ###############  -->
+
+   <!-- COM 1 -->
+   <chunk>
+    <name>com1-frequency</name>
+    <type>float</type>
+    <format>COM1_FRQ=%s</format>
+    <node>/instrumentation/comm[0]/frequencies/selected-mhz</node>
+   </chunk>
+   <chunk>
+    <name>com1-serviceable</name>
+    <type>bool</type>
+    <format>COM1_SRV=%d</format> <!-- 0=inactive, 1=active -->
+    <node>/instrumentation/comm[0]/serviceable</node>
+   </chunk>
+   <chunk>
+    <name>com1-ptt</name>
+    <type>bool</type>
+    <format>COM1_PTT=%d</format> <!-- 0=inactive, 1=active -->
+    <node>/instrumentation/comm[0]/ptt</node>
+   </chunk>
+   <chunk>
+    <name>com1-vol</name>
+    <type>double</type>
+    <format>COM1_VOL=%1.1f</format> <!-- 0=mute, <=1 full -->
+    <node>/instrumentation/comm[0]/volume</node>
+   </chunk>
+   <chunk>
+    <name>com1-txpwr</name>
+    <type>double</type>
+    <format>COM1_PWR=%.2f</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
+    <node>/instrumentation/comm[0]/tx-power</node>
+   </chunk>
+
+   <!-- COM 2 -->
+   <chunk>
+    <name>com2-frequency</name>
+    <type>float</type>
+    <format>COM2_FRQ=%03.3f</format>
+    <node>/instrumentation/comm[1]/frequencies/selected-mhz</node>
+   </chunk>
+   <chunk>
+    <name>com2-serviceable</name>
+    <type>bool</type>
+    <format>COM2_SRV=%d</format>
+    <node>/instrumentation/comm[1]/serviceable</node>
+   </chunk>
+   <chunk>
+    <name>com2-ptt</name>
+    <type>int</type>
+    <format>COM2_PTT=%d</format>
+    <node>/instrumentation/comm[1]/ptt</node>
+   </chunk>
+   <chunk>
+    <name>com2-vol</name>
+    <type>double</type>
+    <format>COM2_VOL=%1.1f</format>
+    <node>/instrumentation/comm[1]/volume</node>
+   </chunk>
+   <chunk>
+    <name>com2-txpwr</name>
+    <type>double</type>
+    <format>COM2_PWR=%.2f</format>
+    <node>/instrumentation/comm[1]/tx-power</node>
+   </chunk>
+   
+   <!-- COM 3 -->
+   <chunk>
+    <name>com3-frequency</name>
+    <type>float</type>
+    <format>COM3_FRQ=%03.3f</format>
+    <node>/instrumentation/comm[2]/frequencies/selected-mhz</node>
+   </chunk>
+   <chunk>
+    <name>com3-serviceable</name>
+    <type>bool</type>
+    <format>COM3_SRV=%d</format>
+    <node>/instrumentation/comm[2]/serviceable</node>
+   </chunk>
+   <chunk>
+    <name>com3-ptt</name>
+    <type>int</type>
+    <format>COM3_PTT=%d</format>
+    <node>/instrumentation/comm[2]/ptt</node>
+   </chunk>
+   <chunk>
+    <name>com3-vol</name>
+    <type>double</type>
+    <format>COM3_VOL=%1.1f</format>
+    <node>/instrumentation/comm[2]/volume</node>
+   </chunk>
+   <chunk>
+    <name>com3-txpwr</name>
+    <type>double</type>
+    <format>COM3_PWR=%.2f</format>
+    <node>/instrumentation/comm[2]/tx-power</node>
+   </chunk>
+
+   <!-- TODO: add more radios here. The plugin ignores not present radios automatically. -->
+
+   
+   
+   
+   <!--  #####################  -->
+   <!--  #  POSITIONAL DATA  #  -->
+   <!--  #####################  -->
+
+   <chunk>
+    <name>pos-longitude-deg</name>
+    <type>float</type>
+    <format>LON=%03.6f</format>
+    <node>/position/longitude-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>pos-latitude-deg</name>
+    <type>float</type>
+    <format>LAT=%03.6f</format>
+    <node>/position/latitude-deg</node>
+   </chunk>
+
+   <chunk>
+    <name>pos-alt</name>
+    <type>float</type>
+    <format>ALT=%05.0f</format>
+    <node>/position/altitude-ft</node>
+   </chunk>
+
+   <chunk>
+    <name>heading</name>
+    <type>float</type>
+    <format>HEAD=%03.1f</format>
+    <node>/instrumentation/heading-indicator/indicated-heading-deg</node>
+   </chunk>
+
+  
+   
+   <!--  #########################  -->
+   <!--  #  IDENTIFICATION DATA  #  -->
+   <!--  #########################  -->
+
+   <chunk>
+    <name>callsign</name>
+    <type>string</type>
+    <format>CALLSIGN=%s</format>
+    <node>/sim/multiplay/callsign</node>
+   </chunk>
+   
+
+  </output>
+
+ </generic>
+</PropertyList>
