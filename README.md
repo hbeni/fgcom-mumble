@@ -29,12 +29,13 @@ Server
     - deploy the lib: `$ cp mumble.so /usr/lib/x86_64-linux-gnu/lua/5.1/`
 
 ### Compiling
-Information for compiling the lua mumble.so is given at bkacjios github page.  
+Information for compiling the lua mumble.so is given at bkacjios github page. You need it deployed in your systems lua libs folder for running the lua bots.  
 The lua bots shouldn't be needed to be compiled, just run them trough the lua interpreter.  
 Compiling the mumble server is usually not neccessary, just use your distibutions version; this holds true also for the client.
 
 ### Running a server
 - Have mumble server up and running
+- Provide the special channel `fgcom-mumble`
 - Clients will connect and enable their local fgcom plugin. This handles all human communication on frequencies
 - Start the `atis-bot-manager` which handles all needed bots.
 - Manually start additional `radio-playback`-bots to play arbitary samples on frequencies (like radio stations).
@@ -60,6 +61,14 @@ TODO: Nicer text needed, but basicly:
 - start flightgear with enabled fgcom-mumble protocol ("`--generic=socket,out,2,127.0.0.1,16661,udp,fgcom-mumble`")
 - start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
 
+### Debugging issues
+When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
+
+- Make sure, your mumble is operational otherwise
+- Recheck the tuned frequencies
+- Check that you really are in range
+- Make sure the radio is operable (powered, switched on, serviceable)
+- Look at the plugins debug messages (**TODO:** Where are they?)
 
 
 Architecture description
