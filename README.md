@@ -49,16 +49,16 @@ Client
 
 ## Compiling
 The FGCom-mumble client plugin needs to be in binary form.  
-**TODO:** basicly a make based approach: get the source, get the dependencies, run make and load the resulting plugin trough your mumble client. Possibly a make install could copy the plugin to mubmles plugin directory? Lets see how this is implemented in the mumble client first....
+**TODO:** basicly a `make` based approach: get the source, get the dependencies, run make and load the resulting plugin trough your mumble client. Possibly a make install could copy the plugin to mubmles plugin directory? Lets see how this is implemented in the mumble client first....
 
 ### Running the client
 TODO: Nicer text needed, but basicly:
 - compatible to fgcom-standalone protocol, so vey much all halfaway recent fgfs instances should handle it out of the box
-- connect to fgfs mumble server
+- connect your mumble client to fgfs mumble server
 - enable your plugin in your standard mumble client
 - join the `fgcom-mumble` channel
 - start flightgear with enabled fgcom-mumble protocol ("`--generic=socket,out,2,127.0.0.1,16661,udp,fgcom-mumble`")
-- start using your radio stack
+- start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
 
 
 
@@ -87,19 +87,12 @@ This inherently enables listening and sending on multiple frequencies.
 To get the needed data the plugin offers a simple network socket listening for updates on UDP Port **16661** (original FGCom port, it's compatible).  
 This can easily be linked to an FGFS generic protocol or to an external application (like ATC-Pie or OpenRadar) to push updaes to the plugin.
 
-For the plugin to work properly, it needs the following data:
-- callsign
-- location on earth (lat, long, altitude)
-- selected frequency per radio
-- ptt/sending status per radio
-
-Technically, each packet contains a string with several `Field=Value` variables set. Fields are separated using comma. Records are separated using newline. The plugin will parse the incoming string for the given fields (so it's possible to just send a new callsign for example).  
-The available fields are described in the `fgcom-mumble.xml` protocol file.
-
-
+Details are explained in the `plugin-spec.md` file.
 
 ### Plugin output data
 The plugin will broadcast its state (callsign, listen/send frequencies, location) to the other plugins using the mumble internal plugin interface. Other plugins will pick this up and update their internal knowledge of other users.
+
+Details are also explained in the `plugin-spec.md` file.
 
 
 ### Flightgear integration
@@ -107,10 +100,12 @@ To send data to the plugin, flightgear must be startet with property-tree synchr
 Currently, we aim for compatibility to the FGCom protocol (Port 16661; https://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Protocol/fgcom.xml) as it provides all the data we need. The sole exceptions are:
 
  - `output-volume`: is currently tied to /sim/sound/atc/volume and thus not bound to the COM in question
- - `silence-threshold`: same, is not depending on the radio in question (this is not needed in fgcom-mumble anymore because of mumble taking care of that itself)
  - `ptt-key-status`: currently an index denoting the active radio; the consequence of this is that you cannot broadcast at two frequencies at once.
+ - `silence-threshold`: same, is not depending on the radio in question (but is not needed in fgcom-mumble anymore because of mumble taking care of that itself)
 
 The plugin will handle the old FGCom protocol fields. If you want newer features (for example broadcasting on several radios in parallel) you need to use the new protocol fields.
+
+The new protocol xml-file is supplied in the source tree and documented.
 
 
 ATIS / Radio station support
@@ -118,7 +113,7 @@ ATIS / Radio station support
 This is implemented modular trough a special set of mumble bots. The bots behave as ordinary mumble clients supplementing FGCom-mumble plugin information so the pilots client plugins will behave correctly. From the pilots view, they are just more ordinary clients.
 
 ### ATIS playback
-A special `radio-playback`-bot can connect to the mumble server. For that to work properly, he will be called with the needed information: frequency to send on and its location. This information will be broadcasted over the mumble pugin interface, so the other mumble pugins of the pilots can pick it up. From then on, the bot behaves as an ordinary radio client from the view of the plugins.
+A special `radio-playback`-bot can connect to the mumble server. For that to work properly, he will be called with the needed information: frequency to send on and its location. This information will be broadcasted over the mumble plugin interface, so the other mumble pugins of the pilots can pick it up. From then on, the bot behaves as an ordinary radio client from the view of the plugins.
 The bot will read a specified audio file and braodcast it on the selected frequency, until either he is killed or the audio file is deleted (then he kills himself).
 
 ### ATIS recording
@@ -130,11 +125,11 @@ The following features should be implemented:
  4. *Easy recording:* No special software should be needed to conduct recording. It should be done via the in-place infrastructure.
 
 This can be easily supported trough a special `radio-recorder` bot that will listen for incoming record requests over the mumble plugin API.  
-Recording has to be done using a special frequency like `RECORD_<tgtFreq>`. The pilots will not hear the recording, because they can't tune into this frequency. Just the `radio-recorder` bot will monitor all frequencies starting with `RECORD_`-prefix and record anything that comes in. As the target frequency and location must be set from the client (atc-instance in this case), the bot will receive anything that is needed to get frequency and location of the broadcast.  
+Recording has to be done using a special frequency like `RECORD_<tgtFreq>`. The other pilots will not hear the recording, because they can't tune into this frequency. Just the `radio-recorder` bot will monitor all frequencies starting with `RECORD_`-prefix and record anything that comes in. As the target frequency and location must be set from the client (atc-instance in this case), the bot will receive anything that is needed to get frequency and location of the broadcast.  
 The bot is expected to record on the same machine where the radio-playback bot will pick the recordings up, so there is no need for file synchronization. The network-stuff is already handled by the mumble infrastructure this way.
 
 ### Radio stations
-Just invoke an `radio-playback` bot with the radio station audio program file.
+Just invoke a `radio-playback` bot with the radio station audio program file.
 
 ### Radio bot manager
 This is a simple program that automates the spawning/killing of the atis related bots on the server side.  
