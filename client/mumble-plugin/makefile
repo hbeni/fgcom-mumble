@@ -1,5 +1,6 @@
 CC=g++
-CFLAGS=-I. -I./lib
+DEBUGFLAG=-g3
+CFLAGS=-I. -I./lib $(DEBUGFLAG)
 
 plugin: radio_model.o fgcom-mumble.o
 	$(CC) -shared -o fgcom-mumble.so lib/radio_model.o fgcom-mumble.o $(CFLAGS)
