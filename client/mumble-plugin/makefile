@@ -13,7 +13,7 @@ radio_model.o:
 
 
 test: radio_model.o
-	$(CC) -o test/geotest test/geotest.cpp $(CFLAGS)
+	$(CC) -o test/geotest lib/radio_model.o test/geotest.cpp $(CFLAGS)
 
 clean:
 	rm -f *.so *.o lib/*.o

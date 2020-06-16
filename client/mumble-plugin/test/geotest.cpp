@@ -3,7 +3,7 @@
 #include <string>     // std::string, std::stof
 #include <iostream> 
 #include <cmath>
-#include "lib/radio_model.cpp"
+#include "lib/radio_model.h"
 
 using namespace std; 
 
