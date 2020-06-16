@@ -50,11 +50,12 @@ Client
 
 ## Compiling
 The FGCom-mumble client plugin needs to be in binary form.  
-**TODO:** basicly a `make` based approach: get the source, get the dependencies, run make and load the resulting plugin trough your mumble client. Possibly a make install could copy the plugin to mubmles plugin directory? Lets see how this is implemented in the mumble client first....
 
-- Prerequisites: `make`, `g++`
+- Prerequisites: `make`, `g++`, `mingw32` (for windows build)
 - Go to the folder `client/mumble-plugin/`
-- `make` will build the plugin
+- compile:
+  - `make plugin` will build the plugin for linux
+  - `make plugin-win64` will build it for windows
 - Copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
 
 ### Running the client
