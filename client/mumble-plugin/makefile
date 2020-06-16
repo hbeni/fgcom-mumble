@@ -10,6 +10,14 @@ fgcom-mumble.o:
 
 radio_model.o:
 	$(CC) -fPIC -c -o lib/radio_model.o lib/radio_model.cpp $(CFLAGS)
-	
+
+
+test: radio_model.o
+	$(CC) -o test/geotest test/geotest.cpp $(CFLAGS)
+
 clean:
-	rm *.so *.o lib/*.o
+	rm -f *.so *.o lib/*.o
+
+clean-all: clean
+	rm -f test/geotest
+	rm -f fgcom-mumble.so
