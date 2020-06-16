@@ -1,4 +1,4 @@
-.PHONY : all all-debug plugin test clean clean-all debug-on
+.PHONY : all all-debug plugin libs test clean clean-all debug-on
 CC=g++
 DEBUG=
 CFLAGS=-I. -I./lib $(DEBUG)
@@ -11,22 +11,22 @@ all-debug:
 	make DEBUG=-g3 all
 
 # make the plugin
-plugin: radio_model.o
+plugin: libs
 	$(CC) -shared -fPIC -o fgcom-mumble.so lib/radio_model.o fgcom-mumble.cpp $(CFLAGS)
 
-# make the rdio model lib
-radio_model.o:
-	$(CC) -fPIC -c -o lib/radio_model.o lib/radio_model.cpp $(CFLAGS)
+# make all the libs
+libs:  lib/radio_model.o #libs/more.o
 
-
+%.o : %.cpp
+	$(CC) -fPIC -c -o $@ $< $(CFLAGS)
 
 # Compile tests and stuff
-test: radio_model.o
+test: libs
 	$(CC) -o test/geotest lib/radio_model.o test/geotest.cpp $(CFLAGS)
 
 # clean compile results
 clean:
-	rm -f *.so *.o lib/*.o
+	rm -f *.o lib/*.o
 
 # clean compile results and binarys
 clean-all: clean
