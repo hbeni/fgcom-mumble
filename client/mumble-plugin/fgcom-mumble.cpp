@@ -5,6 +5,7 @@
 
 // Include the definitions of the plugin functions
 // Not that this will also include PluginComponents.h
+#include "globalVars.h"
 #include "MumblePlugin.h"
 #include "MumbleAPI.h"
 

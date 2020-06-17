@@ -1,7 +1,7 @@
 .PHONY : all all-debug plugin libs test clean clean-all debug-on
 CC=g++
 DEBUG=
-CFLAGS=-I. -I./lib $(DEBUG)
+CFLAGS=-I. -I./lib -pthread $(DEBUG)
 
 # Compile all that stuff
 all: plugin test clean
