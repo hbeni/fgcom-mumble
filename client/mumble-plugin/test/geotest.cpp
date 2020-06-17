@@ -14,6 +14,19 @@ int main (int argc, char **argv)
     double lon1 = 0.1246; 
     double lat2 = 40.6892; 
     double lon2 = 74.0445; */
+    
+    if (argc != 7) {
+        cout << "Test tool for FGCom geolib\n";
+        cout << "The tool accepts two x/y/z coordinates and prints informations about\n";
+        cout << "the geoid like distance, visible horizont distance and if the points\n";
+        cout << "can see each other or are hidden by earth.\n";
+        cout << "\nUsage: " << argv[0] << " lat1 lon1 alt1 lat2 lon2 alt2\n";
+        cout << "  alt is in meter above surface. lat/lon is decimal format (45.01234).\n";
+        cout << "\nExample: can you see the Pulverturm in Lindau from Konstanz? (no)\n";
+        cout << "   call: `" << argv[0] << " 47.665953 9.218242 1.75   47.545780 9.675327 15`\n";
+        return 0;
+    }
+    
     double lat1 = stod(argv[1]); 
     double lon1 = stod(argv[2]); 
     float  h1   = stof(argv[3]); 
