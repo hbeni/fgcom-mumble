@@ -9,6 +9,8 @@
 #include <stdlib.h> 
 #include <unistd.h> 
 #include <string.h> 
+#include <sstream> 
+#include <regex>
 #include <sys/types.h> 
 #include <sys/socket.h> 
 #include <arpa/inet.h> 
@@ -25,17 +27,95 @@
 
 /*
  * Process a received message:
- * Read the contents and put them into the shared structure
+ * Read the contents and put them into the shared structure.
+ * This will be called from the UDP server thread when receiving new data.
  * 
- * Note: uses the global fgcom_local_client structure!
+ * Note: uses the global fgcom_local_client structure and fgcom_localcfg_mtx!
  * @todo: that should be changed, so the udp server instance gets initialized with pointers to these variables.
  */
-std::mutex fgcom_localcfg_mtx;
 void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
     printf("Client said: %s\n", buffer);
     
+    // convert to stringstream so we can easily tokenize
+    // TODO: why not simply refactor to strtok()?
+    std::stringstream streambuffer(buffer); //std::string(buffer)
+    std::string segment;
+    std::regex parse_key_value ("^(\\w+)=(.+)");
+    std::regex parse_COM ("^(COM)(\\d)_(.+)");
     fgcom_localcfg_mtx.lock();
-    fgcom_local_client.radios[0].volts++;
+    while(std::getline(streambuffer, segment, ',')) {
+        try {
+            std::smatch sm;
+            if (std::regex_search(segment, sm, parse_key_value)) {
+                // this is a valid token. Lets parse it!
+                std::string token_key   = sm[1];
+                std::string token_value = sm[2];
+                printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                
+                std::smatch smc;
+                if (std::regex_search(token_key, smc, parse_COM)) {
+                    // COM Radio mode detected
+                    std::string radio_type = smc[1];
+                    std::string radio_nr   = smc[2];
+                    std::string radio_var  = smc[3];
+                    
+                    // if the selected radio does't exist, create it now
+                    int radio_id = std::stoi(radio_nr.c_str());  // COM1 -> 1
+                    if (fgcom_local_client.radios.size() < radio_id) {
+                        for (int cr = fgcom_local_client.radios.size(); cr < radio_id; cr++) {
+                            fgcom_local_client.radios.push_back(fgcom_radio()); // add new radio instance with default values
+                        }
+                    }
+                    radio_id--; // convert to array index
+                    
+                    if (radio_var == "FRQ") fgcom_local_client.radios[radio_id].frequency   = token_value;
+                    if (radio_var == "VLT") fgcom_local_client.radios[radio_id].volts       = std::stof(token_value);
+                    if (radio_var == "PBT") fgcom_local_client.radios[radio_id].power_btn   = (token_value == "1")? true : false;
+                    if (radio_var == "SRV") fgcom_local_client.radios[radio_id].serviceable = (token_value == "1")? true : false;
+                    if (radio_var == "PTT") fgcom_local_client.radios[radio_id].ptt         = (token_value == "1")? true : false;
+                    if (radio_var == "VOL") fgcom_local_client.radios[radio_id].volume      = std::stof(token_value);
+                    if (radio_var == "PWR") fgcom_local_client.radios[radio_id].pwr         = std::stof(token_value);
+
+                }
+                
+                
+                // User client values
+                if (token_key == "LON") fgcom_local_client.lon = std::stof(token_value);
+                if (token_key == "LAT") fgcom_local_client.lat = std::stof(token_value);
+                if (token_key == "ALT") fgcom_local_client.alt = std::stoi(token_value);
+                if (token_key == "CALLSIGN") fgcom_local_client.callsign = token_value;
+                
+                
+                // FGCom 3.0 compatibility
+                if (token_key == "PTT") {
+                    // PTT contains the ID of the used radio (0=none, 1=COM1, 2=COM2)
+                    int ptt_id = std::stoi(token_value);
+                    for (int i = 0; i<fgcom_local_client.radios.size(); i++) {
+                        if (i == ptt_id - 1) {
+                            fgcom_local_client.radios[i].ptt = 1;
+                        } else {
+                            fgcom_local_client.radios[i].ptt = 0;
+                        }
+                    }
+                }
+                if (token_key == "OUTPUT_VOL") {
+                    // Set all radio instances to the selected volume
+                    float comvol = std::stof(token_value);
+                    for (int i = 0; i<fgcom_local_client.radios.size(); i++) {
+                        fgcom_local_client.radios[i].volume = comvol;
+                    }
+                }
+           
+            } else {
+                // this was an invalid token. skip it silently.
+            }
+            
+        // done with parsing?
+        } catch (const std::exception& e) {
+            std::cout << "Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
+        }
+        
+    } // endwhile
     fgcom_localcfg_mtx.unlock();
 }
 
@@ -95,8 +175,8 @@ int main() {
     
     // init local state
     fgcom_local_client.callsign = "itsMe"; // init local user callsign
-    fgcom_local_client.radios.push_back(fgcom_radio()); // add new radio instance with default values
-    fgcom_local_client.radios[0].frequency = "<unset>"; // initialize frequency
+    //fgcom_local_client.radios.push_back(fgcom_radio()); // add new radio instance with default values
+    //fgcom_local_client.radios[0].frequency = "<unset>"; // initialize frequency
     
     std::cout << "Init udp server...";
     std::thread udpServerThread(fgcom_spawnUDPServer);
@@ -104,13 +184,19 @@ int main() {
     
     while (true) {
         std::cout << "--------------\n";
-        printf("TEST-State:   frequency=%s\n", fgcom_local_client.radios[0].frequency.c_str());
-        printf("TEST-State:   power_btn=%i\n", fgcom_local_client.radios[0].power_btn);
-        printf("TEST-State:       volts=%f\n", fgcom_local_client.radios[0].volts);
-        printf("TEST-State: serviceable=%i\n", fgcom_local_client.radios[0].serviceable);
-        printf("TEST-State:         ptt=%i\n", fgcom_local_client.radios[0].ptt);
-        printf("TEST-State:      volume=%f\n", fgcom_local_client.radios[0].volume);
-        printf("TEST-State:         pwr=%f\n", fgcom_local_client.radios[0].pwr);
+        printf("%s: location: LAT=%f LON=%f ALT=%f\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.lat, fgcom_local_client.lon, fgcom_local_client.alt);
+        printf("%s: %i radios registered\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.radios.size());
+        if (fgcom_local_client.radios.size() > 0) {
+            for (int i=0; i<fgcom_local_client.radios.size(); i++) {
+                printf("  Radio %i:   frequency=%s\n", i, fgcom_local_client.radios[i].frequency.c_str());
+                printf("  Radio %i:   power_btn=%i\n", i, fgcom_local_client.radios[i].power_btn);
+                printf("  Radio %i:       volts=%f\n", i, fgcom_local_client.radios[i].volts);
+                printf("  Radio %i: serviceable=%i\n", i, fgcom_local_client.radios[i].serviceable);
+                printf("  Radio %i:         ptt=%i\n", i, fgcom_local_client.radios[i].ptt);
+                printf("  Radio %i:      volume=%f\n", i, fgcom_local_client.radios[i].volume);
+                printf("  Radio %i:         pwr=%f\n", i, fgcom_local_client.radios[i].pwr);
+            }
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
     

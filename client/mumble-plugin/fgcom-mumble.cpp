@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <iostream>
 #include <cstring>
+#include <vector>
+#include <string>
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
@@ -53,6 +55,10 @@ plugin_id_t ownID;
 // All of the following function must be implemented in order for Mumble to load the plugin
 
 mumble_error_t mumble_init(mumble_connection_t connection) {
+    pluginLog("starting local UDP server");
+    std::thread udpServerThread(fgcom_spawnUDPServer);
+    std::cout << "server started.";
+    
 	pluginLog("Initialized plugin");
 
 	// Print the connection ID at initialization. If not connected to a server it should be -1.
