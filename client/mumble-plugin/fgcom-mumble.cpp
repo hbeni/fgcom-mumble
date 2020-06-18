@@ -50,6 +50,32 @@ std::ostream& operator<<(std::ostream& stream, const version_t version) {
 }
 
 
+/*******************
+ * Some helpers    *
+ ******************/
+
+/*
+ * To be called when plugin is initialized to set up
+ * local stuff. the function gets called from
+ *  - mumble_registerAPIFunctions()   (plugin is loaded but not neccesarily connected to server)
+ *  - mumble_onServerSynchronized()   (we are connected but plugin is not neccesarily loaded)
+ */
+void fgcom_initPlugin() {
+    // told from noubernou/acre: this function is called after synchronized in all cases (not just join) so we may
+    // use this as a hacky solution to know we are connected. mumble_onServerSynchronized does not get called when the plugin was not loaded at connecting time.
+    
+    // fetch local user id from server
+    mumble_userid_t localUser;
+	if (mumAPI.getLocalUserID(ownID, activeConnection, &localUser) != STATUS_OK) {
+		pluginLog("Failed to retrieve local user ID");
+	} else {
+        fgcom_local_client.localUser = localUser; // store id to localUser
+        connectionSynchronized = true; // if we are successfully and complete connected to server
+        pluginLog("got local clientID="+std::to_string(localUser));
+    }
+}
+
+
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////// PLUGIN IMPLEMENTATION ///////////////////
@@ -110,11 +136,14 @@ version_t mumble_getAPIVersion() {
 void mumble_registerAPIFunctions(MumbleAPI api) {
 	// In this function the plugin is presented with a struct of function pointers that can be used
 	// to interact with Mumble. Thus you should store it somewhere safe for later usage.
+    // This is called on plugin loading time, where we might not be connected.
 	mumAPI = api;
 
 	pluginLog("Registered Mumble's API functions");
 
 	mumAPI.log(ownID, "Received API functions");
+    
+    fgcom_initPlugin();
 }
 
 
@@ -214,7 +243,6 @@ void mumble_onServerConnected(mumble_connection_t connection) {
 
 	pLog() << "Established server-connection with ID " << connection << std::endl;
     
-    connectionSynchronized = true; // TODO: DOES NOT BELONG HERE, BUT TO finished synchronized. Currently thats buggy tough and i cant program the message notification otherwise... I need to open a bug report for this.
 }
 
 void mumble_onServerDisconnected(mumble_connection_t connection) {
@@ -226,8 +254,8 @@ void mumble_onServerDisconnected(mumble_connection_t connection) {
 
 void mumble_onServerSynchronized(mumble_connection_t connection) {
 	// The client has finished synchronizing with the server. Thus we can now obtain a list of all users on this server
+    // This is only called if the module was loaded during connecting time.
 	pLog() << "Server has finished synchronizing (ServerConnection: " << connection << ")" << std::endl ;
-    connectionSynchronized = true;
 
 	size_t userCount;
 	mumble_userid_t *userIDs;
@@ -250,13 +278,9 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 
 	mumAPI.freeMemory(ownID, userIDs);
 
-	mumble_userid_t localUser;
-	if (mumAPI.getLocalUserID(ownID, activeConnection, &localUser) != STATUS_OK) {
-		pluginLog("Failed to retrieve local user ID");
-		return;
-	}
 
-	fgcom_local_client.localUser = localUser; // store id to localUser 
+    fgcom_initPlugin();
+	
 
 	/*if (mumAPI.sendData(ownID, activeConnection, &localUser, 1, "Just a test", 12, "testMsg") == STATUS_OK) {
 		pluginLog("Successfully sent plugin message");
@@ -277,7 +301,7 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 		stream << " He came from channel with ID " << previousChannelID << ".";
 	}
 	
-	if (userID == ownID) {
+	if (userID == fgcom_local_client.localUser) {
         stream << " OH! thats me! hello myself!";
     }
 

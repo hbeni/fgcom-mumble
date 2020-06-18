@@ -90,11 +90,12 @@ void notifyRemotes(int what, int selector ) {
     
     // Now get all known FGCom users of the current channel.
     // to those we will push the update.
-    // TODO: maybe just resolve to remotes? but that may not be updated yet...
+    // TODO: maybe just resolve to knopwn fgcom remotes? but that may not be updated yet...
     size_t userCount;
 	mumble_userid_t *userIDs;
 
 	if (mumAPI.getAllUsers(ownID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
+        // ^TODO: currently all server users. We should strip this down to channel users, and then maybe just the ones known to have the plugin enabled for bandwith reasons...
 		std::cout << "[ERROR]: Can't obtain user list" << std::endl;
 		return;
 	} else {
