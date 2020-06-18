@@ -12,7 +12,7 @@ all-debug:
 
 # make the plugin
 plugin: libs
-	$(CC) -shared -fPIC -o fgcom-mumble.so lib/radio_model.o fgcom-mumble.cpp $(CFLAGS)
+	$(CC) -shared -fPIC -o fgcom-mumble.so lib/plugin_io.o lib/radio_model.o fgcom-mumble.cpp $(CFLAGS)
 
 # make all the libs
 libs:  lib/radio_model.o lib/plugin_io.o

@@ -1,7 +1,14 @@
 // Define some global structures
 //
+
+#ifndef FGCOM_GLOBALS_H
+#define FGCOM_GLOBALS_H
+
 #include <vector>
 #include <string>
+#include <mutex>
+#include "MumblePlugin.h"
+
 
 // This represents the state of a radio
 struct fgcom_radio {
@@ -39,15 +46,21 @@ struct fgcom_client {
 };
 
 
+
 // Global mutex for read/write access.
-// This needs to be locked everytime one wants to read/write to the data
-std::mutex fgcom_localcfg_mtx;
+// This needs to be locked everytime one wants to read/write
+// to the data to fgcom_local_client or fgcom_remote_clients
+extern std::mutex fgcom_localcfg_mtx;
 
 // Local plugin datastore
 // this is written from by the udp server and read by the plugin
-struct fgcom_client fgcom_local_client;   // local client data
+extern struct fgcom_client fgcom_local_client;   // local client data
 
 // Remote plugin state
 // this is written to from the plugins receive data function and read from other plugin functions
-std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
-std::vector<fgcom_radio> fgcom_remote_clients; // remote radio config
+extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
+extern std::vector<fgcom_radio> fgcom_remote_clients; // remote radio config
+
+
+
+#endif

@@ -19,6 +19,67 @@
 #include <mutex>
 #include <vector>
 #include "globalVars.h"
+#include "plugin_io.h"
+#include "MumblePlugin.h"
+
+
+/*****************************************************
+ *               Plugin communications               *
+ ****************************************************/
+
+void notifyRemotes(int what, int selector ) {
+    // check if we are connected and synchronized
+    if (!connectionSynchronized) {
+        std::cout << "notifyRemotes("<<what<<","<<selector<<"): not notifying, not connected!" << std::endl;
+        return;
+    }
+
+    // @param what:  0=all local info; 1=location data; 2=comms
+    // @param selector: ignored, when 'what'=2: id of radio (0=COM1,1=COM2,...); -1 sends all radios
+    switch (what) {
+    case 0:
+        // notify all info
+        notifyRemotes(1);
+        notifyRemotes(2);
+        break;
+        
+    case 1:
+        // Notify on location
+        std::cout << "notifyRemotes("<<what<<","<<selector<<"): location" << std::endl;
+        break;
+        
+    case 2:
+        // notify on radio state
+        std::cout << "notifyRemotes(): radio" << std::endl;
+        
+        if (selector == -1) {
+            std::cout << "  all radios selected" << std::endl;
+        } else {
+            std::cout << "  send state of COM" << selector+1 << std::endl;
+        }
+        
+        break;
+    }
+    
+/// Sends the provided data to the provided client(s). This kind of data can only be received by another plugin active
+/// on that client. The sent data can be seen by any active plugin on the receiving client. Therefore the sent data
+/// must not contain sensitive information or anything else that shouldn't be known by others.
+///
+/// @param callerID The ID of the plugin calling this function
+/// @param connection The ID of the server-connection to send the data through (the server the given users are on)
+/// @param users An array of user IDs to send the data to
+/// @param userCount The size of the provided user-array
+/// @param data The data that shall be sent as a String
+/// @param dataLength The length of the data-string
+/// @param dataID The ID of the sent data. This has to be used by the receiving plugin(s) to figure out what to do with
+/// 	the data
+/// @returns The error code. If everything went well, STATUS_OK will be returned.
+//mumble_error_t (PLUGIN_CALLING_CONVENTION *sendData)(plugin_id_t callerID, mumble_connection_t connection, mumble_userid_t *users,
+//		size_t userCount, const char *data, size_t dataLength, const char *dataID);
+    
+    
+}
+
 
 
 /*****************************************************
@@ -29,8 +90,7 @@
  * FlightSims to inform the plugin of local state.   *
  ****************************************************/
 
-#define FGCOM_PORT 16661    // 16661 is the known FGCom udp port
-#define MAXLINE    1024     // max size of a udp packet
+
 
 /*
  * Process a received message:
@@ -40,9 +100,11 @@
  * Note: uses the global fgcom_local_client structure and fgcom_localcfg_mtx!
  * @todo: that should be changed, so the udp server instance gets initialized with pointers to these variables.
  */
+std::mutex fgcom_localcfg_mtx;
+struct fgcom_client fgcom_local_client;
 void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
     printf("Client said: %s\n", buffer);
-    
+
     // convert to stringstream so we can easily tokenize
     // TODO: why not simply refactor to strtok()?
     std::stringstream streambuffer(buffer); //std::string(buffer)
@@ -51,6 +113,11 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
     std::regex parse_COM ("^(COM)(\\d)_(.+)");
     fgcom_localcfg_mtx.lock();
     while(std::getline(streambuffer, segment, ',')) {
+        printf("Segment=%s",segment);
+        //printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+
+    
+    
         try {
             std::smatch sm;
             if (std::regex_search(segment, sm, parse_key_value)) {
@@ -118,6 +185,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
            
             } else {
                 // this was an invalid token. skip it silently.
+                printf("  segment invalid (is no key=value format): %s\n", segment.c_str());
             }
             
         // done with parsing?
@@ -125,19 +193,14 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
             std::cout << "Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
         }
         
-    } // endwhile
+    }  //endwhile
     fgcom_localcfg_mtx.unlock();
 }
 
 
-/*
- * Spawn the udp server thread.
- * He should constantly monitor the port for incoming data.
- * 
- * @param ??? TODO: Pointer to the shared data structure.
- */
+
 void fgcom_spawnUDPServer() {
-    std::cout << "server spawning...";
+    printf("FGCom: server starting on port %i\n", FGCOM_PORT);
     int  fgcom_UDPServer_sockfd; 
     char buffer[MAXLINE]; 
     struct sockaddr_in servaddr, cliaddr; 
@@ -172,15 +235,56 @@ void fgcom_spawnUDPServer() {
         n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,  
                     MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len); 
         buffer[n] = '\0';
-        fgcom_udp_parseMsg(buffer);
+        
+        if (strstr(buffer, "SHUTDOWN")) {
+            // Allow the udp server to be shut down when receiving SHUTDOWN command
+            printf("FGCom: shutdown command recieved, server stopping now");
+            close(fgcom_UDPServer_sockfd);
+            break;
+        } else {
+            fgcom_udp_parseMsg(buffer);
+        }
     }
       
     return;
 }
 
+void fgcom_shutdownUDPServer() {
+    //  Trigger shutdown: this just sends some magic UDP message.
+    printf("FGCOM: sending UDP shutdown request\n");
+    std::string message = "SHUTDOWN";
+    
+    const char* server_name = "localhost";
+	const int server_port = FGCOM_PORT;
+
+	struct sockaddr_in server_address;
+	memset(&server_address, 0, sizeof(server_address));
+	server_address.sin_family = AF_INET;
+
+	// creates binary representation of server name
+	// and stores it as sin_addr
+	// http://beej.us/guide/bgnet/output/html/multipage/inet_ntopman.html
+	inet_pton(AF_INET, server_name, &server_address.sin_addr);
+
+	// htons: port in network order format
+	server_address.sin_port = htons(server_port);
+
+	// open socket
+	int sock;
+	if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
+		printf("could not create socket\n");
+		return;
+	}
+
+	// send data
+	int len = sendto(sock, message.c_str(), strlen(message.c_str()), 0,
+	           (struct sockaddr*)&server_address, sizeof(server_address));
+
+}
+
 
 // FOR TESTING PURPOSES ONLY. NEEDS TO BE DISCARDED ONCE THE CODE IS INTEGRATABLE INTO THE PLUGIN
-int main() { 
+/*int main() { 
     std::cout.setf(std::ios::unitbuf); // unbuffered cout writes
     
     // init local state
@@ -212,4 +316,4 @@ int main() {
     
     // ensure that thread has finished before the main thread terminates
     udpServerThread.join();
-}
+}*/

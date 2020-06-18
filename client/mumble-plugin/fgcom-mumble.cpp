@@ -4,10 +4,12 @@
 // Mumble source tree or at <https://www.mumble.info/LICENSE>.
 
 // Include the definitions of the plugin functions
-// Not that this will also include PluginComponents.h
+// Note that this will also include PluginComponents.h
 #include "globalVars.h"
 #include "MumblePlugin.h"
 #include "MumbleAPI.h"
+#include "plugin_io.h"
+#include "radio_model.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +17,15 @@
 #include <cstring>
 #include <vector>
 #include <string>
+#include <thread>
+
+
+// Mubmle API global vars.
+// They get initialized from the plugin interface (see fgcom-mumble.cpp)
+MumbleAPI mumAPI;
+mumble_connection_t activeConnection;
+plugin_id_t ownID;
+bool connectionSynchronized;
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
@@ -45,19 +56,27 @@ std::ostream& operator<<(std::ostream& stream, const version_t version) {
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 
-MumbleAPI mumAPI;
-mumble_connection_t activeConnection;
-plugin_id_t ownID;
+
+// Notiz: Loggen im mumble-Fenster: mumAPI.log(ownID, "Received API functions");
+// Notiz: Loggen ins terminal-log:  pluginLog("Registered Mumble's API functions");
 
 //////////////////////////////////////////////////////////////
 //////////////////// OBLIGATORY FUNCTIONS ////////////////////
 //////////////////////////////////////////////////////////////
 // All of the following function must be implemented in order for Mumble to load the plugin
-
+std::thread::id udpServerThread_id;
 mumble_error_t mumble_init(mumble_connection_t connection) {
     pluginLog("starting local UDP server");
     std::thread udpServerThread(fgcom_spawnUDPServer);
-    std::cout << "server started.";
+    udpServerThread_id = udpServerThread.get_id();
+    udpServerThread.detach();
+    std::cout << "server started; id=" << udpServerThread_id;
+    
+    pluginLog("Testing some stuff");
+    pluginLog("  range of ALT=50m:" + std::to_string(fgcom_radiowave_getDistToHorizon(50)) );
+    char buffer[1024] = "abcde";
+    fgcom_udp_parseMsg(buffer);
+    
     
 	pluginLog("Initialized plugin");
 
@@ -73,6 +92,9 @@ mumble_error_t mumble_init(mumble_connection_t connection) {
 void mumble_shutdown() {
 	pluginLog("Shutdown plugin");
 
+    // Let the UDP server shutdown itself
+    fgcom_shutdownUDPServer();
+    
 	mumAPI.log(ownID, "Shutdown");
 }
 
@@ -200,6 +222,7 @@ void mumble_onServerConnected(mumble_connection_t connection) {
 
 void mumble_onServerDisconnected(mumble_connection_t connection) {
 	activeConnection = -1;
+    connectionSynchronized = false;
 
 	pLog() << "Disconnected from server-connection with ID " << connection << std::endl;
 }
@@ -207,6 +230,7 @@ void mumble_onServerDisconnected(mumble_connection_t connection) {
 void mumble_onServerSynchronized(mumble_connection_t connection) {
 	// The client has finished synchronizing with the server. Thus we can now obtain a list of all users on this server
 	pLog() << "Server has finished synchronizing (ServerConnection: " << connection << ")" << std::endl ;
+    connectionSynchronized = true;
 
 	size_t userCount;
 	mumble_userid_t *userIDs;
@@ -285,8 +309,8 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
 }
 
 bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
-	pLog() << "Audio input with " << channelCount << " channels and " << sampleCount << " samples per channel encountered. IsSpeech: "
-		<< isSpeech << std::endl;
+	//pLog() << "Audio input with " << channelCount << " channels and " << sampleCount << " samples per channel encountered. IsSpeech: "
+	//	<< isSpeech << std::endl;
 
 	// mark inputPCM as unused
 	(void) inputPCM;
@@ -296,13 +320,14 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 }
 
 bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech, mumble_userid_t userID) {
-	std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
+	/*std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
 
 	if (isSpeech) {
 		stream << " The output is speech from user with ID " << userID << ".";
 	}
 
 	stream << std::endl;
+    */
 
 	// Mark ouputPCM as unused
 	(void) outputPCM;
@@ -312,7 +337,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
 }
 
 bool mumble_onAudioOutputAboutToPlay(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-	pLog() << "The resulting audio output has " << channelCount << " channels with " << sampleCount << " samples per channel" << std::endl;
+	//pLog() << "The resulting audio output has " << channelCount << " channels with " << sampleCount << " samples per channel" << std::endl;
 
 	// mark outputPCM as unused
 	(void) outputPCM;

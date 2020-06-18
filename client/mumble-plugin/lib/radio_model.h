@@ -3,6 +3,8 @@
 // This just defines some functions that are used from the plugin.
 //
 
+#ifndef FGCOM_RADIOMODEL_H
+#define FGCOM_RADIOMODEL_H
 
 /*
  * Calculates the distance to horizon for an given observer at height h.
@@ -54,3 +56,6 @@ double fgcom_radiowave_degreeAboveHorizon(double surfacedist, double hah);
  * @return great circle distance in km (as the crow flies)
  */
 double fgcom_radiowave_getSurfaceDistance(double lat1, double lon1, double lat2, double lon2);
+
+
+#endif
