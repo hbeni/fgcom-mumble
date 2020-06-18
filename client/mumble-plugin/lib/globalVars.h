@@ -27,7 +27,7 @@ struct fgcom_radio {
 struct fgcom_client {
 	float lon;
 	float lat;
-	int   alt;
+	int   alt;  // in meters
 	std::string  callsign;
 	std::vector<fgcom_radio> radios;
 	fgcom_client()  {

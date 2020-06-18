@@ -19,11 +19,18 @@
 #include <mutex>
 #include <vector>
 #include "globalVars.h"
-  
+
+
+/*****************************************************
+ *                     UDP Server                    *
+ * The UDP interface is the plugins port to receive  *
+ * configuration state from the outside world.       *
+ * It is used for example from ATC clients or        *
+ * FlightSims to inform the plugin of local state.   *
+ ****************************************************/
+
 #define FGCOM_PORT 16661    // 16661 is the known FGCom udp port
 #define MAXLINE    1024     // max size of a udp packet
-
-
 
 /*
  * Process a received message:
@@ -82,7 +89,10 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
                 // User client values
                 if (token_key == "LON") fgcom_local_client.lon = std::stof(token_value);
                 if (token_key == "LAT") fgcom_local_client.lat = std::stof(token_value);
-                if (token_key == "ALT") fgcom_local_client.alt = std::stoi(token_value);
+                if (token_key == "ALT") {
+                    // ALT comes in ft. We need meters however
+                    fgcom_local_client.alt = std::stoi(token_value) / 3.2808;
+                }
                 if (token_key == "CALLSIGN") fgcom_local_client.callsign = token_value;
                 
                 
@@ -124,7 +134,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
  * Spawn the udp server thread.
  * He should constantly monitor the port for incoming data.
  * 
- * @param ??? Pointer to the shared data structure.
+ * @param ??? TODO: Pointer to the shared data structure.
  */
 void fgcom_spawnUDPServer() {
     std::cout << "server spawning...";
@@ -184,7 +194,7 @@ int main() {
     
     while (true) {
         std::cout << "--------------\n";
-        printf("%s: location: LAT=%f LON=%f ALT=%f\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.lat, fgcom_local_client.lon, fgcom_local_client.alt);
+        printf("%s: location: LAT=%f LON=%f ALT=%i\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.lat, fgcom_local_client.lon, fgcom_local_client.alt);
         printf("%s: %i radios registered\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.radios.size());
         if (fgcom_local_client.radios.size() > 0) {
             for (int i=0; i<fgcom_local_client.radios.size(); i++) {
