@@ -44,6 +44,14 @@ void fgcom_shutdownUDPServer();
 void notifyRemotes(int what, int selector=-1);
 
 
-// for debugging internal stuff
-void fgcom_udp_parseMsg(char buffer[1024]);
+/*
+ * Handle incoming mumble plugin data
+ * 
+ * @param mumble_userid_t sender of the data (that looks like an unsigned int)
+ * @param dataID string with dataID ("FGCOM.....")
+ * @param data   string with the payload
+ * @return true if the data could be processed
+ */
+bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data);
+
 #endif

@@ -32,7 +32,8 @@ struct fgcom_radio {
 
 // This represents a clients metadata
 struct fgcom_client {
-	float lon;
+	unsigned int localUser;  // mumble client ID
+    float lon;
 	float lat;
 	int   alt;  // in meters
 	std::string  callsign;

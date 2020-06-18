@@ -66,19 +66,14 @@ std::ostream& operator<<(std::ostream& stream, const version_t version) {
 // All of the following function must be implemented in order for Mumble to load the plugin
 std::thread::id udpServerThread_id;
 mumble_error_t mumble_init(mumble_connection_t connection) {
-    pluginLog("starting local UDP server");
+    pluginLog("FGCOM: starting local UDP server");
     std::thread udpServerThread(fgcom_spawnUDPServer);
     udpServerThread_id = udpServerThread.get_id();
     udpServerThread.detach();
-    std::cout << "server started; id=" << udpServerThread_id;
-    
-    pluginLog("Testing some stuff");
-    pluginLog("  range of ALT=50m:" + std::to_string(fgcom_radiowave_getDistToHorizon(50)) );
-    char buffer[1024] = "abcde";
-    fgcom_udp_parseMsg(buffer);
+    //std::cout << "FGCOM: udp server started; id=" << udpServerThread_id;
     
     
-	pluginLog("Initialized plugin");
+	pluginLog("FGCOM: Initialized plugin");
 
 	// Print the connection ID at initialization. If not connected to a server it should be -1.
 	pLog() << "Connection ID at initialization: " << connection << std::endl;
@@ -218,6 +213,8 @@ void mumble_onServerConnected(mumble_connection_t connection) {
 	activeConnection = connection;
 
 	pLog() << "Established server-connection with ID " << connection << std::endl;
+    
+    connectionSynchronized = true; // TODO: DOES NOT BELONG HERE, BUT TO finished synchronized. Currently thats buggy tough and i cant program the message notification otherwise... I need to open a bug report for this.
 }
 
 void mumble_onServerDisconnected(mumble_connection_t connection) {
@@ -259,21 +256,33 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 		return;
 	}
 
-	if (mumAPI.sendData(ownID, activeConnection, &localUser, 1, "Just a test", 12, "testMsg") == STATUS_OK) {
+	fgcom_local_client.localUser = localUser; // store id to localUser 
+
+	/*if (mumAPI.sendData(ownID, activeConnection, &localUser, 1, "Just a test", 12, "testMsg") == STATUS_OK) {
 		pluginLog("Successfully sent plugin message");
 	} else {
 		pluginLog("Failed at sending message");
-	}
+	}*/
 }
 
 void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t previousChannelID, mumble_channelid_t newChannelID) {
+    // Called for each user entering the channel. When newly entering the channel ourself, this gets called for every user.
+    
+    // TODO: Push our full data to the joining client.
+    
 	std::ostream& stream = pLog() << "User with ID " << userID << " entered channel with ID " << newChannelID << ".";
 
 	// negative ID means that there was no previous channel (e.g. because the user just connected)
 	if (previousChannelID >= 0) {
 		stream << " He came from channel with ID " << previousChannelID << ".";
 	}
+	
+	if (userID == ownID) {
+        stream << " OH! thats me! hello myself!";
+    }
 
+	
+	
 	stream << " (ServerConnection: " << connection << ")" << std::endl;
 }
 
@@ -350,12 +359,12 @@ bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender
 	pLog() << "Received data with ID \"" << dataID << "\" from user with ID " << sender << ". Its length is " << dataLength
 		<< ". (ServerConnection:" << connection << ")" << std::endl;
 
-	if (std::strcmp(dataID, "testMsg") == 0) {
-		pLog() << "The received data: " << data << std::endl;
-	}
-
-	// This function returns whether it has processed the data (preventing further plugins from seeing it)
-	return false;
+        if (dataLength > 0) {
+            // if there is payload: handle it
+            return handlePluginDataReceived(sender, std::string(dataID), std::string(data));
+        }
+        
+        return false;
 }
 
 void mumble_onUserAdded(mumble_connection_t connection, mumble_userid_t userID) {
