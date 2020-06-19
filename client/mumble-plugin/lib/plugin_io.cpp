@@ -455,6 +455,7 @@ void fgcom_spawnUDPServer() {
     } 
     
     printf("FGCom: [UDP] server up and waiting for data\n");
+    mumAPI.log(ownID, std::string("UDP server up and waiting for data at port "+std::to_string(FGCOM_PORT)).c_str());
     
     // wait for incoming data
     int n; 
@@ -469,6 +470,7 @@ void fgcom_spawnUDPServer() {
             // Allow the udp server to be shut down when receiving SHUTDOWN command
             printf("FGCom: [UDP] shutdown command recieved, server stopping now");
             close(fgcom_UDPServer_sockfd);
+            mumAPI.log(ownID, std::string("UDP server at port "+std::to_string(FGCOM_PORT)+" stopped").c_str());
             break;
             
         } else {

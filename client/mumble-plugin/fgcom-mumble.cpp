@@ -100,9 +100,10 @@ void fgcom_initPlugin() {
         
         
     } else {
-        std::cout << "fgcom_initPlugin(): not connected, so not initializing functoins needing connected state." << std::endl;
+        std::cout << "fgcom_initPlugin(): not connected, so not initializing functions needing connected state." << std::endl;
         return;
     }
+    
     
 }
 
@@ -147,7 +148,7 @@ void mumble_shutdown() {
     // Let the UDP server shutdown itself
     fgcom_shutdownUDPServer();
     
-	mumAPI.log(ownID, "Shutdown");
+	mumAPI.log(ownID, "Plugin deactivated");
 }
 
 const char* mumble_getName() {
@@ -172,7 +173,7 @@ void mumble_registerAPIFunctions(MumbleAPI api) {
 
 	pluginLog("Registered Mumble's API functions");
 
-	mumAPI.log(ownID, "Received API functions");
+	mumAPI.log(ownID, "Plugin loaded");
     
     fgcom_initPlugin();
 }
