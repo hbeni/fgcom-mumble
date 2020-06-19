@@ -87,12 +87,14 @@ void notifyRemotes(int what, int selector ) {
                 std::cout << "  send state of COM" << selector+1 << std::endl;
                 dataID  = "FGCOM:UPD_COM:"+std::to_string(selector);
                 message = "FRQ="+fgcom_local_client.radios[selector].frequency+","
-                        + "VLT="+std::to_string(fgcom_local_client.radios[selector].volts)+","
-                        + "PBT="+std::to_string(fgcom_local_client.radios[selector].power_btn)+","
-                        + "SRV="+std::to_string(fgcom_local_client.radios[selector].serviceable)+","
+                        //+ "VLT="+std::to_string(fgcom_local_client.radios[selector].volts)+","
+                        //+ "PBT="+std::to_string(fgcom_local_client.radios[selector].power_btn)+","
+                        //+ "SRV="+std::to_string(fgcom_local_client.radios[selector].serviceable)+","
                         + "PTT="+std::to_string(fgcom_local_client.radios[selector].ptt)+","
-                        + "VOL="+std::to_string(fgcom_local_client.radios[selector].volume)+","
+                        //+ "VOL="+std::to_string(fgcom_local_client.radios[selector].volume)+","
                         + "PWR="+std::to_string(fgcom_local_client.radios[selector].pwr)+",";
+                    // ^^ Save bandwith: We do not need all state on the other clients currently. Once we do, we can just uncomment this and the code to handle it is already implemented :)
+                    // Ah yeah, and we must uncomment the change-detection down at fgcom_udp_parseMsg(), otherwise the changes get not detected
             }
             
             break;
@@ -332,17 +334,17 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     if (radio_var == "VLT") {
                         float oldValue = fgcom_local_client.radios[radio_id].volts;
                         fgcom_local_client.radios[radio_id].volts       = std::stof(token_value);
-                        if (fgcom_local_client.radios[radio_id].volts != oldValue ) radioDataHasChanged->insert(radio_id);
+                        // do not send right now: if (fgcom_local_client.radios[radio_id].volts != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "PBT") {
                         bool oldValue = fgcom_local_client.radios[radio_id].power_btn;
                         fgcom_local_client.radios[radio_id].power_btn   = (token_value == "1")? true : false;
-                        if (fgcom_local_client.radios[radio_id].power_btn != oldValue ) radioDataHasChanged->insert(radio_id);
+                        // do not send right now: if (fgcom_local_client.radios[radio_id].power_btn != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "SRV") {
                         bool oldValue = fgcom_local_client.radios[radio_id].serviceable;
                         fgcom_local_client.radios[radio_id].serviceable = (token_value == "1")? true : false;
-                        if (fgcom_local_client.radios[radio_id].serviceable != oldValue ) radioDataHasChanged->insert(radio_id);
+                        // do not send right now: if (fgcom_local_client.radios[radio_id].serviceable != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "PTT") {
                         bool oldValue = fgcom_local_client.radios[radio_id].ptt;
@@ -352,7 +354,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     if (radio_var == "VOL") {
                         float oldValue = fgcom_local_client.radios[radio_id].volume;
                         fgcom_local_client.radios[radio_id].volume      = std::stof(token_value);
-                        if (fgcom_local_client.radios[radio_id].volume != oldValue ) radioDataHasChanged->insert(radio_id);
+                        // do not send right now: if (fgcom_local_client.radios[radio_id].volume != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "PWR") {
                         float oldValue = fgcom_local_client.radios[radio_id].pwr;
@@ -363,7 +365,8 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 }
                 
                 
-                // User client values
+                // User client values.
+                // TODO: We should limit the update notification rate of positional data (The reason is that for example the UDP sending interface of flightgear may send new data several times per second.)
                 if (token_key == "LON") {
                     float oldValue = fgcom_local_client.lon;
                     fgcom_local_client.lon = std::stof(token_value);;
