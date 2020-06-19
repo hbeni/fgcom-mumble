@@ -80,7 +80,7 @@ void fgcom_initPlugin() {
 	if (mumAPI.getLocalUserID(ownID, activeConnection, &localUser) != STATUS_OK) {
 		pluginLog("Failed to retrieve local user ID");
 	} else {
-        fgcom_local_client.localUser = localUser; // store id to localUser
+        fgcom_local_client.mumid = localUser; // store id to localUser
         connectionSynchronized = true; // if we are successfully and complete connected to server
         pluginLog("got local clientID="+std::to_string(localUser));
     }
@@ -312,7 +312,7 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 		stream << " He came from channel with ID " << previousChannelID << ".";
 	}
 	
-	if (userID == fgcom_local_client.localUser) {
+	if (userID == fgcom_local_client.mumid) {
         stream << " OH! thats me! hello myself!";
     }
 

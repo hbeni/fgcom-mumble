@@ -5,8 +5,8 @@ void debug_out_internal_state() {
     
     while (true) {
         std::cout << "---------LOCAL STATE-----------\n";
-        printf("%s: location: LAT=%f LON=%f ALT=%i\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.lat, fgcom_local_client.lon, fgcom_local_client.alt);
-        printf("%s: %i radios registered\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.radios.size());
+        printf("[mumid=%i] %s: location: LAT=%f LON=%f ALT=%i\n", fgcom_local_client.mumid, fgcom_local_client.callsign.c_str(), fgcom_local_client.lat, fgcom_local_client.lon, fgcom_local_client.alt);
+        printf("[mumid=%i] %s: %i radios registered\n", fgcom_local_client.mumid, fgcom_local_client.callsign.c_str(), fgcom_local_client.radios.size());
         if (fgcom_local_client.radios.size() > 0) {
             for (int i=0; i<fgcom_local_client.radios.size(); i++) {
                 printf("  Radio %i:   frequency=%s\n", i, fgcom_local_client.radios[i].frequency.c_str());
@@ -21,9 +21,7 @@ void debug_out_internal_state() {
         
         std::cout << "---------REMOTE STATE-----------\n";
         for (const auto &p : fgcom_remote_clients) {
-                    std::cout << p.first << " => callsign=" << p.second.callsign << " id=" << p.second.mumid << ", #-radios: " << p.second.radios.size() << '\n';
-                
-            printf("[id=%i; mumid=%i] %s: location: LAT=%f LON=%f ALT=%i\n", p.first, p.second.mumid, p.second.lat, p.second.lon, p.second.alt);
+            printf("[id=%i; mumid=%i] %s: location: LAT=%f LON=%f ALT=%i\n", p.first, p.second.mumid, p.second.callsign.c_str(), p.second.lat, p.second.lon, p.second.alt);
             printf("[id=%i; mumid=%i] %s: %i radios registered\n", p.first, p.second.mumid, p.second.callsign.c_str(), p.second.radios.size());
             if (p.second.radios.size() > 0) {
                 for (int i=0; i<p.second.radios.size(); i++) {

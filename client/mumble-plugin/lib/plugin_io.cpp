@@ -18,7 +18,9 @@
 #include <thread>
 #include <mutex>
 #include <vector>
-#include<set>
+#include <set>
+#include <map>
+#include <clocale> // setlocale() 
 
 #include "globalVars.h"
 #include "plugin_io.h"
@@ -99,11 +101,14 @@ void notifyRemotes(int what, int selector ) {
 		std::cout << "[ERROR]: Can't obtain user list" << std::endl;
 		return;
 	} else {
-        std::cout << "There are " << userCount << " users on this server. Their names are:" << std::endl;
+        std::cout << "There are " << userCount << " users on this server." << std::endl;
 
         if (userCount >= 1) {
+            // remove local id from that array to prevent sending updates to ourselves
+            //TODO: auto arrayEnd = std::remove(std::begin(*userIDs), std::end(*userIDs), fgcom_local_client.mumid);
+            
             for(size_t i=0; i<userCount; i++) {
-                std::cout << "Sending message to: " << userIDs[i] << std::endl;
+                std::cout << "  sending message to: " << userIDs[i] << std::endl;
             }
             mumAPI.sendData(ownID, activeConnection, userIDs, userCount, message.c_str(), strlen(message.c_str()), dataID.c_str());
         }
@@ -114,20 +119,123 @@ void notifyRemotes(int what, int selector ) {
     
 }
 
-
+std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
+std::map<int, fgcom_client> fgcom_remote_clients; // remote radio config
 bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data) {
-    // Handle the incoming data
+    // Handle the incoming data (if it belongs to us)
+    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
     
-    if (dataID == "FGCOM:UPD_LOC") {
-        // Location data update
+    if (dataID.substr(0,5) == "FGCOM") {
+        // Data is for our plugin
+        int clientID = (int) senderID;  // get mumble client id
+        std::regex parse_key_value ("^(\\w+)=(.+)"); // prepare a regex for simpler parsing
         
-       std::cout << "LOC UPDATE: Sender=" << senderID << " DataID=" << dataID.c_str() << " DATA=" << data.c_str() << std::endl;
-	} else if (dataID.substr(0, 14) == "FGCOM:UPD_COM:") {
-        std::cout << "COM UPDTE: Sender=" << senderID << " DataID=" << dataID.c_str() << " DATA=" << data.c_str() << std::endl;
+        fgcom_remotecfg_mtx.lock();
+        
+        // check if user is already known to us; if not add him to the local clients store
+        auto search = fgcom_remote_clients.find(clientID);
+        if (search == fgcom_remote_clients.end()) {
+            fgcom_remote_clients[clientID] = fgcom_client();
+            fgcom_remote_clients[clientID].mumid = clientID;
+            /*std::cout << "   DBG: INSERTED NEW REMOTE CLIENT: " <<std::endl;
+            for (const auto &p : fgcom_remote_clients) {
+                std::cout << p.first << " => callsign=" << p.second.callsign << " id=" << p.second.mumid << ", #-radios: " << p.second.radios.size() << '\n';
+            }*/
+        }
+        
+        // Parse the data, depending on packet type
+        if (dataID == "FGCOM:UPD_LOC") {
+            // Location data update
+            std::cout << "LOC UPDATE: Sender=" << clientID << " DataID=" << dataID.c_str() << " DATA=" << data.c_str() << std::endl;
+            
+            // update properties
+            std::stringstream streambuffer(data);
+            std::string segment;
+            while(std::getline(streambuffer, segment, ',')) {
+                // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
+                printf("FGCom: [mum_pluginIO] Segment=%s",segment);
+                
+                try {
+                                
+                    std::smatch sm;
+                    if (std::regex_search(segment, sm, parse_key_value)) {
+                        // this is a valid token. Lets parse it!
+                        //printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                        std::string token_key   = sm[1];
+                        std::string token_value = sm[2];
+                        printf("FGCom: [mum_pluginIO] Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                        
+                        if (token_key == "LON")      fgcom_remote_clients[clientID].lon      = std::stof(token_value);
+                        if (token_key == "LAT")      fgcom_remote_clients[clientID].lat      = std::stof(token_value);
+                        if (token_key == "ALT")      fgcom_remote_clients[clientID].alt      = std::stoi(token_value);
+                        if (token_key == "CALLSIGN") fgcom_remote_clients[clientID].callsign = token_value;
+                        
+                    } else {
+                        // ignore, segment was not in key=value format
+                    }
+                 
+                // done with parsing?
+                } catch (const std::exception& e) {
+                    std::cout << "FGCom: [mum_pluginIO] Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
+                }
+            }
+            
+        
+        } else if (dataID.substr(0, 14) == "FGCOM:UPD_COM:") {
+            // Radio data update. Here the radio in question was given in the dataid.
+            std::cout << "COM UPDATE: Sender=" << clientID << " DataID=" << dataID.c_str() << " DATA=" << data.c_str() << std::endl;
+            int radio_id = std::stoi(dataID.substr(14)); // segfault, indicates problem with the implemented udp protocol
+            
+            // if the selected radio does't exist, create it now
+            if (fgcom_remote_clients[clientID].radios.size() < radio_id+1) {
+                for (int cr = fgcom_remote_clients[clientID].radios.size(); cr < radio_id+1; cr++) {
+                    fgcom_remote_clients[clientID].radios.push_back(fgcom_radio()); // add new radio instance with default values
+                }
+            }
+            
+            // update the radios properties
+            std::stringstream streambuffer(data);
+            std::string segment;
+            while(std::getline(streambuffer, segment, ',')) {
+                // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
+                printf("FGCom: [mum_pluginIO] Segment=%s",segment);
+                
+                try {        
+                    std::smatch sm;
+                    if (std::regex_search(segment, sm, parse_key_value)) {
+                        // this is a valid token. Lets parse it!
+                        //printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                        std::string token_key   = sm[1];
+                        std::string token_value = sm[2];
+                        printf("FGCom: [mum_pluginIO] Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                        
+                        if (token_key == "FRQ") fgcom_remote_clients[clientID].radios[radio_id].frequency   = token_value;
+                        if (token_key == "VLT") fgcom_remote_clients[clientID].radios[radio_id].volts       = std::stof(token_value);
+                        if (token_key == "PBT") fgcom_remote_clients[clientID].radios[radio_id].power_btn   = (token_value == "1")? true : false;
+                        if (token_key == "SRV") fgcom_remote_clients[clientID].radios[radio_id].serviceable = (token_value == "1")? true : false;
+                        if (token_key == "PTT") fgcom_remote_clients[clientID].radios[radio_id].ptt         = (token_value == "1")? true : false;
+                        if (token_key == "VOL") fgcom_remote_clients[clientID].radios[radio_id].volume      = std::stof(token_value);
+                        if (token_key == "PWR") fgcom_remote_clients[clientID].radios[radio_id].pwr         = std::stof(token_value);      
+                        
+                    } else {
+                        // ignore, segment was not in key=value format
+                    }
+                 
+                // done with parsing?
+                } catch (const std::exception& e) {
+                    std::cout << "FGCom: [mum_pluginIO] Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
+                }
+            }
+        }
+        
+        fgcom_remotecfg_mtx.unlock();
+        
+        return true; // signal to other plugins that the data was handled already
+        
+    } else {
+        return false; // packet does not belong to us. other plugins should also receive it
     }
 
-	// This function returns whether it has processed the data (preventing further plugins from seeing it)
-	return false;
 }    
 
 
@@ -151,12 +259,17 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
  * 
  * Note: uses the global fgcom_local_client structure and fgcom_localcfg_mtx!
  * @todo: that should be changed, so the udp server instance gets initialized with pointers to these variables.
+ *
+ * @param buffer The char buffer to parse
+ * @param userDataHashanged pointer to boolean that after call indicates if userdata had changed
+ * @param radioDataHasChanged pointer to an set of ints that show which radios did change
  */
 std::mutex fgcom_localcfg_mtx;
 struct fgcom_client fgcom_local_client;
-void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
+void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<int> *radioDataHasChanged) {
     printf("FGCOM: [UDP] received message: %s\n", buffer);
-    std::cout << "DBG: Stored local userID=" << fgcom_local_client.localUser <<std::endl;
+    //std::cout << "DBG: Stored local userID=" << fgcom_local_client.mumid <<std::endl;
+    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
 
     // convert to stringstream so we can easily tokenize
     // TODO: why not simply refactor to strtok()?
@@ -165,14 +278,10 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
     std::regex parse_key_value ("^(\\w+)=(.+)");
     std::regex parse_COM ("^(COM)(\\d)_(.+)");
     fgcom_localcfg_mtx.lock();
-    bool userDataHashanged = false;     // so we can send updates to remotes
-    std::set<int> radioDataHasChanged;  // so we can send updates to remotes
     while(std::getline(streambuffer, segment, ',')) {
         printf("FGCom: [UDP] Segment=%s",segment);
         //printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
 
-    
-    
         try {
             std::smatch sm;
             if (std::regex_search(segment, sm, parse_key_value)) {
@@ -193,7 +302,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
                     if (fgcom_local_client.radios.size() < radio_id) {
                         for (int cr = fgcom_local_client.radios.size(); cr < radio_id; cr++) {
                             fgcom_local_client.radios.push_back(fgcom_radio()); // add new radio instance with default values
-                            radioDataHasChanged.insert(radio_id-1);
+                            radioDataHasChanged->insert(radio_id-1);
                         }
                     }
                     radio_id--; // convert to array index
@@ -201,37 +310,37 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
                     if (radio_var == "FRQ") {
                         std::string oldValue = fgcom_local_client.radios[radio_id].frequency;
                         fgcom_local_client.radios[radio_id].frequency   = token_value;
-                        if (fgcom_local_client.radios[radio_id].frequency != oldValue ) radioDataHasChanged.insert(radio_id);
+                        if (fgcom_local_client.radios[radio_id].frequency != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "VLT") {
                         float oldValue = fgcom_local_client.radios[radio_id].volts;
                         fgcom_local_client.radios[radio_id].volts       = std::stof(token_value);
-                        if (fgcom_local_client.radios[radio_id].volts != oldValue ) radioDataHasChanged.insert(radio_id);
+                        if (fgcom_local_client.radios[radio_id].volts != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "PBT") {
                         bool oldValue = fgcom_local_client.radios[radio_id].power_btn;
                         fgcom_local_client.radios[radio_id].power_btn   = (token_value == "1")? true : false;
-                        if (fgcom_local_client.radios[radio_id].power_btn != oldValue ) radioDataHasChanged.insert(radio_id);
+                        if (fgcom_local_client.radios[radio_id].power_btn != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "SRV") {
                         bool oldValue = fgcom_local_client.radios[radio_id].serviceable;
                         fgcom_local_client.radios[radio_id].serviceable = (token_value == "1")? true : false;
-                        if (fgcom_local_client.radios[radio_id].serviceable != oldValue ) radioDataHasChanged.insert(radio_id);
+                        if (fgcom_local_client.radios[radio_id].serviceable != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "PTT") {
                         bool oldValue = fgcom_local_client.radios[radio_id].ptt;
                         fgcom_local_client.radios[radio_id].ptt         = (token_value == "1")? true : false;
-                        if (fgcom_local_client.radios[radio_id].ptt != oldValue ) radioDataHasChanged.insert(radio_id);
+                        if (fgcom_local_client.radios[radio_id].ptt != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "VOL") {
                         float oldValue = fgcom_local_client.radios[radio_id].volume;
                         fgcom_local_client.radios[radio_id].volume      = std::stof(token_value);
-                        if (fgcom_local_client.radios[radio_id].volume != oldValue ) radioDataHasChanged.insert(radio_id);
+                        if (fgcom_local_client.radios[radio_id].volume != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "PWR") {
                         float oldValue = fgcom_local_client.radios[radio_id].pwr;
                         fgcom_local_client.radios[radio_id].pwr = std::stof(token_value);
-                        if (fgcom_local_client.radios[radio_id].pwr != oldValue ) radioDataHasChanged.insert(radio_id);
+                        if (fgcom_local_client.radios[radio_id].pwr != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
 
                 }
@@ -240,24 +349,24 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
                 // User client values
                 if (token_key == "LON") {
                     float oldValue = fgcom_local_client.lon;
-                    fgcom_local_client.lon = std::stof(token_value);
-                    if (fgcom_local_client.lon != oldValue ) userDataHashanged = true;
+                    fgcom_local_client.lon = std::stof(token_value);;
+                    if (fgcom_local_client.lon != oldValue ) *userDataHashanged = true;
                 }
                 if (token_key == "LAT") {
                     float oldValue = fgcom_local_client.lat;
                     fgcom_local_client.lat = std::stof(token_value);
-                    if (fgcom_local_client.lat != oldValue ) userDataHashanged = true;
+                    if (fgcom_local_client.lat != oldValue ) *userDataHashanged = true;
                 }
                 if (token_key == "ALT") {
                     int oldValue = fgcom_local_client.alt;
                     // ALT comes in ft. We need meters however
                     fgcom_local_client.alt = std::stoi(token_value) / 3.2808;
-                    if (fgcom_local_client.alt != oldValue ) userDataHashanged = true;
+                    if (fgcom_local_client.alt != oldValue ) *userDataHashanged = true;
                 }
                 if (token_key == "CALLSIGN") {
                     std::string oldValue = fgcom_local_client.callsign;
                     fgcom_local_client.callsign = token_value;
-                    if (fgcom_local_client.callsign != oldValue ) userDataHashanged = true;
+                    if (fgcom_local_client.callsign != oldValue ) *userDataHashanged = true;
                 }
                 
                 
@@ -289,15 +398,6 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE]) {
         // done with parsing?
         } catch (const std::exception& e) {
             std::cout << "FGCom: [UDP] Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
-        }
-        
-        
-        // if we got updates, we should publish them to other clients now
-        if (userDataHashanged) notifyRemotes(1);
-        for (std::set<int>::iterator it=radioDataHasChanged.begin(); it!=radioDataHasChanged.end(); ++it) {
-            // iterate trough changed radio instances
-            std::cout << "ITERATOR: " << ' ' << *it;
-            notifyRemotes(2, *it);
         }
         
     }  //endwhile
@@ -348,8 +448,26 @@ void fgcom_spawnUDPServer() {
             printf("FGCom: [UDP] shutdown command recieved, server stopping now");
             close(fgcom_UDPServer_sockfd);
             break;
+            
         } else {
-            fgcom_udp_parseMsg(buffer);
+            // let the incoming data be handled
+            
+            bool userDataHashanged = false;     // so we can send updates to remotes
+            std::set<int> radioDataHasChanged;  // so we can send updates to remotes
+            
+            fgcom_udp_parseMsg(buffer, &userDataHashanged, &radioDataHasChanged);
+            
+            // if we got updates, we should publish them to other clients now
+            if (userDataHashanged) {
+                printf("FGCom: [UDP] userDataHashanged, notifying other clients");
+                notifyRemotes(1);
+            }
+            for (std::set<int>::iterator it=radioDataHasChanged.begin(); it!=radioDataHasChanged.end(); ++it) {
+                // iterate trough changed radio instances
+                //std::cout << "ITERATOR: " << ' ' << *it;
+                printf("FGCom: [UDP] radioDataHashanged id=%i, notifying other clients", *it);
+                notifyRemotes(2, *it);
+            }
         }
     }
       
