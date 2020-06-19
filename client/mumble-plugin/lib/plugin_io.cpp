@@ -388,39 +388,3 @@ void fgcom_shutdownUDPServer() {
 	           (struct sockaddr*)&server_address, sizeof(server_address));
 
 }
-
-
-// FOR TESTING PURPOSES ONLY. NEEDS TO BE DISCARDED ONCE THE CODE IS INTEGRATABLE INTO THE PLUGIN
-/*int main() { 
-    std::cout.setf(std::ios::unitbuf); // unbuffered cout writes
-    
-    // init local state
-    fgcom_local_client.callsign = "itsMe"; // init local user callsign
-    //fgcom_local_client.radios.push_back(fgcom_radio()); // add new radio instance with default values
-    //fgcom_local_client.radios[0].frequency = "<unset>"; // initialize frequency
-    
-    std::cout << "Init udp server...";
-    std::thread udpServerThread(fgcom_spawnUDPServer);
-    std::cout << "server started.";
-    
-    while (true) {
-        std::cout << "--------------\n";
-        printf("%s: location: LAT=%f LON=%f ALT=%i\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.lat, fgcom_local_client.lon, fgcom_local_client.alt);
-        printf("%s: %i radios registered\n", fgcom_local_client.callsign.c_str(), fgcom_local_client.radios.size());
-        if (fgcom_local_client.radios.size() > 0) {
-            for (int i=0; i<fgcom_local_client.radios.size(); i++) {
-                printf("  Radio %i:   frequency=%s\n", i, fgcom_local_client.radios[i].frequency.c_str());
-                printf("  Radio %i:   power_btn=%i\n", i, fgcom_local_client.radios[i].power_btn);
-                printf("  Radio %i:       volts=%f\n", i, fgcom_local_client.radios[i].volts);
-                printf("  Radio %i: serviceable=%i\n", i, fgcom_local_client.radios[i].serviceable);
-                printf("  Radio %i:         ptt=%i\n", i, fgcom_local_client.radios[i].ptt);
-                printf("  Radio %i:      volume=%f\n", i, fgcom_local_client.radios[i].volume);
-                printf("  Radio %i:         pwr=%f\n", i, fgcom_local_client.radios[i].pwr);
-            }
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    }
-    
-    // ensure that thread has finished before the main thread terminates
-    udpServerThread.join();
-}*/

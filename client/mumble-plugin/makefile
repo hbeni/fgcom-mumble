@@ -6,9 +6,12 @@ CFLAGS=-I. -I./lib -pthread $(DEBUG)
 # Compile all that stuff
 all: plugin test clean
 
-# convinience invocation for debug build fpr GDB
+# DEBUG MODE
+#   convinience invocation for debug build fpr GDB
+#   -g3:     gdb debugging symbols
+#   -DDEBUG: makes debug code active (prints internal state to stdout every sec)
 all-debug:
-	make DEBUG=-g3 all
+	make DEBUG+="-g3 -DDEBUG" all
 
 # make the plugin
 plugin: libs

@@ -19,6 +19,11 @@
 #include <string>
 #include <thread>
 
+#ifdef DEBUG
+// include debug code
+#include "debug.cpp"
+#endif
+
 
 // Mubmle API global vars.
 // They get initialized from the plugin interface (see fgcom-mumble.cpp)
@@ -63,6 +68,12 @@ std::ostream& operator<<(std::ostream& stream, const version_t version) {
 void fgcom_initPlugin() {
     // told from noubernou/acre: this function is called after synchronized in all cases (not just join) so we may
     // use this as a hacky solution to know we are connected. mumble_onServerSynchronized does not get called when the plugin was not loaded at connecting time.
+    
+    #ifdef DEBUG
+    // In Debug mode, start a detached thread that puts internal state to stdout every second
+    std::thread debug_out_thread(debug_out_internal_state);
+    debug_out_thread.detach();
+    #endif
     
     // fetch local user id from server
     mumble_userid_t localUser;
