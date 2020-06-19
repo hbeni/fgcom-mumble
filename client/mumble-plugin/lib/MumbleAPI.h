@@ -19,6 +19,14 @@ const version_t MUMBLE_PLUGIN_API_VERSION = { MUMBLE_PLUGIN_API_MAJOR, MUMBLE_PL
 
 
 struct MumbleAPI {
+	/////////////////////////////////////////////////////////
+	////////////////////// GENERAL NOTE /////////////////////
+	/////////////////////////////////////////////////////////
+	//
+	// All functions that take in a connection as a paremeter may only be called **after** the connection
+	// has finished synchronizing. The only exception from this is isConnectionSynchronized.
+
+
 	// -------- Memory management --------
 	
 	/// Frees the given pointer.
@@ -39,6 +47,16 @@ struct MumbleAPI {
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then it is valid to access the
 	/// 	value of the provided pointer
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *getActiveServerConnection)(plugin_id_t callerID, mumble_connection_t *connection);
+
+	/// Checks whether the given connection has finished initializing yet.
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param connection The ID of the server-connection to use as a context
+	/// @param[out] A pointer to the boolean variable that'll hold the info whether the server has finished synchronization yet
+	/// 	after this function has executed successfully.
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
+	/// 	may be accessed
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *isConnectionSynchronized)(plugin_id_t callerID, mumble_connection_t connection, bool *synchronized);
 
 	/// Fills in the information about the local user.
 	///
@@ -138,6 +156,16 @@ struct MumbleAPI {
 	/// 	may be accessed
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *getLocalUserTransmissionMode)(plugin_id_t callerID, transmission_mode_t *transmissionMode);
 
+	/// Checks whether the given user is currently locally muted.
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param connection The ID of the server-connection to use as a context
+	/// @param userID The ID of the user to search for
+	/// @param[out] A pointer to where the local mute state of that user shall be written
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
+	/// 	may be accessed
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *isUserLocallyMuted)(plugin_id_t callerID, mumble_connection_t connection,
+			mumble_userid_t userID, bool *muted);
 
 
 	// -------- Request functions --------
@@ -171,6 +199,21 @@ struct MumbleAPI {
 	/// @param activate Whether to activate the overwrite (false deactivates an existing overwrite)
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestMicrophoneActivationOvewrite)(plugin_id_t callerID, bool activate);
+
+	/// Requests Mumble to set the local mute state of the given client. Note that this only affects the **local** mute state
+	/// opposed to a server-mute (client is globally muted by the server) or the client's own mute-state (client has muted its
+	/// microphone and thus isn't transmitting any audio).
+	/// Furthermore it must be noted that muting the local user with this function does not work (it doesn't make sense). If
+	/// you try to do so, this function will fail. In order to make this work, this function will also fail if the server
+	/// has not finished synchronizing with the client yet.
+	///
+	/// @param callerID The ID of the plugin calling this function.
+	/// @param connection The ID of the server-connection to use as a context
+	/// @param userID The ID of the user that shall be moved
+	/// @param muted Whether to locally mute the given client (opposed to unmuting it)
+	/// @returns The error code. If everything went well, STATUS_OK will be returned.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalMute)(plugin_id_t callerID, mumble_connection_t connection, 
+				mumble_userid_t userID, bool muted);
 
 
 

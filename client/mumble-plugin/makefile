@@ -35,7 +35,7 @@ clean:
 clean-all: clean
 	rm -f test/geotest
 	rm -f fgcom-mumble.so
-	rm -f *.exe test/*.exe lib/*.dll
+	rm -f *.exe test/*.exe *.dll lib/*.dll
 
 
 

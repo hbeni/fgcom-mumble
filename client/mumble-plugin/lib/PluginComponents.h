@@ -74,7 +74,9 @@ enum ErrorCode {
 	EC_UNKNOWN_TRANSMISSION_MODE,
 	EC_AUDIO_NOT_AVAILABLE,
 	EC_INVALID_SAMPLE,
-	EC_INVALID_PLUGIN_ID
+	EC_INVALID_PLUGIN_ID,
+	EC_INVALID_MUTE_TARGET,
+	EC_CONNECTION_UNSYNCHRONIZED
 };
 
 /// This enum's values represent error codes specific to the framework of handling positional data
@@ -285,6 +287,10 @@ inline const char* errorMessage(int16_t errorCode) {
 			return "Attempted to use invalid sample (can't play it)";
 		case EC_INVALID_PLUGIN_ID:
 			return "Used an invalid plugin ID";
+		case EC_INVALID_MUTE_TARGET:
+			return "Used an invalid mute-target";
+		case EC_CONNECTION_UNSYNCHRONIZED:
+			return "The requested server connection has not yet finished synchrnonizing";
 		default:
 			return "Unknown error code";
 	}

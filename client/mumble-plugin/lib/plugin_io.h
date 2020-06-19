@@ -13,7 +13,6 @@
 extern MumbleAPI mumAPI;
 extern mumble_connection_t activeConnection;
 extern plugin_id_t ownID;
-extern bool connectionSynchronized;
 
 
 /*
@@ -53,5 +52,13 @@ void notifyRemotes(int what, int selector=-1);
  * @return true if the data could be processed
  */
 bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data);
+
+
+/*
+ * Check if we are connected to a server
+ *
+ * @return bool
+ */
+bool fgcom_isConnectedToServer();
 
 #endif

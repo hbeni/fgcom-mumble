@@ -30,7 +30,6 @@
 MumbleAPI mumAPI;
 mumble_connection_t activeConnection;
 plugin_id_t ownID;
-bool connectionSynchronized;
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
@@ -75,15 +74,36 @@ void fgcom_initPlugin() {
     debug_out_thread.detach();
     #endif
     
-    // fetch local user id from server
-    mumble_userid_t localUser;
-	if (mumAPI.getLocalUserID(ownID, activeConnection, &localUser) != STATUS_OK) {
-		pluginLog("Failed to retrieve local user ID");
-	} else {
-        fgcom_local_client.mumid = localUser; // store id to localUser
-        connectionSynchronized = true; // if we are successfully and complete connected to server
-        pluginLog("got local clientID="+std::to_string(localUser));
+    /*
+     * OFFLINE INIT: Here init stuff that can be initialized offline.
+     * Do this just once.
+     */ 
+    // ... currently no such things
+    
+    
+    
+    /*
+     * ONLINE INIT: Here do things that afford an established connection to the server
+     */
+    if (fgcom_isConnectedToServer()) {
+        
+        // fetch local user id from server, but only if we are already connected
+        mumble_userid_t localUser;
+        if (mumAPI.getLocalUserID(ownID, activeConnection, &localUser) != STATUS_OK) {
+            pluginLog("Failed to retrieve local user ID");
+        } else {
+            fgcom_local_client.mumid = localUser; // store id to localUser
+            pluginLog("got local clientID="+std::to_string(localUser));
+        }
+        
+        // ... more needed?
+        
+        
+    } else {
+        std::cout << "fgcom_initPlugin(): not connected, so not initializing functoins needing connected state." << std::endl;
+        return;
     }
+    
 }
 
 
@@ -107,7 +127,7 @@ mumble_error_t mumble_init(mumble_connection_t connection) {
     std::thread udpServerThread(fgcom_spawnUDPServer);
     udpServerThread_id = udpServerThread.get_id();
     udpServerThread.detach();
-    //std::cout << "FGCOM: udp server started; id=" << udpServerThread_id;
+    std::cout << "FGCOM: udp server started; id=" << udpServerThread_id << std::endl;
     
     
 	pluginLog("FGCOM: Initialized plugin");
@@ -192,7 +212,7 @@ const char* mumble_getDescription() {
 void mumble_registerPluginID(plugin_id_t id) {
 	// This ID serves as an identifier for this plugin as far as Mumble is concerned
 	// It might be a good idea to store it somewhere for later use
-	pLog() << "Registered ID: " << id << std::endl;
+	pLog() << "Registered PluginID: " << id << std::endl;
 
 	ownID = id;
 }
@@ -258,7 +278,6 @@ void mumble_onServerConnected(mumble_connection_t connection) {
 
 void mumble_onServerDisconnected(mumble_connection_t connection) {
 	activeConnection = -1;
-    connectionSynchronized = false;
 
 	pLog() << "Disconnected from server-connection with ID " << connection << std::endl;
 }
@@ -266,6 +285,7 @@ void mumble_onServerDisconnected(mumble_connection_t connection) {
 void mumble_onServerSynchronized(mumble_connection_t connection) {
 	// The client has finished synchronizing with the server. Thus we can now obtain a list of all users on this server
     // This is only called if the module was loaded during connecting time.
+    // Sync status can be tested with isConnectionSynchronized()
 	pLog() << "Server has finished synchronizing (ServerConnection: " << connection << ")" << std::endl ;
 
 	size_t userCount;
