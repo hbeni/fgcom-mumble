@@ -117,16 +117,25 @@ void notifyRemotes(int what, int selector ) {
 		return;
 	} else {
         std::cout << "There are " << userCount << " users on this server." << std::endl;
-
         if (userCount >= 1) {
             // remove local id from that array to prevent sending updates to ourselves
-            //TODO: auto arrayEnd = std::remove(std::begin(*userIDs), std::end(*userIDs), fgcom_local_client.mumid);
-            
+            /* TODO: sending all but the local user does compile, but does not work:  mumble_userid_t *exclusiveUserIDs_ptr = exclusiveUserIDs;
+            mumble_userid_t exclusiveUserIDs[userCount-1];
+            int o = userCount-1;
             for(size_t i=0; i<userCount; i++) {
-                std::cout << "  sending message to: " << userIDs[i] << std::endl;
+                if (userIDs[i] != fgcom_local_client.mumid) {
+                    exclusiveUserIDs[o] = userIDs[i];
+                    std::cout << "  sending message to: " << userIDs[i] << std::endl;
+                    o++;
+                } else {
+                    std::cout << "  ignored local user: id=" << userIDs[i] << std::endl;
+                }
             }
+            mumAPI.sendData(ownID, activeConnection, exclusiveUserIDs_ptr, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+            */
+            
             mumAPI.sendData(ownID, activeConnection, userIDs, userCount, message.c_str(), strlen(message.c_str()), dataID.c_str());
-            std::cout << "  message sent to " << userCount << " clients" << std::endl;
+            std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
         }
 
         mumAPI.freeMemory(ownID, userIDs);
@@ -427,7 +436,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
 
 
 void fgcom_spawnUDPServer() {
-    printf("FGCom: [UDP] server starting on port %i...\n", FGCOM_PORT);
+    printf("FGCom: [UDP] server starting\n");
     int  fgcom_UDPServer_sockfd; 
     char buffer[MAXLINE]; 
     struct sockaddr_in servaddr, cliaddr; 
@@ -444,18 +453,26 @@ void fgcom_spawnUDPServer() {
     // Filling server information 
     servaddr.sin_family    = AF_INET; // IPv4 
     servaddr.sin_addr.s_addr = INADDR_ANY; 
-    servaddr.sin_port = htons(FGCOM_PORT); 
       
-    // Bind the socket with the server address 
-    if ( bind(fgcom_UDPServer_sockfd, (const struct sockaddr *)&servaddr,  
-            sizeof(servaddr)) < 0 ) 
-    { 
-        perror("FGCom: [UDP] udp socket bind to port failed"); 
+    // Bind the socket with the server address
+    bool bind_ok = false;
+    int tryport;
+    for (tryport = FGCOM_PORT; tryport < FGCOM_PORT + 10; tryport++) {
+        servaddr.sin_port = htons(tryport); 
+        if ( bind(fgcom_UDPServer_sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) >= 0 ) { 
+            perror("FGCom: [UDP] udp socket bind succeeded");
+            bind_ok = true;
+            break;
+        }
+    }
+    if (!bind_ok) {
+        perror("FGCom: [UDP] udp socket bind to port failed");
         exit(EXIT_FAILURE); 
-    } 
+    }
     
-    printf("FGCom: [UDP] server up and waiting for data\n");
-    mumAPI.log(ownID, std::string("UDP server up and waiting for data at port "+std::to_string(FGCOM_PORT)).c_str());
+    
+    printf("FGCom: [UDP] server up and waiting for data at port %i\n", tryport);
+    mumAPI.log(ownID, std::string("UDP server up and waiting for data at port "+std::to_string(tryport)).c_str());
     
     // wait for incoming data
     int n; 
