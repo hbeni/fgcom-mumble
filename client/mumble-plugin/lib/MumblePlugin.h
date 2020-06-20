@@ -34,9 +34,11 @@ extern "C" {
 	
 	/// Gets called right after loading the plugin in order to let the plugin initialize.
 	///
-	/// @param connection The ID of the server-connection this event is connected to, or its default value.
+	/// Registers the ID of this plugin.
+	/// @param id The ID for this plugin. This is the ID Mumble will reference this plugin with
+	/// 	and by which this plugin can identify itself when communicating with Mumble.
 	/// @returns The status of the initialization. If everything went fine, return STATUS_OK
-	PLUGIN_EXPORT mumble_error_t PLUGIN_CALLING_CONVENTION mumble_init(mumble_connection_t connection);
+	PLUGIN_EXPORT mumble_error_t PLUGIN_CALLING_CONVENTION mumble_init(uint32_t id);
 	
 	/// Gets called when unloading the plugin in order to allow it to clean up after itself.
 	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_shutdown();
@@ -92,12 +94,6 @@ extern "C" {
 	/// @returns A pointer to the description (encoded as a C-String)
 	PLUGIN_EXPORT const char* PLUGIN_CALLING_CONVENTION mumble_getDescription();
 
-	/// Registers the ID of this plugin. This is the ID Mumble will reference this plugin with and by which this plugin
-	/// can identify itself when communicating with Mumble.
-	///
-	/// @param id The ID for this plugin
-	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_registerPluginID(uint32_t id);
-	
 	/// Gets the feature set of this plugin. The feature set is described by bitwise or'ing the elements of the PluginFeature enum
 	/// together.
 	///

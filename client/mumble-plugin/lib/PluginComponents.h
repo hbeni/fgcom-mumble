@@ -76,7 +76,8 @@ enum ErrorCode {
 	EC_INVALID_SAMPLE,
 	EC_INVALID_PLUGIN_ID,
 	EC_INVALID_MUTE_TARGET,
-	EC_CONNECTION_UNSYNCHRONIZED
+	EC_CONNECTION_UNSYNCHRONIZED,
+	EC_INVALID_API_VERSION
 };
 
 /// This enum's values represent error codes specific to the framework of handling positional data
@@ -291,6 +292,8 @@ inline const char* errorMessage(int16_t errorCode) {
 			return "Used an invalid mute-target";
 		case EC_CONNECTION_UNSYNCHRONIZED:
 			return "The requested server connection has not yet finished synchrnonizing";
+		case EC_INVALID_API_VERSION:
+			return "The used API version is invalid or not supported";
 		default:
 			return "Unknown error code";
 	}

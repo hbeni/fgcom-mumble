@@ -34,7 +34,7 @@
 bool fgcom_isConnectedToServer() {
     std::cout << "fgcom_isConnectedToServer(): checking connection" << std::endl;
     bool synchronized;
-    if (STATUS_OK != mumAPI.isConnectionSynchronized(ownID, activeConnection, &synchronized)) {
+    if (STATUS_OK != mumAPI.isConnectionSynchronized(ownPluginID, activeConnection, &synchronized)) {
         std::cout << "fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized()" << std::endl;
         return false;
     }
@@ -111,7 +111,7 @@ void notifyRemotes(int what, int selector ) {
     size_t userCount;
 	mumble_userid_t *userIDs;
 
-	if (mumAPI.getAllUsers(ownID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
+	if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
         // ^TODO: currently all server users. We should strip this down to channel users, and then maybe just the ones known to have the plugin enabled for bandwith reasons...
 		std::cout << "[ERROR]: Can't obtain user list" << std::endl;
 		return;
@@ -131,14 +131,14 @@ void notifyRemotes(int what, int selector ) {
                     std::cout << "  ignored local user: id=" << userIDs[i] << std::endl;
                 }
             }
-            mumAPI.sendData(ownID, activeConnection, exclusiveUserIDs_ptr, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+            mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs_ptr, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
             */
             
-            mumAPI.sendData(ownID, activeConnection, userIDs, userCount, message.c_str(), strlen(message.c_str()), dataID.c_str());
+            mumAPI.sendData(ownPluginID, activeConnection, userIDs, userCount, message.c_str(), strlen(message.c_str()), dataID.c_str());
             std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
         }
 
-        mumAPI.freeMemory(ownID, userIDs);
+        mumAPI.freeMemory(ownPluginID, userIDs);
         std::cout << "  notification done." << std::endl;
     }
     
@@ -472,7 +472,7 @@ void fgcom_spawnUDPServer() {
     
     
     printf("FGCom: [UDP] server up and waiting for data at port %i\n", tryport);
-    mumAPI.log(ownID, std::string("UDP server up and waiting for data at port "+std::to_string(tryport)).c_str());
+    mumAPI.log(ownPluginID, std::string("UDP server up and waiting for data at port "+std::to_string(tryport)).c_str());
     
     // wait for incoming data
     int n; 
@@ -487,7 +487,7 @@ void fgcom_spawnUDPServer() {
             // Allow the udp server to be shut down when receiving SHUTDOWN command
             printf("FGCom: [UDP] shutdown command recieved, server stopping now");
             close(fgcom_UDPServer_sockfd);
-            mumAPI.log(ownID, std::string("UDP server at port "+std::to_string(FGCOM_PORT)+" stopped").c_str());
+            mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(FGCOM_PORT)+" stopped").c_str());
             break;
             
         } else {

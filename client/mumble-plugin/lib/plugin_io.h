@@ -12,7 +12,7 @@
 // They get initialized from the plugin interface (see fgcom-mumble.cpp)
 extern MumbleAPI mumAPI;
 extern mumble_connection_t activeConnection;
-extern plugin_id_t ownID;
+extern plugin_id_t ownPluginID;
 
 
 /*

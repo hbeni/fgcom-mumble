@@ -29,7 +29,7 @@
 // They get initialized from the plugin interface (see fgcom-mumble.cpp)
 MumbleAPI mumAPI;
 mumble_connection_t activeConnection;
-plugin_id_t ownID;
+plugin_id_t ownPluginID;
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
@@ -64,33 +64,47 @@ std::ostream& operator<<(std::ostream& stream, const version_t version) {
  *  - mumble_registerAPIFunctions()   (plugin is loaded but not neccesarily connected to server)
  *  - mumble_onServerSynchronized()   (we are connected but plugin is not neccesarily loaded)
  */
+bool fgcom_offlineInitDone = false;
+bool fgcom_onlineInitDone = false;
+std::thread::id udpServerThread_id;
 void fgcom_initPlugin() {
-    // told from noubernou/acre: this function is called after synchronized in all cases (not just join) so we may
-    // use this as a hacky solution to know we are connected. mumble_onServerSynchronized does not get called when the plugin was not loaded at connecting time.
-    
-    #ifdef DEBUG
-    // In Debug mode, start a detached thread that puts internal state to stdout every second
-    std::thread debug_out_thread(debug_out_internal_state);
-    debug_out_thread.detach();
-    #endif
+    if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone) mumAPI.log(ownPluginID, "Plugin initializing");
     
     /*
      * OFFLINE INIT: Here init stuff that can be initialized offline.
      * Do this just once.
-     */ 
-    // ... currently no such things
-    
+     */     
+    if (! fgcom_offlineInitDone) {
+        pluginLog("performing offline initialization");
+        
+        #ifdef DEBUG
+        // In Debug mode, start a detached thread that puts internal state to stdout every second
+        std::thread debug_out_thread(debug_out_internal_state);
+        debug_out_thread.detach();
+        #endif
+        
+        // start the local udp server.
+        pluginLog("FGCOM: starting local UDP server");
+        std::thread udpServerThread(fgcom_spawnUDPServer);
+        udpServerThread_id = udpServerThread.get_id();
+        udpServerThread.detach();
+        std::cout << "FGCOM: udp server started; id=" << udpServerThread_id << std::endl;
+        
+        fgcom_offlineInitDone = true;
+    }
     
     
     /*
      * ONLINE INIT: Here do things that afford an established connection to the server
      */
-    if (fgcom_isConnectedToServer()) {
+    if (! fgcom_offlineInitDone && fgcom_isConnectedToServer()) {
+        pluginLog("performing online initialization");
         
         // fetch local user id from server, but only if we are already connected
         mumble_userid_t localUser;
-        if (mumAPI.getLocalUserID(ownID, activeConnection, &localUser) != STATUS_OK) {
+        if (mumAPI.getLocalUserID(ownPluginID, activeConnection, &localUser) != STATUS_OK) {
             pluginLog("Failed to retrieve local user ID");
+            return; // abort online init - something horribly went wrong.
         } else {
             fgcom_local_client.mumid = localUser; // store id to localUser
             pluginLog("got local clientID="+std::to_string(localUser));
@@ -98,12 +112,13 @@ void fgcom_initPlugin() {
         
         // ... more needed?
         
+        fgcom_onlineInitDone = true;
+        
         
     } else {
-        std::cout << "fgcom_initPlugin(): not connected, so not initializing functions needing connected state." << std::endl;
+        std::cout << "fgcom_initPlugin(): not connected, so no online init possible (will try later)" << std::endl;
         return;
     }
-    
     
 }
 
@@ -115,26 +130,30 @@ void fgcom_initPlugin() {
 //////////////////////////////////////////////////////////////
 
 
-// Notiz: Loggen im mumble-Fenster: mumAPI.log(ownID, "Received API functions");
+// Notiz: Loggen im mumble-Fenster: mumAPI.log(ownPluginID, "Received API functions");
 // Notiz: Loggen ins terminal-log:  pluginLog("Registered Mumble's API functions");
+
+/*  INIT Sequence
+    Call mumble_setMumbleInfo (if implemented)
+    Call mumble_getAPIVersion to get the required API version (respected in the next call)
+    Call mumble_registerAPIFunctions
+    Call mumble_init
+*/
+
 
 //////////////////////////////////////////////////////////////
 //////////////////// OBLIGATORY FUNCTIONS ////////////////////
 //////////////////////////////////////////////////////////////
 // All of the following function must be implemented in order for Mumble to load the plugin
-std::thread::id udpServerThread_id;
-mumble_error_t mumble_init(mumble_connection_t connection) {
-    pluginLog("FGCOM: starting local UDP server");
-    std::thread udpServerThread(fgcom_spawnUDPServer);
-    udpServerThread_id = udpServerThread.get_id();
-    udpServerThread.detach();
-    std::cout << "FGCOM: udp server started; id=" << udpServerThread_id << std::endl;
+mumble_error_t mumble_init(uint32_t id) {
+    pLog() << "Registered PluginID: " << id << std::endl;
+	ownPluginID = id;
     
-    
+    // perform initialization if not done already (or missing parts of it;
+    // this is called when loading the plugin which may be done offline)
+    fgcom_initPlugin(); 
 	pluginLog("FGCOM: Initialized plugin");
 
-	// Print the connection ID at initialization. If not connected to a server it should be -1.
-	pLog() << "Connection ID at initialization: " << connection << std::endl;
 
 	// STATUS_OK is a macro set to the appropriate status flag (ErrorCode)
 	// If you need to return any other status have a look at the ErrorCode enum
@@ -148,7 +167,7 @@ void mumble_shutdown() {
     // Let the UDP server shutdown itself
     fgcom_shutdownUDPServer();
     
-	mumAPI.log(ownID, "Plugin deactivated");
+	mumAPI.log(ownPluginID, "Plugin deactivated");
 }
 
 const char* mumble_getName() {
@@ -172,10 +191,6 @@ void mumble_registerAPIFunctions(MumbleAPI api) {
 	mumAPI = api;
 
 	pluginLog("Registered Mumble's API functions");
-
-	mumAPI.log(ownID, "Plugin loaded");
-    
-    fgcom_initPlugin();
 }
 
 
@@ -208,14 +223,6 @@ const char* mumble_getDescription() {
 	// For the returned pointer the same rules as for getName() apply
 	// In short: in the vast majority of cases you'll want to return a hard-coded String-literal
 	return "TODO: Description string";
-}
-
-void mumble_registerPluginID(plugin_id_t id) {
-	// This ID serves as an identifier for this plugin as far as Mumble is concerned
-	// It might be a good idea to store it somewhere for later use
-	pLog() << "Registered PluginID: " << id << std::endl;
-
-	ownID = id;
 }
 
 uint32_t mumble_getFeatures() {
@@ -272,8 +279,12 @@ void mumble_shutdownPositionalData() {
 
 void mumble_onServerConnected(mumble_connection_t connection) {
 	activeConnection = connection;
-
 	pLog() << "Established server-connection with ID " << connection << std::endl;
+    
+    // perform initialization if not done already (or missing parts of it;
+    // particularly it will run the online part if the plugin was loaded when
+    // we were not connected yet)
+    fgcom_initPlugin();    
     
 }
 
@@ -292,7 +303,7 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 	size_t userCount;
 	mumble_userid_t *userIDs;
 
-	if (mumAPI.getAllUsers(ownID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
+	if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
 		pluginLog("[ERROR]: Can't obtain user list");
 		return;
 	}
@@ -301,20 +312,20 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 
 	for(size_t i=0; i<userCount; i++) {
 		char *userName;
-		mumAPI.getUserName(ownID, connection, userIDs[i], &userName);
+		mumAPI.getUserName(ownPluginID, connection, userIDs[i], &userName);
 		
 		pLog() << "\t" << userName << std::endl;
 
-		mumAPI.freeMemory(ownID, userName);
+		mumAPI.freeMemory(ownPluginID, userName);
 	}
 
-	mumAPI.freeMemory(ownID, userIDs);
+	mumAPI.freeMemory(ownPluginID, userIDs);
 
 
     fgcom_initPlugin();
 	
 
-	/*if (mumAPI.sendData(ownID, activeConnection, &localUser, 1, "Just a test", 12, "testMsg") == STATUS_OK) {
+	/*if (mumAPI.sendData(ownPluginID, activeConnection, &localUser, 1, "Just a test", 12, "testMsg") == STATUS_OK) {
 		pluginLog("Successfully sent plugin message");
 	} else {
 		pluginLog("Failed at sending message");
