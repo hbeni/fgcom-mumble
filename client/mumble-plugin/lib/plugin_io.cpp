@@ -34,9 +34,13 @@
 bool fgcom_isConnectedToServer() {
     std::cout << "fgcom_isConnectedToServer(): checking connection" << std::endl;
     bool synchronized;
-    if (STATUS_OK != mumAPI.isConnectionSynchronized(ownPluginID, activeConnection, &synchronized)) {
-        std::cout << "fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized()" << std::endl;
+    int resCode = mumAPI.isConnectionSynchronized(ownPluginID, activeConnection, &synchronized);
+    if (STATUS_OK != resCode) {
+        std::cout << "fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized(): rc=" << resCode << std::endl;
         return false;
+    } else {
+        std::cout << "fgcom_isConnectedToServer(): OK executing isConnectionSynchronized()" << std::endl;
+        std::cout << "fgcom_isConnectedToServer(): synchstate=" << synchronized << std::endl;
     }
     return synchronized;
 }
@@ -107,7 +111,7 @@ void notifyRemotes(int what, int selector ) {
     
     // Now get all known FGCom users of the current channel.
     // to those we will push the update.
-    // TODO: maybe just resolve to knopwn fgcom remotes? but that may not be updated yet...
+    // TODO: maybe just resolve to known fgcom remotes? but that may not be updated yet...
     size_t userCount;
 	mumble_userid_t *userIDs;
 
@@ -117,9 +121,8 @@ void notifyRemotes(int what, int selector ) {
 		return;
 	} else {
         std::cout << "There are " << userCount << " users on this server." << std::endl;
-        if (userCount >= 1) {
+        if (userCount > 1) {
             // remove local id from that array to prevent sending updates to ourselves
-            /* TODO: sending all but the local user does compile, but does not work:  mumble_userid_t *exclusiveUserIDs_ptr = exclusiveUserIDs;
             mumble_userid_t exclusiveUserIDs[userCount-1];
             int o = userCount-1;
             for(size_t i=0; i<userCount; i++) {
@@ -131,11 +134,16 @@ void notifyRemotes(int what, int selector ) {
                     std::cout << "  ignored local user: id=" << userIDs[i] << std::endl;
                 }
             }
-            mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs_ptr, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
-            */
+            int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+            if (send_res != STATUS_OK) {
+                std::cout << "  message sent ERROR: " << send_res << std::endl;
+            } else {
+                std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
+            }
             
-            mumAPI.sendData(ownPluginID, activeConnection, userIDs, userCount, message.c_str(), strlen(message.c_str()), dataID.c_str());
-            std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
+            
+            //mumAPI.sendData(ownPluginID, activeConnection, userIDs, userCount, message.c_str(), strlen(message.c_str()), dataID.c_str());
+            //std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
         }
 
         mumAPI.freeMemory(ownPluginID, userIDs);

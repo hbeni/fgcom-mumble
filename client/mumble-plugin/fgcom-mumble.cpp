@@ -97,7 +97,7 @@ void fgcom_initPlugin() {
     /*
      * ONLINE INIT: Here do things that afford an established connection to the server
      */
-    if (! fgcom_offlineInitDone && fgcom_isConnectedToServer()) {
+    if (! fgcom_onlineInitDone && fgcom_isConnectedToServer()) {
         pluginLog("performing online initialization");
         
         // fetch local user id from server, but only if we are already connected
@@ -322,6 +322,9 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 	mumAPI.freeMemory(ownPluginID, userIDs);
 
 
+    // perform initialization if not done already (or missing parts of it;
+    // particularly it will run the online part if the plugin was loaded when
+    // we were not connected/synchronized yet)
     fgcom_initPlugin();
 	
 
