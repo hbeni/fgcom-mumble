@@ -124,7 +124,7 @@ void notifyRemotes(int what, int selector ) {
         if (userCount > 1) {
             // remove local id from that array to prevent sending updates to ourselves
             mumble_userid_t exclusiveUserIDs[userCount-1];
-            int o = userCount-1;
+            int o = 0;
             for(size_t i=0; i<userCount; i++) {
                 if (userIDs[i] != fgcom_local_client.mumid) {
                     exclusiveUserIDs[o] = userIDs[i];
@@ -140,10 +140,7 @@ void notifyRemotes(int what, int selector ) {
             } else {
                 std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
             }
-            
-            
-            //mumAPI.sendData(ownPluginID, activeConnection, userIDs, userCount, message.c_str(), strlen(message.c_str()), dataID.c_str());
-            //std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
+
         }
 
         mumAPI.freeMemory(ownPluginID, userIDs);
@@ -187,14 +184,13 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             std::string segment;
             while(std::getline(streambuffer, segment, ',')) {
                 // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
-                printf("FGCom: [mum_pluginIO] Segment=%s",segment.c_str());
+                printf("FGCom: [mum_pluginIO] Segment='%s'\n",segment.c_str());
                 
                 try {
                                 
                     std::smatch sm;
                     if (std::regex_search(segment, sm, parse_key_value)) {
                         // this is a valid token. Lets parse it!
-                        //printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
                         std::string token_key   = sm[1];
                         std::string token_value = sm[2];
                         printf("FGCom: [mum_pluginIO] Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
@@ -233,7 +229,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             std::string segment;
             while(std::getline(streambuffer, segment, ',')) {
                 // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
-                printf("FGCom: [mum_pluginIO] Segment=%s",segment.c_str());
+                printf("FGCom: [mum_pluginIO] Segment='%s'\n",segment.c_str());
                 
                 try {        
                     std::smatch sm;
@@ -265,7 +261,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         
         fgcom_remotecfg_mtx.unlock();
         
-        printf("FGCom: [mum_pluginIO] Parsing done.");
+        printf("FGCom: [mum_pluginIO] Parsing done.\n");
         return true; // signal to other plugins that the data was handled already
         
     } else {
@@ -315,8 +311,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
     std::regex parse_COM ("^(COM)(\\d)_(.+)");
     fgcom_localcfg_mtx.lock();
     while(std::getline(streambuffer, segment, ',')) {
-        printf("FGCom: [UDP] Segment=%s",segment.c_str());
-        //printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+        printf("FGCom: [UDP] Segment='%s'\n",segment.c_str());
 
         try {
             std::smatch sm;
@@ -442,7 +437,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
 }
 
 
-
+int fgcom_udp_port_used = FGCOM_PORT; 
 void fgcom_spawnUDPServer() {
     printf("FGCom: [UDP] server starting\n");
     int  fgcom_UDPServer_sockfd; 
@@ -464,9 +459,8 @@ void fgcom_spawnUDPServer() {
       
     // Bind the socket with the server address
     bool bind_ok = false;
-    int tryport;
-    for (tryport = FGCOM_PORT; tryport < FGCOM_PORT + 10; tryport++) {
-        servaddr.sin_port = htons(tryport); 
+    for (fgcom_udp_port_used = FGCOM_PORT; fgcom_udp_port_used < FGCOM_PORT + 10; fgcom_udp_port_used++) {
+        servaddr.sin_port = htons(fgcom_udp_port_used); 
         if ( bind(fgcom_UDPServer_sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) >= 0 ) { 
             perror("FGCom: [UDP] udp socket bind succeeded");
             bind_ok = true;
@@ -479,8 +473,8 @@ void fgcom_spawnUDPServer() {
     }
     
     
-    printf("FGCom: [UDP] server up and waiting for data at port %i\n", tryport);
-    mumAPI.log(ownPluginID, std::string("UDP server up and waiting for data at port "+std::to_string(tryport)).c_str());
+    printf("FGCom: [UDP] server up and waiting for data at port %i\n", fgcom_udp_port_used);
+    mumAPI.log(ownPluginID, std::string("UDP server up and waiting for data at port "+std::to_string(fgcom_udp_port_used)).c_str());
     
     // wait for incoming data
     int n; 
@@ -493,9 +487,9 @@ void fgcom_spawnUDPServer() {
         
         if (strstr(buffer, "SHUTDOWN")) {
             // Allow the udp server to be shut down when receiving SHUTDOWN command
-            printf("FGCom: [UDP] shutdown command recieved, server stopping now");
+            printf("FGCom: [UDP] shutdown command recieved, server stopping now\n");
             close(fgcom_UDPServer_sockfd);
-            mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(FGCOM_PORT)+" stopped").c_str());
+            mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
             break;
             
         } else {
@@ -525,11 +519,10 @@ void fgcom_spawnUDPServer() {
 
 void fgcom_shutdownUDPServer() {
     //  Trigger shutdown: this just sends some magic UDP message.
-    printf("FGCOM: sending UDP shutdown request\n");
+    printf("FGCOM: sending UDP shutdown request to port %i\n",fgcom_udp_port_used);
     std::string message = "SHUTDOWN";
     
     const char* server_name = "localhost";
-	const int server_port = FGCOM_PORT;
 
 	struct sockaddr_in server_address;
 	memset(&server_address, 0, sizeof(server_address));
@@ -541,7 +534,7 @@ void fgcom_shutdownUDPServer() {
 	inet_pton(AF_INET, server_name, &server_address.sin_addr);
 
 	// htons: port in network order format
-	server_address.sin_port = htons(server_port);
+	server_address.sin_port = htons(fgcom_udp_port_used);
 
 	// open socket
 	int sock;

@@ -4,7 +4,7 @@
 #define FGCOM_PLUGIN_IO_H
 
 
-#define FGCOM_PORT 16661    // port to listen to (16661 is the known FGCom udp port)
+#define FGCOM_PORT 16661    // port to start listen to (16661 is the known FGCom udp port)
 #define MAXLINE    1024     // max byte size of a udp packet
 
 
