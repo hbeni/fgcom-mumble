@@ -16,6 +16,22 @@ extern plugin_id_t ownPluginID;
 
 
 /*
+ * Debug/Log functions
+ * 
+ * log to mumble client chat window: mumAPI.log(ownPluginID, "Received API functions");
+ * log to terminal/stdout:  pluginLog("Registered Mumble's API functions");
+ */
+std::ostream& pLog();
+
+template<typename T>
+void pluginLog(T log);
+
+// debug=true: only log if compiled in DEBUG mode
+template<typename T>
+void pluginDbg(T log);
+
+
+/*
  * Spawn the udp server thread.
  * He should constantly monitor the port for incoming data.
  * 

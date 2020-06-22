@@ -36,27 +36,16 @@ plugin_id_t ownPluginID;
 #define FGCOM_VERSION_MINOR 1
 #define FGCOM_VERSION_PATCH 0
 
-// These are just some utility functions facilitating writing logs and the like
-// The actual implementation of the plugin is further down
-std::ostream& pLog() {
-	std::cout << "FGCom: ";
-	return std::cout;
-}
-
-template<typename T>
-void pluginLog(T log) {
-	pLog() << log << std::endl;
-}
-
-std::ostream& operator<<(std::ostream& stream, const version_t version) {
-	stream << "v" << version.major << "." << version.minor << "." << version.patch;
-	return stream;
-}
-
 
 /*******************
  * Some helpers    *
  ******************/
+
+// Stream overload for version printing
+std::ostream& operator<<(std::ostream& stream, const version_t version) {
+	stream << "v" << version.major << "." << version.minor << "." << version.patch;
+	return stream;
+}
 
 /*
  * To be called when plugin is initialized to set up
@@ -84,11 +73,12 @@ void fgcom_initPlugin() {
         #endif
         
         // start the local udp server.
-        pluginLog("FGCOM: starting local UDP server");
+        pluginDbg("starting local UDP server");
         std::thread udpServerThread(fgcom_spawnUDPServer);
         udpServerThread_id = udpServerThread.get_id();
         udpServerThread.detach();
-        std::cout << "FGCOM: udp server started; id=" << udpServerThread_id << std::endl;
+        //std::cout << "FGCOM: udp server started; id=" << udpServerThread_id << std::endl;
+        pluginDbg("udp server started");
         
         fgcom_offlineInitDone = true;
     }
@@ -116,7 +106,7 @@ void fgcom_initPlugin() {
         
         
     } else {
-        std::cout << "fgcom_initPlugin(): not connected, so no online init possible (will try later)" << std::endl;
+        pluginLog("fgcom_initPlugin(): not connected, so no online init possible (will try later)");
         return;
     }
     

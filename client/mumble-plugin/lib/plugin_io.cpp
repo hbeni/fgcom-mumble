@@ -27,20 +27,41 @@
 #include "MumblePlugin.h"
 
 
+// These are just some utility functions facilitating writing logs and the like
+// The actual implementation of the plugin is further down
+std::ostream& pLog() {
+    std::cout << "FGCom: ";
+    return std::cout;
+}
+
+template<typename T>
+void pluginLog(T log) {
+    pLog() << log << std::endl;
+}
+template<typename T>
+void pluginDbg(T log) {
+    #ifdef DEBUG
+    // only log if we build in debug mode
+    pLog() << "[DBG] " << log << std::endl;
+    #endif
+}
+
+
+
 /*****************************************************
  *               Plugin communications               *
  ****************************************************/
 
 bool fgcom_isConnectedToServer() {
-    std::cout << "fgcom_isConnectedToServer(): checking connection" << std::endl;
+    pluginDbg("fgcom_isConnectedToServer(): checking connection");
     bool synchronized;
     int resCode = mumAPI.isConnectionSynchronized(ownPluginID, activeConnection, &synchronized);
     if (STATUS_OK != resCode) {
-        std::cout << "fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized(): rc=" << resCode << std::endl;
+        pluginDbg("fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized(): rc="+std::to_string(resCode));
         return false;
     } else {
-        std::cout << "fgcom_isConnectedToServer(): OK executing isConnectionSynchronized()" << std::endl;
-        std::cout << "fgcom_isConnectedToServer(): synchstate=" << synchronized << std::endl;
+        pluginDbg("fgcom_isConnectedToServer(): OK executing isConnectionSynchronized()");
+        pluginDbg("fgcom_isConnectedToServer(): synchstate="+std::to_string(synchronized));
     }
     return synchronized;
 }
@@ -51,12 +72,12 @@ void notifyRemotes(int what, int selector ) {
     std::string message(""); // the message as sting data (yeah, i'm lazy but it parses so easily and is human readable and therefore easy to debug)
     
     // check if we are connected and synchronized
-    printf("notifyRemotes(%i,%i) called\n", what, selector);
+    pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+") called");
     if (!fgcom_isConnectedToServer()) {
-        std::cout << "notifyRemotes("<<what<<","<<selector<<"): not connected, so not notifying." << std::endl;
+        pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): not connected, so not notifying.");
         return;
     } else {
-        std::cout << "notifyRemotes("<<what<<","<<selector<<"): we are connected, so notifications will be sent." << std::endl;
+        pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): we are connected, so notifications will be sent.");
     }
 
     // @param what:  0=all local info; 1=location data; 2=comms
@@ -64,14 +85,14 @@ void notifyRemotes(int what, int selector ) {
     switch (what) {
         case 0:
             // notify all info
-            std::cout << "notifyRemotes(): all status" << std::endl;
+            pluginDbg("notifyRemotes(): all status");
             notifyRemotes(1);
             notifyRemotes(2);
             break;
             
         case 1:
             // Notify on location
-            std::cout << "notifyRemotes("<<what<<","<<selector<<"): location" << std::endl;
+            pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): location");
             dataID  = "FGCOM:UPD_LOC";
             message = "CALLSIGN="+fgcom_local_client.callsign+","
                      +"LAT="+std::to_string(fgcom_local_client.lat)+","
@@ -81,14 +102,14 @@ void notifyRemotes(int what, int selector ) {
             
         case 2:
             // notify on radio state
-            std::cout << "notifyRemotes(): radio" << std::endl;            
+            pluginDbg("notifyRemotes(): radio");            
             if (selector == -1) {
-                std::cout << "  all radios selected" << std::endl;
+                pluginDbg("  all radios selected");
                 for (int ri=0; ri < fgcom_local_client.radios.size(); ri++) {  
                     notifyRemotes(1,ri);
                 }
             } else {
-                std::cout << "  send state of COM" << selector+1 << std::endl;
+                pluginDbg("  send state of COM"+std::to_string(selector+1) );
                 dataID  = "FGCOM:UPD_COM:"+std::to_string(selector);
                 message = "FRQ="+fgcom_local_client.radios[selector].frequency+","
                         //+ "VLT="+std::to_string(fgcom_local_client.radios[selector].volts)+","
@@ -104,7 +125,7 @@ void notifyRemotes(int what, int selector ) {
             break;
             
         default: 
-            std::cout << "notifyRemotes("<<what<<","<<selector<<"): 'what' unknown" << std::endl;
+            pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): 'what' unknown");
             return;
     }
     
@@ -117,10 +138,10 @@ void notifyRemotes(int what, int selector ) {
 
 	if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
         // ^TODO: currently all server users. We should strip this down to channel users, and then maybe just the ones known to have the plugin enabled for bandwith reasons...
-		std::cout << "[ERROR]: Can't obtain user list" << std::endl;
+		pluginLog("[ERROR]: Can't obtain user list");
 		return;
 	} else {
-        std::cout << "There are " << userCount << " users on this server." << std::endl;
+        pluginDbg("There are "+std::to_string(userCount)+" users on this server.");
         if (userCount > 1) {
             // remove local id from that array to prevent sending updates to ourselves
             mumble_userid_t exclusiveUserIDs[userCount-1];
@@ -128,23 +149,23 @@ void notifyRemotes(int what, int selector ) {
             for(size_t i=0; i<userCount; i++) {
                 if (userIDs[i] != fgcom_local_client.mumid) {
                     exclusiveUserIDs[o] = userIDs[i];
-                    std::cout << "  sending message to: " << userIDs[i] << std::endl;
+                    pluginDbg("  sending message to: "+std::to_string(userIDs[i]));
                     o++;
                 } else {
-                    std::cout << "  ignored local user: id=" << userIDs[i] << std::endl;
+                    pluginDbg("  ignored local user: id="+std::to_string(userIDs[i]));
                 }
             }
             int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
             if (send_res != STATUS_OK) {
-                std::cout << "  message sent ERROR: " << send_res << std::endl;
+                pluginDbg("  message sent ERROR: "+std::to_string(send_res));
             } else {
-                std::cout << "  message sent to " << userCount-1 << " clients" << std::endl;
+                pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
             }
 
         }
 
         mumAPI.freeMemory(ownPluginID, userIDs);
-        std::cout << "  notification done." << std::endl;
+        pluginDbg("  notification done.");
     }
     
     
@@ -177,14 +198,14 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         // Parse the data, depending on packet type
         if (dataID == "FGCOM:UPD_LOC") {
             // Location data update
-            std::cout << "LOC UPDATE: Sender=" << clientID << " DataID=" << dataID.c_str() << " DATA=" << data.c_str() << std::endl;
+            pluginDbg("LOC UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             
             // update properties
             std::stringstream streambuffer(data);
             std::string segment;
             while(std::getline(streambuffer, segment, ',')) {
                 // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
-                printf("FGCom: [mum_pluginIO] Segment='%s'\n",segment.c_str());
+                pluginDbg("[mum_pluginIO] Segment="+segment);
                 
                 try {
                                 
@@ -193,7 +214,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         // this is a valid token. Lets parse it!
                         std::string token_key   = sm[1];
                         std::string token_value = sm[2];
-                        printf("FGCom: [mum_pluginIO] Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                        pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
                         
                         if (token_key == "LON")      fgcom_remote_clients[clientID].lon      = std::stof(token_value);
                         if (token_key == "LAT")      fgcom_remote_clients[clientID].lat      = std::stof(token_value);
@@ -207,14 +228,14 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                  
                 // done with parsing?
                 } catch (const std::exception& e) {
-                    std::cout << "FGCom: [mum_pluginIO] Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
+                    pluginDbg("[mum_pluginIO] Parsing throw exception, ignoring token "+segment);
                 }
             }
             
         
         } else if (dataID.substr(0, 14) == "FGCOM:UPD_COM:") {
             // Radio data update. Here the radio in question was given in the dataid.
-            std::cout << "COM UPDATE: Sender=" << clientID << " DataID=" << dataID.c_str() << " DATA=" << data.c_str() << std::endl;
+            pluginDbg("COM UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             int radio_id = std::stoi(dataID.substr(14)); // segfault, indicates problem with the implemented udp protocol
             
             // if the selected radio does't exist, create it now
@@ -229,7 +250,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             std::string segment;
             while(std::getline(streambuffer, segment, ',')) {
                 // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
-                printf("FGCom: [mum_pluginIO] Segment='%s'\n",segment.c_str());
+                pluginDbg("[mum_pluginIO] Segment="+segment);
                 
                 try {        
                     std::smatch sm;
@@ -238,7 +259,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         //printf("Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
                         std::string token_key   = sm[1];
                         std::string token_value = sm[2];
-                        printf("FGCom: [mum_pluginIO] Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                        pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
                         
                         if (token_key == "FRQ") fgcom_remote_clients[clientID].radios[radio_id].frequency   = token_value;
                         if (token_key == "VLT") fgcom_remote_clients[clientID].radios[radio_id].volts       = std::stof(token_value);
@@ -254,14 +275,14 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                  
                 // done with parsing?
                 } catch (const std::exception& e) {
-                    std::cout << "FGCom: [mum_pluginIO] Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
+                    pluginLog("[mum_pluginIO] Parsing throw exception, ignoring token "+segment);
                 }
             }
         }
         
         fgcom_remotecfg_mtx.unlock();
         
-        printf("FGCom: [mum_pluginIO] Parsing done.\n");
+        pluginDbg("FGCom: [mum_pluginIO] Parsing done.");
         return true; // signal to other plugins that the data was handled already
         
     } else {
@@ -299,7 +320,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
 std::mutex fgcom_localcfg_mtx;
 struct fgcom_client fgcom_local_client;
 void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<int> *radioDataHasChanged) {
-    printf("FGCOM: [UDP] received message: %s\n", buffer);
+    pluginDbg("[UDP] received message: "+std::string(buffer));
     //std::cout << "DBG: Stored local userID=" << fgcom_local_client.mumid <<std::endl;
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
 
@@ -311,7 +332,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
     std::regex parse_COM ("^(COM)(\\d)_(.+)");
     fgcom_localcfg_mtx.lock();
     while(std::getline(streambuffer, segment, ',')) {
-        printf("FGCom: [UDP] Segment='%s'\n",segment.c_str());
+        pluginDbg("[UDP] Segment='"+segment);
 
         try {
             std::smatch sm;
@@ -319,7 +340,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 // this is a valid token. Lets parse it!
                 std::string token_key   = sm[1];
                 std::string token_value = sm[2];
-                printf("FGCom: [UDP] Parsing token: %s=%s\n", token_key.c_str(), token_value.c_str());
+                pluginDbg("[UDP] Parsing token: "+token_key+"="+token_value);
                 
                 std::smatch smc;
                 if (std::regex_search(token_key, smc, parse_COM)) {
@@ -424,12 +445,12 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
            
             } else {
                 // this was an invalid token. skip it silently.
-                printf("FGCom: [UDP] segment invalid (is no key=value format): %s\n", segment.c_str());
+                pluginDbg("[UDP] segment invalid (is no key=value format): "+segment);
             }
             
         // done with parsing?
         } catch (const std::exception& e) {
-            std::cout << "FGCom: [UDP] Parsing throw exception, ignoring token " << segment.c_str() << std::endl;
+            pluginDbg("[UDP] Parsing throw exception, ignoring segment "+segment);
         }
         
     }  //endwhile
@@ -439,14 +460,14 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
 
 int fgcom_udp_port_used = FGCOM_PORT; 
 void fgcom_spawnUDPServer() {
-    printf("FGCom: [UDP] server starting\n");
+    pluginLog("[UDP] server starting");
     int  fgcom_UDPServer_sockfd; 
     char buffer[MAXLINE]; 
     struct sockaddr_in servaddr, cliaddr; 
       
     // Creating socket file descriptor 
     if ( (fgcom_UDPServer_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        perror("FGCom: [UDP] socket creation failed"); 
+        pluginLog("FGCom: [UDP] socket creation failed"); 
         exit(EXIT_FAILURE); 
     } 
       
@@ -473,7 +494,7 @@ void fgcom_spawnUDPServer() {
     }
     
     
-    printf("FGCom: [UDP] server up and waiting for data at port %i\n", fgcom_udp_port_used);
+    pluginLog("[UDP] server up and waiting for data at port "+std::to_string(fgcom_udp_port_used));
     mumAPI.log(ownPluginID, std::string("UDP server up and waiting for data at port "+std::to_string(fgcom_udp_port_used)).c_str());
     
     // wait for incoming data
@@ -487,7 +508,7 @@ void fgcom_spawnUDPServer() {
         
         if (strstr(buffer, "SHUTDOWN")) {
             // Allow the udp server to be shut down when receiving SHUTDOWN command
-            printf("FGCom: [UDP] shutdown command recieved, server stopping now\n");
+            pluginLog("[UDP] shutdown command recieved, server stopping now");
             close(fgcom_UDPServer_sockfd);
             mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
             break;
@@ -502,13 +523,13 @@ void fgcom_spawnUDPServer() {
             
             // if we got updates, we should publish them to other clients now
             if (userDataHashanged) {
-                printf("FGCom: [UDP] userData has changed, notifying other clients\n");
+                pluginDbg("[UDP] userData has changed, notifying other clients");
                 notifyRemotes(1);
             }
             for (std::set<int>::iterator it=radioDataHasChanged.begin(); it!=radioDataHasChanged.end(); ++it) {
                 // iterate trough changed radio instances
                 //std::cout << "ITERATOR: " << ' ' << *it;
-                printf("FGCom: [UDP] radioData id=%i has changed, notifying other clients\n", *it);
+                pluginDbg("FGCom: [UDP] radioData id="+std::to_string(*it)+" has changed, notifying other clients");
                 notifyRemotes(2, *it);
             }
         }
@@ -519,7 +540,7 @@ void fgcom_spawnUDPServer() {
 
 void fgcom_shutdownUDPServer() {
     //  Trigger shutdown: this just sends some magic UDP message.
-    printf("FGCOM: sending UDP shutdown request to port %i\n",fgcom_udp_port_used);
+    pluginDbg("sending UDP shutdown request to port "+std::to_string(fgcom_udp_port_used));
     std::string message = "SHUTDOWN";
     
     const char* server_name = "localhost";
@@ -539,7 +560,7 @@ void fgcom_shutdownUDPServer() {
 	// open socket
 	int sock;
 	if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
-		printf("could not create socket\n");
+		pluginLog("could not create udp cliet socket");
 		return;
 	}
 
