@@ -53,31 +53,30 @@ void pluginDbg(T log) {
  ****************************************************/
 
 bool fgcom_isConnectedToServer() {
-    pluginDbg("fgcom_isConnectedToServer(): checking connection");
+    //pluginDbg("fgcom_isConnectedToServer(): checking connection");
     bool synchronized;
     int resCode = mumAPI.isConnectionSynchronized(ownPluginID, activeConnection, &synchronized);
     if (STATUS_OK != resCode) {
-        pluginDbg("fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized(): rc="+std::to_string(resCode));
+   //     pluginDbg("fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized(): rc="+std::to_string(resCode));
         return false;
     } else {
-        pluginDbg("fgcom_isConnectedToServer(): OK executing isConnectionSynchronized()");
-        pluginDbg("fgcom_isConnectedToServer(): synchstate="+std::to_string(synchronized));
+    //    pluginDbg("fgcom_isConnectedToServer(): synchstate="+std::to_string(synchronized));
     }
     return synchronized;
 }
 
 
-void notifyRemotes(int what, int selector ) {
+void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
     std::string dataID("");  // FGCOM<something>
     std::string message(""); // the message as sting data (yeah, i'm lazy but it parses so easily and is human readable and therefore easy to debug)
     
     // check if we are connected and synchronized
-    pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+") called");
+    pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+","+std::to_string(tgtUser)+") called");
     if (!fgcom_isConnectedToServer()) {
-        pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): not connected, so not notifying.");
+        pluginDbg("notifyRemotes(): not connected, so not notifying.");
         return;
     } else {
-        pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): we are connected, so notifications will be sent.");
+        pluginDbg("notifyRemotes(): we are connected, so notifications will be sent.");
     }
 
     // @param what:  0=all local info; 1=location data; 2=comms
@@ -85,14 +84,14 @@ void notifyRemotes(int what, int selector ) {
     switch (what) {
         case 0:
             // notify all info
-            pluginDbg("notifyRemotes(): all status");
-            notifyRemotes(1);
-            notifyRemotes(2);
+            pluginDbg("notifyRemotes(): selected: all");
+            notifyRemotes(1, -1, tgtUser);
+            notifyRemotes(2, -1, tgtUser);
             break;
             
         case 1:
             // Notify on location
-            pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): location");
+            pluginDbg("notifyRemotes(): selected: location");
             dataID  = "FGCOM:UPD_LOC";
             message = "CALLSIGN="+fgcom_local_client.callsign+","
                      +"LAT="+std::to_string(fgcom_local_client.lat)+","
@@ -102,14 +101,14 @@ void notifyRemotes(int what, int selector ) {
             
         case 2:
             // notify on radio state
-            pluginDbg("notifyRemotes(): radio");            
+            pluginDbg("notifyRemotes(): selected radio");            
             if (selector == -1) {
-                pluginDbg("  all radios selected");
+                pluginDbg("notifyRemotes():    all radios selected");
                 for (int ri=0; ri < fgcom_local_client.radios.size(); ri++) {  
-                    notifyRemotes(1,ri);
+                    notifyRemotes(1,ri,tgtUser);
                 }
             } else {
-                pluginDbg("  send state of COM"+std::to_string(selector+1) );
+                pluginDbg("notifyRemotes():    send state of COM"+std::to_string(selector+1) );
                 dataID  = "FGCOM:UPD_COM:"+std::to_string(selector);
                 message = "FRQ="+fgcom_local_client.radios[selector].frequency+","
                         //+ "VLT="+std::to_string(fgcom_local_client.radios[selector].volts)+","
@@ -125,7 +124,7 @@ void notifyRemotes(int what, int selector ) {
             break;
             
         default: 
-            pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+"): 'what' unknown");
+            pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+","+std::to_string(tgtUser)+"): 'what' unknown");
             return;
     }
     
@@ -143,23 +142,36 @@ void notifyRemotes(int what, int selector ) {
 	} else {
         pluginDbg("There are "+std::to_string(userCount)+" users on this server.");
         if (userCount > 1) {
-            // remove local id from that array to prevent sending updates to ourselves
-            mumble_userid_t exclusiveUserIDs[userCount-1];
-            int o = 0;
-            for(size_t i=0; i<userCount; i++) {
-                if (userIDs[i] != fgcom_local_client.mumid) {
-                    exclusiveUserIDs[o] = userIDs[i];
-                    pluginDbg("  sending message to: "+std::to_string(userIDs[i]));
-                    o++;
+            if (tgtUser > -1) {
+                //a specific user was requested
+                pluginDbg("  sending message to targeted user: "+std::to_string(tgtUser));
+                int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+                if (send_res != STATUS_OK) {
+                    pluginDbg("  message sent ERROR: "+std::to_string(send_res));
                 } else {
-                    pluginDbg("  ignored local user: id="+std::to_string(userIDs[i]));
+                    pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
                 }
-            }
-            int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
-            if (send_res != STATUS_OK) {
-                pluginDbg("  message sent ERROR: "+std::to_string(send_res));
             } else {
-                pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
+                // Notify all users;
+                // remove local id from that array to prevent sending updates to ourselves
+                mumble_userid_t exclusiveUserIDs[userCount-1];
+                int o = 0;
+                for(size_t i=0; i<userCount; i++) {
+                    if (userIDs[i] != fgcom_local_client.mumid) {
+                        exclusiveUserIDs[o] = userIDs[i];
+                        pluginDbg("  sending message to: "+std::to_string(userIDs[i]));
+                        o++;
+                    } else {
+                        pluginDbg("  ignored local user: id="+std::to_string(userIDs[i]));
+                    }
+                }
+            
+                int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+                if (send_res != STATUS_OK) {
+                    pluginDbg("  message sent ERROR: "+std::to_string(send_res));
+                } else {
+                    pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
+                }
             }
 
         }

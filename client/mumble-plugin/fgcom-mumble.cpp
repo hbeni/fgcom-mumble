@@ -26,7 +26,6 @@
 
 
 // Mubmle API global vars.
-// They get initialized from the plugin interface (see fgcom-mumble.cpp)
 MumbleAPI mumAPI;
 mumble_connection_t activeConnection;
 plugin_id_t ownPluginID;
@@ -35,6 +34,13 @@ plugin_id_t ownPluginID;
 #define FGCOM_VERSION_MAJOR 0
 #define FGCOM_VERSION_MINOR 1
 #define FGCOM_VERSION_PATCH 0
+
+
+// Global plugin state
+int fgcom_specialChannelID = -1;
+bool fgcom_inSpecialChannel = false;
+
+
 
 
 /*******************
@@ -98,7 +104,37 @@ void fgcom_initPlugin() {
         } else {
             fgcom_local_client.mumid = localUser; // store id to localUser
             pluginLog("got local clientID="+std::to_string(localUser));
+            mumAPI.freeMemory(ownPluginID, &localUser);
         }
+        
+        
+        // fetch all channels from server in order to get the special fgcom-mumble channel ID
+        //fgcom_specialChannelID
+        size_t channelCount;
+        mumble_channelid_t *channels;
+        if (mumAPI.getAllChannels(ownPluginID, activeConnection, &channels, &channelCount) != STATUS_OK) {
+            pluginLog("Failed to retrieve all channel IDs");
+            return;
+        } else {
+            pluginLog("Server has "+std::to_string(channelCount)+" channels:");
+            for (size_t ci=0; ci<channelCount; ci++) {
+                pluginDbg("  resolving channel name for id="+std::to_string(channels[ci]));
+                char *channelName;
+                int cfres = mumAPI.getChannelName(ownPluginID, activeConnection, channels[ci], &channelName);
+                if (cfres != STATUS_OK) {
+                    pluginDbg("  channelID="+std::to_string(channels[ci])+" '"+channelName+"'");
+                    if ("fgcom-mumble" == channelName) {
+                        pluginDbg("    special channel id found!");
+                        fgcom_specialChannelID = channels[ci];
+                    }
+                    
+                    mumAPI.freeMemory(ownPluginID, channelName);
+                } else {
+                    pluginDbg("Error fetching channel names: rc="+std::to_string(cfres));
+                }
+            }
+        }
+        mumAPI.freeMemory(ownPluginID, channels);
         
         // ... more needed?
         
@@ -212,14 +248,15 @@ const char* mumble_getAuthor() {
 const char* mumble_getDescription() {
 	// For the returned pointer the same rules as for getName() apply
 	// In short: in the vast majority of cases you'll want to return a hard-coded String-literal
-	return "TODO: Description string";
+	return "FGCOM provides an aircraft radio simulation.";
 }
 
 uint32_t mumble_getFeatures() {
 	// Tells Mumble whether this plugin delivers some known common functionality. See the PluginFeature enum in
 	// PluginComponents.h for what is available.
 	// If you want your plugin to deliver positional data, you'll want to return FEATURE_POSITIONAL
-	return FEATURE_NONE;
+	//return FEATURE_NONE;
+    return FEATURE_AUDIO;
 }
 
 uint32_t mumble_deactivateFeatures(uint32_t features) {
@@ -229,59 +266,22 @@ uint32_t mumble_deactivateFeatures(uint32_t features) {
 	return features;
 }
 
-uint8_t mumble_initPositionalData(const char **programNames, const uint64_t *programPIDs, size_t programCount) {
-	std::ostream& stream = pLog() << "Got " << programCount << " programs to init positional data.";
-
-	if (programCount > 0) {
-		stream << " The first name is " << programNames[0] << " and has PID " << programPIDs[0];
-	}
-
-	stream << std::endl;
-
-	// As this plugin doesn't provide PD, we return PDEC_ERROR_PERM to indicate that even in the future we won't do so
-	// If your plugin is indeed delivering positional data but is only temporarily unaible to do so, return PDEC_ERROR_TEMP
-	// and if you deliver PD and succeeded initializing return PDEC_OK.
-	return PDEC_ERROR_PERM;
-}
-
-#define SET_TO_ZERO(name) name[0] = 0.0f; name[1] = 0.0f; name[2] = 0.0f
-bool mumble_fetchPositionalData(float *avatarPos, float *avatarDir, float *avatarAxis, float *cameraPos, float *cameraDir,
-			float *cameraAxis, const char **context, const char **identity) {
-	pluginLog("Has been asked to deliver positional data");
-
-	// If unable to provide positional data, this function should return false and reset all given values to 0/empty Strings
-	SET_TO_ZERO(avatarPos);
-	SET_TO_ZERO(avatarDir);
-	SET_TO_ZERO(avatarAxis);
-	SET_TO_ZERO(cameraPos);
-	SET_TO_ZERO(cameraDir);
-	SET_TO_ZERO(cameraAxis);
-	*context = "";
-	*identity = "";
-
-	// This function returns whether it can continue to deliver positional data
-	return false;
-}
-
-void mumble_shutdownPositionalData() {
-	pluginLog("Shutting down positional data");
-}
 
 void mumble_onServerConnected(mumble_connection_t connection) {
-	activeConnection = connection;
-	pLog() << "Established server-connection with ID " << connection << std::endl;
+    pLog() << "Established server-connection with ID " << connection << std::endl;
     
     // perform initialization if not done already (or missing parts of it;
     // particularly it will run the online part if the plugin was loaded when
     // we were not connected yet)
+    activeConnection = connection;
     fgcom_initPlugin();    
     
 }
 
 void mumble_onServerDisconnected(mumble_connection_t connection) {
-	activeConnection = -1;
-
-	pLog() << "Disconnected from server-connection with ID " << connection << std::endl;
+    pLog() << "Disconnected from server-connection with ID " << connection << std::endl;
+    
+    activeConnection = -1;
 }
 
 void mumble_onServerSynchronized(mumble_connection_t connection) {
@@ -316,13 +316,6 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
     // particularly it will run the online part if the plugin was loaded when
     // we were not connected/synchronized yet)
     fgcom_initPlugin();
-	
-
-	/*if (mumAPI.sendData(ownPluginID, activeConnection, &localUser, 1, "Just a test", 12, "testMsg") == STATUS_OK) {
-		pluginLog("Successfully sent plugin message");
-	} else {
-		pluginLog("Failed at sending message");
-	}*/
 }
 
 void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t previousChannelID, mumble_channelid_t newChannelID) {
@@ -336,14 +329,15 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 	if (previousChannelID >= 0) {
 		stream << " He came from channel with ID " << previousChannelID << ".";
 	}
-	
-	if (userID == fgcom_local_client.mumid) {
+	stream << " (ServerConnection: " << connection << ")" << std::endl;
+
+    if (userID == fgcom_local_client.mumid) {
         stream << " OH! thats me! hello myself!";
+    } else {
+        pluginDbg("send state to freshly joined user");
+        notifyRemotes(0, -1, userID);
     }
 
-	
-	
-	stream << " (ServerConnection: " << connection << ")" << std::endl;
 }
 
 void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t channelID) {
@@ -428,6 +422,9 @@ bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender
 }
 
 void mumble_onUserAdded(mumble_connection_t connection, mumble_userid_t userID) {
+    /// Called when a new user gets added to the user model. This is the case when that new user freshly connects to the server the
+	/// local user is on but also when the local user connects to a server other clients are already connected to (in this case this
+	/// method will be called for every client already on that server).
 	pLog() << "Added user with ID " << userID << " (ServerConnection: " << connection << ")" << std::endl;
 }
 

@@ -55,8 +55,9 @@ void fgcom_shutdownUDPServer();
  * 
  * @param what:     0=all local info; 1=location data; 2=comms
  * @param selector: ignored, when 'what'=2: id of radio (0=COM1,1=COM2,...)
+ * @param tgtUser:  -1: notify all, otherwise just the specified ID
  */
-void notifyRemotes(int what, int selector=-1);
+void notifyRemotes(int what, int selector=-1, mumble_userid_t tgtUser=-1);
 
 
 /*
