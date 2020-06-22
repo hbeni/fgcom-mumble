@@ -65,7 +65,6 @@ bool fgcom_isConnectedToServer() {
     return synchronized;
 }
 
-
 void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
     std::string dataID("");  // FGCOM<something>
     std::string message(""); // the message as sting data (yeah, i'm lazy but it parses so easily and is human readable and therefore easy to debug)
@@ -134,50 +133,53 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
     // TODO: maybe just resolve to known fgcom remotes? but that may not be updated yet...
     size_t userCount;
 	mumble_userid_t *userIDs;
-
-	if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
-        // ^TODO: currently all server users. We should strip this down to channel users, and then maybe just the ones known to have the plugin enabled for bandwith reasons...
-		pluginLog("[ERROR]: Can't obtain user list");
-		return;
-	} else {
-        pluginDbg("There are "+std::to_string(userCount)+" users on this server.");
-        if (userCount > 1) {
-            if (tgtUser > -1) {
-                //a specific user was requested
-                pluginDbg("  sending message to targeted user: "+std::to_string(tgtUser));
-                int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
-                if (send_res != STATUS_OK) {
-                    pluginDbg("  message sent ERROR: "+std::to_string(send_res));
-                } else {
-                    pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
-                }
-            } else {
-                // Notify all users;
-                // remove local id from that array to prevent sending updates to ourselves
-                mumble_userid_t exclusiveUserIDs[userCount-1];
-                int o = 0;
-                for(size_t i=0; i<userCount; i++) {
-                    if (userIDs[i] != fgcom_local_client.mumid) {
-                        exclusiveUserIDs[o] = userIDs[i];
-                        pluginDbg("  sending message to: "+std::to_string(userIDs[i]));
-                        o++;
+	if (fgcom_specialChannelID > -1) {
+        //if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
+        if (mumAPI.getUsersInChannel(ownPluginID, activeConnection, fgcom_specialChannelID, &userIDs, &userCount) != STATUS_OK) {
+            pluginLog("[ERROR]: Can't obtain user list");
+            return;
+        } else {
+            pluginDbg("There are "+std::to_string(userCount)+" users on this channel.");
+            if (userCount > 1) {
+                if (tgtUser > -1) {
+                    //a specific user was requested
+                    pluginDbg("  sending message to targeted user: "+std::to_string(tgtUser));
+                    int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+                    if (send_res != STATUS_OK) {
+                        pluginDbg("  message sent ERROR: "+std::to_string(send_res));
                     } else {
-                        pluginDbg("  ignored local user: id="+std::to_string(userIDs[i]));
+                        pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
+                    }
+                } else {
+                    // Notify all users;
+                    // remove local id from that array to prevent sending updates to ourselves
+                    mumble_userid_t exclusiveUserIDs[userCount-1];
+                    int o = 0;
+                    for(size_t i=0; i<userCount; i++) {
+                        if (userIDs[i] != fgcom_local_client.mumid) {
+                            exclusiveUserIDs[o] = userIDs[i];
+                            pluginDbg("  sending message to: "+std::to_string(userIDs[i]));
+                            o++;
+                        } else {
+                            pluginDbg("  ignored local user: id="+std::to_string(userIDs[i]));
+                        }
+                    }
+                
+                    int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+                    if (send_res != STATUS_OK) {
+                        pluginDbg("  message sent ERROR: "+std::to_string(send_res));
+                    } else {
+                        pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
                     }
                 }
-            
-                int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
-                if (send_res != STATUS_OK) {
-                    pluginDbg("  message sent ERROR: "+std::to_string(send_res));
-                } else {
-                    pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
-                }
+
             }
 
+            mumAPI.freeMemory(ownPluginID, userIDs);
+            pluginDbg("  notification done.");
         }
-
-        mumAPI.freeMemory(ownPluginID, userIDs);
-        pluginDbg("  notification done.");
+    } else {
+        pluginDbg("  notification not possible: unable to get local fgcom special channel id");
     }
     
     

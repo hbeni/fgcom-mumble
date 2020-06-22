@@ -19,7 +19,7 @@ Server
 -------------------
 
 ###  Setup requirements
-- plain mumble server instance. The *fgcom-mumble* plugin on each client handles the rest.
+- plain mumble server instance; >= v1.4.0. The *fgcom-mumble* plugin on each client handles the rest.
 - Create a new channel named `fgcom-mumble` for the airspace. The plugin only does it's things when on this channel.
 - to additionally run the bots:
   - lua 5.1 for the bots (`apt-get install lua5.1`)
@@ -44,7 +44,7 @@ Compiling the mumble server is usually not neccessary, just use your distibution
 Client
 ----------------
 ###  Setup requirements
-- have a standard mumble client with recent plugin support (>= 1.4.0)
+- have a standard mumble client with recent plugin support (>= v1.4.0)
   - have the FGCom-mumble plugin loaded
 - deploy the `fgcom-mumble.xml` to flightgears protocol directory
 

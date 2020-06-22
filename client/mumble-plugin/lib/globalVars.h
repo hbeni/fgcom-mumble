@@ -63,6 +63,8 @@ extern struct fgcom_client fgcom_local_client;   // local client data
 extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
 extern std::map<int, fgcom_client> fgcom_remote_clients; // remote radio config
 
+// Global plugin state
+extern int fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp
 
 
 #endif
