@@ -59,6 +59,15 @@ int main (int argc, char **argv)
     printf("  angle posA->posB = %.2f° \n", fgcom_radiowave_degreeAboveHorizon(dist, heightAB-h1));
     printf("  angle posB->posA = %.2f° \n", fgcom_radiowave_degreeAboveHorizon(dist, heightBA-h2));
 
+    for (int pwr=0; pwr<=30; true) {
+        float sigStrengthAB = fgcom_radiowave_getSignalStrength(lat1, lon1, h1, lat2, lon2, h2, pwr);
+        float sigStrengthBA = fgcom_radiowave_getSignalStrength(lat2, lon2, h2, lat1, lon1, h1, pwr);
+        printf("  VHF signal posA->posB @%iw = %.0f% \n", pwr, sigStrengthAB*100);
+        // its the same (it should at least) printf("  VHF signal posB->posA @%iw = %.0f% \n", pwr, sigStrengthBA*100);
+        if      (pwr <  5) { pwr++; }
+        else if (pwr < 20) { pwr += 5; }
+        else               { pwr += 10; }
+    }
     
     return 0; 
 } 

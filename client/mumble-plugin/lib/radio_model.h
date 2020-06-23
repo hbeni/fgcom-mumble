@@ -58,4 +58,18 @@ double fgcom_radiowave_degreeAboveHorizon(double surfacedist, double hah);
 double fgcom_radiowave_getSurfaceDistance(double lat1, double lon1, double lat2, double lon2);
 
 
+/*
+ * Get signal strength
+ * 
+ * @param lat1  Latitude of object A
+ * @param lon1  Longitude of object A
+ * @param alt1  height of observer A, in meters above surface
+ * @param lat2  Latitude of object B
+ * @param lon2  Longitude of object B
+ * @param alt2  height of observer A, in meters above surface
+ * @param power Signal sending power in watts
+ * @return float 0.0=no signal; 1.0=best signal
+ */
+float fgcom_radiowave_getSignalStrength(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power);
+
 #endif

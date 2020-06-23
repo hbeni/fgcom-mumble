@@ -20,6 +20,7 @@ struct fgcom_radio {
 	bool  ptt;           // true if PTT is pushed
 	float volume;        // volume, 0.0->1.0
 	float pwr;           // tx power in watts
+	float squelch;       // squelch setting (cutoff signal below this quality)
 	fgcom_radio()  {
         frequency   = "";
         power_btn   = true;
@@ -28,6 +29,7 @@ struct fgcom_radio {
         ptt         = false;
         volume      = 1.0;
         pwr         = 10;
+        squelch     = 0.1;
     };
 };
 

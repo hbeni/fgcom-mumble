@@ -2,8 +2,9 @@ FGCom mumble plugin specification
 =================================
 This document describes the technical specifications for the plugins interna as well as IO interfaces.
 
-The basic idea is that the plugin is some intelligent mute/unmute manager for the mumble client. The muting/unmuting is governed by the underlaying radio simulation, i.e. the radios state, tuned frequencies and location.
-These states should be provided to the plugin in an application agnostic manner, so it's easy to inteface as well as to flightgear and also third party ATC clients; and maybe also other flightsims...
+The basic idea is that the plugin is some intelligent send/receive manager for the mumble client. The sending/receiving is governed by the underlaying radio simulation, i.e. the radios state, tuned frequencies and location.
+These states should be provided to the plugin in an application agnostic manner, so it's easy to inteface as well as to flightgear and also third party ATC clients; and maybe also other flightsims...  
+I have chosen a simple, text based UDP protocol for this reason.
 
 
 Initialization
@@ -11,10 +12,19 @@ Initialization
 The plugin initializes with emtpy internal data.
 When receiving local input dat (see below), the internal state is updated (ie new radios get registered, frequencies set etc).
 
-If joining the special mumble channel `fgcom-mumble`, the plugin will locally mute all clients.  
+If joining the special mumble channel `fgcom-mumble`, the plugin will start to handle all clients audio streams in that channel.  
 When leaving that special channel, the plugin enters some 'noop' state so it will continue to collect updates from other client plugins, but mumble communication is unaffected otherwise.
 
-Your local microphone will get muted when entering the special channel, as well as unmuted when leaving it.
+Your local microphone will get switched to push-to-talk mode when entering the special channel (as well as restored when leaving it). When activating your flightsims PTT button on a radio, it will get switched on if that radio is operable.
+
+
+State Updates
+---------------
+Communication between plugins is handled by mumbles internal plugin data interface.
+
+When entering the fgcom-channel, your client will start to broadcast its state (and following changes) to remote clients.
+
+Each time a new client joins the fgcom channel, local plugins will broadcast their state to that client to get it updated with current data.
 
 
 Internal state
@@ -72,38 +82,51 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 
 Plugin output data
 ------------------
-### Mumble Plugin interface
-The plugin will broadcast its state (callsign, listen/send frequencies, ptt-state, location, tx-power) to the other plugins using the mumble internal plugin interface (TCP based). Other plugins will pick this up and update their internal knowledge of the other users.
+### Mumble PluginData interface
+The plugin will broadcast its state (callsign, listen/send frequencies, ptt-state, location, tx-power) to the other plugins using the mumble internal plugin data interface (TCP based). Other plugins will pick this up and update their internal knowledge of the other users.
 
-The data packets are constructed as following: The first sequence of bytes must form the ASCII-string `fgcom`. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation.
+The data packets are constructed as following: The `dataID` field must start with the ASCII-string `FGCOM`. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation and are ignored.
 
-TODO: Design the protocol fields needed. Afte the plugin-ID we need some packet type and then the payload. Maybe make it easy and define an "update" type whose payload is FIELD=VALUE or something, probably best binary encoded; and then we can broadcast every change individually (order does not matter much here...)
-Note: Thos types are needed so far:
-- hello: Client tells other clients, that he is new and now activated the plugin and as uch can start to receive updates. Other clients should respond with their current state.
+The following bytes in the `dataID` field denote the packet type. Each packet consists of a comma-separated sequence of `KEY=VALUE` pairs and empty values are to be ignored too:
+
+- `FGCOM:UPD_LOC` keys a location data update package:
+  - `LON`
+  - `LAT`
+  - `ALT`
+  - `CALLSIGN`
+- `FGCOM:UPD_COM:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
+  - `FRQ`
+  - `VLT` (not transmitted currently)
+  - `PBT` (not transmitted currently)
+  - `PTT`
+  - `VOL` (not transmitted currently)
+  - `PWR`
+- `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us
 
 
 Transmitting radio transmissions
 --------------------------------
 When the plugin detects a change in one of the `COM`*n*`_PTT` fields, it will first check the affected radio(s) state: Is there power? is it turned on? is it serviceable?  
 
-If yes, the PTT state change is transferred to other fgcom clients via mumbles plugin interface. Then your microphone is unmuted as long as at least one `COM`*n*`_PTT` remains `1`. Mumble will then transfer your voice as usual. After PTT is released, the change gets broadcasted again and mic muted.
+If yes, the PTT state change is transferred to other fgcom clients via mumbles plugin interface. Then your microphone is activated as long as at least one `COM`*n*`_PTT` remains `1` and its radio remains operational. Meanwhile Mumble will transfer your voice as usual. After PTT is released, the change gets broadcasted again and your mic deactivated.
 
 
 Receiving radio transmissions
 -----------------------------
-When another client sends an PTT update, the plugin will check the state: Which frequency did the sender use (lookup PTT->radio->frequency)? is one of our radios tuned to that frequency? Is our radio powered/on/serviceable? Is the sender in range (distance and tx-power)?  
+When another client sends an audio stream, the plugin will check the remote clients state: Which frequency did the sender use (lookup PTT->radio->frequency)? is one of our radios tuned to that frequency? Is our radio powered/on/serviceable? After that, the signal strength is computed using the radio model to detect if the signal is strong enough.
 
-If yes, the sending client is locally unmuted, so you can hear the standard mumble voice data (additional adjustments of the audio stream may apply, like static-noise and volume adjustments).
-When the PTT switches back to `0`, the sender is locally muted again.
+If yes, the sending clients audio stream is let trough, so you can hear the standard mumble voice data (additional adjustments of the audio stream may apply, like static-noise and volume adjustments).
+
+If either your radio is not operational or not tuned to the same frequency or not in range, the adio stream is canceled out, so you will not be able to hear it.
 
 
 Simple radio wave model
-----------------
-When receiving radio transmissions, it is important to see if the sender is in range. Frequencies are reused around the globe and so this is the only way to distinguish between neabry transmitters and the ones on the other side of the globe.
+------------------------
+When receiving radio transmissions, it is important to see if the sender is in range. Frequencies are reused around the globe and so this is the only way to distinguish between nearby transmitters and the ones on the other side of the globe.
 
-As a first draft, the plugin implements a simple radio wave propagation model that solely takes the output power and distance of the sender into account.
+As a first draft, the plugin implements a simple radio wave propagation model that solely takes the output power, distance and line-of-sight of the sender into account (ie. a VHF radio model).  
 It is currently modelled very simply, so that the tx-power of 10W approximates linearly to 50 nautical miles in flat coordinate distance (i got this number for the Bendix KX165A by googling). The main purpose is pilots geographic radio net separation and not realistic range behaviour at this time.  
 Please note that currently no (to me) known flightgear aircraft sets the radios tx-power, so it defaults to 10W/50nM (like current FGCom does).
 
-In the future we surely should refine this model to be way more realistic (see https://en.wikipedia.org/wiki/Radio_propagation); maybe take even the terrain (mountains etc) and maybe also the weather into account.  
+In the future we surely should refine this model to be way more realistic (see https://en.wikipedia.org/wiki/Radio_propagation); maybe take even the used antenna, the terrain (mountains etc) and maybe also the weather into account.  
 A good first step would probably be to add static noise and lessen volume for very distant senders, and to provide realistic numbers for the range/watts.

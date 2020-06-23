@@ -56,11 +56,11 @@ The FGCom-mumble client plugin needs to be in binary form.
 - compile:
   - `make plugin` will build the plugin for linux
   - `make plugin-win64` will build it for windows
+  - `make all-debug` will build for linux but add debug code that will print lots of stuff to the terminal window
 - Copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
 
 ### Running the client
-TODO: Nicer text needed, but basicly:
-- compatible to fgcom-standalone protocol, so vey much all halfaway recent fgfs instances should handle it out of the box
+- compatible to fgcom-standalone protocol, so vey much all halfway recent fgfs instances and aircraft should handle it out of the box
 - connect your mumble client to fgfs mumble server
 - enable your plugin in your standard mumble client
 - join the `fgcom-mumble` channel
@@ -70,11 +70,12 @@ TODO: Nicer text needed, but basicly:
 ### Debugging issues
 When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
 
-- Make sure, your mumble is operational otherwise
+- Make sure, your mumble is operational otherwise (so you can talk with others)
+- Check that you are not transmitting when you expect incoming messages (Radios are halfduplex -> look at your mumble symbol)
 - Recheck the tuned frequencies
-- Check that you really are in range
+- Check that you really are in range (low altitude severely limits your available range!)
 - Make sure the radio is operable (powered, switched on, serviceable)
-- Look at the plugins debug messages (**TODO:** Where are they?)
+- Look at the plugins debug messages (start mumble from terminal; probably make a debug build for that)
 
 
 Architecture description
@@ -94,20 +95,20 @@ If a users fgcom mumble plugin then receives a new audio transmission, it will:
 - look at the location of the sender
 - look at current transmission state of the local user
 Then, if the frequency is currently tuned AND the sender was in radio-range AND the current user is not transmitting himself on the frequency in question, the received transmision will be played; otherwise discarded.  
-This inherently enables listening and sending on multiple frequencies.
+This inherently enables listening and sending on multiple frequencies in parallel.
 
-"Frequency" thereby is an arbitary string, which enables to tune arbitary frequencies and also simulate land-lines. To receive a transmission, just the frequency string must match between sender and receiver.
+"Frequency" thereby is an arbitary string, which enables to tune arbitary frequencies and also may used to simulate land-lines for ATC. To receive a transmission, the frequency string must match between sender and receiver.
 
 ### Plugin input data
 To get the needed data the plugin offers a simple network socket listening for updates on UDP Port **16661** (original FGCom port, it's compatible).  
-This can easily be linked to an FGFS generic protocol or to an external application (like ATC-Pie or OpenRadar) to push updaes to the plugin.
+This can easily be linked to an FGFS generic protocol or to an external application (like ATC-Pie or OpenRadar) to push updates to the plugin.
 
 Details are explained in the `plugin-spec.md` file.
 
 ### Plugin output data
 The plugin will broadcast its state (callsign, listen/send frequencies, location) to the other plugins using the mumble internal plugin interface. Other plugins will pick this up and update their internal knowledge of other users.
 
-Details are also explained in the `plugin-spec.md` file.
+Details are too explained in the `plugin-spec.md` file.
 
 
 ### Flightgear integration
@@ -123,7 +124,18 @@ The plugin will handle the old FGCom protocol fields. If you want newer features
 The new protocol xml-file is supplied in the source tree and documented.
 
 
-ATIS / Radio station support
+ATC support
+----------------------------
+ATC clients can connect using the old FGCom UDP protocol or using the newer one.
+
+## Position, `ALT=` setting / Antenna height
+In either case, it is important to set a valid position and altitude. Altitude is the main range limiting factor in VHF radio ooperations, for example 1m heigth gives about 3.6km range until your transmission hits the earths surface. it is advised that you set the altitude to the antenna tip height above surface (so 8m building+2m Antenna gives 10m=32.8ft: `ALT=32.8`.
+
+### Land lines
+You can establish virtual land lines by adding a new "virtual radio" with a custom frequency like "LANDLINE-TWR". Radio limits still apply but should not be a problem, given the short distances involved.
+
+
+NOT-IMPLEMENTED-YET: ATIS / Radio station support
 ----------------------------
 This is implemented modular trough a special set of mumble bots. The bots behave as ordinary mumble clients supplementing FGCom-mumble plugin information so the pilots client plugins will behave correctly. From the pilots view, they are just more ordinary clients.
 
@@ -152,7 +164,7 @@ This is a simple program that automates the spawning/killing of the atis related
   - She monitors recorded ATIS samples and spawns/kills `radio-playback` bots appropriate to the recordings.
 
 
-Support for FGCom special frequencies
+NOT-IMPLEMENTED-YET: Support for FGCom special frequencies
 -------------------------------------
 A common thing is that pilots may want to easily test if their setup works. This is implemented trough some special bots as well as the plugin itself. Also, FGCom-mumble has builtin special frequencies with alternative behaviour.
 

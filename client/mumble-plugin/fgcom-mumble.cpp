@@ -86,6 +86,27 @@ bool fgcom_isPluginActive() {
     return fgcom_inSpecialChannel;
 }
 
+/*
+ * See if the radio is operable
+ * 
+ * @param fgcom_radio the radio to check
+ * @return bool true, wehn it is
+ */
+bool fgcom_radio_isOperable(fgcom_radio r) {
+    //pluginDbg("fgcom_radio_operable() called");
+    //pluginDbg("fgcom_radio_operable()    r.frequency="+r.frequency);
+    //pluginDbg("fgcom_radio_operable()    r.power_btn="+std::to_string(r.power_btn));
+    //pluginDbg("fgcom_radio_operable()    r.volts="+std::to_string(r.volts));
+    //pluginDbg("fgcom_radio_operable()    r.serviceable="+std::to_string(r.serviceable));
+
+    bool radio_serviceable = r.serviceable;
+    bool radio_switchedOn  = r.power_btn;
+    bool radio_powered     = (r.volts >= 1.0)? true:false; // some aircraft report boolean here, so treat 1.0 as powered
+    
+    bool operable = (radio_serviceable && radio_switchedOn && radio_powered);
+    //pluginDbg("fgcom_radio_operable() result: operable="+std::to_string(operable));
+    return operable;
+}
 
 /*
  * Handle PTT change of local user
@@ -101,13 +122,11 @@ void fgcom_handlePTT() {
         bool radio_ptt_result = false; // if we should open or close the mic, default no
         if (fgcom_local_client.radios.size() > 0) {
             for (int i=0; i<fgcom_local_client.radios.size(); i++) {
-                radio_serviceable = fgcom_local_client.radios[i].serviceable;
-                radio_switchedOn  = fgcom_local_client.radios[i].power_btn;
-                radio_powered     = (fgcom_local_client.radios[i].volts >= 1.0)? true:false; // some aircraft report boolean here, so treat every volts >=1 as "powered"
                 radio_ptt         = fgcom_local_client.radios[i].ptt;
                 
                 if (radio_ptt) {
-                    if (radio_serviceable && radio_switchedOn && radio_powered) {
+                    //if (radio_serviceable && radio_switchedOn && radio_powered) {
+                    if ( fgcom_radio_isOperable(fgcom_local_client.radios[i])) {
                         pluginLog("  COM"+std::to_string(i+1)+" PTT active and radio is operable -> open mic");
                         radio_ptt_result = true;
                         break; // we only have one output stream, so further search makes no sense
@@ -234,7 +253,8 @@ mumble_error_t fgcom_initPlugin() {
                 if (fgcom_specialChannelID == localChannelID) {
                     pluginDbg("Already in special channel at init time");
                     fgcom_setPluginActive(true);
-                    notifyRemotes(0);
+                    notifyRemotes(0); // send our state to all clients
+                    notifyRemotes(3); // request all other state
                 } else {
                     pluginDbg("Channels not equal: special="+std::to_string(fgcom_specialChannelID)+" == cur="+std::to_string(localChannelID));
                 }
@@ -294,7 +314,7 @@ mumble_error_t mumble_init(uint32_t id) {
     // this is called when loading the plugin which may be done offline)
     mumble_error_t init_rc = fgcom_initPlugin();
     if (STATUS_OK != init_rc) return init_rc;
-	pluginLog("FGCOM: Initialized plugin");
+	pluginLog("Initialized plugin");
 
 
 	// STATUS_OK is a macro set to the appropriate status flag (ErrorCode)
@@ -539,12 +559,99 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
     if (fgcom_isPluginActive()) {
         // TODO: check signal strength; if source is in range, let it trough
     } */
-
-	// Mark ouputPCM as unused
-	(void) outputPCM;
-
-	// This function returns whether it has modified the audio stream
-	return false;
+    
+    // See if the plugin is activated and if the audio source is speech.
+    // We let the audio trough in case plugin is not active.
+    pluginDbg("mumble_onAudioSourceFetched(): plugin active="+std::to_string(fgcom_isPluginActive()));
+    bool rv = false;  // return value; false means the stream was not touched
+    if (fgcom_isPluginActive() && isSpeech) {
+        // This means, that the remote client was able to send, ie. his radio had power to transmit (or its a pluginless mumble client).
+        pluginDbg("mumble_onAudioSourceFetched():   plugin active+speech detected.");
+        
+        float bestSignalStrength = 0.0; // we want to get the connections signal strength.
+        fgcom_radio matchedLocalRadio;
+        
+        // Fetch the remote clients data
+        auto search = fgcom_remote_clients.find(userID);
+        if (search == fgcom_remote_clients.end()) {
+            // we found remote state.
+            fgcom_client rmt = fgcom_remote_clients[userID];
+            pluginDbg("mumble_onAudioSourceFetched():   sender callsign="+rmt.callsign);
+            
+            // lets search the used radio(s) and determine best signal strength.
+            // currently mumble has only one voice stream per client, so we assume it comes from the best matching radio.
+            // Note: If we are PTTing ourself currently, the radio cannot receive at the moment (half-duplex mode!)
+            for (int ri=0; ri<rmt.radios.size(); ri++) {
+                if (rmt.radios[ri].ptt) {
+                    // The remote radio does transmit currently.
+                    // See if we have an operable radio tuned to that frequency
+                    fgcom_client lcl = fgcom_local_client;
+                    bool frequencyIsListenedTo = false;
+                    for (int lri=0; lri<lcl.radios.size(); lri++) {
+                        if (lcl.radios[lri].frequency == rmt.radios[ri].frequency
+                            && fgcom_radio_isOperable(lcl.radios[lri])
+                            && !lcl.radios[lri].ptt) {
+                            // we are listening on that frequency!
+                            // determine signal strenght for this connection
+                            float ss = fgcom_radiowave_getSignalStrength(
+                                lcl.lat, lcl.lon, lcl.alt,
+                                rmt.lat, rmt.lon, rmt.alt,
+                                rmt.radios[ri].pwr);
+                            if (ss > lcl.radios[lri].squelch && ss > bestSignalStrength) {
+                                // the signal is stronger than our squelch and tops the current last best signal
+                                bestSignalStrength = ss;
+                                matchedLocalRadio  = lcl.radios[lri];
+                            }
+                        }
+                    }
+                } else {
+                    // the inspected remote radio did not PTT
+                }
+            }
+            
+        } else {
+            // we have no idea about the remote yet: treat him as if hes not in range
+            // (this may especially happen with sending clients without enabled plugin!)
+            pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state. muting stream.");
+        }
+        
+        
+        // Now we got the connections signal strength.
+        // It is either positive, or zero in case:
+        //   - we did not have any info on the client
+        //   - the client was out of range
+        //   - we did not tune the frequency (or radio was broken, or radio squelch cut off)
+        rv = true; // we adjust the stream in any case
+        if (bestSignalStrength > 0.0) { 
+            // we got a connection!
+            pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
+            
+            // TODO: mix in white noise and respect local radio volume setting
+            //       note: maybe we can copy the DSP filters from ACRE2 https://github.com/IDI-Systems/acre2/blob/master/extensions/src/ACRE2Core/FilterRadio.cpp
+            // fgcom_audio_addWhiteNoise(outputPCM, bestSignalStrength);
+            // fgcom_audio_adjustVolume(outputPCM,matchedLocalRadio.volume);
+            // rv = true;
+            
+            // Let the stream trough untouched, as long as we did not mixed in white noise and volume
+            rv = false;
+            
+        } else {
+            pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
+            // cancel out the stream.
+            //std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
+            memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(short) );
+        }
+        
+        
+    } else {
+        // do nothing, leave the stream alone
+        rv = false;
+    }
+    
+    
+    // go home
+    if (!rv) (void) outputPCM;  // Mark ouputPCM as unused
+    return rv;   // This function returns whether it has modified the audio stream
 }
 
 /*  I think we don't need this and should implement stuff in the function above.

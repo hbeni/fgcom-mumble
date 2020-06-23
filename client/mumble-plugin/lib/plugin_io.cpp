@@ -1,8 +1,11 @@
-// An simple udp IO interface for the FGCom mumble plugin.
+// Plugin IO
 //
-// It spawns an UDP server that accepts state inforamtion.
-// The information is parsed and then put into a shared data
-// structure, from where the plugin can read the current state.
+// A) An simple udp IO interface for the FGCom mumble plugin.
+//    It spawns an UDP server that accepts state inforamtion.
+//    The information is parsed and then put into a shared data
+//    structure, from where the plugin can read the current state.
+// B) Mumble internal plugin IO
+//    Handles sending and receiving messages from mumbles interface
 //
 #include <iostream>
 #include <stdio.h>
@@ -122,6 +125,12 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
             }
             
             break;
+        
+        case 3:
+            // we ask all other clients to send us their data
+            dataID  = "FGCOM:ICANHAZDATAPLZ";
+            message = "allYourDataBelongsToUs!";
+            break;
             
         default: 
             pluginDbg("notifyRemotes("+std::to_string(what)+","+std::to_string(selector)+","+std::to_string(tgtUser)+"): 'what' unknown");
@@ -131,7 +140,6 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
     
     // Now get all known FGCom users of the current channel.
     // to those we will push the update.
-    // TODO: maybe just resolve to known fgcom remotes? but that may not be updated yet...
     size_t userCount;
 	mumble_userid_t *userIDs;
 	if (fgcom_specialChannelID > -1) {
@@ -177,7 +185,7 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
             }
 
             mumAPI.freeMemory(ownPluginID, userIDs);
-            pluginDbg("  notification done.");
+            pluginDbg("  notification for dataID='"+dataID+"' done.");
         }
     } else {
         pluginDbg("  notification not possible: unable to get local fgcom special channel id");
@@ -211,7 +219,12 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         }
         
         // Parse the data, depending on packet type
-        if (dataID == "FGCOM:UPD_LOC") {
+        if (dataID == "FGCOM:ICANHAZDATAPLZ") {
+            // client asks for our current state
+            pluginDbg("Data update requested: Sender="+std::to_string(clientID)+" DataID="+dataID);
+            notifyRemotes(0, -1, clientID); // notify the sender with all our data
+            
+        } else if (dataID == "FGCOM:UPD_LOC") {
             // Location data update
             pluginDbg("LOC UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             
@@ -293,6 +306,9 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                     pluginLog("[mum_pluginIO] Parsing throw exception, ignoring token "+segment);
                 }
             }
+            
+        } else {
+            pluginDbg("FGCom: [mum_pluginIO] dataID='"+dataID+"' not known. Ignoring.");
         }
         
         fgcom_remotecfg_mtx.unlock();

@@ -73,5 +73,40 @@ double fgcom_radiowave_getSurfaceDistance(double lat1, double lon1,
     return rad * c; 
 } 
 
+float fgcom_radiowave_getSignalStrength(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power) {
+    
+    // get distance to radio horizon (that is the both ranges combined)
+    double radiodist = fgcom_radiowave_getDistToHorizon(alt1) + fgcom_radiowave_getDistToHorizon(alt2);
+    
+    // get surface distance
+    double dist = fgcom_radiowave_getSurfaceDistance(lat1, lon1, lat2, lon2);
+    
+    // get if they can see each other. VHF will have no connection when no line-of-sight is present.
+    double heightAboveHorizon = fgcom_radiowave_heightAboveHorizon(dist, alt1, alt2);
+    if (heightAboveHorizon < 0) return 0.0;  // no, they cant, bail out without signal.
 
-
+    // get slant distance (in km) so we can calculate signal strenght based on distance
+    double slantDist = fgcom_radiowave_getSlantDistance(dist, heightAboveHorizon-alt1);
+    
+    // power/distance model
+    // It is currently modelled very simply (linearly) and NOT REALISTICALLY!
+    // Main target now is to get some geographic separation. Main Factor vor VHF is line-of-sight anyways.
+    // TODO: Make this more realistic! Depends probably also on antenna used at sender and receiver.
+    // TODO: Take terrain effects into account. We could probably use the 3° ASTER/SRTM data for that. This will mute the radio behind mountains :)
+    // current formula: (-1/wr*x^2+100)/100, where wr=wattpower*50 and x=slatDistance in km
+    float wr = power * 50; // gives maximum range in km for the supplied power
+    float ss = (-1/wr*pow(slantDist,2)+100)/100;  // gives @10w: 50km=0.95 100km=0.8 150km=0.55 200km=0.2
+    
+    if (ss <=0.0) return 0.0; // in case signal strength got neagative, that means we are out of range (too less tx-power)
+    
+    // when distance is near the radio horizon, we smoothly cut off the signal, so it doesn't drop sharply to 0
+    float usedRange = slantDist/radiodist;
+    float usedRange_cutoffPct = 0.9; // at which percent of used radio horizon we start to cut off
+    if (usedRange > usedRange_cutoffPct) {
+        float loss    = (usedRange - usedRange_cutoffPct) * 10; //convert to percent range: 0.9=0%  0.95=0.5(50%)  1.0=1.0(100%)
+        //printf("DBG: distance near radio horizon (%.2f/%.2f=%.2f); raw strength=%.2f; loss=%.2f; result=%.2f\n", slantDist, radiodist, usedRange, ss, loss, ss*(1-loss) );
+        ss = ss * (1-loss); // apply loss to signal
+    }
+    
+    return ss;
+}
