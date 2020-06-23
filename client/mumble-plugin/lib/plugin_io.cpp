@@ -25,6 +25,7 @@
 #include "globalVars.h"
 #include "plugin_io.h"
 #include "MumblePlugin.h"
+#include "fgcom-mumble.h"
 
 
 // These are just some utility functions facilitating writing logs and the like
@@ -397,6 +398,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                         bool oldValue = fgcom_local_client.radios[radio_id].ptt;
                         fgcom_local_client.radios[radio_id].ptt         = (token_value == "1")? true : false;
                         if (fgcom_local_client.radios[radio_id].ptt != oldValue ) radioDataHasChanged->insert(radio_id);
+                        fgcom_handlePTT();
                     }
                     if (radio_var == "VOL") {
                         float oldValue = fgcom_local_client.radios[radio_id].volume;

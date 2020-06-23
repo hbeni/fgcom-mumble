@@ -8,6 +8,7 @@
 #include "globalVars.h"
 #include "MumblePlugin.h"
 #include "MumbleAPI.h"
+#include "fgcom-mumble.h"
 #include "plugin_io.h"
 #include "radio_model.h"
 
@@ -57,18 +58,77 @@ std::ostream& operator<<(std::ostream& stream, const version_t version) {
  * 
  * @param bool active if the plugin handling stuff should be active
  */
+transmission_mode_t fgcom_prevTransmissionMode = TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
 void fgcom_setPluginActive(bool active) {
+    mumble_error_t merr;
     fgcom_inSpecialChannel = active;
     if (active) {
         pluginLog("plugin handling activated: ");
         mumAPI.log(ownPluginID, "plugin handling activated");
+        
+        // switch to push-to-talk
+        merr = mumAPI.getLocalUserTransmissionMode(ownPluginID, &fgcom_prevTransmissionMode);
+        if (merr == STATUS_OK) {
+            merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, TM_PUSH_TO_TALK);
+            mumAPI.log(ownPluginID, "enabled push-to-talk");
+        }
+        
     } else {
         pluginLog("plugin handling deactivated");
         mumAPI.log(ownPluginID, "plugin handling deactivated");
+        
+        // restore old transmission mode
+        merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, fgcom_prevTransmissionMode);
     }
+    
 }
 bool fgcom_isPluginActive() {
     return fgcom_inSpecialChannel;
+}
+
+
+/*
+ * Handle PTT change of local user
+ * 
+ * This will check the local radio state and activate the mic if all is operable.
+ * When no PTT or no radio is operable, mic is closed.
+ */
+void fgcom_handlePTT() {
+    if (fgcom_isPluginActive()) {
+        pluginDbg("Handling PTT state");
+        // see which radio was used and if its operational.
+        bool radio_serviceable, radio_powered, radio_switchedOn, radio_ptt;
+        bool radio_ptt_result = false; // if we should open or close the mic, default no
+        if (fgcom_local_client.radios.size() > 0) {
+            for (int i=0; i<fgcom_local_client.radios.size(); i++) {
+                radio_serviceable = fgcom_local_client.radios[i].serviceable;
+                radio_switchedOn  = fgcom_local_client.radios[i].power_btn;
+                radio_powered     = (fgcom_local_client.radios[i].volts >= 1.0)? true:false; // some aircraft report boolean here, so treat every volts >=1 as "powered"
+                radio_ptt         = fgcom_local_client.radios[i].ptt;
+                
+                if (radio_ptt) {
+                    if (radio_serviceable && radio_switchedOn && radio_powered) {
+                        pluginLog("  COM"+std::to_string(i+1)+" PTT active and radio is operable -> open mic");
+                        radio_ptt_result = true;
+                        break; // we only have one output stream, so further search makes no sense
+                    } else {
+                        pluginLog("  COM"+std::to_string(i+1)+" PTT active but radio not operable!");
+                    }
+                } else {
+                    pluginDbg("  COM"+std::to_string(i+1)+" PTT off");
+                }
+            }
+        }
+        
+        if (radio_ptt_result) pluginDbg("final PTT/radio openmic state: "+std::to_string(radio_ptt_result));
+        mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, radio_ptt_result);
+        
+    } else {
+        // Todo: do we need to reset something or so? i think no:
+        //       plugin deactivation will already handle setting the old transmission mode,
+        //       so the mic will be open according to that...
+        mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
+    }
 }
 
 
@@ -444,13 +504,19 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
     
 }
 
+// Note: Audio input is only possible with open mic. fgcom_hanldePTT() takes care of that.
 bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
 	//pLog() << "Audio input with " << channelCount << " channels and " << sampleCount << " samples per channel encountered. IsSpeech: "
 	//	<< isSpeech << std::endl;
     /*pluginDbg("  plugin active="+std::to_string(fgcom_isPluginActive()));
     if (fgcom_isPluginActive()) {
-        // TODO: see which radio was used and if its operational. If not, null out the stream
-    } */
+        // see which radio was used and if its operational. If not, null out the stream
+        //bool activate = true;
+        requestMicrophoneActivationOvewrite(ownPluginID, activate);
+    }*/
+    
+    // Recheck that mic is open; close it immediately when radio fails.
+    fgcom_handlePTT();
     
 	// mark inputPCM as unused
 	(void) inputPCM;
