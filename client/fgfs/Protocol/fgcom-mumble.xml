@@ -36,45 +36,89 @@
    <!-- COM 1 -->
    <chunk>
     <name>com1-frequency</name>
-    <type>float</type>
+    <type>string</type>
     <format>COM1_FRQ=%s</format>
     <node>/instrumentation/comm[0]/frequencies/selected-mhz</node>
    </chunk>
    <chunk>
     <name>com1-powered</name>
-    <type>bool</type>
+    <type>string</type>
     <format>COM1_VLT=%s</format> <!-- in volts -->
     <node>/system/electrical/outputs/comm[0]</node>
    </chunk>
    <chunk>
     <name>com1-powerbutton</name>
-    <type>bool</type>
+    <type>string</type>
     <format>COM1_PBT=%s</format> <!-- 0=inactive, 1=active -->
     <node>/instrumentation/comm[0]/power-btn</node>
    </chunk>
    <chunk>
     <name>com1-serviceable</name>
-    <type>bool</type>
+    <type>string</type>
     <format>COM1_SRV=%s</format> <!-- 0=failed, 1=operable -->
     <node>/instrumentation/comm[0]/serviceable</node>
    </chunk>
    <chunk>
     <name>com1-ptt</name>
-    <type>bool</type>
+    <type>string</type>
     <format>COM1_PTT=%s</format> <!-- 0=inactive, 1=active -->
     <node>/instrumentation/comm[0]/ptt</node>
    </chunk>
    <chunk>
     <name>com1-vol</name>
-    <type>double</type>
+    <type>string</type>
     <format>COM1_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
     <node>/instrumentation/comm[0]/volume</node>
    </chunk>
    <chunk>
     <name>com1-txpwr</name>
-    <type>double</type>
+    <type>string</type>
     <format>COM1_PWR=%s</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
     <node>/instrumentation/comm[0]/tx-power</node>
+   </chunk>
+   
+   <!-- COM 2 -->
+   <chunk>
+    <name>com2-frequency</name>
+    <type>string</type>
+    <format>COM2_FRQ=%s</format>
+    <node>/instrumentation/comm[1]/frequencies/selected-mhz</node>
+   </chunk>
+   <chunk>
+    <name>com2-powered</name>
+    <type>string</type>
+    <format>COM2_VLT=%s</format> <!-- in volts -->
+    <node>/system/electrical/outputs/comm[1]</node>
+   </chunk>
+   <chunk>
+    <name>com2-powerbutton</name>
+    <type>string</type>
+    <format>COM2_PBT=%s</format> <!-- 0=inactive, 1=active -->
+    <node>/instrumentation/comm[1]/power-btn</node>
+   </chunk>
+   <chunk>
+    <name>com2-serviceable</name>
+    <type>string</type>
+    <format>COM2_SRV=%s</format> <!-- 0=failed, 1=operable -->
+    <node>/instrumentation/comm[1]/serviceable</node>
+   </chunk>
+   <chunk>
+    <name>com2-ptt</name>
+    <type>string</type>
+    <format>COM2_PTT=%s</format> <!-- 0=inactive, 1=active -->
+    <node>/instrumentation/comm[1]/ptt</node>
+   </chunk>
+   <chunk>
+    <name>com2-vol</name>
+    <type>string</type>
+    <format>COM2_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
+    <node>/instrumentation/comm[1]/volume</node>
+   </chunk>
+   <chunk>
+    <name>com2-txpwr</name>
+    <type>string</type>
+    <format>COM2_PWR=%s</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
+    <node>/instrumentation/comm[1]/tx-power</node>
    </chunk>
 
 

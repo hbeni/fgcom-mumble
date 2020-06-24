@@ -402,17 +402,17 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     }
                     if (radio_var == "PBT") {
                         bool oldValue = fgcom_local_client.radios[radio_id].power_btn;
-                        fgcom_local_client.radios[radio_id].power_btn   = (token_value == "1")? true : false;
+                        fgcom_local_client.radios[radio_id].power_btn   = (token_value == "1" || token_value == "true")? true : false;
                         // do not send right now: if (fgcom_local_client.radios[radio_id].power_btn != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "SRV") {
                         bool oldValue = fgcom_local_client.radios[radio_id].serviceable;
-                        fgcom_local_client.radios[radio_id].serviceable = (token_value == "1")? true : false;
+                        fgcom_local_client.radios[radio_id].serviceable = (token_value == "1" || token_value == "true")? true : false;
                         // do not send right now: if (fgcom_local_client.radios[radio_id].serviceable != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "PTT") {
                         bool oldValue = fgcom_local_client.radios[radio_id].ptt;
-                        fgcom_local_client.radios[radio_id].ptt         = (token_value == "1")? true : false;
+                        fgcom_local_client.radios[radio_id].ptt         = (token_value == "1" || token_value == "true")? true : false;
                         if (fgcom_local_client.radios[radio_id].ptt != oldValue ) radioDataHasChanged->insert(radio_id);
                         fgcom_handlePTT();
                     }
