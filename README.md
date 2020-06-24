@@ -5,6 +5,7 @@ This project aims to provide a modular, mumble based radio simulation for flight
 
 ### The main goals are:
 - Provide a realistic radio simulation
+- Arbitary frequency support
 - Ease of use for the end user / pilot
 - Capability to be integrated to flightgear, with the option to support third party applications (ATC, but also other flightsims)
 - Standalone nature (no dependency on flightgear)
