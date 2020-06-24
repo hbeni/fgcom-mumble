@@ -38,7 +38,7 @@ struct fgcom_client {
 	unsigned int mumid;  // mumble client ID
     float lon;
 	float lat;
-	int   alt;  // in meters
+	float alt;  // in meters
 	std::string  callsign;
 	std::vector<fgcom_radio> radios;
 	fgcom_client()  {
@@ -63,7 +63,7 @@ extern struct fgcom_client fgcom_local_client;   // local client data
 // Remote plugin state
 // this is written to from the plugins receive data function and read from other plugin functions
 extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
-extern std::map<int, fgcom_client> fgcom_remote_clients; // remote radio config
+extern std::map<mumble_userid_t, fgcom_client> fgcom_remote_clients; // remote radio config
 
 // Global plugin state
 extern int fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp

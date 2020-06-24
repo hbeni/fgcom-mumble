@@ -195,14 +195,14 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
 }
 
 std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
-std::map<int, fgcom_client> fgcom_remote_clients; // remote radio config
+std::map<mumble_userid_t, fgcom_client> fgcom_remote_clients; // remote radio config
 bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data) {
     // Handle the incoming data (if it belongs to us)
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
     
     if (dataID.substr(0,5) == "FGCOM") {
         // Data is for our plugin
-        int clientID = (int) senderID;  // get mumble client id
+        mumble_userid_t clientID = senderID;  // get mumble client id
         std::regex parse_key_value ("^(\\w+)=(.+)"); // prepare a regex for simpler parsing
         
         fgcom_remotecfg_mtx.lock();
@@ -246,7 +246,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         
                         if (token_key == "LON")      fgcom_remote_clients[clientID].lon      = std::stof(token_value);
                         if (token_key == "LAT")      fgcom_remote_clients[clientID].lat      = std::stof(token_value);
-                        if (token_key == "ALT")      fgcom_remote_clients[clientID].alt      = std::stoi(token_value);
+                        if (token_key == "ALT")      fgcom_remote_clients[clientID].alt      = std::stof(token_value);
                         if (token_key == "CALLSIGN") fgcom_remote_clients[clientID].callsign = token_value;
                         
                         
@@ -445,7 +445,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 if (token_key == "ALT") {
                     int oldValue = fgcom_local_client.alt;
                     // ALT comes in ft. We need meters however
-                    fgcom_local_client.alt = std::stoi(token_value) / 3.2808;
+                    fgcom_local_client.alt = std::stof(token_value) / 3.2808;
                     if (fgcom_local_client.alt != oldValue ) *userDataHashanged = true;
                 }
                 if (token_key == "CALLSIGN") {
