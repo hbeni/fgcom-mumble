@@ -147,6 +147,7 @@ void fgcom_handlePTT() {
         //       plugin deactivation will already handle setting the old transmission mode,
         //       so the mic will be open according to that...
         mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
+        pluginDbg("Handling PTT state: PLUGIN NOT ACTIVE");
     }
 }
 
