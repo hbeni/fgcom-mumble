@@ -443,8 +443,16 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     if (fgcom_local_client.lat != oldValue ) *userDataHashanged = true;
                 }
                 if (token_key == "ALT") {
+                    /* TODO: The old FGcom protocol transmit above sea level. As long as we are not
+                    using ground terrain information to get the height above surface, we have a too high
+                    range for the radios... (we treat ASL as AGL!)
+                    The geoid however is some meanASL, so the difference between sea level and ground
+                    level is falsely added to our height, resulting in a much further radio horizon.
+                    This should be only an issue with VFR and low flight levels, however, as the
+                    decreases with fly altitude. The only good option is to incorporate a terrain model
+                    to be able to calculate the true AGL.  */
                     int oldValue = fgcom_local_client.alt;
-                    // ALT comes in ft. We need meters however
+                    // ALT comes in ft ASL. We need meters however
                     fgcom_local_client.alt = std::stof(token_value) / 3.2808;
                     if (fgcom_local_client.alt != oldValue ) *userDataHashanged = true;
                 }
