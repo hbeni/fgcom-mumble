@@ -459,13 +459,16 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 if (token_key == "PTT") {
                     // PTT contains the ID of the used radio (0=none, 1=COM1, 2=COM2)
                     int ptt_id = std::stoi(token_value);
+                    pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
                     for (int i = 0; i<fgcom_local_client.radios.size(); i++) {
+                        pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
                         if (i == ptt_id - 1) {
                             fgcom_local_client.radios[i].ptt = 1;
                         } else {
                             fgcom_local_client.radios[i].ptt = 0;
                         }
                     }
+                    fgcom_handlePTT();
                 }
                 if (token_key == "OUTPUT_VOL") {
                     // Set all radio instances to the selected volume

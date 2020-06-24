@@ -5,7 +5,7 @@
   <![CDATA[
     This is the protocol definition for fgcom-mumble - a realtime communication
     middleware based on Mumble for FlightGear
-    See http://<someYetNonExistingAddress>
+    See https://github.com/hbeni/fgcom-mumble
 
     Usage:
     # fgfs --generic=socket,out,<hz>,<host>,16661,udp,fgcom-mumble
@@ -17,7 +17,7 @@
 
  <generic>
 
-  <!-- The fopllowing output is expected to be parsed from the mumble-plugin.
+  <!-- The following output is expected to be parsed from the mumble-plugin.
        It will be designed so that order or occurrence of the fields does not matter:
        The fields are parsed from left to right and the values updated accordingly.
        
