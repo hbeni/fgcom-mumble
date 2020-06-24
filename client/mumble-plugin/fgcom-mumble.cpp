@@ -546,19 +546,7 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 }
 
 bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech, mumble_userid_t userID) {
-	/*std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
-
-	if (isSpeech) {
-		stream << " The output is speech from user with ID " << userID << ".";
-	}
-
-	stream << std::endl;
-    */
-    
-    /*pluginDbg("  plugin active="+std::to_string(fgcom_isPluginActive()));
-    if (fgcom_isPluginActive()) {
-        // TODO: check signal strength; if source is in range, let it trough
-    } */
+	//std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
     
     // See if the plugin is activated and if the audio source is speech.
     // We let the audio trough in case plugin is not active.
@@ -566,14 +554,14 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
     bool rv = false;  // return value; false means the stream was not touched
     if (fgcom_isPluginActive() && isSpeech) {
         // This means, that the remote client was able to send, ie. his radio had power to transmit (or its a pluginless mumble client).
-        pluginDbg("mumble_onAudioSourceFetched():   plugin active+speech detected.");
+        pluginDbg("mumble_onAudioSourceFetched():   plugin active+speech detected from id="+std::to_string(userID));
         
-        float bestSignalStrength = 0.0; // we want to get the connections signal strength.
+        float bestSignalStrength = -1.0; // we want to get the connections signal strength.
         fgcom_radio matchedLocalRadio;
         
         // Fetch the remote clients data
         auto search = fgcom_remote_clients.find(userID);
-        if (search == fgcom_remote_clients.end()) {
+        if (search != fgcom_remote_clients.end()) {
             // we found remote state.
             fgcom_client rmt = fgcom_remote_clients[userID];
             pluginDbg("mumble_onAudioSourceFetched():   sender callsign="+rmt.callsign);
@@ -582,25 +570,31 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // currently mumble has only one voice stream per client, so we assume it comes from the best matching radio.
             // Note: If we are PTTing ourself currently, the radio cannot receive at the moment (half-duplex mode!)
             for (int ri=0; ri<rmt.radios.size(); ri++) {
+                pluginDbg("mumble_onAudioSourceFetched():   check radioID="+std::to_string(ri));
                 if (rmt.radios[ri].ptt) {
+                    pluginDbg("mumble_onAudioSourceFetched():     PTT detected");
                     // The remote radio does transmit currently.
                     // See if we have an operable radio tuned to that frequency
                     fgcom_client lcl = fgcom_local_client;
                     bool frequencyIsListenedTo = false;
                     for (int lri=0; lri<lcl.radios.size(); lri++) {
+                        pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match");
                         if (lcl.radios[lri].frequency == rmt.radios[ri].frequency
                             && fgcom_radio_isOperable(lcl.radios[lri])
                             && !lcl.radios[lri].ptt) {
+                            pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
                             // we are listening on that frequency!
                             // determine signal strenght for this connection
                             float ss = fgcom_radiowave_getSignalStrength(
                                 lcl.lat, lcl.lon, lcl.alt,
                                 rmt.lat, rmt.lon, rmt.alt,
                                 rmt.radios[ri].pwr);
+                            pluginDbg("mumble_onAudioSourceFetched():       signalStrength="+std::to_string(ss));
                             if (ss > lcl.radios[lri].squelch && ss > bestSignalStrength) {
                                 // the signal is stronger than our squelch and tops the current last best signal
                                 bestSignalStrength = ss;
                                 matchedLocalRadio  = lcl.radios[lri];
+                                pluginDbg("mumble_onAudioSourceFetched():         taking it, its better than the previous one");
                             }
                         }
                     }
@@ -639,12 +633,19 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         } else {
             pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
             // cancel out the stream.
+            // float *outputPCM
             //std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
             memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(short) );
+            //memcpy ( &person_copy, &person, sizeof(person) );
+            pluginDbg("sample=");
+            for (long i=0; i<sizeof(outputPCM); i++) {
+                std::cout << std::to_string(outputPCM[i]);
+            }
         }
         
         
     } else {
+        // plugin not active OR no speech detected
         // do nothing, leave the stream alone
         rv = false;
     }
