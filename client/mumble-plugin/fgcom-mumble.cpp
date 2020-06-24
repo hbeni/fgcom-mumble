@@ -127,7 +127,7 @@ void fgcom_handlePTT() {
                 if (radio_ptt) {
                     //if (radio_serviceable && radio_switchedOn && radio_powered) {
                     if ( fgcom_radio_isOperable(fgcom_local_client.radios[i])) {
-                        pluginLog("  COM"+std::to_string(i+1)+" PTT active and radio is operable -> open mic");
+                        pluginDbg("  COM"+std::to_string(i+1)+" PTT active and radio is operable -> open mic");
                         radio_ptt_result = true;
                         break; // we only have one output stream, so further search makes no sense
                     } else {
@@ -632,15 +632,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             
         } else {
             pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
-            // cancel out the stream.
-            // float *outputPCM
-            //std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
-            memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(short) );
-            //memcpy ( &person_copy, &person, sizeof(person) );
-            pluginDbg("sample=");
-            for (long i=0; i<sizeof(outputPCM); i++) {
-                std::cout << std::to_string(outputPCM[i]);
-            }
+            memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(float) );
         }
         
         
