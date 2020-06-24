@@ -624,6 +624,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             
             // TODO: mix in white noise and respect local radio volume setting
             //       note: maybe we can copy the DSP filters from ACRE2 https://github.com/IDI-Systems/acre2/blob/master/extensions/src/ACRE2Core/FilterRadio.cpp
+            // NOTE: FGFS Core Bug pending: /instrumentation/com[n]/volume is not set at least with c172; see https://sourceforge.net/p/flightgear/codetickets/2282/
             // fgcom_audio_addWhiteNoise(outputPCM, bestSignalStrength);
             // fgcom_audio_adjustVolume(outputPCM,matchedLocalRadio.volume);
             // rv = true;
