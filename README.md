@@ -75,6 +75,7 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 - Recheck the tuned frequencies
 - Check that you really are in range (low altitude severely limits your available range!)
 - Make sure the radio is operable (powered, switched on, serviceable)
+- Try to leave and rejoin the channel
 - Look at the plugins debug messages (start mumble from terminal; probably make a debug build for that)
 
 

@@ -68,7 +68,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `COM`*n*`_PWR` | Float  | Transmitting power in watts.            | `10.0`     |
 | `LON`          | Float  | Longitudinal position                   | *mandatory*|
 | `LAT`          | Float  | Latidunal position                      | *mandatory*|
-| `ALT`          | Int    | Altitude in ft above sea-level          | *mandatory*|
+| `ALT`          | Int    | Altitude in ft above ground-level          | *mandatory*|
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
 
 

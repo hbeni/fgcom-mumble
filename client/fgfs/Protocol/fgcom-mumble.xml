@@ -161,7 +161,7 @@
     <name>pos-alt</name>
     <type>float</type>
     <format>ALT=%05.0f</format>
-    <node>/position/altitude-ft</node>
+    <node>/position/altitude-agl-ft</node>
    </chunk>
 
   
