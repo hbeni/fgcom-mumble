@@ -125,6 +125,18 @@
    <!-- TODO: add more radios here. The plugin ignores not present radios automatically. -->
 
    
+   <!-- FGCom 3.0 compatibility: /instrumentation/com[n]/ptt is never set from any aircraft except
+        c182s. The old FGCom protocol seems outdated and transmit an old property.
+        To get compativility out-of-the-box, we transmit the FGCom PTT property here.
+        The UDP server takes care to parse this properly into the new format.
+        Note however, this overrides the individual COM-PTTs above. -->
+   <chunk>
+    <name>fgcom-ptt-compatibility</name>
+    <type>string</type>
+    <format>PTT=%s</format> <!-- 0=inactive, 1=COM1, 2=COM2 -->
+    <node>/controls/radios/comm-ptt</node>
+   </chunk>
+
    
    
    <!--  #####################  -->
