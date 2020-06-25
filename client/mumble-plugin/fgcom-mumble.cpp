@@ -1,7 +1,25 @@
-// Copyright 2019-2020 The Mumble Developers. All rights reserved.
-// Use of this source code is governed by a BSD-style license
-// that can be found in the LICENSE file at the root of the
-// Mumble source tree or at <https://www.mumble.info/LICENSE>.
+/* 
+ * This file is part of the FGCom-mumble distribution (https://github.com/hbeni/fgcom-mumble).
+ * Copyright (c) 2020 Benedikt Hallinger
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Mumble API:
+ * Copyright 2019-2020 The Mumble Developers. All rights reserved.
+ * Use of this source code is governed by a BSD-style license
+ * that can be found in the LICENSE file at the root of the
+ * Mumble source tree or at <https://www.mumble.info/LICENSE>.
+ */
 
 // Include the definitions of the plugin functions
 // Note that this will also include PluginComponents.h
