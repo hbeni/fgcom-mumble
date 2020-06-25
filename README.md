@@ -29,10 +29,10 @@ Server
     - lua lib build process: `$ make all`
     - deploy the lib: `$ cp mumble.so /usr/lib/x86_64-linux-gnu/lua/5.1/`
 
-### Compiling
-Information for compiling the lua mumble.so is given at bkacjios github page. You need it deployed in your systems lua libs folder for running the lua bots.  
-The lua bots shouldn't be needed to be compiled, just run them trough the lua interpreter.  
-Compiling the mumble server is usually not neccessary, just use your distibutions version; this holds true also for the client.
+### Compiling server parts
+- Information for compiling the lua mumble.so is given at bkacjios github page. You need it deployed in your systems lua libs folder for running the lua bots.  
+- The lua bots shouldn't be needed to be compiled, just run them trough the lua interpreter.  
+- Compiling the mumble server is usually not neccessary, just use your distibutions version; this holds true also for the client.
 
 ### Running a server
 - Have mumble server up and running
@@ -49,16 +49,28 @@ Client
   - have the FGCom-mumble plugin loaded
 - deploy the `fgcom-mumble.xml` to flightgears protocol directory
 
-## Compiling
+## Compiling the plugin
 The FGCom-mumble client plugin needs to be in binary form.  
 
 - Prerequisites: `make`, `g++`, `mingw32` (for windows build)
 - Go to the folder `client/mumble-plugin/`
-- compile:
-  - `make plugin` will build the plugin for linux
+- on linux type `make`
+- or `make all-win64` for cross-compile to windows
+
+Other interesting compile targets:
+
+  - `make` is an alias for `make all`
+  - `make all` builds for linux: the libs, the plugins and the test tools in test directory
+  - `make all-debug` will build that too but add
+ debug code that will print lots of stuff to the terminal window when running the plugin
+  - `make plugin` will build just the the plugin for linux
   - `make plugin-win64` will build it for windows
-  - `make all-debug` will build for linux but add debug code that will print lots of stuff to the terminal window
-- Copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
+
+
+## Installation
+- copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
+- copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
+
 
 ### Running the client
 - compatible to fgcom-standalone protocol, so vey much all halfway recent fgfs instances and aircraft should handle it out of the box
