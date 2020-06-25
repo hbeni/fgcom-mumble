@@ -44,9 +44,9 @@ clean-all: clean
 all-win: plugin-win64 test-win64 clean
 
 # build win64 test tools
-test-win64: libs
-	x86_64-w64-mingw32-g++ -o test/geotest.exe lib/radio_model.o test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+test-win64:
+	x86_64-w64-mingw32-g++ -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
 # build win64 plugin-dll
 plugin-win64: libs
-	x86_64-w64-mingw32-g++ -o fgcom-mumble.dll lib/radio_model.o fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ $(CFLAGS)
+	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/plugin_io.cpp lib/radio_model.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -lws2_32 $(CFLAGS)

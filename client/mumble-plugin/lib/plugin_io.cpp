@@ -15,9 +15,18 @@
 #include <sstream> 
 #include <regex>
 #include <sys/types.h> 
-#include <sys/socket.h> 
-#include <arpa/inet.h> 
-#include <netinet/in.h>
+
+#ifdef MINGW_WIN64
+    #include <winsock2.h>
+    //#include <windows.h>
+    //#include <ws2tcpip.h>
+    typedef int socklen_t;
+#else
+    #include <sys/socket.h> 
+    #include <arpa/inet.h> 
+    #include <netinet/in.h>
+#endif
+
 #include <thread>
 #include <mutex>
 #include <vector>
@@ -585,8 +594,6 @@ void fgcom_shutdownUDPServer() {
     //  Trigger shutdown: this just sends some magic UDP message.
     pluginDbg("sending UDP shutdown request to port "+std::to_string(fgcom_udp_port_used));
     std::string message = "SHUTDOWN";
-    
-    const char* server_name = "localhost";
 
 	struct sockaddr_in server_address;
 	memset(&server_address, 0, sizeof(server_address));
@@ -595,7 +602,11 @@ void fgcom_shutdownUDPServer() {
 	// creates binary representation of server name
 	// and stores it as sin_addr
 	// http://beej.us/guide/bgnet/output/html/multipage/inet_ntopman.html
-	inet_pton(AF_INET, server_name, &server_address.sin_addr);
+#ifdef MINGW_WIN64
+    server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+#else
+	inet_pton(AF_INET, "localhost", &server_address.sin_addr);
+#endif
 
 	// htons: port in network order format
 	server_address.sin_port = htons(fgcom_udp_port_used);
