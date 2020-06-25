@@ -50,3 +50,24 @@ test-win64:
 # build win64 plugin-dll
 plugin-win64: libs
 	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/plugin_io.cpp lib/radio_model.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -lws2_32 $(CFLAGS)
+
+
+
+# Build a release tarball
+release: clean-all plugin plugin-win64
+	rm -f fgcom-mumble-linux*.tar.gz
+	rm -f fgcom-mumble-windows*.zip
+	mkdir fgcom-mumble-linux
+	mkdir fgcom-mumble-linux/plugin
+	cp ../../README.md ../../LICENSE ../../plugin.spec.md fgcom-mumble-linux
+	cp fgcom-mumble.so fgcom-mumble-linux/plugin
+	cp -r ../fgfs/ fgcom-mumble-linux
+	tar -czf fgcom-mumble-linux.tar.gz fgcom-mumble-linux/
+	rm -rf fgcom-mumble-linux
+	mkdir fgcom-mumble-windows
+	mkdir fgcom-mumble-windows/plugin
+	cp ../../README.md ../../LICENSE ../../plugin.spec.md fgcom-mumble-windows
+	cp fgcom-mumble.dll fgcom-mumble-windows/plugin
+	cp -r ../fgfs/ fgcom-mumble-windows
+	zip -r fgcom-mumble-windows.zip fgcom-mumble-windows
+	rm -rf fgcom-mumble-windows

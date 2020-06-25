@@ -1,3 +1,26 @@
+/* 
+ * This file is part of the FGCom-mumble distribution (https://github.com/hbeni/fgcom-mumble).
+ * Copyright (c) 2020 Benedikt Hallinger
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+// This is a test tool for the radio lib.
+// It receives two positions and prints out useful information on it.
+// you can get distance, radio horizon range, if they can see each other
+// and other useful stuff.
+
 #include <stdio.h>
 #include <cstring>
 #include <string>     // std::string, std::stof
