@@ -664,7 +664,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
             // TODO: mix in white noise and respect local radio volume setting
             //       note: maybe we can copy the DSP filters from ACRE2 https://github.com/IDI-Systems/acre2/blob/master/extensions/src/ACRE2Core/FilterRadio.cpp
-            // fgcom_audio_addWhiteNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
+            fgcom_audio_addNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
             fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
             
         } else {

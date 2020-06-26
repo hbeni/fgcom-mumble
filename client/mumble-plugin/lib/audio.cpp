@@ -16,20 +16,50 @@
  */
  
 #include "audio.h"
-#include <iostream>  // cout
+#include "phil_burk_19990905_patest_pink.c"  // pink noise generator from  Phil Burk, http://www.softsynth.com
+
  
 /*
  * This file contains audio processing stuff.
- * We use the DSPFilter library for filtering/adjusting the audio samples.
- * The code is heavily inspired from the GPL'ed IDI-Systems Arma3 ACRE TS
- * plugin to be found at https://github.com/IDI-Systems/acre2
- * Thank you NouberNou and friends, i have no clue on audio processing and
- * and this would not have been possible without your code!
  */
+
+
+/**
+ * Following functions are called from plugin code
+ */
+void fgcom_audio_addNoise(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
+
+    // Calculate volume levels:
+    // We want the noise to get louder at bad signal quality and the signal to get weaker.
+    float signalVolume;
+    float noiseVolume;
+    if (signalQuality >= 0.85) {
+        noiseVolume  = 0.15; // let noise be constant from here on
+        signalVolume = 1.0;
+    } else {
+        noiseVolume  = 1 - signalQuality;
+        signalVolume = -1* pow(1 - signalQuality -0.15, 2) + 1;
+    }
+    
+    // Now tune down the signal according to calculated volume level
+    fgcom_audio_applyVolume(signalVolume, outputPCM, sampleCount, channelCount);
+    
+    // TODO: we may clip some random samples from the signal on low quality
+    
+    // Apply noise to the signal
+    PinkNoise fgcom_PinkSource;
+    InitializePinkNoise(&fgcom_PinkSource, 12);     // Init new PinkNoise source with num of rows
+    for (uint32_t s=0; s<channelCount*sampleCount; s++) {
+        float noise = GeneratePinkNoise( &fgcom_PinkSource );
+        noise = noise * noiseVolume;
+        outputPCM[s] = outputPCM[s] + noise;
+    }
+    
+}
+
 
 void fgcom_audio_applyVolume(float volume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
     // just loop over the array, applying the volume
-    std::cout << "DBG: adjusted volume by " << volume << std::endl;
     if (volume == 1.0) return; // no adjustment requested
     // TODO: Make sure we are not going off limits
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
