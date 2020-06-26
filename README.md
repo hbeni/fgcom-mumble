@@ -16,6 +16,54 @@ This project aims to provide a modular, mumble based radio simulation for flight
 Install / Setup
 ===============
 
+Client
+----------------
+###  Setup requirements
+- have a standard mumble client with recent plugin support (>= v1.4.0)
+  - have the FGCom-mumble plugin loaded
+- deploy the `fgcom-mumble.xml` to flightgears protocol directory
+
+## Installation
+- copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
+- copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
+
+### Running the client
+- compatible to fgcom-standalone protocol, so vey much all halfway recent fgfs instances and aircraft should handle it out of the box
+- connect your mumble client to fgfs mumble server
+- enable your plugin in your standard mumble client
+- join the `fgcom-mumble` channel
+- start flightgear with enabled fgcom-mumble protocol ("`--generic=socket,out,2,127.0.0.1,16661,udp,fgcom-mumble`")
+- start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
+
+
+## Compiling the plugin
+The FGCom-mumble client plugin needs to be in binary form.  
+
+- Prerequisites: `make`, `g++`, `mingw32` (for windows build)
+- Go to the folder `client/mumble-plugin/`
+- on linux type `make`
+- or `make all-win64` for cross-compile to windows
+
+Other interesting compile targets:
+
+  - `make` is an alias for `make all`
+  - `make all` builds for linux: the libs, the plugins and the test tools in test directory
+  - `make all-debug` will build that too but add
+ debug code that will print lots of stuff to the terminal window when running the plugin
+  - `make plugin` will build just the the plugin for linux
+  - `make plugin-win64` will build it for windows
+
+### Debugging issues
+When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
+
+- Make sure, your mumble is operational otherwise (so you can talk with others)
+- Check that you are not transmitting when you expect incoming messages (Radios are halfduplex -> look at your mumble symbol)
+- Recheck the tuned frequencies
+- Check that you really are in range (low altitude severely limits your available range!)
+- Make sure the radio is operable (powered, switched on, serviceable)
+- Try to leave and rejoin the channel
+- Look at the plugins debug messages (start mumble from terminal; probably make a debug build for that)
+
 Server
 -------------------
 
@@ -41,55 +89,6 @@ Server
 - Start the `atis-bot-manager` which handles all needed bots.
 - Manually start additional `radio-playback`-bots to play arbitary samples on frequencies (like radio stations).
 
-
-Client
-----------------
-###  Setup requirements
-- have a standard mumble client with recent plugin support (>= v1.4.0)
-  - have the FGCom-mumble plugin loaded
-- deploy the `fgcom-mumble.xml` to flightgears protocol directory
-
-## Compiling the plugin
-The FGCom-mumble client plugin needs to be in binary form.  
-
-- Prerequisites: `make`, `g++`, `mingw32` (for windows build)
-- Go to the folder `client/mumble-plugin/`
-- on linux type `make`
-- or `make all-win64` for cross-compile to windows
-
-Other interesting compile targets:
-
-  - `make` is an alias for `make all`
-  - `make all` builds for linux: the libs, the plugins and the test tools in test directory
-  - `make all-debug` will build that too but add
- debug code that will print lots of stuff to the terminal window when running the plugin
-  - `make plugin` will build just the the plugin for linux
-  - `make plugin-win64` will build it for windows
-
-
-## Installation
-- copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
-- copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
-
-
-### Running the client
-- compatible to fgcom-standalone protocol, so vey much all halfway recent fgfs instances and aircraft should handle it out of the box
-- connect your mumble client to fgfs mumble server
-- enable your plugin in your standard mumble client
-- join the `fgcom-mumble` channel
-- start flightgear with enabled fgcom-mumble protocol ("`--generic=socket,out,2,127.0.0.1,16661,udp,fgcom-mumble`")
-- start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
-
-### Debugging issues
-When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
-
-- Make sure, your mumble is operational otherwise (so you can talk with others)
-- Check that you are not transmitting when you expect incoming messages (Radios are halfduplex -> look at your mumble symbol)
-- Recheck the tuned frequencies
-- Check that you really are in range (low altitude severely limits your available range!)
-- Make sure the radio is operable (powered, switched on, serviceable)
-- Try to leave and rejoin the channel
-- Look at the plugins debug messages (start mumble from terminal; probably make a debug build for that)
 
 
 Architecture description
