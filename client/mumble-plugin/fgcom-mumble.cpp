@@ -29,6 +29,7 @@
 #include "fgcom-mumble.h"
 #include "plugin_io.h"
 #include "radio_model.h"
+#include "audio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -566,6 +567,26 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 
 bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech, mumble_userid_t userID) {
 	//std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
+    // the PCM format is an float array. The cells are inidvidual apmplitudes.
+    // With two channels, the first float at outputPCM[0] the left channel, outputPCM[1] right, [2] left etc.
+    //  channelCount The amount of channels in the audio
+    //  sampleCount The amount of sample points per channel
+    // for two channels at 3 samples we get the following array:
+    //   [0]    left channel, first sample
+    //   [1]    right channel, first sample
+    //   [2]    left channel, second sample
+    //   [3]    right channel, second sample
+    //   [4]    left channel, third sample
+    //   [5]    right channel, third sample
+    //
+    // loop over every channels samples
+    /*for (uint32_t c=0; c<channelCount; c++) {
+        for (uint32_t s=c; s<channelCount*sampleCount; s+=channelCount) {
+            std::cout << "["<< c << "]s="<< s <<" ";
+            if (c==1) outputPCM[s] = 0; // mute left channel
+        }
+    }*/
+  
     
     // See if the plugin is activated and if the audio source is speech.
     // We let the audio trough in case plugin is not active.
@@ -640,14 +661,11 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // we got a connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
             
+            fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
             // TODO: mix in white noise and respect local radio volume setting
             //       note: maybe we can copy the DSP filters from ACRE2 https://github.com/IDI-Systems/acre2/blob/master/extensions/src/ACRE2Core/FilterRadio.cpp
-            // fgcom_audio_addWhiteNoise(outputPCM, bestSignalStrength);
-            // fgcom_audio_adjustVolume(outputPCM,matchedLocalRadio.volume);
-            // rv = true;
-            
-            // Let the stream trough untouched, as long as we did not mixed in white noise and volume
-            rv = false;
+            // fgcom_audio_addWhiteNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
+            fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
             
         } else {
             pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
