@@ -419,8 +419,13 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     radio_id--; // convert to array index
                     
                     if (radio_var == "FRQ") {
+                        // frequency must be normalized, it may contain leading/trailing zeroes and spaces.
+                        std::regex frq_cleaner_re ("^[0\\s]+|(\\..+?)[0\\s]+$");
+                        std::string token_value_clean;
+                        std::regex_replace (std::back_inserter(token_value_clean), token_value.begin(), token_value.end(), frq_cleaner_re, "$1");
+                        
                         std::string oldValue = fgcom_local_client.radios[radio_id].frequency;
-                        fgcom_local_client.radios[radio_id].frequency   = token_value;
+                        fgcom_local_client.radios[radio_id].frequency   = token_value_clean;
                         if (fgcom_local_client.radios[radio_id].frequency != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
                     if (radio_var == "VLT") {
