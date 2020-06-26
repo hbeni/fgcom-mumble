@@ -494,6 +494,7 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
         if (newChannelID == fgcom_specialChannelID) {
             pluginDbg("joined special channel, activating plugin functions");
             fgcom_setPluginActive(true);
+            notifyRemotes(0); // send our state to all users
         }
     } else {
         if (fgcom_isPluginActive()) {
@@ -609,16 +610,24 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // lets search the used radio(s) and determine best signal strength.
             // currently mumble has only one voice stream per client, so we assume it comes from the best matching radio.
             // Note: If we are PTTing ourself currently, the radio cannot receive at the moment (half-duplex mode!)
+            pluginDbg("mumble_onAudioSourceFetched():   sender registered rmt-radios: "+std::to_string(rmt.radios.size()));
             for (int ri=0; ri<rmt.radios.size(); ri++) {
-                pluginDbg("mumble_onAudioSourceFetched():   check radioID="+std::to_string(ri));
+                pluginDbg("mumble_onAudioSourceFetched():   check remote radio #"+std::to_string(ri));
+                pluginDbg("mumble_onAudioSourceFetched():    frequency='"+rmt.radios[ri].frequency+"'");
+                pluginDbg("mumble_onAudioSourceFetched():    ptt='"+std::to_string(rmt.radios[ri].ptt)+"'");
+                pluginDbg("mumble_onAudioSourceFetched():    txpwr='"+std::to_string(rmt.radios[ri].pwr)+"'");
                 if (rmt.radios[ri].ptt) {
                     pluginDbg("mumble_onAudioSourceFetched():     PTT detected");
                     // The remote radio does transmit currently.
                     // See if we have an operable radio tuned to that frequency
                     fgcom_client lcl = fgcom_local_client;
                     bool frequencyIsListenedTo = false;
+                    pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match");
                     for (int lri=0; lri<lcl.radios.size(); lri++) {
-                        pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match");
+                        pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
+                        pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
+                        pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(fgcom_radio_isOperable(lcl.radios[lri]))+"'");
+                        pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
                         if (lcl.radios[lri].frequency == rmt.radios[ri].frequency
                             && fgcom_radio_isOperable(lcl.radios[lri])
                             && !lcl.radios[lri].ptt) {
@@ -635,11 +644,16 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 bestSignalStrength = ss;
                                 matchedLocalRadio  = lcl.radios[lri];
                                 pluginDbg("mumble_onAudioSourceFetched():         taking it, its better than the previous one");
+                            } else {
+                                pluginDbg("mumble_onAudioSourceFetched():         not taking it. squelch="+std::to_string(lcl.radios[lri].squelch)+", previousBestSignal="+std::to_string(bestSignalStrength));
                             }
+                        } else {
+                            pluginDbg("mumble_onAudioSourceFetched():     nomatch");
                         }
                     }
                 } else {
                     // the inspected remote radio did not PTT
+                    pluginDbg("mumble_onAudioSourceFetched():     remote PTT OFF");
                 }
             }
             
@@ -660,10 +674,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         if (bestSignalStrength > 0.0) { 
             // we got a connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
-            
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
-            // TODO: mix in white noise and respect local radio volume setting
-            //       note: maybe we can copy the DSP filters from ACRE2 https://github.com/IDI-Systems/acre2/blob/master/extensions/src/ACRE2Core/FilterRadio.cpp
             fgcom_audio_addNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
             fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
             

@@ -28,8 +28,8 @@ void debug_out_internal_state() {
         printf("[mumid=%i] %s: %i radios registered\n", fgcom_local_client.mumid, fgcom_local_client.callsign.c_str(), fgcom_local_client.radios.size());
         if (fgcom_local_client.radios.size() > 0) {
             for (int i=0; i<fgcom_local_client.radios.size(); i++) {
-                printf("  Radio %i:   frequency=%s\n", i, fgcom_local_client.radios[i].frequency.c_str());
-                printf("  Radio %i:   power_btn=%i\n", i, fgcom_local_client.radios[i].power_btn);
+                printf("  Radio %i:   frequency='%s'\n", i, fgcom_local_client.radios[i].frequency.c_str());
+                printf("  Radio %i:   power_btn=%i'\n", i, fgcom_local_client.radios[i].power_btn);
                 printf("  Radio %i:       volts=%f\n", i, fgcom_local_client.radios[i].volts);
                 printf("  Radio %i: serviceable=%i\n", i, fgcom_local_client.radios[i].serviceable);
                 printf("  Radio %i:         ptt=%i\n", i, fgcom_local_client.radios[i].ptt);
@@ -44,7 +44,7 @@ void debug_out_internal_state() {
             printf("[id=%i; mumid=%i] %s: %i radios registered\n", p.first, p.second.mumid, p.second.callsign.c_str(), p.second.radios.size());
             if (p.second.radios.size() > 0) {
                 for (int i=0; i<p.second.radios.size(); i++) {
-                    printf("  Radio %i:   frequency=%s\n", i, p.second.radios[i].frequency.c_str());
+                    printf("  Radio %i:   frequency='%s'\n", i, p.second.radios[i].frequency.c_str());
                     printf("  Radio %i:   power_btn=%i\n", i, p.second.radios[i].power_btn);
                     printf("  Radio %i:       volts=%f\n", i, p.second.radios[i].volts);
                     printf("  Radio %i: serviceable=%i\n", i, p.second.radios[i].serviceable);

@@ -177,8 +177,9 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
         } else {
             pluginDbg("There are "+std::to_string(userCount)+" users on this channel.");
             if (userCount > 1) {
-                if (tgtUser > -1) {
-                    //a specific user was requested
+                if (tgtUser > 0) {
+                    // a specific user was requested
+                    // (note: 0 is usually the id of the superuser, ordinary users star with 1)
                     pluginDbg("  sending message to targeted user: "+std::to_string(tgtUser));
                     int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
                     if (send_res != STATUS_OK) {
@@ -498,9 +499,15 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     for (int i = 0; i<fgcom_local_client.radios.size(); i++) {
                         pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
                         if (i == ptt_id - 1) {
-                            fgcom_local_client.radios[i].ptt = 1;
+                            if (fgcom_local_client.radios[i].ptt != 1){
+                                radioDataHasChanged->insert(i);
+                                fgcom_local_client.radios[i].ptt = 1;
+                            }
                         } else {
-                            fgcom_local_client.radios[i].ptt = 0;
+                            if (fgcom_local_client.radios[i].ptt == 1){
+                                radioDataHasChanged->insert(i);
+                                fgcom_local_client.radios[i].ptt = 0;
+                            }
                         }
                     }
                     fgcom_handlePTT();
