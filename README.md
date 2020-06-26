@@ -58,9 +58,9 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 
 - Make sure, your mumble is operational otherwise (so you can talk with others)
 - Check that you are not transmitting when you expect incoming messages (Radios are halfduplex -> look at your mumble symbol)
-- Recheck the tuned frequencies
-- Check that you really are in range (low altitude severely limits your available range!)
+- Recheck the tuned frequencies and volume of radio and, if present, audio panel
 - Make sure the radio is operable (powered, switched on, serviceable)
+- Check that you really are in range (low altitude severely limits your available range!)
 - Try to leave and rejoin the channel
 - Look at the plugins debug messages (start mumble from terminal; probably make a debug build for that)
 
@@ -125,7 +125,10 @@ Details are too explained in the `plugin-spec.md` file.
 
 
 ### Flightgear integration
-To send data to the plugin, flightgear must be startet with property-tree synchronization trough a generic protocol.
+To send data to the plugin, flightgear must be startet with property-tree synchronization trough a generic protocol.  
+We strongly advise to use the new protocol format.
+The new protocol xml-file is supplied in the source tree and documented.
+
 Currently, we aim for compatibility to the FGCom protocol (Port 16661; https://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Protocol/fgcom.xml) as it provides all the data we need. The sole exceptions are:
 
  - `output-volume`: is currently tied to /sim/sound/atc/volume and thus not bound to the COM in question
@@ -133,8 +136,6 @@ Currently, we aim for compatibility to the FGCom protocol (Port 16661; https://s
  - `silence-threshold`: same, is not depending on the radio in question (but is not needed in fgcom-mumble anymore because of mumble taking care of that itself)
 
 The plugin will handle the old FGCom protocol fields. If you want newer features (for example broadcasting on several radios in parallel) you need to use the new protocol fields.
-
-The new protocol xml-file is supplied in the source tree and documented.
 
 
 ATC support
