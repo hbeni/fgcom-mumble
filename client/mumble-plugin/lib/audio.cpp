@@ -31,15 +31,13 @@ void fgcom_audio_addNoise(float signalQuality, float *outputPCM, uint32_t sample
 
     // Calculate volume levels:
     // We want the noise to get louder at bad signal quality and the signal to get weaker.
+    // basicly the signal quality already tells us how the ratio is between signal and noise.
     float signalVolume;
     float noiseVolume;
-    if (signalQuality >= 0.85) {
-        noiseVolume  = 0.15; // let noise be constant from here on
-        signalVolume = 1.0;
-    } else {
-        noiseVolume  = 1 - signalQuality;
-        signalVolume = -1* pow(1 - signalQuality -0.15, 2) + 1;
-    }
+    float minimumNoiseVolume = 0.15;
+    signalVolume = signalQuality;
+    noiseVolume  = 1-signalQuality;
+    if (noiseVolume < minimumNoiseVolume)  noiseVolume = minimumNoiseVolume;
     
     // Now tune down the signal according to calculated volume level
     fgcom_audio_applyVolume(signalVolume, outputPCM, sampleCount, channelCount);
