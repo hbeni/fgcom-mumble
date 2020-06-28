@@ -382,6 +382,10 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
     pluginDbg("[UDP] received message: "+std::string(buffer));
     //std::cout << "DBG: Stored local userID=" << fgcom_local_client.mumid <<std::endl;
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    
+    // markers for ALT/HGT resolution
+    float hgt_value = -1;
+    float alt_value = -1;
 
     // convert to stringstream so we can easily tokenize
     // TODO: why not simply refactor to strtok()?
@@ -475,19 +479,9 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     fgcom_local_client.lat = std::stof(token_value);
                     if (fgcom_local_client.lat != oldValue ) *userDataHashanged = true;
                 }
-                if (token_key == "ALT") {
-                    /* TODO: The old FGcom protocol transmit above sea level. As long as we are not
-                    using ground terrain information to get the height above surface, we have a too high
-                    range for the radios... (we treat ASL as AGL!)
-                    The geoid however is some meanASL, so the difference between sea level and ground
-                    level is falsely added to our height, resulting in a much further radio horizon.
-                    This should be only an issue with VFR and low flight levels, however, as the
-                    decreases with fly altitude. The only good option is to incorporate a terrain model
-                    to be able to calculate the true AGL.  */
-                    int oldValue = fgcom_local_client.alt;
-                    // ALT comes in ft ASL. We need meters however
-                    fgcom_local_client.alt = std::stof(token_value) / 3.2808;
-                    if (fgcom_local_client.alt != oldValue ) *userDataHashanged = true;
+                if (token_key == "HGT") {
+                    // HGT comes in ft ASL. We need meters however
+                    hgt_value = std::stof(token_value) / 3.2808;
                 }
                 if (token_key == "CALLSIGN") {
                     std::string oldValue = fgcom_local_client.callsign;
@@ -497,6 +491,10 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 
                 
                 // FGCom 3.0 compatibility
+                if (token_key == "ALT") {
+                    // ALT comes in ft ASL. We need meters however
+                    alt_value = std::stof(token_value) / 3.2808;
+                }
                 if (token_key == "PTT") {
                     // PTT contains the ID of the used radio (0=none, 1=COM1, 2=COM2)
                     int ptt_id = std::stoi(token_value);
@@ -536,7 +534,35 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
         }
         
     }  //endwhile
+    
+    
+    /*
+     * Inspect HGT/ALT state
+     * 
+     * NOTE: The old FGcom protocol transmit above sea level. As long as we are not
+     * using ground terrain information to get the height above surface, we have a too high
+     * range for the radios...
+     * The geoid however is some meanASL, so the difference between sea level and ground
+     * level is falsely added to our height, resulting in a much further radio horizon.
+     * This should be only an issue with VFR and low flight levels, however, as the
+     * decreases with fly altitude. The only good option is to incorporate a terrain model
+     * to be able to calculate the true AGL from the ASL value.
+     */
+    float oldValue = fgcom_local_client.alt;
+    if (hgt_value > -1) {
+        // prefer new hgt field if both given
+        fgcom_local_client.alt = hgt_value;
+    } else if (alt_value > -1) {
+        // if hgt was not there, use alt if given
+        fgcom_local_client.alt = alt_value;
+    }
+    if (fgcom_local_client.alt != oldValue ) *userDataHashanged = true;
+    
+    
+    
+    // All done
     fgcom_localcfg_mtx.unlock();
+    pluginDbg("[UDP] packet fully processed");
 }
 
 

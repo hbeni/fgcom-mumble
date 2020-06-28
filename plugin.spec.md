@@ -67,8 +67,8 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `COM`*n*`_VOL` | Float  | Volume: 0.0=mute, 1.0=full              | `1.0`      |
 | `COM`*n*`_PWR` | Float  | Transmitting power in watts.            | `10.0`     |
 | `LON`          | Float  | Longitudinal position                   | *mandatory*|
-| `LAT`          | Float  | Latidunal position                      | *mandatory*|
-| `ALT`          | Int    | Altitude in ft above ground-level          | *mandatory*|
+| `LAT`          | Float  | Latitudinal position                      | *mandatory*|
+| `HGT`          | Int    | Altitude in ft above ground-level          | *mandatory* (if `ALT` not given)|
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
 
 
@@ -76,6 +76,7 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 
 | Field | Format | Description                                                                                        |
 |-------|--------|---------------------------------------------------------------------------------------------------|
+| `ALT`          | Int    | Altitude in ft above sea-level. If both `HGT` and `ALT` is present in the UDP packet, `HGT` takes precedence. If only `ALT` is given, the radio horizon is artificially bigger than it should be, as we have no terrain model right now. |
 | `PTT` | Int    | Currently active PTT radio (0=none, 1=COM1, 2=COM2). Gets converted to new `COM`*n*`_PTT` updates.|
 | `OUTPUT_VOL` | Float | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
 
