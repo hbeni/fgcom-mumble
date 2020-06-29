@@ -147,7 +147,8 @@ In either case, it is important to set a valid position and altitude. Altitude i
 
 ### Land lines
 You can establish virtual land lines by adding a new "virtual radio" with a special custom frequency starting with `PHONE` like "PHONE-EDDM-TWR". Such connections are not subject to radio signal quality or range and allow for full-duplex operation.  
-Volume settings and operational state of the simulated phone is applied, however.
+Volume settings and operational state of the simulated phone is applied, however.  
+A good practice may be the syntax `PHONE:[ICAO]:[POS](:[LINE]), like `PHONE:EDDM:TWR:1` or `PHONE:EDMO:GND`.
 
 
 NOT-IMPLEMENTED-YET: ATIS / Radio station support

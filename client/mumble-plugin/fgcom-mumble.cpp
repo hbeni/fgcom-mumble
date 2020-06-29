@@ -688,6 +688,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // we got a landline connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected (phone)");
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
+            fgcom_audio_filter(outputPCM, sampleCount, channelCount);
             fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
             
         } else if (bestSignalStrength > 0.0) { 
