@@ -40,5 +40,9 @@ void fgcom_audio_applyVolume(float volume, float *outputPCM, uint32_t sampleCoun
 void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
 
+/*
+ * Apply audio filter
+ */
+void fgcom_audio_filter(float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
 #endif

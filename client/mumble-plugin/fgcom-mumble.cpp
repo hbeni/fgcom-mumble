@@ -675,6 +675,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // we got a connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
+            fgcom_audio_filter(outputPCM, sampleCount, channelCount);
             fgcom_audio_addNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
             fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
             
