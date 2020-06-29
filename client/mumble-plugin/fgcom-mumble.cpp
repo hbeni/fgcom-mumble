@@ -639,6 +639,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                             matchedLocalRadio = lcl.radios[lri];
                             bestSignalStrength = 1.0;
                             isLandline = true;
+                            break; // no point in searching more
                         
                         // normal radio operation
                         } else if (lcl.radios[lri].frequency == rmt.radios[ri].frequency
@@ -663,6 +664,8 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                         } else {
                             pluginDbg("mumble_onAudioSourceFetched():     nomatch");
                         }
+                        
+                        if (bestSignalStrength == 1.0) break; // no point in searching more
                     }
                 } else {
                     // the inspected remote radio did not PTT
