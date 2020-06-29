@@ -146,7 +146,8 @@ ATC clients can connect using the old FGCom UDP protocol or using the newer one.
 In either case, it is important to set a valid position and altitude. Altitude is the main range limiting factor in VHF radio ooperations, for example 1m heigth gives about 3.6km range until your transmission hits the earths surface. it is advised that you set the altitude to the antenna tip height above surface (so 8m building+2m Antenna gives 10m=32.8ft: `ALT=32.8`.
 
 ### Land lines
-You can establish virtual land lines by adding a new "virtual radio" with a custom frequency like "LANDLINE-TWR". Radio limits still apply but should not be a problem, given the short distances involved.
+You can establish virtual land lines by adding a new "virtual radio" with a special custom frequency starting with `PHONE` like "PHONE-EDDM-TWR". Such connections are not subject to radio signal quality or range and allow for full-duplex operation.  
+Volume settings and operational state of the simulated phone is applied, however.
 
 
 NOT-IMPLEMENTED-YET: ATIS / Radio station support

@@ -599,6 +599,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         
         float bestSignalStrength = -1.0; // we want to get the connections signal strength.
         fgcom_radio matchedLocalRadio;
+        bool isLandline = false;
         
         // Fetch the remote clients data
         auto search = fgcom_remote_clients.find(userID);
@@ -628,7 +629,19 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                         pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
                         pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(fgcom_radio_isOperable(lcl.radios[lri]))+"'");
                         pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
-                        if (lcl.radios[lri].frequency == rmt.radios[ri].frequency
+                        
+                        // detect landline/intercom
+                        if (lcl.radios[lri].frequency.substr(0, 5) == "PHONE"
+                            && lcl.radios[lri].frequency == rmt.radios[ri].frequency 
+                            && fgcom_radio_isOperable(lcl.radios[lri])) {
+                            pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  PHONE mode detected");
+                            // Best quality, full-duplex mode
+                            matchedLocalRadio = lcl.radios[lri];
+                            bestSignalStrength = 1.0;
+                            isLandline = true;
+                        
+                        // normal radio operation
+                        } else if (lcl.radios[lri].frequency == rmt.radios[ri].frequency
                             && fgcom_radio_isOperable(lcl.radios[lri])
                             && !lcl.radios[lri].ptt) {
                             pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
@@ -671,7 +684,13 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         //   - the client was out of range
         //   - we did not tune the frequency (or radio was broken, or radio squelch cut off)
         rv = true; // we adjust the stream in any case
-        if (bestSignalStrength > 0.0) { 
+        if (isLandline) {
+            // we got a landline connection!
+            pluginDbg("mumble_onAudioSourceFetched():   connected (phone)");
+            fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
+            fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
+            
+        } else if (bestSignalStrength > 0.0) { 
             // we got a connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
