@@ -131,7 +131,7 @@ void fgcom_audio_filter(float *outputPCM, uint32_t sampleCount, uint16_t channel
     Dsp::Filter* f_highpass = new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (1024);
     Dsp::Params f_highpass_p;
     f_highpass_p[0] = sampleRateHz; // sample rate
-    f_highpass_p[1] = 750; // cutoff frequency
+    f_highpass_p[1] = 1000; // cutoff frequency
     f_highpass_p[2] = 0.97; // Q
     f_highpass->setParams (f_highpass_p);
     f_highpass->process (sampleCount, audioData);
