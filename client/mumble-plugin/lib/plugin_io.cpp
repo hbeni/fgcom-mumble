@@ -136,7 +136,7 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
             if (selector == -1) {
                 pluginDbg("notifyRemotes():    all radios selected");
                 for (int ri=0; ri < fgcom_local_client.radios.size(); ri++) {  
-                    notifyRemotes(1,ri,tgtUser);
+                    notifyRemotes(2,ri,tgtUser);
                 }
             } else {
                 pluginDbg("notifyRemotes():    send state of COM"+std::to_string(selector+1) );
