@@ -7,9 +7,9 @@ This project aims to provide a modular, mumble based radio simulation for flight
 - Provide a realistic radio simulation
 - Arbitary frequency support
 - Ease of use for the end user / pilot
-- Capability to be integrated to flightgear, with the option to support third party applications (ATC, but also other flightsims)
-- Standalone nature (no dependency on flightgear)
 - Ease of server side installation and operation
+- Standalone nature (no dependency on flightgear)
+- Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
 - Modularity, so individual component implementations can be switched and its easy to add features
 
 
@@ -52,17 +52,20 @@ Other interesting compile targets:
  debug code that will print lots of stuff to the terminal window when running the plugin
   - `make plugin` will build just the the plugin for linux
   - `make plugin-win64` will build it for windows
+  - `make release` builds a tar.gz and a zip containing linux/windows binaries
 
 ### Debugging issues
 When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
 
 - Make sure, your mumble is operational otherwise (so you can talk with others)
+- Try to check against the FGCOM-Echo bot (tune 911.00)
 - Check that you are not transmitting when you expect incoming messages (Radios are halfduplex -> look at your mumble symbol)
 - Recheck the tuned frequencies and volume of radio and, if present, audio panel
 - Make sure the radio is operable (powered, switched on, serviceable)
 - Check that you really are in range (low altitude severely limits your available range!)
-- Try to leave and rejoin the channel
-- Look at the plugins debug messages (start mumble from terminal; probably make a debug build for that)
+- Try to leave and rejoin the channel, so the plugin reinitializes
+- Look at the plugins debug messages (start mumble from terminal; you need to make a debug build for that)
+
 
 Server
 -------------------
@@ -70,8 +73,12 @@ Server
 ###  Setup requirements
 - plain mumble server instance; >= v1.4.0. The *fgcom-mumble* plugin on each client handles the rest.
 - Create a new channel named `fgcom-mumble` for the airspace. The plugin only does it's things when on this channel.
-- to additionally run the bots:
-  - lua 5.1 for the bots (`apt-get install lua5.1`)
+
+Thats all to run a FGCom-mumble server.  
+More functionality like ATIS recordings come with serverside bots.
+
+- to additionally run the bots, you need a lua interpreter with the lua-mumble library loaded.
+  - lua 5.1 for the bots (`apt-get install lua5.1 lua-bitop`)
   - mumble.so in lua include path (/usr/lib/x86_64-linux-gnu/lua/5.1/; compiled from https://github.com/bkacjios/lua-mumble)
     - build dependencys on debian: `apt-get install libluajit-5.1-dev protobuf-c-compiler libprotobuf-c-dev libssl-dev libopus-dev libev-dev`
     - lua lib build process: `$ make all`
@@ -86,8 +93,8 @@ Server
 - Have mumble server up and running
 - Provide the special channel `fgcom-mumble`
 - Clients will connect and enable their local fgcom plugin. This handles all human communication on frequencies
-- Start the `atis-bot-manager` which handles all needed bots.
-- Manually start additional `radio-playback`-bots to play arbitary samples on frequencies (like radio stations).
+- Start the `fgcom-bot-manager` which handles all needed bots: `lua fgcom-botmanager.bot.lua`
+- Manually start additional `fgcom-radio`-bots to play arbitary samples on frequencies (like radio stations).
 
 
 
@@ -156,7 +163,7 @@ NOT-IMPLEMENTED-YET: ATIS / Radio station support
 This is implemented modular trough a special set of mumble bots. The bots behave as ordinary mumble clients supplementing FGCom-mumble plugin information so the pilots client plugins will behave correctly. From the pilots view, they are just more ordinary clients.
 
 ### ATIS playback
-A special `radio-playback`-bot can connect to the mumble server. For that to work properly, he will be called with the needed information: frequency to send on and its location. This information will be broadcasted over the mumble plugin interface, so the other mumble pugins of the pilots can pick it up. From then on, the bot behaves as an ordinary radio client from the view of the plugins.
+A special `fgcom-radio`-bot can connect to the mumble server. For that to work properly, he will be called with the needed information: frequency to send on and its location. This information will be broadcasted over the mumble plugin interface, so the other mumble pugins of the pilots can pick it up. From then on, the bot behaves as an ordinary radio client from the view of the plugins.
 The bot will read a specified audio file and braodcast it on the selected frequency, until either he is killed or the audio file is deleted (then he kills himself).
 
 ### ATIS recording
@@ -172,36 +179,38 @@ Recording has to be done using a special frequency like `RECORD_<tgtFreq>`. The 
 The bot is expected to record on the same machine where the radio-playback bot will pick the recordings up, so there is no need for file synchronization. The network-stuff is already handled by the mumble infrastructure this way.
 
 ### Radio stations
-Just invoke a `radio-playback` bot with the radio station audio program file.
+Just invoke a `fgcom-radio` bot with the radio station audio program file.
 
 ### Radio bot manager
 This is a simple program that automates the spawning/killing of the atis related bots on the server side.  
   - She will spawn an `radio-recorder` bot which listens for new recording attempts.
-  - She monitors recorded ATIS samples and spawns/kills `radio-playback` bots appropriate to the recordings.
+  - She monitors recorded ATIS samples and spawns/kills `fgcom-radio` bots appropriate to the recordings.
 
 
-NOT-IMPLEMENTED-YET: Support for FGCom special frequencies
+Support for FGCom special frequencies
 -------------------------------------
 A common thing is that pilots may want to easily test if their setup works. This is implemented trough some special bots as well as the plugin itself. Also, FGCom-mumble has builtin special frequencies with alternative behaviour.
 
-- 910.000 MHz: echo test frequency. Your voice will be echoed back after a short delay, to allow you to check that your microphone, speakers/headset and that your connection to the FGCom server works and to let you know how you are heared from others.
-    This is implemented trough a special `echo-bot` in combination with special plugin handling: The echo bot always records and echoes back, but your local plugin does only playback when the message was from you.
-- Note there is no global-chat frequency. If you want to globally chat, switch mumble channels.
+### Test frequencies
+  - 910.000 MHz: echo test frequency. Your voice will be echoed back after a short delay, to allow you to check that your microphone, speakers/headset and that your connection to the FGCom server works and to let you know how you are heared from others.
+  - 911.000 MHz: "music on hold". The frequency continuously plays background music, allowing you to check that your connection to the FGCom server works.
+This is implemented trough a special `echo-bot` in combination with special plugin handling: The echo bot records transmission on the 910.00 frequency and echoes them back to the sender.
+- Note there is no global-chat frequency. If you want to globally chat, switch to normal mumble channels or use the landline feature (tune a `PHONE` frequency).
 
 
-The following traditional FGCom frequencies have been dropped; these are now implemented trough "default" comms (they were special before because of asterisk implementation details).
+### Obsolete special frequencies
+The following traditional FGCom frequencies are not special anymore; these are now implemented trough "default" comms (they were special before because of asterisk implementation details).
+
 - 121.000 MHz, 121.500 MHz: "guard" frequencies reserved for emergency communications;
 - 123.450 MHz, 123.500 MHz, 122.750 MHz: general chat frequencies;
 - 700.000 MHz: radio station frequency. Depending on the FGCom server in use, a recorded radio message will be played;
 - 723.340 MHz: French Air Patrol communication frequency;
-- 911.000 MHz: "music on hold". The frequency continuously plays background music, allowing you to check that your connection to the FGCom server works.
 
 
 
 
 IDEAS for the future
 ====================
-- [ ] Extend the state of plugins and bots so output power is taken into account. This will influence the radio wave propagation simulation, i.e. determine the range of the signal.
 - [ ] Make the plugin queryable, so it can share information about currently occurring broadcasts in range to external entities (like FGFS: we may tune our ADF to a radio station then :) )
 - [ ] Implement a realistic radio propagation model where terrain (and weather?) also influences the propagation.
 - [ ] Implement a generic radio station bot manager, that spawns/kills fake radio stations when fgfs-mpserver players are nearby
