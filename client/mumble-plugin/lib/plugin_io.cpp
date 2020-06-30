@@ -97,6 +97,7 @@ bool fgcom_isConnectedToServer() {
 }
 
 void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
+    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
     std::string dataID("");  // FGCOM<something>
     std::string message(""); // the message as sting data (yeah, i'm lazy but it parses so easily and is human readable and therefore easy to debug)
     
