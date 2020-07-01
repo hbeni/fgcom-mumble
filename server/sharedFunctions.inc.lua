@@ -16,18 +16,64 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. ]]
 
 --[[       Some shared functionality for the FGCom lua bots     ]]
 
+-- lua-mumble from  bkacjios (https://github.com/bkacjios/lua-mumble).
+-- (needs the shared object in your lua installation; instructions see lua-mumble project)
+mumble = require("mumble")
 CODEC_OPUS = 4
+
+local bit = require("bit") -- bit manipulation libraray implementation
 
 fgcom_clients = {}      -- known clients from fgcom-mumble plugin broadcasts
 
+-- A simple queue implementation, taken and adapted from https://www.lua.org/pil/11.4.html
+Queue = {}
+function Queue:new (o)
+    o = o or {}   -- create object if user does not provide one
+    o.first = 0
+    o.last = -1
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+function Queue:pushleft (value)
+    local first = self.first - 1
+    self.first = first
+    self[first] = value
+end
+function Queue:pushright (value)
+    local last = self.last + 1
+    self.last = last
+    self[last] = value
+end
+function Queue:popleft ()
+    local first = self.first
+    if first > self.last then return nil end
+    local value = self[first]
+    self[first] = nil        -- to allow garbage collection
+    self.first = first + 1
+    return value
+end
+function Queue:popright ()
+    local last = self.last
+    if self.first > last then return nil end
+    local value = self[last]
+    self[last] = nil         -- to allow garbage collection
+    self.last = last - 1
+    return value
+end
+function Queue:size ()
+    size = self.last - self.first + 1
+    if size < 0 then return 0 end
+    return size
+end
 
-local bit = require("bit")
 
 -- FGCom functions
---   they where written from bkacjios: https://github.com/bkacjios/lua-mumble/issues/12
 fgcom = {
+    callsign="FGCOM-someBot",
     
     -- io provides some basic IO functions
+    --   writeShort/readShort/playrecording was written from bkacjios: https://github.com/bkacjios/lua-mumble/issues/12
     io={
         --[[ write short byte to filehandle
             @param f is the filehandle
@@ -106,6 +152,24 @@ fgcom = {
                 print("file "..file.." closed and deleted")
                 return
             end, 60, 0)
+        end,
+        
+        -- tell a client about our location
+        sendRadio = function(user, radioID, frq, ptt)
+            local msg = "FRQ="..frq..",PTT="..ptt
+            print("notifyRadio("..msg..")")
+            mumble.client:sendPluginData("FGCOM:COM:"..radioID, msg, user)
+        end,
+        
+        -- tell a client about our radio
+        sendLocation = function(user, lon, lat, alt)
+            local msg = "CALLSIGN="..fgcom.callsign
+                      ..",LON="..lon              
+                      ..",LAT="..lat
+                      ..",ALT="..alt
+            print("notifyLocation("..msg..")")
+            mumble.client:sendPluginData("FGCOM:UPD_LOC", msg, user)
+            print("  notification sent")
         end
     },
     
@@ -203,8 +267,4 @@ fgcom = {
     }
 }
     
-
--- lua-mumble from  bkacjios (https://github.com/bkacjios/lua-mumble).
--- (needs the shared object in your lua installation; instructions see lua-mumble project)
-mumble = require("mumble")
 
