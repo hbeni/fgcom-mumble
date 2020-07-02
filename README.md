@@ -21,12 +21,12 @@ Documentation
 The documentation is split up into relevant parts:
 
 - Readme.md (*this file*): General overview and client documentation
-- [Readme.architecture.md] Details about the components that make up the system
-- [server/Readme.server.md] Details on the server side components and how to run them
-- [client/plugin.spec.md] Technical details on plugin design and its input/output data formats
+- [Readme.architecture.md](Readme.architecture.md) Details about the components that make up the system
+- [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
+- [client/plugin.spec.md](client/plugin.spec.md) Technical details on plugin design and its input/output data formats
 
 ### Bugs/Feature requests/coding help
-The project lives on github: [https://github.com/hbeni/fgcom-mumble]
+The project lives on github: https://github.com/hbeni/fgcom-mumble
 
 If you want to request a feature or report a bug, you can do so on the issuetracker there. I appreciate help with coding, so feel free to clone the repository and hand in pull-requests!
 
