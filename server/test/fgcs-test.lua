@@ -21,18 +21,20 @@ fgcom.callsign    = "FGOM-REC"
 
  
 -- | Line | Content                               |
-        -- |------|---------------------------------------|
-        -- |   1  | Version and Type field: "1.0 FGCS"    |
-        -- |   2  | Callsign                              |
-        -- |   3  | LAT          (decimal)                |
-        -- |   4  | LON          (decimal)                |
-        -- |   5  | HGT          (altitude in meter AGL)  |
-        -- |   6  | Frequency                             |
-        -- |   7  | TX-Power     (in Watts)               |
-        -- |   8  | PlaybackType (`oneshot` or `loop`)    |
-        -- |   9  | TimeToLive   (seconds; `0`=persistent)|
-        -- |  10  | VoiceCodec   (`int` from lua-mumble)  |
-        -- |  11  | SampleSpeed  (seconds between samples)|
+-- | Line | Content                                |
+-- |------|----------------------------------------|
+-- |   1  | Version and Type field: "1.0 FGCS"     |
+-- |   2  | Callsign                               |
+-- |   3  | LAT          (decimal)                 |
+-- |   4  | LON          (decimal)                 |
+-- |   5  | HGT          (altitude in meter AGL)   |
+-- |   6  | Frequency                              |
+-- |   7  | TX-Power     (in Watts)                |
+-- |   8  | PlaybackType (`oneshot` or `loop`)     |
+-- |   9  | TimeToLive   (seconds; `0`=persistent) |
+-- |  10  | RecTimestamp (unix timestamp)          |
+-- |  11  | VoiceCodec   (`int` from lua-mumble)   |
+-- |  12  | SampleSpeed  (seconds between samples) |
 local header = {
     version      = "1.1 FGCS",
     callsign     = fgcom.callsign,
@@ -42,7 +44,8 @@ local header = {
     frequency    = "124.05",
     txpower      = 10.5,
     playbacktype = "oneshot",
-    timetolive   = 0,
+    timetolive   = 5,
+    timestamp    = os.time(),
     voicecodec   = 4,
     samplespeed  = 0.0222
 }
