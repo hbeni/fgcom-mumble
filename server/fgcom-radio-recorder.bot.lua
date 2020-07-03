@@ -286,12 +286,17 @@ client:hook("OnUserStopSpeaking", function(user)
             os.remove (record_filename_final) -- remove target file silently, if already there
             --print("RENAME: "..remote.record_filename.." -> "..record_filename_final)
             ren_rc, ren_message = os.rename(remote.record_filename, record_filename_final)
-            remote.record_filename = ""
+            remote.record_filename = nil
             print("recording ready: '"..record_filename_final.."'")
-            local f = io.popen("stat -c %Y "..record_filename_final)
-            local last_modified = f:read()
+
+            local ch = client:getChannel(fgcom.channel)
+            ch:message(remote.callsign..": Recording for frequency '"..remote.record_tgt_frq.."' completed!")
+        else
+            --print(remote.callsign..": no active recording detected")
         end
-    end
+    else
+        --print("remote uknown")
+    end       
 end)
 
 
