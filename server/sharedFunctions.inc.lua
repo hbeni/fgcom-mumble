@@ -72,6 +72,22 @@ fgcom = {
     channel  = "fgcom-mumble",
     callsign = "FGCOM-someUnknownBot",
     
+    rng={
+        -- initialize random number generator
+        initialize = function()
+            local devrandom = io.open('/dev/random', 'rb')
+            if devrandom then
+                local res = 0;
+                for f = 1, 4 do res = res*256+(devrandom:read(1)):byte(1, 1); end;
+                devrandom:close();
+                math.randomseed(res+1);
+            else
+                print ("Notice: unable to open /dev/random, falling back to time()")
+                math.randomseed(os.time())
+            end
+        end
+    },
+    
     -- io provides some basic IO functions
     --   writeShort/readShort/playrecording was written from bkacjios: https://github.com/bkacjios/lua-mumble/issues/12
     io={
@@ -135,16 +151,16 @@ fgcom = {
         end,
         
         -- Read and parse FGCS header
-        -- | Line | Content                               |
-        -- |------|---------------------------------------|
-        -- |   1  | Version and Type field: "1.0 FGCS"    |
-        -- |   2  | Callsign                              |
-        -- |   3  | LAT          (decimal)                |
-        -- |   4  | LON          (decimal)                |
-        -- |   5  | HGT          (altitude in meter AGL)  |
-        -- |   6  | Frequency                             |
-        -- |   7  | TX-Power     (in Watts)               |
-        -- |   8  | PlaybackType (`oneshot` or `loop`)    |
+        -- | Line | Content                                |
+        -- |------|----------------------------------------|
+        -- |   1  | Version and Type field: "1.0 FGCS"     |
+        -- |   2  | Callsign                               |
+        -- |   3  | LAT          (decimal)                 |
+        -- |   4  | LON          (decimal)                 |
+        -- |   5  | HGT          (altitude in meter AGL)   |
+        -- |   6  | Frequency                              |
+        -- |   7  | TX-Power     (in Watts)                |
+        -- |   8  | PlaybackType (`oneshot` or `loop`)     |
         -- |   9  | TimeToLive   (seconds; `0`=persistent) |
         -- |  10  | RecTimestamp (unix timestamp)          |
         -- |  11  | VoiceCodec   (`int` from lua-mumble)   |
@@ -166,6 +182,11 @@ fgcom = {
             header.timestamp    = fh:read("*line")
             header.voicecodec   = fh:read("*line")
             header.samplespeed  = fh:read("*line")
+            if not header.version then return false end
+            _, _, ver, const = string.find(header.version, "(%d%.%d+) FGCS")
+            if not ver then return false end
+            -- TODO: better header checks
+            
             return header
         end,
         
@@ -206,6 +227,7 @@ fgcom = {
             local short = fh:read(2) -- Read two characters from the file
             if not short or short == "" then return sample end -- End of file
             local b1, b2 = string.byte(short, 1, 2) -- Convert the two characters to bytes
+            if nil==b1 or nil==b2 then return sample end -- premature End of file or error parsing
             sample.len = bit.bor(bit.lshift(b1, 8), bit.lshift(b2, 0)) -- Combine the two bytes into a number
             sample.data = fh:read(sample.len) -- read data
             
@@ -231,11 +253,19 @@ fgcom = {
             fh:write(string.char(b1, b2))   -- write two bytes to fh
             fh:write(s) -- write the entire sample data
         end,
+        
     },
     
     -- Data handling functions
     data={
-          
+        
+        -- Return remainig validity time
+        -- File is outdated if result is negative
+        -- @param header FGCS header table
+        getFGCSreaminingValidity = function(header)
+            return header.timestamp+header.timetolive-os.time()
+        end,
+        
         -- single char string splitter, sep *must* be a single char pattern
         -- *probably* escaped with % if it has any special pattern meaning, eg "%." not "."
         -- so good for splitting paths on "/" or "%." which is a common need
