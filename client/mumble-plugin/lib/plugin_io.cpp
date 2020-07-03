@@ -318,7 +318,13 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         std::string token_value = sm[2];
                         pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
                         
-                        if (token_key == "FRQ") fgcom_remote_clients[clientID].radios[radio_id].frequency   = token_value;
+                        if (token_key == "FRQ") {
+                            // frequency must be normalized, it may contain leading/trailing zeroes and spaces.
+                            std::regex frq_cleaner_re ("^[0\\s]+|(\\..+?)[0\\s]+$");
+                            std::string token_value_clean;
+                            std::regex_replace (std::back_inserter(token_value_clean), token_value.begin(), token_value.end(), frq_cleaner_re, "$1");
+                            fgcom_remote_clients[clientID].radios[radio_id].frequency   = token_value_clean;
+                        }
                         if (token_key == "VLT") fgcom_remote_clients[clientID].radios[radio_id].volts       = std::stof(token_value);
                         if (token_key == "PBT") fgcom_remote_clients[clientID].radios[radio_id].power_btn   = (token_value == "1")? true : false;
                         if (token_key == "SRV") fgcom_remote_clients[clientID].radios[radio_id].serviceable = (token_value == "1")? true : false;
