@@ -262,7 +262,8 @@ fgcom = {
         -- Return remainig validity time
         -- File is outdated if result is negative
         -- @param header FGCS header table
-        getFGCSreaminingValidity = function(header)
+        -- @return boolean if it is valid
+        getFGCSremainingValidity = function(header)
             return header.timestamp+header.timetolive-os.time()
         end,
         

@@ -113,35 +113,6 @@ readFGCSSampleFile = function(file)
 end
 
 
--- function to get all channel users
--- this updates the global playback_target table
-updateAllChannelUsersforSend = function(cl)
-    --print("udpate channelusers")
-    local ch = cl:getChannel(fgcom.channel)
-    local users = ch:getUsers()
-    playback_targets = {}
-    --print("ok: "..ch:getName())
-    for k,v in pairs(users) do
-        --print("  k",k,"v=",v)
-        table.insert(playback_targets, v)
-    end
-end
-
--- function to disconnect the bot
-shutdownBot = function()
-    updateAllChannelUsersforSend(client)
-
-    -- send update to mute our radio
-    local msg = "FRQ="..lastHeader.frequency
-             ..",PWR="..lastHeader.txpower
-             ..",PTT=1"
-    client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
-    
-    -- finally disconnect from the server
-    client:disconnect()
-end
-
-
 -----------------------------
 --[[      BOT RUNTIME      ]]
 -----------------------------
@@ -158,6 +129,19 @@ if not lastHeader then  print("ERROR: '"..sample.."' not readable or no FGCS fil
 --   voiceBuffer is initialized with the read samples
 print(sample..": successfully loaded.")
 
+local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
+local persistent = false
+if lastHeader.timetolive == "0" then
+    print(sample..": This is a persistent sample.")
+    timeLeft   = 1337   -- just some arbitary dummy value in the future
+    persistent = true   -- loops forever!
+end
+if not persistent and timeLeft < 0 then
+    print(sample..": sample is invalid, since "..timeLeft.."s. Aborting.")
+    os.exit(0)
+else
+    print(sample..": sample is valid, remaining time: "..timeLeft.."s")
+end
 
 
 -- Connect to server, so we get the API
@@ -167,6 +151,41 @@ client:auth(fgcom.callsign)
 print("connect and bind: OK")
 
 
+
+-- function to get all channel users
+-- this updates the global playback_target table
+updateAllChannelUsersforSend = function(cl)
+    --print("udpate channelusers")
+    local ch = cl:getChannel(fgcom.channel)
+    local users = ch:getUsers()
+    playback_targets = {}
+    --print("ok: "..ch:getName())
+    for k,v in pairs(users) do
+        --print("  k",k,"v=",v)
+        table.insert(playback_targets, v)
+    end
+end
+
+-- function to disconnect the bot
+shutdownBot = function()
+    print("shutdownBot(): requested")
+    updateAllChannelUsersforSend(client)
+
+    -- send update to mute our radio
+    -- TODO: send deregister request, once implemented
+    local msg = "FRQ="..lastHeader.frequency
+             ..",PWR="..lastHeader.txpower
+             ..",PTT=0"
+    client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
+    print("shutdownBot(): COM0 deactiated")
+    
+    -- finally disconnect from the server
+    client:disconnect()
+    print("shutdownBot(): disconnected")
+    os.exit(0)
+end
+
+
 --[[
   Playback loop: we use a mumble timer for this. The timer loops in
   the playback-rate and looks if there are samples buffered. If so,
@@ -174,7 +193,7 @@ print("connect and bind: OK")
 ]]
 local playbackTimer = mumble.timer()
 playbackTimer_func = function(t)
-    print("playback timer started")
+    print("playback timer: tick")
     
     -- So, a new timer tick started.
     -- See if we have still samples in the voice buffer. If not, reload it from file, if it was a looped one.
@@ -213,10 +232,11 @@ playbackTimer_func = function(t)
         else
             -- It was a looped timer: we reread the file to see if its still there,
             -- then check validity and if so, refill the voiceBuffer
+            print("Looped timer: update voice buffer from file")
     
             -- Read/update FGCS data file
-            local lastHeader, voiceBuffer = readFGCSSampleFile(sample)
-            if not hdr then
+            lastHeader, voiceBuffer = readFGCSSampleFile(sample)
+            if not lastHeader then
                 -- file could not be loaded - most probably it got deleted.
                 -- shut down the bot.
                 print("'"..sample.."' not readable or no FGCS file, probably deleted from filesystem.")
@@ -226,10 +246,17 @@ playbackTimer_func = function(t)
 
             else
                 -- File was successfully reloaded from disk
+                print("update from file successful")
         
                 -- check if the file is still valid
-                local timeLeft = fgcom.data.getFGCSreaminingValidity(hdr)
-                if fgcom.data.getFGCSreaminingValidity(hdr) < 0 then
+                local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
+                local persistent = false
+                if lastHeader.timetolive == "0" then
+                    print(sample..": This is a persistent sample.")
+                    timeLeft   = 1337   -- just some arbitary dummy value in the future
+                    persistent = true   -- loops forever!
+                end
+                if not persistent and timeLeft < 0 then
                     print(sample..": FGCS file outdated since "..timeLeft.." seconds; removing")
                     os.remove(sample)
                     shutdownBot()
@@ -238,9 +265,9 @@ playbackTimer_func = function(t)
                 else
                     -- Samples are still valid;
                     -- we alreay updated the global voiceBuffer, so we need not do anything here.
-                    print(sample..": FGCS file still valid: looping over.")
+                    print(sample..": FGCS file still valid for "..timeLeft.."s: looping over.")
                     
-                    --[[for k,v in pairs(hdr) do
+                    --[[for k,v in pairs(lastHeader) do
                         print("header read: '"..k.."'='"..v.."'")
                     end
                     print("\nread samples:")
@@ -248,7 +275,9 @@ playbackTimer_func = function(t)
                         print("  sample: len="..v.len.."; eof='"..tostring(v.eof).."'; data='"..v.data.."'")
                     end--]]
                     
-                    mumble.timer:set(0.0, lastHeader.samplespeed) -- update timer to sample speed in case it was changed
+                    -- TODO: when active, loop hangs... why? Not so important right now, because samplespeed should only change with new recordings from new clients.
+                    --t:set(0.10, lastHeader.samplespeed) -- update timer to sample speed in case it was changed
+                    
                 end
             end
         end
@@ -290,4 +319,5 @@ end)
 
 
 mumble.loop()
+shutdownBot()
 print(botname.." with callsign "..fgcom.callsign.." completed.")
