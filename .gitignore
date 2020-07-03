@@ -31,3 +31,12 @@
 *.out
 *.app
 geotest
+
+# Certs
+*.pem
+*.key
+*.crt
+*.csr
+
+# radio samples
+*.fgcs
