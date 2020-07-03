@@ -34,7 +34,7 @@ local botname = "FGOM-Echotest"
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
 fgcom.callsign = "FGOM-ECHO"
-local voicebuffer = Queue:new()
+local voiceBuffer = Queue:new()
 
 
 -- Parse cmdline args
@@ -112,29 +112,25 @@ local playback_target = {}
 playbackTimer_func = function(t)
     print("playback timer started")
     -- get the next sample from the buffer and play it
-    nextSample  = voiceBuffer:popleft()
-    endofStream = voicebuffer:size()
-    
+    local nextSample  = voiceBuffer:popleft()
+    local endofStream = 0
+    if voiceBuffer:size() == 0 then endofStream = 1 end
+
     print("transmit next sample")
-    client:transmit(CODEC_OPUS, nextSample, endofStream) -- Transmit the single frame as an audio packet (the bot "speaks")
-    
-    if endofStream then
+    print("  tgt="..playback_target:getSession())
+    print("  eos="..endofStream)
+    print("  cdc="..nextSample.codec)
+    print("  dta="..#nextSample.data)
+    client:transmit(nextSample.codec, nextSample.data)--, endofStream) -- Transmit the single frame as an audio packet (the bot "speaks")
+    print("transmit ok")
+    if endofStream==1 then
         -- no samples left?
         print("no samples left, playback complete")
-        fgcom.io.sendRadio(playback_target, 0, "910.00", 0)
+        client:sendPluginData("FGCOM:UPD_COM:0", "FRQ=910.0,PTT=0", {playback_target})
         t:stop() -- Stop the audio timer
+        print("timer done.")
     end
     
- --[[   if nextSample then
-        print("transmit next sample")
-        client:transmit(CODEC_OPUS, nextSample, endofStream)  -- Transmit the single frame as an audio packet (the bot "speaks")
-    else
-        -- no samples left?
-        print("no samples left, playback complete")
-        fgcom.io.sendRadio(playback_target, 0, "910.00", 0)
-        t:stop() -- Stop the audio timer
-    end
-    --]]
 end
 
 
@@ -165,28 +161,15 @@ end)
 client:hook("OnUserStartSpeaking", function(user)
     print("OnUserStartSpeaking, user["..user:getSession().."]="..user:getName())
            
-    if isClientTalkingToUs(user) then
-        print("  user talks to me!")
-        remote = fgcom_clients[user:getSession()]
-        playback_target = remote  -- so the timer knows about the target user
-        -- send location and radio update, so the sender can hear us.
-        -- we set the bot to the senders location.
-        -- it is important to do it this way, so the normal client plugin
-        -- operation can be verified!
-        fgcom.io.sendLocation(playback_target, remote.lon, remote.lat, remote.alt)
-        fgcom.io.sendRadio(playback_target, 0, "910.00", 1)
-        
-        -- start the playback timer
-        playbackTimer:start(playbackTimer_func, playbackTimer_delay, playbackTimer_rate)
-    end
 end)
 
 
 client:hook("OnUserSpeak", function(event)
-    if event.codec ~= CODEC_OPUS then 
-           print("ERROR: Only CODEC_OPUS is supported for now!")
-           return -- Only supports OPUS voice data..
-    end
+    -- should work with any codec now
+    --if event.codec ~= CODEC_OPUS then 
+    --       print("ERROR: Only CODEC_OPUS is supported for now!")
+    --       return -- Only supports OPUS voice data..
+    --end
 
     print("OnUserSpeak, from=["..event.user:getSession().."] '"..event.user:getName().."'")
     --print("  codec="..event.codec)
@@ -197,7 +180,8 @@ client:hook("OnUserSpeak", function(event)
     if isClientTalkingToUs(event.user) then
         len = #event.data
         print("  recording sample, len="..len)
-        voiceBuffer:pushright(event.data)
+        voiceBuffer:pushright({codec=event.codec, data=event.data})
+        print("  recording ok")
     end
            
 end)
@@ -206,7 +190,26 @@ end)
 client:hook("OnUserStopSpeaking", function(user)
     print("OnUserStopSpeaking, user["..user:getSession().."]="..user:getName())
     
-    -- Mabye let the user finish speaking, and THEN start the playback?
+    if isClientTalkingToUs(user) then
+        print("  user had talked to me!")
+        remote = fgcom_clients[user:getSession()] -- get remote known state
+        playback_target = user  -- so the timer knows about the target mumble.user
+        -- send location and radio update, so the sender can hear us.
+        -- we set the bot to the senders location.
+        -- it is important to do it this way, so the normal client plugin
+        -- operation can be verified!
+        local msg = "CALLSIGN="..fgcom.callsign
+                      ..",LON="..remote.lon              
+                      ..",LAT="..remote.lat
+                      ..",ALT="..remote.alt
+        print("  msg="..msg..", to: "..playback_target:getSession())
+        client:sendPluginData("FGCOM:UPD_LOC", msg, {playback_target})
+        
+        client:sendPluginData("FGCOM:UPD_COM:0", "FRQ=910.0,PTT=1", {playback_target})
+        
+        -- start the playback timer
+        playbackTimer:start(playbackTimer_func, playbackTimer_delay, playbackTimer_rate)
+    end
     
 end)
 

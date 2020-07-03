@@ -23,7 +23,6 @@ Running a server
 - Create a new channel named `fgcom-mumble` for the airspace. The plugin only does it's things when on this channel.
 - Clients will connect and enable their local fgcom plugin. This handles all human communication on frequencies
 - Start the `fgcom-bot-manager` which handles all needed bots: `lua fgcom-botmanager.bot.lua`
-- Manually start additional `fgcom-radio`-bots to play arbitary samples on frequencies (like radio stations).
 
 Basicly, you just need a standard mumble server >=1.4, so the plugins can exchange information. This will enable radio coms.
 
@@ -32,16 +31,25 @@ However, there are advanced features that need serverside support. Mumble-Bots w
 
 ATIS Manager Bot
 ================
-Start the bot with `lua atis-manager.bot.lua -h` to get usage info.
+Start the bot with `lua fgcom-botmanager.bot.lua -h` to get usage info.
 
-The ATIS manager bot has two functions:
+The ATIS manager bot is a central watchdog service that constantly monitors the `fgcom-mumble` channel:
 
-  1. He monitors the `fgcom-mumble` channel for ATIS recoding requests. If he detects one, the ATIS message will be recorded and stored for further usage.
-  2. Manage ATIS-playback bots. If ATIS messages have been recorded, the bot will spawn appropriate `radio-playback` bots serving the ATIS message.
+- presence of exactly one `radio-recorder` bot. She does that by checking the channel users for the bot name. If there is none, a new one will be spawned.
+- checks the available recordings:
+  - for every valid recording there has to be an active `radio-playback` bot. If there is a recording on disk but no corresponding bot, a bot is spawned.
+  - recording files that are not valid anymore need to be cleared from disk (this will also stop the playback bots automatically).
 
 
-Radio recording request
-----------------------
+Radio Recording Bot
+===================
+Start the bot with `lua fgcom-radio-recorder.bot.lua -h` to get usage info.
+
+The `radio-recorder` monitors the `fgcom-mumble` channel for users recording requests. If such a request is detected, the samples get recorded and put to an sample file on disk.  
+Those disk samples can be picked up from the `radio-playback` bot, which is usually invoked automatically from the manager bot.
+
+Radio (ATIS) recording request
+------------------------------
 An ATIS recording request is an ordinary transmission, but on a special tuned frequency in the format `RECORD_<target-frequency>`. As soon as a client transmitts, the bot captures the output and stores it.  
 When the transmission is complete, the bot notes the target frequency, tx-power, geolocation and callsign of the sender.
 The bot will now spawn a `radio-playback` bot that broadcasts the stored audio from the location with the callsign. It will also be terminated from the manager bot after a timeout.
@@ -49,19 +57,64 @@ The bot will now spawn a `radio-playback` bot that broadcasts the stored audio f
 Note that the recording is not ATIS-specific. Using the technique described here also allows to make radio stations etc.
 
 
+910.00 Test frequency recording request
+---------------------------------------
+These recordings are normal ones in regard of this specification. However they have the following notable parmeters:
+
+- Recording occurs on the freuqency `910.00`, ie. without `RECORD_` prefix.
+- Playback must occur at this frequency too.
+- Playback must occur at the senders position.
+- The playback variant is oneshot only and only valid for a brief period of time (TTL). The bot must terminate finally after the playback.
+
+This is implemented by the recording bot monitoring the frequency and writing the `fgcs` fileheader accordingly.
+
+
+FGCom Sample file disk format (`.fgcs`)
+-----------------------------
+This file format holds samples together with its meta information. The file should have a unique name, with the postfix `.fgcs`.  
+Its content begins with a linewise human readable `string` formatted header, each finished with a newline character:
+
+| Line | Content                                |
+|------|----------------------------------------|
+|   1  | Version and Type field: "1.0 FGCS"     |
+|   2  | Callsign                               |
+|   3  | LAT          (decimal)                 |
+|   4  | LON          (decimal)                 |
+|   5  | HGT          (altitude in meter AGL)   |
+|   6  | Frequency                              |
+|   7  | TX-Power     (in Watts)                |
+|   8  | PlaybackType (`oneshot` or `loop`)     |
+|   9  | TimeToLive   (seconds; `0`=persistent) |
+|  10  | RecTimestamp (unix timestamp)          |
+|  11  | VoiceCodec   (`int` from lua-mumble)   |
+|  12  | SampleSpeed  (seconds between samples) |
+
+This header is directly followed with a variable ammount of voice packets; they each have the format `<(2 bytes)length><(n bytes)voice>`.
+
+The *Version* field is there to support or block parsing of older version headers in future revisions. Its structure is space separated: `<major>.<minor> <type> <optionalDescriptiveStuffWhichIsToBeIgnored>`
+
+The *TimeToLive* is relative to the recordings timestamp. If `timestamp + TTL < now`, the sample is not valid anymore and should be cleared from disk. A TTL of `0` or less signals a "persistent" sample.
+
+The *SampleSpeed* is usually 0.02, but depending on the clients settings.
+
+
 Radio Playback Bot
 ==================
-Start the bot with `lua radio-playback -h` to get usage info.
+Start the bot with `lua fgcom-radio-playback.bot.lua -h` to get usage info.
 
-The bot basically connects to the server, sets up fgcom-mumble plugin location information and broadcasts it to clients. It then starts to transmit the contents of an adio file in a loop until either the file is deleted or the bot is killed.
+The bot basically connects to the server, sets up fgcom-mumble plugin location information and broadcasts it to clients. It then starts to transmit the contents of an audio file in a loop until either the file is not valid anymore, deleted or the bot is manually killed.
 
-**TODO:** What file format is expected?
-**TODO:** callup example
+The needed information is read fom the `fgcs`-fileheader or provided by commandline (the latter taking precedence if given).
+
+The bot is assumed to clean its own files when he is done with playback of `fgcs` files.
+
+The playback is currently limited to the sample file format output from the `radio-recorder` described above.
+**TODO:** also let OGG files play, for that use command line options to specify location etc. OGG files are supposed to be persistent and manually called, so do not delete them after playback!
 
 
-Client Bot certificate
-==================
- The bot needs a certificate and key pair to connect to the mumble server. Generate these like this:
+Client Bot certificates
+=======================
+The bots need a certificate and key pair to connect to the mumble server. Generate these like this:
 ```
 openssl genrsa -out bot.key 2048 2> /dev/null
 openssl req -new -sha256 -key bot.key -out bot.csr -subj "/"
