@@ -96,7 +96,7 @@ end
 
 
 -- Connect to server, so we get the API
-print(botname..": connecting to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
+print(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
 print("connect and bind: OK")
