@@ -67,7 +67,7 @@ plugin-win64: libs
 release: clean-all plugin plugin-win64
 	@echo GIT commit $(GITCOMMIT) from $(GITDATE), V$(VERSION)
 	head -n 1 ../../README.md > releaseReadme.md
-	@echo V$(VERSION) \($(GITCOMMIT) $(GITDATE)\) >> releaseReadme.md
+	@echo Version: $(VERSION) \($(GITCOMMIT) $(GITDATE)\) >> releaseReadme.md
 	tail +2 ../../README.md >> releaseReadme.md
 	
 	mkdir fgcom-mumble-linux-$(VERSION)
@@ -91,3 +91,8 @@ release: clean-all plugin plugin-win64
 	rm -rf fgcom-mumble-windows-$(VERSION)
 	
 	rm releaseReadme.md
+
+showVer:
+	@echo "GITCOMMIT:$(GITCOMMIT)"
+	@echo "GITDATE:$(GITDATE)"
+	@echo "VERSION:$(VERSION)"
