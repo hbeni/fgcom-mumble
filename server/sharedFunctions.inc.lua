@@ -19,7 +19,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. ]]
 -- lua-mumble from  bkacjios (https://github.com/bkacjios/lua-mumble).
 -- (needs the shared object in your lua installation; instructions see lua-mumble project)
 mumble = require("mumble")
-CODEC_OPUS = 4
 
 local bit = require("bit") -- bit manipulation libraray implementation
 
@@ -70,31 +69,12 @@ end
 
 -- FGCom functions
 fgcom = {
-    callsign="FGCOM-someBot",
+    channel  = "fgcom-mumble",
+    callsign = "FGCOM-someUnknownBot",
     
     -- io provides some basic IO functions
     --   writeShort/readShort/playrecording was written from bkacjios: https://github.com/bkacjios/lua-mumble/issues/12
     io={
-        --[[ write short byte to filehandle
-            @param f is the filehandle
-            @param short is the short data to write
-        --]]
-        writeShort = function (f, short)
-            -- Convert our 16 bit number into two bytes
-            local b1 = bit.band(bit.rshift(short, 8), 0xFF)
-            local b2 = bit.band(short, 0xFF)
-            f:write(string.char(b1, b2))
-        end,
-
-        --[[ read a short byte from filehandle
-            @param f is the filehandle
-        --]]
-       readShort = function (f)
-            local short = f:read(2) -- Read two characters from the file
-            if not short or short == "" then return end -- End of file
-            local b1, b2 = string.byte(short, 1, 2) -- Convert the two characters to bytes
-            return bit.bor(bit.lshift(b1, 8), bit.lshift(b2, 0)) -- Combine the two bytes into a number
-        end,
         
         -- Play a recorded OPUS sample file to the channel
         -- @param client mumble.client instance
@@ -154,23 +134,103 @@ fgcom = {
             end, 60, 0)
         end,
         
-        -- tell a client about our location
-        sendRadio = function(user, radioID, frq, ptt)
-            local msg = "FRQ="..frq..",PTT="..ptt
-            print("notifyRadio("..msg..")")
-            mumble.client:sendPluginData("FGCOM:COM:"..radioID, msg, user)
+        -- Read and parse FGCS header
+        -- | Line | Content                               |
+        -- |------|---------------------------------------|
+        -- |   1  | Version and Type field: "1.0 FGCS"    |
+        -- |   2  | Callsign                              |
+        -- |   3  | LAT          (decimal)                |
+        -- |   4  | LON          (decimal)                |
+        -- |   5  | HGT          (altitude in meter AGL)  |
+        -- |   6  | Frequency                             |
+        -- |   7  | TX-Power     (in Watts)               |
+        -- |   8  | PlaybackType (`oneshot` or `loop`)    |
+        -- |   9  | TimeToLive   (seconds; `0`=persistent) |
+        -- |  10  | RecTimestamp (unix timestamp)          |
+        -- |  11  | VoiceCodec   (`int` from lua-mumble)   |
+        -- |  12  | SampleSpeed  (seconds between samples) |
+        --
+        -- @param fh filehandle to read from
+        -- @return table with the header data or false on error
+        readFGCSHeader = function(fh)
+            local header = {}
+            header.version      = fh:read("*line")
+            header.callsign     = fh:read("*line")
+            header.lat          = fh:read("*line")
+            header.lon          = fh:read("*line")
+            header.height       = fh:read("*line")
+            header.frequency    = fh:read("*line")
+            header.txpower      = fh:read("*line")
+            header.playbacktype = fh:read("*line")
+            header.timetolive   = fh:read("*line")
+            header.timestamp    = fh:read("*line")
+            header.voicecodec   = fh:read("*line")
+            header.samplespeed  = fh:read("*line")
+            return header
         end,
         
-        -- tell a client about our radio
-        sendLocation = function(user, lon, lat, alt)
-            local msg = "CALLSIGN="..fgcom.callsign
-                      ..",LON="..lon              
-                      ..",LAT="..lat
-                      ..",ALT="..alt
-            print("notifyLocation("..msg..")")
-            mumble.client:sendPluginData("FGCOM:UPD_LOC", msg, user)
-            print("  notification sent")
-        end
+        -- Write a FGCS header
+        -- @param fh filehandle to write to
+        -- @param header table with the header data, as returned from readFGCSHeader()
+        -- @return boolean showing success or failure
+        writeFGCSHeader = function(fh, header)
+            if fh and header.version then
+                fh:write(header.version.."\n")
+                fh:write(header.callsign.."\n")
+                fh:write(header.lat.."\n")
+                fh:write(header.lon.."\n")
+                fh:write(header.height.."\n")
+                fh:write(header.frequency.."\n")
+                fh:write(header.txpower.."\n")
+                fh:write(header.playbacktype.."\n")
+                fh:write(header.timetolive.."\n")
+                fh:write(header.timestamp.."\n")
+                fh:write(header.voicecodec.."\n")
+                fh:write(header.samplespeed.."\n")
+                return true
+            else
+                return false
+            end
+        end,
+        
+        -- Read a sample from a FGCS file.
+        -- must be called after retrieving header.
+        -- len is 0 if no data could be read.
+        -- On the last valid data read, eof will be true to signal that the next read will contian no more data
+        -- @param fh filehandle to read from
+        -- @return table: {len=<bytes>, data=<data>, eof=<bool>}
+        readFGCSSample = function(fh)
+            local sample = {len = 0, data = "", eof=true}  -- default: signal EOF
+        
+            -- first read two bytes, thats a short vlaue designating how much data to read
+            local short = fh:read(2) -- Read two characters from the file
+            if not short or short == "" then return sample end -- End of file
+            local b1, b2 = string.byte(short, 1, 2) -- Convert the two characters to bytes
+            sample.len = bit.bor(bit.lshift(b1, 8), bit.lshift(b2, 0)) -- Combine the two bytes into a number
+            sample.data = fh:read(sample.len) -- read data
+            
+            -- see if we are at the end of the file
+            local cp    = fh:seek()      -- get current position
+            local cp_fs = fh:seek("end") -- filesize
+            if cp == cp_fs then sample.eof = true else sample.eof = false end
+            fh:seek("set", cp)        -- restore position
+            
+            return sample
+        end,
+        
+        -- Write a sample to a FGCS file.
+        -- must be called after writing header.
+        -- @param fh filehandle to write to
+        -- @param s binary sample data
+        writeFGCSSample = function(fh, s)
+            -- write sampe length so we later know how much data to read
+            local len = #s
+            -- Convert our 16 bit number into two bytes
+            local b1 = bit.band(bit.rshift(len, 8), 0xFF)
+            local b2 = bit.band(len, 0xFF)
+            fh:write(string.char(b1, b2))   -- write two bytes to fh
+            fh:write(s) -- write the entire sample data
+        end,
     },
     
     -- Data handling functions
@@ -246,6 +306,7 @@ fgcom = {
                         
                         if "FRQ" == field[1] then fgcom_clients[sid].radios[radioID].frequency = field[2] end
                         if "PTT" == field[1] then fgcom_clients[sid].radios[radioID].ptt = field[2] end
+                        if "PWR" == field[1] then fgcom_clients[sid].radios[radioID].power = field[2] end
                     end
                 end
             end

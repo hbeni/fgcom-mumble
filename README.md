@@ -77,6 +77,8 @@ To record an ATIS sample, you need to:
 - Start talking on the COM device by pressing its PTT
 - When done, release PTT and retune to a normal frequency.
 
+Regular recordings have a serverside limit of 120 seconds by default.
+
 Note: Chances are good that your ATC client does all this for you and you just need to push some "Record ATIS" button.
 
 ### Landlines/Intercom
@@ -92,8 +94,9 @@ Note: Chances are good that your ATC client does set this up for you and provide
 
 ### Test frequencies
 Test frequencies are provided by a specialized server side bot. Look for the bot in mumbles channel list to see if the server supports Test frequencies.
-  - 910.000 MHz: echo test frequency. Your voice will be echoed back after a short delay, to allow you to check that your microphone, speakers/headset and that your connection to the FGCom server works and to let you know how you are heared from others.
-  - 911.000 MHz: The frequency continuously plays a test sample, allowing you to check that your connection to the FGCom server works.
+
+  - 910.000 MHz: echo test frequency. Your voice will be echoed back after you release PTT, to allow you to check that your microphone, speakers/headset and that your connection to the FGCom server works and to let you know how you are heared from others. Test recordings are limited to 10 seconds by default.
+  - NOT-IMPLEMENTED-YET: 911.000 MHz: The frequency continuously plays a test sample, allowing you to check that your connection to the FGCom server works.
 
 
 ### Obsolete legacy FGCom frequencies
