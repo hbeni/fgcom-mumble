@@ -61,12 +61,12 @@ Volume settings and operational state of the simulated phone is applied, however
 A good practice may be the syntax `PHONE:[ICAO]:[POS](:[LINE]), like `PHONE:EDDM:TWR:1` or `PHONE:EDMO:GND`.
 
 
-NOT-IMPLEMENTED-YET: ATIS / Radio station support
+Radio station support
 ----------------------------
 This is implemented modular trough a special set of mumble bots. The bots behave as ordinary mumble clients supplementing FGCom-mumble plugin information so the pilots client plugins will behave correctly. From the pilots view, they are just more ordinary clients.
 
 ### ATIS playback
-A special `fgcom-radio`-bot can connect to the mumble server. For that to work properly, he will be called with the needed information: frequency to send on and its location. This information will be broadcasted over the mumble plugin interface, so the other mumble pugins of the pilots can pick it up. From then on, the bot behaves as an ordinary radio client from the view of the plugins.
+A `fgcom-radio-playback`-bot can connect to the mumble server. For that to work properly, he will be called with the needed information: frequency to send on and its location. This information will be broadcasted over the mumble plugin interface, so the other mumble pugins of the pilots can pick it up. From then on, the bot behaves as an ordinary radio client from the view of the plugins.
 The bot will read a specified audio file and braodcast it on the selected frequency, until either he is killed or the audio file is deleted (then he kills himself).
 
 ### ATIS recording
@@ -82,9 +82,4 @@ Recording has to be done using a special frequency like `RECORD_<tgtFreq>`. The 
 The bot is expected to record on the same machine where the radio-playback bot will pick the recordings up, so there is no need for file synchronization. The network-stuff is already handled by the mumble infrastructure this way.
 
 ### Radio stations
-Just invoke a `fgcom-radio` bot with the radio station audio program file.
-
-### Radio bot manager
-This is a simple program that automates the spawning/killing of the atis related bots on the server side.  
-  - She will spawn an `radio-recorder` bot which listens for new recording attempts.
-  - She monitors recorded ATIS samples and spawns/kills `fgcom-radio` bots appropriate to the recordings.
+Just invoke a `fgcom-radio-playback` bot with the radio station audio program file.

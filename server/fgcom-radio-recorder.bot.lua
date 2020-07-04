@@ -45,14 +45,15 @@ local cert  = "bot.pem"
 local key   = "bot.key"
 local path  = "./recordings"
 local limit = 120     -- default time limit for recordings in secs
-local ttl   = 60*120  -- default time-to-live after recordings
+local ttl   = 120*60  -- default time-to-live after recordings in secs
+local nospawn = false
 
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
         print(botname)
         print("usage: "..arg[0].." [opt=val ...]")
-        print("  opts:")
+        print("  Options:")
         print("    --host=    host to connect to               (default="..host..")")
         print("    --port=    port to connect to               (default="..port..")")
         print("    --cert=    path to PEM encoded cert         (default="..cert..")")
@@ -60,11 +61,12 @@ if arg[1] then
         print("    --path=    Path to store the recordings to  (default="..path..")")
         print("    --limit=   Max limit to record, in seconds  (default="..limit..")")
         print("    --ttl=     Max timeToLive in seconds        (default="..ttl..")")
+        print("    --nospawn  Don't spawn playback bots, just record")
         os.exit(0)
     end
     
     for _, opt in ipairs(arg) do
-        _, _, k, v = string.find(arg[1], "--(%w+)=(.+)")
+        _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         --print("KEY='"..k.."'; VAL='"..v.."'")
         if k=="host"  then host=v end
         if k=="port"  then port=v end
@@ -73,6 +75,7 @@ if arg[1] then
         if k=="path"  then path=v end
         if k=="limit" then limit=v end
         if k=="ttl"   then ttl=v end
+        if opt=="--nospawn" then nospawn=true end
     end
     
 end
@@ -110,7 +113,6 @@ print("connect and bind: OK")
 -- @param user mumble.user to check
 -- @return nil if not, otherwise table with the matched radio
 local isClientTalkingToUs = function(user)
-    local rv = nil
     if fgcom_clients[user:getSession()] then
         local remote = fgcom_clients[user:getSession()]
         print("we know this client: callsign="..remote.callsign)
@@ -125,24 +127,23 @@ local isClientTalkingToUs = function(user)
                 remote.record_mode = "NORMAL"
                 remote.record_tgt_frq = record_tgtFrq
                 print("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
-                rv = radio
-                break
+                return radio
             end
             
             -- FGCom ECHOTEST Frequency recording request
             if radio.frequency:find("^910.0+$") and radio.ptt then
                 -- remote is on echotest-frequency AND his ptt is active
                 remote.record_mode = "ECHOTEST"
-                remote.record_tgt_frq = 910.00
+                remote.record_tgt_frq = "910.00"
                 print("   ECHOTEST frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
-                rv = radio
-                break
+                return radio
             end
             
             
         end
     end
-    return rv
+
+    return nil
 end
 
 
@@ -162,6 +163,33 @@ local getFGCSfileName = function(remote)
     end
     
     return path.."/"..name
+end
+
+
+-- Function to invole a playback bot
+-- @param s path to the sample file to play
+callPlaybackBot = function(s)
+    if nospawn then print("not spawning playback bot: --nospawn in effect") return end
+    
+    local cmd = "lua fgcom-radio-playback.bot.lua"
+             .." --sample="..s
+             .." --host="..host
+             .." --port="..port
+             .." --cert="..cert
+             .." --key="..key
+             --.." --nodel"
+    print("spawning new playback bot: "..cmd)
+    local handle = io.popen(cmd)
+end
+
+
+-- Function to see if we need to ignore the client
+-- @param user mumble.user table
+-- @return boolean
+isIgnored = function(user)
+    if user:getName():find("FGCOM%-RADIO%.*") then return true end
+    
+    return false
 end
 
 
@@ -185,7 +213,11 @@ client:hook("OnPluginData", function(event)
 	--	[1] = mumble.user,
 	--},
     print("DATA INCOMING FROM="..event.sender:getSession())
+           
+    if isIgnored(event.sender) then return end   -- ignore other bots!
+
     fgcom.data.parsePluginData(event.id, event.data, event.sender)
+
 
 end)
 
@@ -195,14 +227,16 @@ client:hook("OnUserStartSpeaking", function(user)
 end)
 
 client:hook("OnUserSpeak", function(event)
-    print("OnUserSpeak, from=["..event.user:getSession().."] '"..event.user:getName().."'")
+    --print("OnUserSpeak, from=["..event.user:getSession().."] '"..event.user:getName().."'")
     --print("  codec="..event.codec)
     --print("  target="..event.target)
     --print("  sequence="..event.sequence)
 
+    if isIgnored(event.user) then return end   -- ignore other bots!
+           
     -- If the user is speaking to us, record its samples and push them to the buffer
     local matchedRadio = isClientTalkingToUs(event.user)
-    if matchedRadio.frequency then
+    if matchedRadio and matchedRadio.frequency then
         print("OnUserSpeak:  radio connected: "..matchedRadio.frequency)
         local remote = fgcom_clients[event.user:getSession()]
            print("remote="..tostring(remote))
@@ -212,6 +246,9 @@ client:hook("OnUserSpeak", function(event)
             print("OnUserSpeak:  FGCS file '"..remote.record_filename.."' not open, opening...")
             if remote.record_filename then
                 print("OnUserSpeak: prepare FGCS header for file '"..remote.record_filename.."'")
+                local ch = client:getChannel(fgcom.channel)
+                ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' started.")
+           
                 local header = {
                     version      = "1.0 FGCS",
                     callsign     = remote.callsign,
@@ -232,6 +269,7 @@ client:hook("OnUserSpeak", function(event)
                 
                 -- Echotest handling: short lived, oneshot sample
                 if remote.record_mode == "ECHOTEST" then
+                    header.callsign     = "ECHO:"..remote.callsign
                     header.playbacktype = "oneshot"
                     header.timetolive   = 30
                     rlimit = 10    -- secs max recording length
@@ -272,6 +310,8 @@ end)
 
 client:hook("OnUserStopSpeaking", function(user)
     print("OnUserStopSpeaking, user["..user:getSession().."]="..user:getName())
+           
+    if isIgnored(user) then return end   -- ignore other bots!
 
     -- see if there is an active recording, if so, end it now
     if fgcom_clients[user:getSession()] then
@@ -290,7 +330,11 @@ client:hook("OnUserStopSpeaking", function(user)
             print("recording ready: '"..record_filename_final.."'")
 
             local ch = client:getChannel(fgcom.channel)
-            ch:message(remote.callsign..": Recording for frequency '"..remote.record_tgt_frq.."' completed!")
+            ch:message(user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' completed!")
+            
+            -- spawn a bot that replays the sample.
+            -- he is responsible fo killing himself and also to delete the sample file if it is not valid anymore.
+            callPlaybackBot(record_filename_final)
         else
             --print(remote.callsign..": no active recording detected")
         end
