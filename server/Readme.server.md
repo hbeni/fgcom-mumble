@@ -29,24 +29,13 @@ Basicly, you just need a standard mumble server >=1.4, so the plugins can exchan
 However, there are advanced features that need serverside support. Mumble-Bots will provide that functionality.
 
 
-ATIS Manager Bot
-================
-Start the bot with `lua fgcom-botmanager.bot.lua -h` to get usage info.
-
-The ATIS manager bot is a central watchdog service that constantly monitors the `fgcom-mumble` channel:
-
-- presence of exactly one `radio-recorder` bot. She does that by checking the channel users for the bot name. If there is none, a new one will be spawned.
-- checks the available recordings:
-  - for every valid recording there has to be an active `radio-playback` bot. If there is a recording on disk but no corresponding bot, a bot is spawned.
-  - recording files that are not valid anymore need to be cleared from disk (this will also stop the playback bots automatically).
-
 
 Radio Recording Bot
 ===================
 Start the bot with `lua fgcom-radio-recorder.bot.lua -h` to get usage info.
 
 The `radio-recorder` monitors the `fgcom-mumble` channel for users recording requests. If such a request is detected, the samples get recorded and put to an sample file on disk.  
-Those disk samples can be picked up from the `radio-playback` bot, which is usually invoked automatically from the manager bot.
+Those disk samples can be picked up from the `radio-playback` bot, which is usually invoked automatically from the recorder bot.
 
 Radio (ATIS) recording request
 ------------------------------

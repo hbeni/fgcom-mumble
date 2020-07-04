@@ -51,28 +51,30 @@ local port   = 64738
 local cert   = "bot.pem"
 local key    = "bot.key"
 local sample = ""
+local nodel  = false
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
         print(botname)
         print("usage: "..arg[0].." [opt=val ...]")
-        print("  opts:")
+        print("  Options:")
         print("    --host=    host to connect to           (default="..host..")")
         print("    --port=    port to connect to           (default="..port..")")
         print("    --cert=    path to PEM encoded cert     (default="..cert..")")
         print("    --key=     path to the certs key        (default="..key..")")
         print("    --sample=  Path to the FGCS sample file (default="..sample..")")
+        print("    --nodel    Don't delete outdated samples")
         os.exit(0)
     end
     
     for _, opt in ipairs(arg) do
-        _, _, k, v = string.find(arg[1], "--(%w+)=(.+)")
-        --print("KEY='"..k.."'; VAL='"..v.."'")
+        _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         if k=="host"   then host=v end
         if k=="port"   then port=v end
         if k=="cert"   then cert=v end
         if k=="key"    then key=v end
         if k=="sample" then sample=v end
+        if opt=="--nodel" then nodel=true end
     end
     
 end
@@ -112,6 +114,15 @@ readFGCSSampleFile = function(file)
     return sampleHeader, vb
 end
 
+-- Function to remove samples according to nodel parameter
+-- @param s filename of sample
+delSample = function(s)
+    if nodel then
+        print("preserving file (--nodel in effect): "..s)
+    else
+        os.remove(s)
+    end
+end
 
 -----------------------------
 --[[      BOT RUNTIME      ]]
@@ -224,7 +235,7 @@ playbackTimer_func = function(t)
         -- Check if this is a oneshot sample. if so, delete the file now as we just played it, and go home
         if lastHeader.playbacktype == "oneshot" then
             print("Oneshot sample detected: delete sample and go home.")
-            os.remove(sample)
+            delSample(sample)
             shutdownBot()
             print("disconnected: we are done.")
             t:stop() -- Stop the timer
@@ -258,7 +269,7 @@ playbackTimer_func = function(t)
                 end
                 if not persistent and timeLeft < 0 then
                     print(sample..": FGCS file outdated since "..timeLeft.." seconds; removing")
-                    os.remove(sample)
+                    delSample(sample)
                     shutdownBot()
                     print("disconnected: we are done.")
                     t:stop() -- Stop the timer
@@ -313,8 +324,25 @@ client:hook("OnServerSync", function(event)
         
     -- start the playback timer.
     -- this will process the voice buffer.
-    playbackTimer:start(playbackTimer_func, 0.25, lastHeader.samplespeed)
+    playbackTimer:start(playbackTimer_func, 0.0, lastHeader.samplespeed)
     
+end)
+
+
+client:hook("OnPluginData", function(event)
+    --["sender"] = mumble.user sender, -- Who sent this data packet
+	--["id"]     = Number id,          -- The data ID of this packet
+	--["data"]   = String data,        -- The data sent (can be binary data)
+	--["receivers"]				= {  -- A table of who is receiving this data
+	--	[1] = mumble.user,
+	--},
+	print("OnPluginData(): DATA INCOMING FROM=", event.id, event.sender)
+
+    -- Answer data requests to the manager bot
+    if event.id:len() > 0 and event.id:find("FGCOM:ICANHAZDATAPLZ") then
+        print("OnPluginData(): client asks for data: ", event.sender)
+    end
+
 end)
 
 
