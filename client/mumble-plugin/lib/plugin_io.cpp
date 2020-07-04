@@ -275,7 +275,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         
                         if (token_key == "LON")      fgcom_remote_clients[clientID].lon      = std::stof(token_value);
                         if (token_key == "LAT")      fgcom_remote_clients[clientID].lat      = std::stof(token_value);
-                        if (token_key == "ALT")      fgcom_remote_clients[clientID].alt      = std::stof(token_value);
+                        if (token_key == "ALT")      fgcom_remote_clients[clientID].alt      = std::stof(token_value);  // ALT in meters above ground!
                         if (token_key == "CALLSIGN") fgcom_remote_clients[clientID].callsign = token_value;
                         
                         
