@@ -43,7 +43,7 @@ void fgcom_audio_addNoise(float signalQuality, float *outputPCM, uint32_t sample
     // basicly the signal quality already tells us how the ratio is between signal and noise.
     float signalVolume;
     float noiseVolume;
-    float minimumNoiseVolume = 0.15;
+    float minimumNoiseVolume = 0.05;
     signalVolume = signalQuality;
     noiseVolume  = 1-signalQuality;
     if (noiseVolume < minimumNoiseVolume)  noiseVolume = minimumNoiseVolume;
