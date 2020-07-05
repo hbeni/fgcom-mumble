@@ -22,17 +22,21 @@ Running a server
 - Have mumble server up and running
 - Create a new channel named `fgcom-mumble` for the airspace. The plugin only does it's things when on this channel.
 - Clients will connect and enable their local fgcom plugin. This handles all human communication on frequencies
-- Start the `fgcom-bot-manager` which handles all needed bots: `lua fgcom-botmanager.bot.lua`
+- Start the `fgcom-bot-manager` which handles all needed bots: `./fgcom-botmanager.sh`
 
 Basicly, you just need a standard mumble server >=1.4, so the plugins can exchange information. This will enable radio coms.
 
 However, there are advanced features that need serverside support. Mumble-Bots will provide that functionality.
 
 
+The Bot manager
+==================
+The bot manager will setup the needed interprocess communication for the recorder bot to notify about new recordings. He then spawns a recorder bot and listens for new recordings. When receiving a new recording, a playback bot is invoked.
+
 
 Radio Recording Bot
 ===================
-Start the bot with `lua fgcom-radio-recorder.bot.lua -h` to get usage info.
+If you want to start the bot manually, you can inspect its available options with `lua fgcom-radio-recorder.bot.lua -h`.
 
 The `radio-recorder` monitors the `fgcom-mumble` channel for users recording requests. If such a request is detected, the samples get recorded and put to an sample file on disk.  
 Those disk samples can be picked up from the `radio-playback` bot, which is usually invoked automatically from the recorder bot.
@@ -89,7 +93,7 @@ The *SampleSpeed* is usually 0.02, but depending on the clients settings.
 
 Radio Playback Bot
 ==================
-Start the bot with `lua fgcom-radio-playback.bot.lua -h` to get usage info.
+If you want to start the bot manually, you can inspect its available options with `lua fgcom-radio-playback.bot.lua -h`.
 
 The bot basically connects to the server, sets up fgcom-mumble plugin location information and broadcasts it to clients. It then starts to transmit the contents of an audio file in a loop until either the file is not valid anymore, deleted or the bot is manually killed.
 
