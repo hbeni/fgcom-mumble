@@ -21,6 +21,10 @@ The purpose of this bot is to monitor `fgcom-mumble` channel traffic on so calle
 "recorder" frequencies. Samples sent on those are recorded to a file using a custom
 file format (FGCS) that can later be read from the FGCom-mumble playback bot.
 
+The bot can optionally notify about finished new recordings using a linux FIFO, which
+is currently the standard method of invoking playback bots. A monitor script is
+reading that fifo and invokes fgcom-radio-playback bots.
+
 Currently the recording takes place for transmisisons in the fgcom-mumble channel
 for the following tuned frequencies (bots own geographic location is not relevant):
 (see isClientTalkingToUs() for current implementations)
@@ -46,7 +50,8 @@ local key   = "bot.key"
 local path  = "./recordings"
 local limit = 120     -- default time limit for recordings in secs
 local ttl   = 120*60  -- default time-to-live after recordings in secs
-local nospawn = false
+local spawn = false
+local fnotify  = ""      -- notify about recorded samples into this file
 
 
 if arg[1] then
@@ -61,24 +66,36 @@ if arg[1] then
         print("    --path=    Path to store the recordings to  (default="..path..")")
         print("    --limit=   Max limit to record, in seconds  (default="..limit..")")
         print("    --ttl=     Max timeToLive in seconds        (default="..ttl..")")
-        print("    --nospawn  Don't spawn playback bots, just record")
+        print("    --fnotify= notify about recorded sample into this file.")
+        --print("    --spawn    Spawn playback bots after recording")
         os.exit(0)
     end
     
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         --print("KEY='"..k.."'; VAL='"..v.."'")
-        if k=="host"  then host=v end
-        if k=="port"  then port=v end
-        if k=="cert"  then cert=v end
-        if k=="key"   then key=v end
-        if k=="path"  then path=v end
-        if k=="limit" then limit=v end
-        if k=="ttl"   then ttl=v end
-        if opt=="--nospawn" then nospawn=true end
+        if k=="host"      then host=v end
+        if k=="port"      then port=v end
+        if k=="cert"      then cert=v end
+        if k=="key"       then key=v end
+        if k=="path"      then path=v end
+        if k=="limit"     then limit=v end
+        if k=="ttl"       then ttl=v end
+        if opt=="--spawn" then spawn=true end
+        if k=="fnotify"   then fnotify=v end
     end
     
 end
+
+if fnotify:len() > 0 then
+    print("will notify about new recordings via file '"..fnotify.."'.")
+end
+
+-- BUG pending: Prevent users from trying --spawn. This will not work:
+--     lua will spawn the bot, but somehow the recorder cant let go of the child process.
+--     this will kill the recorder shortly after.
+if spawn then print("--spawn does not work good currently, sorry.") os.exit(1) end
+
 
 -- Check target dir:
 -- try to create and delete a file at path, so we check if its there and writabl
@@ -169,17 +186,25 @@ end
 -- Function to invole a playback bot
 -- @param s path to the sample file to play
 callPlaybackBot = function(s)
-    if nospawn then print("not spawning playback bot: --nospawn in effect") return end
+    if fnotify:len() > 0 then
+        print("notify via file '"..fnotify.."': "..s)
+        local fifo = io.open(fnotify, "ab")
+        fifo:write(s.."\n")  -- write recorded sample file to fifo.
+        fifo:close()
+        return
+    end
     
-    local cmd = "lua fgcom-radio-playback.bot.lua"
-             .." --sample="..s
-             .." --host="..host
-             .." --port="..port
-             .." --cert="..cert
-             .." --key="..key
-             --.." --nodel"
-    print("spawning new playback bot: "..cmd)
-    local handle = io.popen(cmd)
+    if spawn then
+        local cmd = "lua fgcom-radio-playback.bot.lua"
+                .." --sample="..s
+                .." --host="..host
+                .." --port="..port
+                .." --cert="..cert
+                .." --key="..key
+                --.." --nodel"
+        print("spawning new playback bot: "..cmd)
+        local handle = io.popen(cmd)  -- BUG pending: this is currently blocking the bot and killing him after a short while. use --fifo instead.
+    end
 end
 
 
