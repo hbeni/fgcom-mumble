@@ -196,7 +196,7 @@ playbackTimer_func = function(t)
     if ptt then
         -- PTT is active: setup voice buffer and radio (if not done already)
         if voiceBuffer:size() <= 0 then
-            print("Starting new transmission...")
+            print("fgcom.callsign.. Starting new transmission...")
             
             -- fill temporary buffer
             lastHeader, voiceBuffer = readFGCSSampleFile(sample)
@@ -217,7 +217,7 @@ playbackTimer_func = function(t)
             local msg = "FRQ="..freq
                     ..",PWR=10"
                     ..",PTT=1"
-            print("  Bot sets radio: "..msg)
+            print(fgcom.callsign.."  Bot sets radio: "..msg)
             client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
         end
             
@@ -230,17 +230,17 @@ playbackTimer_func = function(t)
             local endofStream = false
             if voiceBuffer:size() == 0 then endofStream = true end
 
-           -- print("transmit next sample @"..freq)
+            print("transmit next sample @"..freq)
             --print("  tgt="..playback_target:getSession())
-           -- print("  eos="..tostring(endofStream))
-           -- print("  cdc="..lastHeader.voicecodec)
-           -- print("  dta="..#nextSample.data)
+            print("  eos="..tostring(endofStream))
+            print("  cdc="..lastHeader.voicecodec)
+            print("  dta="..#nextSample.data)
             --print("  dta="..nextSample.data)
             client:transmit(lastHeader.voicecodec, nextSample.data, not endofStream) -- Transmit the single frame as an audio packet (the bot "speaks")
-           -- print("transmit ok")
+            print("  transmit ok")
             if endofStream then
                 -- no samples left? Just loop around to trigger all the checks
-                print("  no samples left, playback complete")
+                print(fgcom.callsign.."  no samples left, playback complete")
                 
                 ptt = false;
             
@@ -253,7 +253,7 @@ playbackTimer_func = function(t)
                 client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
                 
                 t:stop() -- Stop the timer
-                print("Transmission complete.")
+                print(fgcom.callsign.." Transmission complete.")
             end
         end
         
@@ -261,8 +261,12 @@ playbackTimer_func = function(t)
         -- PTT is false.
         -- (This should never be reached, because the only place ptt is reset to false is, if the voicebuffer is empty. Somehow the timer was not stopped...)
         print("ERROR: PTT=0 invalid state reached.")
-        os.exit(1)
+        t:stop()
+        voiceBuffer = Queue.new()
+        --os.exit(1)
     end
+    
+    io.flush()
 end
 
 
@@ -279,7 +283,7 @@ client:hook("OnServerSync", function(event)
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
-    print("joined channel "..fgcom.channel)
+    print(fgcom.callsign.." joined channel "..fgcom.channel)
     
     -- update location       
     locUpd:start(function(t)
