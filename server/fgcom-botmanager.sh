@@ -29,8 +29,10 @@
 # Define defaults
 host="localhost"
 port="64738"
-cert="bot.pem"
-key="bot.key"
+rcert="recbot.pem"
+rkey="recbot.key"
+pcert="playbot.pem"
+pkey="playbot.key"
 path="./recordings"
 limit="120" # default time limit for recordings in secs
 ttl="7200"  # default time-to-live after recordings in secs
@@ -48,10 +50,10 @@ function usage() {
     echo "Common options, that will be passed to bots:"
     echo "    --host=    host to connect to               (default=$host)"
     echo "    --port=    port to connect to               (default=$port)"
-    echo "    --cert=    path to PEM encoded cert         (default=$cert)"
-    echo "    --key=     path to the certs key            (default=$key)"
     echo ""
     echo "Recording bot options:"
+    echo "    --rcert=   path to PEM encoded cert         (default=$cert)"
+    echo "    --rkey=    path to the certs key            (default=$key)"
     echo "    --path=    Path to store the recordings to  (default=$path)"
     echo "    --limit=   Max limit to record, in seconds  (default=$limit)"
     echo "    --ttl=     Max timeToLive in seconds        (default=$ttl)"
@@ -59,6 +61,8 @@ function usage() {
     echo "    --rlog=    Recorder bot logfile (\"-\"=STDOUT) (default=$recorderbot_log)"
     echo ""
     echo "Playback bot options:"
+    echo "    --pcert=    path to PEM encoded cert         (default=$cert)"
+    echo "    --pkey=     path to the certs key            (default=$key)"
     echo "    --plog=    Playback bot logfile (\"-\"=STDOUT) (default=$playbackbot_log)"
 }
 
@@ -69,8 +73,10 @@ for opt in "$@"; do
        -h)      usage; exit 0 ;;
        --host=*)  host=$(echo $opt|cut -d"=" -f2);;
        --port=*)  port=$(echo $opt|cut -d"=" -f2);;
-       --cert=*)  cert=$(echo $opt|cut -d"=" -f2);;
-       --key=*)   key=$(echo $opt|cut -d"=" -f2);;
+       --rcert=*) rcert=$(echo $opt|cut -d"=" -f2);;
+       --rkey=*)  rkey=$(echo $opt|cut -d"=" -f2);;
+       --pcert=*) pcert=$(echo $opt|cut -d"=" -f2);;
+       --pkey=*)  pkey=$(echo $opt|cut -d"=" -f2);;
        --path=*)  key=$(echo $opt|cut -d"=" -f2);;
        --limit=*) limit=$(echo $opt|cut -d"=" -f2);;
        --ttl=*)   ttl=$(echo $opt|cut -d"=" -f2);;
@@ -85,8 +91,10 @@ done
 echo "Starting FGCom-mumble bot manager..."
 echo "  --host=$host"
 echo "  --port=$port"
-echo "  --cert=$cert"
-echo "  --key=$key"
+echo "  --rcert=$rcert"
+echo "  --rkey=$rkey"
+echo "  --pcert=$pcert"
+echo "  --pkey=$pkey"
 echo "  --path=$path"
 echo "  --limit=$limit"
 echo "  --ttl=$ttl"
@@ -94,9 +102,9 @@ echo "  --rlog=$recorderbot_log"
 echo "  --plog=$playbackbot_log"
 
 # define cmd options for the bot callups
-common_opts="--host=$host --port=$port --cert=$cert --key=$key"
-playback_opts="$common_opts"
-recorder_opts="$common_opts --path=$path --limit=$limit --ttl=$ttl"
+common_opts="--host=$host --port=$port"
+playback_opts="$common_opts --cert=$pcert --key=$pkey"
+recorder_opts="$common_opts --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
 
 
 # setup the fifo
