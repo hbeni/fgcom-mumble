@@ -59,6 +59,12 @@ The plugin aims to be compatible to the legacy fgcom-standalone protocol, so vey
 - start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,2,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
 - start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
 
+### OpenRadar specific
+Currently, OpenRadar just supports one Radio per UDP port. In case you want several Radios (which is likely), you need to invoke several dedicated mumble processes. This will give you separate FGCom-mumble plugin instances listening on different ports, and in OpenRadar you can thus specify that ports.
+
+### ATC-Pie specific
+Currently ATC-Pie has the same issue (and the same workaround) as OpenRadar. There is a development version in the works that will enable better FGCom-mumble support.
+
 
 Support for FGCom special frequencies
 -------------------------------------
