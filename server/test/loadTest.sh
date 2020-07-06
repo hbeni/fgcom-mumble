@@ -9,7 +9,7 @@ if [[ -z "$1" ]]; then
 fi
 if [[ -n $2 ]]; then spacing=$2; fi
 
-function spawnBot { lua test/fgcom-fakepilot.bot.lua --id=$1 --cert=$2 --key=$3 --chancee=-1 & }
+function spawnBot { lua test/fgcom-fakepilot.bot.lua --id=$1 --cert=$2 --key=$3 & }
 
 
 for i in $(seq 1 $1); do
