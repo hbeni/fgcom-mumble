@@ -234,8 +234,12 @@ playbackTimer_func = function(t)
         
         -- Check if this is a oneshot sample. if so, delete the file now as we just played it, and go home
         if lastHeader.playbacktype == "oneshot" then
-            print("Oneshot sample detected: delete sample and go home.")
-            delSample(sample)
+            print("Oneshot sample detected, not looping.")
+            local persistent = false
+            if lastHeader.timetolive ~= "0" then
+                print("deleting oneshot non-persistent sample file.")
+                delSample(sample)
+            end
             shutdownBot()
             print("disconnected: we are done.")
             t:stop() -- Stop the timer
