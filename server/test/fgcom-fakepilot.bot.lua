@@ -205,7 +205,7 @@ playbackTimer_func = function(t)
             -- choose a random frequency
             freq = testfrequencies[math.random(1,#testfrequencies)]
             local ce = tonumber(math.random(0, 100)/100)
-            if ce <= chance_echotest then
+            if ce < chance_echotest then
                 freq = "910.00"
                 print("  (Echotest transmission @"..freq..")")
             else
