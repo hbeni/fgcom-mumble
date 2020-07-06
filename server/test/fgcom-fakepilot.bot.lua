@@ -39,9 +39,8 @@ fgcom.rng.initialize()
 
 --print(math.random(-150, 150)/100 + math.random(-100000, 100000)/100000)  os.exit(1)
 --print(math.random(-100, 100)/100000) os.exit(1)
-
-local botname     = "FGCOM-fakepilot"
-fgcom.callsign    = "FGCOM-BOTPILOT-"..math.random(1, 99999)
+local botid   = ""
+local botname = "FGCOM-fakepilot"
 
 local voiceBuffer = Queue:new() -- Queue voice buffer holding the cached samples
 local lastHeader  = nil -- holds last header data
@@ -71,6 +70,7 @@ if arg[1] then
         print(botname)
         print("usage: "..arg[0].." [opt=val ...]")
         print("  Options:")
+        print("    --id=      id to join with              (default=random)")
         print("    --host=    host to connect to           (default="..host..")")
         print("    --port=    port to connect to           (default="..port..")")
         print("    --cert=    path to PEM encoded cert     (default="..cert..")")
@@ -85,6 +85,7 @@ if arg[1] then
     
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
+        if k=="id"      then botid=v end
         if k=="host"    then host=v end
         if k=="port"    then port=v end
         if k=="cert"    then cert=v end
@@ -100,6 +101,13 @@ end
 
 -- parameter checks
 --if sample == "" then print("parameter --sample is mandatory!") os.exit(1) end
+
+fgcom.callsign = "FGCOM-BOTPILOT-"
+if botid == "" then
+    fgcom.callsign = fgcom.callsign..math.random(1, 99999)
+else
+    fgcom.callsign = fgcom.callsign..botid
+end
 
 
 -----------------------------
