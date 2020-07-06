@@ -52,6 +52,9 @@ local cert   = "bot.pem"
 local key    = "bot.key"
 local sample = ""
 local nodel  = false
+local lat    = ""
+local lon    = ""
+local hgt    = ""
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
@@ -64,6 +67,9 @@ if arg[1] then
         print("    --key=     path to the certs key        (default="..key..")")
         print("    --sample=  Path to the FGCS sample file (default="..sample..")")
         print("    --nodel    Don't delete outdated samples")
+        print("    --lat      Latitude override        (default: use FGCS header)")
+        print("    --lon      Longitude override       (default: use FGCS header)")
+        print("    --hgt      Height override          (default: use FGCS header)")
         os.exit(0)
     end
     
@@ -75,6 +81,9 @@ if arg[1] then
         if k=="key"    then key=v end
         if k=="sample" then sample=v end
         if opt=="--nodel" then nodel=true end
+        if k=="lat"    then lat=v end
+        if k=="lon"    then lon=v end
+        if k=="hgt"    then hgt=v end
     end
     
 end
@@ -312,10 +321,13 @@ client:hook("OnServerSync", function(event)
     updateAllChannelUsersforSend(client)
 
     -- Setup the Bots location on earth
+    local latitude  = lastHeader.lat       if lat ~= "" then latitude  = lat end
+    local longitude = lastHeader.lon       if lon ~= "" then longitude = lon end
+    local height    = lastHeader.height    if hgt ~= "" then height    = hgt end
     local msg = "CALLSIGN="..lastHeader.callsign
-             ..",LON="..lastHeader.lon              
-             ..",LAT="..lastHeader.lat
-             ..",ALT="..lastHeader.height
+             ..",LON="..longitude
+             ..",LAT="..latitude
+             ..",ALT="..height
     print("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC", msg, playback_targets)
         
