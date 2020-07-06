@@ -130,4 +130,4 @@ It is currently modelled very simply, so that the tx-power of 10W approximates l
 Please note that currently no (to me) known flightgear aircraft sets the radios tx-power, so it defaults to 10W/50nM (like current FGCom does).
 
 In the future we surely should refine this model to be way more realistic (see https://en.wikipedia.org/wiki/Radio_propagation); maybe take even the used antenna, the terrain (mountains etc) and maybe also the weather into account.  
-A good first step would probably be to add static noise and lessen volume for very distant senders, and to provide realistic numbers for the range/watts.
+A good first step would probably to provide more realistic numbers for the range/watts and static noise/volume numbers for very distant senders. Also another basic radio model for HF communications would be nice.
