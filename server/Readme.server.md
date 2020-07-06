@@ -22,6 +22,7 @@ Running a server
 - Have mumble server up and running
 - Create a new channel named `fgcom-mumble` for the airspace. The plugin only does it's things when on this channel.
 - Clients will connect and enable their local fgcom plugin. This handles all human communication on frequencies
+- Make a certificate for the bots (details below)
 - Start the `fgcom-bot-manager` which handles all needed bots: `./fgcom-botmanager.sh`
 
 Basicly, you just need a standard mumble server >=1.4, so the plugins can exchange information. This will enable radio coms.
@@ -31,7 +32,10 @@ However, there are advanced features that need serverside support. Mumble-Bots w
 
 The Bot manager
 ==================
+`./fgcom-botmanager.sh --help` will give usage instructions.
+
 The bot manager will setup the needed interprocess communication for the recorder bot to notify about new recordings. He then spawns a recorder bot and listens for new recordings. When receiving a new recording, a playback bot is invoked.
+
 
 
 Radio Recording Bot
