@@ -52,8 +52,8 @@ function usage() {
     echo "    --port=    port to connect to               (default=$port)"
     echo ""
     echo "Recording bot options:"
-    echo "    --rcert=   path to PEM encoded cert         (default=$cert)"
-    echo "    --rkey=    path to the certs key            (default=$key)"
+    echo "    --rcert=   path to PEM encoded cert         (default=$rcert)"
+    echo "    --rkey=    path to the certs key            (default=$rkey)"
     echo "    --path=    Path to store the recordings to  (default=$path)"
     echo "    --limit=   Max limit to record, in seconds  (default=$limit)"
     echo "    --ttl=     Max timeToLive in seconds        (default=$ttl)"
@@ -61,8 +61,8 @@ function usage() {
     echo "    --rlog=    Recorder bot logfile (\"-\"=STDOUT) (default=$recorderbot_log)"
     echo ""
     echo "Playback bot options:"
-    echo "    --pcert=    path to PEM encoded cert         (default=$cert)"
-    echo "    --pkey=     path to the certs key            (default=$key)"
+    echo "    --pcert=   path to PEM encoded cert         (default=$pcert)"
+    echo "    --pkey=    path to the certs key            (default=$pkey)"
     echo "    --plog=    Playback bot logfile (\"-\"=STDOUT) (default=$playbackbot_log)"
 }
 
