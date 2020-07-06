@@ -56,6 +56,10 @@ function usage() {
     echo "    --limit=   Max limit to record, in seconds  (default=$limit)"
     echo "    --ttl=     Max timeToLive in seconds        (default=$ttl)"
     echo "    --fnotify= fifo to where the recorder notifies (default=$fnotify)"
+    echo "    --rlog=    Recorder bot logfile (\"-\"=STDOUT) (default=$recorderbot_log)"
+    echo ""
+    echo "Playback bot options:"
+    echo "    --plog=    Playback bot logfile (\"-\"=STDOUT) (default=$playbackbot_log)"
 }
 
 # Parse cmdline args
@@ -71,6 +75,8 @@ for opt in "$@"; do
        --limit=*) limit=$(echo $opt|cut -d"=" -f2);;
        --ttl=*)   ttl=$(echo $opt|cut -d"=" -f2);;
        --fnotify=*)   fnotify=$(echo $opt|cut -d"=" -f2);;
+       --plog=*)  playbackbot_log=$(echo $opt|cut -d"=" -f2);;
+       --rlog=*)  recorderbot_log=$(echo $opt|cut -d"=" -f2);;
        *) echo "unknown option $opt!"; usage; exit 1;;
    esac
 done
@@ -84,6 +90,8 @@ echo "  --key=$key"
 echo "  --path=$path"
 echo "  --limit=$limit"
 echo "  --ttl=$ttl"
+echo "  --rlog=$recorderbot_log"
+echo "  --plog=$playbackbot_log"
 
 # define cmd options for the bot callups
 common_opts="--host=$host --port=$port --cert=$cert --key=$key"
@@ -108,11 +116,14 @@ fi
 # Spawn the radio recorder bot
 recorderbot_cmd="lua fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
 echo "Spawn bot: $recorderbot_cmd"
-$recorderbot_cmd >$recorderbot_log &
+if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
+    $recorderbot_cmd > $recorderbot_log &
+else
+    $recorderbot_cmd &
+fi
 
 # wait for new recordings and call playback bots
-while true
-do
+while true; do
     if read line <$fnotify; then
         if [[ "$line" == 'quit' ]]; then
             break
@@ -122,7 +133,11 @@ do
         #spawn bot
         playbackbot_cmd="lua fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
         echo "Spawn bot: $playbackbot_cmd"
-        $playbackbot_cmd >$playbackbot_log &
+        if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
+            $playbackbot_cmd > $playbackbot_log &
+        else
+            $playbackbot_cmd &
+        fi
     fi
 done
 
