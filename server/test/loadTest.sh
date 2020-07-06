@@ -9,7 +9,10 @@ if [[ -z "$1" ]]; then
 fi
 if [[ -n $2 ]]; then spacing=$2; fi
 
-function spawnBot { lua test/fgcom-fakepilot.bot.lua --id=$1 --cert=$2 --key=$3 & }
+function spawnBot {
+    echo "  CMD=test/fgcom-fakepilot.bot.lua --id=$1 --cert=$2 --key=$3 --sample=$4 >$5 2>$5 &"
+    lua test/fgcom-fakepilot.bot.lua --id=$1 --cert=$2 --key=$3 --sample=$4 >$5 2>$5 &
+}
 
 
 for i in $(seq 1 $1); do
@@ -23,7 +26,7 @@ for i in $(seq 1 $1); do
 	# and his own sample file
 	cp recordings/fgcom.rec.testsample.fgcs /tmp/fgcom.rec.testsample-$i.fgcs
 
-	spawnBot $i /tmp/fgcom-bot-$i.pem /tmp/fgcom-bot-$i.key /tmp/fgcom.rec.testsample-$i.fgcs
+	spawnBot $i /tmp/fgcom-bot-$i.pem /tmp/fgcom-bot-$i.key /tmp/fgcom.rec.testsample-$i.fgcs /tmp/fgcom-bot-$i.log
 
 	sleep $spacing
 done
