@@ -48,8 +48,8 @@ local playback_targets = nil -- holds updated list of all channel users
 -- Parse cmdline args
 local host   = "localhost"
 local port   = 64738
-local cert   = "bot.pem"
-local key    = "bot.key"
+local cert   = "playbot.pem"
+local key    = "playbot.key"
 local sample = ""
 local nodel  = false
 local lat    = ""

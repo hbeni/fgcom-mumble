@@ -45,8 +45,8 @@ local voiceBuffer = Queue:new()
 -- Parse cmdline args
 local host  = "localhost"
 local port  = 64738
-local cert  = "bot.pem"
-local key   = "bot.key"
+local cert  = "recbot.pem"
+local key   = "recbot.key"
 local path  = "./recordings"
 local limit = 120     -- default time limit for recordings in secs
 local ttl   = 120*60  -- default time-to-live after recordings in secs
