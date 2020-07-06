@@ -59,8 +59,8 @@ struct fgcom_client {
 	std::string  callsign;
 	std::vector<fgcom_radio> radios;
 	fgcom_client()  {
-		lon = -1;
-		lat = -1;
+		lon = -130.000;   // 60°S / 130°W is somewhere in the middle of the pacific ocean... 
+		lat = -60.000;
 		alt = -1;
 		callsign = "ZZZZ";
 	};
