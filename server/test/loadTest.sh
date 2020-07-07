@@ -21,7 +21,7 @@ if [[ -n $5 ]]; then host=$5; fi
 function spawnBot {
     bcmd="lua test/fgcom-fakepilot.bot.lua --id=$1 --cert=$2 --key=$3 --sample=$4 --sleep=$6 --host=$7"
     echo "  cmd=$bcmd >$5 2>$5 &"
-    $cmd >$5 2>$5 &
+    $bcmd >$5 2>$5 &
 }
 
 
