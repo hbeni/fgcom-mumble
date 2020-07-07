@@ -122,7 +122,7 @@ fi
 
 
 # Spawn the radio recorder bot
-recorderbot_cmd="lua fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
+recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
 echo "Spawn bot: $recorderbot_cmd"
 if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
     $recorderbot_cmd > $recorderbot_log &
@@ -139,7 +139,7 @@ while true; do
         date "+[%Y-%m-%d %H:%M:%S] notification received: '$line'"
         
         #spawn bot
-        playbackbot_cmd="lua fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
+        playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
         echo "Spawn bot: $playbackbot_cmd"
         if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
             $playbackbot_cmd > $playbackbot_log &

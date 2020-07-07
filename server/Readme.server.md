@@ -9,11 +9,11 @@ Setup requirements
 ------------------
 - plain mumble murmur server instance; >= v1.4.0.
 
-Thats all to run a basic FGCom-mumble server. The *fgcom-mumble* plugin on each client handles everything else.
+Thats enough to run a basic FGCom-mumble server. The *fgcom-mumble* plugin on each client handles everything else.
 
 More functionality like ATIS recordings come with serverside bots. To run those bots, you need to install additional components:
 
-- a lua >=5.1 interpreter (`apt-get install lua5.1 lua-bitop`)
+- a luajit 5.1 interpreter (`apt-get install luajit lua5.1 lua-bitop`)
   - lua mumble support (*mumble.so*) in lua include path (/usr/lib/x86_64-linux-gnu/lua/5.1/; compiled from [https://github.com/bkacjios/lua-mumble])
 
 
@@ -40,7 +40,7 @@ The bot manager will setup the needed interprocess communication for the recorde
 
 Radio Recording Bot
 ===================
-If you want to start the bot manually, you can inspect its available options with `lua fgcom-radio-recorder.bot.lua -h`.
+If you want to start the bot manually, you can inspect its available options with `luajit fgcom-radio-recorder.bot.lua -h`.
 
 The `radio-recorder` monitors the `fgcom-mumble` channel for users recording requests. If such a request is detected, the samples get recorded and put to an sample file on disk.  
 Those disk samples can be picked up from the `radio-playback` bot, which is usually invoked automatically from the recorder bot.
@@ -97,7 +97,7 @@ The *SampleSpeed* is usually 0.02, but depending on the clients settings.
 
 Radio Playback Bot
 ==================
-If you want to start the bot manually, you can inspect its available options with `lua fgcom-radio-playback.bot.lua -h`.
+If you want to start the bot manually, you can inspect its available options with `luajit fgcom-radio-playback.bot.lua -h`.
 
 The bot basically connects to the server, sets up fgcom-mumble plugin location information and broadcasts it to clients. It then starts to transmit the contents of an audio file in a loop until either the file is not valid anymore, deleted or the bot is manually killed.
 
@@ -125,7 +125,7 @@ You need separate certificates for the recorder and playback bots, otherwise the
 
 Compiling server parts
 ===========================
-- The lua bots shouldn't needed to be compiled, just run them trough the lua interpreter.
+- The lua bots shouldn't needed to be compiled, just run them trough the luajit interpreter.
 - Compiling the mumble server is usually not neccessary, just use your distibutions version; this holds true also for the client.
 
 - Information for compiling the lua *mumble.so* is given at [bkacjios github page](https://github.com/bkacjios/lua-mumble). You need it deployed in your systems lua libs folder for running the lua bots.  
