@@ -214,11 +214,13 @@ playbackTimer_func = function(t)
             
             -- Broadcast radio
             updateAllChannelUsersforSend(client)
-            local msg = "FRQ="..freq
-                    ..",PWR=10"
-                    ..",PTT=1"
-            print(fgcom.callsign.."  Bot sets radio: "..msg)
-            client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
+            if #playback_targets > 0 then
+                local msg = "FRQ="..freq
+                        ..",PWR=10"
+                        ..",PTT=1"
+                print(fgcom.callsign.."  Bot sets radio: "..msg)
+                client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
+            end
         end
             
         -- Play the samples, then stop transmission.
@@ -246,11 +248,13 @@ playbackTimer_func = function(t)
             
                 -- broadcast radio
                 updateAllChannelUsersforSend(client)
-                local msg = "FRQ="..freq
-                        ..",PWR=10"
-                        ..",PTT=0"
-                print("  Bot sets radio: "..msg)
-                client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
+                if #playback_targets > 0 then
+                    local msg = "FRQ="..freq
+                            ..",PWR=10"
+                            ..",PTT=0"
+                    print("  Bot sets radio: "..msg)
+                    client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
+                end
                 
                 t:stop() -- Stop the timer
                 print(fgcom.callsign.." Transmission complete.")
@@ -290,17 +294,18 @@ client:hook("OnServerSync", function(event)
         --print("locUpd: tick")
         -- update current users of channel
         updateAllChannelUsersforSend(client)
-
-        -- Setup the Bots location on earth
-        lat = lat + latmv
-        lon = lon + lonmv
-        alt = alt + math.random(-50, 50)
-        local msg = "CALLSIGN="..fgcom.callsign
-                ..",LON="..lat
-                ..",LAT="..lon
-                ..",ALT="..alt
-        --print("Bot sets location: "..msg)
-        client:sendPluginData("FGCOM:UPD_LOC", msg, playback_targets)
+        if #playback_targets > 0 then
+            -- Setup the Bots location on earth
+            lat = lat + latmv
+            lon = lon + lonmv
+            alt = alt + math.random(-50, 50)
+            local msg = "CALLSIGN="..fgcom.callsign
+                    ..",LON="..lat
+                    ..",LAT="..lon
+                    ..",ALT="..alt
+            --print("Bot sets location: "..msg)
+            client:sendPluginData("FGCOM:UPD_LOC", msg, playback_targets)
+        end
             
     end, 0.00, locs)
     
