@@ -81,7 +81,7 @@ if arg[1] then
     end
     
     for _, opt in ipairs(arg) do
-        _, _, k, v = string.find(arg[1], "--(%w+)=(.+)")
+        _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         print("KEY='"..k.."'; VAL='"..v.."'")
         if k=="host" then host=v end
         if k=="port" then port=v end
