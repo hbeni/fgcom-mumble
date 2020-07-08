@@ -14,7 +14,7 @@ release-server:
 	# Build server components release
 	mkdir server-$(PLUGINVER)
 	mkdir server-$(PLUGINVER)/recordings
-	cp server/recordings/readme.md server-$(PLUGINVER)/recordings
+	cp server/recordings/readme.md server/recordings/fgcom.rec.testsample.fgcs server-$(PLUGINVER)/recordings
 	head -n 1 server/Readme.server.md > server-$(PLUGINVER)/README.md
 	@echo Version: $(VERSION) \($(GITVER) $(GITDATE)\) >> server-$(PLUGINVER)/README.md
 	tail +2 server/Readme.server.md >> server-$(PLUGINVER)/README.md
