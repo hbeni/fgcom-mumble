@@ -92,7 +92,7 @@ Landlines/Intercom connections are a feature meant to be used by ATC instances. 
 
 To talk on an intercom/landline connection:
 
-- Tune a COM device to frequency `PHONE:[ICAO]:[POS](:[LINE]), like `PHONE:EDDM:TWR:1` or `PHONE:EDMO:GND`.
+- Tune a COM device to frequency `PHONE:[ICAO]:[POS](:[LINE])`, like `PHONE:EDDM:TWR:1` or `PHONE:EDMO:GND`.
 - Use your PTT as usual
 
 Note: Chances are good that your ATC client does set this up for you and provides some "Talk on Intercom" button.
