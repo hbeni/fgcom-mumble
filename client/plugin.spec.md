@@ -66,19 +66,19 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `COM`*n*`_PTT` | Bool   | PushToTalk: 0=off, 1=pushed/transmitting| `0`        |
 | `COM`*n*`_VOL` | Float  | Volume: 0.0=mute, 1.0=full              | `1.0`      |
 | `COM`*n*`_PWR` | Float  | Transmitting power in watts.            | `10.0`     |
-| `LON`          | Float  | Longitudinal position                   | *mandatory*|
-| `LAT`          | Float  | Latitudinal position                      | *mandatory*|
-| `HGT`          | Int    | Altitude in ft above ground-level          | *mandatory* (if `ALT` not given)|
+| `LAT`          | Float  | Latitudinal position (decimal: 12.34567)| *mandatory*|
+| `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
+| `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
 
 
 The following fields are known from the old flightgear asterisk FGCom protocol and supported for compatibility reasons:
 
-| Field | Format | Description                                                                                        |
-|-------|--------|---------------------------------------------------------------------------------------------------|
-| `ALT`          | Int    | Altitude in ft above sea-level. If both `HGT` and `ALT` is present in the UDP packet, `HGT` takes precedence. If only `ALT` is given, the radio horizon is artificially bigger than it should be, as we have no terrain model right now. |
-| `PTT` | Int    | Currently active PTT radio (0=none, 1=COM1, 2=COM2). Gets converted to new `COM`*n*`_PTT` updates.|
-| `OUTPUT_VOL` | Float | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
+| Field        | Format | Description                                                                                       |
+|--------------|--------|---------------------------------------------------------------------------------------------------|
+| `ALT`        | Int    | Altitude in ft above sea-level. If both `HGT` and `ALT` is present in the UDP packet, `HGT` takes precedence. If only `ALT` is given, the radio horizon is artificially bigger than it should be, as we have no terrain model right now. |
+| `PTT`        | Int    | Currently active PTT radio (0=none, 1=COM1, 2=COM2). Gets converted to new `COM`*n*`_PTT` updates.|
+| `OUTPUT_VOL` | Float  | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
 
 
 Plugin output data
@@ -86,7 +86,7 @@ Plugin output data
 ### Mumble PluginData interface
 The plugin will broadcast its state (callsign, listen/send frequencies, ptt-state, location, tx-power) to the other plugins using the mumble internal plugin data interface (TCP based). Other plugins will pick this up and update their internal knowledge of the other users.
 
-The data packets are constructed as following: The `dataID` field must start with the ASCII-string `FGCOM`. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation and are ignored.
+The data packets are ASCII based and constructed as following: The `dataID` field must start with the string `FGCOM`. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation and are ignored.
 
 The following bytes in the `dataID` field denote the packet type. Each packet consists of a comma-separated sequence of `KEY=VALUE` pairs and empty values are to be ignored too:
 
