@@ -309,6 +309,26 @@ playbackTimer_func = function(t)
 end
 
 
+notifyLocation = function(tgts)
+    local latitude  = lastHeader.lat       if lat ~= "" then latitude  = lat end
+    local longitude = lastHeader.lon       if lon ~= "" then longitude = lon end
+    local height    = lastHeader.height    if hgt ~= "" then height    = hgt end
+    local msg = "CALLSIGN="..lastHeader.callsign
+             ..",LON="..longitude
+             ..",LAT="..latitude
+             ..",ALT="..height
+    print("Bot sets location: "..msg)
+    client:sendPluginData("FGCOM:UPD_LOC", msg, tgts)
+end
+
+notifyRadio = function(tgts)
+local msg = "FRQ="..lastHeader.frequency
+             ..",PWR="..lastHeader.txpower
+             ..",PTT=1"
+    print("Bot sets radio: "..msg)
+    client:sendPluginData("FGCOM:UPD_COM:0", msg, tgts)
+end
+
 client:hook("OnServerSync", function(event)
     print("Sync done; server greeted with: ", event.welcome_text)
     
@@ -321,22 +341,10 @@ client:hook("OnServerSync", function(event)
     updateAllChannelUsersforSend(client)
 
     -- Setup the Bots location on earth
-    local latitude  = lastHeader.lat       if lat ~= "" then latitude  = lat end
-    local longitude = lastHeader.lon       if lon ~= "" then longitude = lon end
-    local height    = lastHeader.height    if hgt ~= "" then height    = hgt end
-    local msg = "CALLSIGN="..lastHeader.callsign
-             ..",LON="..longitude
-             ..",LAT="..latitude
-             ..",ALT="..height
-    print("Bot sets location: "..msg)
-    client:sendPluginData("FGCOM:UPD_LOC", msg, playback_targets)
+    notifyLocation(playback_targets)
         
     -- Setup a radio to broadcast from
-    local msg = "FRQ="..lastHeader.frequency
-             ..",PWR="..lastHeader.txpower
-             ..",PTT=1"
-    print("Bot sets radio: "..msg)
-    client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
+    notifyRadio(playback_targets)
         
     -- start the playback timer.
     -- this will process the voice buffer.
@@ -354,11 +362,28 @@ client:hook("OnPluginData", function(event)
 	--},
 	print("OnPluginData(): DATA INCOMING FROM=", event.id, event.sender)
 
-    -- Answer data requests to the manager bot
+    -- Answer data requests
     if event.id:len() > 0 and event.id:find("FGCOM:ICANHAZDATAPLZ") then
         print("OnPluginData(): client asks for data: ", event.sender)
+        client:sendPluginData("FGCOM:UPD_COM:0", msg, event.sender)
+        client:sendPluginData("FGCOM:UPD_LOC", msg, event.sender)
     end
 
+end)
+
+
+client:hook("OnUserChannel", function(event)
+	--["user"]	= mumble.user user,
+	--["actor"]	= mumble.user actor,
+	--["from"]	= mumble.channel from,
+	--["to"]	= mumble.channel to,
+    print("OnUserChannel(): client joined fgcom.channel: ", event.user.getName())
+           os.exit(2);
+    if event.to:getName() == fgcom.channel then
+        print("OnUserChannel(): client joined fgcom.channel: ", event.user.getName())
+        notifyLocation(event.user)
+        notifyRadio(event.user)
+    end
 end)
 
 
