@@ -52,9 +52,8 @@ plugin_id_t ownPluginID;
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
-#define FGCOM_VERSION_MINOR 1
+#define FGCOM_VERSION_MINOR 2
 #define FGCOM_VERSION_PATCH 0
-
 
 // Global plugin state
 int  fgcom_specialChannelID = -1;
@@ -183,7 +182,8 @@ bool fgcom_onlineInitDone = false;
 std::thread::id udpServerThread_id;
 std::thread::id udpClientThread_id;
 mumble_error_t fgcom_initPlugin() {
-    if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone) mumAPI.log(ownPluginID, "Plugin initializing");
+    if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone)
+        mumAPI.log(ownPluginID, ("Plugin v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+" initializing").c_str());
     
     /*
      * OFFLINE INIT: Here init stuff that can be initialized offline.
