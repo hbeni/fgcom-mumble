@@ -291,6 +291,12 @@ playbackTimer_func = function(t)
                     -- we alreay updated the global voiceBuffer, so we need not do anything here.
                     print(sample..": FGCS file still valid for "..timeLeft.."s: looping over.")
                     
+                    -- Renotitfy users in channel
+                    -- (this is currently needed, because the lua onUserChannel hook seems to be firing currently)
+                    updateAllChannelUsersforSend(client)
+                    notifyLocation(playback_targets)
+                    notifyRadio(playback_targets)
+                    
                     --[[for k,v in pairs(lastHeader) do
                         print("header read: '"..k.."'='"..v.."'")
                     end
