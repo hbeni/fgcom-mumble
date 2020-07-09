@@ -11,6 +11,7 @@ This project aims to provide a modular, mumble based radio simulation for flight
 - ATIS recording and playback
 - Radio station broadcast support
 - Landline/Intercom support
+- RDF detection for clients
 - Ease of server side installation and operation
 - Standalone nature (no dependency on flightgear)
 - Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)

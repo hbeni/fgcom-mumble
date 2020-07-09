@@ -105,6 +105,27 @@ The following bytes in the `dataID` field denote the packet type. Each packet co
 - `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us
 
 
+### UDP client interface
+The plugin can send information via an UDP interface to third party software at max 10Hz on localhost UDP port **19991**.
+
+The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Values are separated using comma, each packet is terminated by newline.  
+If there is not data to send, nothing will be transmitted over the wire.
+
+#### RDF data
+While the plugin receives a signal on a radio, it will send RDF packets. Absence of RDF data means that there is currently no such transmission.
+
+RDF data is composed with the following fields. As the possibility exists that several
+parallel transmissions are received, the ID *id* is put before the fields.  
+*id* is composed like "`<mumble session id>-<radioID>`".
+
+| Field                 | Format | Description                             |
+|-----------------------|--------|-----------------------------------------|
+| `RDF_`*id*`_CALLSIGN` | String | Callsign of the sender                  |
+| `RDF_`*id*`_DIR`      | Float  | Relative bearing of the signal (`0.0` to `359.99`)|
+| `RDF_`*id*`_VRT`      | Float  | Vertical angle of the signal (`-90.0` to `+90.0`)|
+| `RDF_`*id*`_QLY`      | Float  | Signal quality (`0.00` to `1.0`)        |
+
+
 Transmitting radio transmissions
 --------------------------------
 When the plugin detects a change in one of the `COM`*n*`_PTT` fields, it will first check the affected radio(s) state: Is there power? is it turned on? is it serviceable?  

@@ -22,7 +22,9 @@
 #define FGCOM_PLUGIN_IO_H
 
 
-#define FGCOM_PORT 16661    // port to start listen to (16661 is the known FGCom udp port)
+#define FGCOM_SERVER_PORT 16661    // port to start listen to (16661 is the known FGCom udp port)
+#define FGCOM_CLIENT_PORT 19991    // port to send udp datagrams to
+#define FGCOM_CLIENT_RATE 10       // datarate in packets/seconds
 #define MAXLINE    1024     // max byte size of a udp packet
 
 
@@ -64,6 +66,12 @@ void fgcom_spawnUDPServer();
  */
 void fgcom_shutdownUDPServer();
 
+
+/*
+ * Spawn UDP client thread.
+ * He will push out data until stopped.
+ */
+void fgcom_spawnUDPClient();
 
 
 /*

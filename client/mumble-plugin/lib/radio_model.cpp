@@ -22,7 +22,8 @@
 //
 
 #include <iostream> 
-#include <cmath> 
+#include <cmath>
+#include "radio_model.h"
 
 #define EARTH_RADIUS_CONST 3.57  // earth radius factor constant for m/km
 #define EARTH_RADIUS_AVG   6371  // earth radius constant in km
@@ -61,6 +62,23 @@ double fgcom_radiowave_degreeAboveHorizon(double surfacedist, double hah) {
     return (sinA != 0)? sinA * 90 : 0;
 }
 
+double fgcom_radiowave_getDirection(double lat1, double lon1, double lat2, double lon2) {
+    // Implementation taken from: https://www.movable-type.co.uk/scripts/latlong.html
+    //                       via: https://stackoverflow.com/a/18738281
+    double dLon = (lon2 - lon1);
+
+    double y = sin(dLon) * cos(lat2);
+    double x = cos(lat1) * sin(lat2) - sin(lat1)
+            * cos(lat2) * cos(dLon);
+
+    double brng = atan2(y, x) * (180.0 / M_PI);
+    brng = (int)(brng + 360) % 360;
+    brng = 360 - brng; // count degrees counter-clockwise - remove to make clockwise
+    if (brng >= 360) brng = 0;
+
+    return brng;
+}
+
 double fgcom_radiowave_getSurfaceDistance(double lat1, double lon1, 
                         double lat2, double lon2) {
     
@@ -91,7 +109,8 @@ double fgcom_radiowave_getSurfaceDistance(double lat1, double lon1,
     return rad * c; 
 } 
 
-float fgcom_radiowave_getSignalStrength(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power) {
+fgcom_radiowave_signal fgcom_radiowave_getSignal(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power) {
+    struct fgcom_radiowave_signal signal;
     
     // get distance to radio horizon (that is the both ranges combined)
     double radiodist = fgcom_radiowave_getDistToHorizon(alt1) + fgcom_radiowave_getDistToHorizon(alt2);
@@ -101,7 +120,7 @@ float fgcom_radiowave_getSignalStrength(double lat1, double lon1, float alt1, do
     
     // get if they can see each other. VHF will have no connection when no line-of-sight is present.
     double heightAboveHorizon = fgcom_radiowave_heightAboveHorizon(dist, alt1, alt2);
-    if (heightAboveHorizon < 0) return 0.0;  // no, they cant, bail out without signal.
+    if (heightAboveHorizon < 0) return signal;  // no, they cant, bail out without signal.
 
     // get slant distance (in km) so we can calculate signal strenght based on distance
     double slantDist = fgcom_radiowave_getSlantDistance(dist, heightAboveHorizon-alt1);
@@ -115,7 +134,7 @@ float fgcom_radiowave_getSignalStrength(double lat1, double lon1, float alt1, do
     float wr = power * 50; // gives maximum range in km for the supplied power
     float ss = (-1/wr*pow(slantDist,2)+100)/100;  // gives @10w: 50km=0.95 100km=0.8 150km=0.55 200km=0.2
     
-    if (ss <=0.0) return 0.0; // in case signal strength got neagative, that means we are out of range (too less tx-power)
+    if (ss <=0.0) return signal; // in case signal strength got neagative, that means we are out of range (too less tx-power)
     
     // when distance is near the radio horizon, we smoothly cut off the signal, so it doesn't drop sharply to 0
     float usedRange = slantDist/radiodist;
@@ -126,5 +145,9 @@ float fgcom_radiowave_getSignalStrength(double lat1, double lon1, float alt1, do
         ss = ss * (1-loss); // apply loss to signal
     }
     
-    return ss;
+    // prepare return struct
+    signal.quality       = ss;
+    signal.direction     = fgcom_radiowave_getDirection(lat1, lon1, lat2, lon2);
+    signal.verticalAngle = fgcom_radiowave_degreeAboveHorizon(dist, alt2-alt1);
+    return signal;
 }
