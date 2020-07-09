@@ -181,6 +181,7 @@ void fgcom_handlePTT() {
 bool fgcom_offlineInitDone = false;
 bool fgcom_onlineInitDone = false;
 std::thread::id udpServerThread_id;
+std::thread::id udpClientThread_id;
 mumble_error_t fgcom_initPlugin() {
     if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone) mumAPI.log(ownPluginID, "Plugin initializing");
     
@@ -285,6 +286,16 @@ mumble_error_t fgcom_initPlugin() {
             mumAPI.freeMemory(ownPluginID, &localChannelID);
             
             if (!fgcom_isPluginActive()) fgcom_setPluginActive(fgcom_isPluginActive()); // print some nice message to start
+            
+            
+            // start the local udp client.
+            pluginDbg("starting local UDP client");
+            std::thread udpClientThread(fgcom_spawnUDPClient);
+            udpClientThread_id = udpClientThread.get_id();
+            udpClientThread.detach();
+            //std::cout << "FGCOM: udp client started; id=" << udpClientThread_id << std::endl;
+            pluginDbg("udp client started");
+            
             
             // ... more needed?
             
@@ -602,6 +613,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         bool isLandline = false;
         
         // Fetch the remote clients data
+        fgcom_remotecfg_mtx.lock();
         auto search = fgcom_remote_clients.find(userID);
         if (search != fgcom_remote_clients.end()) {
             // we found remote state.
@@ -648,14 +660,27 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                             pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
                             // we are listening on that frequency!
                             // determine signal strenght for this connection
-                            float ss = fgcom_radiowave_getSignalStrength(
+                            fgcom_radiowave_signal signal = fgcom_radiowave_getSignal(
                                 lcl.lat, lcl.lon, lcl.alt,
                                 rmt.lat, rmt.lon, rmt.alt,
                                 rmt.radios[ri].pwr);
-                            pluginDbg("mumble_onAudioSourceFetched():       signalStrength="+std::to_string(ss));
-                            if (ss > lcl.radios[lri].squelch && ss > bestSignalStrength) {
+                            pluginDbg("mumble_onAudioSourceFetched():       signalStrength="+std::to_string(signal.quality)
+                                +"; direction="+std::to_string(signal.direction)
+                                +"; angle="+std::to_string(signal.verticalAngle)
+                            );
+                        
+                            // Udpate the radios signal information
+                            pluginDbg("mumble_onAudioSourceFetched(): update signal data for remote("+std::to_string(rmt.mumid)+")="+rmt.callsign+", radio["+std::to_string(ri)+"]");
+                            //pluginDbg("mumble_onAudioSourceFetched():    signal.quality: rmt("+std::to_string(rmt.radios[ri].signal.quality)+") new("+std::to_string(signal.quality)+")");
+                            //pluginDbg("mumble_onAudioSourceFetched():    signal.direction: rmt("+std::to_string(rmt.radios[ri].signal.direction)+") new("+std::to_string(signal.direction)+")");
+                            //pluginDbg("mumble_onAudioSourceFetched():    signal.verticalAngle: rmt("+std::to_string(rmt.radios[ri].signal.verticalAngle)+") new("+std::to_string(signal.verticalAngle)+")");
+                            fgcom_remote_clients[userID].radios[ri].signal.quality       = signal.quality;
+                            fgcom_remote_clients[userID].radios[ri].signal.direction     = signal.direction;
+                            fgcom_remote_clients[userID].radios[ri].signal.verticalAngle = signal.verticalAngle;
+                        
+                            if (signal.quality > lcl.radios[lri].squelch && signal.quality > bestSignalStrength) {
                                 // the signal is stronger than our squelch and tops the current last best signal
-                                bestSignalStrength = ss;
+                                bestSignalStrength = signal.quality;
                                 matchedLocalRadio  = lcl.radios[lri];
                                 pluginDbg("mumble_onAudioSourceFetched():         taking it, its better than the previous one");
                             } else {
@@ -663,6 +688,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                             }
                         } else {
                             pluginDbg("mumble_onAudioSourceFetched():     nomatch");
+                            fgcom_remote_clients[userID].radios[ri].signal.quality = -1;
                         }
                         
                         if (bestSignalStrength == 1.0) break; // no point in searching more
@@ -670,6 +696,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                 } else {
                     // the inspected remote radio did not PTT
                     pluginDbg("mumble_onAudioSourceFetched():     remote PTT OFF");
+                    fgcom_remote_clients[userID].radios[ri].signal.quality = -1;
                 }
             }
             
@@ -679,6 +706,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state. muting stream.");
             bestSignalStrength = 0.0;
         }
+        fgcom_remotecfg_mtx.unlock();
         
         
         // Now we got the connections signal strength.
@@ -743,6 +771,7 @@ bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender
         return false;
 }
 
+/*
 void mumble_onUserAdded(mumble_connection_t connection, mumble_userid_t userID) {
     /// Called when a new user gets added to the user model. This is the case when that new user freshly connects to the server the
 	/// local user is on but also when the local user connects to a server other clients are already connected to (in this case this
@@ -768,7 +797,7 @@ void mumble_onChannelRenamed(mumble_connection_t connection, mumble_channelid_t 
 
 void mumble_onKeyEvent(uint32_t keyCode, bool wasPress) {
 	pLog() << "Encountered key " << (wasPress ? "press" : "release") << " of key with code " << keyCode << std::endl;
-}
+}*/
 
 bool mumble_hasUpdate() {
 	// This plugin never has an update

@@ -26,6 +26,7 @@
 #include <mutex>
 #include <map>
 #include "MumblePlugin.h"
+#include "radio_model.h"
 
 
 // This represents the state of a radio
@@ -38,6 +39,8 @@ struct fgcom_radio {
 	float volume;        // volume, 0.0->1.0
 	float pwr;           // tx power in watts
 	float squelch;       // squelch setting (cutoff signal below this quality)
+	struct fgcom_radiowave_signal signal; 
+	
 	fgcom_radio()  {
         frequency   = "";
         power_btn   = true;

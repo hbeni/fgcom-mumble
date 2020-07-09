@@ -24,6 +24,21 @@
 #ifndef FGCOM_RADIOMODEL_H
 #define FGCOM_RADIOMODEL_H
 
+// Received signal information for a radio instance
+// direction and verticalAngle are only valid if qualtiy > 0.0
+struct fgcom_radiowave_signal {
+    float quality;        // 0.0=no signal, 1.0=perfect signal
+    float direction;      // 0.0=north, 90=east, 180=south, 270=west
+    float verticalAngle;  // 0.0=straight, 90=above, -90=below
+    
+    fgcom_radiowave_signal()  {
+        quality       = -1;
+        direction     = -1;
+        verticalAngle = -1;
+    };
+};
+
+
 /*
  * Calculates the distance to horizon for an given observer at height h.
  *
@@ -55,13 +70,24 @@ double fgcom_radiowave_getSlantDistance(double surfacedist, double hah);
 
 
 /*
- * Get angle of visible height above horizon.
+ * Get vertical angle of visible height above horizon.
  * 
  * @param surfacedist surface distance between the two objects in km
  * @param hah  visible height of observed object above horizon in m (@see heightAboveHorizon()), must be corrected for own height!
  * @return float Degrees of the visible height
  */
 double fgcom_radiowave_degreeAboveHorizon(double surfacedist, double hah);
+
+/*
+ * Get angle of source
+ * 
+ * @param lat1  Latitude of observer object
+ * @param lon1  Longitude of observer object
+ * @param lat2  Latitude of target object
+ * @param lon2  Longitude of target object
+ * @return float Degrees of direction
+ */
+double fgcom_radiowave_getDirection(double lat1, double lon1, double lat2, double lon2);
 
 
 /*
@@ -86,8 +112,8 @@ double fgcom_radiowave_getSurfaceDistance(double lat1, double lon1, double lat2,
  * @param lon2  Longitude of object B
  * @param alt2  height of observer A, in meters above surface
  * @param power Signal sending power in watts
- * @return float 0.0=no signal; 1.0=best signal
+ * @return fgcom_radiowave_signal
  */
-float fgcom_radiowave_getSignalStrength(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power);
+fgcom_radiowave_signal fgcom_radiowave_getSignal(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power);
 
 #endif
