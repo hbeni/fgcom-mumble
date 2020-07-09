@@ -40,3 +40,7 @@ geotest
 
 # radio samples
 *.fgcs
+
+# Archives
+*.zip
+*.tar.gz
