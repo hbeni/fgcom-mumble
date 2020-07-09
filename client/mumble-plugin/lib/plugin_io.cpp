@@ -742,6 +742,7 @@ std::string fgcom_udp_generateMsg() {
                 if (clientMsg.length() > 0) clientMsg+=",";
                 std::string prfx = "RDF_"+std::to_string(remote.mumid)+"-"+std::to_string(ri)+"_";
                 clientMsg += prfx+"CALLSIGN="+remote.callsign;
+                clientMsg += ","+prfx+"FRQ="+remote.radios[ri].frequency;
                 clientMsg += ","+prfx+"DIR="+std::to_string(signal.direction);
                 clientMsg += ","+prfx+"VRT="+std::to_string(signal.verticalAngle);
                 clientMsg += ","+prfx+"QLY="+std::to_string(signal.quality);

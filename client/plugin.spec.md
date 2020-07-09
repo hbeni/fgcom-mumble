@@ -121,6 +121,7 @@ parallel transmissions are received, the ID *id* is put before the fields.
 | Field                 | Format | Description                             |
 |-----------------------|--------|-----------------------------------------|
 | `RDF_`*id*`_CALLSIGN` | String | Callsign of the sender                  |
+| `RDF_`*id*`_FRQ`      | String | Frquency of the signal                  |
 | `RDF_`*id*`_DIR`      | Float  | Relative bearing of the signal (`0.0` to `359.99`)|
 | `RDF_`*id*`_VRT`      | Float  | Vertical angle of the signal (`-90.0` to `+90.0`)|
 | `RDF_`*id*`_QLY`      | Float  | Signal quality (`0.00` to `1.0`)        |
