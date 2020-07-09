@@ -615,11 +615,17 @@ void fgcom_spawnUDPServer() {
     // wait for incoming data
     int n; 
     socklen_t len;
+    bool firstdata = false;
     while (true) {
         len = sizeof(cliaddr);  //len is value/result 
         n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,  
                     MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len); 
         buffer[n] = '\0';
+        
+        if (!firstdata && sizeof(buffer) > 4) {
+            firstdata = true;
+            mumAPI.log(ownPluginID, "UDP server is connected");
+        }
         
         if (strstr(buffer, "SHUTDOWN")) {
             // Allow the udp server to be shut down when receiving SHUTDOWN command
