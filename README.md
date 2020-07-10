@@ -114,6 +114,10 @@ The following traditional FGCom frequencies are not special anymore; these are n
 - 723.340 MHz: French Air Patrol communication frequency;
 
 
+###  Special FGCom-mumble frequencies
+- `<del>`: Providing this frequency will deregister the radio. A Radio on this frequency is never operable and thus never sends or receives transmissions.
+
+
 Troubleshooting
 ------------------------
 When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
