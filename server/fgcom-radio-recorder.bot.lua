@@ -227,6 +227,13 @@ client:hook("OnServerSync", function(event)
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
     print("joined channel "..fgcom.channel)
+           
+    -- Adjust comment
+    client:setComment("<b><i><u>FGCom:</u></i></b><br/>Listening on the following frequencies:"
+                      .."<ul>"
+                      .."<li><tt>910.00</tt>: Echotest; speak and i will reply!</li>"
+                      .."<li><tt>RECORD_</tt><i>&lt;tgtFreq&gt;</i>: record ATIS for <i>&lt;tgtFreq&gt;</i> at your Callsign and location</li>"
+                      .."</ul>")
 end)
 
 
