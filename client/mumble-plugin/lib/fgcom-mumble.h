@@ -37,5 +37,12 @@ bool fgcom_isPluginActive();
  */
 void fgcom_handlePTT();
 
+/*
+ * See if the radio is operable
+ * 
+ * @param fgcom_radio the radio to check
+ * @return bool true, wehn it is
+ */
+bool fgcom_radio_isOperable(fgcom_radio r);
 
 #endif
