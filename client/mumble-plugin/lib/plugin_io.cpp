@@ -483,6 +483,11 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                         fgcom_local_client.radios[radio_id].pwr = std::stof(token_value);
                         if (fgcom_local_client.radios[radio_id].pwr != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
+                    if (radio_var == "RDF") {
+                        bool oldValue = fgcom_local_client.radios[radio_id].signal.rdfEnabled;
+                        fgcom_local_client.radios[radio_id].signal.rdfEnabled = (token_value == "1" || token_value == "true")? true : false;
+                        // do not send this: its only ever local state!  radioDataHasChanged->insert(radio_id);
+                    }
 
                 }
                 
@@ -726,7 +731,7 @@ std::string fgcom_udp_generateMsg() {
     /*
      * RDF generation
      * This inspects all radios for RDF information.
-     * (The RDF information is updated from the plugin-io parser)
+     * (The RDF information is updated from the plugin-io parser and signal signal processing)
      */
     fgcom_remotecfg_mtx.lock();
     for (const auto &p : fgcom_remote_clients) {
@@ -738,7 +743,8 @@ std::string fgcom_udp_generateMsg() {
             //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.quality="+std::to_string(signal.quality));
             //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.diection="+std::to_string(signal.direction));
             //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.angle="+std::to_string(signal.verticalAngle));
-            if (signal.quality > 0.0) {
+            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.rdfEnabled="+std::to_string(signal.rdfEnabled));
+            if (signal.rdfEnabled && signal.quality > 0.0) {
                 if (clientMsg.length() > 0) clientMsg+=",";
                 std::string prfx = "RDF_"+std::to_string(remote.mumid)+"-"+std::to_string(ri)+"_";
                 clientMsg += prfx+"CALLSIGN="+remote.callsign;

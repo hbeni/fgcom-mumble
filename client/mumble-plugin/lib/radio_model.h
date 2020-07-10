@@ -30,11 +30,13 @@ struct fgcom_radiowave_signal {
     float quality;        // 0.0=no signal, 1.0=perfect signal
     float direction;      // 0.0=north, 90=east, 180=south, 270=west
     float verticalAngle;  // 0.0=straight, 90=above, -90=below
+    bool  rdfEnabled;     // true=Enable RDF output
     
     fgcom_radiowave_signal()  {
         quality       = -1;
         direction     = -1;
         verticalAngle = -1;
+        rdfEnabled    = false;
     };
 };
 

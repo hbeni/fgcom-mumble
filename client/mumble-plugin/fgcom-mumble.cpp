@@ -677,7 +677,18 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                             fgcom_remote_clients[userID].radios[ri].signal.quality       = signal.quality;
                             fgcom_remote_clients[userID].radios[ri].signal.direction     = signal.direction;
                             fgcom_remote_clients[userID].radios[ri].signal.verticalAngle = signal.verticalAngle;
-                        
+
+                            // Copy the RDF setting of the local radio to the remote state, so the RDF generator knows
+                            // wether he should genearte RDF information for the signal.
+                            // The local RDF setting is updated trough the UDP input interface (plugin-io.cpp).
+                            // If the local radio is RDF enabled, that will result in all remote radios transmissions
+                            // to be considered for RDF output (ie. it multiplexes).
+                            fgcom_remote_clients[userID].radios[ri].signal.rdfEnabled = lcl.radios[lri].signal.rdfEnabled;
+
+                            // See if the signal is better than the previous one.
+                            // As we have only one audio source stream per user, we want to apply the best
+                            // signal. If the remote station transmits with multiple radios, and we are tuned to more than
+                            // one, this will result in hearing the best signal quality of those available.
                             if (signal.quality > lcl.radios[lri].squelch && signal.quality > bestSignalStrength) {
                                 // the signal is stronger than our squelch and tops the current last best signal
                                 bestSignalStrength = signal.quality;
