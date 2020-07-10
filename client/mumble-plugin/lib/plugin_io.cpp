@@ -483,12 +483,17 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                         fgcom_local_client.radios[radio_id].pwr = std::stof(token_value);
                         if (fgcom_local_client.radios[radio_id].pwr != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
+                    if (radio_var == "SQC") {
+                        float oldValue = fgcom_local_client.radios[radio_id].squelch;
+                        fgcom_local_client.radios[radio_id].squelch = std::stof(token_value);
+                        // do not send right now: if (fgcom_local_client.radios[radio_id].squelch != oldValue ) radioDataHasChanged->insert(radio_id);
+                    }
                     if (radio_var == "RDF") {
                         bool oldValue = fgcom_local_client.radios[radio_id].signal.rdfEnabled;
                         fgcom_local_client.radios[radio_id].signal.rdfEnabled = (token_value == "1" || token_value == "true")? true : false;
                         // do not send this: its only ever local state!  radioDataHasChanged->insert(radio_id);
                     }
-
+                  
                 }
                 
                 
