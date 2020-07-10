@@ -32,9 +32,11 @@ void debug_out_internal_state() {
                 printf("  Radio %i:   power_btn=%i'\n", i, fgcom_local_client.radios[i].power_btn);
                 printf("  Radio %i:       volts=%f\n", i, fgcom_local_client.radios[i].volts);
                 printf("  Radio %i: serviceable=%i\n", i, fgcom_local_client.radios[i].serviceable);
+                printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(fgcom_local_client.radios[i]));
                 printf("  Radio %i:         ptt=%i\n", i, fgcom_local_client.radios[i].ptt);
                 printf("  Radio %i:      volume=%f\n", i, fgcom_local_client.radios[i].volume);
                 printf("  Radio %i:         pwr=%f\n", i, fgcom_local_client.radios[i].pwr);
+                printf("  Radio %i:     squelch=%f\n", i, fgcom_local_client.radios[i].squelch);
                 printf("  Radio %i: RDF_enabled=%i\n", i, fgcom_local_client.radios[i].signal.rdfEnabled);
             }
         }
@@ -50,9 +52,11 @@ void debug_out_internal_state() {
                     printf("  Radio %i:   power_btn=%i\n", i, p.second.radios[i].power_btn);
                     printf("  Radio %i:       volts=%f\n", i, p.second.radios[i].volts);
                     printf("  Radio %i: serviceable=%i\n", i, p.second.radios[i].serviceable);
+                    printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(p.second.radios[i]));
                     printf("  Radio %i:         ptt=%i\n", i, p.second.radios[i].ptt);
                     printf("  Radio %i:      volume=%f\n", i, p.second.radios[i].volume);
                     printf("  Radio %i:         pwr=%f\n", i, p.second.radios[i].pwr);
+                    printf("  Radio %i:     squelch=%f\n", i, p.second.radios[i].squelch);
                     printf("  Radio %i: RDF_enabled=%i\n", i, p.second.radios[i].signal.rdfEnabled);
                 }
             }

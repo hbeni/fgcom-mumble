@@ -116,6 +116,9 @@ bool fgcom_radio_isOperable(fgcom_radio r) {
     //pluginDbg("fgcom_radio_operable()    r.power_btn="+std::to_string(r.power_btn));
     //pluginDbg("fgcom_radio_operable()    r.volts="+std::to_string(r.volts));
     //pluginDbg("fgcom_radio_operable()    r.serviceable="+std::to_string(r.serviceable));
+    
+    // A radio on the special "<del>" frequency is never operable.
+    if (r.frequency == "<del>") return false;
 
     bool radio_serviceable = r.serviceable;
     bool radio_switchedOn  = r.power_btn;
