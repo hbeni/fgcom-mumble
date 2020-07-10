@@ -55,6 +55,8 @@ Each packet contains ASCII-data in a single string with several `Field=Value` va
 
 *For example*, if just a new frequency is submitted, it will just update that frequency. If the radio was not registered previously, a new instance will be created that defaults to "operational", until updates say otherwise (this is to support easy integration of ATC clients that do not want to simulate radio failures for example).
 
+
+### Core data
 Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denotes a number starting from `1`):
 
 | Field          | Format | Description                             | Default    |
@@ -72,6 +74,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
 
 
+### Legacy FGCom fields
 The following fields are known from the old flightgear asterisk FGCom protocol and supported for compatibility reasons:
 
 | Field        | Format | Description                                                                                       |
@@ -79,6 +82,19 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 | `ALT`        | Int    | Altitude in ft above sea-level. If both `HGT` and `ALT` is present in the UDP packet, `HGT` takes precedence. If only `ALT` is given, the radio horizon is artificially bigger than it should be, as we have no terrain model right now. |
 | `PTT`        | Int    | Currently active PTT radio (0=none, 1=COM1, 2=COM2). Gets converted to new `COM`*n*`_PTT` updates.|
 | `OUTPUT_VOL` | Float  | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
+
+
+### Configuration options
+The Following fields are configuration options that change some behaviour.
+
+| Field          | Format | Description                             | Default    |
+|----------------|--------|-----------------------------------------|------------|
+| `COM`*n*`_RDF` | Bool   | Set to `1` to enable RDF output for signals received on this radio (details below: "*UDP client interface / RDF data*")   | `0`|
+
+
+### Testing UDP input
+Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q1 -u localhost 16661`
+sets the callsign and frequency for COM1.
 
 
 Plugin output data
@@ -106,13 +122,15 @@ The following bytes in the `dataID` field denote the packet type. Each packet co
 
 
 ### UDP client interface
-The plugin can send information via an UDP interface to third party software at max 10Hz on localhost UDP port **19991**.
+The plugin can send information via an UDP interface to third party software at max 10Hz to localhost UDP port **19991**.
 
 The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Values are separated using comma, each packet is terminated by newline.  
-If there is not data to send, nothing will be transmitted over the wire.
+If there is not data to send, nothing will be transmitted over the wire.  
+Unknown fields or empty ones (eg. `Field=`) are to be ignored when parsing.
 
 #### RDF data
-While the plugin receives a signal on a radio, it will send RDF packets. Absence of RDF data means that there is currently no such transmission.
+While the plugin receives a signal trough a RDF-enabled radio (`COM`*n*`_RDF=1`, see *Plugin input data* above), it will send RDF packets.  
+Absence of RDF data means that there is currently no such transmission.
 
 RDF data is composed with the following fields. As the possibility exists that several
 parallel transmissions are received, the ID *id* is put before the fields.  
@@ -122,9 +140,15 @@ parallel transmissions are received, the ID *id* is put before the fields.
 |-----------------------|--------|-----------------------------------------|
 | `RDF_`*id*`_CALLSIGN` | String | Callsign of the sender                  |
 | `RDF_`*id*`_FRQ`      | String | Frquency of the signal                  |
-| `RDF_`*id*`_DIR`      | Float  | Relative bearing of the signal (`0.0` to `359.99`)|
-| `RDF_`*id*`_VRT`      | Float  | Vertical angle of the signal (`-90.0` to `+90.0`)|
+| `RDF_`*id*`_DIR`      | Float  | Direction to the signal source (`0.0` to `359.99`; `0.0`=due WSG84 north)|
+| `RDF_`*id*`_VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
 | `RDF_`*id*`_QLY`      | Float  | Signal quality (`0.00` to `1.0`)        |
+
+The `DIR` and `VRT` angles are in degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF_1-0_DIR=180.5,RDF_1-0_VRT=12.5`: The Airplane transmitting is thus directly south and above of you.  
+The values are true bearings relative to your position, and `DIR=0.0` is due north relative to the WSG84 grid.
+
+#### Checking UDP client output
+Aside from using real clients, the UDP output can be displayed using the linux tool "`netcat`": `netcat -l -u -p 19991` will display all sent UDP packets to port 19991.
 
 
 Transmitting radio transmissions
