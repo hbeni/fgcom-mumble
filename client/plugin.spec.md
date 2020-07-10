@@ -66,6 +66,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `COM`*n*`_PTT` | Bool   | PushToTalk: 0=off, 1=pushed/transmitting| `0`        |
 | `COM`*n*`_VOL` | Float  | Volume: 0.0=mute, 1.0=full              | `1.0`      |
 | `COM`*n*`_PWR` | Float  | Transmitting power in watts.            | `10.0`     |
+| `COM`*n*`_SQC` | Float  | Squelch setting (0.0=off, 1.0=full)     | `0.10`     |
 | `LAT`          | Float  | Latitudinal position (decimal: 12.34567)| *mandatory*|
 | `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
 | `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
