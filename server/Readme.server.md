@@ -113,7 +113,7 @@ Client Bot certificates
 =======================
 The bots each need a certificate and key pair to connect to the mumble server. Generate these like this:
 ```
-for w in rec play;
+for w in rec play status;
   do  openssl genrsa -out ${w}bot.key 2048 2> /dev/null
   openssl req -new -sha256 -key ${w}bot.key -out ${w}bot.csr -subj "/"
   openssl x509 -req -in ${w}bot.csr -signkey ${w}bot.key -out ${w}bot.pem 2> /dev/null
