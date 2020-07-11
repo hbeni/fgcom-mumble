@@ -30,6 +30,8 @@
         zoomOffset: -1
     }).addTo(mymap);
     
+    L.control.scale({maxWidth:500}).addTo(mymap);
+    
     // Add aircraft markers
     %client_markers%
 
