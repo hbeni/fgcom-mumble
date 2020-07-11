@@ -94,7 +94,7 @@ foreach ($db_data as $u) {
     $utpl->assignVar('alt', round($u['alt'],0) );
     $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
     $utpl->assignVar('updated',time()-$u['updated']);
-    $utpl->assignVar('stale',   (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
+    $utpl->assignVar('stale', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
     
     if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_users_body .= $utpl->generate();
@@ -119,8 +119,11 @@ foreach ($db_data as $u) {
     $utpl->assignVar('alt', round($u['alt'],0) );
     $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
     $utpl->assignVar('updated',time()-$u['updated']);
-    $utpl->assignVar('stale',   (time()-$u['updated'] <= 30)? '' : 'class="stale"' );
-    $tpl_bots_body .= $utpl->generate();
+    $utpl->assignVar('stale', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
+    
+    if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
+        $tpl_bots_body .= $utpl->generate();
+    }
 }
 $tpl_bots->assignVar('title', "Current playbacks");
 $tpl_bots->assignVar('user_table_entries', $tpl_bots_body);
@@ -133,6 +136,7 @@ $tpl_index->assignVar('bots', $tpl_bots->generate());
 $tpl_clients_body = "";
 $id=1;
 foreach ($db_data as $u) {
+    // draw a nice marker on the map for each client
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/map_client.tpl');
     $utpl->assignVar('id',$id++);
     $utpl->assignVar('callsign',$u['callsign']);
@@ -140,9 +144,12 @@ foreach ($db_data as $u) {
     $utpl->assignVar('range', getVHFRadioHorizon($u['alt'])*1000);
     $utpl->assignVar('lat', $u['lat'] );
     $utpl->assignVar('lon', $u['lon'] );
-    $utpl->assignVar('color',   (time()-$u['updated'] <= 30)? '#ff9900' : '#B0AAA1' );
-    $utpl->assignVar('opacity', (time()-$u['updated'] <= 30)? 0.35 : 0.15);
-    $tpl_clients_body .= $utpl->generate();
+    $utpl->assignVar('color',   (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '#ff9900' : '#B0AAA1' );
+    $utpl->assignVar('opacity', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? 0.35 : 0.15);
+    
+    if ($u['alt'] >= 0 && time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
+        $tpl_clients_body .= $utpl->generate();
+    }
 }
 $tpl_map->assignVar('client_markers', $tpl_clients_body);
 $tpl_map->assignVar('initLAT',  $ini_config['map']['lat']);
