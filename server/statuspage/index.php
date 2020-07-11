@@ -1,0 +1,218 @@
+<?php
+/**
+* This file is part of the FGCom-mumble distribution (https://github.com/hbeni/fgcom-mumble).
+* Copyright (c) 2020 Benedikt Hallinger
+* 
+* This program is free software: you can redistribute it and/or modify  
+* it under the terms of the GNU General Public License as published by  
+* the Free Software Foundation, version 3.
+*
+* This program is distributed in the hope that it will be useful, but 
+* WITHOUT ANY WARRANTY; without even the implied warranty of 
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+* General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License 
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************
+*
+* This is a small status webpage for the FGCom-mumble implementation.
+*
+* Main code is at the start, some functions at the end.
+*
+* You can experimentally test this locally with PHPs internal webserver:
+*   FGCom-mumble/server/statuspage$ php -S localhost:8080 -t .
+* Then the Statuspage is serviced at http://localhost:8080/
+*/
+
+
+// Initialize basic stuff
+$tpl_index = new HTMLTemplate(dirname(__FILE__).'/inc/index.tpl');
+$tpl_msg   = new HTMLTemplate(dirname(__FILE__).'/inc/msg.tpl');
+$tpl_users = new HTMLTemplate(dirname(__FILE__).'/inc/users.tpl');
+$tpl_bots  = new HTMLTemplate(dirname(__FILE__).'/inc/users.tpl');
+$tpl_map   = new HTMLTemplate(dirname(__FILE__).'/inc/map.tpl');
+
+
+/*
+* Load central config
+*/
+if (!is_readable(dirname(__FILE__).'/config.ini')) {
+    $tpl_msg->assignVar('msg', "Setup error: config file not readable: ".dirname(__FILE__).'/config.ini');
+    $tpl_index->assignVar('message', $tpl_msg->generate());
+    $tpl_index->render();
+    exit(1);
+}
+$ini_config = parse_ini_file(dirname(__FILE__).'/config.ini', true);
+//Array ( [json-database] => Array ( [file] => /tmp/fgcom-web.db ) ) 
+
+
+/**
+* Fetch database contents
+*
+* Expected format is a JSON array representing one user record each:
+* {"type":"client",  "callsign":"Calls-1",   "freqencies":["123.456"],
+*  "lat":12.3456, "lon":20.11111,  "alt":1234.45,  "updated":1111111122}
+*/
+$allClients = array();
+$allBots    = array();
+$tpl_index->assignVar('dbchanged', "TODO: from modifyTime file");
+if (!is_readable($ini_config['json-database']['file'])) {
+    $tpl_index->assignVar('dbchanged', "???");
+    $tpl_msg->assignVar('msg', "Info: Database not initialized yet. Please try again later.");
+    $tpl_index->assignVar('message', $tpl_msg->generate());
+    $tpl_index->render();
+    exit(1);
+}
+$db_lastUpdate = filemtime($ini_config['json-database']['file']);
+$tpl_index->assignVar('dbchanged', date("d.m.Y H:i:s", $db_lastUpdate));
+$db_content = file_get_contents($ini_config['json-database']['file']);
+$db_data = json_decode($db_content, true);
+if (!$db_data) {
+    $tpl_msg->assignVar('msg', "Error: Database format invalid!");
+    var_dump($db_content);
+    $tpl_index->assignVar('message', $tpl_msg->generate());
+    $tpl_index->render();
+    exit(1);
+}
+
+
+/*
+* Get regular users
+*/
+$tpl_users_body = "";
+foreach ($db_data as $u) {
+    if ($u['type'] != "client") continue;
+    $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
+    $utpl->assignVar('callsign',$u['callsign']);
+    $utpl->assignVar('fequency',implode($u['freqencies'],"<br/>"));
+    $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
+    $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
+    $utpl->assignVar('alt', round($u['alt'],0) );
+    $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
+    $utpl->assignVar('updated',time()-$u['updated']);
+    $utpl->assignVar('stale',   (time()-$u['updated'] <= 30)? '' : 'class="stale"' );
+    $tpl_users_body .= $utpl->generate();
+}
+$tpl_users->assignVar('title', "Current users");
+$tpl_users->assignVar('user_table_entries', $tpl_users_body);
+$tpl_index->assignVar('users', $tpl_users->generate());
+
+
+/*
+* Get playback bots
+*/
+$tpl_bots_body = "";
+foreach ($db_data as $u) {
+    if ($u['type'] != "playback-bot") continue;
+    $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
+    $utpl->assignVar('callsign',$u['callsign']);
+    $utpl->assignVar('fequency',implode($u['freqencies'],"<br/>"));
+    $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
+    $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
+    $utpl->assignVar('alt', round($u['alt'],0) );
+    $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
+    $utpl->assignVar('updated',time()-$u['updated']);
+    $utpl->assignVar('stale',   (time()-$u['updated'] <= 30)? '' : 'class="stale"' );
+    $tpl_bots_body .= $utpl->generate();
+}
+$tpl_bots->assignVar('title', "Current playbacks");
+$tpl_bots->assignVar('user_table_entries', $tpl_bots_body);
+$tpl_index->assignVar('bots', $tpl_bots->generate());
+
+
+/**
+* Integrate the leaflet map
+*/
+$tpl_clients_body = "";
+$id=1;
+foreach ($db_data as $u) {
+    $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/map_client.tpl');
+    $utpl->assignVar('id',$id++);
+    $utpl->assignVar('callsign',$u['callsign']);
+    $utpl->assignVar('fequency',implode($u['freqencies'],"<br/>"));
+    $utpl->assignVar('range', getVHFRadioHorizon($u['alt'])*1000);
+    $utpl->assignVar('lat', $u['lat'] );
+    $utpl->assignVar('lon', $u['lon'] );
+    $utpl->assignVar('color',   (time()-$u['updated'] <= 30)? '#ff9900' : '#B0AAA1' );
+    $utpl->assignVar('opacity', (time()-$u['updated'] <= 30)? 0.35 : 0.15);
+    $tpl_clients_body .= $utpl->generate();
+}
+$tpl_map->assignVar('client_markers', $tpl_clients_body);
+$tpl_index->assignVar('map', $tpl_map->generate());
+
+
+/*
+* All done: print the page
+*/
+$tpl_index->render();
+
+
+
+
+/************************* LIBS ****************************/
+
+/*
+* Calculate approximate radio range (VHF radio horizon)
+*/
+function getVHFRadioHorizon($height) {
+    // https://en.wikipedia.org/wiki/Horizon#Distance_to_the_horizon
+    // this is a raw value (VHF actually goes slightly furhter) but accurate enough here.
+    return 3.57 * sqrt($height);
+}
+
+
+/*
+* A really small template engine.
+*
+* Will load a template file and replace variables in the form "%var%" with content.
+*/
+class HTMLTemplate {
+    private $template_src = '';
+    
+    private $variables = array();
+    
+    /**
+    * Constructor
+    */
+    function HTMLTemplate($tpl) {
+        if (!is_readable($tpl)) {
+            print("Setup error: template file not readable: ".$tpl);
+            exit(1);
+        }
+        $this->template_src = file_get_contents($tpl);
+    }
+
+    /**
+    * Add some variable content
+    */
+    public function assignVar($variable, $tpl_index) {
+        $this->variables[$variable] = $tpl_index;
+    }
+     
+    /**
+    * Assembles the page
+    */
+    public function generate() {
+        $tpl_index = $this->template_src;
+        
+        // generate the body and replace it into the variables
+        foreach($this->variables as $var => $content) {
+            $tpl_index = str_replace("%$var%", $content, $tpl_index);
+        }
+        
+        $tpl_index = preg_replace("/%.+?%/", '', $tpl_index); // strip remaining variables
+        
+        return($tpl_index);
+    }
+    
+    /**
+    * Prints the page
+    */
+    public function render() {
+        print($this->generate());
+    }
+    
+}
+    
+?>
