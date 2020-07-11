@@ -51,7 +51,7 @@ $ini_config = parse_ini_file(dirname(__FILE__).'/config.ini', true);
 * Fetch database contents
 *
 * Expected format is a JSON array representing one user record each:
-* {"type":"client",  "callsign":"Calls-1",   "freqencies":["123.456"],
+* {"type":"client",  "callsign":"Calls-1",   "frequencies":["123.456"],
 *  "lat":12.3456, "lon":20.11111,  "alt":1234.45,  "updated":1111111122}
 */
 $allClients = array();
@@ -68,9 +68,9 @@ $db_lastUpdate = filemtime($ini_config['json-database']['file']);
 $tpl_index->assignVar('dbchanged', date("d.m.Y H:i:s", $db_lastUpdate));
 $db_content = file_get_contents($ini_config['json-database']['file']);
 $db_data = json_decode($db_content, true);
+if ($db_data == "{}") $db_data = array();
 if (!$db_data) {
     $tpl_msg->assignVar('msg', "Error: Database format invalid!");
-    var_dump($db_content);
     $tpl_index->assignVar('message', $tpl_msg->generate());
     $tpl_index->render();
     exit(1);
@@ -85,7 +85,7 @@ foreach ($db_data as $u) {
     if ($u['type'] != "client") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
     $utpl->assignVar('callsign',$u['callsign']);
-    $utpl->assignVar('fequency',implode($u['freqencies'],"<br/>"));
+    $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('alt', round($u['alt'],0) );
@@ -107,7 +107,7 @@ foreach ($db_data as $u) {
     if ($u['type'] != "playback-bot") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
     $utpl->assignVar('callsign',$u['callsign']);
-    $utpl->assignVar('fequency',implode($u['freqencies'],"<br/>"));
+    $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('alt', round($u['alt'],0) );
@@ -130,7 +130,7 @@ foreach ($db_data as $u) {
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/map_client.tpl');
     $utpl->assignVar('id',$id++);
     $utpl->assignVar('callsign',$u['callsign']);
-    $utpl->assignVar('fequency',implode($u['freqencies'],"<br/>"));
+    $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('range', getVHFRadioHorizon($u['alt'])*1000);
     $utpl->assignVar('lat', $u['lat'] );
     $utpl->assignVar('lon', $u['lon'] );
