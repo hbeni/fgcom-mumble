@@ -66,7 +66,7 @@ if (!is_readable($ini_config['json-database']['file'])) {
 }
 $db_lastUpdate = filemtime($ini_config['json-database']['file']);
 $tpl_index->assignVar('dbchanged', date("d.m.Y H:i:s", $db_lastUpdate));
-if (time()-$db_lastUpdateupdatestale > $ini_config['json-database']['updatestale']) $tpl_index->assignVar('updatestale', 'class="stale"');
+if (time()-$db_lastUpdate > $ini_config['ui']['db_stale']) $tpl_index->assignVar('updatestale', 'class="stale"');
 $db_content = file_get_contents($ini_config['json-database']['file']);
 $db_data = json_decode($db_content, true);
 if ($db_data == "{}") $db_data = array();
@@ -94,8 +94,11 @@ foreach ($db_data as $u) {
     $utpl->assignVar('alt', round($u['alt'],0) );
     $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
     $utpl->assignVar('updated',time()-$u['updated']);
-    $utpl->assignVar('stale',   (time()-$u['updated'] <= 30)? '' : 'class="stale"' );
-    $tpl_users_body .= $utpl->generate();
+    $utpl->assignVar('stale',   (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
+    
+    if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
+        $tpl_users_body .= $utpl->generate();
+    }
 }
 $tpl_users->assignVar('title', "Current users");
 $tpl_users->assignVar('user_table_entries', $tpl_users_body);
