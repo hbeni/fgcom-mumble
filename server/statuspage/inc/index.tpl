@@ -19,7 +19,7 @@
     <body>
         <div class="title">
             <h1>FGCom-mumble: live status page</h1>
-            <span>Last database update: %dbchanged%</span>
+            <span %updatestale%>Last database update: %dbchanged%</span>
         </div>
         
         %message%
