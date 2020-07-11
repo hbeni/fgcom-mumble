@@ -1,0 +1,110 @@
+body {
+    background-color: #ececec;
+}  
+
+/* Page title */
+.title {
+    border: 1px solid black;
+    background-color: #fafafa;
+    background-image: url("fgcom_logo.png");
+    background-repeat: no-repeat;
+    background-size: 4em, 4em;
+    padding-left: 2.2em;
+    padding-top: -1em;
+    min-height: 4em;
+    width: 60%;
+    text-align: center;
+    vertical-align: top;
+    margin: auto;
+    box-shadow:2px 2px 4px #000000;
+}
+.title h1 {
+    margin:0; padding:0 0em;
+    color: yellow;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.title span {
+    margin:0; padding:0;
+    font-style: italic;
+}
+
+/* Message block */
+.message {
+    border: 1px solid black;
+    background-color: #fafafa;
+    background-size: 2em, 2em;
+    padding: 0.2em;
+    height: 2em;
+    width: 50%;
+    margin: auto;
+    margin-top:1em;
+    box-shadow:2px 2px 4px #000000;
+}
+
+h2 { /* Headings in sections */
+    font-size:16pt;
+    font-style: italic;
+    text-decoration:underline;
+    color: yellow;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.section table {
+    border-collapse: collapse;
+    width: 100%;
+}
+.section th, .section td {
+  text-align: left;
+  padding: 8px;
+}
+tr:nth-child(odd){background-color: #f2f2f2}
+.section th {
+    font-size:10pt;
+    background-color: #2C80BD;
+    color: white;
+}
+
+/* Stale table row tr entries */
+.stale {
+    color:#C3C3C3;
+}
+
+/* Section blocks and map container */
+.section, #mapid {
+    border: 1px solid black;
+    background-color: #fafafa;
+    background-size: 2em, 2em;
+    padding: 0.2em;
+    width: 80%;
+    margin: auto;
+    margin-top:1em;
+    text-align: center;
+    box-shadow:2px 2px 4px #000000;
+}
+.section h2 {  /* heading */
+}
+
+/* leaflet map container */
+#mapid {
+    width: 80%;
+    height: 50em;
+}
+.map_popup{
+    color:black;
+}
+.map_popup th{color:black;
+}
+.map_popup td{color:black;
+}
+
+
+/* Footer div */
+.footer {
+    font-size:10pt;
+    width:80%;
+    text-align:center;
+    margin:3em auto auto auto;
+    padding:5px;
+    border-top: 1px solid black;
+    float:middle;
+}
