@@ -33,7 +33,7 @@ Just define a new webroot and set it to this directory. Configure your webserver
 Copy the `config.dist.ini` to `config.ini`. You also may want to adapt the webpage configuration file.
 
 ### mumble status bot
-The bot will usually be started from the bot manager script, but in case you want to start it manually, `fgcom-status.bot.lua -h` gibes usage information.
+The bot will usually be started from the bot manager script, but in case you want to start it manually, `fgcom-status.bot.lua -h` gives usage information.
 
 The bot will initialize the database at startup, if not done yet. For this he will wipe clean an existing database. then he asks all other FGCom clients to provide their data to the bot, who will add it to the database.
 
