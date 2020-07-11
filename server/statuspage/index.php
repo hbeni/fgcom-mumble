@@ -164,6 +164,8 @@ $tpl_index->render();
 function getVHFRadioHorizon($height) {
     // https://en.wikipedia.org/wiki/Horizon#Distance_to_the_horizon
     // this is a raw value (VHF actually goes slightly furhter) but accurate enough here.
+    if ($height <= 0) return(0);
+    if (!is_numeric($height)) return(0);
     return 3.57 * sqrt($height);
 }
 
