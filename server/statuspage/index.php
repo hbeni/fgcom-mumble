@@ -45,7 +45,7 @@ if (!is_readable(dirname(__FILE__).'/config.ini')) {
 }
 $ini_config = parse_ini_file(dirname(__FILE__).'/config.ini', true);
 //Array ( [json-database] => Array ( [file] => /tmp/fgcom-web.db ) ) 
-
+$ini_config = sanitize($ini_config);
 
 /**
 * Fetch database contents
@@ -76,6 +76,8 @@ if (!$db_data) {
     $tpl_index->render();
     exit(1);
 }
+$db_data = sanitize($db_data);
+
 
 
 /*
@@ -163,6 +165,21 @@ function getVHFRadioHorizon($height) {
     // https://en.wikipedia.org/wiki/Horizon#Distance_to_the_horizon
     // this is a raw value (VHF actually goes slightly furhter) but accurate enough here.
     return 3.57 * sqrt($height);
+}
+
+/*
+* make the values HTML-secure
+*/
+function sanitize($v) {
+    if (is_array($v)) {
+        foreach ($v as $kv => $vv) {
+            $v[$kv] = sanitize($vv);
+        }
+        return $v;
+    } else {
+        return(htmlentities($v));
+    }
+    
 }
 
 
