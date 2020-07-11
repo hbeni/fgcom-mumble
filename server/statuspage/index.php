@@ -66,6 +66,7 @@ if (!is_readable($ini_config['json-database']['file'])) {
 }
 $db_lastUpdate = filemtime($ini_config['json-database']['file']);
 $tpl_index->assignVar('dbchanged', date("d.m.Y H:i:s", $db_lastUpdate));
+if (time()-$db_lastUpdateupdatestale > $ini_config['json-database']['updatestale']) $tpl_index->assignVar('updatestale', 'class="stale"');
 $db_content = file_get_contents($ini_config['json-database']['file']);
 $db_data = json_decode($db_content, true);
 if ($db_data == "{}") $db_data = array();
@@ -139,6 +140,9 @@ foreach ($db_data as $u) {
     $tpl_clients_body .= $utpl->generate();
 }
 $tpl_map->assignVar('client_markers', $tpl_clients_body);
+$tpl_map->assignVar('initLAT',  $ini_config['map']['lat']);
+$tpl_map->assignVar('initLON',  $ini_config['map']['lon']);
+$tpl_map->assignVar('initZOOM', $ini_config['map']['zoom']);
 $tpl_index->assignVar('map', $tpl_map->generate());
 
 

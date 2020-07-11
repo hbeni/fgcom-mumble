@@ -7,9 +7,9 @@
 
     // init map and center view somewhere on earth
     // (if we have a stored position in cookie, use that)
-    var lat  = ( getCookie("lat" ) ? getCookie("lat" ) : 30.0000 );
-    var lon  = ( getCookie("lon" ) ? getCookie("lon" ) : 0.00000 );
-    var zoom = ( getCookie("zoom") ? getCookie("zoom") : 2 );
+    var lat  = ( getCookie("lat" ) ? getCookie("lat" ) : %initLAT% );
+    var lon  = ( getCookie("lon" ) ? getCookie("lon" ) : %initLON% );
+    var zoom = ( getCookie("zoom") ? getCookie("zoom") : %initZOOM% );
     var mymap = L.map('mapid').setView([lat, lon], zoom);
     
     // update location cookie when panning or zooming
