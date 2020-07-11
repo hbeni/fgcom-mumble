@@ -45,16 +45,18 @@ body {
 }
 
 h2 { /* Headings in sections */
-    font-size:16pt;
+    font-size:14pt;
     font-style: italic;
-    text-decoration:underline;
-    color: yellow;
-    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+    color: black;
+    padding-top: -1em;
+    margin-top: -0.1em;
+    text-align: left;
 }
 
 .section table {
     border-collapse: collapse;
     width: 100%;
+    border: 1px solid black;
 }
 .section th, .section td {
   text-align: left;
