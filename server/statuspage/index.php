@@ -84,6 +84,7 @@ $db_data = sanitize($db_data);
 * Get regular users
 */
 $tpl_users_body = "";
+$numUsers = 0;
 foreach ($db_data as $u) {
     if ($u['type'] != "client") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
@@ -98,9 +99,10 @@ foreach ($db_data as $u) {
     
     if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_users_body .= $utpl->generate();
+        $numUsers++;
     }
 }
-$tpl_users->assignVar('title', "Current users");
+$tpl_users->assignVar('title', "Current users: ".$numUsers);
 $tpl_users->assignVar('user_table_entries', $tpl_users_body);
 $tpl_index->assignVar('users', $tpl_users->generate());
 
@@ -109,6 +111,7 @@ $tpl_index->assignVar('users', $tpl_users->generate());
 * Get playback bots
 */
 $tpl_bots_body = "";
+$numBots = 0;
 foreach ($db_data as $u) {
     if ($u['type'] != "playback-bot") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
@@ -123,9 +126,10 @@ foreach ($db_data as $u) {
     
     if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_bots_body .= $utpl->generate();
+        $numBots++;
     }
 }
-$tpl_bots->assignVar('title', "Current playbacks");
+$tpl_bots->assignVar('title', "Current radio broadcasts: ".$numBots);
 $tpl_bots->assignVar('user_table_entries', $tpl_bots_body);
 $tpl_index->assignVar('bots', $tpl_bots->generate());
 
