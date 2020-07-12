@@ -70,8 +70,9 @@ if (time()-$db_lastUpdate > $ini_config['ui']['db_stale']) $tpl_index->assignVar
 $db_content = file_get_contents($ini_config['json-database']['file']);
 $db_data = json_decode($db_content, true);
 if ($db_data == "{}") $db_data = array();
-if (!$db_data) {
+if (!is_array($db_data)) {
     $tpl_msg->assignVar('msg', "Error: Database format invalid!");
+    var_dump($db_data);
     $tpl_index->assignVar('message', $tpl_msg->generate());
     $tpl_index->render();
     exit(1);
