@@ -6,6 +6,7 @@
         <title>FGCom-mumble Live status page</title>
         <link rel="shortcut icon" type="image/png" href="inc/fgcom_logo.png"/>
         <link rel="stylesheet" href="inc/style.css">
+        <script src="inc/utils.js"></script>
         
         <!-- include leaflet map -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
