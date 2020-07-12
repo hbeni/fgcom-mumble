@@ -104,6 +104,7 @@ foreach ($db_data as $u) {
     }
 }
 $tpl_users->assignVar('title', "Current users: ".$numUsers);
+$tpl_users->assignVar('table_id', "table_users"); // for tablesort (and css, if needed)
 $tpl_users->assignVar('user_table_entries', $tpl_users_body);
 $tpl_index->assignVar('users', $tpl_users->generate());
 
@@ -131,6 +132,7 @@ foreach ($db_data as $u) {
     }
 }
 $tpl_bots->assignVar('title', "Current radio broadcasts: ".$numBots);
+$tpl_bots->assignVar('table_id', "table_bots"); // for tablesort (and css, if needed)
 $tpl_bots->assignVar('user_table_entries', $tpl_bots_body);
 $tpl_index->assignVar('bots', $tpl_bots->generate());
 
