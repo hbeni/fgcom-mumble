@@ -2,9 +2,6 @@
 <div id="mapid"></div> 
 <script>
 
-    
-
-
     // init map and center view somewhere on earth
     // (if we have a stored position in cookie, use that)
     var lat  = ( getCookie("lat" ) ? getCookie("lat" ) : %initLAT% );
@@ -14,9 +11,9 @@
     
     // update location cookie when panning or zooming
     mymap.on("moveend", function(e){
-        setCookie("lat", mymap.getCenter().lat, 1);
-        setCookie("lon", mymap.getCenter().lng, 1);
-        setCookie("zoom",mymap.getZoom(),       1);
+        setCookie("lat", mymap.getCenter().lat, 1800);
+        setCookie("lon", mymap.getCenter().lng, 1800);
+        setCookie("zoom",mymap.getZoom(),       1800);
     } );
     
     
@@ -46,36 +43,6 @@
     
     // Add aircraft markers
     %client_markers%
-
     
-    
-    /***********************************************
-     * UTILS
-     */
-    
-    // set a cookie
-    function setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays*24*60*60*1000));
-        var expires = "expires="+ d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-
-    // get a cookie
-    function getCookie(cname) {
-        var name = cname + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for(var i = 0; i <ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
     
 </script>
