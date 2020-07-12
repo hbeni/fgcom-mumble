@@ -4,6 +4,7 @@ body {
 
 /* Page title */
 .title {
+    position:relative;
     border: 1px solid black;
     background-color: #fafafa;
     background-image: url("fgcom_logo.png");
@@ -51,6 +52,19 @@ h2 { /* Headings in sections */
     padding-top: -1em;
     margin-top: -0.1em;
     text-align: left;
+}
+
+#s_refresh { /* auto refresh box */
+    position:absolute;
+    bottom:0;
+    right:0;
+    
+    border:1px solid black;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 8pt;
+    background-color: #fafafa;
+    border-radius: 3px;
+    outline: none;
 }
 
 .section table {

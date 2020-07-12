@@ -163,6 +163,13 @@ $tpl_map->assignVar('initZOOM', $ini_config['map']['zoom']);
 $tpl_index->assignVar('map', $tpl_map->generate());
 
 
+/**
+* Calculate auto refresh box
+*/
+$tpl_refreshbox = new HTMLTemplate(dirname(__FILE__).'/inc/refreshbox.tpl');
+$tpl_index->assignVar('refreshbox', $tpl_refreshbox->generate());
+
+
 /*
 * All done: print the page
 */
