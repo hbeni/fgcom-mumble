@@ -18,6 +18,8 @@ release-server:
 	head -n 1 server/Readme.server.md > server-$(PLUGINVER)/README.md
 	@echo Version: $(VERSION) \($(GITVER) $(GITDATE)\) >> server-$(PLUGINVER)/README.md
 	tail +2 server/Readme.server.md >> server-$(PLUGINVER)/README.md
+	cp -r server/statuspage/ server-$(PLUGINVER)
+	mv server-$(PLUGINVER)/statuspage/Readme.statuspage.md server-$(PLUGINVER)
 	cp server/fgcom-botmanager.sh server/*.bot.lua server-$(PLUGINVER)
 	zip -r server-$(PLUGINVER).zip server-$(PLUGINVER)
 	rm -rf server-$(PLUGINVER)
