@@ -46,4 +46,4 @@ The default path is `/tmp/fgcom-web.db` so the database usually lives in memory 
 
 
 ### Schema description
-There is just a single table containing the information per connected client. In addition to that, the timestamp-collumn "lastUpdate" will contain the last time the data was updated. The webpage will skip old entries.
+There is just a single table containing the information per connected client. In addition to that, the timestamp-collumn "updated" will contain the last time the data was updated. The webpage will skip old entries.
