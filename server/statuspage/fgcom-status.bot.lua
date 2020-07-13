@@ -131,7 +131,7 @@ local generateOutData = function()
     end
     
     dataJsonString = json.stringify(data)
-    fgcom.dbg("JSON RESULT", dataJsonString)
+    fgcom.dbg("JSON RESULT: "..dataJsonString)
     return dataJsonString
 end
 
