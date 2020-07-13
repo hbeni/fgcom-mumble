@@ -6,7 +6,7 @@
                 <th>Callsign</th>
                 <th>Fequencys</th>
                 <th>Lat/Lon</th>
-                <th>Altitude</th>
+                <th>Height</th>
                 <th>Approx.<br>range</th>
                 <th>Last<br>update</th>
             </tr>

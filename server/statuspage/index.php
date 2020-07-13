@@ -93,7 +93,7 @@ foreach ($db_data as $u) {
     $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
-    $utpl->assignVar('alt', round($u['alt'],0) );
+    $utpl->assignVar('alt', round(m2ft($u['alt']),0) );
     $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
     $utpl->assignVar('updated',time()-$u['updated']);
     $utpl->assignVar('stale', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
@@ -123,7 +123,7 @@ foreach ($db_data as $u) {
     $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
-    $utpl->assignVar('alt', round($u['alt'],0) );
+    $utpl->assignVar('alt', round(m2ft($u['alt']),0) );
     $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
     $utpl->assignVar('updated',time()-$u['updated']);
     $utpl->assignVar('stale', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
@@ -155,7 +155,7 @@ foreach ($db_data as $u) {
     $utpl->assignVar('range', getVHFRadioHorizon($u['alt'])*1000);
     $utpl->assignVar('lat', $u['lat'] );
     $utpl->assignVar('lon', $u['lon'] );
-    $utpl->assignVar('alt', round($u['alt'],0) );
+    $utpl->assignVar('alt', round(m2ft($u['alt']),0) );
     $utpl->assignVar('color',   (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '#ff9900' : '#B0AAA1' );
     $utpl->assignVar('opacity', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? 0.35 : 0.15);
     $utpl->assignVar('icon', 'userIcon');
@@ -191,7 +191,15 @@ $tpl_index->render();
 /************************* LIBS ****************************/
 
 /*
+* Meters to ft
+*/
+function m2ft($height) {
+    return $height * 3.2808;
+}
+
+/*
 * Calculate approximate radio range (VHF radio horizon)
+* @param $height: in meter
 */
 function getVHFRadioHorizon($height) {
     // https://en.wikipedia.org/wiki/Horizon#Distance_to_the_horizon
@@ -215,6 +223,7 @@ function sanitize($v) {
     }
     
 }
+
 
 
 /*
