@@ -20,9 +20,12 @@
     // allow mapclick to get coordinates
     var popup = L.popup();
     function onMapClick(e) {
+        var e_lat = e.latlng.lat.toFixed(5);
+        var e_lon = e.latlng.lng.toFixed(5);
+        var pstr = '<table class="map_popup"><tr><th>Lat:</th><td>'+e_lat.toString()+'</td></tr><tr><th>Lon:</th><td>'+e_lon.toString()+'</td></tr></table>';
         popup
             .setLatLng(e.latlng)
-            .setContent("<b>Position:</b> " + e.latlng.toString())
+            .setContent(pstr)
             .openOn(mymap);
     }
     mymap.on('click', onMapClick);
@@ -40,6 +43,25 @@
     }).addTo(mymap);
     
     L.control.scale({maxWidth:500}).addTo(mymap);
+    
+    // define common markers
+    var userIcon = L.Icon.extend({
+        options: {
+            iconUrl:      'inc/user.png',
+            iconSize:     [20, 24],
+            iconAnchor:   [10, 12],
+            popupAnchor:  [0, -15]
+        }
+    });
+    // define common markers
+    var radioIcon = L.Icon.extend({
+        options: {
+            iconUrl:      'inc/radio.png',
+            iconSize:     [28, 24],
+            iconAnchor:   [14, 12],
+            popupAnchor:  [0, -12]
+        }
+    });
     
     // Add aircraft markers
     %client_markers%

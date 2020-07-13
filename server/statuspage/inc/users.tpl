@@ -1,15 +1,14 @@
-<div class="section">
+<div class="section %section_id%">
     <h2>%title%</h2>
     <table id="%table_id%">
         <thead>
             <tr>
                 <th>Callsign</th>
                 <th>Fequencys</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
+                <th>Lat/Lon</th>
                 <th>Altitude</th>
-                <th>Approx. range</th>
-                <th>Last update</th>
+                <th>Approx.<br>range</th>
+                <th>Last<br>update</th>
             </tr>
         </thead>
         <tbody>
