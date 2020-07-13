@@ -72,6 +72,16 @@ fgcom = {
     channel  = "fgcom-mumble",
     callsign = "FGCOM-someUnknownBot",
     
+    -- Log / debug log
+    debugMode = false,
+    dbg = function(s)
+        if fgcom.debugMode then print(s) end
+    end,
+    log = function(s)
+        print(s)
+    end,
+    
+    
     rng={
         -- initialize random number generator
         initialize = function()

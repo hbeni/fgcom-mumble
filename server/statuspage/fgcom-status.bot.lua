@@ -62,6 +62,7 @@ if arg[1] then
         print("    --db=      Path to the db                   (default="..db..")")
         print("    --speed=   update interval in seconds       (default="..speed..")")
         print("    --web=     Advertise url in comment         (default=no commercials!)")
+        print("    --debug    print debug messages             (default=no)")
         os.exit(0)
     end
     
@@ -75,17 +76,16 @@ if arg[1] then
         if k=="db"        then db=v end
         if k=="speed"     then speed=v end
         if k=="web"       then weburl=v end
+        if opt == "--debug" then fgcom.debugMode = true end
     end
     
 end
 
-
 -- Connect to server, so we get the API
-print(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
+fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
-print("connect and bind: OK")
-
+fgcom.log("connect and bind", "OK")
 
 -- Generate JSON data data from state
 --   Expected format is a JSON array representing one user record each:
@@ -95,13 +95,13 @@ local generateOutData = function()
     local allUsers = client:getUsers()
     local data     = {}  -- final return array
     
-    print("generateOutData(): number of known users: "..#fgcom_clients)
+    fgcom.dbg("generateOutData(): number of known users: "..#fgcom_clients)
     for sid, user in pairs(fgcom_clients) do
-        print("generateOutData(): processing user: "..sid)
+        fgcom.dbg("generateOutData(): processing user: "..sid)
         local userData = {}
         local mumbleUser = allUsers[sid]
         if not mumbleUser then
-            print("User sid="..sid.." not connected anymore!")
+            fgcom.dbg("User sid="..sid.." not connected anymore!")
             -- push out old data.
             userData.updated = fgcom_clients[sid].lastUpdate
             userData.type    = fgcom_clients[sid].type
@@ -117,7 +117,7 @@ local generateOutData = function()
         
         userData.frequencies = {}
         for radio_id,radio in pairs(user.radios) do
-            print("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
+            fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
             if radio.frequency ~= "<del>" then
                 table.insert(userData.frequencies, radio.frequency)
             end
@@ -131,7 +131,7 @@ local generateOutData = function()
     end
     
     dataJsonString = json.stringify(data)
-    print("JSON RESULT", dataJsonString)
+    fgcom.dbg("JSON RESULT", dataJsonString)
     return dataJsonString
 end
 
@@ -140,13 +140,13 @@ end
 -- this updates the global playback_target table
 local playback_targets = nil -- holds updated list of all channel users
 updateAllChannelUsersforSend = function(cl)
-    --print("udpate channelusers")
+    --fgcom.dbg("udpate channelusers")
     local ch = cl:getChannel(fgcom.channel)
     local users = ch:getUsers()
     playback_targets = {}
-    --print("ok: "..ch:getName())
+    --fgcom.dbg("ok: "..ch:getName())
     for k,v in pairs(users) do
-        --print("  k",k,"v=",v)
+        --fgcom.dbg("  k="..tostring(k).."v="..tostring(v))
         table.insert(playback_targets, v)
     end
 end
@@ -155,35 +155,35 @@ end
 -- Timed loop to update the database
 local dbUpdateTimer = mumble.timer()
 dbUpdateTimer_func = function(t)
-    print("Update db '"..db.."'")
+    fgcom.dbg("Update db '"..db.."'")
 
     -- first, try to open a new temporary target file
     local tmpdb = db..".part";
     local tmpdb_fh = io.open(tmpdb, "wb")
     
     if tmpdb_fh then
-        print("opened db '"..tmpdb.."'")
+        fgcom.dbg("opened db '"..tmpdb.."'")
         -- tmpdb is open, write out the data
         local data = generateOutData()
         local writeRes = tmpdb_fh:write(data)
         if not writeRes then
-            print("unable to write into db: "..tmpdb)
+            fgcom.log("unable to write into db: "..tmpdb)
             -- lets try in next iteration  os.exit(1)
             io.close(tmpdb_fh)
         else
             -- write was okay
-            print("wrote db '"..tmpdb.."'")
+            fgcom.dbg("wrote db '"..tmpdb.."'")
             tmpdb_fh:flush()
             io.close(tmpdb_fh)
             
             os.remove(db)
             ren_rc, ren_message = os.rename(tmpdb, db)
             -- TODO: handle errors
-            print("published db '"..db.."'")
+            fgcom.dbg("published db '"..db.."'")
         end
         
     else
-        print("ERROR: unable to open db: "..tmpdb)
+        fgcom.log("ERROR: unable to open db: "..tmpdb)
         -- lets try again in the next iteration.... os.exit(1)
     end
 
@@ -195,16 +195,16 @@ end
 -- Called when the bot successfully connected to the server
 -- and has received all current channel and client data
 client:hook("OnServerSync", function(event)
-    print("Sync done; server greeted with: ", event.welcome_text)
+    fgcom.log("Sync done; server greeted with: "..event.welcome_text)
     
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
-    print("joined channel "..fgcom.channel)
+    fgcom.log("joined channel "..fgcom.channel)
            
     -- Adjust comment
     if weburl:len() > 0 then
-        print("Advetising web url: "..weburl)
+        fgcom.log("Advetising web url: "..weburl)
         client:setComment("<b><i><u>FGCom:</u></i></b><br/>Visit the status page at:<br/>"
                       .."<a href=\""..weburl.."\">"..weburl.."</a>")
     end
@@ -225,7 +225,7 @@ client:hook("OnPluginData", function(event)
 	--["receivers"]				= {  -- A table of who is receiving this data
 	--	[1] = mumble.user,
 	--},
-    print("DATA INCOMING FROM="..event.sender:getSession())
+    fgcom.dbg("DATA INCOMING FROM="..event.sender:getSession())
 
     fgcom.data.parsePluginData(event.id, event.data, event.sender)
 

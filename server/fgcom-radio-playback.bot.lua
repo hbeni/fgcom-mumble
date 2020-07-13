@@ -70,6 +70,7 @@ if arg[1] then
         print("    --lat      Latitude override        (default: use FGCS header)")
         print("    --lon      Longitude override       (default: use FGCS header)")
         print("    --hgt      Height override          (default: use FGCS header)")
+        print("    --debug    print debug messages             (default=no)")
         os.exit(0)
     end
     
@@ -84,6 +85,7 @@ if arg[1] then
         if k=="lat"    then lat=v end
         if k=="lon"    then lon=v end
         if k=="hgt"    then hgt=v end
+        if opt == "--debug" then fgcom.debugMode = true end
     end
     
 end
@@ -112,7 +114,7 @@ readFGCSSampleFile = function(file)
     local endOfSamples = false
     while not endOfSamples do
         local nextSample = fgcom.io.readFGCSSample(sampleFH)
-        --print("sample: len="..nextSample.len.."; eof='"..tostring(nextSample.eof).."'; data='"..nextSample.data.."'")
+        --fgcom.dbg("sample: len="..nextSample.len.."; eof='"..tostring(nextSample.eof).."'; data='"..nextSample.data.."'")
         if nextSample.len > 0 and not nextSample.eof then
             vb:pushright(nextSample) -- write the sample structure to the buffer
         end
@@ -127,7 +129,7 @@ end
 -- @param s filename of sample
 delSample = function(s)
     if nodel then
-        print("preserving file (--nodel in effect): "..s)
+        fgcom.dbg("preserving file (--nodel in effect): "..s)
     else
         os.remove(s)
     end
@@ -142,53 +144,53 @@ end
 -- usually we want the file deleted after validity expired, but for that we need
 -- to make sure its a FGCS file... otherwise its another rm tool... ;)
 lastHeader, voiceBuffer = readFGCSSampleFile(sample)
-if not lastHeader then  print("ERROR: '"..sample.."' not readable or no FGCS file") os.exit(1) end
+if not lastHeader then  fgcom.log("ERROR: '"..sample.."' not readable or no FGCS file") os.exit(1) end
 
 -- AFTER THIS CODE we can be confident it was a valid FGCS file!
 --   lastHeader is initialized with the header data
 --   voiceBuffer is initialized with the read samples
-print(sample..": successfully loaded.")
+fgcom.log(sample..": successfully loaded.")
 
 local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
 local persistent = false
 if lastHeader.timetolive == "0" then
-    print(sample..": This is a persistent sample.")
+    fgcom.log(sample..": This is a persistent sample.")
     timeLeft   = 1337   -- just some arbitary dummy value in the future
     persistent = true   -- loops forever!
 end
 if not persistent and timeLeft < 0 then
-    print(sample..": sample is invalid, since "..timeLeft.."s. Aborting.")
+    fgcom.log(sample..": sample is invalid, since "..timeLeft.."s. Aborting.")
     os.exit(0)
 else
-    print(sample..": sample is valid, remaining time: "..timeLeft.."s")
+    fgcom.log(sample..": sample is valid, remaining time: "..timeLeft.."s")
 end
 
 
 -- Connect to server, so we get the API
-print(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
+fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(fgcom.callsign)
-print("connect and bind: OK")
+fgcom.dbg("connect and bind: OK")
 
 
 
 -- function to get all channel users
 -- this updates the global playback_target table
 updateAllChannelUsersforSend = function(cl)
-    --print("udpate channelusers")
+    --fgcom.dbg("udpate channelusers")
     local ch = cl:getChannel(fgcom.channel)
     local users = ch:getUsers()
     playback_targets = {}
-    --print("ok: "..ch:getName())
+    --fgcom.dbg("ok: "..ch:getName())
     for k,v in pairs(users) do
-        --print("  k",k,"v=",v)
+        --fgcom.dbg("  k="..tostring(k).."v="..tostring(v))
         table.insert(playback_targets, v)
     end
 end
 
 -- function to disconnect the bot
 shutdownBot = function()
-    print("shutdownBot(): requested")
+    fgcom.log("shutdownBot(): requested")
     updateAllChannelUsersforSend(client)
 
     -- send update to mute our radio
@@ -197,11 +199,11 @@ shutdownBot = function()
              ..",PWR="..lastHeader.txpower
              ..",PTT=0"
     client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
-    print("shutdownBot(): COM0 deactiated")
+    fgcom.log("shutdownBot(): COM0 deactiated")
     
     -- finally disconnect from the server
     client:disconnect()
-    print("shutdownBot(): disconnected")
+    fgcom.log("shutdownBot(): disconnected")
     os.exit(0)
 end
 
@@ -213,29 +215,29 @@ end
 ]]
 local playbackTimer = mumble.timer()
 playbackTimer_func = function(t)
-    print("playback timer: tick")
+    fgcom.dbg("playback timer: tick")
     
     -- So, a new timer tick started.
     -- See if we have still samples in the voice buffer. If not, reload it from file, if it was a looped one.
     if voiceBuffer:size() > 0 then
-        print("voiceBuffer is still filled, samples: "..voiceBuffer:size())
+        fgcom.dbg("voiceBuffer is still filled, samples: "..voiceBuffer:size())
         
         -- get the next sample from the buffer and play it
         local nextSample  = voiceBuffer:popleft()
         local endofStream = false
         if voiceBuffer:size() == 0 then endofStream = true end
 
-        print("transmit next sample")
-        --print("  tgt="..playback_target:getSession())
-        print("  eos="..tostring(endofStream))
-        print("  cdc="..lastHeader.voicecodec)
-        print("  dta="..#nextSample.data)
-        --print("  dta="..nextSample.data)
+        fgcom.dbg("transmit next sample")
+        --fgcom.dbg("  tgt="..playback_target:getSession())
+        fgcom.dbg("  eos="..tostring(endofStream))
+        fgcom.dbg("  cdc="..lastHeader.voicecodec)
+        fgcom.dbg("  dta="..#nextSample.data)
+        --fgcom.dbg("  dta="..nextSample.data)
         client:transmit(lastHeader.voicecodec, nextSample.data, not endofStream) -- Transmit the single frame as an audio packet (the bot "speaks")
-        print("transmit ok")
+        fgcom.dbg("transmit ok")
         if endofStream then
             -- no samples left? Just loop around to trigger all the checks
-            print("no samples left, playback complete")
+            fgcom.dbg("no samples left, playback complete")
         end
         
     else
@@ -243,60 +245,60 @@ playbackTimer_func = function(t)
         
         -- Check if this is a oneshot sample. if so, delete the file now as we just played it, and go home
         if lastHeader.playbacktype == "oneshot" then
-            print("Oneshot sample detected, not looping.")
+            fgcom.log("Oneshot sample detected, not looping.")
             local persistent = false
             if lastHeader.timetolive ~= "0" then
-                print("deleting oneshot non-persistent sample file.")
+                fgcom.log("deleting oneshot non-persistent sample file.")
                 delSample(sample)
             end
             shutdownBot()
-            print("disconnected: we are done.")
+            fgcom.dbg("disconnected: we are done.")
             t:stop() -- Stop the timer
         
         else
             -- It was a looped timer: we reread the file to see if its still there,
             -- then check validity and if so, refill the voiceBuffer
-            print("Looped timer: update voice buffer from file")
+            fgcom.dbg("Looped timer: update voice buffer from file")
     
             -- Read/update FGCS data file
             lastHeader, voiceBuffer = readFGCSSampleFile(sample)
             if not lastHeader then
                 -- file could not be loaded - most probably it got deleted.
                 -- shut down the bot.
-                print("'"..sample.."' not readable or no FGCS file, probably deleted from filesystem.")
+                fgcom.log("'"..sample.."' not readable or no FGCS file, probably deleted from filesystem.")
                 shutdownBot()
-                print("disconnected: we are done.")
+                fgcom.dbg("disconnected: we are done.")
                 t:stop() -- Stop the timer
 
             else
                 -- File was successfully reloaded from disk
-                print("update from file successful")
+                fgcom.dbg("update from file successful")
         
                 -- check if the file is still valid
                 local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
                 local persistent = false
                 if lastHeader.timetolive == "0" then
-                    print(sample..": This is a persistent sample.")
+                    fgcom.dbg(sample..": This is a persistent sample.")
                     timeLeft   = 1337   -- just some arbitary dummy value in the future
                     persistent = true   -- loops forever!
                 end
                 if not persistent and timeLeft < 0 then
-                    print(sample..": FGCS file outdated since "..timeLeft.." seconds; removing")
+                    fgcom.log(sample..": FGCS file outdated since "..timeLeft.." seconds; removing")
                     delSample(sample)
                     shutdownBot()
-                    print("disconnected: we are done.")
+                    fgcom.dbg("disconnected: we are done.")
                     t:stop() -- Stop the timer
                 else
                     -- Samples are still valid;
                     -- we alreay updated the global voiceBuffer, so we need not do anything here.
-                    print(sample..": FGCS file still valid for "..timeLeft.."s: looping over.")
+                    fgcom.dbg(sample..": FGCS file still valid for "..timeLeft.."s: looping over.")
                     
                     --[[for k,v in pairs(lastHeader) do
-                        print("header read: '"..k.."'='"..v.."'")
+                        fgcom.dbg("header read: '"..k.."'='"..v.."'")
                     end
-                    print("\nread samples:")
+                    fgcom.dbg("\nread samples:")
                     for k,v in ipairs(data) do
-                        print("  sample: len="..v.len.."; eof='"..tostring(v.eof).."'; data='"..v.data.."'")
+                        fgcom.dbg("  sample: len="..v.len.."; eof='"..tostring(v.eof).."'; data='"..v.data.."'")
                     end--]]
                     
                     -- TODO: when active, loop hangs... why? Not so important right now, because samplespeed should only change with new recordings from new clients.
@@ -317,7 +319,7 @@ notifyLocation = function(tgts)
              ..",LON="..longitude
              ..",LAT="..latitude
              ..",ALT="..height
-    print("Bot sets location: "..msg)
+    fgcom.dbg("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC", msg, tgts)
 end
 
@@ -325,17 +327,17 @@ notifyRadio = function(tgts)
 local msg = "FRQ="..lastHeader.frequency
              ..",PWR="..lastHeader.txpower
              ..",PTT=1"
-    print("Bot sets radio: "..msg)
+    fgcom.dbg("Bot sets radio: "..msg)
     client:sendPluginData("FGCOM:UPD_COM:0", msg, tgts)
 end
 
 client:hook("OnServerSync", function(event)
-    print("Sync done; server greeted with: ", event.welcome_text)
+    fgcom.log("Sync done; server greeted with: "..event.welcome_text)
     
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
-    print("joined channel "..fgcom.channel)
+    fgcom.log("joined channel "..fgcom.channel)
     
     -- update current users of channel
     updateAllChannelUsersforSend(client)
@@ -368,11 +370,11 @@ client:hook("OnPluginData", function(event)
 	--["receivers"]				= {  -- A table of who is receiving this data
 	--	[1] = mumble.user,
 	--},
-	print("OnPluginData(): DATA INCOMING FROM=", event.id, event.sender)
+	fgcom.dbg("OnPluginData(): DATA INCOMING FROM="..tostring(event.id)..", "..tostring(event.sender))
 
     -- Answer data requests
     if event.id:len() > 0 and event.id:find("FGCOM:ICANHAZDATAPLZ") then
-        print("OnPluginData(): client asks for data: ", event.sender)
+        fgcom.dbg("OnPluginData(): client asks for data: "..tostring(event.sender))
         client:sendPluginData("FGCOM:UPD_COM:0", msg, event.sender)
         client:sendPluginData("FGCOM:UPD_LOC", msg, event.sender)
     end
@@ -387,7 +389,7 @@ client:hook("OnUserChannel", function(event)
 	--["to"]	= mumble.channel to,
 
     if event.to:getName() == fgcom.channel then
-        print("OnUserChannel(): client joined fgcom.channel: ", event.user:getName())
+        fgcom.dbg("OnUserChannel(): client joined fgcom.channel: "..event.user:getName())
         notifyLocation({event.user})
         notifyRadio({event.user})
     end
@@ -396,4 +398,4 @@ end)
 
 mumble.loop()
 shutdownBot()
-print(botname.." with callsign "..fgcom.callsign.." completed.")
+fgcom.log(botname.." with callsign "..fgcom.callsign.." completed.")
