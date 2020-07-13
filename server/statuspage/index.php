@@ -103,10 +103,12 @@ foreach ($db_data as $u) {
         $numUsers++;
     }
 }
+$tpl_users->assignVar('section_id', "s_users"); // for css
 $tpl_users->assignVar('title', "Current users: ".$numUsers);
 $tpl_users->assignVar('table_id', "table_users"); // for tablesort (and css, if needed)
 $tpl_users->assignVar('user_table_entries', $tpl_users_body);
 $tpl_index->assignVar('users', $tpl_users->generate());
+$tpl_index->assignVar('usercount', $numUsers);
 
 
 /*
@@ -131,10 +133,12 @@ foreach ($db_data as $u) {
         $numBots++;
     }
 }
-$tpl_bots->assignVar('title', "Current radio broadcasts: ".$numBots);
+$tpl_bots->assignVar('section_id', "s_playbacks"); // for css
 $tpl_bots->assignVar('table_id', "table_bots"); // for tablesort (and css, if needed)
+$tpl_bots->assignVar('title', "Current radio broadcasts: ".$numBots);
 $tpl_bots->assignVar('user_table_entries', $tpl_bots_body);
 $tpl_index->assignVar('bots', $tpl_bots->generate());
+$tpl_index->assignVar('playbackcount', $numBots);
 
 
 /**
@@ -151,8 +155,12 @@ foreach ($db_data as $u) {
     $utpl->assignVar('range', getVHFRadioHorizon($u['alt'])*1000);
     $utpl->assignVar('lat', $u['lat'] );
     $utpl->assignVar('lon', $u['lon'] );
+    $utpl->assignVar('alt', round($u['alt'],0) );
     $utpl->assignVar('color',   (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '#ff9900' : '#B0AAA1' );
     $utpl->assignVar('opacity', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? 0.35 : 0.15);
+    $utpl->assignVar('icon', 'userIcon');
+    if ($u['type'] == 'playback-bot') $utpl->assignVar('icon', 'radioIcon');
+    
     
     if ($u['alt'] >= 0 && time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_clients_body .= $utpl->generate();

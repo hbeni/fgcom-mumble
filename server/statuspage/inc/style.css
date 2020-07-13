@@ -1,6 +1,34 @@
 body {
     background-color: #ececec;
-}  
+}
+
+body div.header {
+    position:relative;
+    float:none;
+    width:95%;
+    margin: auto;
+}
+
+body div.body {
+    position:relative;
+    float:none;
+    width:95%;
+    margin: 1em auto 1em auto;
+}
+
+body div.footer {
+    position:relative;
+    float:none;
+    width:100%;
+    margin:3em auto auto auto;
+    clear: both;
+    
+    font-size:10pt;
+    text-align:center;
+    padding:5px;
+    border-top: 1px solid black;
+}
+
 
 /* Page title */
 .title {
@@ -13,7 +41,7 @@ body {
     padding-left: 2.2em;
     padding-top: -1em;
     min-height: 4em;
-    width: 60%;
+    /*width: 60%;*/
     text-align: center;
     vertical-align: top;
     margin: auto;
@@ -45,12 +73,25 @@ body {
     box-shadow:2px 2px 4px #000000;
 }
 
-h2 { /* Headings in sections */
-    font-size:14pt;
+.s_users { /* Users section block */
+    width:49%;
+    float:left;
+}
+
+.s_playbacks { /* Playbacks block */
+    width:49%;
+    float:right;
+}
+
+
+.section h2 { /* Headings in sections */
+    font-size:12pt;
     font-style: italic;
     color: black;
-    padding-top: -1em;
-    margin-top: -0.1em;
+    margin:0;
+    margin-bottom:0.2em;
+    /*padding-top: -1em;
+    margin-top: -0.1em;*/
     text-align: left;
 }
 
@@ -74,11 +115,13 @@ h2 { /* Headings in sections */
 }
 .section th, .section td {
   text-align: left;
-  padding: 8px;
+  padding: 4px;
+  font-size:10pt;
 }
 tr:nth-child(odd){background-color: #f2f2f2}
 .section th {
     font-size:10pt;
+    font-weight:bold;
     background-color: #2C80BD;
     color: white;
 }
@@ -94,9 +137,8 @@ tr:nth-child(odd){background-color: #f2f2f2}
     background-color: #fafafa;
     background-size: 2em, 2em;
     padding: 0.2em;
-    width: 80%;
-    margin: auto;
     margin-top:1em;
+    margin-bottom:1em;
     text-align: center;
     box-shadow:2px 2px 4px #000000;
 }
@@ -105,15 +147,31 @@ tr:nth-child(odd){background-color: #f2f2f2}
 
 /* leaflet map container */
 #mapid {
-    width: 80%;
+    margin:auto;
+    margin-top:1em;
     height: 50em;
 }
 .map_popup{
     color:black;
+    border-collapse: collapse;
+    border: none;
 }
-.map_popup th{color:black;
+.map_popup th{
+    font-size:10pt;
+    font-weight:bold;
+    background-color: white;
+    color: black;
+    margin:0;
+    padding:0;
 }
-.map_popup td{color:black;
+.map_popup td{
+    text-align: left;
+    padding: 4px;
+    font-size:10pt;
+    background-color: white;
+    margin:0;
+    padding:0;
+    padding-left:0.9em;
 }
 
 /* Styles for tablesort */
@@ -150,14 +208,3 @@ th[role=columnheader]:not(.no-sort):hover:after {
 	visibility: visible;
 	opacity: 1;
 } 
-
-/* Footer div */
-.footer {
-    font-size:10pt;
-    width:80%;
-    text-align:center;
-    margin:3em auto auto auto;
-    padding:5px;
-    border-top: 1px solid black;
-    float:middle;
-}

@@ -21,20 +21,27 @@
     </head>
 
     <body>
-        <div class="title">
-            <h1>FGCom-mumble: live status page</h1>
-            <span %updatestale%>Last database update: %dbchanged%</span>
-            %refreshbox%
+        <div class="header">
+            <div class="title">
+                <h1>FGCom-mumble: live status page</h1>
+                <span %updatestale%>Last database update: %dbchanged%</span>
+                <span>| Users: %usercount% | Broadcasts: %playbackcount%</span>
+                %refreshbox%
+            </div>
+            
+            
+            %message%
         </div>
+            
+        <div class="body">
         
-        %message%
+        %map%
     
         %users%
         
         %bots%
         
-        %map%
-
+        </div>
         
         <div class="footer">
             <a href="https://github.com/hbeni/fgcom-mumble"><img height="15px" width="37px" src="inc/GitHub_Logo.png" />hbeni/fgcom-mumble</a> | <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img height="15px" width="44px" src="inc/gplv3-88x31.png" alt="GPLv3"/></a> | &copy; 2020 Benedikt Hallinger
