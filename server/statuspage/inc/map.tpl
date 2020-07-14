@@ -48,18 +48,18 @@
     var userIcon = L.Icon.extend({
         options: {
             iconUrl:      'inc/user.png',
-            iconSize:     [20, 24],
-            iconAnchor:   [10, 12],
-            popupAnchor:  [0, -15]
+            iconSize:     [12, 16],
+            iconAnchor:   [6, 8],
+            popupAnchor:  [0, -10]
         }
     });
     // define common markers
     var radioIcon = L.Icon.extend({
         options: {
             iconUrl:      'inc/radio.png',
-            iconSize:     [28, 24],
-            iconAnchor:   [14, 12],
-            popupAnchor:  [0, -12]
+            iconSize:     [20, 18],
+            iconAnchor:   [10, 9],
+            popupAnchor:  [0, -8]
         }
     });
     
