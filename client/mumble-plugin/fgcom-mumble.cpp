@@ -735,15 +735,14 @@ bool mumble_onAudioOutputAboutToPlay(float *outputPCM, uint32_t sampleCount, uin
 }*/
 
 bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender, const char *data, size_t dataLength, const char *dataID) {
-	pLog() << "Received data with ID \"" << dataID << "\" from user with ID " << sender << ". Its length is " << dataLength
-		<< ". (ServerConnection:" << connection << ")" << std::endl;
+    pluginDbg("Received data with ID '"+std::string(dataID)+"' from user with ID '"+std::to_string(sender)+"'. Its length is '"+std::to_string(dataLength)+". (ServerConnection:"+std::to_string(connection)+")");
 
-        if (dataLength > 0) {
-            // if there is payload: handle it
-            return handlePluginDataReceived(sender, std::string(dataID), std::string(data));
-        }
-        
-        return false;
+    if (dataLength > 0) {
+        // if there is payload: handle it
+        return handlePluginDataReceived(sender, std::string(dataID), std::string(data));
+    }
+
+    return false;
 }
 
 void mumble_onUserAdded(mumble_connection_t connection, mumble_userid_t userID) {
