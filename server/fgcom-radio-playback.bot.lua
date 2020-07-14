@@ -375,8 +375,8 @@ client:hook("OnPluginData", function(event)
     -- Answer data requests
     if event.id:len() > 0 and event.id:find("FGCOM:ICANHAZDATAPLZ") then
         fgcom.dbg("OnPluginData(): client asks for data: "..tostring(event.sender))
-        client:sendPluginData("FGCOM:UPD_COM:0", msg, event.sender)
-        client:sendPluginData("FGCOM:UPD_LOC", msg, event.sender)
+        notifyLocation({event.sender})
+        notifyRadio({event.sender})
     end
 
 end)
