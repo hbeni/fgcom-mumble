@@ -34,8 +34,10 @@ The Bot manager
 ==================
 `./fgcom-botmanager.sh --help` will give usage instructions.
 
-The bot manager will setup the needed interprocess communication for the recorder bot to notify about new recordings. He then spawns a recorder bot and listens for new recordings. When receiving a new recording, a playback bot is invoked.
+The bot manager will start the basic set of bots.  
+He also will setup the needed interprocess communication for the recorder bot to notify about new recordings. He then spawns a recorder bot and listens for new recordings. When receiving a new recording, a playback bot is invoked.
 
+The status bot can advertise the status page url in it's mumble comment. to activate this, use `./fgcom-botmanager.sh --sweb=<url>`.
 
 
 Radio Recording Bot
