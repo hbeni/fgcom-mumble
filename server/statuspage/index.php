@@ -86,9 +86,12 @@ $db_data = sanitize($db_data);
 */
 $tpl_users_body = "";
 $numUsers = 0;
+$id=0;
 foreach ($db_data as $u) {
+    $id++;
     if ($u['type'] != "client") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
+    $utpl->assignVar('id',$id);
     $utpl->assignVar('callsign',$u['callsign']);
     $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
@@ -116,9 +119,12 @@ $tpl_index->assignVar('usercount', $numUsers);
 */
 $tpl_bots_body = "";
 $numBots = 0;
+$id=0;
 foreach ($db_data as $u) {
+    $id++;
     if ($u['type'] != "playback-bot") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
+    $utpl->assignVar('id',$id);
     $utpl->assignVar('callsign',$u['callsign']);
     $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate

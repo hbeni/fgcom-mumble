@@ -1,4 +1,4 @@
-<tr %stale%>
+<tr %stale% onclick="showPopup(%id%)">
 <td>%callsign%</td>
 <td>%fequency%</td>
 <td>%lat%<br>%lon%</td>
