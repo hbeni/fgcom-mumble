@@ -2,9 +2,13 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>FGCom-mumble Live status page</title>
+        <meta name="author" content="Benedikt Hallinger">
+        <meta name="description" content="FGCom-mumble online status">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="expires" content="5">
         <link rel="shortcut icon" type="image/png" href="inc/fgcom_logo.png"/>
+        
         <link rel="stylesheet" href="inc/style.css">
         <script src="inc/utils.js"></script>
         
