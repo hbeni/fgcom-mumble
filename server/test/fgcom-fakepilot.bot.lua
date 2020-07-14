@@ -299,6 +299,7 @@ client:hook("OnServerSync", function(event)
             lat = lat + latmv
             lon = lon + lonmv
             alt = alt + math.random(-50, 50)
+            if alt < 100 then alt = math.abs(alt) end
             local msg = "CALLSIGN="..fgcom.callsign
                     ..",LON="..lat
                     ..",LAT="..lon
