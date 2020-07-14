@@ -110,6 +110,7 @@ local generateOutData = function()
             fgcom_clients[sid].lastUpdate = os.time()
             fgcom_clients[sid].type = "client"
             if mumbleUser:getName():find("FGCOM%-.*") then fgcom_clients[sid].type = "playback-bot" end
+            if mumbleUser:getName():find("FGCOM%-BOTPILOT.*") then fgcom_clients[sid].type = "client" end
             userData.type = fgcom_clients[sid].type
         end
         
