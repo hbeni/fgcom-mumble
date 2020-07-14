@@ -15,6 +15,7 @@ This project aims to provide a modular, mumble based radio simulation for flight
 - Standalone nature (no dependency on flightgear)
 - Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
 - Modularity, so individual component implementations can be switched and its easy to add features
+- Good and complete documentation
 
 Documentation
 =============
