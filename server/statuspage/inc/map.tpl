@@ -64,7 +64,12 @@
     });
     
     // Add aircraft markers
+    var markers = [];
     %client_markers%
     
+    // functions to open marker popup
+    function showPopup(id){
+        markers[id].openPopup();
+    }
     
 </script>
