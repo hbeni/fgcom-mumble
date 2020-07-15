@@ -311,14 +311,19 @@ playbackTimer_func = function(t)
 end
 
 
+notifyUserdata = function(tgts)
+    local msg = "CALLSIGN="..lastHeader.callsign
+    fgcom.dbg("Bot sets userdata: "..msg)
+    client:sendPluginData("FGCOM:UPD_USR", msg, tgts)
+end
+
 notifyLocation = function(tgts)
     local latitude  = lastHeader.lat       if lat ~= "" then latitude  = lat end
     local longitude = lastHeader.lon       if lon ~= "" then longitude = lon end
     local height    = lastHeader.height    if hgt ~= "" then height    = hgt end
-    local msg = "CALLSIGN="..lastHeader.callsign
-             ..",LON="..longitude
-             ..",LAT="..latitude
-             ..",ALT="..height
+    local msg = ",LON="..longitude
+              ..",LAT="..latitude
+              ..",ALT="..height
     fgcom.dbg("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC", msg, tgts)
 end
@@ -343,6 +348,7 @@ client:hook("OnServerSync", function(event)
     updateAllChannelUsersforSend(client)
 
     -- Setup the Bots location on earth
+    notifyUserdata(playback_targets)
     notifyLocation(playback_targets)
         
     -- Setup a radio to broadcast from
@@ -375,6 +381,7 @@ client:hook("OnPluginData", function(event)
     -- Answer data requests
     if event.id:len() > 0 and event.id:find("FGCOM:ICANHAZDATAPLZ") then
         fgcom.dbg("OnPluginData(): client asks for data: "..tostring(event.sender))
+        notifyUserdata({event.sender})
         notifyLocation({event.sender})
         notifyRadio({event.sender})
     end
@@ -390,6 +397,7 @@ client:hook("OnUserChannel", function(event)
 
     if event.to:getName() == fgcom.channel then
         fgcom.dbg("OnUserChannel(): client joined fgcom.channel: "..event.user:getName())
+        notifyUserdata({event.user})
         notifyLocation({event.user})
         notifyRadio({event.user})
     end
