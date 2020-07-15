@@ -23,7 +23,11 @@
 //    The information is parsed and then put into a shared data
 //    structure, from where the plugin can read the current state.
 // B) Mumble internal plugin IO
-//    Handles sending and receiving messages from mumbles interface
+//    Handles sending and receiving messages from mumbles interface.
+//    Sending of messages ("notifications") is differentiated between
+//    "urgent" and "not-urgent" messages. "urgent" ones are sent directly
+//    after change, whereas "not-urgent" ones are handled by a separate
+//    notification thread to cap the maximum of sent updates by time.
 //
 #include <iostream>
 #include <stdio.h>
@@ -33,6 +37,7 @@
 #include <sstream> 
 #include <regex>
 #include <sys/types.h> 
+#include <math.h>
 
 #ifdef MINGW_WIN64
     #include <winsock2.h>
@@ -110,22 +115,22 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
         pluginDbg("notifyRemotes(): we are connected, so notifications will be sent.");
     }
 
-    // @param what:  0=all local info; 1=location data; 2=comms
+    // @param what:  0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping
     // @param selector: ignored, when 'what'=2: id of radio (0=COM1,1=COM2,...); -1 sends all radios
     switch (what) {
         case 0:
             // notify all info
             pluginDbg("notifyRemotes(): selected: all");
-            notifyRemotes(1, -1, tgtUser);
-            notifyRemotes(2, -1, tgtUser);
-            break;
+            notifyRemotes(4, -1, tgtUser);  // userdata
+            notifyRemotes(1, -1, tgtUser);  // location
+            notifyRemotes(2, -1, tgtUser);  // radios
+            return;
             
         case 1:
             // Notify on location
             pluginDbg("notifyRemotes(): selected: location");
             dataID  = "FGCOM:UPD_LOC";
-            message = "CALLSIGN="+fgcom_local_client.callsign+","
-                     +"LAT="+std::to_string(fgcom_local_client.lat)+","
+            message = "LAT="+std::to_string(fgcom_local_client.lat)+","
                      +"LON="+std::to_string(fgcom_local_client.lon)+","
                      +"ALT="+std::to_string(fgcom_local_client.alt)+",";
             break;
@@ -158,6 +163,19 @@ void notifyRemotes(int what, int selector, mumble_userid_t tgtUser) {
             // we ask all other clients to send us their data
             dataID  = "FGCOM:ICANHAZDATAPLZ";
             message = "allYourDataBelongsToUs!";
+            break;
+            
+        case 4:
+            // userstate
+            pluginDbg("notifyRemotes(): selected: userdata");
+            dataID  = "FGCOM:UPD_USR";
+            message = "CALLSIGN="+fgcom_local_client.callsign;
+            break;
+
+        case 5:
+            // Ping-Packet: notify that we are still alive, but data did not change
+            dataID  = "FGCOM:PING";
+            message = "1";
             break;
             
         default: 
@@ -247,15 +265,20 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             }*/
         }
         
+        // Whatever we received: store that we have seen something
+        fgcom_remote_clients[clientID].lastUpdate = std::chrono::system_clock::now();
+        
         // Parse the data, depending on packet type
         if (dataID == "FGCOM:ICANHAZDATAPLZ") {
             // client asks for our current state
             pluginDbg("Data update requested: Sender="+std::to_string(clientID)+" DataID="+dataID);
             notifyRemotes(0, -1, clientID); // notify the sender with all our data
-            
-        } else if (dataID == "FGCOM:UPD_LOC") {
-            // Location data update
-            pluginDbg("LOC UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
+        
+        
+        // Userdata and Location data update are treated the same
+        } else if (dataID == "FGCOM:UPD_USR"
+                || dataID == "FGCOM:UPD_LOC") {
+            pluginDbg("USR/LOC UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             
             // update properties
             std::stringstream streambuffer(data);
@@ -273,11 +296,13 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         std::string token_value = sm[2];
                         pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
                         
+                        // Location data
                         if (token_key == "LON")      fgcom_remote_clients[clientID].lon      = std::stof(token_value);
                         if (token_key == "LAT")      fgcom_remote_clients[clientID].lat      = std::stof(token_value);
                         if (token_key == "ALT")      fgcom_remote_clients[clientID].alt      = std::stof(token_value);  // ALT in meters above ground!
-                        if (token_key == "CALLSIGN") fgcom_remote_clients[clientID].callsign = token_value;
                         
+                        // Userdata
+                        if (token_key == "CALLSIGN") fgcom_remote_clients[clientID].callsign = token_value; 
                         
                     } else {
                         // ignore, segment was not in key=value format
@@ -288,7 +313,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                     pluginDbg("[mum_pluginIO] Parsing throw exception, ignoring token "+segment);
                 }
             }
-            
+        
         
         } else if (dataID.substr(0, 14) == "FGCOM:UPD_COM:") {
             // Radio data update. Here the radio in question was given in the dataid.
@@ -341,6 +366,13 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                     pluginLog("[mum_pluginIO] Parsing throw exception, ignoring token "+segment);
                 }
             }
+
+            
+        } else if (dataID == "FGCOM:PING") {
+            pluginDbg("FGCom: [mum_pluginIO] ping received.");
+            // don't have any use yet. Ignore for now, later we may use this to cleanup remote knowledge.
+            // Main usage is to notify we are there with as less data as possible.
+
             
         } else {
             pluginDbg("FGCom: [mum_pluginIO] dataID='"+dataID+"' not known. Ignoring.");
@@ -355,7 +387,67 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         return false; // packet does not belong to us. other plugins should also receive it
     }
 
-}    
+}
+
+
+struct fgcom_client lastNotifiedState;  // holds the last data we did sent out, so we can detect changes (and how much)
+const std::chrono::milliseconds notifyPingInterval = std::chrono::milliseconds(NOTIFYPINGINTERVAL);
+auto lastPing = std::chrono::system_clock::now();
+void fgcom_notifyThread() {
+    while (true) {
+        if (fgcom_isPluginActive()) {
+            // if plugin is active, check if we need to send notifications.
+            fgcom_remotecfg_mtx.lock();
+            
+            // Note: we are just looking at location and userdata. Radio data is "urgent" and notified directly.
+            // Difference with 3 decimals is about 100m: http://wiki.gis.com/wiki/index.php/Decimal_degrees
+            bool notifyUserData     = false;
+            bool notifyLocationData = false;
+            if (fabs(fgcom_local_client.lat - lastNotifiedState.lat) >= 0.0005) { // about 40-50m
+                lastNotifiedState.lat = fgcom_local_client.lat;
+                notifyLocationData = true;
+            }
+            if (fabs(fgcom_local_client.lon - lastNotifiedState.lon) >= 0.0005) { // about 40-50m
+                lastNotifiedState.lon = fgcom_local_client.lon;
+                notifyLocationData = true;
+            }
+            if (fabs(fgcom_local_client.alt - lastNotifiedState.alt) >= 5) {  // 5 meters
+                lastNotifiedState.alt = fgcom_local_client.alt;
+                notifyLocationData = true;
+            }
+            if (fgcom_local_client.callsign != lastNotifiedState.callsign) {
+                lastNotifiedState.callsign = fgcom_local_client.callsign;
+                notifyUserData = true;
+            }
+            
+            fgcom_remotecfg_mtx.unlock();
+            
+            // We did not have a change for several seconds.
+            // We should send something so other clients know we are still alive!
+            if (!notifyUserData && std::chrono::system_clock::now() > lastPing + notifyPingInterval) {
+                pluginDbg("FGCom: [mum_pluginIO] fgcom_notifyThread() Ping is due.");
+                lastPing = std::chrono::system_clock::now();
+                notifyRemotes(5);
+            }
+            
+            // Location has changed significantly: notify!
+            if (notifyLocationData) {
+                pluginDbg("FGCom: [mum_pluginIO] fgcom_notifyThread() locationdata was changed.");
+                lastPing = std::chrono::system_clock::now();
+                notifyRemotes(1);
+            }
+            
+            // userdata has changed: notify!
+            if (notifyUserData) {
+                pluginDbg("FGCom: [mum_pluginIO] fgcom_notifyThread() userdata was changed.");
+                lastPing = std::chrono::system_clock::now();
+                notifyRemotes(4);
+            }
+        }
+        
+        std::this_thread::sleep_for(std::chrono::milliseconds(NOTIFYINTERVAL));
+    }
+}
 
 
 
@@ -377,7 +469,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
  * This will be called from the UDP server thread when receiving new data.
  * 
  * Note: uses the global fgcom_local_client structure and fgcom_localcfg_mtx!
- * @todo: that should be changed, so the udp server instance gets initialized with pointers to these variables.
+ * Note: Radio changes and userstate must trigger instant notification to other clients, but
+ *       location data is not that urgent and changes often fractionally. We use the notification threat for that.
  *
  * @param buffer The char buffer to parse
  * @param userDataHashanged pointer to boolean that after call indicates if userdata had changed
@@ -481,20 +574,19 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 
                 
                 // User client values.
-                // TODO: We should limit the update notification rate of positional data (The reason is that for example the UDP sending interface of flightgear may send new data several times per second.)
+                // Radio updates are "urgent" and need to be notified about instantly.
                 if (token_key == "LON") {
                     float oldValue = fgcom_local_client.lon;
                     fgcom_local_client.lon = std::stof(token_value);;
-                    if (fgcom_local_client.lon != oldValue ) *userDataHashanged = true;
                 }
                 if (token_key == "LAT") {
                     float oldValue = fgcom_local_client.lat;
                     fgcom_local_client.lat = std::stof(token_value);
-                    if (fgcom_local_client.lat != oldValue ) *userDataHashanged = true;
                 }
                 if (token_key == "HGT") {
                     // HGT comes in ft ASL. We need meters however
                     hgt_value = std::stof(token_value) / 3.2808;
+                    // note: value not stored here, because it may conflict with ALT; see some lines below
                 }
                 if (token_key == "CALLSIGN") {
                     std::string oldValue = fgcom_local_client.callsign;
@@ -507,6 +599,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 if (token_key == "ALT") {
                     // ALT comes in ft ASL. We need meters however
                     alt_value = std::stof(token_value) / 3.2808;
+                    // note: value not stored here, because it may conflict with ALT; see some lines below
                 }
                 if (token_key == "PTT") {
                     // PTT contains the ID of the used radio (0=none, 1=COM1, 2=COM2)
@@ -569,9 +662,9 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
         // if hgt was not there, use alt if given
         fgcom_local_client.alt = alt_value;
     }
-    if (fgcom_local_client.alt != oldValue ) *userDataHashanged = true;
     
-    
+    // Update that we have received some data
+    fgcom_local_client.lastUpdate = std::chrono::system_clock::now();
     
     // All done
     fgcom_localcfg_mtx.unlock();
@@ -645,20 +738,24 @@ void fgcom_spawnUDPServer() {
             
             bool userDataHashanged = false;     // so we can send updates to remotes
             std::set<int> radioDataHasChanged;  // so we can send updates to remotes
-            
             fgcom_udp_parseMsg(buffer, &userDataHashanged, &radioDataHasChanged);
             
-            // if we got updates, we should publish them to other clients now
+            /* Process urgent updates
+             * (not-urgent updates are dealt from the notification thread) */
+            // If we got userdata changed, notify immediately.
             if (userDataHashanged) {
                 pluginDbg("[UDP] userData has changed, notifying other clients");
-                notifyRemotes(1);
+                notifyRemotes(4);
             }
+            // See if we had a radio update. This is an "urgent" update: we must inform other clients instantly!
             for (std::set<int>::iterator it=radioDataHasChanged.begin(); it!=radioDataHasChanged.end(); ++it) {
                 // iterate trough changed radio instances
                 //std::cout << "ITERATOR: " << ' ' << *it;
                 pluginDbg("FGCom: [UDP] radioData id="+std::to_string(*it)+" has changed, notifying other clients");
                 notifyRemotes(2, *it);
             }
+            
+            
         }
     }
       

@@ -289,6 +289,12 @@ mumble_error_t fgcom_initPlugin() {
             
             if (!fgcom_isPluginActive()) fgcom_setPluginActive(fgcom_isPluginActive()); // print some nice message to start
             
+            
+            // Start to periodically send notifications (if needed)
+            std::thread notifyThread(fgcom_notifyThread);
+            notifyThread.detach();
+
+            
             // ... more needed?
             
             
@@ -500,7 +506,7 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
             notifyRemotes(0); // send our state to all users
         }
     } else {
-        if (fgcom_isPluginActive()) {
+        if (fgcom_isPluginActive()) { //TODO: Don't do this if we just joined the channel. Currently we notifiy two times :/
             // if we are in the special channel, update new clinets with our state
             pluginDbg("send state to freshly joined user");
             notifyRemotes(0, -1, userID);
