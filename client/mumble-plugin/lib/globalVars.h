@@ -53,6 +53,7 @@ struct fgcom_radio {
 // This represents a clients metadata
 struct fgcom_client {
 	unsigned int mumid;  // mumble client ID
+	std::chrono::system_clock::time_point lastUpdate;
     float lon;
 	float lat;
 	float alt;  // in meters
@@ -63,6 +64,7 @@ struct fgcom_client {
 		lat = -60.000;
 		alt = -1;
 		callsign = "ZZZZ";
+        lastUpdate = std::chrono::system_clock::now();
 	};
 };
 
