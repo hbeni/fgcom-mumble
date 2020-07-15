@@ -29,7 +29,7 @@ Each time a new client joins the fgcom channel, local plugins will broadcast the
 Notification of other clients take place on special events (like joining the channel or activating the plugin) and potentially when new data is recieved trough the UDP input interface:
 
  - Radio state updates and userstate are sent immediately ("urgent" notification).
- - Locationdata is sent at most at a rate of 1 Hz ("non-urgent"). If said data did not change for a period of time (10 seconds) a "ping" notification will be sent to others, notifying that the own plugin is still connected and alive.
+ - Locationdata is sent at most at a rate of 1 Hz ("non-urgent"). If said data did not change for a period of time (10 seconds), a "ping" notification will be sent to others, notifying that the own plugin is still connected and alive.
 
 
 Internal state
@@ -109,8 +109,8 @@ The following bytes in the `dataID` field denote the packet type. Each packet co
   - `PTT`
   - `VOL` (not transmitted currently)
   - `PWR`
-- `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us
-- `FGCOM:PING` keys a ping package and lets others know we are still alive but don't had any updates for some time.
+- `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us (payload is insignificant)
+- `FGCOM:PING` keys a ping package and lets others know we are still alive but don't had any updates for some time (payload is currently insignificant).
 
 
 Transmitting radio transmissions
