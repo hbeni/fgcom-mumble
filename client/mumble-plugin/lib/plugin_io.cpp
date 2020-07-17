@@ -574,6 +574,11 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     }
                 }
                 
+                
+                // Enable/Disable radio audio effects
+                if (token_key == "AUDIO_FX_RADIO") {
+                    fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
+                }
             
            
             } else {
