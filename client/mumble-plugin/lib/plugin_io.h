@@ -22,8 +22,10 @@
 #define FGCOM_PLUGIN_IO_H
 
 
-#define FGCOM_PORT 16661    // port to start listen to (16661 is the known FGCom udp port)
-#define MAXLINE    1024     // max byte size of a udp packet
+#define FGCOM_PORT 16661      // port to start listen to (16661 is the known FGCom udp port)
+#define MAXLINE    1024       // max byte size of a udp packet
+#define NOTIFYINTERVAL 1000   // minimal time between notifications (ms)
+#define NOTIFYPINGINTERVAL 10000 // time between pings (ms), if no notification was done
 
 
 // Mubmle API global vars.
@@ -71,7 +73,7 @@ void fgcom_shutdownUDPServer();
  * This will construct a binary datastream message and push
  * it to the mumble plugin send function.
  * 
- * @param what:     0=all local info; 1=location data; 2=comms, 3=ask for data
+ * @param what:     0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping
  * @param selector: ignored, when 'what'=2: id of radio (0=COM1,1=COM2,...)
  * @param tgtUser:  0: notify all, otherwise just the specified ID (note: 0 is the superuserID)
  */
@@ -88,6 +90,21 @@ void notifyRemotes(int what, int selector=-1, mumble_userid_t tgtUser=0);
  */
 bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data);
 
+/*
+ * Thread to detect notification changes and trigger non-urgent notifications.
+ * The intent here is that fast changing data (like LAT/LON/ALT) will not
+ * be transmitted with every incoming UDP change, because that can be used to
+ * spam the infrastructure (like changing LAT with 100Hz or so).
+ * We differentiate between urgent and non-urgent changes:
+ *   - urgent is a change of user- and radio state, like frequency or especially PTT
+ *     => handled from the UDP input parser.
+ *   - non-urgent are changes to location. We can skip to notify
+ *     if the changes are very frequent and not significant enough.
+ *     => handled here.
+ *     => regarding the FGFS input stream this will probably result in the maximum
+ *        rate defined in NOTIFYINTERVAL during flight.
+ */
+void fgcom_notifyThread();
 
 /*
  * Check if we are connected to a server

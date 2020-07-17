@@ -92,7 +92,7 @@ fgcom = {
                 devrandom:close();
                 math.randomseed(res+1);
             else
-                print ("Notice: unable to open /dev/random, falling back to time()")
+                fgcom.log("Notice: unable to open /dev/random, falling back to time()")
                 math.randomseed(os.time())
             end
         end
@@ -241,8 +241,8 @@ fgcom = {
         -- @param mumble.user sender of the data
         parsePluginData = function(dataID, data, sender)
             if dataID:len() > 0 and dataID:find("FGCOM:") then
-                print("Received FGCOM-plugin data, dataID='"..dataID.."', from=["..sender:getSession().."] '"..sender:getName().."'")
-                    print("  data='"..data.."'")
+                fgcom.dbg("Received FGCOM-plugin data, dataID='"..dataID.."', from=["..sender:getSession().."] '"..sender:getName().."'")
+                fgcom.dbg("  data='"..data.."'")
           
                 sid = sender:getSession()
 
@@ -255,7 +255,7 @@ fgcom = {
                         alt="",
                         radios={}
                     }
-                    print("added new client state: "..sid)
+                    fgcom.dbg("added new client state: "..sid)
                 end
           
                 -- OK, go ahead and try to parse;
@@ -266,7 +266,7 @@ fgcom = {
                     field = fgcom.data.csplit(token, "=")
                     
                     -- Udpates to location/user state
-                    if dataID:find("FGCOM:UPD_LOC") then
+                    if dataID:find("FGCOM:UPD_LOC") or dataID:find("FGCOM:UPD_USR") then
                         if "CALLSIGN" == field[1] then fgcom_clients[sid].callsign = field[2] end
                         if "LAT" == field[1] then fgcom_clients[sid].lat = field[2] end
                         if "LON" == field[1] then fgcom_clients[sid].lon = field[2] end
@@ -294,19 +294,21 @@ fgcom = {
                 end
             end
             
-            print("Parsing done. New remote state:")
+            fgcom.dbg("Parsing done. New remote state:")
             for uid,remote in pairs(fgcom_clients) do
                 for k,v in pairs(remote) do
-                    print(uid, k, v)
+                    --print(uid, k, v)
                     if k=="radios" then
                         for radio_id,radio in pairs(remote.radios) do
-                            print(uid,"    radio #"..radio_id.." frequency='"..radio.frequency.."'")
-                            print(uid,"    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
+                            fgcom.dbg(uid,"    radio #"..radio_id.." frequency='"..radio.frequency.."'")
+                            fgcom.dbg(uid,"    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
                         end
+                    else
+                        fgcom.dbg(uid.."\t"..k.."\t"..v)
                     end
                 end
             end
-            print("-----------")
+            fgcom.dbg("-----------")
         end
     }
 }
