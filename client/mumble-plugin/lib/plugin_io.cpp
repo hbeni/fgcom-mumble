@@ -57,6 +57,7 @@
 
 #include "globalVars.h"
 #include "plugin_io.h"
+#include "rdfUDP.h"
 #include "MumblePlugin.h"
 #include "fgcom-mumble.h"
 
@@ -552,6 +553,28 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                         fgcom_local_client.radios[i].volume = comvol;
                     }
                 }
+                
+                
+                // Plugin Configuration
+                // start/adjust the local rdf udp client.
+                if (token_key == "RDF_PORT") {
+                    fgcom_cfg.rdfPort = std::stoi(token_value);
+                    if (rdfClientRunning) {
+                        pluginDbg("[UDP] RDF port change to: "+std::to_string(fgcom_cfg.rdfPort));
+                        // running thread will handle the change to fgcom_cfg.rdfPort
+                    } else {
+                        // start new thread if requested
+                        if (fgcom_cfg.rdfPort > 0) {
+                            pluginDbg("[UDP] RDF client requested: "+std::to_string(fgcom_cfg.rdfPort));
+                            std::thread rdfudpClientThread(fgcom_spawnRDFUDPClient);
+                            rdfudpClientThread.detach();
+                            //std::cout << "FGCOM: udp client started; id=" << udpClientThread_id << std::endl;
+                            pluginDbg("[UDP] RDF udp client started");
+                        }
+                    }
+                }
+                
+            
            
             } else {
                 // this was an invalid token. skip it silently.
@@ -714,141 +737,4 @@ void fgcom_shutdownUDPServer() {
 	int len = sendto(sock, message.c_str(), strlen(message.c_str()), 0,
 	           (struct sockaddr*)&server_address, sizeof(server_address));
 
-}
-
-
-
-
-/*****************************************************
- *                     UDP Client                    *
- * The UDP interface is the plugins port to send     *
- * data to the outside world.                        *
- * It is used for example from ATC clients or        *
- * FlightSims to detect radio transmissions (RDF).   *
- ****************************************************/
-
-/*
- * Generates a message from current radio state
- */
-std::string fgcom_udp_generateMsg() {
-    std::string clientMsg;
-    
-    /*
-     * RDF generation
-     * This inspects all radios for RDF information.
-     * (The RDF information is updated from the plugin-io parser and signal signal processing)
-     */
-    fgcom_remotecfg_mtx.lock();
-    for (const auto &p : fgcom_remote_clients) {
-        fgcom_client remote = p.second;
-        //pluginDbg("[UDP] client fgcom_udp_generateMsg(): check remote="+std::to_string(remote.mumid)+", callsign="+remote.callsign);
-        for (int ri=0; ri<remote.radios.size(); ri++) {
-            fgcom_radiowave_signal signal = remote.radios[ri].signal;
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg(): check radio["+std::to_string(ri)+"]");
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.quality="+std::to_string(signal.quality));
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.diection="+std::to_string(signal.direction));
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.angle="+std::to_string(signal.verticalAngle));
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.rdfEnabled="+std::to_string(signal.rdfEnabled));
-            if (signal.rdfEnabled && signal.quality > 0.0) {
-                if (clientMsg.length() > 0) clientMsg+=",";
-                std::string prfx = "RDF_"+std::to_string(remote.mumid)+"-"+std::to_string(ri)+"_";
-                clientMsg += prfx+"CALLSIGN="+remote.callsign;
-                clientMsg += ","+prfx+"FRQ="+remote.radios[ri].frequency;
-                clientMsg += ","+prfx+"DIR="+std::to_string(signal.direction);
-                clientMsg += ","+prfx+"VRT="+std::to_string(signal.verticalAngle);
-                clientMsg += ","+prfx+"QLY="+std::to_string(signal.quality);
-            }
-            
-            // reset the quality. If the user is still speaking, this will get set to the true value
-            // with the next received audio sample (see fgcom-mumble.cpp handler).
-            // This is needed here, because currently we have no other means to detect
-            // if a client stopped speaking (PTT off is not enough: the client may suddenly disconnect too!)
-            fgcom_remote_clients[p.first].radios[ri].signal.quality       = -1;
-            fgcom_remote_clients[p.first].radios[ri].signal.verticalAngle = -1;
-            fgcom_remote_clients[p.first].radios[ri].signal.direction     = -1;
-        }
-        
-    }
-    fgcom_remotecfg_mtx.unlock();
-    
-    
-    // Finally return data
-    //pluginDbg("[UDP] client fgcom_udp_generateMsg(): data buld finished, length="+std::to_string(clientMsg.length())+", content="+clientMsg);
-    if (clientMsg.length() > 0 ) {
-        return clientMsg+'\n';
-    } else {
-        return clientMsg;
-    }
-}
-
-
-// Spawns the UDP client thread
-void fgcom_spawnUDPClient() {
-    pluginLog("[UDP] client starting at rate "+std::to_string(FGCOM_CLIENT_RATE)+" pakets/s");
-    const float packetrate = FGCOM_CLIENT_RATE;
-    const int datarate = 1000000 * (1/packetrate);  //datarate in seconds*microseconds
-    int fgcom_UDPClient_sockfd, rc;  
-    struct sockaddr_in cliAddr, remoteServAddr;
-
-    // Prepare addressing
-    remoteServAddr.sin_family = AF_INET;
-    remoteServAddr.sin_port = htons(FGCOM_CLIENT_PORT);
-#ifdef MINGW_WIN64
-    remoteServAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);    // 127.0.0.1 on purpose: don't change for securites sake
-#else
-	inet_pton(AF_INET, "localhost", &remoteServAddr.sin_addr);  // 127.0.0.1 on purpose: don't change for securites sake
-#endif
-    //bzero(&(remoteServAddr.sin_zero), 8);     /* zero the rest of the struct */
-    
-    // Creating socket file descriptor 
-    if ( (fgcom_UDPClient_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        pluginLog("[UDP] client ERROR: socket creation failed");
-        return;
-    }
-    
-    // bind client port
-    cliAddr.sin_family = AF_INET;
-    cliAddr.sin_port = htons(0);
-    cliAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK); // restricted to 127.0.0.1 on purpose: don't
-
-    rc = bind ( fgcom_UDPClient_sockfd, (struct sockaddr *) &cliAddr, sizeof(cliAddr) );
-    if (rc < 0) {
-        pluginLog("[UDP] client ERROR: local port binding failed");
-        return;
-    }
-    
-
-    // Generate Data packets and send them in a loop
-    while (true) {
-        // sleep for datarate-time microseconds
-        //pluginDbg("[UDP] client sleep for "+std::to_string(datarate)+" microseconds");
-        if(usleep(datarate) < 0) {
-            pluginLog("[UDP] client socket creation failed"); 
-            break;
-        }
-        
-        // generate data.
-        std::string udpdata = fgcom_udp_generateMsg();
-        if (udpdata.length() > 0) {
-            rc = sendto (fgcom_UDPClient_sockfd, udpdata.c_str(), strlen(udpdata.c_str()) + 1, 0,
-                 (struct sockaddr *) &remoteServAddr,
-                 sizeof (remoteServAddr));
-            if (rc < 0) {
-                pluginLog("[UDP] client ERROR sending "+std::to_string(strlen(udpdata.c_str()))+" bytes of data");
-                close (fgcom_UDPClient_sockfd);
-                return;
-            }
-            
-            //pluginLog("[UDP] client sending OK ("+std::to_string(strlen(udpdata.c_str()))+" bytes of data)");
-            
-        } else {
-            // no data generated: do not send anything.
-            //pluginDbg("[UDP] client sending skipped: no data to send.");
-        }
-        
-    }
-    
-    
-    close(fgcom_UDPClient_sockfd);
-    pluginDbg("[UDP] client finished.");
 }

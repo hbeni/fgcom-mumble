@@ -29,6 +29,16 @@
 #include "radio_model.h"
 
 
+// Plugin runtime configuration
+//
+// Currently the configuration cannot be done trough mumble, but that is planned.
+// Changing runtime configuration can be done trough the inbound RDP interface for now.
+struct fgcom_config {
+    int rdfPort;  // defines RDF output port
+};
+extern struct fgcom_config fgcom_cfg;
+
+
 // This represents the state of a radio
 struct fgcom_radio {
 	std::string  frequency; // tuned frequency
