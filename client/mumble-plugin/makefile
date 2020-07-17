@@ -59,7 +59,8 @@ test-win64:
 
 # build win64 plugin-dll
 plugin-win64: libs
-	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/plugin_io.cpp lib/radio_model.cpp lib/audio.cpp lib/rdfUDP.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -lws2_32 $(CFLAGS)
+	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/plugin_io.cpp lib/radio_model.cpp lib/audio.cpp lib/rdfUDP.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -Wl,-Bstatic -lpthread -lws2_32 $(CFLAGS)
+
 
 
 

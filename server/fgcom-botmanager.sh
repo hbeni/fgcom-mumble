@@ -33,13 +33,18 @@ rcert="recbot.pem"
 rkey="recbot.key"
 pcert="playbot.pem"
 pkey="playbot.key"
+scert="statusbot.pem"
+skey="statusbot.key"
 path="./recordings"
 limit="120" # default time limit for recordings in secs
 ttl="7200"  # default time-to-live after recordings in secs
 fnotify="/tmp/fgcom-fnotify-fifo"
+statusbot_db="/tmp/fgcom-web.db"
+statusbot_web=""
 
 recorderbot_log=/dev/null
 playbackbot_log=/dev/null
+statusbot_log=/dev/null
 
 # print usage information
 function usage() {
@@ -64,6 +69,13 @@ function usage() {
     echo "    --pcert=   path to PEM encoded cert         (default=$pcert)"
     echo "    --pkey=    path to the certs key            (default=$pkey)"
     echo "    --plog=    Playback bot logfile (\"-\"=STDOUT) (default=$playbackbot_log)"
+    echo ""
+    echo "Statuspage bot options:"
+    echo "    --scert=   path to PEM encoded cert         (default=$scert)"
+    echo "    --skey=    path to the certs key            (default=$skey)"
+    echo "    --slog=    Playback bot logfile (\"-\"=STDOUT) (default=$statusbot_log)"
+    echo "    --sdb=     Database file to write           (default=$statusbot_db)"
+    echo "    --sweb=    Advertise url in comment         (default=no commercials!)"
 }
 
 # Parse cmdline args
@@ -77,12 +89,17 @@ for opt in "$@"; do
        --rkey=*)  rkey=$(echo $opt|cut -d"=" -f2);;
        --pcert=*) pcert=$(echo $opt|cut -d"=" -f2);;
        --pkey=*)  pkey=$(echo $opt|cut -d"=" -f2);;
+       --scert=*) scert=$(echo $opt|cut -d"=" -f2);;
+       --skey=*)  skey=$(echo $opt|cut -d"=" -f2);;
        --path=*)  key=$(echo $opt|cut -d"=" -f2);;
        --limit=*) limit=$(echo $opt|cut -d"=" -f2);;
        --ttl=*)   ttl=$(echo $opt|cut -d"=" -f2);;
        --fnotify=*)   fnotify=$(echo $opt|cut -d"=" -f2);;
        --plog=*)  playbackbot_log=$(echo $opt|cut -d"=" -f2);;
        --rlog=*)  recorderbot_log=$(echo $opt|cut -d"=" -f2);;
+       --slog=*)  statusbot_log=$(echo $opt|cut -d"=" -f2);;
+       --sdb=*)  statusbot_db=$(echo $opt|cut -d"=" -f2);;
+       --sweb=*) statusbot_web=$(echo $opt|cut -d"=" -f2);;
        *) echo "unknown option $opt!"; usage; exit 1;;
    esac
 done
@@ -95,17 +112,22 @@ echo "  --rcert=$rcert"
 echo "  --rkey=$rkey"
 echo "  --pcert=$pcert"
 echo "  --pkey=$pkey"
+echo "  --scert=$scert"
+echo "  --skey=$skey"
 echo "  --path=$path"
 echo "  --limit=$limit"
 echo "  --ttl=$ttl"
 echo "  --rlog=$recorderbot_log"
 echo "  --plog=$playbackbot_log"
+echo "  --slog=$statusbot_log"
+echo "  --sdb=$statusbot_db"
+echo "  --sweb=$statusbot_web"
 
 # define cmd options for the bot callups
 common_opts="--host=$host --port=$port"
 playback_opts="$common_opts --cert=$pcert --key=$pkey"
 recorder_opts="$common_opts --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
-
+status_opts="$common_opts --cert=$scert --key=$skey --db=$statusbot_db"
 
 # setup the fifo
 echo "Setup fifo '$fnotify'"
@@ -129,6 +151,18 @@ if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
 else
     $recorderbot_cmd &
 fi
+
+
+# Spawn the statusPage bot
+statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
+[[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
+echo "Spawn bot: $statusbot_cmd"
+if [ -n $statusbot_log ] && [ $statusbot_log != "-" ]; then
+    $statusbot_cmd > $statusbot_log &
+else
+    $statusbot_cmd &
+fi
+
 
 # wait for new recordings and call playback bots
 while true; do

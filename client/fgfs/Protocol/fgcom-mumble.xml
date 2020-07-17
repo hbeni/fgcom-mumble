@@ -76,6 +76,12 @@
     <format>COM1_PWR=%s</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
     <node>/instrumentation/comm[0]/tx-power</node>
    </chunk>
+   <chunk>
+    <name>com1-squelch</name>
+    <type>string</type>
+    <format>COM1_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
+    <node>/instrumentation/comm[0]/squelch</node>
+   </chunk>
    
    <!-- COM 2 -->
    <chunk>
@@ -119,6 +125,12 @@
     <type>string</type>
     <format>COM2_PWR=%s</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
     <node>/instrumentation/comm[1]/tx-power</node>
+   </chunk>
+   <chunk>
+    <name>com2-squelch</name>
+    <type>string</type>
+    <format>COM1_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
+    <node>/instrumentation/comm[1]/squelch</node>
    </chunk>
 
 

@@ -198,12 +198,14 @@ client:hook("OnUserStopSpeaking", function(user)
         -- we set the bot to the senders location.
         -- it is important to do it this way, so the normal client plugin
         -- operation can be verified!
-        local msg = "CALLSIGN="..fgcom.callsign
-                      ..",LON="..remote.lon              
-                      ..",LAT="..remote.lat
-                      ..",ALT="..remote.alt
+        local msg = ",LON="..remote.lon              
+                  ..",LAT="..remote.lat
+                  ..",ALT="..remote.alt
         print("  msg="..msg..", to: "..playback_target:getSession())
         client:sendPluginData("FGCOM:UPD_LOC", msg, {playback_target})
+        
+        local msg = "CALLSIGN="..fgcom.callsign
+        client:sendPluginData("FGCOM:UPD_USR", msg, playback_targets)
         
         client:sendPluginData("FGCOM:UPD_COM:0", "FRQ=910.0,PTT=1", {playback_target})
         

@@ -16,6 +16,7 @@ This project aims to provide a modular, mumble based radio simulation for flight
 - Standalone nature (no dependency on flightgear)
 - Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
 - Modularity, so individual component implementations can be switched and its easy to add features
+- Good and complete documentation
 
 Documentation
 =============
@@ -23,8 +24,9 @@ The documentation is split up into relevant parts:
 
 - Readme.md (*this file*): General overview and client documentation
 - [Readme.architecture.md](Readme.architecture.md) Details about the components that make up the system
-- [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
 - [client/plugin.spec.md](client/plugin.spec.md) Technical details on plugin design and its input/output data formats
+- [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
+- [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
 
 ### Bugs/Feature requests/coding help
 The project lives on github: https://github.com/hbeni/fgcom-mumble

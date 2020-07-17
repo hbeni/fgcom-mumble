@@ -68,6 +68,7 @@ if arg[1] then
         print("    --ttl=     Max timeToLive in seconds        (default="..ttl..")")
         print("    --fnotify= notify about recorded sample into this file.")
         --print("    --spawn    Spawn playback bots after recording")
+        print("    --debug    print debug messages             (default=no)")
         os.exit(0)
     end
     
@@ -83,18 +84,19 @@ if arg[1] then
         if k=="ttl"       then ttl=v end
         if opt=="--spawn" then spawn=true end
         if k=="fnotify"   then fnotify=v end
+        if opt == "--debug" then fgcom.debugMode = true end
     end
     
 end
 
 if fnotify:len() > 0 then
-    print("will notify about new recordings via file '"..fnotify.."'.")
+    fgcom.log("will notify about new recordings via file '"..fnotify.."'.")
 end
 
 -- BUG pending: Prevent users from trying --spawn. This will not work:
 --     lua will spawn the bot, but somehow the recorder cant let go of the child process.
 --     this will kill the recorder shortly after.
-if spawn then print("--spawn does not work good currently, sorry.") os.exit(1) end
+if spawn then fgcom.log("--spawn does not work good currently, sorry.") os.exit(1) end
 
 
 -- Check target dir:
@@ -103,23 +105,23 @@ local tdir = io.open(path.."/hello", "wb")
 if tdir then
     tf=tdir:write("ok")
     if not tf then
-        print("unable to write into recording dir: "..path)
+        fgcom.log("unable to write into recording dir: "..path)
         os.exit(1)
     else
         io.close(tdir)
         os.remove(path.."/hello")
     end
 else
-    print("unable to open recording dir: "..path)
+    fgcom.log("unable to open recording dir: "..path)
     os.exit(1)
 end
 
 
 -- Connect to server, so we get the API
-print(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
+fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
-print("connect and bind: OK")
+fgcom.log("connect and bind: OK")
 
 
 
@@ -132,9 +134,9 @@ print("connect and bind: OK")
 local isClientTalkingToUs = function(user)
     if fgcom_clients[user:getSession()] then
         local remote = fgcom_clients[user:getSession()]
-        print("we know this client: callsign="..remote.callsign)
+        fgcom.dbg("we know this client: callsign="..remote.callsign)
         for radio_id,radio in pairs(remote.radios) do
-            print("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
+            fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
             
             -- ATIS/Radio Recording request for tgt frequency
             local record_tgtFrq = ""
@@ -143,7 +145,7 @@ local isClientTalkingToUs = function(user)
                 -- remote is on Recording-TGT frequency AND his ptt is active
                 remote.record_mode = "NORMAL"
                 remote.record_tgt_frq = record_tgtFrq
-                print("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
+                fgcom.dbg("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
                 return radio
             end
             
@@ -152,7 +154,7 @@ local isClientTalkingToUs = function(user)
                 -- remote is on echotest-frequency AND his ptt is active
                 remote.record_mode = "ECHOTEST"
                 remote.record_tgt_frq = "910.00"
-                print("   ECHOTEST frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
+                fgcom.dbg("   ECHOTEST frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
                 return radio
             end
             
@@ -187,7 +189,7 @@ end
 -- @param s path to the sample file to play
 callPlaybackBot = function(s)
     if fnotify:len() > 0 then
-        print("notify via file '"..fnotify.."': "..s)
+        fgcom.dbg("notify via file '"..fnotify.."': "..s)
         local fifo = io.open(fnotify, "ab")
         fifo:write(s.."\n")  -- write recorded sample file to fifo.
         fifo:close()
@@ -202,7 +204,7 @@ callPlaybackBot = function(s)
                 .." --cert="..cert
                 .." --key="..key
                 --.." --nodel"
-        print("spawning new playback bot: "..cmd)
+        fgcom.dbg("spawning new playback bot: "..cmd)
         local handle = io.popen(cmd)  -- BUG pending: this is currently blocking the bot and killing him after a short while. use --fifo instead.
     end
 end
@@ -221,12 +223,19 @@ end
 -- Called when the bot successfully connected to the server
 -- and has received all current channel and client data
 client:hook("OnServerSync", function(event)
-    print("Sync done; server greeted with: ", event.welcome_text)
+    print("Sync done; server greeted with: "..event.welcome_text)
     
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
-    print("joined channel "..fgcom.channel)
+    fgcom.log("joined channel "..fgcom.channel)
+           
+    -- Adjust comment
+    client:setComment("<b><i><u>FGCom:</u></i></b><br/>Listening on the following frequencies:"
+                      .."<ul>"
+                      .."<li><tt>910.00</tt>: Echotest; speak and i will reply!</li>"
+                      .."<li><tt>RECORD_</tt><i>&lt;tgtFreq&gt;</i>: record ATIS for <i>&lt;tgtFreq&gt;</i> at your Callsign and location</li>"
+                      .."</ul>")
 end)
 
 
@@ -237,7 +246,7 @@ client:hook("OnPluginData", function(event)
 	--["receivers"]				= {  -- A table of who is receiving this data
 	--	[1] = mumble.user,
 	--},
-    print("DATA INCOMING FROM="..event.sender:getSession())
+    fgcom.dbg("DATA INCOMING FROM="..event.sender:getSession())
            
     if isIgnored(event.sender) then return end   -- ignore other bots!
 
@@ -248,29 +257,29 @@ end)
 
 
 client:hook("OnUserStartSpeaking", function(user)
-    print("OnUserStartSpeaking, user["..user:getSession().."]="..user:getName())
+    fgcom.dbg("OnUserStartSpeaking, user["..user:getSession().."]="..user:getName())
 end)
 
 client:hook("OnUserSpeak", function(event)
-    --print("OnUserSpeak, from=["..event.user:getSession().."] '"..event.user:getName().."'")
-    --print("  codec="..event.codec)
-    --print("  target="..event.target)
-    --print("  sequence="..event.sequence)
+    --fgcom.dbg("OnUserSpeak, from=["..event.user:getSession().."] '"..event.user:getName().."'")
+    --fgcom.dbg("  codec="..event.codec)
+    --fgcom.dbg("  target="..event.target)
+    --fgcom.dbg("  sequence="..event.sequence)
 
     if isIgnored(event.user) then return end   -- ignore other bots!
            
     -- If the user is speaking to us, record its samples and push them to the buffer
     local matchedRadio = isClientTalkingToUs(event.user)
     if matchedRadio and matchedRadio.frequency then
-        print("OnUserSpeak:  radio connected: "..matchedRadio.frequency)
+        fgcom.dbg("OnUserSpeak:  radio connected: "..matchedRadio.frequency)
         local remote = fgcom_clients[event.user:getSession()]
-           print("remote="..tostring(remote))
+           fgcom.dbg("remote="..tostring(remote))
         if remote and not remote.record_filename and not remote.record_fh then
             -- we had no filehandle so far, so we open a new file and write the header
             remote.record_filename = getFGCSfileName(remote)..".part"
-            print("OnUserSpeak:  FGCS file '"..remote.record_filename.."' not open, opening...")
+            fgcom.dbg("OnUserSpeak:  FGCS file '"..remote.record_filename.."' not open, opening...")
             if remote.record_filename then
-                print("OnUserSpeak: prepare FGCS header for file '"..remote.record_filename.."'")
+                fgcom.dbg("OnUserSpeak: prepare FGCS header for file '"..remote.record_filename.."'")
                 local ch = client:getChannel(fgcom.channel)
                 ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' started.")
            
@@ -303,7 +312,7 @@ client:hook("OnUserSpeak", function(event)
                 remote.record_fh = io.open(remote.record_filename, "wb")
                 if remote.record_fh then
                     local res = fgcom.io.writeFGCSHeader(remote.record_fh, header)
-                    print("FGCS header write result '"..remote.record_filename.."': "..tostring(res))
+                    fgcom.dbg("FGCS header write result '"..remote.record_filename.."': "..tostring(res))
                     if not res then
                         io.close(remote.record_fh)
                         remote.record_fh       = nil
@@ -319,22 +328,22 @@ client:hook("OnUserSpeak", function(event)
         if remote.record_filename and remote.record_fh then
             local recordingSecsLeft = remote.record_timeout - os.time() +1
             if recordingSecsLeft > 0 then
-                print(remote.record_filename..": recording sample, len="..#event.data.." ("..recordingSecsLeft.."s rectime left)")
+                fgcom.dbg(remote.record_filename..": recording sample, len="..#event.data.." ("..recordingSecsLeft.."s rectime left)")
                 fgcom.io.writeFGCSSample(remote.record_fh, event.data)
             else
-                print(remote.record_filename..": sample discarded: recording time exceeded ("..recordingSecsLeft.."s)")
+                fgcom.dbg(remote.record_filename..": sample discarded: recording time exceeded ("..recordingSecsLeft.."s)")
             end
         end
     
     else
-        print("OnUserSpeak:  radio not matched: "..tostring(matchedRadio))
+        fgcom.dbg("OnUserSpeak:  radio not matched: "..tostring(matchedRadio))
     end
            
 end)
 
 
 client:hook("OnUserStopSpeaking", function(user)
-    print("OnUserStopSpeaking, user["..user:getSession().."]="..user:getName())
+    fgcom.dbg("OnUserStopSpeaking, user["..user:getSession().."]="..user:getName())
            
     if isIgnored(user) then return end   -- ignore other bots!
 
@@ -342,17 +351,17 @@ client:hook("OnUserStopSpeaking", function(user)
     if fgcom_clients[user:getSession()] then
         local remote = fgcom_clients[user:getSession()]
         if remote.record_filename and remote.record_fh then
-            print("closing recording '"..remote.record_filename.."'")
+            fgcom.dbg("closing recording '"..remote.record_filename.."'")
             remote.record_fh:flush()
             io.close(remote.record_fh)
             remote.record_fh = nil
             
             local record_filename_final = remote.record_filename:gsub("%.part", "")
             os.remove (record_filename_final) -- remove target file silently, if already there
-            --print("RENAME: "..remote.record_filename.." -> "..record_filename_final)
+            --fgcom.dbg("RENAME: "..remote.record_filename.." -> "..record_filename_final)
             ren_rc, ren_message = os.rename(remote.record_filename, record_filename_final)
             remote.record_filename = nil
-            print("recording ready: '"..record_filename_final.."'")
+            fgcom.log("recording ready: '"..record_filename_final.."'")
 
             local ch = client:getChannel(fgcom.channel)
             ch:message(user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' completed!")
@@ -361,10 +370,10 @@ client:hook("OnUserStopSpeaking", function(user)
             -- he is responsible fo killing himself and also to delete the sample file if it is not valid anymore.
             callPlaybackBot(record_filename_final)
         else
-            --print(remote.callsign..": no active recording detected")
+            fgcom.dbg(remote.callsign..": no active recording detected")
         end
     else
-        --print("remote uknown")
+        fgcom.dbg("remote uknown")
     end       
 end)
 
