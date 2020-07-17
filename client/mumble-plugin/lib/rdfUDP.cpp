@@ -167,6 +167,7 @@ void fgcom_spawnRDFUDPClient() {
             pluginLog("[RDF] client on port "+std::to_string(port)+" switching to port "+std::to_string(fgcom_cfg.rdfPort));
             port = fgcom_cfg.rdfPort;
             remoteServAddr.sin_port = htons(port);
+            mumAPI.log(ownPluginID, std::string("RDF sending to port "+std::to_string(fgcom_cfg.rdfPort)+" activated").c_str());
         }
 
         
