@@ -59,6 +59,8 @@ plugin_id_t ownPluginID;
 int  fgcom_specialChannelID = -1;
 bool fgcom_inSpecialChannel = false; // adjust using fgcom_setPluginActive()!
 
+struct fgcom_config fgcom_cfg;
+
 
 /*******************
  * Some helpers    *
@@ -185,7 +187,6 @@ void fgcom_handlePTT() {
 bool fgcom_offlineInitDone = false;
 bool fgcom_onlineInitDone = false;
 std::thread::id udpServerThread_id;
-std::thread::id udpClientThread_id;
 mumble_error_t fgcom_initPlugin() {
     if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone)
         mumAPI.log(ownPluginID, ("Plugin v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+" initializing").c_str());
@@ -291,15 +292,6 @@ mumble_error_t fgcom_initPlugin() {
             mumAPI.freeMemory(ownPluginID, &localChannelID);
             
             if (!fgcom_isPluginActive()) fgcom_setPluginActive(fgcom_isPluginActive()); // print some nice message to start
-            
-            
-            // start the local udp client.
-            pluginDbg("starting local UDP client");
-            std::thread udpClientThread(fgcom_spawnUDPClient);
-            udpClientThread_id = udpClientThread.get_id();
-            udpClientThread.detach();
-            //std::cout << "FGCOM: udp client started; id=" << udpClientThread_id << std::endl;
-            pluginDbg("udp client started");
             
             
             // ... more needed?

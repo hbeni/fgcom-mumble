@@ -86,11 +86,12 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 
 
 ### Configuration options
-The Following fields are configuration options that change some behaviour.
+The Following fields are configuration options that change plugin behaviour.
 
-| Field          | Format | Description                             | Default    |
-|----------------|--------|-----------------------------------------|------------|
-| `COM`*n*`_RDF` | Bool   | Set to `1` to enable RDF output for signals received on this radio (details below: "*UDP client interface / RDF data*")   | `0`|
+| Field            | Format | Description                             | Default    |
+|------------------|--------|-----------------------------------------|------------|
+| `RDF_PORT`       | Int    | Activate RDF output to the given UDP Port. Use `0` or `off` to switch off again. Enabled Radios will produce RDF data when eceiving signals. | `off` |
+| `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (when RDF was activated; details below: "*UDP client interface / RDF data*")   | `0`|
 
 
 ### Testing UDP input
