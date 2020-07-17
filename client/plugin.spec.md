@@ -26,6 +26,11 @@ When entering the fgcom-channel, your client will start to broadcast its state (
 
 Each time a new client joins the fgcom channel, local plugins will broadcast their state to that client to get it updated with current data.
 
+Notification of other clients take place on special events (like joining the channel or activating the plugin) and potentially when new data is recieved trough the UDP input interface:
+
+ - Radio state updates and userstate are sent immediately ("urgent" notification).
+ - Locationdata is sent at most at a rate of 1 Hz ("non-urgent"). If said data did not change for a period of time (10 seconds), a "ping" notification will be sent to others, notifying that the own plugin is still connected and alive.
+
 
 Internal state
 --------------
@@ -109,11 +114,12 @@ The data packets are ASCII based and constructed as following: The `dataID` fiel
 
 The following bytes in the `dataID` field denote the packet type. Each packet consists of a comma-separated sequence of `KEY=VALUE` pairs and empty values are to be ignored too:
 
+- `FGCOM:UPD_USR` keys a userdata data update package:
+  - `CALLSIGN`
 - `FGCOM:UPD_LOC` keys a location data update package:
   - `LON` (decimal)
   - `LAT` (decimal)
   - `ALT` (height above ground in meters, not to be confused with ALT from UDP packet!)
-  - `CALLSIGN`
 - `FGCOM:UPD_COM:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
   - `FRQ`
   - `VLT` (not transmitted currently)
@@ -121,7 +127,8 @@ The following bytes in the `dataID` field denote the packet type. Each packet co
   - `PTT`
   - `VOL` (not transmitted currently)
   - `PWR`
-- `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us
+- `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us (payload is insignificant)
+- `FGCOM:PING` keys a ping package and lets others know we are still alive but don't had any updates for some time (payload is currently insignificant).
 
 
 ### UDP client interface

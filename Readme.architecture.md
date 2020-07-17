@@ -85,3 +85,9 @@ The bot is expected to record on the same machine where the radio-playback bot w
 
 ### Radio stations
 Just invoke a `fgcom-radio-playback` bot with the radio station audio program file.
+
+
+Status webpage
+----------------------------
+For user convinience there is also a webpage that shows the current status.  
+refer to the *server/statuspage/Readme.statuspage.md* file for details.

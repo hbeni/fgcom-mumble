@@ -72,6 +72,16 @@ fgcom = {
     channel  = "fgcom-mumble",
     callsign = "FGCOM-someUnknownBot",
     
+    -- Log / debug log
+    debugMode = false,
+    dbg = function(s)
+        if fgcom.debugMode then print(s) end
+    end,
+    log = function(s)
+        print(s)
+    end,
+    
+    
     rng={
         -- initialize random number generator
         initialize = function()
@@ -82,7 +92,7 @@ fgcom = {
                 devrandom:close();
                 math.randomseed(res+1);
             else
-                print ("Notice: unable to open /dev/random, falling back to time()")
+                fgcom.log("Notice: unable to open /dev/random, falling back to time()")
                 math.randomseed(os.time())
             end
         end
@@ -91,64 +101,6 @@ fgcom = {
     -- io provides some basic IO functions
     --   writeShort/readShort/playrecording was written from bkacjios: https://github.com/bkacjios/lua-mumble/issues/12
     io={
-        
-        -- Play a recorded OPUS sample file to the channel
-        -- @param client mumble.client instance
-        -- @param file path to the recored samples
-        -- @param timer_rate how fast the packets are played - 0.02 should be fine in most cases; must comply to the data stream rate, otherwise voice is too fast/too slow
-        playRecording = function(client, file, timer_rate)
-            if not timer_rate then timer_rate=0.02 end
-            
-            local f = assert(io.open(file, "rb"))
-            print("file "..file.." opened")
-
-            local timer = mumble.timer()
-            local deltimer = mumble.timer()
-            print("timer initialized")
-
-            local seq = 0
-            timer:start(function(t)
-                if f then
-                    print("timer: read packet "..seq)
-                    seq = seq+1
-                    local len = fgcom.io.readShort(f)
-                    if not len or len == "" then
-                        print("timer: stop timer")
-                        t:stop() -- Stop the audio timer
-                        f:close()
-                        return
-                    end
-                    print("timer:   header read ok, packet_len="..len)
-                    local pcm = f:read(len)
-                    
-                    print("timer:   data read ok")
-
-                    if not pcm or pcm == "" then
-                        print("timer: stop timer")
-                        t:stop() -- Stop the audio timer
-                        f:close()
-                        return
-                    end
-
-                    print("timer: encode and transmit")
-            --        bitrate = encoder:getBitRate()
-            --        print(" encoder encoding at "..bitrate)
-                    --local encoded = encoder:encode_float(1, pcm) -- encode PCM packet to 1 opus frame
-                    local encoded = pcm
-                    print("timer:   encoded ok")
-                    client:transmit(encoded) -- Transmit the single frame as an audio packet
-                    print("timer:   transmit ok")
-                end
-            end, 0.00, timer_rate) -- Create a timer that will loop every 20ms - must correlate with the
-            
-            -- Delete the file after playing
-            deltimer:start(function(dt)
-                dt:stop()
-                os.remove (file)
-                print("file "..file.." closed and deleted")
-                return
-            end, 60, 0)
-        end,
         
         -- Read and parse FGCS header
         -- | Line | Content                                |
@@ -289,8 +241,8 @@ fgcom = {
         -- @param mumble.user sender of the data
         parsePluginData = function(dataID, data, sender)
             if dataID:len() > 0 and dataID:find("FGCOM:") then
-                print("Received FGCOM-plugin data, dataID='"..dataID.."', from=["..sender:getSession().."] '"..sender:getName().."'")
-                    print("  data='"..data.."'")
+                fgcom.dbg("Received FGCOM-plugin data, dataID='"..dataID.."', from=["..sender:getSession().."] '"..sender:getName().."'")
+                fgcom.dbg("  data='"..data.."'")
           
                 sid = sender:getSession()
 
@@ -303,7 +255,7 @@ fgcom = {
                         alt="",
                         radios={}
                     }
-                    print("added new client state: "..sid)
+                    fgcom.dbg("added new client state: "..sid)
                 end
           
                 -- OK, go ahead and try to parse;
@@ -314,7 +266,7 @@ fgcom = {
                     field = fgcom.data.csplit(token, "=")
                     
                     -- Udpates to location/user state
-                    if dataID:find("FGCOM:UPD_LOC") then
+                    if dataID:find("FGCOM:UPD_LOC") or dataID:find("FGCOM:UPD_USR") then
                         if "CALLSIGN" == field[1] then fgcom_clients[sid].callsign = field[2] end
                         if "LAT" == field[1] then fgcom_clients[sid].lat = field[2] end
                         if "LON" == field[1] then fgcom_clients[sid].lon = field[2] end
@@ -342,19 +294,21 @@ fgcom = {
                 end
             end
             
-            print("Parsing done. New remote state:")
+            fgcom.dbg("Parsing done. New remote state:")
             for uid,remote in pairs(fgcom_clients) do
                 for k,v in pairs(remote) do
-                    print(uid, k, v)
+                    --print(uid, k, v)
                     if k=="radios" then
                         for radio_id,radio in pairs(remote.radios) do
-                            print(uid,"    radio #"..radio_id.." frequency='"..radio.frequency.."'")
-                            print(uid,"    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
+                            fgcom.dbg(uid,"    radio #"..radio_id.." frequency='"..radio.frequency.."'")
+                            fgcom.dbg(uid,"    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
                         end
+                    else
+                        fgcom.dbg(uid.."\t"..k.."\t"..v)
                     end
                 end
             end
-            print("-----------")
+            fgcom.dbg("-----------")
         end
     }
 }

@@ -125,10 +125,9 @@ updateLocData = function(t)
         lat = lat + latmv
         lon = lon + lonmv
         alt = alt + math.random(-50, 50)
-        local msg = "CALLSIGN="..fgcom.callsign
-                ..",LON="..lat
-                ..",LAT="..lon
-                ..",ALT="..alt
+        local msg = ",LON="..lat
+                  ..",LAT="..lon
+                  ..",ALT="..alt
         --print("Bot sets location: "..msg)
         client:sendPluginData("FGCOM:UPD_LOC", msg, playback_targets)
     end
@@ -143,6 +142,10 @@ client:hook("OnServerSync", function(event)
     event.user:move(ch)
     print(fgcom.callsign.." joined channel "..fgcom.channel)
     
+    updateAllChannelUsersforSend(client)
+    local msg = "CALLSIGN="..fgcom.callsign
+    client:sendPluginData("FGCOM:UPD_USR", msg, playback_targets)
+           
     -- update location       
     locUpd:start(updateLocData, 0.00, locs)
    
