@@ -35,6 +35,11 @@
 // Changing runtime configuration can be done trough the inbound RDP interface for now.
 struct fgcom_config {
     int rdfPort;  // defines RDF output port
+    bool radioAudioEffects;
+    
+    fgcom_config()  {
+        radioAudioEffects   = true;
+    };
 };
 extern struct fgcom_config fgcom_cfg;
 

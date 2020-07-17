@@ -92,6 +92,7 @@ The Following fields are configuration options that change plugin behaviour.
 |------------------|--------|-----------------------------------------|------------|
 | `RDF_PORT`       | Int    | Activate RDF output to the given UDP Port. Use `0` or `off` to switch off again. Enabled Radios will produce RDF data when eceiving signals. | `off` |
 | `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (when RDF was activated; details below: "*UDP client interface / RDF data*")   | `0`|
+| `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
 
 
 ### Testing UDP input
