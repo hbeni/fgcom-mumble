@@ -79,6 +79,8 @@ std::ostream& operator<<(std::ostream& stream, const version_t version) {
 transmission_mode_t fgcom_prevTransmissionMode = TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
 void fgcom_setPluginActive(bool active) {
     mumble_error_t merr;
+    if (!fgcom_isConnectedToServer()) return; // not connected: do nothing.
+    
     fgcom_inSpecialChannel = active;
     if (active) {
         pluginLog("plugin handling activated: ");
