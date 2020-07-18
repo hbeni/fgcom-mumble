@@ -38,6 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
+fgcom.botversion  = "1.0"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -56,7 +57,7 @@ local fnotify  = ""      -- notify about recorded samples into this file
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname)
+        print(botname..", "..fgcom.getVersion())
         print("usage: "..arg[0].." [opt=val ...]")
         print("  Options:")
         print("    --host=    host to connect to               (default="..host..")")
@@ -69,6 +70,7 @@ if arg[1] then
         print("    --fnotify= notify about recorded sample into this file.")
         --print("    --spawn    Spawn playback bots after recording")
         print("    --debug    print debug messages             (default=no)")
+        print("    --version  print version and exit")
         os.exit(0)
     end
     
@@ -85,6 +87,7 @@ if arg[1] then
         if opt=="--spawn" then spawn=true end
         if k=="fnotify"   then fnotify=v end
         if opt == "--debug" then fgcom.debugMode = true end
+        if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
     end
     
 end
