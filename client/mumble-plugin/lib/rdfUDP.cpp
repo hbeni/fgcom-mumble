@@ -181,6 +181,7 @@ void fgcom_spawnRDFUDPClient() {
         // generate data.
         std::string udpdata = fgcom_rdf_generateMsg();
         if (udpdata.length() > 0) {
+            pluginDbg("[RDF] client sending msg '"+udpdata+"'");
             rc = sendto (fgcom_UDPClient_sockfd, udpdata.c_str(), strlen(udpdata.c_str()) + 1, 0,
                  (struct sockaddr *) &remoteServAddr,
                  sizeof (remoteServAddr));

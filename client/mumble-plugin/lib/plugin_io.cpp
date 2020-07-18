@@ -651,7 +651,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                 if (token_key == "RDF_PORT") {
                     fgcom_cfg.rdfPort = std::stoi(token_value);
                     if (rdfClientRunning) {
-                        pluginDbg("[UDP] RDF port change to: "+std::to_string(fgcom_cfg.rdfPort));
+                        pluginDbg("[UDP] RDF port info: "+std::to_string(fgcom_cfg.rdfPort));
                         // running thread will handle the change to fgcom_cfg.rdfPort
                     } else {
                         // start new thread if requested
