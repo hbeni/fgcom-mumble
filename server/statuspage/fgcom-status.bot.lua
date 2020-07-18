@@ -36,6 +36,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
+fgcom.botversion = "1.0"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -52,7 +53,7 @@ local weburl = "";
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname)
+        print(botname..", "..fgcom.getVersion())
         print("usage: "..arg[0].." [opt=val ...]")
         print("  Options:")
         print("    --host=    host to connect to               (default="..host..")")
@@ -63,6 +64,7 @@ if arg[1] then
         print("    --speed=   update interval in seconds       (default="..speed..")")
         print("    --web=     Advertise url in comment         (default=no commercials!)")
         print("    --debug    print debug messages             (default=no)")
+        print("    --version  print version and exit")
         os.exit(0)
     end
     
@@ -77,6 +79,7 @@ if arg[1] then
         if k=="speed"     then speed=v end
         if k=="web"       then weburl=v end
         if opt == "--debug" then fgcom.debugMode = true end
+        if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
     end
     
 end
