@@ -39,9 +39,9 @@ Details are too explained in the `plugin-spec.md` file.
 ### Flightgear integration
 To send data to the plugin, flightgear must be startet with property-tree synchronization trough a generic protocol.  
 We strongly advise to use the new protocol format.
-The new protocol xml-file is supplied in the source tree and documented.
+The [new protocol xml-file](client/fgfs/Protocol/fgcom-mumble.xml) is supplied in the source tree and documented (`client/fgfs/Protocol/fgcom-mumble.xml`).
 
-Currently, we aim for compatibility to the FGCom protocol (Port 16661; https://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Protocol/fgcom.xml) as it provides all the data we need. The sole exceptions are:
+Currently, we aim for compatibility to the [original FGCom protocol](https://sourceforge.net/p/flightgear/fgdata/ci/next/tree/Protocol/fgcom.xml) (Port 16661) as it provides all the data we need. The sole exceptions are:
 
  - `output-volume`: is currently tied to /sim/sound/atc/volume and thus not bound to the COM in question
  - `ptt-key-status`: currently an index denoting the active radio; the consequence of this is that you cannot broadcast at two frequencies at once.
@@ -54,8 +54,8 @@ ATC support
 ----------------------------
 ATC clients can connect using the old FGCom UDP protocol or using the newer one.
 
-## Position, `ALT=` setting / Antenna height
-In either case, it is important to set a valid position and altitude. Altitude is the main range limiting factor in VHF radio ooperations, for example 1m heigth gives about 3.6km range until your transmission hits the earths surface. it is advised that you set the altitude to the antenna tip height above surface (so 8m building+2m Antenna gives 10m=32.8ft: `ALT=32.8`.
+## Position, `HGT=` setting / Antenna height
+In either case, it is important to set a valid position and altitude. Altitude is the main range limiting factor in VHF radio ooperations, for example 1m heigth gives about 3.6km range until your transmission hits the earths surface. it is advised that you set the altitude to the antenna tip height above surface (so 8m building+2m Antenna gives 10m=32.8ft: `HGT=32.8`.
 
 ### Land lines
 You can establish virtual land lines by adding a new "virtual radio" with a special custom frequency starting with `PHONE` like "PHONE-EDDM-TWR". Such connections are not subject to radio signal quality or range and allow for full-duplex operation.  
