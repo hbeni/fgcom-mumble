@@ -7,11 +7,17 @@
     middleware based on Mumble for FlightGear
     See https://github.com/hbeni/fgcom-mumble
 
-    Usage:
+    Install: just copy the protocol file to your flightgear installation
+             `Protocol` folder to make it available to flightgear.
+
+    Usage in launcher:
     # fgfs --generic=socket,out,<hz>,<host>,16661,udp,fgcom-mumble
 
-    Check data with:
+    Check flightgear is sending data with:
     #  netcat -u -l -p 16661
+
+    You can also send data to the plugin manually:
+    #  echo "COM1_FRQ=123.45,COM1_PTT=1,......" | netcat -q0 -u localhost 16661
   ]]>
  </comment>
 
