@@ -496,14 +496,14 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 	//std::ostream& stream = pLog() << "User with ID " << userID << " entered channel with ID " << newChannelID << ".";
 
 	// negative ID means that there was no previous channel (e.g. because the user just connected)
-	if (previousChannelID >= 0) {
-		stream << " He came from channel with ID " << previousChannelID << ".";
-	}
-	stream << " (ServerConnection: " << connection << ")" << std::endl;
+	//if (previousChannelID >= 0) {
+	//	stream << " He came from channel with ID " << previousChannelID << ".";
+	//}
+	//stream << " (ServerConnection: " << connection << ")" << std::endl;
 
     
     if (userID == fgcom_local_client.mumid) {
-        stream << " OH! thats me! hello myself!";
+        //stream << " OH! thats me! hello myself!";
         if (newChannelID == fgcom_specialChannelID) {
             pluginDbg("joined special channel, activating plugin functions");
             fgcom_setPluginActive(true);
@@ -530,33 +530,6 @@ void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t user
     
 }
 
-void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_userid_t userID, talking_state_t talkingState) {
-	//std::ostream& stream = pLog() << "User with ID " << userID << " changed his talking state to ";
-
-	// The possible values are contained in the TalkingState enum inside PluginComponent.h
-	switch(talkingState) {
-		case INVALID:
-			stream << "Invalid";
-			break;
-		case PASSIVE:
-			stream << "Passive";
-			break;
-		case TALKING:
-			stream << "Talking";
-			break;
-		case WHISPERING:
-			stream << "Whispering";
-			break;
-		case SHOUTING:
-			stream << "Shouting";
-			break;
-		default:
-			stream << "Unknown (" << talkingState << ")";
-	}
-
-	stream << ". (ServerConnection: " << connection << ")" << std::endl;
-    
-}
 
 // Note: Audio input is only possible with open mic. fgcom_hanldePTT() takes care of that.
 bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
@@ -761,16 +734,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
     return rv;   // This function returns whether it has modified the audio stream
 }
 
-/*  I think we don't need this and should implement stuff in the function above.
-bool mumble_onAudioOutputAboutToPlay(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-	//pLog() << "The resulting audio output has " << channelCount << " channels with " << sampleCount << " samples per channel" << std::endl;
-
-	// mark outputPCM as unused
-	(void) outputPCM;
-
-	// This function returns whether it has modified the audio stream
-	return false;
-}*/
 
 bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender, const char *data, size_t dataLength, const char *dataID) {
     pluginDbg("Received data with ID '"+std::string(dataID)+"' from user with ID '"+std::to_string(sender)+"'. Its length is '"+std::to_string(dataLength)+". (ServerConnection:"+std::to_string(connection)+")");
@@ -783,41 +746,16 @@ bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender
     return false;
 }
 
-/*
-void mumble_onUserAdded(mumble_connection_t connection, mumble_userid_t userID) {
-    /// Called when a new user gets added to the user model. This is the case when that new user freshly connects to the server the
-	/// local user is on but also when the local user connects to a server other clients are already connected to (in this case this
-	/// method will be called for every client already on that server).
-	pLog() << "Added user with ID " << userID << " (ServerConnection: " << connection << ")" << std::endl;
-}
-
-void mumble_onUserRemoved(mumble_connection_t connection, mumble_userid_t userID) {
-	pLog() << "Removed user with ID " << userID << " (ServerConnection: " << connection << ")" << std::endl;
-}
-
-void mumble_onChannelAdded(mumble_connection_t connection, mumble_channelid_t channelID) {
-	pLog() << "Added channel with ID " << channelID << " (ServerConnection: " << connection << ")" << std::endl;
-}
-
-void mumble_onChannelRemoved(mumble_connection_t connection, mumble_channelid_t channelID) {
-	pLog() << "Removed channel with ID " << channelID << " (ServerConnection: " << connection << ")" << std::endl;
-}
-
-void mumble_onChannelRenamed(mumble_connection_t connection, mumble_channelid_t channelID) {
-	pLog() << "Renamed channel with ID " << channelID << " (ServerConnection: " << connection << ")" << std::endl;
-}
-
-void mumble_onKeyEvent(uint32_t keyCode, bool wasPress) {
-	pLog() << "Encountered key " << (wasPress ? "press" : "release") << " of key with code " << keyCode << std::endl;
-}*/
 
 bool mumble_hasUpdate() {
 	// This plugin never has an update
+    // TODO: Implement this, maybe look at the github page? for new tags?
 	return false;
 }
 
 bool mumble_getUpdateDownloadURL(char *buffer, uint16_t bufferSize, uint16_t offset) {
-	/*static std::string url = "https://i.dont.exist/testplugin.zip";
+	// TODO: Implement me: get the latest release tar.gz suitable or the local platform
+    /*static std::string url = "https://i.dont.exist/testplugin.zip";
 
 	size_t writtenChars = url.copy(buffer, bufferSize, offset);
 
