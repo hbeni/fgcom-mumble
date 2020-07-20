@@ -37,10 +37,12 @@ void debug_out_internal_state() {
                 printf("  Radio %i:      volume=%f\n", i, fgcom_local_client.radios[i].volume);
                 printf("  Radio %i:         pwr=%f\n", i, fgcom_local_client.radios[i].pwr);
                 printf("  Radio %i:     squelch=%f\n", i, fgcom_local_client.radios[i].squelch);
+                printf("  Radio %i: RDF_enabled=%i\n", i, fgcom_local_client.radios[i].signal.rdfEnabled);
             }
         }
         
         std::cout << "---------REMOTE STATE-----------\n";
+        fgcom_remotecfg_mtx.lock();
         for (const auto &p : fgcom_remote_clients) {
             printf("[id=%i; mumid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, p.second.mumid, p.second.callsign.c_str(), p.second.lat, p.second.lon, p.second.alt);
             printf("[id=%i; mumid=%i] %s: %i radios registered\n", p.first, p.second.mumid, p.second.callsign.c_str(), p.second.radios.size());
@@ -55,9 +57,11 @@ void debug_out_internal_state() {
                     printf("  Radio %i:      volume=%f\n", i, p.second.radios[i].volume);
                     printf("  Radio %i:         pwr=%f\n", i, p.second.radios[i].pwr);
                     printf("  Radio %i:     squelch=%f\n", i, p.second.radios[i].squelch);
+                    printf("  Radio %i: RDF_enabled=%i\n", i, p.second.radios[i].signal.rdfEnabled);
                 }
             }
         }
+        fgcom_remotecfg_mtx.unlock();
         
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }

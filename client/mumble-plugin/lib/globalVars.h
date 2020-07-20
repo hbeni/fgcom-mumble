@@ -26,6 +26,22 @@
 #include <mutex>
 #include <map>
 #include "MumblePlugin.h"
+#include "radio_model.h"
+
+
+// Plugin runtime configuration
+//
+// Currently the configuration cannot be done trough mumble, but that is planned.
+// Changing runtime configuration can be done trough the inbound RDP interface for now.
+struct fgcom_config {
+    int rdfPort;  // defines RDF output port
+    bool radioAudioEffects;
+    
+    fgcom_config()  {
+        radioAudioEffects   = true;
+    };
+};
+extern struct fgcom_config fgcom_cfg;
 
 
 // This represents the state of a radio
@@ -38,6 +54,8 @@ struct fgcom_radio {
 	float volume;        // volume, 0.0->1.0
 	float pwr;           // tx power in watts
 	float squelch;       // squelch setting (cutoff signal below this quality)
+	struct fgcom_radiowave_signal signal; 
+	
 	fgcom_radio()  {
         frequency   = "";
         power_btn   = true;

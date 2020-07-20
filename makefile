@@ -21,6 +21,7 @@ release-server:
 	cp -r server/statuspage/ server-$(PLUGINVER)
 	mv server-$(PLUGINVER)/statuspage/Readme.statuspage.md server-$(PLUGINVER)
 	cp server/fgcom-botmanager.sh server/*.bot.lua server-$(PLUGINVER)
+	sed '/^\s\+gitver/s/""/"$(GITVER) $(GITDATE)"/' server/sharedFunctions.inc.lua > server-$(PLUGINVER)/sharedFunctions.inc.lua
 	zip -r server-$(PLUGINVER).zip server-$(PLUGINVER)
 	rm -rf server-$(PLUGINVER)
 
