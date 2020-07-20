@@ -18,7 +18,7 @@
 
 // Plugin IO
 //
-// A) An simple udp IO interface for the FGCom mumble plugin.
+// A) A simple udp input interface for the FGCom mumble plugin.
 //    It spawns an UDP server that accepts state inforamtion.
 //    The information is parsed and then put into a shared data
 //    structure, from where the plugin can read the current state.
@@ -29,6 +29,7 @@
 //    after change, whereas "not-urgent" ones are handled by a separate
 //    notification thread to cap the maximum of sent updates by time.
 //
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -59,6 +60,7 @@
 
 #include "globalVars.h"
 #include "plugin_io.h"
+#include "rdfUDP.h"
 #include "MumblePlugin.h"
 #include "fgcom-mumble.h"
 
@@ -353,7 +355,13 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         if (token_key == "VLT") fgcom_remote_clients[clientID].radios[radio_id].volts       = std::stof(token_value);
                         if (token_key == "PBT") fgcom_remote_clients[clientID].radios[radio_id].power_btn   = (token_value == "1")? true : false;
                         if (token_key == "SRV") fgcom_remote_clients[clientID].radios[radio_id].serviceable = (token_value == "1")? true : false;
-                        if (token_key == "PTT") fgcom_remote_clients[clientID].radios[radio_id].ptt         = (token_value == "1")? true : false;
+                        if (token_key == "PTT") {
+                            bool v = (token_value == "1")? true : false;
+                            fgcom_remote_clients[clientID].radios[radio_id].ptt = v;
+                            
+                            // in case PTT was released, reset the received signal quality to invalid". Every other case is handled from the radio code.
+                            if (!v) fgcom_remote_clients[clientID].radios[radio_id].signal.quality = -1; 
+                        }
                         if (token_key == "VOL") fgcom_remote_clients[clientID].radios[radio_id].volume      = std::stof(token_value);
                         if (token_key == "PWR") fgcom_remote_clients[clientID].radios[radio_id].pwr         = std::stof(token_value);      
                         
@@ -495,7 +503,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
     std::regex parse_COM ("^(COM)(\\d)_(.+)");
     fgcom_localcfg_mtx.lock();
     while(std::getline(streambuffer, segment, ',')) {
-        pluginDbg("[UDP] Segment='"+segment);
+        pluginDbg("[UDP] Segment='"+segment+"'");
 
         try {
             std::smatch sm;
@@ -514,6 +522,10 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                     
                     // if the selected radio does't exist, create it now
                     int radio_id = std::stoi(radio_nr.c_str());  // COM1 -> 1
+                    if (radio_id < 1){
+                        pluginLog("[UDP] Token ignored: radio_id outOfBounds (COM starts at 'COM1'!) "+token_key+"="+token_value);
+                        continue; // if radio index not valid (ie. "COM0"): skip the token
+                    }
                     if (fgcom_local_client.radios.size() < radio_id) {
                         for (int cr = fgcom_local_client.radios.size(); cr < radio_id; cr++) {
                             fgcom_local_client.radios.push_back(fgcom_radio()); // add new radio instance with default values
@@ -568,8 +580,12 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                         fgcom_local_client.radios[radio_id].squelch = std::stof(token_value);
                         // do not send right now: if (fgcom_local_client.radios[radio_id].squelch != oldValue ) radioDataHasChanged->insert(radio_id);
                     }
-
-
+                    if (radio_var == "RDF") {
+                        bool oldValue = fgcom_local_client.radios[radio_id].signal.rdfEnabled;
+                        fgcom_local_client.radios[radio_id].signal.rdfEnabled = (token_value == "1" || token_value == "true")? true : false;
+                        // do not send this: its only ever local state!  radioDataHasChanged->insert(radio_id);
+                    }
+                  
                 }
                 
                 
@@ -628,6 +644,33 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
                         fgcom_local_client.radios[i].volume = comvol;
                     }
                 }
+                
+                
+                // Plugin Configuration
+                // start/adjust the local rdf udp client.
+                if (token_key == "RDF_PORT") {
+                    fgcom_cfg.rdfPort = std::stoi(token_value);
+                    if (rdfClientRunning) {
+                        pluginDbg("[UDP] RDF port info: "+std::to_string(fgcom_cfg.rdfPort));
+                        // running thread will handle the change to fgcom_cfg.rdfPort
+                    } else {
+                        // start new thread if requested
+                        if (fgcom_cfg.rdfPort > 0) {
+                            pluginDbg("[UDP] RDF client requested: "+std::to_string(fgcom_cfg.rdfPort));
+                            std::thread rdfudpClientThread(fgcom_spawnRDFUDPClient);
+                            rdfudpClientThread.detach();
+                            //std::cout << "FGCOM: udp client started; id=" << udpClientThread_id << std::endl;
+                            pluginDbg("[UDP] RDF udp client started");
+                        }
+                    }
+                }
+                
+                
+                // Enable/Disable radio audio effects
+                if (token_key == "AUDIO_FX_RADIO") {
+                    fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
+                }
+            
            
             } else {
                 // this was an invalid token. skip it silently.
@@ -672,7 +715,7 @@ void fgcom_udp_parseMsg(char buffer[MAXLINE], bool *userDataHashanged, std::set<
 }
 
 
-int fgcom_udp_port_used = FGCOM_PORT; 
+int fgcom_udp_port_used = FGCOM_SERVER_PORT; 
 void fgcom_spawnUDPServer() {
     pluginLog("[UDP] server starting");
     int  fgcom_UDPServer_sockfd; 
@@ -694,7 +737,7 @@ void fgcom_spawnUDPServer() {
       
     // Bind the socket with the server address
     bool bind_ok = false;
-    for (fgcom_udp_port_used = FGCOM_PORT; fgcom_udp_port_used < FGCOM_PORT + 10; fgcom_udp_port_used++) {
+    for (fgcom_udp_port_used = FGCOM_SERVER_PORT; fgcom_udp_port_used < FGCOM_SERVER_PORT + 10; fgcom_udp_port_used++) {
         servaddr.sin_port = htons(fgcom_udp_port_used); 
         if ( bind(fgcom_UDPServer_sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) >= 0 ) { 
             perror("FGCom: [UDP] udp socket bind succeeded");
@@ -775,9 +818,9 @@ void fgcom_shutdownUDPServer() {
 	// and stores it as sin_addr
 	// http://beej.us/guide/bgnet/output/html/multipage/inet_ntopman.html
 #ifdef MINGW_WIN64
-    server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);    // 127.0.0.1 on purpose: don't change for securites sake
 #else
-	inet_pton(AF_INET, "localhost", &server_address.sin_addr);
+	inet_pton(AF_INET, "localhost", &server_address.sin_addr);  // 127.0.0.1 on purpose: don't change for securites sake
 #endif
 
 	// htons: port in network order format

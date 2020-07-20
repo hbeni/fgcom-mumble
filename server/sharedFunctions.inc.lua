@@ -69,8 +69,18 @@ end
 
 -- FGCom functions
 fgcom = {
-    channel  = "fgcom-mumble",
-    callsign = "FGCOM-someUnknownBot",
+    botversion = "unknown",
+    libversion = "1.0",
+    gitver     = "",   -- will be set from makefile when bundling
+    channel    = "fgcom-mumble",
+    callsign   = "FGCOM-someUnknownBot",
+    
+    -- return version string
+    getVersion = function()
+        local gv = ""
+        if fgcom.gitver ~= "" then gv = " (git "..fgcom.gitver..")" end
+        return "bot v"..fgcom.botversion.." / func v"..fgcom.libversion..gv
+    end,
     
     -- Log / debug log
     debugMode = false,

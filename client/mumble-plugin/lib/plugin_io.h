@@ -22,8 +22,8 @@
 #define FGCOM_PLUGIN_IO_H
 
 
-#define FGCOM_PORT 16661      // port to start listen to (16661 is the known FGCom udp port)
-#define MAXLINE    1024       // max byte size of a udp packet
+#define FGCOM_SERVER_PORT 16661    // port to start listen to (16661 is the known FGCom udp port)
+#define MAXLINE    1024     // max byte size of a udp packet
 #define NOTIFYINTERVAL 1000   // minimal time between notifications (ms)
 #define NOTIFYPINGINTERVAL 10000 // time between pings (ms), if no notification was done
 

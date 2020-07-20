@@ -31,6 +31,8 @@ Details are explained in the `plugin-spec.md` file.
 ### Plugin output data
 The plugin will broadcast its state (callsign, listen/send frequencies, location) to the other plugins using the mumble internal plugin interface. Other plugins will pick this up and update their internal knowledge of other users.
 
+Also, the plugin can send information via an UDP interface to third party software at 10Hz on UDP localhost port **19991**.
+
 Details are too explained in the `plugin-spec.md` file.
 
 

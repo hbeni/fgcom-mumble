@@ -79,14 +79,17 @@ int main (int argc, char **argv)
     printf("  posA <slant> posB = %.2fkm \n", fgcom_radiowave_getSlantDistance(dist, heightAB-h1));
     printf("  posB <slant> posA = %.2fkm \n", fgcom_radiowave_getSlantDistance(dist, heightBA-h2));
     
+    printf("  posA <direction> posB = %.2f° \n", fgcom_radiowave_getDirection(lat1, lon1, lat2, lon2));
+    printf("  posB <direction> posA = %.2f° \n", fgcom_radiowave_getDirection(lat2, lon2, lat1, lon1));
+    
     printf("  angle posA->posB = %.2f° \n", fgcom_radiowave_degreeAboveHorizon(dist, heightAB-h1));
     printf("  angle posB->posA = %.2f° \n", fgcom_radiowave_degreeAboveHorizon(dist, heightBA-h2));
 
     for (int pwr=0; pwr<=30; true) {
-        float sigStrengthAB = fgcom_radiowave_getSignalStrength(lat1, lon1, h1, lat2, lon2, h2, pwr);
-        float sigStrengthBA = fgcom_radiowave_getSignalStrength(lat2, lon2, h2, lat1, lon1, h1, pwr);
-        printf("  VHF signal posA->posB @%iw = %.0f% \n", pwr, sigStrengthAB*100);
-        // its the same (it should at least) printf("  VHF signal posB->posA @%iw = %.0f% \n", pwr, sigStrengthBA*100);
+        struct fgcom_radiowave_signal sigStrengthAB = fgcom_radiowave_getSignal(lat1, lon1, h1, lat2, lon2, h2, pwr);
+        struct fgcom_radiowave_signal sigStrengthBA = fgcom_radiowave_getSignal(lat2, lon2, h2, lat1, lon1, h1, pwr);
+        printf("  VHF signal posA->posB @%iw = %.0f% \n", pwr, sigStrengthAB.quality*100);
+        // its the same (it should at least) printf("  VHF signal posB->posA @%iw = %.0f% \n", pwr, sigStrengthBA.quality*100);
         if      (pwr <  5) { pwr++; }
         else if (pwr < 20) { pwr += 5; }
         else               { pwr += 10; }

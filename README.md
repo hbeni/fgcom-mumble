@@ -11,6 +11,7 @@ This project aims to provide a modular, mumble based radio simulation for flight
 - ATIS recording and playback
 - Radio station broadcast support
 - Landline/Intercom support
+- RDF detection for clients
 - Ease of server side installation and operation
 - Standalone nature (no dependency on flightgear)
 - Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
@@ -66,6 +67,8 @@ Currently, OpenRadar just supports one Radio per UDP port. In case you want seve
 
 ### ATC-Pie specific
 Currently ATC-Pie has the same issue (and the same workaround) as OpenRadar. There is a development version in the works that will enable better FGCom-mumble support.
+
+For each instance of ATC-Pie you will need a linked mumble client session. This applies for example, if you want to simultaniosly service several Airports, or additional CTR.
 
 
 Support for FGCom special frequencies
