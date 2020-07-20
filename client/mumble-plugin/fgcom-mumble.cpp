@@ -493,7 +493,7 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t previousChannelID, mumble_channelid_t newChannelID) {
     // Called for each user entering the channel. When newly entering the channel ourself, this gets called for every user.
     
-	std::ostream& stream = pLog() << "User with ID " << userID << " entered channel with ID " << newChannelID << ".";
+	//std::ostream& stream = pLog() << "User with ID " << userID << " entered channel with ID " << newChannelID << ".";
 
 	// negative ID means that there was no previous channel (e.g. because the user just connected)
 	if (previousChannelID >= 0) {
@@ -531,7 +531,7 @@ void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t user
 }
 
 void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_userid_t userID, talking_state_t talkingState) {
-	std::ostream& stream = pLog() << "User with ID " << userID << " changed his talking state to ";
+	//std::ostream& stream = pLog() << "User with ID " << userID << " changed his talking state to ";
 
 	// The possible values are contained in the TalkingState enum inside PluginComponent.h
 	switch(talkingState) {
