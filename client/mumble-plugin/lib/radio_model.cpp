@@ -63,18 +63,22 @@ double fgcom_radiowave_degreeAboveHorizon(double surfacedist, double hah) {
 }
 
 double fgcom_radiowave_getDirection(double lat1, double lon1, double lat2, double lon2) {
-    // Implementation taken from: https://www.movable-type.co.uk/scripts/latlong.html
-    //                       via: https://stackoverflow.com/a/18738281
-    double dLon = (lon2 - lon1);
+    // Get the target point as viewed from coordinate origin, so atan2 can get the quadrant right
+    // We apply haversine here, so we get the real length based on lat/lon position on
+    // earth (wgs84 cells are only regularly shaped near the equator: size depends on location)
+    double dLat = fgcom_radiowave_getSurfaceDistance(lat1, lon1, lat2, lon1); // y distance in km
+    double dLon = fgcom_radiowave_getSurfaceDistance(lat1, lon1, lat1, lon2); // x distance in km
+    if (lat2 < lat1) dLat *= -1; // apply sign (down is negative vector)
+    if (lon2 < lon1) dLon *= -1; // apply sign (left is negative vector)
 
-    double y = sin(dLon) * cos(lat2);
-    double x = cos(lat1) * sin(lat2) - sin(lat1)
-            * cos(lat2) * cos(dLon);
-
-    double brng = atan2(y, x) * (180.0 / M_PI);
-    brng = (int)(brng + 360) % 360;
-    brng = 360 - brng; // count degrees counter-clockwise - remove to make clockwise
-    if (brng >= 360) brng = 0;
+    double brng = atan2(dLat, dLon) * (180.0 / M_PI);  // 0°=east, 90°=north, etc; lat=y, lon=x
+    brng = 360 - brng; // count degrees clockwise
+    brng += 90; // atan returns with east=0°, so we need to rotate right (atan counts counter-clockwise)
+    
+    // normalize values from -180/+180 to range 0/360
+    if (brng < 360) brng += 360;
+    if (brng > 360) brng -= 360;
+    if (brng == 360) brng = 0;
 
     return brng;
 }
