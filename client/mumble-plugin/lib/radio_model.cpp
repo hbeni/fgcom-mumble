@@ -56,10 +56,15 @@ double fgcom_radiowave_getSlantDistance(double surfacedist, double hah) {
 }
 
 double fgcom_radiowave_degreeAboveHorizon(double surfacedist, double hah) {
-    // simple pythargoras, where we search the angle of the hypotehnuse :)
-    double kath = fgcom_radiowave_getSlantDistance(surfacedist, hah);
-    double sinA = (kath != 0)? (hah/1000) / kath : 0;
-    return (sinA != 0)? sinA * 90 : 0;
+    // simple pythargoras, where we search the angle alpha
+    double distM = surfacedist * 1000; // in m because hah is also in m
+    double hypo  = sqrt( pow(distM, 2) + pow(hah, 2) ); 
+    
+    if (hah == 0)  return 0; // in case of horizontal alignment
+    if (hypo == 0) return (hah >=0)? 90: -90; // in case the tgt point lies directly above/below
+    double sinA = hah / hypo;
+    double angle = (sinA != 0)? asin(sinA) * (180.0 / M_PI) : 0;
+    return angle;
 }
 
 double fgcom_radiowave_getDirection(double lat1, double lon1, double lat2, double lon2) {
