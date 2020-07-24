@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
+#include <set>
 
 // Common  shared functions of plugin i/o
 
@@ -22,10 +22,10 @@
 #define FGCOM_PLUGIN_IO_H
 
 
-#define FGCOM_SERVER_PORT 16661    // port to start listen to (16661 is the known FGCom udp port)
-#define MAXLINE    1024     // max byte size of a udp packet
-#define NOTIFYINTERVAL 1000   // minimal time between notifications (ms)
-#define NOTIFYPINGINTERVAL 10000 // time between pings (ms), if no notification was done
+#define FGCOM_SERVER_PORT  16661  // port to start listen to (16661 is the known FGCom udp port)
+#define MAXLINE             1024  // max byte size of a udp packet
+#define NOTIFYINTERVAL      1000  // minimal time between notifications (ms)
+#define NOTIFYPINGINTERVAL 10000  // time between pings (ms), if no notification was done
 
 
 // Mubmle API global vars.
@@ -34,6 +34,16 @@ extern MumbleAPI mumAPI;
 extern mumble_connection_t activeConnection;
 extern plugin_id_t ownPluginID;
 
+// Notification types
+//0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping
+enum FGCOM_NOTIFY_T {
+    NTFY_ALL = -1,
+    NTFY_USR = 4,
+    NTFY_LOC = 1,
+    NTFY_COM = 2,
+    NTFY_ASK = 3,
+    NTFY_PNG = 5
+};
 
 /*
  * Debug/Log functions
@@ -70,14 +80,15 @@ void fgcom_shutdownUDPServer();
 
 /*
  * Notify other clients on changes to local data.
- * This will construct a binary datastream message and push
+ * This will construct a datastream message and push
  * it to the mumble plugin send function.
  * 
+ * @param iid:      identity selector; -1=any, 0=default, >0=others
  * @param what:     0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping
  * @param selector: ignored, when 'what'=2: id of radio (0=COM1,1=COM2,...)
  * @param tgtUser:  0: notify all, otherwise just the specified ID (note: 0 is the superuserID)
  */
-void notifyRemotes(int what, int selector=-1, mumble_userid_t tgtUser=0);
+void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector=-1, mumble_userid_t tgtUser=0);
 
 
 /*
@@ -112,5 +123,18 @@ void fgcom_notifyThread();
  * @return bool
  */
 bool fgcom_isConnectedToServer();
+
+/*
+ * Return type for indicating what did change by UDP input
+ */
+struct fgcom_udp_parseMsg_result {
+    bool          userData;
+    bool          locationData;
+    std::set<int> radioData;
+    fgcom_udp_parseMsg_result()  {
+        userData = false;
+        locationData = false;
+    };
+};
 
 #endif

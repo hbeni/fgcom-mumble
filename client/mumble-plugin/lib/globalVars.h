@@ -95,12 +95,13 @@ extern std::mutex fgcom_localcfg_mtx;
 
 // Local plugin datastore
 // this is written from by the udp server and read by the plugin
-extern struct fgcom_client fgcom_local_client;   // local client data
+// Note: Some data is only stored at the default identity: mumid
+extern std::map<int, struct fgcom_client> fgcom_local_client;   // local client data
 
 // Remote plugin state
 // this is written to from the plugins receive data function and read from other plugin functions
 extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
-extern std::map<mumble_userid_t, fgcom_client> fgcom_remote_clients; // remote radio config
+extern std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
 
 // Global plugin state
 extern int fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp

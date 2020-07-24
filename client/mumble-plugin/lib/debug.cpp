@@ -24,40 +24,48 @@ void debug_out_internal_state() {
     while (true) {
         std::cout << "---------LOCAL STATE-----------\n";
         printf("plugin state: %s\n", (fgcom_isPluginActive())?"active":"inactive");
-        printf("[mumid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", fgcom_local_client.mumid, fgcom_local_client.callsign.c_str(), fgcom_local_client.lat, fgcom_local_client.lon, fgcom_local_client.alt);
-        printf("[mumid=%i] %s: %i radios registered\n", fgcom_local_client.mumid, fgcom_local_client.callsign.c_str(), fgcom_local_client.radios.size());
-        if (fgcom_local_client.radios.size() > 0) {
-            for (int i=0; i<fgcom_local_client.radios.size(); i++) {
-                printf("  Radio %i:   frequency='%s'\n", i, fgcom_local_client.radios[i].frequency.c_str());
-                printf("  Radio %i:   power_btn=%i'\n", i, fgcom_local_client.radios[i].power_btn);
-                printf("  Radio %i:       volts=%f\n", i, fgcom_local_client.radios[i].volts);
-                printf("  Radio %i: serviceable=%i\n", i, fgcom_local_client.radios[i].serviceable);
-                printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(fgcom_local_client.radios[i]));
-                printf("  Radio %i:         ptt=%i\n", i, fgcom_local_client.radios[i].ptt);
-                printf("  Radio %i:      volume=%f\n", i, fgcom_local_client.radios[i].volume);
-                printf("  Radio %i:         pwr=%f\n", i, fgcom_local_client.radios[i].pwr);
-                printf("  Radio %i:     squelch=%f\n", i, fgcom_local_client.radios[i].squelch);
-                printf("  Radio %i: RDF_enabled=%i\n", i, fgcom_local_client.radios[i].signal.rdfEnabled);
+        for (const auto &idty : fgcom_local_client) {
+            int iid          = idty.first;
+            fgcom_client lcl = idty.second;
+            printf("[mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.lat, lcl.lon, lcl.alt);
+            printf("[mumid=%i; iid=%i] %s: %i radios registered\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.radios.size());
+            if (lcl.radios.size() > 0) {
+                for (int i=0; i<lcl.radios.size(); i++) {
+                    printf("  Radio %i:   frequency='%s'\n", i, lcl.radios[i].frequency.c_str());
+                    printf("  Radio %i:   power_btn=%i'\n", i, lcl.radios[i].power_btn);
+                    printf("  Radio %i:       volts=%f\n", i, lcl.radios[i].volts);
+                    printf("  Radio %i: serviceable=%i\n", i, lcl.radios[i].serviceable);
+                    printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(lcl.radios[i]));
+                    printf("  Radio %i:         ptt=%i\n", i, lcl.radios[i].ptt);
+                    printf("  Radio %i:      volume=%f\n", i, lcl.radios[i].volume);
+                    printf("  Radio %i:         pwr=%f\n", i, lcl.radios[i].pwr);
+                    printf("  Radio %i:     squelch=%f\n", i, lcl.radios[i].squelch);
+                    printf("  Radio %i: RDF_enabled=%i\n", i, lcl.radios[i].signal.rdfEnabled);
+                }
             }
         }
         
         std::cout << "---------REMOTE STATE-----------\n";
         fgcom_remotecfg_mtx.lock();
         for (const auto &p : fgcom_remote_clients) {
-            printf("[id=%i; mumid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, p.second.mumid, p.second.callsign.c_str(), p.second.lat, p.second.lon, p.second.alt);
-            printf("[id=%i; mumid=%i] %s: %i radios registered\n", p.first, p.second.mumid, p.second.callsign.c_str(), p.second.radios.size());
-            if (p.second.radios.size() > 0) {
-                for (int i=0; i<p.second.radios.size(); i++) {
-                    printf("  Radio %i:   frequency='%s'\n", i, p.second.radios[i].frequency.c_str());
-                    printf("  Radio %i:   power_btn=%i\n", i, p.second.radios[i].power_btn);
-                    printf("  Radio %i:       volts=%f\n", i, p.second.radios[i].volts);
-                    printf("  Radio %i: serviceable=%i\n", i, p.second.radios[i].serviceable);
-                    printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(p.second.radios[i]));
-                    printf("  Radio %i:         ptt=%i\n", i, p.second.radios[i].ptt);
-                    printf("  Radio %i:      volume=%f\n", i, p.second.radios[i].volume);
-                    printf("  Radio %i:         pwr=%f\n", i, p.second.radios[i].pwr);
-                    printf("  Radio %i:     squelch=%f\n", i, p.second.radios[i].squelch);
-                    printf("  Radio %i: RDF_enabled=%i\n", i, p.second.radios[i].signal.rdfEnabled);
+            for (const auto &idty : fgcom_remote_clients[p.first]) {
+                int iid          = idty.first;
+                fgcom_client rmt = idty.second;
+                printf("[id=%i; mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.lat, rmt.lon, rmt.alt);
+                printf("[id=%i; mumid=%i; iid=%i] %s: %i radios registered\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.radios.size());
+                if (rmt.radios.size() > 0) {
+                    for (int i=0; i<rmt.radios.size(); i++) {
+                        printf("  Radio %i:   frequency='%s'\n", i, rmt.radios[i].frequency.c_str());
+                        printf("  Radio %i:   power_btn=%i\n", i, rmt.radios[i].power_btn);
+                        printf("  Radio %i:       volts=%f\n", i, rmt.radios[i].volts);
+                        printf("  Radio %i: serviceable=%i\n", i, rmt.radios[i].serviceable);
+                        printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(rmt.radios[i]));
+                        printf("  Radio %i:         ptt=%i\n", i, rmt.radios[i].ptt);
+                        printf("  Radio %i:      volume=%f\n", i, rmt.radios[i].volume);
+                        printf("  Radio %i:         pwr=%f\n", i, rmt.radios[i].pwr);
+                        printf("  Radio %i:     squelch=%f\n", i, rmt.radios[i].squelch);
+                        printf("  Radio %i: RDF_enabled=%i\n", i, rmt.radios[i].signal.rdfEnabled);
+                    }
                 }
             }
         }
