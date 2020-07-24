@@ -10,7 +10,7 @@ I have chosen a simple, text based UDP protocol for this reason.
 Initialization
 --------------
 The plugin initializes with emtpy internal data.
-When receiving local input dat (see below), the internal state is updated (ie new radios get registered, frequencies set etc).
+When receiving local input data (see below), the internal state is updated (ie new radios get registered, frequencies set etc).
 
 If joining the special mumble channel `fgcom-mumble`, the plugin will start to handle all clients audio streams in that channel.  
 When leaving that special channel, the plugin enters some 'noop' state so it will continue to collect updates from other client plugins, but mumble communication is unaffected otherwise.
@@ -34,7 +34,7 @@ Notification of other clients take place on special events (like joining the cha
 
 Internal state
 --------------
-The plugin tracks the following state:
+Internal state is bound to an "identity". Each plugin instance can handle multiple identities. The plugin tracks the following state:
 
 - Per radio:
   - tuned frequency
@@ -66,6 +66,11 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 
 | Field          | Format | Description                             | Default    |
 |----------------|--------|-----------------------------------------|------------|
+| `IID`          | Int    | Switch context of following fields to ID of the identity. `IID` starts at `0` (which is the default identity).    | `0` |
+| `LAT`          | Float  | Latitudinal position (decimal: 12.34567)| *mandatory*|
+| `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
+| `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
+| `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
 | `COM`*n*`_FRQ` | String | Selected frequency (arbitary string!) The string provided will be stripped from leading space and zeroes, and trailing spaces and zeroes after a decimal point. A value of `<del>` can be used to deregister a radio.  | *mandatory*|
 | `COM`*n*`_VLT` | Numeric| Electrical power; >0 means "has power"  | `12`       |
 | `COM`*n*`_PBT` | Bool   | Power button state: 0=off, 1=on         | `1`        |
@@ -74,10 +79,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `COM`*n*`_VOL` | Float  | Volume: 0.0=mute, 1.0=full              | `1.0`      |
 | `COM`*n*`_PWR` | Float  | Transmitting power in watts.            | `10.0`     |
 | `COM`*n*`_SQC` | Float  | Squelch setting (0.0=off, 1.0=full)     | `0.10`     |
-| `LAT`          | Float  | Latitudinal position (decimal: 12.34567)| *mandatory*|
-| `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
-| `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
-| `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
+
 
 
 ### Legacy FGCom fields
@@ -102,7 +104,7 @@ The Following fields are configuration options that change plugin behaviour.
 
 ### Testing UDP input
 Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q1 -u localhost 16661`
-sets the callsign and frequency for COM1.
+sets the callsign and frequency for COM1 for the default identity.
 
 
 Plugin output data
@@ -110,17 +112,17 @@ Plugin output data
 ### Mumble PluginData interface
 The plugin will broadcast its state (callsign, listen/send frequencies, ptt-state, location, tx-power) to the other plugins using the mumble internal plugin data interface (TCP based). Other plugins will pick this up and update their internal knowledge of the other users.
 
-The data packets are ASCII based and constructed as following: The `dataID` field must start with the string `FGCOM`. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation and are ignored.
+The data packets are ASCII based and constructed as following: The `dataID` field must start with the string `FGCOM`. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation and are ignored. Following a colon, the id of the target identity *iid* is submitted (`0` denotes the default identity).
 
 The following bytes in the `dataID` field denote the packet type. Each packet consists of a comma-separated sequence of `KEY=VALUE` pairs and empty values are to be ignored too:
 
-- `FGCOM:UPD_USR` keys a userdata data update package:
+- `FGCOM:`*iid*`:UPD_USR` keys a userdata data update package:
   - `CALLSIGN`
-- `FGCOM:UPD_LOC` keys a location data update package:
+- `FGCOM:`*iid*`:UPD_LOC` keys a location data update package:
   - `LON` (decimal)
   - `LAT` (decimal)
   - `ALT` (height above ground in meters, not to be confused with ALT from UDP packet!)
-- `FGCOM:UPD_COM:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
+- `FGCOM:`*iid*`:UPD_COM:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
   - `FRQ`
   - `VLT` (not transmitted currently)
   - `PBT` (not transmitted currently)
@@ -140,21 +142,21 @@ Unknown fields or empty ones (eg. `Field=`) are to be ignored when parsing.
 
 #### RDF data
 While the plugin receives a signal trough a RDF-enabled radio (`COM`*n*`_RDF=1`, see *Plugin input data* above), it will send RDF packets.  
-Absence of RDF data means that there is currently no such transmission.
+Absence of RDF data means that there is currently no such transmission.  
+Each RDF enabled radio can receive multiple signals. It is up to the client to sort this out (eg. only consider the strongest signal for a given radio).
 
-RDF data is composed with the following fields. As the possibility exists that several
-parallel transmissions are received, the ID *id* is put before the fields.  
-*id* is composed like "`<mumble session id>-<radioID>`".
+Each active signal per radio is reported on a separate output line (separated by `\n`). The signal source is reported by starting the RDF message string with `RDF_<remote mumble session id>-<remote identID>-<remote radioID>:`.  
+RDF data is composed by the following fields:
 
 | Field                 | Format | Description                             |
 |-----------------------|--------|-----------------------------------------|
-| `RDF_`*id*`_CALLSIGN` | String | Callsign of the sender                  |
-| `RDF_`*id*`_FRQ`      | String | Frquency of the signal                  |
-| `RDF_`*id*`_DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WSG84 north)|
-| `RDF_`*id*`_VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
-| `RDF_`*id*`_QLY`      | Float  | Signal quality (`0.00` to `1.0`)        |
+| `CALLSIGN` | String | Callsign of the sender                  |
+| `FRQ`      | String | Frquency of the signal                  |
+| `DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WSG84 north)|
+| `VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
+| `QLY`      | Float  | Signal quality (`0.00` to `1.0`)        |
 
-The `DIR` and `VRT` angles are in degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF_1-0_DIR=180.5,RDF_1-0_VRT=12.5`: The Airplane transmitting is thus directly south and above of you.  
+The `DIR` and `VRT` angles are in decimal degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF_1-0-1:DIR=180.5,VRT=12.5`: The Airplane transmitting is thus directly south and above of you.  
 The values are true bearings relative to your position, and `DIR=0.0` is due north relative to the WSG84 grid.
 
 #### Checking UDP client output
