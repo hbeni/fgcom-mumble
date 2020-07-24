@@ -75,35 +75,35 @@ std::string fgcom_rdf_generateMsg() {
      * (The RDF information is updated from the plugin-io parser and signal signal processing)
      */
     fgcom_remotecfg_mtx.lock();
-    for (const auto &p : fgcom_remote_clients) {
-        fgcom_client remote = p.second;
-        //pluginDbg("[UDP] client fgcom_udp_generateMsg(): check remote="+std::to_string(remote.mumid)+", callsign="+remote.callsign);
-        for (int ri=0; ri<remote.radios.size(); ri++) {
-            fgcom_radiowave_signal signal = remote.radios[ri].signal;
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg(): check radio["+std::to_string(ri)+"]");
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.quality="+std::to_string(signal.quality));
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.diection="+std::to_string(signal.direction));
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.angle="+std::to_string(signal.verticalAngle));
-            //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.rdfEnabled="+std::to_string(signal.rdfEnabled));
-            if (signal.rdfEnabled && signal.quality > 0.0) {
-                if (clientMsg.length() > 0) clientMsg+=",";
-                std::string prfx = "RDF_"+std::to_string(remote.mumid)+"-"+std::to_string(ri)+"_";
-                clientMsg += prfx+"CALLSIGN="+remote.callsign;
-                clientMsg += ","+prfx+"FRQ="+remote.radios[ri].frequency;
-                clientMsg += ","+prfx+"DIR="+std::to_string(signal.direction);
-                clientMsg += ","+prfx+"VRT="+std::to_string(signal.verticalAngle);
-                clientMsg += ","+prfx+"QLY="+std::to_string(signal.quality);
+    for (const auto &cl : fgcom_remote_clients) {
+        for (const auto &idty : fgcom_remote_clients[cl.first]) {
+            fgcom_client remote = idty.second;
+            //pluginDbg("[UDP] client fgcom_udp_generateMsg(): check remote="+std::to_string(remote.mumid)+", callsign="+remote.callsign);
+            for (int ri=0; ri<remote.radios.size(); ri++) {
+                fgcom_radiowave_signal signal = remote.radios[ri].signal;
+                //pluginDbg("[UDP] client fgcom_udp_generateMsg(): check radio["+std::to_string(ri)+"]");
+                //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.quality="+std::to_string(signal.quality));
+                //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.direction="+std::to_string(signal.direction));
+                //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.angle="+std::to_string(signal.verticalAngle));
+                //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.rdfEnabled="+std::to_string(signal.rdfEnabled));
+                if (signal.rdfEnabled && signal.quality > 0.0) {
+                    clientMsg += "RDF_"+std::to_string(remote.mumid)+"-"+std::to_string(idty.first)+"_"+"-"+std::to_string(ri)+":";
+                    clientMsg += ",FRQ="+remote.radios[ri].frequency;
+                    clientMsg += ",DIR="+std::to_string(signal.direction);
+                    clientMsg += ",VRT="+std::to_string(signal.verticalAngle);
+                    clientMsg += ",QLY="+std::to_string(signal.quality);
+                    clientMsg += "\n";
+                }
+                
+                // reset the quality. If the user is still speaking, this will get set to the true value
+                // with the next received audio sample (see fgcom-mumble.cpp handler).
+                // This is needed here, because currently we have no other means to detect
+                // if a client stopped speaking (PTT off is not enough: the client may suddenly disconnect too!)
+                fgcom_remote_clients[cl.first][idty.first].radios[ri].signal.quality       = -1;
+                fgcom_remote_clients[cl.first][idty.first].radios[ri].signal.verticalAngle = -1;
+                fgcom_remote_clients[cl.first][idty.first].radios[ri].signal.direction     = -1;
             }
-            
-            // reset the quality. If the user is still speaking, this will get set to the true value
-            // with the next received audio sample (see fgcom-mumble.cpp handler).
-            // This is needed here, because currently we have no other means to detect
-            // if a client stopped speaking (PTT off is not enough: the client may suddenly disconnect too!)
-            fgcom_remote_clients[p.first].radios[ri].signal.quality       = -1;
-            fgcom_remote_clients[p.first].radios[ri].signal.verticalAngle = -1;
-            fgcom_remote_clients[p.first].radios[ri].signal.direction     = -1;
         }
-        
     }
     fgcom_remotecfg_mtx.unlock();
     
