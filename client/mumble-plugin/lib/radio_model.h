@@ -31,6 +31,8 @@ struct fgcom_radiowave_signal {
     float direction;      // 0.0=north, 90=east, 180=south, 270=west
     float verticalAngle;  // 0.0=straight, 90=above, -90=below
     bool  rdfEnabled;     // true=Enable RDF output
+    std::string sourceCallsign; // Callsign of the sender
+    std::string tgtCallsign;    // Callsign of the receiver
     
     fgcom_radiowave_signal()  {
         quality       = -1;

@@ -87,7 +87,9 @@ std::string fgcom_rdf_generateMsg() {
                 //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.angle="+std::to_string(signal.verticalAngle));
                 //pluginDbg("[UDP] client fgcom_udp_generateMsg():   signal.rdfEnabled="+std::to_string(signal.rdfEnabled));
                 if (signal.rdfEnabled && signal.quality > 0.0) {
-                    clientMsg += "RDF_"+std::to_string(remote.mumid)+"-"+std::to_string(idty.first)+"_"+"-"+std::to_string(ri)+":";
+                    clientMsg += "RDF:";
+                    clientMsg += "CS_SRC="+signal.sourceCallsign;
+                    clientMsg += ",CS_TGT="+signal.tgtCallsign;
                     clientMsg += ",FRQ="+remote.radios[ri].frequency;
                     clientMsg += ",DIR="+std::to_string(signal.direction);
                     clientMsg += ",VRT="+std::to_string(signal.verticalAngle);
