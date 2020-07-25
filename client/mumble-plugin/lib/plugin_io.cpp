@@ -173,7 +173,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                         //+ "SRV="+std::to_string(lcl.radios[selector].serviceable)+","
                         + "PTT="+std::to_string(lcl.radios[selector].ptt)+","
                         //+ "VOL="+std::to_string(lcl.radios[selector].volume)+","
-                        + "PWR="+std::to_string(lcl.radios[selector].pwr)+",";
+                        + "PWR="+std::to_string(lcl.radios[selector].pwr);
                     // ^^ Save bandwith: We do not need all state on the other clients currently. Once we do, we can just uncomment this and the code to handle it is already implemented :)
                     // Ah yeah, and we must uncomment the change-detection down at fgcom_udp_parseMsg(), otherwise the changes get not detected
             }
@@ -189,7 +189,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
         case NTFY_USR:
             // userstate
             pluginDbg("notifyRemotes(): selected: userdata");
-            dataID  = "FGCOM:"+std::to_string(iid)+":UPD_USR";
+            dataID  = "FGCOM:UPD_USR:"+std::to_string(iid);
             message = "CALLSIGN="+lcl.callsign;
             break;
 
