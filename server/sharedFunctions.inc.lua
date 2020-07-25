@@ -259,10 +259,13 @@ fgcom = {
                 local datatype = dataID_t[1] -- should always be "FGCOM"
                 local packtype = dataID_t[2] -- UPD_LOC, etc
                 local iid = "0"              -- default identity iid
+                fgcom.dbg("  datatype='"..datatype.."'")
+                fgcom.dbg("  packtype='"..packtype.."'")
 
                 if packtype == "UPD_USR" or packtype == "UPD_LOC" or packtype == "UPD_COM" then
                     local iid = dataID_t[3]          -- identity selector
                     local sid = sender:getSession()  -- mumble session id
+                    fgcom.dbg("  iid='"..iid.."'")
 
                     -- check if we already have state for this client; if not add
                     if not fgcom_clients[sid] then
@@ -287,50 +290,57 @@ fgcom = {
                     -- for token in string.gmatch(data, ",") do
                     for index,token in ipairs(fgcom.data.csplit(data, ",")) do
                         field = fgcom.data.csplit(token, "=")
-                        
-                        -- Udpates to location/user state
-                        if packtype == "UPD_LOC" or packtype == "UPD_USR" then
-                            if "CALLSIGN" == field[1] then fgcom_clients[sid][iid].callsign = field[2] end
-                            if "LAT" == field[1] then fgcom_clients[sid][iid].lat = field[2] end
-                            if "LON" == field[1] then fgcom_clients[sid][iid].lon = field[2] end
-                            if "ALT" == field[1] then fgcom_clients[sid][iid].alt = field[2] end
-                        end
-                        
-                        -- Updates to radios
-                        if packtype == "UPD_COM" then
-                            -- the dataID says, which radio to update (starting at zero)
-                            radioID = dataID_t[4]
-                            if not fgcom_clients[sid][iid].radios[radioID] then
-                                -- if radio unknown yet, add template
-                                fgcom_clients[sid][iid].radios[radioID] = {
-                                    frequency = "",
-                                    ptt = 0
-                                    -- todo: more needed?
-                                }
+                        if #field == 2 then
+                            fgcom.dbg("parsing field: "..field[1].."="..field[2])
+
+                            -- Udpates to location/user state
+                            if packtype == "UPD_LOC" or packtype == "UPD_USR" then
+                                if "CALLSIGN" == field[1] then fgcom_clients[sid][iid].callsign = field[2] end
+                                if "LAT" == field[1] then fgcom_clients[sid][iid].lat = field[2] end
+                                if "LON" == field[1] then fgcom_clients[sid][iid].lon = field[2] end
+                                if "ALT" == field[1] then fgcom_clients[sid][iid].alt = field[2] end
                             end
                             
-                            if "FRQ" == field[1] then fgcom_clients[sid][iid].radios[radioID].frequency = field[2] end
-                            if "PTT" == field[1] then fgcom_clients[sid][iid].radios[radioID].ptt = field[2] end
-                            if "PWR" == field[1] then fgcom_clients[sid][iid].radios[radioID].power = field[2] end
+                            -- Updates to radios
+                            if packtype == "UPD_COM" then
+                                -- the dataID says, which radio to update (starting at zero)
+                                radioID = dataID_t[4]
+                                if not fgcom_clients[sid][iid].radios[radioID] then
+                                    -- if radio unknown yet, add template
+                                    fgcom_clients[sid][iid].radios[radioID] = {
+                                        frequency = "",
+                                        ptt = 0
+                                        -- todo: more needed?
+                                    }
+                                end
+                                
+                                if "FRQ" == field[1] then fgcom_clients[sid][iid].radios[radioID].frequency = field[2] end
+                                if "PTT" == field[1] then fgcom_clients[sid][iid].radios[radioID].ptt = field[2] end
+                                if "PWR" == field[1] then fgcom_clients[sid][iid].radios[radioID].power = field[2] end
+                            end
+                        else
+                            fgcom.dbg("parsing field failed! "..#field.." tokens seen")
                         end
                     end
           
-                else if packtype == "PING" or packtype == "ICANHAZDATAPLZ" then
+                elseif packtype == "PING" or packtype == "ICANHAZDATAPLZ" then
                     -- ignore for now
                 end
             end
             
             fgcom.dbg("Parsing done. New remote state:")
-            for uid,remote in pairs(fgcom_clients) do
-                for k,v in pairs(remote) do
-                    --print(uid, k, v)
-                    if k=="radios" then
-                        for radio_id,radio in pairs(remote.radios) do
-                            fgcom.dbg(uid,"    radio #"..radio_id.." frequency='"..radio.frequency.."'")
-                            fgcom.dbg(uid,"    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
+            for uid,remote_client in pairs(fgcom_clients) do
+                for iid,idty in pairs(remote_client) do
+                    for k,v in pairs(idty) do
+                        --print(uid, k, v)
+                        if k=="radios" then
+                            for radio_id,radio in pairs(idty.radios) do
+                                fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.." frequency='"..radio.frequency.."'")
+                                fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
+                            end
+                        else
+                            fgcom.dbg("sid="..uid.."; idty="..iid.."\t"..k..":\t"..v)
                         end
-                    else
-                        fgcom.dbg(uid.."\t"..k.."\t"..v)
                     end
                 end
             end

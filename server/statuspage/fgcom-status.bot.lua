@@ -99,8 +99,8 @@ local generateOutData = function()
     local data     = {}  -- final return array
     
     fgcom.dbg("generateOutData(): number of known users: "..#fgcom_clients)
-    for sid, user in pairs(fgcom_clients) do
-        for iid,idty in pairs(user) do
+    for sid, remote_client in pairs(fgcom_clients) do
+        for iid,user in pairs(remote_client) do
             fgcom.dbg("generateOutData(): processing user: "..sid.." with idty="..iid)
             local userData = {}   -- the return structure for generating the message
             local mumbleUser = allUsers[sid]
