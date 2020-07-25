@@ -116,13 +116,13 @@ The data packets are ASCII based and constructed as following: The `dataID` fiel
 
 The following bytes in the `dataID` field denote the packet type. Each packet consists of a comma-separated sequence of `KEY=VALUE` pairs and empty values are to be ignored too:
 
-- `FGCOM:`*iid*`:UPD_USR` keys a userdata data update package:
+- `FGCOM:UPD_USR:`*iid* keys a userdata data update package:
   - `CALLSIGN`
-- `FGCOM:`*iid*`:UPD_LOC` keys a location data update package:
+- `FGCOM:UPD_LOC:`*iid* keys a location data update package:
   - `LON` (decimal)
   - `LAT` (decimal)
   - `ALT` (height above ground in meters, not to be confused with ALT from UDP packet!)
-- `FGCOM:`*iid*`:UPD_COM:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
+- `FGCOM:UPD_COM:`*iid*`:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
   - `FRQ`
   - `VLT` (not transmitted currently)
   - `PBT` (not transmitted currently)
