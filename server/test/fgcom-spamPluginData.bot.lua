@@ -129,7 +129,7 @@ updateLocData = function(t)
                   ..",LAT="..lon
                   ..",ALT="..alt
         --print("Bot sets location: "..msg)
-        client:sendPluginData("FGCOM:UPD_LOC", msg, playback_targets)
+        client:sendPluginData("FGCOM:UPD_LOC:0", msg, playback_targets)
     end
 end
 
@@ -144,7 +144,7 @@ client:hook("OnServerSync", function(event)
     
     updateAllChannelUsersforSend(client)
     local msg = "CALLSIGN="..fgcom.callsign
-    client:sendPluginData("FGCOM:UPD_USR", msg, playback_targets)
+    client:sendPluginData("FGCOM:UPD_USR:0", msg, playback_targets)
            
     -- update location       
     locUpd:start(updateLocData, 0.00, locs)

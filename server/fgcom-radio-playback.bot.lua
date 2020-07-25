@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.0"
+fgcom.botversion = "1.1"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -201,7 +201,7 @@ shutdownBot = function()
     local msg = "FRQ="..lastHeader.frequency
              ..",PWR="..lastHeader.txpower
              ..",PTT=0"
-    client:sendPluginData("FGCOM:UPD_COM:0", msg, playback_targets)
+    client:sendPluginData("FGCOM:UPD_COM:0:0", msg, playback_targets)
     fgcom.log("shutdownBot(): COM0 deactiated")
     
     -- finally disconnect from the server
@@ -317,7 +317,7 @@ end
 notifyUserdata = function(tgts)
     local msg = "CALLSIGN="..lastHeader.callsign
     fgcom.dbg("Bot sets userdata: "..msg)
-    client:sendPluginData("FGCOM:UPD_USR", msg, tgts)
+    client:sendPluginData("FGCOM:UPD_USR:0", msg, tgts)
 end
 
 notifyLocation = function(tgts)
@@ -328,7 +328,7 @@ notifyLocation = function(tgts)
               ..",LAT="..latitude
               ..",ALT="..height
     fgcom.dbg("Bot sets location: "..msg)
-    client:sendPluginData("FGCOM:UPD_LOC", msg, tgts)
+    client:sendPluginData("FGCOM:UPD_LOC:0", msg, tgts)
 end
 
 notifyRadio = function(tgts)
