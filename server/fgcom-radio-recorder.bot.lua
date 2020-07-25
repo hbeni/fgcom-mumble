@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.0"
+fgcom.botversion  = "1.1"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -133,35 +133,37 @@ fgcom.log("connect and bind: OK")
 --   - tuned the FGCom test frequency 910.000
 --   - tuned RECORD_<tgtFrq>
 -- @param user mumble.user to check
--- @return nil if not, otherwise table with the matched radio
+-- @return nil if not, otherwise <identity>,<radio>: table with the matched radio
 local isClientTalkingToUs = function(user)
     if fgcom_clients[user:getSession()] then
-        local remote = fgcom_clients[user:getSession()]
-        fgcom.dbg("we know this client: callsign="..remote.callsign)
-        for radio_id,radio in pairs(remote.radios) do
-            fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
-            
-            -- ATIS/Radio Recording request for tgt frequency
-            local record_tgtFrq = ""
-            _, _, record_tgtFrq = radio.frequency:find("^RECORD_(.+)")
-            if record_tgtFrq and radio.ptt then
-                -- remote is on Recording-TGT frequency AND his ptt is active
-                remote.record_mode = "NORMAL"
-                remote.record_tgt_frq = record_tgtFrq
-                fgcom.dbg("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
-                return radio
+        local rmt_client = fgcom_clients[user:getSession()]
+        for iid,remote in pairs(rmt_client) do
+            fgcom.dbg("we know this client: callsign="..remote.callsign)
+            for radio_id,radio in pairs(remote.radios) do
+                fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
+                
+                -- ATIS/Radio Recording request for tgt frequency
+                local record_tgtFrq = ""
+                _, _, record_tgtFrq = radio.frequency:find("^RECORD_(.+)")
+                if record_tgtFrq and radio.ptt then
+                    -- remote is on Recording-TGT frequency AND his ptt is active
+                    remote.record_mode = "NORMAL"
+                    remote.record_tgt_frq = record_tgtFrq
+                    fgcom.dbg("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
+                    return radio
+                end
+                
+                -- FGCom ECHOTEST Frequency recording request
+                if radio.frequency:find("^910.0+$") and radio.ptt then
+                    -- remote is on echotest-frequency AND his ptt is active
+                    remote.record_mode = "ECHOTEST"
+                    remote.record_tgt_frq = "910.00"
+                    fgcom.dbg("   ECHOTEST frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
+                    return remote, radio
+                end
+                
+                
             end
-            
-            -- FGCom ECHOTEST Frequency recording request
-            if radio.frequency:find("^910.0+$") and radio.ptt then
-                -- remote is on echotest-frequency AND his ptt is active
-                remote.record_mode = "ECHOTEST"
-                remote.record_tgt_frq = "910.00"
-                fgcom.dbg("   ECHOTEST frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
-                return radio
-            end
-            
-            
         end
     end
 
@@ -272,11 +274,10 @@ client:hook("OnUserSpeak", function(event)
     if isIgnored(event.user) then return end   -- ignore other bots!
            
     -- If the user is speaking to us, record its samples and push them to the buffer
-    local matchedRadio = isClientTalkingToUs(event.user)
-    if matchedRadio and matchedRadio.frequency then
+    local remote, matchedRadio = isClientTalkingToUs(event.user)
+    if remote and matchedRadio and matchedRadio.frequency then
         fgcom.dbg("OnUserSpeak:  radio connected: "..matchedRadio.frequency)
-        local remote = fgcom_clients[event.user:getSession()]
-           fgcom.dbg("remote="..tostring(remote))
+        fgcom.dbg("remote="..tostring(remote))
         if remote and not remote.record_filename and not remote.record_fh then
             -- we had no filehandle so far, so we open a new file and write the header
             remote.record_filename = getFGCSfileName(remote)..".part"
@@ -352,28 +353,30 @@ client:hook("OnUserStopSpeaking", function(user)
 
     -- see if there is an active recording, if so, end it now
     if fgcom_clients[user:getSession()] then
-        local remote = fgcom_clients[user:getSession()]
-        if remote.record_filename and remote.record_fh then
-            fgcom.dbg("closing recording '"..remote.record_filename.."'")
-            remote.record_fh:flush()
-            io.close(remote.record_fh)
-            remote.record_fh = nil
-            
-            local record_filename_final = remote.record_filename:gsub("%.part", "")
-            os.remove (record_filename_final) -- remove target file silently, if already there
-            --fgcom.dbg("RENAME: "..remote.record_filename.." -> "..record_filename_final)
-            ren_rc, ren_message = os.rename(remote.record_filename, record_filename_final)
-            remote.record_filename = nil
-            fgcom.log("recording ready: '"..record_filename_final.."'")
+        local rmt_client = fgcom_clients[user:getSession()]
+        for iid,remote in pairs(rmt_client) do
+            if remote.record_filename and remote.record_fh then
+                fgcom.dbg("closing recording '"..remote.record_filename.."'")
+                remote.record_fh:flush()
+                io.close(remote.record_fh)
+                remote.record_fh = nil
+                
+                local record_filename_final = remote.record_filename:gsub("%.part", "")
+                os.remove (record_filename_final) -- remove target file silently, if already there
+                --fgcom.dbg("RENAME: "..remote.record_filename.." -> "..record_filename_final)
+                ren_rc, ren_message = os.rename(remote.record_filename, record_filename_final)
+                remote.record_filename = nil
+                fgcom.log("recording ready: '"..record_filename_final.."'")
 
-            local ch = client:getChannel(fgcom.channel)
-            ch:message(user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' completed!")
-            
-            -- spawn a bot that replays the sample.
-            -- he is responsible fo killing himself and also to delete the sample file if it is not valid anymore.
-            callPlaybackBot(record_filename_final)
-        else
-            fgcom.dbg(remote.callsign..": no active recording detected")
+                local ch = client:getChannel(fgcom.channel)
+                ch:message(user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' completed!")
+                
+                -- spawn a bot that replays the sample.
+                -- he is responsible fo killing himself and also to delete the sample file if it is not valid anymore.
+                callPlaybackBot(record_filename_final)
+            else
+                fgcom.dbg(remote.callsign..": no active recording detected")
+            end
         end
     else
         fgcom.dbg("remote uknown")

@@ -70,7 +70,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.0",
+    libversion = "1.1",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -254,53 +254,69 @@ fgcom = {
                 fgcom.dbg("Received FGCOM-plugin data, dataID='"..dataID.."', from=["..sender:getSession().."] '"..sender:getName().."'")
                 fgcom.dbg("  data='"..data.."'")
           
-                sid = sender:getSession()
+                -- split the dataid into fields
+                local dataID_t = fgcom.data.csplit(dataID, ":")
+                local datatype = dataID_t[1] -- should always be "FGCOM"
+                local packtype = dataID_t[2] -- UPD_LOC, etc
+                local iid = "0"              -- default identity iid
 
-                -- check if we already have state for this client; if not add template
-                if not fgcom_clients[sid] then
-                    fgcom_clients[sid] = {
-                        callsign="",
-                        lat="",
-                        lon="",
-                        alt="",
-                        radios={}
-                    }
-                    fgcom.dbg("added new client state: "..sid)
-                end
-          
-                -- OK, go ahead and try to parse;
-                -- we are interested in the callsign and the location.
-                -- For proper recording, also the PTT state is important to us.
-                -- for token in string.gmatch(data, ",") do
-                for index,token in ipairs(fgcom.data.csplit(data, ",")) do
-                    field = fgcom.data.csplit(token, "=")
-                    
-                    -- Udpates to location/user state
-                    if dataID:find("FGCOM:UPD_LOC") or dataID:find("FGCOM:UPD_USR") then
-                        if "CALLSIGN" == field[1] then fgcom_clients[sid].callsign = field[2] end
-                        if "LAT" == field[1] then fgcom_clients[sid].lat = field[2] end
-                        if "LON" == field[1] then fgcom_clients[sid].lon = field[2] end
-                        if "ALT" == field[1] then fgcom_clients[sid].alt = field[2] end
+                if packtype == "UPD_USR" or packtype == "UPD_LOC" or packtype == "UPD_COM" then
+                    local iid = dataID_t[3]          -- identity selector
+                    local sid = sender:getSession()  -- mumble session id
+
+                    -- check if we already have state for this client; if not add
+                    if not fgcom_clients[sid] then
+                        fgcom_clients[sid] = {}
+                        fgcom.dbg("added new client state: "..sid)
                     end
-                    
-                    -- Updates to radios
-                    if dataID:find("FGCOM:UPD_COM:") then
-                        -- the dataID says, which radio to update (starting at zero)
-                        dataID_t = fgcom.data.csplit(dataID, ":")
-                        radioID = dataID_t[3]
-                        if not fgcom_clients[sid].radios[radioID] then
-                            -- if radio unknown yet, add template
-                            fgcom_clients[sid].radios[radioID] = {
-                                frequency = "",
-                                ptt = 0
-                                -- todo: more needed?
-                            }
+          
+                    -- check if we already know this clients identity with given iid; if not, add template
+                    if not fgcom_clients[sid][iid] then
+                        fgcom_clients[sid][iid] = {
+                            callsign="",
+                            lat="",
+                            lon="",
+                            alt="",
+                            radios={}
+                        }
+                    end
+            
+                    -- OK, go ahead and try to parse;
+                    -- we are interested in the callsign and the location.
+                    -- For proper recording, also the PTT state is important to us.
+                    -- for token in string.gmatch(data, ",") do
+                    for index,token in ipairs(fgcom.data.csplit(data, ",")) do
+                        field = fgcom.data.csplit(token, "=")
+                        
+                        -- Udpates to location/user state
+                        if packtype == "UPD_LOC" or packtype == "UPD_USR" then
+                            if "CALLSIGN" == field[1] then fgcom_clients[sid][iid].callsign = field[2] end
+                            if "LAT" == field[1] then fgcom_clients[sid][iid].lat = field[2] end
+                            if "LON" == field[1] then fgcom_clients[sid][iid].lon = field[2] end
+                            if "ALT" == field[1] then fgcom_clients[sid][iid].alt = field[2] end
                         end
                         
-                        if "FRQ" == field[1] then fgcom_clients[sid].radios[radioID].frequency = field[2] end
-                        if "PTT" == field[1] then fgcom_clients[sid].radios[radioID].ptt = field[2] end
-                        if "PWR" == field[1] then fgcom_clients[sid].radios[radioID].power = field[2] end
+                        -- Updates to radios
+                        if packtype == "UPD_COM" then
+                            -- the dataID says, which radio to update (starting at zero)
+                            radioID = dataID_t[4]
+                            if not fgcom_clients[sid][iid].radios[radioID] then
+                                -- if radio unknown yet, add template
+                                fgcom_clients[sid][iid].radios[radioID] = {
+                                    frequency = "",
+                                    ptt = 0
+                                    -- todo: more needed?
+                                }
+                            end
+                            
+                            if "FRQ" == field[1] then fgcom_clients[sid][iid].radios[radioID].frequency = field[2] end
+                            if "PTT" == field[1] then fgcom_clients[sid][iid].radios[radioID].ptt = field[2] end
+                            if "PWR" == field[1] then fgcom_clients[sid][iid].radios[radioID].power = field[2] end
+                        end
                     end
+          
+                else if packtype == "PING" or packtype == "ICANHAZDATAPLZ" then
+                    -- ignore for now
                 end
             end
             

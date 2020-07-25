@@ -84,15 +84,17 @@ print("connect and bind: OK")
 isClientTalkingToUs = function(user)
     rv = false
     if fgcom_clients[user:getSession()] then
-        remote = fgcom_clients[user:getSession()]
-        print("we know this client: callsign="..remote.callsign)
-        for radio_id,radio in pairs(remote.radios) do
-            print("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
-            if radio.frequency:find(l_echo_frequency) and radio.ptt then
-                -- remote is on out frequency AND his ptt is active
-                print("   frequency match at radio #"..radio_id)
-                rv = true
-                break
+        local rmt_client = fgcom_clients[user:getSession()]
+        for iid,remote in pairs(rmt_client) do
+            print("we know this client: callsign="..remote.callsign)
+            for radio_id,radio in pairs(remote.radios) do
+                print("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
+                if radio.frequency:find(l_echo_frequency) and radio.ptt then
+                    -- remote is on out frequency AND his ptt is active
+                    print("   frequency match at radio #"..radio_id)
+                    rv = true
+                    break
+                end
             end
         end
     end
@@ -202,12 +204,12 @@ client:hook("OnUserStopSpeaking", function(user)
                   ..",LAT="..remote.lat
                   ..",ALT="..remote.alt
         print("  msg="..msg..", to: "..playback_target:getSession())
-        client:sendPluginData("FGCOM:UPD_LOC", msg, {playback_target})
+        client:sendPluginData("FGCOM:UPD_LOC:0", msg, {playback_target})
         
         local msg = "CALLSIGN="..fgcom.callsign
-        client:sendPluginData("FGCOM:UPD_USR", msg, playback_targets)
+        client:sendPluginData("FGCOM:UPD_USR:0", msg, playback_targets)
         
-        client:sendPluginData("FGCOM:UPD_COM:0", "FRQ=910.0,PTT=1", {playback_target})
+        client:sendPluginData("FGCOM:UPD_COM:0:0", "FRQ=910.0,PTT=1", {playback_target})
         
         -- start the playback timer
         playbackTimer:start(playbackTimer_func, playbackTimer_delay, playbackTimer_rate)
