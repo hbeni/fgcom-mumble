@@ -150,7 +150,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
         case NTFY_LOC:
             // Notify on location
             pluginDbg("notifyRemotes(): selected: location");
-            dataID  = "FGCOM:"+std::to_string(iid)+":UPD_LOC";
+            dataID  = "FGCOM:UPD_LOC:"+std::to_string(iid);
             message = "LAT="+std::to_string(lcl.lat)+","
                      +"LON="+std::to_string(lcl.lon)+","
                      +"ALT="+std::to_string(lcl.alt)+",";
@@ -166,7 +166,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                 }
             } else {
                 pluginDbg("notifyRemotes():    send state of COM"+std::to_string(selector+1) );
-                dataID  = "FGCOM:"+std::to_string(iid)+":UPD_COM:"+std::to_string(selector);
+                dataID  = "FGCOM:UPD_COM:"+std::to_string(iid)+":"+std::to_string(selector);
                 message = "FRQ="+lcl.radios[selector].frequency+","
                         //+ "VLT="+std::to_string(lcl.radios[selector].volts)+","
                         //+ "PBT="+std::to_string(lcl.radios[selector].power_btn)+","
@@ -279,7 +279,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         
         // Get identity id
         int iid = 0;
-        std::regex get_iid_re ("^FGCOM:(\\d+):");
+        std::regex get_iid_re ("^FGCOM:\\w+:(\\d+)");
         std::smatch smc_iid;
         if (std::regex_search(dataID, smc_iid, get_iid_re)) {
             iid = stoi(smc_iid[1]);
@@ -316,8 +316,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             
         
         // Userdata and Location data update are treated the same
-        } else if (dataID == "FGCOM:"+iid_str+":UPD_USR"
-                || dataID == "FGCOM:"+iid_str+":UPD_LOC") {
+        } else if (dataID == "FGCOM:UPD_USR:"+iid_str
+                || dataID == "FGCOM:UPD_LOC:"+iid_str) {
             pluginDbg("USR/LOC UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             
             // update properties
@@ -355,7 +355,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             }
         
         
-        } else if (dataID.substr(0, 15+iid_str.length()) == "FGCOM:"+iid_str+":UPD_COM:") {
+        } else if (dataID.substr(0, 15+iid_str.length()) == "FGCOM:UPD_COM:"+iid_str+":") {
             // Radio data update. Here the radio in question was given in the dataid.
             pluginDbg("COM UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             int radio_id = std::stoi(dataID.substr(15+iid_str.length())); // when segfault: indicates problem with the implemented udp protocol
