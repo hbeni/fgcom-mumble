@@ -662,9 +662,11 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     //pluginDbg("mumble_onAudioSourceFetched():    signal.quality: rmt("+std::to_string(rmt.radios[ri].signal.quality)+") new("+std::to_string(signal.quality)+")");
                                     //pluginDbg("mumble_onAudioSourceFetched():    signal.direction: rmt("+std::to_string(rmt.radios[ri].signal.direction)+") new("+std::to_string(signal.direction)+")");
                                     //pluginDbg("mumble_onAudioSourceFetched():    signal.verticalAngle: rmt("+std::to_string(rmt.radios[ri].signal.verticalAngle)+") new("+std::to_string(signal.verticalAngle)+")");
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.quality       = signal.quality;
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.direction     = signal.direction;
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.verticalAngle = signal.verticalAngle;
+                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.quality        = signal.quality;
+                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.direction      = signal.direction;
+                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.verticalAngle  = signal.verticalAngle;
+                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.sourceCallsign = rmt.callsign;
+                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.tgtCallsign    = lcl.callsign;
 
                                     // Copy the RDF setting of the local radio to the remote state, so the RDF generator knows
                                     // wether he should genearte RDF information for the signal.
