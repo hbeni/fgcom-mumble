@@ -97,13 +97,13 @@ The Following fields are configuration options that change plugin behaviour.
 
 | Field            | Format | Description                             | Default    |
 |------------------|--------|-----------------------------------------|------------|
-| `RDF_PORT`       | Int    | Activate RDF output to the given UDP Port. Use `0` or `off` to switch off again. Enabled Radios will produce RDF data when eceiving signals. | `off` |
+| `RDF_PORT`       | Int    | Activate RDF output to the given UDP Port. Use `0` or `off` to switch off again. Enabled Radios will produce RDF data when receiving signals. | `off` |
 | `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (when RDF was activated; details below: "*UDP client interface / RDF data*")   | `0`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
 
 
 ### Testing UDP input
-Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q1 -u localhost 16661`
+Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661`
 sets the callsign and frequency for COM1 for the default identity.
 
 
@@ -112,9 +112,14 @@ Plugin output data
 ### Mumble PluginData interface
 The plugin will broadcast its state (callsign, listen/send frequencies, ptt-state, location, tx-power) to the other plugins using the mumble internal plugin data interface (TCP based). Other plugins will pick this up and update their internal knowledge of the other users.
 
-The data packets are ASCII based and constructed as following: The `dataID` field must start with the string `FGCOM`. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation and are ignored. Following a colon, the id of the target identity *iid* is submitted (`0` denotes the default identity).
+The data packets are ASCII based and constructed as following:
 
-The following bytes in the `dataID` field denote the packet type. Each packet consists of a comma-separated sequence of `KEY=VALUE` pairs and empty values are to be ignored too:
+The *dataID* field has the syntax `FGCOM:<packetType>[:<iid>[:<params>]]`; ie. it must start with the string `FGCOM` and following fields are separated by colon. Only such packets are allowed to be processed from the plugin, other packets do no belong to the fgcom-implementation and are ignored.  
+The second field denote the fgcom packet type.  
+For PacketTypes encoding identity information, the next field contains the identity *iid* (`0` denotes the default identity).  
+After that, some PacketTypes can contain further parameters.
+
+Each packets *payload* consists of a comma-separated string sequence of `KEY=VALUE` pairs (empty values are to be ignored too):
 
 - `FGCOM:UPD_USR:`*iid* keys a userdata data update package:
   - `CALLSIGN`
