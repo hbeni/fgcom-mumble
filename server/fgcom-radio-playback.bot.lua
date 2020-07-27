@@ -324,9 +324,9 @@ notifyLocation = function(tgts)
     local latitude  = lastHeader.lat       if lat ~= "" then latitude  = lat end
     local longitude = lastHeader.lon       if lon ~= "" then longitude = lon end
     local height    = lastHeader.height    if hgt ~= "" then height    = hgt end
-    local msg = ",LON="..longitude
+    local msg = "LON="..longitude
               ..",LAT="..latitude
-              ..",ALT="..height
+              ..",ALT="..height+5
     fgcom.dbg("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC:0", msg, tgts)
 end
@@ -336,7 +336,7 @@ local msg = "FRQ="..lastHeader.frequency
              ..",PWR="..lastHeader.txpower
              ..",PTT=1"
     fgcom.dbg("Bot sets radio: "..msg)
-    client:sendPluginData("FGCOM:UPD_COM:0", msg, tgts)
+    client:sendPluginData("FGCOM:UPD_COM:0:0", msg, tgts)
 end
 
 client:hook("OnServerSync", function(event)

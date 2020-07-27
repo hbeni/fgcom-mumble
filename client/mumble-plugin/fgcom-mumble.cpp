@@ -30,6 +30,7 @@
 #include "plugin_io.h"
 #include "radio_model.h"
 #include "audio.h"
+#include "rdfUDP.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -84,7 +85,6 @@ void fgcom_setPluginActive(bool active) {
     mumble_error_t merr;
     if (!fgcom_isConnectedToServer()) return; // not connected: do nothing.
     
-    fgcom_inSpecialChannel = active;
     if (active) {
         pluginLog("plugin handling activated: ");
         mumAPI.log(ownPluginID, "plugin handling activated");
@@ -97,12 +97,16 @@ void fgcom_setPluginActive(bool active) {
         }
         
     } else {
-        pluginLog("plugin handling deactivated");
-        mumAPI.log(ownPluginID, "plugin handling deactivated");
+        if (fgcom_inSpecialChannel) {
+            pluginLog("plugin handling deactivated");
+            mumAPI.log(ownPluginID, "plugin handling deactivated");
+        }
         
         // restore old transmission mode
         merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, fgcom_prevTransmissionMode);
     }
+    
+    fgcom_inSpecialChannel = active;
     
 }
 bool fgcom_isPluginActive() {
@@ -146,14 +150,16 @@ void fgcom_handlePTT() {
         // see which radio was used and if its operational.
         bool radio_serviceable, radio_powered, radio_switchedOn, radio_ptt;
         bool radio_ptt_result = false; // if we should open or close the mic, default no
-        for (int iid=0; iid < fgcom_local_client.size(); iid++) {
-            if (fgcom_local_client[iid].radios.size() > 0) {
-                for (int i=0; i<fgcom_local_client[iid].radios.size(); i++) {
-                    radio_ptt = fgcom_local_client[iid].radios[i].ptt;
+        for (const auto &lcl_idty : fgcom_local_client) {
+            int iid          = lcl_idty.first;
+            fgcom_client lcl = lcl_idty.second;
+            if (lcl.radios.size() > 0) {
+                for (int i=0; i<lcl.radios.size(); i++) {
+                    radio_ptt = lcl.radios[i].ptt;
                     
                     if (radio_ptt) {
                         //if (radio_serviceable && radio_switchedOn && radio_powered) {
-                        if ( fgcom_radio_isOperable(fgcom_local_client[iid].radios[i])) {
+                        if ( fgcom_radio_isOperable(lcl.radios[i])) {
                             pluginDbg("  COM"+std::to_string(i+1)+" PTT active and radio is operable -> open mic");
                             radio_ptt_result = true;
                             break; // we only have one output stream, so further search makes no sense
@@ -190,6 +196,7 @@ void fgcom_handlePTT() {
 bool fgcom_offlineInitDone = false;
 bool fgcom_onlineInitDone = false;
 std::thread::id udpServerThread_id;
+mumble_userid_t localMumId;
 mumble_error_t fgcom_initPlugin() {
     if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone)
         mumAPI.log(ownPluginID, ("Plugin v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+" initializing").c_str());
@@ -233,6 +240,7 @@ mumble_error_t fgcom_initPlugin() {
                 return EC_USER_NOT_FOUND; // abort online init - something horribly went wrong.
             } else {
                 // update mumble session id to all known identities
+                localMumId = localUser;
                 fgcom_remotecfg_mtx.lock();
                 for (const auto &idty : fgcom_local_client) {
                     fgcom_local_client[idty.first].mumid = localUser;
@@ -283,7 +291,7 @@ mumble_error_t fgcom_initPlugin() {
             // active plugin and are activating it now.
             pluginDbg("Check if we are already in the special channel and thus need to activate");
             mumble_channelid_t localChannelID;
-            mumble_error_t glcres = mumAPI.getChannelOfUser(ownPluginID, activeConnection, fgcom_local_client[0].mumid, &localChannelID);
+            mumble_error_t glcres = mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID);
             if (glcres == STATUS_OK) {
                 if (fgcom_specialChannelID == localChannelID) {
                     pluginDbg("Already in special channel at init time");
@@ -510,7 +518,7 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 	//stream << " (ServerConnection: " << connection << ")" << std::endl;
 
     
-    if (userID == fgcom_local_client[0].mumid) {
+    if (userID == localMumId) {
         //stream << " OH! thats me! hello myself!";
         if (newChannelID == fgcom_specialChannelID) {
             pluginDbg("joined special channel, activating plugin functions");
@@ -530,8 +538,8 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t channelID) {
 	pLog() << "User with ID " << userID << " has left channel with ID " << channelID << ". (ServerConnection: " << connection << ")" << std::endl;
     
-    //pluginDbg("userid="+std::to_string(userID)+"  mumid="+std::to_string(fgcom_local_client[0].mumid)+"  pluginActive="+std::to_string(fgcom_isPluginActive()));
-    if (userID == fgcom_local_client[0].mumid && fgcom_isPluginActive()) {
+    //pluginDbg("userid="+std::to_string(userID)+"  mumid="+std::to_string(localMumId)+"  pluginActive="+std::to_string(fgcom_isPluginActive()));
+    if (userID == localMumId && fgcom_isPluginActive()) {
         pluginDbg("left special channel, deactivating plugin functions");
         fgcom_setPluginActive(false);
     }
@@ -623,7 +631,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                             int iid          = lcl_idty.first;
                             fgcom_client lcl = lcl_idty.second;
                             bool frequencyIsListenedTo = false;
-                            pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match");
+                            pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match (local iid="+std::to_string(iid)+")");
                             for (int lri=0; lri<lcl.radios.size(); lri++) {
                                 pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
                                 pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
@@ -642,7 +650,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     break; // no point in searching more
                                 
                                 // normal radio operation
-                                } else if (lcl.radios[lri].frequency == rmt.radios[ri].frequency
+                                } else if (fgcom_normalizeFrequency(lcl.radios[lri].frequency) == fgcom_normalizeFrequency(rmt.radios[ri].frequency)
                                     && fgcom_radio_isOperable(lcl.radios[lri])
                                     && !lcl.radios[lri].ptt) {
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
@@ -657,23 +665,21 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                         +"; angle="+std::to_string(signal.verticalAngle)
                                     );
                                 
-                                    // Udpate the radios signal information
-                                    pluginDbg("mumble_onAudioSourceFetched(): update signal data for remote("+std::to_string(rmt.mumid)+")="+rmt.callsign+", radio["+std::to_string(ri)+"]");
-                                    //pluginDbg("mumble_onAudioSourceFetched():    signal.quality: rmt("+std::to_string(rmt.radios[ri].signal.quality)+") new("+std::to_string(signal.quality)+")");
-                                    //pluginDbg("mumble_onAudioSourceFetched():    signal.direction: rmt("+std::to_string(rmt.radios[ri].signal.direction)+") new("+std::to_string(signal.direction)+")");
-                                    //pluginDbg("mumble_onAudioSourceFetched():    signal.verticalAngle: rmt("+std::to_string(rmt.radios[ri].signal.verticalAngle)+") new("+std::to_string(signal.verticalAngle)+")");
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.quality        = signal.quality;
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.direction      = signal.direction;
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.verticalAngle  = signal.verticalAngle;
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.sourceCallsign = rmt.callsign;
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.tgtCallsign    = lcl.callsign;
+                                    
+                                    // RDF: Updpate the radios signal information
+                                    if (lcl.radios[lri].rdfEnabled) {
+                                        pluginDbg("mumble_onAudioSourceFetched(): update signal data for RDF ("+std::to_string(rmt.mumid)+")="+rmt.callsign+", radio["+std::to_string(ri)+"]");
+                                        //std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign+":"+std::to_string(lri);
+                                        std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign;
+                                        struct fgcom_rdfInfo rdfInfo = fgcom_rdfInfo();
+                                        rdfInfo.txIdentity = rmt;
+                                        rdfInfo.txRadio    = rmt.radios[ri];
+                                        rdfInfo.rxIdentity = lcl;
+                                        rdfInfo.rxRadio    = lcl.radios[lri];
+                                        rdfInfo.signal     = signal;
+                                        fgcom_rdf_registerSignal(rdfID, rdfInfo);
+                                    }
 
-                                    // Copy the RDF setting of the local radio to the remote state, so the RDF generator knows
-                                    // wether he should genearte RDF information for the signal.
-                                    // The local RDF setting is updated trough the UDP input interface (plugin-io.cpp).
-                                    // If the local radio is RDF enabled, that will result in all remote radios transmissions
-                                    // to be considered for RDF output (ie. it multiplexes).
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.rdfEnabled = lcl.radios[lri].signal.rdfEnabled;
 
                                     // See if the signal is better than the previous one.
                                     // As we have only one audio source stream per user, we want to apply the best
@@ -689,7 +695,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     }
                                 } else {
                                     pluginDbg("mumble_onAudioSourceFetched():     nomatch");
-                                    fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.quality = -1;
                                 }
                                 
                                 if (bestSignalStrength == 1.0) break; // no point in searching more
@@ -698,7 +703,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                     } else {
                         // the inspected remote radio did not PTT
                         pluginDbg("mumble_onAudioSourceFetched():     remote PTT OFF");
-                        fgcom_remote_clients[userID][rmt_iid].radios[ri].signal.quality = -1;
                     }
                 }
             }

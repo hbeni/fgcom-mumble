@@ -33,6 +33,7 @@
 extern MumbleAPI mumAPI;
 extern mumble_connection_t activeConnection;
 extern plugin_id_t ownPluginID;
+extern mumble_userid_t localMumId;
 
 // Notification types
 //0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping

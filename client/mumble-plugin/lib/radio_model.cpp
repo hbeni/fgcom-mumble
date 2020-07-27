@@ -23,6 +23,7 @@
 
 #include <iostream> 
 #include <cmath>
+#include <regex>
 #include "radio_model.h"
 
 #define EARTH_RADIUS_CONST 3.57  // earth radius factor constant for m/km
@@ -159,4 +160,27 @@ fgcom_radiowave_signal fgcom_radiowave_getSignal(double lat1, double lon1, float
     signal.direction     = fgcom_radiowave_getDirection(lat1, lon1, lat2, lon2);
     signal.verticalAngle = fgcom_radiowave_degreeAboveHorizon(dist, alt2-alt1);
     return signal;
+}
+
+
+/* 
+ * Normalize frequencys for better matching
+ */
+std::string fgcom_normalizeFrequency(std::string frq) {
+    // try to treat this as number and normalize it.
+    // if it fails, just return bare string.
+    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    try {
+        if (std::regex_match(frq, std::regex("^[0-9.]+$") )) {
+            float frq_f = std::stof(frq);
+            char buffer [50];
+            int len = sprintf (buffer, "%.3f", frq_f);
+            std::string ret = std::string(buffer, len);
+            return ret;
+        } else {
+            return frq;
+        }
+    } catch (const std::exception& e) {
+        return frq;
+    }
 }
