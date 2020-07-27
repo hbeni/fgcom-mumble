@@ -786,7 +786,8 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
 }
 
 
-int fgcom_udp_port_used = FGCOM_SERVER_PORT; 
+int fgcom_udp_port_used = FGCOM_SERVER_PORT;
+bool fgcom_udp_shutdowncmd = false;
 void fgcom_spawnUDPServer() {
     pluginLog("[UDP] server starting");
     int  fgcom_UDPServer_sockfd; 
@@ -840,9 +841,10 @@ void fgcom_spawnUDPServer() {
             mumAPI.log(ownPluginID, "UDP server is connected");
         }
         
-        if (strstr(buffer, "SHUTDOWN")) {
+        if (strstr(buffer, "SHUTDOWN") && fgcom_udp_shutdowncmd) {
             // Allow the udp server to be shut down when receiving SHUTDOWN command
             pluginLog("[UDP] shutdown command recieved, server stopping now");
+            fgcom_udp_shutdowncmd = false;
             close(fgcom_UDPServer_sockfd);
             mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
             break;
@@ -886,9 +888,11 @@ void fgcom_spawnUDPServer() {
 }
 
 void fgcom_shutdownUDPServer() {
-    //  Trigger shutdown: this just sends some magic UDP message.
+    // Trigger shutdown: this just sends some magic UDP message.
+    // This is neccessary because of the blocking state of the socket.
     pluginDbg("sending UDP shutdown request to port "+std::to_string(fgcom_udp_port_used));
     std::string message = "SHUTDOWN";
+    fgcom_udp_shutdowncmd = true;
 
 	struct sockaddr_in server_address;
 	memset(&server_address, 0, sizeof(server_address));
