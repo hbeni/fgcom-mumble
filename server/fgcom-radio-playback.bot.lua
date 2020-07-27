@@ -326,7 +326,7 @@ notifyLocation = function(tgts)
     local height    = lastHeader.height    if hgt ~= "" then height    = hgt end
     local msg = "LON="..longitude
               ..",LAT="..latitude
-              ..",ALT="..height+5
+              ..",ALT="..height
     fgcom.dbg("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC:0", msg, tgts)
 end
