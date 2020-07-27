@@ -34,7 +34,6 @@
 // Currently the configuration cannot be done trough mumble, but that is planned.
 // Changing runtime configuration can be done trough the inbound RDP interface for now.
 struct fgcom_config {
-    int rdfPort;  // defines RDF output port
     bool radioAudioEffects;
     
     fgcom_config()  {
@@ -54,7 +53,7 @@ struct fgcom_radio {
 	float volume;        // volume, 0.0->1.0
 	float pwr;           // tx power in watts
 	float squelch;       // squelch setting (cutoff signal below this quality)
-	struct fgcom_radiowave_signal signal; 
+	bool  rdfEnabled;    // if radio can receive RDF information
 	
 	fgcom_radio()  {
         frequency   = "";
@@ -65,12 +64,14 @@ struct fgcom_radio {
         volume      = 1.0;
         pwr         = 10;
         squelch     = 0.1;
+        rdfEnabled  = false;
     };
 };
 
 // This represents a clients metadata
 struct fgcom_client {
-	unsigned int mumid;  // mumble client ID
+	mumble_userid_t mumid;  // mumble client ID
+	uint16_t clientPort;  // client port of the identity, we may send packets to this port
 	std::chrono::system_clock::time_point lastUpdate;
     float lon;
 	float lat;

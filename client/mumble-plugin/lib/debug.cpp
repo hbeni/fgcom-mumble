@@ -28,6 +28,7 @@ void debug_out_internal_state() {
             int iid          = idty.first;
             fgcom_client lcl = idty.second;
             printf("[mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.lat, lcl.lon, lcl.alt);
+            printf("[mumid=%i; iid=%i] %s: clientPort=%i\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.clientPort);
             printf("[mumid=%i; iid=%i] %s: %i radios registered\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.radios.size());
             if (lcl.radios.size() > 0) {
                 for (int i=0; i<lcl.radios.size(); i++) {
@@ -40,7 +41,7 @@ void debug_out_internal_state() {
                     printf("  Radio %i:      volume=%f\n", i, lcl.radios[i].volume);
                     printf("  Radio %i:         pwr=%f\n", i, lcl.radios[i].pwr);
                     printf("  Radio %i:     squelch=%f\n", i, lcl.radios[i].squelch);
-                    printf("  Radio %i: RDF_enabled=%i\n", i, lcl.radios[i].signal.rdfEnabled);
+                    printf("  Radio %i: RDF_enabled=%i\n", i, lcl.radios[i].rdfEnabled);
                 }
             }
         }
@@ -53,6 +54,7 @@ void debug_out_internal_state() {
                 fgcom_client rmt = idty.second;
                 printf("[id=%i; mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.lat, rmt.lon, rmt.alt);
                 printf("[id=%i; mumid=%i; iid=%i] %s: %i radios registered\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.radios.size());
+                printf("[mumid=%i; iid=%i] %s: clientPort=%i\n", rmt.mumid, iid, rmt.callsign.c_str(), rmt.clientPort);
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
                         printf("  Radio %i:   frequency='%s'\n", i, rmt.radios[i].frequency.c_str());
@@ -64,7 +66,7 @@ void debug_out_internal_state() {
                         printf("  Radio %i:      volume=%f\n", i, rmt.radios[i].volume);
                         printf("  Radio %i:         pwr=%f\n", i, rmt.radios[i].pwr);
                         printf("  Radio %i:     squelch=%f\n", i, rmt.radios[i].squelch);
-                        printf("  Radio %i: RDF_enabled=%i\n", i, rmt.radios[i].signal.rdfEnabled);
+                        printf("  Radio %i: RDF_enabled=%i\n", i, rmt.radios[i].rdfEnabled);
                     }
                 }
             }

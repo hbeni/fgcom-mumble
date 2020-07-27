@@ -305,6 +305,7 @@ fgcom = {
                             if packtype == "UPD_COM" then
                                 -- the dataID says, which radio to update (starting at zero)
                                 radioID = dataID_t[4]
+                                fgcom.dbg("  radioID='"..radioID.."'")
                                 if not fgcom_clients[sid][iid].radios[radioID] then
                                     -- if radio unknown yet, add template
                                     fgcom_clients[sid][iid].radios[radioID] = {
@@ -339,7 +340,7 @@ fgcom = {
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
                             end
                         else
-                            fgcom.dbg("sid="..uid.."; idty="..iid.."\t"..k..":\t"..v)
+                            fgcom.dbg("sid="..uid.."; idty="..iid.."\t"..k..":\t"..tostring(v))
                         end
                     end
                 end

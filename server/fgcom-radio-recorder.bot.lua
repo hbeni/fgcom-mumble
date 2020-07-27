@@ -154,7 +154,7 @@ local isClientTalkingToUs = function(user)
                 end
                 
                 -- FGCom ECHOTEST Frequency recording request
-                if radio.frequency:find("^910.0+$") and radio.ptt then
+                if (radio.frequency:find("^910$") or radio.frequency:find("^910.0+$")) and radio.ptt then
                     -- remote is on echotest-frequency AND his ptt is active
                     remote.record_mode = "ECHOTEST"
                     remote.record_tgt_frq = "910.00"

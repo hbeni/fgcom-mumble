@@ -34,8 +34,16 @@ Notification of other clients take place on special events (like joining the cha
 
 Internal state
 --------------
-Internal state is bound to an "identity". Each plugin instance can handle multiple identities. The plugin tracks the following state:
+Internal state is bound to an "identity". Each plugin instance can handle multiple identities. The identity IID is to be considered local and derived from the client port of the received UDP messages (so the first received port creates the default identity, and other ports respective additional identities).  
+Usually the plugin has only one identity (especially with flightsims), however some ATC-clients may register additional ones to service more than one location per session.
 
+The plugin tracks the following state per identity:
+
+- Callsign
+- Location:
+  - latitutde
+  - longitude
+  - altitude
 - Per radio:
   - tuned frequency
   - power knob on/off
@@ -44,11 +52,6 @@ Internal state is bound to an "identity". Each plugin instance can handle multip
   - volume
   - ptt state of the radio
   - output watts of the radio
-- Location:
-  - latitutde
-  - longitude
-  - altitude
-- Callsign
 
 
 Plugin input data
@@ -66,7 +69,6 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 
 | Field          | Format | Description                             | Default    |
 |----------------|--------|-----------------------------------------|------------|
-| `IID`          | Int    | Switch context of following fields to ID of the identity. `IID` starts at `0` (which is the default identity).    | `0` |
 | `LAT`          | Float  | Latitudinal position (decimal: 12.34567)| *mandatory*|
 | `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
 | `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
@@ -97,14 +99,15 @@ The Following fields are configuration options that change plugin behaviour.
 
 | Field            | Format | Description                             | Default    |
 |------------------|--------|-----------------------------------------|------------|
-| `RDF_PORT`       | Int    | Activate RDF output to the given UDP Port. Use `0` or `off` to switch off again. Enabled Radios will produce RDF data when receiving signals. | `off` |
+| `IID`          | Int    | Switch context of following fields to ID of the identity `IID`. IDD is starting from `0`.  | derived from UDP client port |
+| `RDF_PORT`       | Int    | Switch the identities RDF UDP target Port. | send to UDP client port of the identity |
 | `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (when RDF was activated; details below: "*UDP client interface / RDF data*")   | `0`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
 
 
 ### Testing UDP input
-Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661`
-sets the callsign and frequency for COM1 for the default identity.
+Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661 -p 50001`
+sets the callsign and frequency for COM1 for the default identity (make sure the `-p` source port stays the same for each identity).
 
 
 Plugin output data
@@ -139,7 +142,7 @@ Each packets *payload* consists of a comma-separated string sequence of `KEY=VAL
 
 
 ### UDP client interface
-The plugin can send information via an UDP interface to third party software at max 10Hz to localhost UDP port **19991**.
+The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is localhost, on the respective identities client port (can be overridden by `RDF_PORT`). The client port is derived from the UDP input servers packet for the identity.
 
 The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Values are separated using comma, each packet is terminated by newline.  
 If there is not data to send, nothing will be transmitted over the wire.  
