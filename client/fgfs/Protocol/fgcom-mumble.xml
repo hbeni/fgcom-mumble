@@ -41,6 +41,13 @@
    <!--  #    RADIOS   #  -->
    <!--  ###############  -->
 
+   <!-- Use just IID=0 single identity-->
+   <chunk>
+    <name>IID</name>
+    <type>string</type>
+    <format>IID=0</format>
+   </chunk>
+   
    <!-- COM 1 -->
    <chunk>
     <name>com1-frequency</name>
