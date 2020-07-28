@@ -124,6 +124,10 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             notifyRemotes(idty.first, what, selector, tgtUser);
         }
         return;
+    } else {
+        // skip notification attempts if we don't have an state yet
+        pluginDbg("notifyRemotes(): no local state yet, skipping notifications.");
+        if (fgcom_local_client.size() == 0 ) return;
     }
 
     // resolve selected identity
