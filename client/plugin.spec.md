@@ -18,24 +18,11 @@ When leaving that special channel, the plugin enters some 'noop' state so it wil
 Your local microphone will get switched to push-to-talk mode when entering the special channel (as well as restored when leaving it). When activating your flightsims PTT button on a radio, it will get switched on if that radio is operable.
 
 
-State Updates
----------------
-Communication between plugins is handled by mumbles internal plugin data interface.
-
-When entering the fgcom-channel, your client will start to broadcast its state (and following changes) to remote clients.
-
-Each time a new client joins the fgcom channel, local plugins will broadcast their state to that client to get it updated with current data.
-
-Notification of other clients take place on special events (like joining the channel or activating the plugin) and potentially when new data is recieved trough the UDP input interface:
-
- - Radio state updates and userstate are sent immediately ("urgent" notification).
- - Locationdata is sent at most at a rate of 1 Hz ("non-urgent"). If said data did not change for a period of time (10 seconds), a "ping" notification will be sent to others, notifying that the own plugin is still connected and alive.
-
-
 Internal state
 --------------
 Internal state is bound to an "identity". Each plugin instance can handle multiple identities. The identity IID is to be considered local and derived from the client port of the received UDP messages (so the first received port creates the default identity, and other ports respective additional identities).  
-Usually the plugin has only one identity (especially with flightsims), however some ATC-clients may register additional ones to service more than one location per session.
+Usually the plugin has only one identity (especially with flightsims), however some ATC-clients may register additional ones to service more than one location per session.  
+The plugis internal state is cleaned from outdated data regularly.
 
 The plugin tracks the following state per identity:
 
@@ -54,6 +41,20 @@ The plugin tracks the following state per identity:
   - output watts of the radio
 
 
+Internal State Updates
+----------------------
+Communication between plugins is handled by mumbles internal plugin data interface.
+
+When entering the fgcom-channel, your client will start to broadcast its state (and following changes) to remote clients.
+
+Each time a new client joins the fgcom channel, local plugins will broadcast their state to that client to get it updated with current data.
+
+Notification of other clients take place on special events (like joining the channel or activating the plugin) and potentially when new data is recieved trough the UDP input interface:
+
+ - Radio state updates and userstate are sent immediately ("urgent" notification).
+ - Locationdata is sent at most at a rate of 1 Hz ("non-urgent"). If said data did not change for a period of time (10 seconds), a "ping" notification will be sent to others, notifying that the own plugin is still connected and alive.
+
+
 Plugin input data
 -----------------
 To get the needed data the plugin offers a simple network socket listening for updates on UDP Port **16661** (original FGCom port, it's compatible).  
@@ -62,6 +63,8 @@ This can easily be linked to an FGFS generic protocol or to an external applicat
 Each packet contains ASCII-data in a single string with several `Field=Value` variables set. Fields are separated using comma. Records are separated using newline. The plugin will parse the incoming string field by field. Empty values ("`Field=,`") are to be ignored; in case the field was not initialized previously, sane defaults should be assumed. Fields are parsed from left to right; following repetitions of fields will overwrite earlier occurrences unless the latter value is emtpy. Field ordering is important only in this regard, but otherwise not significant.
 
 *For example*, if just a new frequency is submitted, it will just update that frequency. If the radio was not registered previously, a new instance will be created that defaults to "operational", until updates say otherwise (this is to support easy integration of ATC clients that do not want to simulate radio failures for example).
+
+The plugis internal state is cleaned from outdated data regularly. Any succesfull field parsing will update the `lastUpdate` timestamp for the affected identity, so UDP clients are expected to send data regularly (eg. every few seconds; for example the callsign).
 
 
 ### Core data
@@ -147,7 +150,7 @@ Each packets *payload* consists of a comma-separated string sequence of `KEY=VAL
   - `VOL` (not transmitted currently)
   - `PWR`
 - `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us (payload is insignificant)
-- `FGCOM:PING` keys a ping package and lets others know we are still alive but don't had any updates for some time (payload is currently insignificant).
+- `FGCOM:PING keys a ping package and lets others know the identities are still alive but don't had any updates for some time (payload is INT list of alive IIDs).
 
 
 ### UDP client interface
