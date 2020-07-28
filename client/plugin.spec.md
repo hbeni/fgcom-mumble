@@ -164,14 +164,13 @@ Each RDF enabled radio can receive multiple signals. It is up to the client to s
 
 Each active signal per radio is reported on a separate output line (separated by `\n`). The signal source is reported by starting the RDF message string with `RDF:`, followed by the RDF data fields:
 
-| Field                 | Format | Description                             |
-|-----------------------|--------|-----------------------------------------|
-| `CS_SRC`   | String | Callsign of the sender                             |
-| `CS_TGT`   | String | Callsign of the receiver                           |
-| `FRQ`      | String | Frquency of the signal                             |
+| Field      | Format | Description                                      |
+|------------|--------|--------------------------------------------------|
+| `CS_TX`    | String | Callsign of the sender                           |
+| `FRQ`      | String | Frquency of the signal                           |
 | `DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WSG84 north)|
 | `VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
-| `QLY`      | Float  | Signal quality (`0.00` to `1.0`)                   |
+| `QLY`      | Float  | Signal quality (`0.00` to `1.0`)                 |
 
 The `DIR` and `VRT` angles are in decimal degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF_1-0-1:DIR=180.5,VRT=12.5`: The Airplane transmitting is thus directly south and above of you.  
 The values are true bearings relative to your position, and `DIR=0.0` is due north relative to the WSG84 grid.

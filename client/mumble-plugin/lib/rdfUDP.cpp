@@ -93,8 +93,8 @@ std::string fgcom_rdf_generateMsg(uint16_t selectedPort) {
         fgcom_rdfInfo rdfInfo = rdf.second;
         if (rdfInfo.signal.quality > 0.0 && rdfInfo.rxIdentity.clientPort == selectedPort) {
             clientMsg += "RDF:";
-            clientMsg += "CS_SRC="+rdfInfo.txIdentity.callsign;
-            clientMsg += ",CS_TGT="+rdfInfo.rxIdentity.callsign;
+            clientMsg += "CS_TX="+rdfInfo.txIdentity.callsign;
+            //clientMsg += ",CS_RX="+rdfInfo.rxIdentity.callsign;
             clientMsg += ",FRQ="+rdfInfo.txRadio.frequency;
             clientMsg += ",DIR="+std::to_string(rdfInfo.signal.direction);
             clientMsg += ",VRT="+std::to_string(rdfInfo.signal.verticalAngle);
