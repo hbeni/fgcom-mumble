@@ -29,6 +29,12 @@ void debug_out_internal_state() {
             fgcom_client lcl = idty.second;
             printf("[mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.lat, lcl.lon, lcl.alt);
             printf("[mumid=%i; iid=%i] %s: clientPort=%i\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.clientPort);
+            
+            std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(lcl.lastUpdate);
+            std::string lastUpdate_str(30, '\0');
+            std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%T", std::localtime(&lastUpdate_t));
+            printf("[mumid=%i; iid=%i] %s: lastUpdate=%s\n", lcl.mumid, iid, lcl.callsign.c_str(), lastUpdate_str.c_str());
+            
             printf("[mumid=%i; iid=%i] %s: %i radios registered\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.radios.size());
             if (lcl.radios.size() > 0) {
                 for (int i=0; i<lcl.radios.size(); i++) {
@@ -55,6 +61,12 @@ void debug_out_internal_state() {
                 printf("[id=%i; mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.lat, rmt.lon, rmt.alt);
                 printf("[id=%i; mumid=%i; iid=%i] %s: %i radios registered\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.radios.size());
                 printf("[mumid=%i; iid=%i] %s: clientPort=%i\n", rmt.mumid, iid, rmt.callsign.c_str(), rmt.clientPort);
+                
+                std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(rmt.lastUpdate);
+                std::string lastUpdate_str(30, '\0');
+                std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%T", std::localtime(&lastUpdate_t));
+                printf("[mumid=%i; iid=%i] %s: lastUpdate=%s\n", rmt.mumid, iid, rmt.callsign.c_str(), lastUpdate_str.c_str());
+            
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
                         printf("  Radio %i:   frequency='%s'\n", i, rmt.radios[i].frequency.c_str());

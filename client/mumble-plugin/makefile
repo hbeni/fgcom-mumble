@@ -25,10 +25,10 @@ all-debug:
 
 # make the plugin
 plugin: libs
-	$(CC) -shared -fPIC -o fgcom-mumble.so lib/plugin_io.o lib/radio_model.o lib/audio.o lib/rdfUDP.o fgcom-mumble.cpp $(CFLAGS)
+	$(CC) -shared -fPIC -o fgcom-mumble.so lib/plugin_io.o lib/radio_model.o lib/audio.o lib/rdfUDP.o lib/garbage_collector.o fgcom-mumble.cpp $(CFLAGS)
 
 # make all the libs
-libs:  lib/radio_model.o lib/plugin_io.o lib/audio.o lib/rdfUDP.o
+libs:  lib/radio_model.o lib/plugin_io.o lib/audio.o lib/rdfUDP.o lib/garbage_collector.o
 
 %.o : %.cpp
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS)
@@ -59,7 +59,7 @@ test-win64:
 
 # build win64 plugin-dll
 plugin-win64: libs
-	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/plugin_io.cpp lib/radio_model.cpp lib/audio.cpp lib/rdfUDP.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -Wl,-Bstatic -lpthread -lws2_32 $(CFLAGS)
+	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/plugin_io.cpp lib/radio_model.cpp lib/audio.cpp lib/rdfUDP.cpp lib/garbage_collector.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -Wl,-Bstatic -lpthread -lws2_32 $(CFLAGS)
 
 
 

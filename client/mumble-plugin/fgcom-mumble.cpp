@@ -31,6 +31,7 @@
 #include "radio_model.h"
 #include "audio.h"
 #include "rdfUDP.h"
+#include "garbage_collector.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -196,6 +197,7 @@ void fgcom_handlePTT() {
 bool fgcom_offlineInitDone = false;
 bool fgcom_onlineInitDone = false;
 std::thread::id udpServerThread_id;
+std::thread::id gcThread_id;
 mumble_userid_t localMumId;
 mumble_error_t fgcom_initPlugin() {
     if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone)
@@ -219,8 +221,14 @@ mumble_error_t fgcom_initPlugin() {
         std::thread udpServerThread(fgcom_spawnUDPServer);
         udpServerThread_id = udpServerThread.get_id();
         udpServerThread.detach();
-        //std::cout << "FGCOM: udp server started; id=" << udpServerThread_id << std::endl;
         pluginDbg("udp server started");
+        
+        // start the local GC thread
+        pluginDbg("starting garbage collector");
+        std::thread gcThread(fgcom_spawnGarbageCollector);
+        gcThread_id = gcThread.get_id();
+        gcThread.detach();
+        pluginDbg("garbage collector started");
         
         fgcom_offlineInitDone = true;
     }

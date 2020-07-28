@@ -200,7 +200,11 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
         case NTFY_PNG:
             // Ping-Packet: notify that we are still alive, but data did not change
             dataID  = "FGCOM:PING";
-            message = "1";
+            message = "";
+            for (const auto &idty : fgcom_local_client) {
+                if (message.length() > 0) message += ",";
+                message += std::to_string(idty.first);
+            }
             break;
             
         default: 
@@ -282,7 +286,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         std::regex parse_key_value ("^(\\w+)=(.+)"); // prepare a regex for simpler parsing
         
         // Get identity id
-        int iid = 0;
+        int iid = -1;
         std::regex get_iid_re ("^FGCOM:\\w+:(\\d+)");
         std::smatch smc_iid;
         if (std::regex_search(dataID, smc_iid, get_iid_re)) {
@@ -314,9 +318,21 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         
         
         } else if (dataID == "FGCOM:PING") {
-            pluginDbg("FGCom: [mum_pluginIO] ping received.");
-            // don't have any use yet. Ignore for now, later we may use this to cleanup remote knowledge.
-            // Main usage is to notify we are there with as less data as possible.
+            // ping packet contains list of IIDs which are alive.
+            pluginDbg("FGCom: [mum_pluginIO] ping received, idtys="+data);
+            std::stringstream streambuffer(data);
+            std::string segment;
+            while(std::getline(streambuffer, segment, ',')) {
+                try {
+                    int rmt_iid = stoi(segment);
+                    if (fgcom_remote_clients[clientID].count(rmt_iid) > 0) {
+                        fgcom_remote_clients[clientID][rmt_iid].lastUpdate = std::chrono::system_clock::now();
+                    }
+                
+                } catch (const std::exception& e) {
+                    pluginDbg("[mum_pluginIO] Parsing ping packet throw exception, ignoring token "+segment);
+                }
+            }
             
         
         // Userdata and Location data update are treated the same
