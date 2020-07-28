@@ -99,8 +99,6 @@ The Following fields are configuration options that change plugin behaviour.
 
 | Field            | Format | Description                             | Default    |
 |------------------|--------|-----------------------------------------|------------|
-| `IID`          | Int    | Switch context of following fields to ID of the identity `IID`. IDD is starting from `0`.  | derived from UDP client port |
-| `RDF_PORT`       | Int    | Switch the identities RDF UDP target Port. | send to UDP client port of the identity |
 | `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (when RDF was activated; details below: "*UDP client interface / RDF data*")   | `0`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
 
@@ -108,6 +106,17 @@ The Following fields are configuration options that change plugin behaviour.
 ### Testing UDP input
 Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661 -p 50001`
 sets the callsign and frequency for COM1 for the default identity (make sure the `-p` source port stays the same for each identity).
+
+
+### Special usecases
+#### Force Identities
+Each UDP client is considered as one "identity" for the plugin and thus has its own state. In case your client application switches UDP ports randomly, you can manually select an identity to which to apply the UDP fields to.  
+Normally this is not needed, as UDP clients are supposed to keep the port stable and receive data at their source port.
+
+| Field            | Format | Description                             | Default    |
+|------------------|--------|-----------------------------------------|------------|
+| `IID`          | Int    | Switch context of following UDP fields to ID of the identity `IID`. IDD is starting from `0`.  | derived from UDP client port |
+| `RDF_PORT`       | Int    | Switch the identities RDF UDP target Port. | send to UDP client port of the identity |
 
 
 Plugin output data
