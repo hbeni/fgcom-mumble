@@ -70,7 +70,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.1",
+    libversion = "1.2",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -280,9 +280,13 @@ fgcom = {
                             lat="",
                             lon="",
                             alt="",
-                            radios={}
+                            radios={},
+                            lastUpdate=0
                         }
                     end
+          
+                    -- record that we had an data update
+                    fgcom_clients[sid][iid].lastUpdate = os.time()
             
                     -- OK, go ahead and try to parse;
                     -- we are interested in the callsign and the location.
@@ -324,7 +328,17 @@ fgcom = {
                         end
                     end
           
-                elseif packtype == "PING" or packtype == "ICANHAZDATAPLZ" then
+                elseif packtype == "PING" then
+                    -- update the contained identites lastUpdate timestamps
+                    local sid       = sender:getSession()  -- mumble session id
+                    for _,iid in ipairs(fgcom.data.csplit(data, ",")) do
+                        fgcom.dbg("ping packet for sid="..sid.."; iid="..iid)
+                        if fgcom_clients[sid][iid] then 
+                            fgcom_clients[sid][iid].lastUpdate = os.time()
+                        end
+                    end
+          
+                elseif packtype == "ICANHAZDATAPLZ" then
                     -- ignore for now
                 end
             end
@@ -346,6 +360,21 @@ fgcom = {
                 end
             end
             fgcom.dbg("-----------")
+        end,
+          
+        -- Clean up fgcom_clients array from stale entries
+        -- fgcom.data.cleanupTimeout variable holds the timeout in seconds
+        cleanupTimeout = 30,  -- timeout in seconds
+        cleanupPluginData = function()
+            for uid,remote_client in pairs(fgcom_clients) do
+                for iid,idty in pairs(remote_client) do
+                    local stale_since = os.time() - idty.lastUpdate
+                    if stale_since > fgcom.data.cleanupTimeout then
+                        fgcom.dbg("cleanup remote data: sid="..uid.."; idty="..iid.."  stale_since="..stale_since)
+                        fgcom_clients[uid][iid] = nil;
+                    end
+                end
+            end
         end
     }
 }

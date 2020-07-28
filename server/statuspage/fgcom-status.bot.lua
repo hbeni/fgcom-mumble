@@ -36,7 +36,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.1"
+fgcom.botversion = "1.2"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -109,9 +109,7 @@ local generateOutData = function()
                 -- push out old data for a while
                 userData.updated = fgcom_clients[sid][iid].lastUpdate
                 userData.type    = fgcom_clients[sid][iid].type
-                -- TODO: remove dataset from fgcom_clients after some timeout
             else 
-                fgcom_clients[sid][iid].lastUpdate = os.time()
                 fgcom_clients[sid][iid].type = "client"
                 if mumbleUser:getName():find("FGCOM%-.*") then fgcom_clients[sid][iid].type = "playback-bot" end
                 if mumbleUser:getName():find("FGCOM%-BOTPILOT.*") then fgcom_clients[sid][iid].type = "client" end
@@ -187,6 +185,10 @@ dbUpdateTimer_func = function(t)
             -- TODO: handle errors
             fgcom.dbg("published db '"..db.."'")
         end
+        
+        -- clean up stale entries
+        fgcom.data.cleanupTimeout = 60  -- enhance timeout, so we can display them longer
+        fgcom.data.cleanupPluginData()
         
     else
         fgcom.log("ERROR: unable to open db: "..tmpdb)

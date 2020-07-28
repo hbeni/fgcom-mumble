@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.1"
+fgcom.botversion  = "1.2"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -257,6 +257,8 @@ client:hook("OnPluginData", function(event)
 
     fgcom.data.parsePluginData(event.id, event.data, event.sender)
 
+    -- clean up stale entries
+    fgcom.data.cleanupPluginData()
 
 end)
 
