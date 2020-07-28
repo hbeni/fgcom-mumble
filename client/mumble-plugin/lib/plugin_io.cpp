@@ -586,7 +586,11 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     if (fgcom_udp_portMap.count(clientPort) == 0) {
                         // register new client port to portmap.
                         // (IIDs are counted upwards from zero, so we save bandwith when transmitting packets)
-                        fgcom_udp_portMap[clientPort] = fgcom_udp_portMap.size();
+                        int freeIID = 0;
+                        for (const auto &fc : fgcom_udp_portMap) {
+                            if (fc.second >= freeIID) freeIID = fc.second + 1;
+                        }
+                        fgcom_udp_portMap[clientPort] = freeIID;
                     }
                     iid = fgcom_udp_portMap[clientPort];
                     pluginDbg("[UDP] identity portmap result: port("+std::to_string(clientPort)+") => iid("+std::to_string(iid)+")");
