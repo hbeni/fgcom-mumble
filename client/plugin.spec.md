@@ -62,11 +62,13 @@ Each packet contains ASCII-data in a single string with several `Field=Value` va
 
 
 ### Core data
+All participating clients must share a common definition of "frequency", and this should be the "tuned" frequency and not the actual resulting MHz wave frequency (esp. with 8.3 channels spacing).
+
 Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denotes a number starting from `1`):
 
 | Field          | Format | Description                             | Default    |
 |----------------|--------|-----------------------------------------|------------|
-| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string!) The string provided will be stripped from leading space and zeroes, and trailing spaces and zeroes after a decimal point. A value of `<del>` can be used to deregister a radio.  | *mandatory*|
+| `COM`*n*`_FRQ` | String | Selected tuned frequency (arbitary string!) The string provided will be stripped from leading space and zeroes, and trailing spaces and zeroes after a decimal point. A value of `<del>` can be used to deregister a radio.  | *mandatory*|
 | `COM`*n*`_VLT` | Numeric| Electrical power; >0 means "has power"  | `12`       |
 | `COM`*n*`_PBT` | Bool   | Power button state: 0=off, 1=on         | `1`        |
 | `COM`*n*`_SRV` | Bool   | Serviceable: 0=failed, 1=operable       | `1`        |
