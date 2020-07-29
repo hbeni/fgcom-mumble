@@ -57,8 +57,9 @@ You are ready for radio usage! Some client needs to supply information to the pl
 ### Generic compatibility
 The plugin aims to be compatible to the legacy fgcom-standalone protocol, so vey much all halfway recent fgfs instances, ATC clients and aircraft should handle it out of the box at least with COM1.
 
-Note that frequencies can be arbitary strings.  
-But callsigns and Frequencies are not allowed to contain the comma symbol (`,`). Decimal point symbol has always to be a point (`.`).
+Note that frequencies can be arbitary strings. That said, all participating clients must share a common definition of "frequency", and this should be the "tuned" frequency and not the actual resulting MHz wave frequency (esp. with 8.3 channels spacing).  
+Also note that callsigns and frequencies are not allowed to contain the comma symbol (`,`). Decimal point symbol has always to be a point (`.`).
+
 
 ### Flightgear specific
 - copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
