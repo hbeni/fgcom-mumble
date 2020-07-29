@@ -60,7 +60,7 @@ Plugin input data
 To get the needed data the plugin offers a simple network socket listening for updates on UDP Port **16661** (original FGCom port, it's compatible).  
 This can easily be linked to an FGFS generic protocol or to an external application (like ATC-Pie or OpenRadar) to push updates to the plugin. If that port cannot be bound for some reason, the plugin will try 10 consecutive following ports before failing. The actually used port is reported in the mumble client.
 
-Each packet contains ASCII-data in a single string with several `Field=Value` variables set. Fields are separated using comma. Records are separated using newline. The plugin will parse the incoming string field by field. Empty values ("`Field=,`") are to be ignored; in case the field was not initialized previously, sane defaults should be assumed. Fields are parsed from left to right; following repetitions of fields will overwrite earlier occurrences unless the latter value is emtpy. Field ordering is important only in this regard, but otherwise not significant. Floats are always expected with a point as decimal-point character.
+Each packet contains ASCII-data in a single string with several `Field=Value` variables set. Fields are separated using comma. Records are separated using newline. The plugin will parse the incoming string field by field. Empty values ("`Field=,`") are to be ignored; in case the field was not initialized previously, sane defaults should be assumed. Fields are parsed from left to right; following repetitions of fields will overwrite earlier occurrences unless the latter value is emtpy. Field ordering is important only in this regard, but otherwise not significant. Floats are always expected with a point as decimal-point character. The field separator (`,`) is not allowed as field value.
 
 *For example*, if just a new frequency is submitted, it will just update that frequency. If the radio was not registered previously, a new instance will be created that defaults to "operational", until updates say otherwise (this is to support easy integration of ATC clients that do not want to simulate radio failures for example).
 
@@ -76,7 +76,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
 | `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
-| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string!) The string provided will be stripped from leading space and zeroes, and trailing spaces and zeroes after a decimal point. A value of `<del>` can be used to deregister a radio.  | *mandatory*|
+| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string!) The string provided will be normalized to a float, if it's numeric. A value of `<del>` can be used to deregister a radio.  | *mandatory*|
 | `COM`*n*`_VLT` | Numeric| Electrical power; >0 means "has power"  | `12`       |
 | `COM`*n*`_PBT` | Bool   | Power button state: 0=off, 1=on         | `1`        |
 | `COM`*n*`_SRV` | Bool   | Serviceable: 0=failed, 1=operable       | `1`        |
