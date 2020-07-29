@@ -167,12 +167,14 @@ While the plugin receives a signal trough a RDF-enabled radio (`COM`*n*`_RDF=1`,
 Absence of RDF data means that there is currently no such transmission.  
 Each RDF enabled radio can receive multiple signals. It is up to the client to sort this out (eg. only consider the strongest signal for a given radio).
 
-Each active signal per radio is reported on a separate output line (separated by `\n`). The signal source is reported by starting the RDF message string with `RDF:`, followed by the RDF data fields:
+Each active signal per radio is reported on a separate output line (separated by `\n`).  
+The signal source is reported by starting the RDF message string with `RDF:`, followed by the RDF data fields.  
+The reported frequency is the one tuned on the radio (and not effective wave frequency).
 
 | Field      | Format | Description                                      |
 |------------|--------|--------------------------------------------------|
 | `CS_TX`    | String | Callsign of the sender                           |
-| `FRQ`      | String | Frquency of the signal                           |
+| `FRQ`      | String | Tuned frequency of the signal                           |
 | `DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WSG84 north)|
 | `VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
 | `QLY`      | Float  | Signal quality (`0.00` to `1.0`)                 |
