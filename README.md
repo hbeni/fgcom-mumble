@@ -63,7 +63,7 @@ Also note that callsigns and frequencies are not allowed to contain the comma sy
 
 ### Flightgear specific
 - copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
-- start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,2,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
+- start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
 - start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
 
 ### OpenRadar specific
