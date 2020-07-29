@@ -60,7 +60,7 @@ Plugin input data
 To get the needed data the plugin offers a simple network socket listening for updates on UDP Port **16661** (original FGCom port, it's compatible).  
 This can easily be linked to an FGFS generic protocol or to an external application (like ATC-Pie or OpenRadar) to push updates to the plugin. If that port cannot be bound for some reason, the plugin will try 10 consecutive following ports before failing. The actually used port is reported in the mumble client.
 
-Each packet contains ASCII-data in a single string with several `Field=Value` variables set. Fields are separated using comma. Records are separated using newline. The plugin will parse the incoming string field by field. Empty values ("`Field=,`") are to be ignored; in case the field was not initialized previously, sane defaults should be assumed. Fields are parsed from left to right; following repetitions of fields will overwrite earlier occurrences unless the latter value is emtpy. Field ordering is important only in this regard, but otherwise not significant.
+Each packet contains ASCII-data in a single string with several `Field=Value` variables set. Fields are separated using comma. Records are separated using newline. The plugin will parse the incoming string field by field. Empty values ("`Field=,`") are to be ignored; in case the field was not initialized previously, sane defaults should be assumed. Fields are parsed from left to right; following repetitions of fields will overwrite earlier occurrences unless the latter value is emtpy. Field ordering is important only in this regard, but otherwise not significant. Floats are always expected with a point as decimal-point character.
 
 *For example*, if just a new frequency is submitted, it will just update that frequency. If the radio was not registered previously, a new instance will be created that defaults to "operational", until updates say otherwise (this is to support easy integration of ATC clients that do not want to simulate radio failures for example).
 
@@ -134,7 +134,9 @@ The second field denote the fgcom packet type.
 For PacketTypes encoding identity information, the next field contains the identity *iid* (`0` denotes the default identity).  
 After that, some PacketTypes can contain further parameters.
 
-Each packets *payload* consists of a comma-separated string sequence of `KEY=VALUE` pairs (empty values are to be ignored too):
+Each packets *payload* consists of a comma-separated string sequence of `KEY=VALUE` pairs (empty values are to be ignored too). Floats are always expected with a point as decimal-point character.
+
+The following internal plugin data packets are defined:
 
 - `FGCOM:UPD_USR:`*iid* keys a userdata data update package:
   - `CALLSIGN`
@@ -150,13 +152,13 @@ Each packets *payload* consists of a comma-separated string sequence of `KEY=VAL
   - `VOL` (not transmitted currently)
   - `PWR`
 - `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us (payload is insignificant)
-- `FGCOM:PING keys a ping package and lets others know the identities are still alive but don't had any updates for some time (payload is INT list of alive IIDs).
+- `FGCOM:PING` keys a ping package and lets others know which local identities are still alive but don't had any updates for some time (payload is INT list of alive IIDs).
 
 
 ### UDP client interface
 The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is localhost, on the respective identities client port (can be overridden by `RDF_PORT`). The client port is derived from the UDP input servers packet for the identity.
 
-The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Values are separated using comma, each packet is terminated by newline.  
+The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Values are separated using comma, each packet is terminated by newline. Floats are always output with a point as decimal-point character.  
 If there is not data to send, nothing will be transmitted over the wire.  
 Unknown fields or empty ones (eg. `Field=`) are to be ignored when parsing.
 
