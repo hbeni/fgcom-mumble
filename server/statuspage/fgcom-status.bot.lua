@@ -36,7 +36,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.0"
+fgcom.botversion = "1.2"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -99,39 +99,39 @@ local generateOutData = function()
     local data     = {}  -- final return array
     
     fgcom.dbg("generateOutData(): number of known users: "..#fgcom_clients)
-    for sid, user in pairs(fgcom_clients) do
-        fgcom.dbg("generateOutData(): processing user: "..sid)
-        local userData = {}
-        local mumbleUser = allUsers[sid]
-        if not mumbleUser then
-            fgcom.dbg("User sid="..sid.." not connected anymore!")
-            -- push out old data.
-            userData.updated = fgcom_clients[sid].lastUpdate
-            userData.type    = fgcom_clients[sid].type
-            -- TODO: remove dataset from fgcom_clients after some timeout
-        else 
-            fgcom_clients[sid].lastUpdate = os.time()
-            fgcom_clients[sid].type = "client"
-            if mumbleUser:getName():find("FGCOM%-.*") then fgcom_clients[sid].type = "playback-bot" end
-            if mumbleUser:getName():find("FGCOM%-BOTPILOT.*") then fgcom_clients[sid].type = "client" end
-            userData.type = fgcom_clients[sid].type
-        end
-        
-        userData.callsign = user.callsign
-        
-        userData.frequencies = {}
-        for radio_id,radio in pairs(user.radios) do
-            fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
-            if radio.frequency ~= "<del>" then
-                table.insert(userData.frequencies, radio.frequency)
+    for sid, remote_client in pairs(fgcom_clients) do
+        for iid,user in pairs(remote_client) do
+            fgcom.dbg("generateOutData(): processing user: "..sid.." with idty="..iid)
+            local userData = {}   -- the return structure for generating the message
+            local mumbleUser = allUsers[sid]
+            if not mumbleUser then
+                fgcom.dbg("User sid="..sid.." not connected anymore!")
+                -- push out old data for a while
+                userData.updated = fgcom_clients[sid][iid].lastUpdate
+                userData.type    = fgcom_clients[sid][iid].type
+            else 
+                fgcom_clients[sid][iid].type = "client"
+                if mumbleUser:getName():find("FGCOM%-.*") then fgcom_clients[sid][iid].type = "playback-bot" end
+                if mumbleUser:getName():find("FGCOM%-BOTPILOT.*") then fgcom_clients[sid][iid].type = "client" end
+                userData.type = fgcom_clients[sid][iid].type
             end
+            
+            userData.callsign = user.callsign
+            
+            userData.frequencies = {}
+            for radio_id,radio in pairs(user.radios) do
+                fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
+                if radio.frequency ~= "<del>" then
+                    table.insert(userData.frequencies, radio.frequency)
+                end
+            end
+            userData.lat = user.lat
+            userData.lon = user.lon
+            userData.alt = user.alt
+            userData.updated = fgcom_clients[sid][iid].lastUpdate
+            
+            table.insert(data, userData)
         end
-        userData.lat = user.lat
-        userData.lon = user.lon
-        userData.alt = user.alt
-        userData.updated = fgcom_clients[sid].lastUpdate
-        
-        table.insert(data, userData)
     end
     
     dataJsonString = json.stringify(data)
@@ -185,6 +185,10 @@ dbUpdateTimer_func = function(t)
             -- TODO: handle errors
             fgcom.dbg("published db '"..db.."'")
         end
+        
+        -- clean up stale entries
+        fgcom.data.cleanupTimeout = 60  -- enhance timeout, so we can display them longer
+        fgcom.data.cleanupPluginData()
         
     else
         fgcom.log("ERROR: unable to open db: "..tmpdb)

@@ -34,7 +34,6 @@
 // Currently the configuration cannot be done trough mumble, but that is planned.
 // Changing runtime configuration can be done trough the inbound RDP interface for now.
 struct fgcom_config {
-    int rdfPort;  // defines RDF output port
     bool radioAudioEffects;
     
     fgcom_config()  {
@@ -54,7 +53,7 @@ struct fgcom_radio {
 	float volume;        // volume, 0.0->1.0
 	float pwr;           // tx power in watts
 	float squelch;       // squelch setting (cutoff signal below this quality)
-	struct fgcom_radiowave_signal signal; 
+	bool  rdfEnabled;    // if radio can receive RDF information
 	
 	fgcom_radio()  {
         frequency   = "";
@@ -65,12 +64,14 @@ struct fgcom_radio {
         volume      = 1.0;
         pwr         = 10;
         squelch     = 0.1;
+        rdfEnabled  = false;
     };
 };
 
 // This represents a clients metadata
 struct fgcom_client {
-	unsigned int mumid;  // mumble client ID
+	mumble_userid_t mumid;  // mumble client ID
+	uint16_t clientPort;  // client port of the identity, we may send packets to this port
 	std::chrono::system_clock::time_point lastUpdate;
     float lon;
 	float lat;
@@ -95,12 +96,13 @@ extern std::mutex fgcom_localcfg_mtx;
 
 // Local plugin datastore
 // this is written from by the udp server and read by the plugin
-extern struct fgcom_client fgcom_local_client;   // local client data
+// Note: Some data is only stored at the default identity: mumid
+extern std::map<int, struct fgcom_client> fgcom_local_client;   // local client data
 
 // Remote plugin state
 // this is written to from the plugins receive data function and read from other plugin functions
 extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
-extern std::map<mumble_userid_t, fgcom_client> fgcom_remote_clients; // remote radio config
+extern std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
 
 // Global plugin state
 extern int fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp

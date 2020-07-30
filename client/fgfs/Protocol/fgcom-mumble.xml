@@ -17,7 +17,9 @@
     #  netcat -u -l -p 16661
 
     You can also send data to the plugin manually:
-    #  echo "COM1_FRQ=123.45,COM1_PTT=1,......" | netcat -q0 -u localhost 16661
+    (<clientport> will be reported from mumble when the first UDP packet arrives)
+    #  echo "COM1_FRQ=123.45,COM1_PTT=1,......" | netcat -q0 -u localhost 16661 -p <clientport>
+    
   ]]>
  </comment>
 
