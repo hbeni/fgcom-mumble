@@ -78,7 +78,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
 | `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
-| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string or wave carrier frequency; see below section for details). A value of `<del>` can be used to deregister a radio.  | *mandatory*|
+| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string or wave carrier frequency as float with minimum 4 decimals precision; see below section for details). A value of `<del>` can be used to deregister a radio.  | *mandatory*|
 | `COM`*n*`_VLT` | Numeric| Electrical power; >0 means "has power"  | `12`       |
 | `COM`*n*`_PBT` | Bool   | Power button state: 0=off, 1=on         | `1`        |
 | `COM`*n*`_SRV` | Bool   | Serviceable: 0=failed, 1=operable       | `1`        |
@@ -94,7 +94,7 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 
 | Field        | Format | Description                                                                                       |
 |--------------|--------|---------------------------------------------------------------------------------------------------|
-| `COM`*n*`_FRQ` | String | Selected channel frequency, gets converted to carrier frequency (see section below)  | *mandatory*|
+| `COM`*n*`_FRQ` | Float | Selected channel frequency, gets converted to carrier frequency (see section below)  | *mandatory*|
 | `ALT`        | Int    | Altitude in ft above sea-level. If both `HGT` and `ALT` is present in the UDP packet, `HGT` takes precedence. If only `ALT` is given, the radio horizon is artificially bigger than it should be, as we have no terrain model right now. |
 | `PTT`        | Int    | Currently active PTT radio (0=none, 1=COM1, 2=COM2). Gets converted to new `COM`*n*`_PTT` updates.|
 | `OUTPUT_VOL` | Float  | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
@@ -103,6 +103,7 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 The implementation internally operates on the basic common denominator, the carrier wave frequency. However, older flightgear aircraft may still send the selected "channel" (which is OK for 25kHz spacing, but not anymore for 8.33kHz steps).  
 Therefore the UDP interface tries to convert such "channel names" to the real wave frequency:
 
+- if the supplied frequency is *numeric* and at least four digits precision, it is assumed a "real wave frequency" and used as-is.
 - if the supplied frequency is *non-numeric* (eg. `PHONE:`... etc) it is used as-is.
 - if the supplied frequency is *the recorder one* (`RECORD_<tgtFrq>`), the frequency part is subject to channel-conversion.
 - if the supplied frequency *is* numeric, the frequency will be inspected for known "channel names". If so, it gets converted to the respective carrier frequency (like 25kHz `118.025` => `118.0250`; or 8.33kHz `118.015` => `118.0167`).
