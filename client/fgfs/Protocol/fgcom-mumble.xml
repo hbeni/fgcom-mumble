@@ -46,7 +46,13 @@
     <name>com1-frequency</name>
     <type>string</type>
     <format>COM1_FRQ=%s</format>
-    <node>/instrumentation/comm[0]/frequencies/selected-mhz</node>
+    <node>/instrumentation/comm[0]/frequencies/selected-mhz-fmt</node>
+   </chunk>
+   <chunk>
+    <name>com1-frequency</name>
+    <type>string</type>
+    <format>COM1_FRQ=%s</format>
+    <node>/instrumentation/comm[0]/frequencies/selected-mhz-fmt</node>
    </chunk>
    <chunk>
     <name>com1-powered</name>
@@ -96,7 +102,7 @@
     <name>com2-frequency</name>
     <type>string</type>
     <format>COM2_FRQ=%s</format>
-    <node>/instrumentation/comm[1]/frequencies/selected-mhz</node>
+    <node>/instrumentation/comm[1]/frequencies/selected-mhz-fmt</node>
    </chunk>
    <chunk>
     <name>com2-powered</name>

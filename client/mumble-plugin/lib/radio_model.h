@@ -39,6 +39,14 @@ struct fgcom_radiowave_signal {
 };
 
 
+// Frequency conversion result
+struct fgcom_radiowave_freqConvRes {
+    std::string prefix;    // extracted prefix
+    std::string frequency; // extracted and converted frequency
+    bool isNumeric;        // tells if frequency is a valid numeric
+};
+
+
 /*
  * Calculates the distance to horizon for an given observer at height h.
  *
@@ -118,12 +126,47 @@ fgcom_radiowave_signal fgcom_radiowave_getSignal(double lat1, double lon1, float
 
 
 /*
- * Normalize frequency for better matching
+ * Extract numeric frequency from string and clean string from leading/trailing zeroes/spaces.
+ * 
+ * Note: "frequency" may be an arbitary string, so we are just allowed to treat numerical-only
+ *       values as numerical frequency.
+ *       The exception are certain special frequencies, like "RECORD_<tgtFrq>", where we must split
+ *       into prefix and frequency.
+ * 
+ * Thus, the return may be:
+ *   r.isNumerical == true:   numerical parsing was OK, optionally there may be a prefix set and r.frequency contains a numerical.
+ *   r.isNumerical == false:  it was a string or no special frequency; r.frequency contains an arbitary string.
+ * 
+ * The returned frequency is just the raw split result and, aside of sanitizing/clearing, unaltered.
+ * The string is cleared of:
+ * - leading zeroes and spaces
+ * - trailing spaces
+ * 
+ * @param frq the frequency string to inspect
+ * @return fgcom_radiowave_freqConvRes; frequency key is always set, prefix only if parsed a special frequency.
+ */
+fgcom_radiowave_freqConvRes fgcom_radiowave_splitFreqString(std::string frq);
+
+/*
+ * Convert 25kHz/8.33kHz channel names to a physical carrier wave frequency
  * 
  * @param frq the frequency string to normalize
- * @return normalized string
+ * @return fgcom_radiowave_freqConvRes; frequency key is always set, prefix only if parsed correctly.
  */
-std::string fgcom_normalizeFrequency(std::string frq);
+std::string fgcom_radiowave_conv_chan2freq(std::string frq);
 
+
+/*
+ * See if the frequencies match.
+ * 
+ * To see how "good" the frequencies match, a signal filter factor is returned.
+ * This may be used to simulate frequency overlap.
+ * if either frq1 or frq2 is non-numeric, a case sensitive string match is
+ * 
+ * @param  frq1  first frequency (real wave freq)
+ * @param  frq2  second frequency (real wave freq)
+ * @return float signal filter factor, 0.0=no match, 1.0=perfect match
+ */
+float fgcom_radiowave_getFrqMatch(std::string frq1_real, std::string frq2_real);
 
 #endif
