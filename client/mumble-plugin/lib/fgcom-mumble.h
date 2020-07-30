@@ -21,6 +21,10 @@
 #ifndef FGCOM_MUMBLE_H
 #define FGCOM_MUMBLE_H
 
+// Plugin Version
+#define FGCOM_VERSION_MAJOR 0
+#define FGCOM_VERSION_MINOR 3
+#define FGCOM_VERSION_PATCH 0
 
 /*
  * Is the plugin currently active?
