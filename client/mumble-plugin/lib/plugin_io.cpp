@@ -404,8 +404,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
                         
                         if (token_key == "FRQ") {
-                            // frequency must be normalized, it may contain leading/trailing zeroes and spaces.
-                            fgcom_remote_clients[clientID][iid].radios[radio_id].frequency = fgcom_normalizeFrequency(token_value);
+                            // expected is real wave carrier frequency, so something with at least 4 decimals
+                            fgcom_remote_clients[clientID][iid].radios[radio_id].frequency = token_value;
                         }
                         if (token_key == "VLT") fgcom_remote_clients[clientID][iid].radios[radio_id].volts       = std::stof(token_value);
                         if (token_key == "PBT") fgcom_remote_clients[clientID][iid].radios[radio_id].power_btn   = (token_value == "1")? true : false;
@@ -656,13 +656,38 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     radio_id--; // convert to array index
                     
                     if (radio_var == "FRQ") {
-                        // frequency must be normalized, it may contain leading/trailing zeroes and spaces.
-                        std::regex frq_cleaner_re ("^[0\\s]+|(\\..+?)[0\\s]+$");
-                        std::string token_value_clean;
-                        std::regex_replace (std::back_inserter(token_value_clean), token_value.begin(), token_value.end(), frq_cleaner_re, "$1");
+                        // Frequency handling is a bit difficult (see https://github.com/hbeni/fgcom-mumble/issues/34):
+                        // - we expect real wave frequencies here.
+                        // - old FGCom interface had sended channel names (which, in 8.33 spacing do not translate directly to real wave frequencies)
+                        // - result is, we must convert in some circumstances.
+                        //
+                        // also the provided value may be containing illegal stuff like trailing/leading spaces/zeroes; so, it must be normalized.
+                        fgcom_radiowave_freqConvRes frq_parsed = fgcom_radiowave_splitFreqString(token_value);  // results in a cleaned frequency
+                        std::string finalParsedFRQ;
+                        if (frq_parsed.isNumeric) {
+                            // frequency is a numeric string.
+                            // Let's check the decimals to decide if it is new or old format
+                            if (std::regex_match(frq_parsed.frequency, std::regex("^\\d+\\.\\d{4,}$") )) {
+                                // numeric frequency detected with >=4 decimals: treat as real wave frequency
+                                pluginDbg("[UDP] detected real wave frequency format="+token_value);
+                                finalParsedFRQ = frq_parsed.prefix + frq_parsed.frequency;
+                                
+                            } else {
+                                // FGCom 3.0 compatibility mode:
+                                // we expect 25kHz or 8.33 channel names here.
+                                // So if we encounter such data, we probably need to convert the frequency part
+                                pluginDbg("[UDP] detected old FGCom frequency format="+token_value);
+                                finalParsedFRQ = frq_parsed.prefix + fgcom_radiowave_conv_chan2freq(frq_parsed.frequency);
+                                pluginDbg("[UDP] conversion result to realFreq="+finalParsedFRQ);
+                            }
+                        } else {
+                            // not numeric: use as-is.
+                            finalParsedFRQ = frq_parsed.frequency;  // already cleaned value
+                        }
                         
+                        // handle final COMn_FRQ parsing result
                         std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
-                        fgcom_local_client[iid].radios[radio_id].frequency   = token_value_clean;
+                        fgcom_local_client[iid].radios[radio_id].frequency = frq_parsed.frequency; // already cleaned value
                         if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     if (radio_var == "VLT") {

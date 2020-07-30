@@ -36,6 +36,7 @@ libs:  lib/radio_model.o lib/plugin_io.o lib/audio.o lib/rdfUDP.o lib/garbage_co
 # Compile tests and stuff
 test: libs
 	$(CC) -o test/geotest lib/radio_model.o test/geotest.cpp $(CFLAGS)
+	$(CC) -o test/frqtest lib/radio_model.o test/frqtest.cpp $(CFLAGS)
 
 # clean compile results
 clean:
@@ -56,6 +57,7 @@ all-win: plugin-win64 test-win64 clean
 # build win64 test tools
 test-win64:
 	x86_64-w64-mingw32-g++ -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	x86_64-w64-mingw32-g++ -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
 # build win64 plugin-dll
 plugin-win64: libs
