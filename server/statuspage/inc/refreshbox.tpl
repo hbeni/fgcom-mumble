@@ -1,7 +1,7 @@
 <form> 
     <select id="s_refresh" onchange="setCookie('refresh', this.options[this.selectedIndex].value); window.setTimeout(function(){ document.location.reload(true); }, this.options[this.selectedIndex].value*1000);">
         <option value="0" selected>no refresh</option>
-        <option value="5">5 secs</option>
+        <!--<option value="5">5 secs</option>-->
         <option value="10">10 secs</option>
         <option value="15">15 secs</option>
         <option value="30">30 secs</option>

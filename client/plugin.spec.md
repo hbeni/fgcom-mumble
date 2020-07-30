@@ -68,6 +68,8 @@ The plugis internal state is cleaned from outdated data regularly. Any succesful
 
 
 ### Core data
+All participating clients must share a common definition of "frequency", and this should be the "tuned" frequency and not the actual resulting MHz wave frequency (esp. with 8.3 channels spacing).
+
 Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denotes a number starting from `1`):
 
 | Field          | Format | Description                             | Default    |
