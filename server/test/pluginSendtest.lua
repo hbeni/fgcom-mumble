@@ -29,8 +29,8 @@ client:hook("OnServerSync", function(event)
             i=i+1
             print("  "..i.." ("..s.."): "..u:getName())
             
-            client:sendPluginData("FGCOM:UPD_USR", "CALLSIGN=test-"..i, {u})
-            client:sendPluginData("FGCOM:UPD_COM:0", "FRQ=123,PTT=0"..i, users)
+            client:sendPluginData("FGCOM:UPD_USR:0", "CALLSIGN=test-"..i, {u})
+            client:sendPluginData("FGCOM:UPD_COM:0:0", "FRQ=123,PTT=0"..i, users)
         end
     end, 1, 1)
     

@@ -70,7 +70,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.0",
+    libversion = "1.2",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -254,71 +254,127 @@ fgcom = {
                 fgcom.dbg("Received FGCOM-plugin data, dataID='"..dataID.."', from=["..sender:getSession().."] '"..sender:getName().."'")
                 fgcom.dbg("  data='"..data.."'")
           
-                sid = sender:getSession()
+                -- split the dataid into fields
+                local dataID_t = fgcom.data.csplit(dataID, ":")
+                local datatype = dataID_t[1] -- should always be "FGCOM"
+                local packtype = dataID_t[2] -- UPD_LOC, etc
+                local iid = "0"              -- default identity iid
+                fgcom.dbg("  datatype='"..datatype.."'")
+                fgcom.dbg("  packtype='"..packtype.."'")
 
-                -- check if we already have state for this client; if not add template
-                if not fgcom_clients[sid] then
-                    fgcom_clients[sid] = {
-                        callsign="",
-                        lat="",
-                        lon="",
-                        alt="",
-                        radios={}
-                    }
-                    fgcom.dbg("added new client state: "..sid)
-                end
+                if packtype == "UPD_USR" or packtype == "UPD_LOC" or packtype == "UPD_COM" then
+                    local iid = dataID_t[3]          -- identity selector
+                    local sid = sender:getSession()  -- mumble session id
+                    fgcom.dbg("  iid='"..iid.."'")
+
+                    -- check if we already have state for this client; if not add
+                    if not fgcom_clients[sid] then
+                        fgcom_clients[sid] = {}
+                        fgcom.dbg("added new client state: "..sid)
+                    end
           
-                -- OK, go ahead and try to parse;
-                -- we are interested in the callsign and the location.
-                -- For proper recording, also the PTT state is important to us.
-                -- for token in string.gmatch(data, ",") do
-                for index,token in ipairs(fgcom.data.csplit(data, ",")) do
-                    field = fgcom.data.csplit(token, "=")
-                    
-                    -- Udpates to location/user state
-                    if dataID:find("FGCOM:UPD_LOC") or dataID:find("FGCOM:UPD_USR") then
-                        if "CALLSIGN" == field[1] then fgcom_clients[sid].callsign = field[2] end
-                        if "LAT" == field[1] then fgcom_clients[sid].lat = field[2] end
-                        if "LON" == field[1] then fgcom_clients[sid].lon = field[2] end
-                        if "ALT" == field[1] then fgcom_clients[sid].alt = field[2] end
+                    -- check if we already know this clients identity with given iid; if not, add template
+                    if not fgcom_clients[sid][iid] then
+                        fgcom_clients[sid][iid] = {
+                            callsign="",
+                            lat="",
+                            lon="",
+                            alt="",
+                            radios={},
+                            lastUpdate=0
+                        }
                     end
-                    
-                    -- Updates to radios
-                    if dataID:find("FGCOM:UPD_COM:") then
-                        -- the dataID says, which radio to update (starting at zero)
-                        dataID_t = fgcom.data.csplit(dataID, ":")
-                        radioID = dataID_t[3]
-                        if not fgcom_clients[sid].radios[radioID] then
-                            -- if radio unknown yet, add template
-                            fgcom_clients[sid].radios[radioID] = {
-                                frequency = "",
-                                ptt = 0
-                                -- todo: more needed?
-                            }
+          
+                    -- record that we had an data update
+                    fgcom_clients[sid][iid].lastUpdate = os.time()
+            
+                    -- OK, go ahead and try to parse;
+                    -- we are interested in the callsign and the location.
+                    -- For proper recording, also the PTT state is important to us.
+                    -- for token in string.gmatch(data, ",") do
+                    for index,token in ipairs(fgcom.data.csplit(data, ",")) do
+                        field = fgcom.data.csplit(token, "=")
+                        if #field == 2 then
+                            fgcom.dbg("parsing field: "..field[1].."="..field[2])
+
+                            -- Udpates to location/user state
+                            if packtype == "UPD_LOC" or packtype == "UPD_USR" then
+                                if "CALLSIGN" == field[1] then fgcom_clients[sid][iid].callsign = field[2] end
+                                if "LAT" == field[1] then fgcom_clients[sid][iid].lat = field[2] end
+                                if "LON" == field[1] then fgcom_clients[sid][iid].lon = field[2] end
+                                if "ALT" == field[1] then fgcom_clients[sid][iid].alt = field[2] end
+                            end
+                            
+                            -- Updates to radios
+                            if packtype == "UPD_COM" then
+                                -- the dataID says, which radio to update (starting at zero)
+                                radioID = dataID_t[4]
+                                fgcom.dbg("  radioID='"..radioID.."'")
+                                if not fgcom_clients[sid][iid].radios[radioID] then
+                                    -- if radio unknown yet, add template
+                                    fgcom_clients[sid][iid].radios[radioID] = {
+                                        frequency = "",
+                                        ptt = 0
+                                        -- todo: more needed?
+                                    }
+                                end
+                                
+                                if "FRQ" == field[1] then fgcom_clients[sid][iid].radios[radioID].frequency = field[2] end
+                                if "PTT" == field[1] then fgcom_clients[sid][iid].radios[radioID].ptt = field[2] end
+                                if "PWR" == field[1] then fgcom_clients[sid][iid].radios[radioID].power = field[2] end
+                            end
+                        else
+                            fgcom.dbg("parsing field failed! "..#field.." tokens seen")
                         end
-                        
-                        if "FRQ" == field[1] then fgcom_clients[sid].radios[radioID].frequency = field[2] end
-                        if "PTT" == field[1] then fgcom_clients[sid].radios[radioID].ptt = field[2] end
-                        if "PWR" == field[1] then fgcom_clients[sid].radios[radioID].power = field[2] end
                     end
+          
+                elseif packtype == "PING" then
+                    -- update the contained identites lastUpdate timestamps
+                    local sid       = sender:getSession()  -- mumble session id
+                    for _,iid in ipairs(fgcom.data.csplit(data, ",")) do
+                        fgcom.dbg("ping packet for sid="..sid.."; iid="..iid)
+                        if fgcom_clients[sid][iid] then 
+                            fgcom_clients[sid][iid].lastUpdate = os.time()
+                        end
+                    end
+          
+                elseif packtype == "ICANHAZDATAPLZ" then
+                    -- ignore for now
                 end
             end
             
             fgcom.dbg("Parsing done. New remote state:")
-            for uid,remote in pairs(fgcom_clients) do
-                for k,v in pairs(remote) do
-                    --print(uid, k, v)
-                    if k=="radios" then
-                        for radio_id,radio in pairs(remote.radios) do
-                            fgcom.dbg(uid,"    radio #"..radio_id.." frequency='"..radio.frequency.."'")
-                            fgcom.dbg(uid,"    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
+            for uid,remote_client in pairs(fgcom_clients) do
+                for iid,idty in pairs(remote_client) do
+                    for k,v in pairs(idty) do
+                        --print(uid, k, v)
+                        if k=="radios" then
+                            for radio_id,radio in pairs(idty.radios) do
+                                fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.." frequency='"..radio.frequency.."'")
+                                fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
+                            end
+                        else
+                            fgcom.dbg("sid="..uid.."; idty="..iid.."\t"..k..":\t"..tostring(v))
                         end
-                    else
-                        fgcom.dbg(uid.."\t"..k.."\t"..v)
                     end
                 end
             end
             fgcom.dbg("-----------")
+        end,
+          
+        -- Clean up fgcom_clients array from stale entries
+        -- fgcom.data.cleanupTimeout variable holds the timeout in seconds
+        cleanupTimeout = 30,  -- timeout in seconds
+        cleanupPluginData = function()
+            for uid,remote_client in pairs(fgcom_clients) do
+                for iid,idty in pairs(remote_client) do
+                    local stale_since = os.time() - idty.lastUpdate
+                    if stale_since > fgcom.data.cleanupTimeout then
+                        fgcom.dbg("cleanup remote data: sid="..uid.."; idty="..iid.."  stale_since="..stale_since)
+                        fgcom_clients[uid][iid] = nil;
+                    end
+                end
+            end
         end
     }
 }

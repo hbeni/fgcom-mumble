@@ -30,13 +30,11 @@ struct fgcom_radiowave_signal {
     float quality;        // 0.0=no signal, 1.0=perfect signal
     float direction;      // 0.0=north, 90=east, 180=south, 270=west
     float verticalAngle;  // 0.0=straight, 90=above, -90=below
-    bool  rdfEnabled;     // true=Enable RDF output
     
     fgcom_radiowave_signal()  {
         quality       = -1;
         direction     = -1;
         verticalAngle = -1;
-        rdfEnabled    = false;
     };
 };
 
@@ -117,5 +115,15 @@ double fgcom_radiowave_getSurfaceDistance(double lat1, double lon1, double lat2,
  * @return fgcom_radiowave_signal
  */
 fgcom_radiowave_signal fgcom_radiowave_getSignal(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power);
+
+
+/*
+ * Normalize frequency for better matching
+ * 
+ * @param frq the frequency string to normalize
+ * @return normalized string
+ */
+std::string fgcom_normalizeFrequency(std::string frq);
+
 
 #endif

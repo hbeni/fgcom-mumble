@@ -57,9 +57,13 @@ You are ready for radio usage! Some client needs to supply information to the pl
 ### Generic compatibility
 The plugin aims to be compatible to the legacy fgcom-standalone protocol, so vey much all halfway recent fgfs instances, ATC clients and aircraft should handle it out of the box at least with COM1.
 
+Note that frequencies can be arbitary strings. That said, all participating clients must share a common definition of "frequency", and this should be the "tuned" frequency and not the actual resulting MHz wave frequency (esp. with 8.3 channels spacing).  
+Also note that callsigns and frequencies are not allowed to contain the comma symbol (`,`). Decimal point symbol has always to be a point (`.`).
+
+
 ### Flightgear specific
 - copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
-- start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,2,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
+- start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
 - start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
 
 ### OpenRadar specific
@@ -68,7 +72,8 @@ Currently, OpenRadar just supports one Radio per UDP port. In case you want seve
 ### ATC-Pie specific
 Currently ATC-Pie has the same issue (and the same workaround) as OpenRadar. There is a development version in the works that will enable better FGCom-mumble support.
 
-For each instance of ATC-Pie you will need a linked mumble client session. This applies for example, if you want to simultaniosly service several Airports, or additional CTR.
+Currently, for each instance of ATC-Pie you will need a linked mumble client session. This applies for example, if you want to simultaniosly service several Airports, or additional CTR.  
+Once the ATC-Pie version with FGCom-mumble support is out, you just need to adjust the *local UDP port* option at the *start session* dialog to contain a uniqhe UDP source port per ATC-Session.
 
 
 Support for FGCom special frequencies

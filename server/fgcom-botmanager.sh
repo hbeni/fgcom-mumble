@@ -41,6 +41,7 @@ ttl="7200"  # default time-to-live after recordings in secs
 fnotify="/tmp/fgcom-fnotify-fifo"
 statusbot_db="/tmp/fgcom-web.db"
 statusbot_web=""
+debug="0"
 
 recorderbot_log=/dev/null
 playbackbot_log=/dev/null
@@ -55,6 +56,7 @@ function usage() {
     echo "Common options, that will be passed to bots:"
     echo "    --host=    host to connect to               (default=$host)"
     echo "    --port=    port to connect to               (default=$port)"
+    echo "    --debug    enable debug mode"
     echo ""
     echo "Recording bot options:"
     echo "    --rcert=   path to PEM encoded cert         (default=$rcert)"
@@ -100,6 +102,7 @@ for opt in "$@"; do
        --slog=*)  statusbot_log=$(echo $opt|cut -d"=" -f2);;
        --sdb=*)  statusbot_db=$(echo $opt|cut -d"=" -f2);;
        --sweb=*) statusbot_web=$(echo $opt|cut -d"=" -f2);;
+       --debug) debug="1";;
        *) echo "unknown option $opt!"; usage; exit 1;;
    esac
 done
@@ -122,9 +125,11 @@ echo "  --plog=$playbackbot_log"
 echo "  --slog=$statusbot_log"
 echo "  --sdb=$statusbot_db"
 echo "  --sweb=$statusbot_web"
+[[ $debug == "1" ]] && echo "  --debug"
 
 # define cmd options for the bot callups
 common_opts="--host=$host --port=$port"
+[[ $debug == "1" ]] && common_opts="$common_opts --debug"
 playback_opts="$common_opts --cert=$pcert --key=$pkey"
 recorder_opts="$common_opts --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
 status_opts="$common_opts --cert=$scert --key=$skey --db=$statusbot_db"
