@@ -77,8 +77,8 @@ void fgcom_gc_clean_rmt() {
     
     pluginDbg("[GC] RMT searching for stale remote state...");
     std::vector<mumble_userid_t> staleRemoteClients;
-    std::vector<int> staleIIDs;
     for (const auto &p : fgcom_remote_clients) {
+        std::vector<int> staleIIDs;
         mumble_userid_t clid = p.first;
         for (const auto &idty : fgcom_remote_clients[clid]) {
             int iid          = idty.first;
