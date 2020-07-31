@@ -110,6 +110,14 @@ std::string fgcom_rdf_generateMsg(uint16_t selectedPort) {
         fgcom_rdf_activeSignals.erase(elem);
     }
 
+    // If there was data generated, add a FGCOM header
+    if (clientMsg.length() > 0) clientMsg = "FGCOM v" 
+            + std::to_string(FGCOM_VERSION_MAJOR) + "."
+            + std::to_string(FGCOM_VERSION_MINOR) + "."
+            + std::to_string(FGCOM_VERSION_PATCH) 
+            + "\n"
+            + clientMsg;
+    
 
     // Finally return data
     //pluginDbg("[UDP] client fgcom_udp_generateMsg(): data buld finished, length="+std::to_string(clientMsg.length())+", content="+clientMsg);
