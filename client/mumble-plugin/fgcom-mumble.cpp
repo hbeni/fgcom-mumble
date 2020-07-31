@@ -646,6 +646,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(fgcom_radio_isOperable(lcl.radios[lri]))+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       RDF='"+std::to_string(lcl.radios[lri].rdfEnabled)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
+                                pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");
                                 
                                 // calculate frequency match
                                 fgcom_radiowave_freqConvRes rmt_frq_p = fgcom_radiowave_splitFreqString(rmt.radios[ri].frequency);
