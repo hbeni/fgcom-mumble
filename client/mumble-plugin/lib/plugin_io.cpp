@@ -538,6 +538,7 @@ void fgcom_notifyThread() {
 std::mutex fgcom_localcfg_mtx;
 std::map<int, fgcom_client> fgcom_local_client;
 std::map<uint16_t, int> fgcom_udp_portMap; // port2iid
+bool fgcom_com_ptt_compatmode = false;
 std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort) {
     pluginDbg("[UDP] received message (clientPort="+std::to_string(clientPort)+"): "+std::string(buffer));
     //std::cout << "DBG: Stored local userID=" << localMumId <<std::endl;
@@ -706,10 +707,20 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].serviceable != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     if (radio_var == "PTT") {
-                        bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
-                        fgcom_local_client[iid].radios[radio_id].ptt         = (token_value == "1" || token_value == "true")? true : false;
-                        if (fgcom_local_client[iid].radios[radio_id].ptt != oldValue ) parseResult[iid].radioData.insert(radio_id);
-                        fgcom_handlePTT();
+                        // depends if we are previously have been in old compat mode (a single PTT property)
+                        // if yes: we need to ignore the "PTT disabled" request, because it is probably always 0
+                        bool parsedPTT = (token_value == "1" || token_value == "true")? true : false;
+                        
+                        // PTT was set to true with the new way: we disable compat mode and take it
+                        if (parsedPTT && fgcom_com_ptt_compatmode) fgcom_com_ptt_compatmode = false; 
+                        
+                        if (!fgcom_com_ptt_compatmode) {
+                            bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
+                            fgcom_local_client[iid].radios[radio_id].ptt = parsedPTT;
+                            if (fgcom_local_client[iid].radios[radio_id].ptt != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                            fgcom_handlePTT();
+                        }
+
                     }
                     if (radio_var == "VOL") {
                         float oldValue = fgcom_local_client[iid].radios[radio_id].volume;
@@ -783,18 +794,24 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 if (token_key == "PTT") {
                     // PTT contains the ID of the used radio (0=none, 1=COM1, 2=COM2)
                     int ptt_id = std::stoi(token_value);
-                    pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
-                    for (int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
-                        pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
-                        if (i == ptt_id - 1) {
-                            if (fgcom_local_client[iid].radios[i].ptt != 1){
-                                parseResult[iid].radioData.insert(i);
-                                fgcom_local_client[iid].radios[i].ptt = 1;
-                            }
-                        } else {
-                            if (fgcom_local_client[iid].radios[i].ptt == 1){
-                                parseResult[iid].radioData.insert(i);
-                                fgcom_local_client[iid].radios[i].ptt = 0;
+                    
+                    // handle compat mode switch: if we receive PTT in the old way, we switch it on
+                    if (ptt_id > 0) fgcom_com_ptt_compatmode = true;
+                    
+                    if (fgcom_com_ptt_compatmode) {
+                        pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
+                        for (int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
+                            pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
+                            if (i == ptt_id - 1) {
+                                if (fgcom_local_client[iid].radios[i].ptt != 1){
+                                    parseResult[iid].radioData.insert(i);
+                                    fgcom_local_client[iid].radios[i].ptt = 1;
+                                }
+                            } else {
+                                if (fgcom_local_client[iid].radios[i].ptt == 1){
+                                    parseResult[iid].radioData.insert(i);
+                                    fgcom_local_client[iid].radios[i].ptt = 0;
+                                }
                             }
                         }
                     }
