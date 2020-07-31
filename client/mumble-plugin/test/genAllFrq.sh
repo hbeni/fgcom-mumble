@@ -48,7 +48,7 @@ echo '"8.33kHz";"real"' > $outfile
 chn=0
 echo -n "8.33, three digits " 
 for i in $(seq $frq_start 0.005 $frq_end); do
-    echo $i | grep -q -E "20|45|70|95|00$"
+    echo $i | grep -q -E "20|45|70|95$"
     [[ $? -eq 0 ]] && continue   # skip certain invalid frequencies
 
     real=$($tool $i 0 |grep -E -o "realFrq\[1\] = '(.*)" |awk '{print $3;}' )
