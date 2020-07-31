@@ -689,7 +689,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         
                         // handle final COMn_FRQ parsing result
                         std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
-                        fgcom_local_client[iid].radios[radio_id].frequency = frq_parsed.frequency; // already cleaned value
+                        fgcom_local_client[iid].radios[radio_id].frequency = finalParsedFRQ; // already cleaned value
                         if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     if (radio_var == "VLT") {
