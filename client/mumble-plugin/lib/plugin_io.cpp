@@ -684,6 +684,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         } else {
                             // not numeric: use as-is.
                             finalParsedFRQ = frq_parsed.frequency;  // already cleaned value
+                            pluginDbg("[UDP] using FRQ as-is (non-numeric)");
                         }
                         
                         // handle final COMn_FRQ parsing result
