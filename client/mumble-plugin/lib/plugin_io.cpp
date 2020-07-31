@@ -689,8 +689,22 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         
                         // handle final COMn_FRQ parsing result
                         std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
+                        fgcom_radiowave_freqConvRes frq_ori = fgcom_radiowave_splitFreqString(oldValue);
                         fgcom_local_client[iid].radios[radio_id].frequency = finalParsedFRQ; // already cleaned value
-                        if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                        
+                        // see if we need to notify:
+                        // - for changed non-numeric, always if its different
+                        // - for change in numeric/non-numeric, also always if its different
+                        // - for numeric ones, if the prefix did change, or the frequency is different for more than rounding errors
+                        fgcom_radiowave_freqConvRes frq_new = fgcom_radiowave_splitFreqString(finalParsedFRQ);
+                        if (frq_ori.isNumeric && frq_new.isNumeric && frq_ori.prefix == frq_new.prefix) {
+                            // both are numeric and the prefix did not change: only notify if frequency changed that much
+                            float frq_diff = std::fabs(std::stof(frq_ori.frequency) - std::stof(frq_new.frequency));
+                            //pluginDbg("[UDP] COMM frq diff="+std::to_string(frq_diff)+"; old="+oldValue+"; new="+finalParsedFRQ);
+                            if ( frq_diff > 0.000010 ) parseResult[iid].radioData.insert(radio_id);
+                        } else {
+                            if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                        }
                     }
                     if (radio_var == "VLT") {
                         float oldValue = fgcom_local_client[iid].radios[radio_id].volts;
