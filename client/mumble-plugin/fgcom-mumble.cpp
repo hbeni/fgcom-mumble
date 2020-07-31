@@ -672,10 +672,14 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
                                     // we are listening on that frequency!
                                     // determine signal strenght for this connection
-                                    fgcom_radiowave_signal signal = signalMatchFilter * fgcom_radiowave_getSignal(
+                                    fgcom_radiowave_signal signal = fgcom_radiowave_getSignal(
                                         lcl.lat, lcl.lon, lcl.alt,
                                         rmt.lat, rmt.lon, rmt.alt,
                                         rmt.radios[ri].pwr);
+                                    
+                                    // apply signal filter from frequency match (miss-tuned will reduce the signal quality)
+                                    signal.quality *= signalMatchFilter;
+                                    
                                     pluginDbg("mumble_onAudioSourceFetched():       signalStrength="+std::to_string(signal.quality)
                                         +"; direction="+std::to_string(signal.direction)
                                         +"; angle="+std::to_string(signal.verticalAngle)
