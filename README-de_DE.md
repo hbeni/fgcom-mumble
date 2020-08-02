@@ -28,10 +28,10 @@ Die englische Version ist stets führend.
 
 Die Doku ist in folgende Dateien aufgeteilt:
 
-- Readme-de_DE.md (*diese Datei*): allgemeine Übersicht ([englisch](Readme.md))
+- Readme-de_DE.md (*diese Datei*): allgemeine Übersicht ([englisch](README.md))
 - [Readme.architecture.md](Readme.architecture.md) (engl.) Details über die Komponenten des Systems
 - [client/plugin.spec.md](client/plugin.spec.md) (engl.) Technische Spezifikation des mumble Plugins und seiner Schnittstellen
-- [server/Readme.server.md](server/Readme.server.md) (engl.) Details über die serverseitigen Koponenten und ihre Installation/Betrieb
+- [server/Readme.server-de_DE.md](server/Readme.server-de_DE.md) (deutsch) Details über die serverseitigen Koponenten und ihre Installation/Betrieb
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) (engl.) Technische Details über die Statuswebseite und deren Komponenten
 
 ### Fehler melden / Features anfragen / Hilfe anbieten
