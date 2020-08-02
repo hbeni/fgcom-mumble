@@ -3,6 +3,8 @@ FGCom-mumble - a flightsim radio simulation framework based on mumble
 
 This project aims to provide a modular, mumble based radio simulation for flight simulators. The project startet mainly as a successor for the asterisk based FGCom implementation.
 
+([-> deutsche Version](README-de_DE.md))
+
 ### The main goals are:
 - Provide communication with geographic and channel separation
 - Provide a realistic radio simulation
@@ -22,7 +24,7 @@ Documentation
 =============
 The documentation is split up into relevant parts:
 
-- Readme.md (*this file*): General overview and client documentation
+- Readme.md (*this file*): General overview and client documentation ([deutsche Version](README-de_DE.md))
 - [Readme.architecture.md](Readme.architecture.md) Details about the components that make up the system
 - [client/plugin.spec.md](client/plugin.spec.md) Technical details on plugin design and its input/output data formats
 - [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them

@@ -111,7 +111,12 @@ std::string fgcom_rdf_generateMsg(uint16_t selectedPort) {
     }
 
     // If there was data generated, add a FGCOM header
-    if (clientMsg.length() > 0) clientMsg = "FGCOM\n" + clientMsg;
+    if (clientMsg.length() > 0) clientMsg = "FGCOM v" 
+            + std::to_string(FGCOM_VERSION_MAJOR) + "."
+            + std::to_string(FGCOM_VERSION_MINOR) + "."
+            + std::to_string(FGCOM_VERSION_PATCH) 
+            + "\n"
+            + clientMsg;
     
 
     // Finally return data
