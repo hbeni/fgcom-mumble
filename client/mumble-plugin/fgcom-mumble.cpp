@@ -53,11 +53,6 @@ MumbleAPI mumAPI;
 mumble_connection_t activeConnection;
 plugin_id_t ownPluginID;
 
-// Plugin Version
-#define FGCOM_VERSION_MAJOR 0
-#define FGCOM_VERSION_MINOR 3
-#define FGCOM_VERSION_PATCH 0
-
 // Global plugin state
 int  fgcom_specialChannelID = -1;
 bool fgcom_inSpecialChannel = false; // adjust using fgcom_setPluginActive()!

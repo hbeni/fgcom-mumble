@@ -179,7 +179,8 @@ While the plugin receives a signal trough a RDF-enabled radio (`COM`*n*`_RDF=1`,
 Absence of RDF data means that there is currently no such transmission.  
 Each RDF enabled radio can receive multiple signals. It is up to the client to sort this out (eg. only consider the strongest signal for a given radio).
 
-Each active signal per radio is reported on a separate output line (separated by `\n`).  
+If any radio is configured for RDF, and if any transmission is detected, a header is written that consists of the string `FGCOM` followed by version information, on a dedicated line.  
+After that header, each active signal per radio is reported on a separate output line (separated by `\n`).  
 The signal source is reported by starting the RDF message string with `RDF:`, followed by the RDF data fields.  
 The reported frequency is the one tuned on the radio (and not effective wave frequency).
 
