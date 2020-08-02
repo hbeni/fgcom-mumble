@@ -4,7 +4,7 @@ FGCom-mumble - eine (Flugsimulator-) Funksimulation basierend auf Mumble
 Dies ist die deutsche Übersetzung der serverseitigen Details.  
 Die englische Version ist stets führend und die deutsche Version enthält eventuell nicht den aktuellsten Stand!
 
-([-> english original version](server/Readme.server.md))
+([-> english original version](Readme.server.md))
 
 Installation / Setup für den Serverteil
 =======================================
@@ -79,7 +79,7 @@ FGCom Sample file disk format (`.fgcs`)
 Das FGCS-Dateiformat enthält die aufgezeichneten Soundsamples zusammen mit Metainformationen. Die Dateien sollten einen eindeutigen Namen mit `.fgcs` Postfix haben.  
 Der Inhalt beginnt mit einem zeilenweisen, menschenlesbaren Header, gefolgt von den binären Sampledaten.
 
-Das Dateiormat wird im Detail in der [englischen Version](server/Readme.server.md#fgcom-sample-file-disk-format-fgcs) dargestellt.
+Das Dateiormat wird im Detail in der [englischen Version](Readme.server.md#fgcom-sample-file-disk-format-fgcs) dargestellt.
 
 
 Wiedergabebot
