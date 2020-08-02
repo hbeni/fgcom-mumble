@@ -150,7 +150,7 @@ local isClientTalkingToUs = function(user)
                     remote.record_mode = "NORMAL"
                     remote.record_tgt_frq = record_tgtFrq
                     fgcom.dbg("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
-                    return radio
+                    return remote, radio
                 end
                 
                 -- FGCom ECHOTEST Frequency recording request
