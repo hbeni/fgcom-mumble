@@ -56,6 +56,7 @@ local nodel  = false
 local lat    = ""
 local lon    = ""
 local hgt    = ""
+local pingT  = 10  -- ping time spacing in seconds
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
@@ -368,6 +369,15 @@ client:hook("OnServerSync", function(event)
     -- start the playback timer.
     -- this will process the voice buffer.
     playbackTimer:start(playbackTimer_func, 0.0, lastHeader.samplespeed)
+           
+    
+    -- A timer that will send PING packets from time to time
+    local pingTimer = mumble.timer()
+    pingTimer:start(function(t)
+        fgcom.dbg("sending PING packet")
+        updateAllChannelUsersforSend(client)
+        client:sendPluginData("FGCOM:PING", "0", playback_targets)
+    end, pingT, pingT)
     
 end)
 
