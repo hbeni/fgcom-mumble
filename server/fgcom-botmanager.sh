@@ -177,6 +177,13 @@ while true; do
         fi
         date "+[%Y-%m-%d %H:%M:%S] notification received: '$line'"
         
+        # See if there is already a playback bot instance with that sample
+        botPID=$(pgrep -f -- "--sample=$line")
+        if [[ -n "$botPID" ]]; then
+            echo "Spawn bot ignored (found already running instance): $playbackbot_cmd"
+            continue
+        fi
+        
         #spawn bot
         playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
         echo "Spawn bot: $playbackbot_cmd"
