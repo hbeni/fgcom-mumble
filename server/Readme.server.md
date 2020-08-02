@@ -3,7 +3,7 @@ FGCom-mumble - a flightsim radio simulation framework based on mumble
 
 This is the server side documentation for the FGCom-mumble implementation.
 
-There is also a german translation available: [-> deutsche Version](Reamde.server-de_DE.md).
+There is also a german translation available: [-> deutsche Version](Readme.server-de_DE.md).
 
 Install / Setup for the Server
 ==============================
