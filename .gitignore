@@ -45,3 +45,6 @@ frqtest
 # Archives
 *.zip
 *.tar.gz
+
+# runtime config
+server/statuspage/config.ini
