@@ -6,9 +6,9 @@ CFLAGS=-I. -I./lib -pthread $(DEBUG)
 # get version
 GITCOMMIT:=$(shell git log -1 --pretty=format:"%h")
 GITDATE:=$(shell git log -1 --pretty=format:"%cd" --date=short)
-VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR fgcom-mumble.cpp |grep -E -o '[0-9]')
-VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR fgcom-mumble.cpp |grep -E -o '[0-9]')
-VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH fgcom-mumble.cpp |grep -E -o '[0-9]')
+VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR lib/fgcom-mumble.h |grep -E -o '[0-9]')
+VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR lib/fgcom-mumble.h |grep -E -o '[0-9]')
+VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH lib/fgcom-mumble.h |grep -E -o '[0-9]')
 VERSION:=$(VERSION_V).$(VERSION_M).$(VERSION_P)
 
 
@@ -77,7 +77,7 @@ release: clean-all plugin plugin-win64
 	mkdir fgcom-mumble-linux-$(VERSION)/plugin
 	rm -f fgcom-mumble-linux*.tar.gz
 	cp releaseReadme.md fgcom-mumble-linux-$(VERSION)/README.md
-	cp ../../LICENSE ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-linux-$(VERSION)
+	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-linux-$(VERSION)
 	cp fgcom-mumble.so fgcom-mumble-linux-$(VERSION)/plugin
 	cp -r ../fgfs/ fgcom-mumble-linux-$(VERSION)
 	tar -czf fgcom-mumble-linux-$(VERSION).tar.gz fgcom-mumble-linux-$(VERSION)/
@@ -87,7 +87,7 @@ release: clean-all plugin plugin-win64
 	mkdir fgcom-mumble-windows-$(VERSION)/plugin
 	rm -f fgcom-mumble-windows*.zip
 	cp releaseReadme.md fgcom-mumble-windows-$(VERSION)/README.md
-	cp ../../LICENSE ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-windows-$(VERSION)
+	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-windows-$(VERSION)
 	cp fgcom-mumble.dll fgcom-mumble-windows-$(VERSION)/plugin
 	cp -r ../fgfs/ fgcom-mumble-windows-$(VERSION)
 	zip -r fgcom-mumble-windows-$(VERSION).zip fgcom-mumble-windows-$(VERSION)

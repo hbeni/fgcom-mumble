@@ -12,18 +12,19 @@ release: release-server
 
 release-server:
 	# Build server components release
-	mkdir server-$(PLUGINVER)
-	mkdir server-$(PLUGINVER)/recordings
-	cp server/recordings/readme.md server/recordings/fgcom.rec.testsample.fgcs server-$(PLUGINVER)/recordings
-	head -n 1 server/Readme.server.md > server-$(PLUGINVER)/README.md
-	@echo Version: $(VERSION) \($(GITVER) $(GITDATE)\) >> server-$(PLUGINVER)/README.md
-	tail +2 server/Readme.server.md >> server-$(PLUGINVER)/README.md
-	cp -r server/statuspage/ server-$(PLUGINVER)
-	mv server-$(PLUGINVER)/statuspage/Readme.statuspage.md server-$(PLUGINVER)
-	cp server/fgcom-botmanager.sh server/*.bot.lua server-$(PLUGINVER)
-	sed '/^\s\+gitver/s/""/"$(GITVER) $(GITDATE)"/' server/sharedFunctions.inc.lua > server-$(PLUGINVER)/sharedFunctions.inc.lua
-	zip -r server-$(PLUGINVER).zip server-$(PLUGINVER)
-	rm -rf server-$(PLUGINVER)
+	mkdir fgcom-mumble-server-$(PLUGINVER)
+	mkdir fgcom-mumble-server-$(PLUGINVER)/recordings
+	cp server/recordings/readme.md server/recordings/fgcom.rec.testsample.fgcs fgcom-mumble-server-$(PLUGINVER)/recordings
+	head -n 1 server/Readme.server.md > fgcom-mumble-server-$(PLUGINVER)/README.md
+	@echo Version: $(VERSION) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-server-$(PLUGINVER)/README.md
+	tail +2 server/Readme.server.md >> fgcom-mumble-server-$(PLUGINVER)/README.md
+	cp -r server/statuspage/ fgcom-mumble-server-$(PLUGINVER)
+	mv fgcom-mumble-server-$(PLUGINVER)/statuspage/Readme.statuspage.md fgcom-mumble-server-$(PLUGINVER)
+	cp server/Readme.server-de_DE.md fgcom-mumble-server-$(PLUGINVER)/
+	cp server/fgcom-botmanager.sh server/*.bot.lua fgcom-mumble-server-$(PLUGINVER)
+	sed '/^\s\+gitver/s/""/"$(GITVER) $(GITDATE)"/' server/sharedFunctions.inc.lua > fgcom-mumble-server-$(PLUGINVER)/sharedFunctions.inc.lua
+	zip -r fgcom-mumble-server-$(PLUGINVER).zip fgcom-mumble-server-$(PLUGINVER)
+	rm -rf fgcom-mumble-server-$(PLUGINVER)
 
 # relay everything else to the mumble-plugin makefile
 .DEFAULT:
