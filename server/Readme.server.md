@@ -1,6 +1,9 @@
 FGCom-mumble - a flightsim radio simulation framework based on mumble
 ===================================================================== 
 
+This is the server side documentation for the FGCom-mumble implementation.
+
+There is also a german translation available: [-> deutsche Version](Readme.server-de_DE.md).
 
 Install / Setup for the Server
 ==============================
@@ -45,13 +48,13 @@ Radio Recording Bot
 If you want to start the bot manually, you can inspect its available options with `luajit fgcom-radio-recorder.bot.lua -h`.
 
 The `radio-recorder` monitors the `fgcom-mumble` channel for users recording requests. If such a request is detected, the samples get recorded and put to an sample file on disk.  
-Those disk samples can be picked up from the `radio-playback` bot, which is usually invoked automatically from the recorder bot.
+Those disk samples can be picked up from the `radio-playback` bot, which is usually invoked automatically from the botmanager. For this, the recorder bot has an notification interface to the botmanger.
 
 Radio (ATIS) recording request
 ------------------------------
 An ATIS recording request is an ordinary transmission, but on a special tuned frequency in the format `RECORD_<target-frequency>`. As soon as a client transmitts, the bot captures the output and stores it.  
 When the transmission is complete, the bot notes the target frequency, tx-power, geolocation and callsign of the sender.
-The bot will now spawn a `radio-playback` bot that broadcasts the stored audio from the location with the callsign. It will also be terminated from the manager bot after a timeout.
+Then, a `radio-playback` bot that broadcasts the stored audio from the location with the callsign will be spawned. It will also be terminated from the manager bot after a timeout.
 
 Note that the recording is not ATIS-specific. Using the technique described here also allows to make radio stations etc.
 
