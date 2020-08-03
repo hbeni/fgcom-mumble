@@ -559,7 +559,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     std::stringstream streambuffer(buffer); //std::string(buffer)
     std::string segment;
     std::regex parse_key_value ("^(\\w+)=(.+)");
-    std::regex parse_COM ("^(COM)(\\d)_(.+)");
+    std::regex parse_COM ("^(COM)(\\d+)_(.+)");
     fgcom_localcfg_mtx.lock();
     while(std::getline(streambuffer, segment, ',')) {
         pluginDbg("[UDP] Segment='"+segment+"'");
