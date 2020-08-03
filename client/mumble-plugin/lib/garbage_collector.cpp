@@ -77,8 +77,8 @@ void fgcom_gc_clean_rmt() {
     
     pluginDbg("[GC] RMT searching for stale remote state...");
     std::vector<mumble_userid_t> staleRemoteClients;
-    std::vector<int> staleIIDs;
     for (const auto &p : fgcom_remote_clients) {
+        std::vector<int> staleIIDs;
         mumble_userid_t clid = p.first;
         for (const auto &idty : fgcom_remote_clients[clid]) {
             int iid          = idty.first;
@@ -86,7 +86,7 @@ void fgcom_gc_clean_rmt() {
 
             std::chrono::milliseconds since = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::system_clock::now()-rmt.lastUpdate);
             if (since > rmt_timeout) {
-                pluginDbg("[GC] RMTT  mumid="+std::to_string(clid)+"; iid="+std::to_string(iid)+" stale since="+std::to_string((float)since.count()/1000)+"s" );
+                pluginDbg("[GC] RMT  mumid="+std::to_string(clid)+"; iid="+std::to_string(iid)+" stale since="+std::to_string((float)since.count()/1000)+"s" );
                  staleIIDs.push_back(iid);
             }
         }

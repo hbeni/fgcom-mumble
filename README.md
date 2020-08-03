@@ -59,7 +59,7 @@ You are ready for radio usage! Some client needs to supply information to the pl
 ### Generic compatibility
 The plugin aims to be compatible to the legacy fgcom-standalone protocol, so vey much all halfway recent fgfs instances, ATC clients and aircraft should handle it out of the box at least with COM1.
 
-Note that frequencies can be arbitary strings. That said, all participating clients must share a common definition of "frequency", and this should be the "tuned" frequency and not the actual resulting MHz wave frequency (esp. with 8.3 channels spacing).  
+Note that frequencies can be arbitary strings. That said, all participating clients must share a common definition of "frequency", this should be the physical radio wave frequency and not the "channel" (esp. with 8.3 channels spacing).  
 Also note that callsigns and frequencies are not allowed to contain the comma symbol (`,`). Decimal point symbol has always to be a point (`.`).
 
 
@@ -67,6 +67,8 @@ Also note that callsigns and frequencies are not allowed to contain the comma sy
 - copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
 - start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
 - start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
+
+The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
 
 ### OpenRadar specific
 Currently, OpenRadar just supports one Radio per UDP port. In case you want several Radios (which is likely), you need to invoke several dedicated mumble processes. This will give you separate FGCom-mumble plugin instances listening on different ports, and in OpenRadar you can thus specify that ports.

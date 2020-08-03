@@ -45,7 +45,7 @@ extern struct fgcom_config fgcom_cfg;
 
 // This represents the state of a radio
 struct fgcom_radio {
-	std::string  frequency; // tuned frequency
+	std::string  frequency; // tuned frequency (real carrier frequency)
 	bool  power_btn;     // true if switched on
 	float volts;         // how much electric power it has (>0 = on)
 	bool  serviceable;   // false if broken
