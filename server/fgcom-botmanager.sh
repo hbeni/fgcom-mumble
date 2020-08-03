@@ -134,9 +134,19 @@ playback_opts="$common_opts --cert=$pcert --key=$pkey"
 recorder_opts="$common_opts --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
 status_opts="$common_opts --cert=$scert --key=$skey --db=$statusbot_db"
 
+
+# define cleanup routine
+function cleanup()
+{
+    rm -f $fnotify
+    pkill -f "fgcom-radio-recorder.bot.lua"
+    pkill -f "fgcom-status.bot.lua"
+}
+trap cleanup EXIT
+
+
 # setup the fifo
 echo "Setup fifo '$fnotify'"
-trap "rm -f $fnotify" EXIT
 
 if [[ ! -p $fnotify ]]; then
     mkfifo $fnotify
@@ -148,25 +158,40 @@ if [[ ! -p "$fnotify" ]]; then
 fi
 
 
-# Spawn the radio recorder bot
-recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
-echo "Spawn bot: $recorderbot_cmd"
-if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
-    $recorderbot_cmd > $recorderbot_log &
-else
-    $recorderbot_cmd &
-fi
+# Botmanager watchdog
+{
+    echo "watchdog starting..."
+    while [[ -p $fnotify ]]; do
+        # Spawn the radio recorder bot
+        botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua")
+        if [[ -z "$botPID" ]]; then
+            recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
+            echo "Spawn bot: $recorderbot_cmd"
+            if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
+                $recorderbot_cmd > $recorderbot_log &
+            else
+                $recorderbot_cmd &
+            fi
+        fi
 
-
-# Spawn the statusPage bot
-statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
-[[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
-echo "Spawn bot: $statusbot_cmd"
-if [ -n $statusbot_log ] && [ $statusbot_log != "-" ]; then
-    $statusbot_cmd > $statusbot_log &
-else
-    $statusbot_cmd &
-fi
+        # Spawn the statusPage bot
+        botPID=$(pgrep -f -- "fgcom-status.bot.lua")
+        if [[ -z "$botPID" ]]; then
+            statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
+            [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
+            echo "Spawn bot: $statusbot_cmd"
+            if [ -n $statusbot_log ] && [ $statusbot_log != "-" ]; then
+                $statusbot_cmd > $statusbot_log &
+            else
+                $statusbot_cmd &
+            fi
+        fi
+        
+        sleep 1
+    done
+    echo "watchdog finished"
+    
+} &
 
 
 # wait for new recordings and call playback bots
@@ -176,6 +201,13 @@ while true; do
             break
         fi
         date "+[%Y-%m-%d %H:%M:%S] notification received: '$line'"
+        
+        # See if there is already a playback bot instance with that sample
+        botPID=$(pgrep -f -- "--sample=$line")
+        if [[ -n "$botPID" ]]; then
+            echo "Spawn bot ignored (found already running instance): $playbackbot_cmd"
+            continue
+        fi
         
         #spawn bot
         playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
