@@ -404,8 +404,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
                         
                         if (token_key == "FRQ") {
-                            // frequency must be normalized, it may contain leading/trailing zeroes and spaces.
-                            fgcom_remote_clients[clientID][iid].radios[radio_id].frequency = fgcom_normalizeFrequency(token_value);
+                            // expected is real wave carrier frequency, so something with at least 4 decimals
+                            fgcom_remote_clients[clientID][iid].radios[radio_id].frequency = token_value;
                         }
                         if (token_key == "VLT") fgcom_remote_clients[clientID][iid].radios[radio_id].volts       = std::stof(token_value);
                         if (token_key == "PBT") fgcom_remote_clients[clientID][iid].radios[radio_id].power_btn   = (token_value == "1")? true : false;
@@ -538,6 +538,7 @@ void fgcom_notifyThread() {
 std::mutex fgcom_localcfg_mtx;
 std::map<int, fgcom_client> fgcom_local_client;
 std::map<uint16_t, int> fgcom_udp_portMap; // port2iid
+bool fgcom_com_ptt_compatmode = false;
 std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort) {
     pluginDbg("[UDP] received message (clientPort="+std::to_string(clientPort)+"): "+std::string(buffer));
     //std::cout << "DBG: Stored local userID=" << localMumId <<std::endl;
@@ -656,14 +657,54 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     radio_id--; // convert to array index
                     
                     if (radio_var == "FRQ") {
-                        // frequency must be normalized, it may contain leading/trailing zeroes and spaces.
-                        std::regex frq_cleaner_re ("^[0\\s]+|(\\..+?)[0\\s]+$");
-                        std::string token_value_clean;
-                        std::regex_replace (std::back_inserter(token_value_clean), token_value.begin(), token_value.end(), frq_cleaner_re, "$1");
+                        // Frequency handling is a bit difficult (see https://github.com/hbeni/fgcom-mumble/issues/34):
+                        // - we expect real wave frequencies here.
+                        // - old FGCom interface had sended channel names (which, in 8.33 spacing do not translate directly to real wave frequencies)
+                        // - result is, we must convert in some circumstances.
+                        //
+                        // also the provided value may be containing illegal stuff like trailing/leading spaces/zeroes; so, it must be normalized.
+                        fgcom_radiowave_freqConvRes frq_parsed = fgcom_radiowave_splitFreqString(token_value);  // results in a cleaned frequency
+                        std::string finalParsedFRQ;
+                        if (frq_parsed.isNumeric) {
+                            // frequency is a numeric string.
+                            // Let's check the decimals to decide if it is new or old format
+                            if (std::regex_match(frq_parsed.frequency, std::regex("^\\d+\\.\\d{4,}$") )) {
+                                // numeric frequency detected with >=4 decimals: treat as real wave frequency
+                                pluginDbg("[UDP] detected real wave frequency format="+token_value);
+                                finalParsedFRQ = frq_parsed.prefix + frq_parsed.frequency;
+                                
+                            } else {
+                                // FGCom 3.0 compatibility mode:
+                                // we expect 25kHz or 8.33 channel names here.
+                                // So if we encounter such data, we probably need to convert the frequency part
+                                pluginDbg("[UDP] detected old FGCom frequency format="+token_value);
+                                finalParsedFRQ = frq_parsed.prefix + fgcom_radiowave_conv_chan2freq(frq_parsed.frequency);
+                                pluginDbg("[UDP] conversion result to realFreq="+finalParsedFRQ);
+                            }
+                        } else {
+                            // not numeric: use as-is.
+                            finalParsedFRQ = frq_parsed.frequency;  // already cleaned value
+                            pluginDbg("[UDP] using FRQ as-is (non-numeric)");
+                        }
                         
+                        // handle final COMn_FRQ parsing result
                         std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
-                        fgcom_local_client[iid].radios[radio_id].frequency   = token_value_clean;
-                        if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                        fgcom_radiowave_freqConvRes frq_ori = fgcom_radiowave_splitFreqString(oldValue);
+                        fgcom_local_client[iid].radios[radio_id].frequency = finalParsedFRQ; // already cleaned value
+                        
+                        // see if we need to notify:
+                        // - for changed non-numeric, always if its different
+                        // - for change in numeric/non-numeric, also always if its different
+                        // - for numeric ones, if the prefix did change, or the frequency is different for more than rounding errors
+                        fgcom_radiowave_freqConvRes frq_new = fgcom_radiowave_splitFreqString(finalParsedFRQ);
+                        if (frq_ori.isNumeric && frq_new.isNumeric && frq_ori.prefix == frq_new.prefix) {
+                            // both are numeric and the prefix did not change: only notify if frequency changed that much
+                            float frq_diff = std::fabs(std::stof(frq_ori.frequency) - std::stof(frq_new.frequency));
+                            //pluginDbg("[UDP] COMM frq diff="+std::to_string(frq_diff)+"; old="+oldValue+"; new="+finalParsedFRQ);
+                            if ( frq_diff > 0.000010 ) parseResult[iid].radioData.insert(radio_id);
+                        } else {
+                            if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                        }
                     }
                     if (radio_var == "VLT") {
                         float oldValue = fgcom_local_client[iid].radios[radio_id].volts;
@@ -681,10 +722,20 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].serviceable != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     if (radio_var == "PTT") {
-                        bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
-                        fgcom_local_client[iid].radios[radio_id].ptt         = (token_value == "1" || token_value == "true")? true : false;
-                        if (fgcom_local_client[iid].radios[radio_id].ptt != oldValue ) parseResult[iid].radioData.insert(radio_id);
-                        fgcom_handlePTT();
+                        // depends if we are previously have been in old compat mode (a single PTT property)
+                        // if yes: we need to ignore the "PTT disabled" request, because it is probably always 0
+                        bool parsedPTT = (token_value == "1" || token_value == "true")? true : false;
+                        
+                        // PTT was set to true with the new way: we disable compat mode and take it
+                        if (parsedPTT && fgcom_com_ptt_compatmode) fgcom_com_ptt_compatmode = false; 
+                        
+                        if (!fgcom_com_ptt_compatmode) {
+                            bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
+                            fgcom_local_client[iid].radios[radio_id].ptt = parsedPTT;
+                            if (fgcom_local_client[iid].radios[radio_id].ptt != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                            fgcom_handlePTT();
+                        }
+
                     }
                     if (radio_var == "VOL") {
                         float oldValue = fgcom_local_client[iid].radios[radio_id].volume;
@@ -758,18 +809,24 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 if (token_key == "PTT") {
                     // PTT contains the ID of the used radio (0=none, 1=COM1, 2=COM2)
                     int ptt_id = std::stoi(token_value);
-                    pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
-                    for (int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
-                        pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
-                        if (i == ptt_id - 1) {
-                            if (fgcom_local_client[iid].radios[i].ptt != 1){
-                                parseResult[iid].radioData.insert(i);
-                                fgcom_local_client[iid].radios[i].ptt = 1;
-                            }
-                        } else {
-                            if (fgcom_local_client[iid].radios[i].ptt == 1){
-                                parseResult[iid].radioData.insert(i);
-                                fgcom_local_client[iid].radios[i].ptt = 0;
+                    
+                    // handle compat mode switch: if we receive PTT in the old way, we switch it on
+                    if (ptt_id > 0) fgcom_com_ptt_compatmode = true;
+                    
+                    if (fgcom_com_ptt_compatmode) {
+                        pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
+                        for (int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
+                            pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
+                            if (i == ptt_id - 1) {
+                                if (fgcom_local_client[iid].radios[i].ptt != 1){
+                                    parseResult[iid].radioData.insert(i);
+                                    fgcom_local_client[iid].radios[i].ptt = 1;
+                                }
+                            } else {
+                                if (fgcom_local_client[iid].radios[i].ptt == 1){
+                                    parseResult[iid].radioData.insert(i);
+                                    fgcom_local_client[iid].radios[i].ptt = 0;
+                                }
                             }
                         }
                     }

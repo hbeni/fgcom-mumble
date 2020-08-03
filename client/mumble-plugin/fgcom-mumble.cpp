@@ -639,9 +639,16 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
                                 pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(fgcom_radio_isOperable(lcl.radios[lri]))+"'");
+                                pluginDbg("mumble_onAudioSourceFetched():       RDF='"+std::to_string(lcl.radios[lri].rdfEnabled)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
+                                pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");
                                 
-                                // detect landline/intercom
+                                // calculate frequency match
+                                fgcom_radiowave_freqConvRes rmt_frq_p = fgcom_radiowave_splitFreqString(rmt.radios[ri].frequency);
+                                float signalMatchFilter = fgcom_radiowave_getFrqMatch(lcl.radios[lri].frequency, rmt.radios[ri].frequency);
+                                
+                                
+                                /* detect landline/intercom */
                                 if (lcl.radios[lri].frequency.substr(0, 5) == "PHONE"
                                     && lcl.radios[lri].frequency == rmt.radios[ri].frequency 
                                     && fgcom_radio_isOperable(lcl.radios[lri])) {
@@ -652,10 +659,13 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     isLandline = true;
                                     break; // no point in searching more
                                 
-                                // normal radio operation
-                                } else if (fgcom_normalizeFrequency(lcl.radios[lri].frequency) == fgcom_normalizeFrequency(rmt.radios[ri].frequency)
+                                
+                                /* normal radio operation */
+                                // (prefixed special frequencies never should be recieved!)
+                                } else if (signalMatchFilter > 0.0 
                                     && fgcom_radio_isOperable(lcl.radios[lri])
-                                    && !lcl.radios[lri].ptt) {
+                                    && !lcl.radios[lri].ptt   // halfduplex!
+                                    && rmt_frq_p.prefix.length() == 0) {
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
                                     // we are listening on that frequency!
                                     // determine signal strenght for this connection
@@ -663,6 +673,10 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                         lcl.lat, lcl.lon, lcl.alt,
                                         rmt.lat, rmt.lon, rmt.alt,
                                         rmt.radios[ri].pwr);
+                                    
+                                    // apply signal filter from frequency match (miss-tuned will reduce the signal quality)
+                                    signal.quality *= signalMatchFilter;
+                                    
                                     pluginDbg("mumble_onAudioSourceFetched():       signalStrength="+std::to_string(signal.quality)
                                         +"; direction="+std::to_string(signal.direction)
                                         +"; angle="+std::to_string(signal.verticalAngle)
@@ -670,7 +684,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 
                                     
                                     // RDF: Updpate the radios signal information
-                                    if (lcl.radios[lri].rdfEnabled) {
+                                    if (lcl.radios[lri].rdfEnabled && signal.quality > lcl.radios[lri].squelch) {
                                         pluginDbg("mumble_onAudioSourceFetched(): update signal data for RDF ("+std::to_string(rmt.mumid)+")="+rmt.callsign+", radio["+std::to_string(ri)+"]");
                                         //std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign+":"+std::to_string(lri);
                                         std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign;
@@ -696,6 +710,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     } else {
                                         pluginDbg("mumble_onAudioSourceFetched():         not taking it. squelch="+std::to_string(lcl.radios[lri].squelch)+", previousBestSignal="+std::to_string(bestSignalStrength));
                                     }
+                                    
+                                    
+                                /* no match means, we had no operable mode for this radio pair */
                                 } else {
                                     pluginDbg("mumble_onAudioSourceFetched():     nomatch");
                                 }

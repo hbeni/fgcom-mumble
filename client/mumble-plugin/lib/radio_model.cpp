@@ -163,24 +163,178 @@ fgcom_radiowave_signal fgcom_radiowave_getSignal(double lat1, double lon1, float
 }
 
 
-/* 
- * Normalize frequencys for better matching
+/*
+ * Extract numeric frequency from string and clean string from leading zeroes/spaces
  */
-std::string fgcom_normalizeFrequency(std::string frq) {
-    // try to treat this as number and normalize it.
-    // if it fails, just return bare string.
+fgcom_radiowave_freqConvRes fgcom_radiowave_splitFreqString(std::string frq) {
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    // construct default return value: use as-is
+    struct fgcom_radiowave_freqConvRes res;
+    res.frequency = frq;
+    res.isNumeric = false;
+    
     try {
-        if (std::regex_match(frq, std::regex("^[0-9.]+$") )) {
-            float frq_f = std::stof(frq);
-            char buffer [50];
-            int len = sprintf (buffer, "%.3f", frq_f);
-            std::string ret = std::string(buffer, len);
-            return ret;
+        std::smatch sm;
+        if (std::regex_match(frq, sm, std::regex("^[\\s0]*((?:RECORD_)?)([0-9.]+?)[\\s]*$") )) {
+            // numeric frequency detected.
+            // note: it is important for further detection that we keep the nmber of decimals unaltered!
+            res.prefix    = sm[1];
+            res.frequency = sm[2];
+            res.isNumeric = true;
+            return res;
         } else {
-            return frq;
+            // not numeric: use as-is
+            return res;
         }
     } catch (const std::exception& e) {
+        // parsing error: fall back to use-as-is
+        return res;
+    }
+}
+
+
+/* 
+ * Convert 25kHz/8.33kHz channel name frequencies to real carrier frequency.
+ * 
+ * This is done according to the list from https://833radio.com/news/show/7
+ * and much appreciated help from Michael "mickybadia" Filhol (ATC-Pie developer, where some of the code here is borrowed)
+ * 
+ * @param frq cleaned frequency string like "118.02" or "118.025"
+ * @return frequency string of corresponding real wave frequency, like "118.0250"
+ */
+std::string fgcom_radiowave_conv_chan2freq(std::string frq) {
+    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    
+    std::smatch sm;
+    if (std::regex_match(frq, sm, std::regex("^\\d+(\\.?)$") )) {
+        // we have some MHz frequency like "123". We ensure a frequency with decimals.
+        if (sm[1].length() == 0) {
+            frq = frq+".00";
+        } else {
+            frq = frq+"00";
+        }
+//         std::cout << "fgcom_radiowave_conv_chan2freq(): added two decimals: " << frq << std::endl;
+    } else if (std::regex_match(frq, std::regex("^\\d+\\.\\d$") )) {
+        // we have some MHz frequency like "123.3". We ensure a frequency with decimals.
+        frq = frq+"0";
+//         std::cout << "fgcom_radiowave_conv_chan2freq(): added one decimal: " << frq << std::endl;
+    }
+
+    if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d)(\\d)$") )) {
+        // we have a 25kHz shortened channel name like "123.35". Valid endings are 0, 2, 5, 7
+//         std::cout << "fgcom_radiowave_conv_chan2freq(): 25khz short name detected: " << frq << std::endl;
+        if (sm[3] == "2" || sm[3] == "7") {
+            // ._2 and ._7 endings are old shortened names for odd 25kHz-step freq's (.02 -> .0250)
+            return frq + "50";
+        } else if (sm[3] == "0" || sm[3] == "5") {
+            // ._0 and ._5 endings are old shortened names for whole 25kHz-step freq's (.05 -> .0500)
+            return frq + "00";
+        } else {
+//             std::cout << "fgcom_radiowave_conv_chan2freq(): invalid ending: " << sm[3] << std::endl;
+            return frq; // invalid ending, just return the frq
+        }
+        
+    } else if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d)(\\d)(\\d)$") )) {
+        // we have a proper 25kHz channel name (like "118.025") OR an 8.33 channel name (like "118.015")
+        
+        std::string lastTwo = std::string(sm[3]) + std::string(sm[4]);
+        // if the last two digits form a valid 8.33 spacing channel name, we need to convert them to the base frequency
+        if (lastTwo == "05" || lastTwo == "10" ||
+            lastTwo == "15" || lastTwo == "30" ||
+            lastTwo == "35" || lastTwo == "40" ||
+            lastTwo == "55" || lastTwo == "60" ||
+            lastTwo == "65" || lastTwo == "80" ||
+            lastTwo == "85" || lastTwo == "90"    ) {
+//             std::cout << "fgcom_radiowave_conv_chan2freq(): 8.33khz channel name detected: " << frq << std::endl;
+            // valid 8.33 channel name: Expand to corresponding real frequency
+        
+            // convert first subchannel to its 25kHz base frequency (like "._30" -> "._25")
+//             std::cout << "fgcom_radiowave_conv_chan2freq():  preswap=" << lastTwo;
+            if (lastTwo == "05") lastTwo = "00";
+            if (lastTwo == "30") lastTwo = "25";
+            if (lastTwo == "55") lastTwo = "50";
+            if (lastTwo == "80") lastTwo = "75";
+//             std::cout << "; postswap=" << lastTwo << std::endl;
+            std::string tgtfrq = std::string(sm[1]) + "." + std::string(sm[2]) + lastTwo;
+//             std::cout << "tgtfrq=" << tgtfrq << std::endl;
+  
+            if (lastTwo == "00" || lastTwo == "25" || lastTwo == "50" || lastTwo == "75") {
+                // just map trough the fixed old 25kHz representations
+//                 std::cout << "  mapTrough=" << tgtfrq+"00" << std::endl;
+                return tgtfrq+"00";
+            } else {
+                // get the nearest multiple of the spacing
+                float spacing_MHz = .025 / 3;   // 8.33 kHz in mHz = 0.00833333
+                float tgtfrq_f = std::stof(tgtfrq);
+                int ch_833 = round(tgtfrq_f / spacing_MHz);    // get 8.33 channel number; eg round( 118.025 / 0.0083333)
+                float realFrq_f = ch_833 * spacing_MHz; // calculate 8real .33 channel numbers frequency
+//                 printf("  calculated channel#=%i (=%.5f)\n", ch_833, realFrq_f);
+                
+                // convert back to string for return
+                char buffer [50];
+                int len = sprintf (buffer, "%.5f", realFrq_f);   // 5 digits is 10Hz resolution.
+                return std::string(buffer, len);
+            }
+        
+        } else {
+//             std::cout << "fgcom_radiowave_conv_chan2freq(): 25khz straight channel name detected: " << frq << std::endl;
+            return frq + "0"; // 00, 25, 50, 75 are already straight 25kHz frequencies (.025 => .0250)
+        }
+        
+    } else {
+        // it was not parseable (unhandled format, note, we also don't need to handle real wave frequencies; the're used as-is)
+//         std::cout << "fgcom_radiowave_conv_chan2freq(): unhandled : " << frq << std::endl;
         return frq;
+    }
+    
+}
+
+
+/*
+ * See if the frequencies match.
+ */
+float fgcom_radiowave_getFrqMatch(std::string frq1_real, std::string frq2_real) {
+    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    
+    // default: case-sensitive string comparison
+    float filter = (frq1_real == frq2_real)? 1.0 : 0.0;
+    
+//     std::cout << "fgcom_radiowave_getFrqMatch('" << frq1_real.c_str() << "', '" <<frq2_real.c_str() << "')" << std::endl;
+//     std::cout << "fgcom_radiowave_getFrqMatch() default string match=" << filter << std::endl;
+    
+    // see if we can it make more precise.
+    // that is the case if we have numerical values (after ignoring prefixes).
+    try {
+        fgcom_radiowave_freqConvRes frq1_p = fgcom_radiowave_splitFreqString(frq1_real);
+        fgcom_radiowave_freqConvRes frq2_p = fgcom_radiowave_splitFreqString(frq2_real);
+        if (frq1_p.isNumeric && frq2_p.isNumeric) {
+            // numeric frequencies
+            float frq1_f = std::stof(frq1_p.frequency);
+            float frq2_f = std::stof(frq2_p.frequency);
+            
+            // calculate absolute "off" tuning / tunable window
+            // 1.5-500x  => gives >1.0 at 0.001 (1kHz) difference, declining to 0.0. at 0.003 (3 kHz),
+            //              yielding a tunable band of 6kHz around the 8.33kHz channel center,
+            //              where the range 7.33->9.33 is perfect signal and 50% signal is at about 2kHz off.
+            // TODO: Note, i completely made up those numbers. I have no idea of tuning radios. I just wanted to make sure, that 25kHz radios will receive 8.33 channels with overlapping stepsize while keeping the 8.33 channels distinct and with a gap between windows...
+            float diff = std::fabs(frq1_f - frq2_f);
+//             std::cout << "DBG CALC:" << std::endl;
+//             std::cout << "   frq1_p=" << frq1_p.frequency << std::endl;
+//             std::cout << "   frq1_f=" << frq1_f << std::endl;
+//             std::cout << "   frq2_p=" << frq2_p.frequency << std::endl;
+//             std::cout << "   frq2_f=" << frq1_f << std::endl;
+            filter     = 1.5 - 500 * diff;
+//             std::cout << "   diff=" << diff << "; filter=" << filter << std::endl;
+            if (filter > 1.0) filter = 1.0;
+            if (filter < 0.0) filter = 0.0;
+            
+            return filter;
+        } else {
+            // not numeric: return default
+            return filter;
+        }
+    } catch (const std::exception& e) {
+        // fallback in case of errors: return default
+        return filter;
     }
 }

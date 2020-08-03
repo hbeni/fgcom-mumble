@@ -32,7 +32,7 @@ The plugin tracks the following state per identity:
   - longitude
   - altitude
 - Per radio:
-  - tuned frequency
+  - tuned carrier frequency
   - power knob on/off
   - electrical power availability
   - serviceable (is it failed?)
@@ -68,7 +68,7 @@ The plugis internal state is cleaned from outdated data regularly. Any succesful
 
 
 ### Core data
-All participating clients must share a common definition of "frequency", and this should be the "tuned" frequency and not the actual resulting MHz wave frequency (esp. with 8.3 channels spacing).
+All participating clients must share a common definition of "frequency", and this should be the physical radio wave frequency and not the "channel" (esp. with 8.3 channels spacing).
 
 Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denotes a number starting from `1`):
 
@@ -78,7 +78,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
 | `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
-| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string!) The string provided will be normalized to a float, if it's numeric. A value of `<del>` can be used to deregister a radio.  | *mandatory*|
+| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string or wave carrier frequency as float with minimum 4 decimals precision; see below section for details). A value of `<del>` can be used to deregister a radio.  | *mandatory*|
 | `COM`*n*`_VLT` | Numeric| Electrical power; >0 means "has power"  | `12`       |
 | `COM`*n*`_PBT` | Bool   | Power button state: 0=off, 1=on         | `1`        |
 | `COM`*n*`_SRV` | Bool   | Serviceable: 0=failed, 1=operable       | `1`        |
@@ -94,9 +94,19 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 
 | Field        | Format | Description                                                                                       |
 |--------------|--------|---------------------------------------------------------------------------------------------------|
+| `COM`*n*`_FRQ` | Float | Selected channel frequency, gets converted to carrier frequency (see section below)  | *mandatory*|
 | `ALT`        | Int    | Altitude in ft above sea-level. If both `HGT` and `ALT` is present in the UDP packet, `HGT` takes precedence. If only `ALT` is given, the radio horizon is artificially bigger than it should be, as we have no terrain model right now. |
 | `PTT`        | Int    | Currently active PTT radio (0=none, 1=COM1, 2=COM2). Gets converted to new `COM`*n*`_PTT` updates.|
 | `OUTPUT_VOL` | Float  | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
+
+#### `COM`*n*`_FRQ` handling for "channel names"
+The implementation internally operates on the basic common denominator, the carrier wave frequency. However, older flightgear aircraft may still send the selected "channel" (which is OK for 25kHz spacing, but not anymore for 8.33kHz steps).  
+Therefore the UDP interface tries to convert such "channel names" to the real wave frequency:
+
+- if the supplied frequency is *numeric* and at least four digits precision, it is assumed a "real wave frequency" and used as-is.
+- if the supplied frequency is *non-numeric* (eg. `PHONE:`... etc) it is used as-is.
+- if the supplied frequency is *the recorder one* (`RECORD_<tgtFrq>`), the frequency part is subject to channel-conversion.
+- if the supplied frequency *is* numeric, the frequency will be inspected for known "channel names". If so, it gets converted to the respective carrier frequency (like 25kHz `118.025` => `118.0250`; or 8.33kHz `118.015` => `118.0167`).
 
 
 ### Configuration options
@@ -147,7 +157,7 @@ The following internal plugin data packets are defined:
   - `LAT` (decimal)
   - `ALT` (height above ground in meters, not to be confused with ALT from UDP packet!)
 - `FGCOM:UPD_COM:`*iid*`:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
-  - `FRQ`
+  - `FRQ` the real wave carrier frequency
   - `VLT` (not transmitted currently)
   - `PBT` (not transmitted currently)
   - `PTT`
@@ -202,7 +212,8 @@ When another client sends an audio stream, the plugin will check the remote clie
 
 If yes, the sending clients audio stream is let trough, so you can hear the standard mumble voice data (additional adjustments of the audio stream may apply, like static-noise and volume adjustments).
 
-If either your radio is not operational or not tuned to the same frequency or not in range, the adio stream is canceled out, so you will not be able to hear it.
+If either your radio is not operational or not tuned to the same frequency or not in range, the adio stream is canceled out, so you will not be able to hear it.  
+"Same frequency" thereby means case-sensitive string matching for non-numeric frequencies and a frequency overlap calculation from the radio model for numbers.
 
 
 Simple radio wave model
