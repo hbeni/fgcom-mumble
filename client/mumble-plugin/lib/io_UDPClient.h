@@ -1,5 +1,5 @@
-#ifndef FGCOM_RDFUDP_H
-#define FGCOM_RDFUDP_H
+#ifndef FGCOM_IO_UDPCLIENT_H
+#define FGCOM_IO_UDPCLIENT_H
 
 #include <cstring>
 #include <vector>
