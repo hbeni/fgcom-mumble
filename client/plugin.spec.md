@@ -131,7 +131,7 @@ Normally this is not needed, as UDP clients are supposed to keep the port stable
 | Field            | Format | Description                             | Default    |
 |------------------|--------|-----------------------------------------|------------|
 | `IID`          | Int    | Switch context of following UDP fields to ID of the identity `IID`. IDD is starting from `0`.  | derived from UDP client port |
-| `RDF_PORT`       | Int    | Switch the identities RDF UDP target Port. | send to UDP client port of the identity |
+| `UDP_TGT_PORT`   | Int    | Switch the identities UDP target Port. | send to UDP client port of the identity |
 
 
 Plugin output data
@@ -168,7 +168,7 @@ The following internal plugin data packets are defined:
 
 
 ### UDP client interface
-The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is localhost, on the respective identities client port (can be overridden by `RDF_PORT`). The client port is derived from the UDP input servers packet for the identity.
+The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is localhost, on the respective identities client port (can be overridden by `UDP_TGT_PORT`). The client port is derived from the UDP input servers packet for the identity.
 
 The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Values are separated using comma, each packet is terminated by newline. Floats are always output with a point as decimal-point character.  
 If there is not data to send, nothing will be transmitted over the wire.  
@@ -192,7 +192,7 @@ The reported frequency is the one tuned on the radio (and not effective wave fre
 | `VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
 | `QLY`      | Float  | Signal quality (`0.00` to `1.0`)                 |
 
-The `DIR` and `VRT` angles are in decimal degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF_1-0-1:DIR=180.5,VRT=12.5`: The Airplane transmitting is thus directly south and above of you.  
+The `DIR` and `VRT` angles are in decimal degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98`: The Airplane transmitting is thus directly south and above of you.  
 The values are true bearings relative to your position, and `DIR=0.0` is due north relative to the WSG84 grid.
 
 #### Checking UDP client output
