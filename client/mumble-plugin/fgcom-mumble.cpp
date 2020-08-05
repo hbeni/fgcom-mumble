@@ -28,9 +28,10 @@
 #include "MumbleAPI.h"
 #include "fgcom-mumble.h"
 #include "plugin_io.h"
+#include "io_UDPServer.h"
+#include "io_UDPClient.h"
 #include "radio_model.h"
 #include "audio.h"
-#include "io_UDPClient.h"
 #include "garbage_collector.h"
 
 #include <stdio.h>

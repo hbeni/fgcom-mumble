@@ -22,8 +22,6 @@
 #define FGCOM_PLUGIN_IO_H
 
 
-#define FGCOM_SERVER_PORT  16661  // port to start listen to (16661 is the known FGCom udp port)
-#define MAXLINE             1024  // max byte size of a udp packet
 #define NOTIFYINTERVAL      1000  // minimal time between notifications (ms)
 #define NOTIFYPINGINTERVAL 10000  // time between pings (ms), if no notification was done
 
@@ -60,23 +58,6 @@ void pluginLog(T log);
 // debug=true: only log if compiled in DEBUG mode
 template<typename T>
 void pluginDbg(T log);
-
-
-/*
- * Spawn the udp server thread.
- * He should constantly monitor the port for incoming data.
- * 
- * @param ??? TODO: Pointer to the shared data structure. Currently access is via globalvar
- * @return nothing so far. Maybe thread handle?
- */
-void fgcom_spawnUDPServer();
-
-
-/*
- * Trigger shutdown of the udp server
- */
-void fgcom_shutdownUDPServer();
-
 
 
 /*
@@ -125,17 +106,5 @@ void fgcom_notifyThread();
  */
 bool fgcom_isConnectedToServer();
 
-/*
- * Return type for indicating what did change by UDP input
- */
-struct fgcom_udp_parseMsg_result {
-    bool          userData;
-    bool          locationData;
-    std::set<int> radioData;
-    fgcom_udp_parseMsg_result()  {
-        userData = false;
-        locationData = false;
-    };
-};
 
 #endif
