@@ -18,8 +18,8 @@
 
 // Common  shared functions of plugin i/o
 
-#ifndef FGCOM_PLUGIN_IO_H
-#define FGCOM_PLUGIN_IO_H
+#ifndef FGCOM_IO_PLUGIN_H
+#define FGCOM_IO_PLUGIN_H
 
 
 #define NOTIFYINTERVAL      1000  // minimal time between notifications (ms)

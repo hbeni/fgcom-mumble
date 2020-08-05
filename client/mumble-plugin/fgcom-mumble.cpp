@@ -27,7 +27,7 @@
 #include "MumblePlugin.h"
 #include "MumbleAPI.h"
 #include "fgcom-mumble.h"
-#include "plugin_io.h"
+#include "io_plugin.h"
 #include "io_UDPServer.h"
 #include "io_UDPClient.h"
 #include "radio_model.h"

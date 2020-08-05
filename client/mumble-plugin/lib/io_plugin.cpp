@@ -55,7 +55,7 @@
 #include <clocale> // setlocale() 
 
 #include "globalVars.h"
-#include "plugin_io.h"
+#include "io_plugin.h"
 #include "io_UDPClient.h"
 #include "MumblePlugin.h"
 #include "fgcom-mumble.h"
