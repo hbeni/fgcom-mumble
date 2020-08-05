@@ -33,7 +33,7 @@
 
 #include "MumblePlugin.h"
 #include "globalVars.h"
-#include "plugin_io.h"
+#include "io_plugin.h"
 #include "garbage_collector.h"
 
 
