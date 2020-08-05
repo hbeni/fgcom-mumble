@@ -168,19 +168,21 @@ The following internal plugin data packets are defined:
 
 
 ### UDP client interface
-The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is localhost, on the respective identities client port (can be overridden by `UDP_TGT_PORT`). The client port is derived from the UDP input servers packet for the identity.
+The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is localhost, on the respective identities client port (can be overridden by `UDP_TGT_PORT`). The client port is derived from the UDP input servers packet for the identity.  
+If there is no data to send, nothing will be transmitted over the wire.  
 
-The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Values are separated using comma, each packet is terminated by newline. Floats are always output with a point as decimal-point character.  
-If there is not data to send, nothing will be transmitted over the wire.  
+The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Pairs are separated using comma, each packet is terminated by newline. Floats are always output with a point as decimal-point character.  
 Unknown fields or empty ones (eg. `Field=`) are to be ignored when parsing.
 
-#### RDF data
-While the plugin receives a signal trough a RDF-enabled radio (`COM`*n*`_RDF=1`, see *Plugin input data* above), it will send RDF packets.  
-Absence of RDF data means that there is currently no such transmission.  
-Each RDF enabled radio can receive multiple signals. It is up to the client to sort this out (eg. only consider the strongest signal for a given radio).
+#### Header
+If any data is generated, each UDP packet starts with a header that consists of the string `FGCOM`, followed by version information, finished by a newline (`\n`) character.
 
-If any radio is configured for RDF, and if any transmission is detected, a header is written that consists of the string `FGCOM` followed by version information, on a dedicated line.  
-After that header, each active signal per radio is reported on a separate output line (separated by `\n`).  
+#### RDF data
+While the plugin receives a signal trough a RDF-enabled radio (`COM`*n*`_RDF=1`, see *Plugin input data* above), it will send RDF data.  
+Absence of RDF data means that there is currently no such transmission.  
+Each RDF enabled radio can receive multiple signals. It is up to the client to sort this out (eg. maybe only consider the strongest signal for a given source).
+
+Each active signal per radio is reported on a separate output line (separated by `\n`).  
 The signal source is reported by starting the RDF message string with `RDF:`, followed by the RDF data fields.  
 The reported frequency is the one tuned on the radio (and not effective wave frequency).
 
