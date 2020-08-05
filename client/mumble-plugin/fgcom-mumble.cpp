@@ -30,7 +30,7 @@
 #include "plugin_io.h"
 #include "radio_model.h"
 #include "audio.h"
-#include "rdfUDP.h"
+#include "io_UDPClient.h"
 #include "garbage_collector.h"
 
 #include <stdio.h>

@@ -11,8 +11,8 @@
  * Spawn UDP client thread.
  * He will push out data until stopped.
  */
-extern bool rdfClientRunning; // will be managed by client thread
-void fgcom_spawnRDFUDPClient(); 
+extern bool udpClientRunning; // will be managed by client thread
+void fgcom_spawnUDPClient(); 
 
 // This represents an RDF signal recording
 struct fgcom_rdfInfo {
