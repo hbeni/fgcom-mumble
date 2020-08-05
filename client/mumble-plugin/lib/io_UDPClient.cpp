@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// RDF UDP client
+// UDP client
 //
 // Simple UDP client sending RDF packets.
 // The RDF client must be configured and started trough special 
@@ -51,13 +51,13 @@
 #include "globalVars.h"
 #include "plugin_io.h"
 #include "fgcom-mumble.h"
-#include "rdfUDP.h"
+#include "io_UDPClient.h"
 
     
-#define FGCOM_RDFCLIENT_RATE 10       // datarate in packets/seconds
+#define FGCOM_UDPCLIENT_RATE 10       // datarate in packets/seconds
 
 /*****************************************************
- *                 RDF UDP Client                    *
+ *                   UDP Client                      *
  * The UDP interface is the plugins port to send     *
  * RDF data to the outside world.                    *
  * It is used for example from ATC clients or        *
@@ -110,13 +110,6 @@ std::string fgcom_rdf_generateMsg(uint16_t selectedPort) {
         fgcom_rdf_activeSignals.erase(elem);
     }
 
-    // If there was data generated, add a FGCOM header
-    if (clientMsg.length() > 0) clientMsg = "FGCOM v" 
-            + std::to_string(FGCOM_VERSION_MAJOR) + "."
-            + std::to_string(FGCOM_VERSION_MINOR) + "."
-            + std::to_string(FGCOM_VERSION_PATCH) 
-            + "\n"
-            + clientMsg;
     
 
     // Finally return data
@@ -127,11 +120,11 @@ std::string fgcom_rdf_generateMsg(uint16_t selectedPort) {
 
 
 // Spawns the UDP client thread
-bool rdfClientRunning = false;
-std::map<int, uint16_t> fgcom_rdfudp_portCfg;
-void fgcom_spawnRDFUDPClient() {
-    pluginLog("[RDF] client initializing at rate "+std::to_string(FGCOM_RDFCLIENT_RATE)+" pakets/s");
-    const float packetrate = FGCOM_RDFCLIENT_RATE;
+bool udpClientRunning = false;
+std::map<int, uint16_t> fgcom_cliudp_portCfg;
+void fgcom_spawnUDPClient() {
+    pluginLog("[UDP-client] client initializing at rate "+std::to_string(FGCOM_UDPCLIENT_RATE)+" pakets/s");
+    const float packetrate = FGCOM_UDPCLIENT_RATE;
     const int datarate = 1000000 * (1/packetrate);  //datarate in seconds*microseconds
     int fgcom_UDPClient_sockfd, rc;
     uint16_t port;  
@@ -150,7 +143,7 @@ void fgcom_spawnRDFUDPClient() {
     
     // Creating socket file descriptor 
     if ( (fgcom_UDPClient_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        pluginLog("[RDF] client ERROR: socket creation failed");
+        pluginLog("[UDP-client] client ERROR: socket creation failed");
         return;
     }
     
@@ -160,19 +153,19 @@ void fgcom_spawnRDFUDPClient() {
     cliAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK); // restricted to 127.0.0.1 on purpose: don't change
     rc = bind ( fgcom_UDPClient_sockfd, (struct sockaddr *) &cliAddr, sizeof(cliAddr) );
     if (rc < 0) {
-        pluginLog("[RDF] client ERROR: local source port binding failed");
+        pluginLog("[UDP-client] client ERROR: local source port binding failed");
         return;
     }
 
-    rdfClientRunning = true;
+    udpClientRunning = true;
     
     // Generate Data packets and send them in a loop
     while (true) {
         
         // sleep for datarate-time microseconds
-        //pluginDbg("[RDF] client sleep for "+std::to_string(datarate)+" microseconds");
+        //pluginDbg("[UDP-client] client sleep for "+std::to_string(datarate)+" microseconds");
         if(usleep(datarate) < 0) {
-            pluginLog("[RDF] client socket creation failed"); 
+            pluginLog("[UDP-client] client socket creation failed"); 
             break;
         }
         
@@ -185,35 +178,45 @@ void fgcom_spawnRDFUDPClient() {
             port = lcl.clientPort;
             remoteServAddr.sin_port = htons(port);
             if (port <=0) {
-                pluginDbg("[RDF] client sending skipped: no valid port config for identity="+std::to_string(iid));
+                pluginDbg("[UDP-client] client sending skipped: no valid port config for identity="+std::to_string(iid));
                 continue;
             }
             
             // Report if the identities port changed
-            if (fgcom_rdfudp_portCfg[iid] == 0 || fgcom_rdfudp_portCfg[iid] != port) {
-                pluginLog("[RDF] client for '"+lcl.callsign+"' (iid="+std::to_string(iid)+") port="+std::to_string(fgcom_rdfudp_portCfg[iid])+" switching to port "+std::to_string(port));
-                mumAPI.log(ownPluginID, std::string("RDF sending for '"+lcl.callsign+"' to port "+std::to_string(port)+" enabled").c_str());
-                fgcom_rdfudp_portCfg[iid] = port;
+            if (fgcom_cliudp_portCfg[iid] == 0 || fgcom_cliudp_portCfg[iid] != port) {
+                pluginLog("[UDP-client] client for '"+lcl.callsign+"' (iid="+std::to_string(iid)+") port="+std::to_string(fgcom_cliudp_portCfg[iid])+" switching to port "+std::to_string(port));
+                mumAPI.log(ownPluginID, std::string("UDP sending for '"+lcl.callsign+"' to port "+std::to_string(port)+" enabled").c_str());
+                fgcom_cliudp_portCfg[iid] = port;
             }
         
             // generate data.
             std::string udpdata = fgcom_rdf_generateMsg(port);
+            
+            // send data
             if (udpdata.length() > 0) {
-                pluginDbg("[RDF] client sending msg for iid="+std::to_string(iid)+" to port="+std::to_string(port)+": '"+udpdata+"'");
+                // If there was data generated, add a FGCOM header
+                if (udpdata.length() > 0) udpdata = "FGCOM v" 
+                        + std::to_string(FGCOM_VERSION_MAJOR) + "."
+                        + std::to_string(FGCOM_VERSION_MINOR) + "."
+                        + std::to_string(FGCOM_VERSION_PATCH) 
+                        + "\n"
+                        + udpdata;
+    
+                pluginDbg("[UDP-client] client sending msg for iid="+std::to_string(iid)+" to port="+std::to_string(port)+": '"+udpdata+"'");
                 rc = sendto (fgcom_UDPClient_sockfd, udpdata.c_str(), strlen(udpdata.c_str()) + 1, 0,
                     (struct sockaddr *) &remoteServAddr,
                     sizeof (remoteServAddr));
                 if (rc < 0) {
-                    pluginLog("[RDF] client ERROR sending "+std::to_string(strlen(udpdata.c_str()))+" bytes of data");
+                    pluginLog("[UDP-client] client ERROR sending "+std::to_string(strlen(udpdata.c_str()))+" bytes of data");
                     close (fgcom_UDPClient_sockfd);
                     return;
                 }
                 
-                pluginDbg("[RDF] client sending OK ("+std::to_string(strlen(udpdata.c_str()))+" bytes of data)");
+                pluginDbg("[UDP-client] client sending OK ("+std::to_string(strlen(udpdata.c_str()))+" bytes of data)");
                 
             } else {
                 // no data generated: do not send anything.
-                pluginDbg("[RDF] client sending skipped: no data to send for iid="+std::to_string(iid)+" to port="+std::to_string(port)+".");
+                pluginDbg("[UDP-client] client sending skipped: no data to send for iid="+std::to_string(iid)+" to port="+std::to_string(port)+".");
             }
         }
         
@@ -221,6 +224,6 @@ void fgcom_spawnRDFUDPClient() {
     
     
     close(fgcom_UDPClient_sockfd);
-    rdfClientRunning = false;
-    pluginLog("[RDF] client finished.");
+    udpClientRunning = false;
+    pluginLog("[UDP-client] client finished.");
 }
