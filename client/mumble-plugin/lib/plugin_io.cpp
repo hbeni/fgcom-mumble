@@ -844,7 +844,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 /*
                  * Plugin Configuration
                  */
-                if (token_key == "RDF_PORT") {
+                if (token_key == "UDP_TGT_PORT") {
                     // RDF Port change request: we need to adjust portmapper and local port
                     clientPort                         = std::stoi(token_value);
                     fgcom_local_client[iid].clientPort = clientPort;
