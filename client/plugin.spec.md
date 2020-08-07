@@ -78,7 +78,7 @@ Parsed fields are as following (`COM`*n*`_`\* fields are per radio, "*n*" denote
 | `LON`          | Float  | Longitudinal position (decimal)         | *mandatory*|
 | `HGT`          | Float  | Altitude in ft above ground-level       | *mandatory* (if `ALT` not given)|
 | `CALLSIGN`     | String | Callsign (arbitary string)              | `ZZZZ`     |
-| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string or wave carrier frequency as float with minimum 4 decimals precision; see below section for details). A value of `<del>` can be used to deregister a radio.  | *mandatory*|
+| `COM`*n*`_FRQ` | String | Selected frequency (arbitary string or wave carrier frequency as float with minimum 4 decimals precision in MHz; see below section for details). A value of `<del>` can be used to deregister a radio.  | *mandatory*|
 | `COM`*n*`_VLT` | Numeric| Electrical power; >0 means "has power"  | `12`       |
 | `COM`*n*`_PBT` | Bool   | Power button state: 0=off, 1=on         | `1`        |
 | `COM`*n*`_SRV` | Bool   | Serviceable: 0=failed, 1=operable       | `1`        |
@@ -94,7 +94,7 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 
 | Field        | Format | Description                                                                                       |
 |--------------|--------|---------------------------------------------------------------------------------------------------|
-| `COM`*n*`_FRQ` | Float | Selected channel frequency, gets converted to carrier frequency (see section below)  | *mandatory*|
+| `COM`*n*`_FRQ` | Float | Selected MHz channel frequency, gets converted to carrier frequency (see section below)  | *mandatory*|
 | `ALT`        | Int    | Altitude in ft above sea-level. If both `HGT` and `ALT` is present in the UDP packet, `HGT` takes precedence. If only `ALT` is given, the radio horizon is artificially bigger than it should be, as we have no terrain model right now. |
 | `PTT`        | Int    | Currently active PTT radio (0=none, 1=COM1, 2=COM2). Gets converted to new `COM`*n*`_PTT` updates.|
 | `OUTPUT_VOL` | Float  | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
@@ -157,7 +157,7 @@ The following internal plugin data packets are defined:
   - `LAT` (decimal)
   - `ALT` (height above ground in meters, not to be confused with ALT from UDP packet!)
 - `FGCOM:UPD_COM:`*iid*`:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
-  - `FRQ` the real wave carrier frequency
+  - `FRQ` the real wave carrier frequency in MHz
   - `VLT` (not transmitted currently)
   - `PBT` (not transmitted currently)
   - `PTT`
@@ -189,7 +189,7 @@ The reported frequency is the one tuned on the radio (and not effective wave fre
 | Field      | Format | Description                                      |
 |------------|--------|--------------------------------------------------|
 | `CS_TX`    | String | Callsign of the sender                           |
-| `FRQ`      | String | Tuned frequency of the signal                           |
+| `FRQ`      | String | Tuned frequency of the signal in MHz             |
 | `DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WSG84 north)|
 | `VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
 | `QLY`      | Float  | Signal quality (`0.00` to `1.0`)                 |
