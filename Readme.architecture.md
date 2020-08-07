@@ -20,7 +20,7 @@ If a users fgcom mumble plugin then receives a new audio transmission, it will:
 Then, if the frequency is currently tuned AND the sender was in radio-range AND the current user is not transmitting himself on the frequency in question, the received transmision will be played; otherwise discarded.  
 This inherently enables listening and sending on multiple frequencies in parallel.
 
-"Frequency" thereby is an arbitary string, which enables to tune arbitary frequencies and also may used to simulate land-lines for ATC. To receive a transmission, the frequency string must match between sender and receiver.
+"Frequency" thereby is an arbitary string, which enables to tune arbitary frequencies and also may used to simulate land-lines for ATC. To receive a transmission, the frequency string must match between sender and receiver. If the frequency is numeric, comparison is handled by the radio model.
 
 ### Plugin input data
 To get the needed data the plugin offers a simple network socket listening for updates on UDP Port **16661** (original FGCom port, it's compatible).  
