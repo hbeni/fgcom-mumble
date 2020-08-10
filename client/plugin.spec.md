@@ -218,13 +218,19 @@ If either your radio is not operational or not tuned to the same frequency or no
 "Same frequency" thereby means case-sensitive string matching for non-numeric frequencies and a frequency overlap calculation from the radio model for numbers.
 
 
-Simple radio wave model
+Radio wave models
 ------------------------
 When receiving radio transmissions, it is important to see if the sender is in range. Frequencies are reused around the globe and so this is the only way to distinguish between nearby transmitters and the ones on the other side of the globe.
 
-As a first draft, the plugin implements a simple radio wave propagation model that solely takes the output power, distance and line-of-sight of the sender into account (ie. a VHF radio model).  
-It is currently modelled very simply, so that the tx-power of 10W approximates linearly to 50 nautical miles in flat coordinate distance (i got this number for the Bendix KX165A by googling). The main purpose is pilots geographic radio net separation and not realistic range behaviour at this time.  
+As a first draft, the plugin implements a set of simple radio wave propagation models in a continuous spectrum. The models support tuning bands, so a slight overlap and off-tuning can be simulated.  
+The main purpose is pilots geographic radio net separation and not realistic range behaviour at this time.
+
+- **HF** (below 30MHz): Long range capabilities with sky wave propagation behind the horizon.  
+  Behind the horizon the signal will degrade a little, but otherwise the signal quality depends solely on distance and output power. No advanced characteristics (like time of day or sunspot cycle affecting the ionosphere) are taken into consideration yet.
+- **VHF** (30MHz to 300MHz): line-of-sight propagation, no reception behind the radio horizon.  
+  Altitude of sender/receiver, output power and distance affects signal quality and range. It is currently modelled very simply, so that the tx-power of 10W approximates linearly to 50 nautical miles in flat coordinate distance (i got this number for the Bendix KX165A by googling).  
 Please note that currently no (to me) known flightgear aircraft sets the radios tx-power, so it defaults to 10W/50nM (like current FGCom does).
+- **UHF** (above 300MHz): Modelled like VHF but with reduced range per output watt. No advanced calculations for obstructions like trees/buildings are done yet.
 
 In the future we surely should refine this model to be way more realistic (see https://en.wikipedia.org/wiki/Radio_propagation); maybe take even the used antenna, the terrain (mountains etc) and maybe also the weather into account.  
-A good first step would probably to provide more realistic numbers for the range/watts and static noise/volume numbers for very distant senders. Also another basic radio model for HF communications would be nice.
+A very good next step would probably to provide more realistic numbers for the frequency spacings, range/watts and static noise/volume numbers for very distant senders; for that i need someone with radio transmission experience in that fields. The `client/test/geotest` utility can be queried for playing around with the numbers.
