@@ -28,9 +28,9 @@
 
 // include concrete implementations
 #include "radio_model_string.cpp"
-//#include "radio_model_hf.cpp"
+#include "radio_model_hf.cpp"
 #include "radio_model_vhf.cpp"
-//#include "radio_model_uhf.cpp"
+#include "radio_model_uhf.cpp"
 
 
 
@@ -51,13 +51,15 @@ FGCom_radiowaveModel* FGCom_radiowaveModel::selectModel(std::string freq) {
         // Select model based on frequency band.
         // Models, that say they are compatible to each other may implement frequency band overlapping.
         
-        //if (freq_p.frequency >   3.0 && freq_p.frequency <=  30.0) return new FGCom_radiowaveModel_HF();
-        //if (freq_p.frequency >  30.0 && freq_p.frequency <= 300.0) return new FGCom_radiowaveModel_VHF();
-        //if (freq_p.frequency > 300.0 && freq_p.frequency <=  3000.0) return new FGCom_radiowaveModel_UHF();
+        float frq_num = std::stof(freq_p.frequency);
+        if (frq_num == 910.00) return new FGCom_radiowaveModel_VHF();  // echo test frequency (it is UHF, but needs to be treatened as VHF)
+        
+        if (frq_num <=  30.0)                    return new FGCom_radiowaveModel_HF();
+        if (frq_num >  30.0 && frq_num <= 300.0) return new FGCom_radiowaveModel_VHF();
+        if (frq_num > 300.0)                     return new FGCom_radiowaveModel_UHF();
         
         // every other case = frequency not handled specially yet: use VHF (line-of-sight) model
         return new FGCom_radiowaveModel_VHF();
-        
     } else {
         // non-numeric: use string model
         return new FGCom_radiowaveModel_String();
