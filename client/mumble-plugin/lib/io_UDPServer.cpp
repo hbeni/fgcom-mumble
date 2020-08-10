@@ -55,6 +55,7 @@
 #include <clocale> // setlocale() 
 
 #include "globalVars.h"
+#include "radio_model.h"
 #include "io_plugin.h"
 #include "io_UDPServer.h"
 #include "io_UDPClient.h"
@@ -202,7 +203,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // - result is, we must convert in some circumstances.
                         //
                         // also the provided value may be containing illegal stuff like trailing/leading spaces/zeroes; so, it must be normalized.
-                        fgcom_radiowave_freqConvRes frq_parsed = fgcom_radiowave_splitFreqString(token_value);  // results in a cleaned frequency
+                        fgcom_radiowave_freqConvRes frq_parsed = FGCom_radiowaveModel::splitFreqString(token_value);  // results in a cleaned frequency
                         std::string finalParsedFRQ;
                         if (frq_parsed.isNumeric) {
                             // frequency is a numeric string.
@@ -217,7 +218,8 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                                 // we expect 25kHz or 8.33 channel names here.
                                 // So if we encounter such data, we probably need to convert the frequency part
                                 pluginDbg("[UDP-server] detected old FGCom frequency format="+token_value);
-                                finalParsedFRQ = frq_parsed.prefix + fgcom_radiowave_conv_chan2freq(frq_parsed.frequency);
+                                FGCom_radiowaveModel *radio_model = FGCom_radiowaveModel::selectModel(frq_parsed.frequency);
+                                finalParsedFRQ = frq_parsed.prefix + radio_model->conv_chan2freq(frq_parsed.frequency);
                                 pluginDbg("[UDP-server] conversion result to realFreq="+finalParsedFRQ);
                             }
                         } else {
@@ -228,14 +230,14 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         
                         // handle final COMn_FRQ parsing result
                         std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
-                        fgcom_radiowave_freqConvRes frq_ori = fgcom_radiowave_splitFreqString(oldValue);
+                        fgcom_radiowave_freqConvRes frq_ori = FGCom_radiowaveModel::splitFreqString(oldValue);
                         fgcom_local_client[iid].radios[radio_id].frequency = finalParsedFRQ; // already cleaned value
                         
                         // see if we need to notify:
                         // - for changed non-numeric, always if its different
                         // - for change in numeric/non-numeric, also always if its different
                         // - for numeric ones, if the prefix did change, or the frequency is different for more than rounding errors
-                        fgcom_radiowave_freqConvRes frq_new = fgcom_radiowave_splitFreqString(finalParsedFRQ);
+                        fgcom_radiowave_freqConvRes frq_new = FGCom_radiowaveModel::splitFreqString(finalParsedFRQ);
                         if (frq_ori.isNumeric && frq_new.isNumeric && frq_ori.prefix == frq_new.prefix) {
                             // both are numeric and the prefix did not change: only notify if frequency changed that much
                             float frq_diff = std::fabs(std::stof(frq_ori.frequency) - std::stof(frq_new.frequency));
