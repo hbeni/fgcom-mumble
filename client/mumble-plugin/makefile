@@ -25,10 +25,10 @@ all-debug:
 
 # make the plugin
 plugin: libs
-	$(CC) -shared -fPIC -o fgcom-mumble.so lib/io_plugin.o lib/radio_model.o lib/audio.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o fgcom-mumble.cpp $(CFLAGS)
+	$(CC) -shared -fPIC -o fgcom-mumble.so lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o fgcom-mumble.cpp $(CFLAGS)
 
 # make all the libs
-libs:  lib/radio_model.o lib/io_plugin.o lib/audio.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
+libs:  lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
 
 %.o : %.cpp
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS)

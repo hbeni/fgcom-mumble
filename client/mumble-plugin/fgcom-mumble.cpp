@@ -634,7 +634,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                         for (const auto &lcl_idty : fgcom_local_client) { // inspect all identites of the local client
                             int iid          = lcl_idty.first;
                             fgcom_client lcl = lcl_idty.second;
-                            bool frequencyIsListenedTo = false;
                             pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match (local iid="+std::to_string(iid)+")");
                             for (int lri=0; lri<lcl.radios.size(); lri++) {
                                 pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
@@ -642,11 +641,20 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(fgcom_radio_isOperable(lcl.radios[lri]))+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       RDF='"+std::to_string(lcl.radios[lri].rdfEnabled)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
-                                pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");
+                                pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");                                
                                 
                                 // calculate frequency match
-                                fgcom_radiowave_freqConvRes rmt_frq_p = fgcom_radiowave_splitFreqString(rmt.radios[ri].frequency);
-                                float signalMatchFilter = fgcom_radiowave_getFrqMatch(lcl.radios[lri].frequency, rmt.radios[ri].frequency);
+                                float signalMatchFilter;
+                                fgcom_radiowave_freqConvRes rmt_frq_p = FGCom_radiowaveModel::splitFreqString(rmt.radios[ri].frequency);
+                                FGCom_radiowaveModel *radio_model_lcl = FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency);
+                                FGCom_radiowaveModel *radio_model_rmt = FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency);
+                                if (radio_model_lcl->isCompatible(radio_model_rmt)) {
+                                    signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri].frequency, rmt.radios[ri].frequency);
+                                    
+                                } else {
+                                    pluginDbg("mumble_onAudioSourceFetched():       radio models not compatible: lcl_type="+radio_model_lcl->getType()+"; rmt_type="+radio_model_rmt->getType());
+                                    continue;
+                                }
                                 
                                 
                                 /* detect landline/intercom */
@@ -670,7 +678,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
                                     // we are listening on that frequency!
                                     // determine signal strenght for this connection
-                                    fgcom_radiowave_signal signal = fgcom_radiowave_getSignal(
+                                    fgcom_radiowave_signal signal = radio_model_lcl->getSignal(
                                         lcl.lat, lcl.lon, lcl.alt,
                                         rmt.lat, rmt.lon, rmt.alt,
                                         rmt.radios[ri].pwr);

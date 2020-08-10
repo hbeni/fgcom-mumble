@@ -38,12 +38,12 @@ int main (int argc, char **argv)
     double lat2 = 40.6892; 
     double lon2 = 74.0445; */
     
-    if (argc != 7) {
-        cout << "Test tool for FGCom geolib\n";
+    if (argc < 7 || argc > 8) {
+        cout << argc<< "Test tool for FGCom geolib\n";
         cout << "The tool accepts two x/y/z coordinates and prints informations about\n";
         cout << "the geoid like distance, visible horizont distance and if the points\n";
         cout << "can see each other or are hidden by earth.\n";
-        cout << "\nUsage: " << argv[0] << " lat1 lon1 alt1 lat2 lon2 alt2\n";
+        cout << "\nUsage: " << argv[0] << " lat1 lon1 alt1 lat2 lon2 alt2 [freq]\n";
         cout << "  alt is in meter above surface. lat/lon is decimal format (45.01234).\n";
         cout << "\nExample: can you see the Pulverturm in Lindau from Konstanz? (no)\n";
         cout << "   call: `" << argv[0] << " 47.665953 9.218242 1.75   47.545780 9.675327 15`\n";
@@ -60,40 +60,48 @@ int main (int argc, char **argv)
     cout << "  posA:  lat(" << lat1 << ") lon(" << lon1 << ") alt(" << h1 << ")" <<endl;
     cout << "  posB:  lat(" << lat2 << ") lon(" << lon2 << ") alt(" << h2 << ")" <<endl;
     
-    double dist = fgcom_radiowave_getSurfaceDistance(lat1, lon1, lat2, lon2);
+    FGCom_radiowaveModel *radio_model_base = FGCom_radiowaveModel::selectModel("TEST");
+    
+    double dist = radio_model_base->getSurfaceDistance(lat1, lon1, lat2, lon2);
     printf("  posA <surface> posB = %.2fkm \n", dist);
     
-    double horizA = fgcom_radiowave_getDistToHorizon(h1);
+    double horizA = radio_model_base->getDistToHorizon(h1);
     printf("  horizont A = %.2fkm \n", horizA);
-    double horizB = fgcom_radiowave_getDistToHorizon(h2);
+    double horizB = radio_model_base->getDistToHorizon(h2);
     printf("  horizont B = %.2fkm \n", horizB);
     
-    double heightAB = fgcom_radiowave_heightAboveHorizon(dist, h1, h2);
+    double heightAB = radio_model_base->heightAboveHorizon(dist, h1, h2);
     string visAB = (heightAB >=0)? "visible" : "hidden";
     printf("  heightAboveHorizon A->B = %.2fm (%s)\n", heightAB, visAB.c_str());
     
-    double heightBA = fgcom_radiowave_heightAboveHorizon(dist, h2, h1);
+    double heightBA = radio_model_base->heightAboveHorizon(dist, h2, h1);
     string visBA = (heightBA >=0)? "visible" : "hidden";
     printf("  heightAboveHorizon B->A = %.2fm (%s)\n", heightBA, visBA.c_str());
     
-    printf("  posA <slant> posB = %.2fkm \n", fgcom_radiowave_getSlantDistance(dist, heightAB-h1));
-    printf("  posB <slant> posA = %.2fkm \n", fgcom_radiowave_getSlantDistance(dist, heightBA-h2));
+    printf("  posA <slant> posB = %.2fkm \n", radio_model_base->getSlantDistance(dist, heightAB-h1));
+    printf("  posB <slant> posA = %.2fkm \n", radio_model_base->getSlantDistance(dist, heightBA-h2));
     
-    printf("  posA <direction> posB = %.2f° \n", fgcom_radiowave_getDirection(lat1, lon1, lat2, lon2));
-    printf("  posB <direction> posA = %.2f° \n", fgcom_radiowave_getDirection(lat2, lon2, lat1, lon1));
+    printf("  posA <direction> posB = %.2f° \n", radio_model_base->getDirection(lat1, lon1, lat2, lon2));
+    printf("  posB <direction> posA = %.2f° \n", radio_model_base->getDirection(lat2, lon2, lat1, lon1));
     
-    printf("  angle posA->posB = %.2f° \n", fgcom_radiowave_degreeAboveHorizon(dist, heightAB-h1));
-    printf("  angle posB->posA = %.2f° \n", fgcom_radiowave_degreeAboveHorizon(dist, heightBA-h2));
+    printf("  angle posA->posB = %.2f° \n", radio_model_base->degreeAboveHorizon(dist, heightAB-h1));
+    printf("  angle posB->posA = %.2f° \n", radio_model_base->degreeAboveHorizon(dist, heightBA-h2));
 
-    for (int pwr=0; pwr<=30; true) {
-        struct fgcom_radiowave_signal sigStrengthAB = fgcom_radiowave_getSignal(lat1, lon1, h1, lat2, lon2, h2, pwr);
-        struct fgcom_radiowave_signal sigStrengthBA = fgcom_radiowave_getSignal(lat2, lon2, h2, lat1, lon1, h1, pwr);
-        printf("  VHF signal posA->posB @%iw = %.0f% \n", pwr, sigStrengthAB.quality*100);
-        // its the same (it should at least) printf("  VHF signal posB->posA @%iw = %.0f% \n", pwr, sigStrengthBA.quality*100);
-        if      (pwr <  5) { pwr++; }
-        else if (pwr < 20) { pwr += 5; }
-        else               { pwr += 10; }
+    
+    if (argc >= 8) {
+        // Radio frequency model range test
+        FGCom_radiowaveModel *radio_model = FGCom_radiowaveModel::selectModel(std::string(argv[7]));
+        printf("  conducting radio range test for model '%s':\n", radio_model->getType().c_str());
+        for (int pwr=0; pwr<=30; true) {
+            struct fgcom_radiowave_signal sigStrengthAB = radio_model->getSignal(lat1, lon1, h1, lat2, lon2, h2, pwr);
+            struct fgcom_radiowave_signal sigStrengthBA = radio_model->getSignal(lat2, lon2, h2, lat1, lon1, h1, pwr);
+            printf("    signal posA->posB @%iw = %.0f% \n", pwr, sigStrengthAB.quality*100);
+            // its the same (it should at least) printf("  VHF signal posB->posA @%iw = %.0f% \n", pwr, sigStrengthBA.quality*100);
+            if      (pwr <  5) { pwr++; }
+            else if (pwr < 20) { pwr += 5; }
+            else               { pwr += 10; }
+        }
     }
     
-    return 0; 
+    return 0;
 } 
