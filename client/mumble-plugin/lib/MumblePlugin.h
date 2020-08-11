@@ -94,7 +94,7 @@ extern "C" {
 	/// @returns A pointer to the description (encoded as a C-String)
 	PLUGIN_EXPORT const char* PLUGIN_CALLING_CONVENTION mumble_getDescription();
 
-	/// Gets the feature set of this plugin. The feature set is described by bitwise or'ing the elements of the PluginFeature enum
+	/// Gets the feature set of this plugin. The feature set is described by bitwise or'ing the elements of the Mumble_PluginFeature enum
 	/// together.
 	///
 	/// @returns The feature set of this plugin
@@ -256,12 +256,12 @@ extern "C" {
 	///
 	/// @param connection The ID of the server-connection the data is coming from
 	/// @param sender The ID of the user whose client's plugin has sent the data
-	/// @param data The sent data represented as a string
-	/// @param dataLength The length of data
-	/// @param dataID The ID of this data
+	/// @param data The sent data array. This can be an arbitrary sequence of bytes.
+	/// @param dataLength The length of the data array
+	/// @param dataID The ID of this data (C-encoded)
 	/// @return Whether the given data has been processed by this plugin
-	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender, const char *data, size_t dataLength,
-			const char *dataID);
+	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender,
+			const uint8_t *data, size_t dataLength, const char *dataID);
 
 	/// Called when a new user gets added to the user model. This is the case when that new user freshly connects to the server the
 	/// local user is on but also when the local user connects to a server other clients are already connected to (in this case this
@@ -309,7 +309,7 @@ extern "C" {
 	/// enable that.
 	///
 	/// @param keyCode The key code of the respective key. The character codes are defined
-	/// 	via the KeyCode enum. For printable 7-bit ASCII characters these codes conform
+	/// 	via the Mumble_KeyCode enum. For printable 7-bit ASCII characters these codes conform
 	/// 	to the ASCII code-page with the only difference that case is not distinguished. Therefore
 	/// 	always the upper-case letter code will be used for letters.
 	/// @param wasPres Whether the respective key has been pressed (instead of released)

@@ -34,7 +34,7 @@
 
 /// This enum's values correspond to special feature sets a plugin may provide.
 /// They are meant to be or'ed together to represent the total feature set of a plugin.
-enum PluginFeature {
+enum Mumble_PluginFeature {
 	/// None of the below
 	FEATURE_NONE = 0,
 	/// The plugin provides positional data from a game
@@ -44,7 +44,7 @@ enum PluginFeature {
 };
 
 /// This enum's values represent talking states a user can be in when using Mumble.
-enum TalkingState {
+enum Mumble_TalkingState {
 	INVALID=-1,
 	PASSIVE=0,
 	TALKING,
@@ -55,7 +55,7 @@ enum TalkingState {
 /// This enum's values represent transmission modes a user might have configured. Transmission mode
 /// in this context is referring to a method that determines when a user is speaking and thus when
 /// to transmit audio packets.
-enum TransmissionMode {
+enum Mumble_TransmissionMode {
 	TM_CONTINOUS,
 	TM_VOICE_ACTIVATION,
 	TM_PUSH_TO_TALK
@@ -63,7 +63,8 @@ enum TransmissionMode {
 
 /// This enum's values represent the error codes that are being used by the MumbleAPI.
 /// You can get a string-representation for each error code via the errorMessage function.
-enum ErrorCode {
+enum Mumble_ErrorCode {
+	EC_INTERNAL_ERROR = -2,
 	EC_GENERIC_ERROR = -1,
 	EC_OK = 0,
 	EC_POINTER_NOT_FOUND,
@@ -77,12 +78,13 @@ enum ErrorCode {
 	EC_INVALID_PLUGIN_ID,
 	EC_INVALID_MUTE_TARGET,
 	EC_CONNECTION_UNSYNCHRONIZED,
-	EC_INVALID_API_VERSION
+	EC_INVALID_API_VERSION,
+	EC_UNSYNCHRONIZED_BLOB
 };
 
 /// This enum's values represent error codes specific to the framework of handling positional data
 /// gathering (needed for Mumble's positional audio feature).
-enum PositionalDataErrorCode {
+enum Mumble_PositionalDataErrorCode {
 	/// Positional data has been initialized properly
 	PDEC_OK = 0,
 	/// Positional data is temporarily unavailable (e.g. because the corresponding process isn't running) but might be
@@ -93,7 +95,7 @@ enum PositionalDataErrorCode {
 };
 
 /// This enum's values represent the key-codes Mumble's API uses to reference keys on the keyboard.
-enum KeyCode {
+enum Mumble_KeyCode {
 	KC_INVALID           = -1,
 
 	// Non-printable characters first
@@ -294,6 +296,8 @@ inline const char* errorMessage(int16_t errorCode) {
 			return "The requested server connection has not yet finished synchrnonizing";
 		case EC_INVALID_API_VERSION:
 			return "The used API version is invalid or not supported";
+		case EC_UNSYNCHRONIZED_BLOB:
+			return "The requested blob (content) has not yet been synchronized between the client and the server";
 		default:
 			return "Unknown error code";
 	}
@@ -301,9 +305,9 @@ inline const char* errorMessage(int16_t errorCode) {
 
 
 /// Typedef for the type of a talking state
-typedef enum TalkingState talking_state_t;
+typedef enum Mumble_TalkingState talking_state_t;
 /// Typedef for the type of a transmission mode
-typedef enum TransmissionMode transmission_mode_t;
+typedef enum Mumble_TransmissionMode transmission_mode_t;
 /// Typedef for the type of a version
 typedef struct Version version_t;
 /// Typedef for the type of a connection
@@ -313,10 +317,10 @@ typedef uint32_t mumble_userid_t;
 /// Typedef for the type of a channel
 typedef int32_t mumble_channelid_t;
 /// Typedef for the type of an error (code)
-typedef enum ErrorCode mumble_error_t;
+typedef enum Mumble_ErrorCode mumble_error_t;
 /// Typedef for the type of a plugin ID
 typedef uint32_t plugin_id_t;
 /// Typedef for the type of a key-code
-typedef KeyCode keycode_t;
+typedef Mumble_KeyCode keycode_t;
 
 #endif // MUMBLE_PLUGINCOMPONENT_H_
