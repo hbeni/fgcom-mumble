@@ -226,7 +226,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                     // (note: 0 is usually the id of the superuser, ordinary users star with 1)
                     if (tgtUser != lcl.mumid) {
                         pluginDbg("  sending message to targeted user: "+std::to_string(tgtUser));
-                        int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, 1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+                        int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, 1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
                         if (send_res != STATUS_OK) {
                             pluginDbg("  message sent ERROR: "+std::to_string(send_res));
                         } else {
@@ -250,7 +250,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                         }
                     }
                 
-                    int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, message.c_str(), strlen(message.c_str()), dataID.c_str());
+                    int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
                     if (send_res != STATUS_OK) {
                         pluginDbg("  message sent ERROR: "+std::to_string(send_res));
                     } else {
