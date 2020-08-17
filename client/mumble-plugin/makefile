@@ -1,7 +1,8 @@
 .PHONY : all all-debug plugin libs test clean clean-all debug-on
 CC=g++
 DEBUG=
-CFLAGS=-I. -I./lib -pthread $(DEBUG)
+override CFLAGS+=-I. -I./lib -pthread $(DEBUG)
+SSLFLAGS+=-lssl -lcrypto
 
 # get version
 GITCOMMIT:=$(shell git log -1 --pretty=format:"%h")
@@ -10,6 +11,13 @@ VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR lib/fgcom-mumble.h |grep -E -o '
 VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR lib/fgcom-mumble.h |grep -E -o '[0-9]')
 VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH lib/fgcom-mumble.h |grep -E -o '[0-9]')
 VERSION:=$(VERSION_V).$(VERSION_M).$(VERSION_P)
+
+
+# Notice: Special calls
+#
+# `make DEBUG+="-DDEBUG"`                  enable debug code (add "-g3 -DDEBUG" for additional gdb symbols)
+# `make CFLAGS+="-DNO_UPDATER" SSLFLAGS=`  skip auto-updater code
+#
 
 
 
@@ -25,7 +33,7 @@ all-debug:
 
 # make the plugin
 plugin: libs
-	$(CC) -shared -fPIC -o fgcom-mumble.so lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o fgcom-mumble.cpp $(CFLAGS)
+	$(CC) -shared -fPIC -o fgcom-mumble.so lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS)
 
 # make all the libs
 libs:  lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
@@ -61,7 +69,7 @@ test-win64:
 
 # build win64 plugin-dll
 plugin-win64: libs
-	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -Wl,-Bstatic -lpthread -lws2_32 $(CFLAGS)
+	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -Wl,-Bstatic -lpthread -lws2_32 $(SSLFLAGS) $(CFLAGS)
 
 
 

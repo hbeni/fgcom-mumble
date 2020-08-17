@@ -420,7 +420,7 @@ void mumble_registerAPIFunctions(MumbleAPI api) {
 void mumble_setMumbleInfo(version_t mumbleVersion, version_t mumbleAPIVersion, version_t minimalExpectedAPIVersion) {
 	// this function will always be the first one to be called. Even before init()
 	// In here you can get info about the Mumble version this plugin is about to run in.
-	pLog() << "Mumble version: " << mumbleVersion << "; Mumble API-Version: " << mumbleAPIVersion << "; Minimal expected API-Version: "
+	pLog() << "Plugin version: " << mumble_getVersion() << "; Mumble version: " << mumbleVersion << "; Mumble API-Version: " << mumbleAPIVersion << "; Minimal expected API-Version: "
 		<< minimalExpectedAPIVersion << std::endl;
 }
 
@@ -797,25 +797,8 @@ bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender
 }
 
 
-bool mumble_hasUpdate() {
-	// This plugin never has an update
-    // TODO: Implement this, maybe look at the github page? for new tags?
-	return false;
-}
 
-bool mumble_getUpdateDownloadURL(char *buffer, uint16_t bufferSize, uint16_t offset) {
-	// TODO: Implement me: get the latest release tar.gz suitable or the local platform
-    /*static std::string url = "https://i.dont.exist/testplugin.zip";
-
-	size_t writtenChars = url.copy(buffer, bufferSize, offset);
-
-	if (writtenChars < bufferSize) {
-		// URL has fit into the buffer -> append null byte and be done with it
-		buffer[writtenChars] = '\0';
-		return true;
-	} else {
-		std::cout << "Overflow" << std::endl;
-		return false;
-	}*/
-    return false;
-}
+#ifndef NO_UPDATER
+// updater in separate file
+#include "updater.cpp"
+#endif

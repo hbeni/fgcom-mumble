@@ -15,15 +15,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Define opwn plugin api
 //
-
+// Define own plugin api
+//
 #ifndef FGCOM_MUMBLE_H
 #define FGCOM_MUMBLE_H
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
-#define FGCOM_VERSION_MINOR 3
+#define FGCOM_VERSION_MINOR 4
 #define FGCOM_VERSION_PATCH 0
 
 /*
