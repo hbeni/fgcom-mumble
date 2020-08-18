@@ -1,0 +1,4 @@
+[submodule "client/mumble-plugin/lib/openssl"]
+	path = client/mumble-plugin/lib/openssl
+	url = git://git.openssl.org/openssl.git
+	branch = OpenSSL_1_1_1-stable
