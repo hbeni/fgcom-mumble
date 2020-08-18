@@ -42,6 +42,7 @@ Install / Setup for the Client
 Setup requirements
 ----------------------
 - have a standard mumble client with recent plugin support (>= v1.4.0)
+- a recent OpenSSL installation
 
 Installation
 -----------------------
@@ -149,12 +150,16 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 
 Compiling the plugin
 ======================
-The FGCom-mumble client plugin needs to be in binary form. If you want to use the latest code from github, you can compile yurself.   
+The FGCom-mumble client plugin needs to be in binary form. If you want to use the latest code from github, you can compile yurself.  
 
-- Prerequisites: `make`, `g++`, `mingw32` (for windows build)
-- Go to the folder `client/mumble-plugin/`
-- on linux type `make`
-- or `make all-win64` for cross-compile to windows
+- Prerequisites:
+  - `git`, `make`, `g++`, `mingw32` (for windows build)
+  - OpenSSL: Linux builds dynamically against the installed `libssl-dev`. MingW/Windows links statically against a build from the git submodule `lib/openssl` by invoking `make openssl-win`.
+
+- Building:
+  - Go to the folder `client/mumble-plugin/`
+  - on linux type `make`
+  - or `make all-win64` to cross-compile to windows
 
 Other interesting compile targets:
 
