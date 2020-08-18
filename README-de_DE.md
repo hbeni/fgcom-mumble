@@ -47,6 +47,7 @@ Installation / Einrichtung des Mumble-plugins
 Vorraussetzungen
 ----------------------
 - Du brauchst lediglich ein aktuelles Mumble mit Pluginunterstützung (>= v1.4.0)
+- Eine aktuelle OpenSSL Installation
 
 Installation
 -----------------------
@@ -166,10 +167,14 @@ Das Plugin selbst Kompilieren
 Das FGCom-mumble plugin muss in Maschinensprache vorliegen, um von Mumble geladen werden zu können.
 Um den aktuellsten Quellcode zu benutzen, kannst du das Plugin selbst übersetzen.  
 
-- Vorraussetzungen: `make`, `g++`, `mingw32` (für Windows-Erzeugung unter Linux)
-- Geh in das Verzeichnis `client/mumble-plugin/`
-- Unter Linux, tippe `make`
-- oder `make all-win64`, um eine Kreuzkompilierung für Windows auszuführen
+- Vorraussetzungen:
+  - `git`, `make`, `g++`, `mingw32` (für Windows-Erzeugung unter Linux)
+  - OpenSSL: Linux baut dynamisch gegen das installierte `libssl-dev`. MingW/Windows linkt statisch gegen einen Bau des git submodules `lib/openssl` durch den Auruf von `make openssl-win`.
+
+- Bauen:
+  - Geh in das Verzeichnis `client/mumble-plugin/`
+  - Unter Linux, tippe `make`
+  - oder `make all-win64`, um eine Kreuzkompilierung für Windows auszuführen
 
 Weitere interessante make buildtargets:
 
