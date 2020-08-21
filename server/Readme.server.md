@@ -33,14 +33,27 @@ Basicly, you just need a standard mumble server >=1.4, so the plugins can exchan
 However, there are advanced features that need serverside support. Mumble-Bots will provide that functionality.
 
 
+Distributed setup
+---------------------
+As the components connect to each other via network, there is no need to run everything on one server. To distribute load, it is possible to run the bots separately from the status page for example, or separate the bots and status page from the murmur service.  
+
+Currently, the bot manager and recorder bot must run on the same machine.
+
+
 The Bot manager
 ==================
 `./fgcom-botmanager.sh --help` will give usage instructions.
 
-The bot manager will start the basic set of bots.  
+The bot manager will start and manage the basic set of bots (you can disable each bot type individually).  
 He also will setup the needed interprocess communication for the recorder bot to notify about new recordings. He then spawns a recorder bot and listens for new recordings. When receiving a new recording, a playback bot is invoked.
 
 The status bot can advertise the status page url in it's mumble comment. to activate this, use `./fgcom-botmanager.sh --sweb=<url>`.
+
+
+Status bot
+===================
+The status bot provides the clients information to the status webpage.  
+This is documented separately: [statuspage/Readme.statuspage.md](statuspage/Readme.statuspage.md).
 
 
 Radio Recording Bot
