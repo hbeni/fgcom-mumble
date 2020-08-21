@@ -31,15 +31,26 @@ Einen Server betreiben
 - Starte den `fgcom-bot-manager`, der sich um die benötigten Bots kümmert: `./fgcom-botmanager.sh`
 
 
+Verteiltes setup
+---------------------
+Die Komponenten kommunizieren über Netzwerk miteinander, daher können sie auch auf separaten Servern betrieben werden. Um Last zu verteilen, kann beispielsweise der Statusbot und Statusseite getrennt von den anderen Bots und dem murmur-Dienst betrieben werden.  
+
+Aktuell muss der Botmanager und der Recorderbot gemeinsam betrieben werden.
+
 
 Der Botmanager
 ==================
 `./fgcom-botmanager.sh --help` zeigt Aufrufinformationen an.
 
-Der Botmanager startet selbständig die benötigten Bots.  
+Der Botmanager startet und verwaltet selbständig die benötigten Bots (einzeln auswählbar).  
 Er erzeugt außerdem die notwendie Interprozesskommunikation für den Aufnahmebot. Danach startet er den Aufnahmebot und wartet auf Nachrichten von ihm. Sobald eine aunahmeinformation eintrifft, startet der Botmanager einen passenden Wiedergabebot.
 
 Der Statusbot kann eine URL für die Statuswebseite in seinem Kommentar ankündigen. Um dies zu aktivieren: `./fgcom-botmanager.sh --sweb=<url>`.
+
+
+Status bot
+===================
+Der Statusbot stellt die auf der Statusseite anzuzeigenden Informationen bereit. Die Statuskomponente ist separat dokumentiert: [statuspage/Readme.statuspage.md](statuspage/Readme.statuspage.md).
 
 
 Aufnahmebot

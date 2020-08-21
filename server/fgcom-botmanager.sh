@@ -47,6 +47,10 @@ recorderbot_log=/dev/null
 playbackbot_log=/dev/null
 statusbot_log=/dev/null
 
+run_recorderbot="1"
+run_playbackbot="1"
+run_statusbot="1"
+
 # print usage information
 function usage() {
     echo "Manage FGCOM-mumble bots"
@@ -59,6 +63,7 @@ function usage() {
     echo "    --debug    enable debug mode"
     echo ""
     echo "Recording bot options:"
+    echo "    --norec    Do not run recorder bot"
     echo "    --rcert=   path to PEM encoded cert         (default=$rcert)"
     echo "    --rkey=    path to the certs key            (default=$rkey)"
     echo "    --path=    Path to store the recordings to  (default=$path)"
@@ -68,11 +73,13 @@ function usage() {
     echo "    --rlog=    Recorder bot logfile (\"-\"=STDOUT) (default=$recorderbot_log)"
     echo ""
     echo "Playback bot options:"
+    echo "    --noplay   Do not run playback bots"
     echo "    --pcert=   path to PEM encoded cert         (default=$pcert)"
     echo "    --pkey=    path to the certs key            (default=$pkey)"
     echo "    --plog=    Playback bot logfile (\"-\"=STDOUT) (default=$playbackbot_log)"
     echo ""
     echo "Statuspage bot options:"
+    echo "    --nostatus Do not run status bot"
     echo "    --scert=   path to PEM encoded cert         (default=$scert)"
     echo "    --skey=    path to the certs key            (default=$skey)"
     echo "    --slog=    Playback bot logfile (\"-\"=STDOUT) (default=$statusbot_log)"
@@ -100,9 +107,12 @@ for opt in "$@"; do
        --plog=*)  playbackbot_log=$(echo $opt|cut -d"=" -f2);;
        --rlog=*)  recorderbot_log=$(echo $opt|cut -d"=" -f2);;
        --slog=*)  statusbot_log=$(echo $opt|cut -d"=" -f2);;
-       --sdb=*)  statusbot_db=$(echo $opt|cut -d"=" -f2);;
-       --sweb=*) statusbot_web=$(echo $opt|cut -d"=" -f2);;
-       --debug) debug="1";;
+       --sdb=*)   statusbot_db=$(echo $opt|cut -d"=" -f2);;
+       --sweb=*)  statusbot_web=$(echo $opt|cut -d"=" -f2);;
+       --debug)   debug="1";;
+       --norec)    run_recorderbot="0";;
+       --noplay)   run_playbackbot="0";;
+       --nostatus) run_statusbot="0";;
        *) echo "unknown option $opt!"; usage; exit 1;;
    esac
 done
@@ -164,7 +174,7 @@ fi
     while [[ -p $fnotify ]]; do
         # Spawn the radio recorder bot
         botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua")
-        if [[ -z "$botPID" ]]; then
+        if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
             recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
             echo "Spawn bot: $recorderbot_cmd"
             if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
@@ -176,7 +186,7 @@ fi
 
         # Spawn the statusPage bot
         botPID=$(pgrep -f -- "fgcom-status.bot.lua")
-        if [[ -z "$botPID" ]]; then
+        if [[ $run_statusbot -gt "0" && -z "$botPID" ]]; then
             statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
             echo "Spawn bot: $statusbot_cmd"
@@ -202,20 +212,22 @@ while true; do
         fi
         date "+[%Y-%m-%d %H:%M:%S] notification received: '$line'"
         
-        # See if there is already a playback bot instance with that sample
-        botPID=$(pgrep -f -- "--sample=$line")
-        if [[ -n "$botPID" ]]; then
-            echo "Spawn bot ignored (found already running instance): $playbackbot_cmd"
-            continue
-        fi
-        
-        #spawn bot
-        playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
-        echo "Spawn bot: $playbackbot_cmd"
-        if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
-            $playbackbot_cmd > $playbackbot_log &
-        else
-            $playbackbot_cmd &
+        if [[ $run_playbackbot -gt "0" ]]; then
+            # See if there is already a playback bot instance with that sample
+            botPID=$(pgrep -f -- "--sample=$line")
+            if [[ -n "$botPID" ]]; then
+                echo "Spawn bot ignored (found already running instance): $playbackbot_cmd"
+                continue
+            fi
+            
+            #spawn bot
+            playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
+            echo "Spawn bot: $playbackbot_cmd"
+            if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
+                $playbackbot_cmd > $playbackbot_log &
+            else
+                $playbackbot_cmd &
+            fi
         fi
     fi
 done
