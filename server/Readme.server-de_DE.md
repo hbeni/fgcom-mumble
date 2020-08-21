@@ -42,7 +42,7 @@ Der Botmanager
 ==================
 `./fgcom-botmanager.sh --help` zeigt Aufrufinformationen an.
 
-Der Botmanager startet und verwaltet selbständig die benötigten Bots (einzeln auswählbar).  
+Der Botmanager startet und verwaltet selbständig die benötigten Bots (einzeln auswählbar). Der Botmanager startet abgestürzte Botinstanzen automatisch neu.  
 Er erzeugt außerdem die notwendie Interprozesskommunikation für den Aufnahmebot. Danach startet er den Aufnahmebot und wartet auf Nachrichten von ihm. Sobald eine aunahmeinformation eintrifft, startet der Botmanager einen passenden Wiedergabebot.
 
 Der Statusbot kann eine URL für die Statuswebseite in seinem Kommentar ankündigen. Um dies zu aktivieren: `./fgcom-botmanager.sh --sweb=<url>`.
