@@ -28,7 +28,7 @@ Deployment
 ------------------
 
 ### Webpage
-Just define a new webroot and set it to this directory. Configure your webserver to deliver index.php via the PHP interpreter.
+Just define a new webroot and set it to the directory containing `index.php`. Configure your webserver to deliver `index.php` via the PHP interpreter.
 
 Copy the `config.dist.ini` to `config.ini`. You also may want to adapt the webpage configuration file.
 
