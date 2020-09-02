@@ -528,6 +528,7 @@ void fgcom_spawnUDPServer() {
                 if (ures.userData) {
                     pluginDbg("[UDP-server] userData for iid='"+std::to_string(iid)+"' has changed, notifying other clients");
                     notifyRemotes(iid, NTFY_USR);
+                    fgcom_updateClientComment();
                 }
                 // See if we had a radio update. This is an "urgent" update: we must inform other clients instantly!
                 for (std::set<int>::iterator it=ures.radioData.begin(); it!=ures.radioData.end(); ++it) {
@@ -535,6 +536,7 @@ void fgcom_spawnUDPServer() {
                     //std::cout << "ITERATOR: " << ' ' << *it;
                     pluginDbg("FGCom: [UDP-server] radioData for iid='"+std::to_string(iid)+"', radio_id="+std::to_string(*it)+" has changed, notifying other clients");
                     notifyRemotes(iid, NTFY_COM, *it);
+                    fgcom_updateClientComment();
                 }
                 // If we got locationdata changed, do NOT notify. This is handled asynchronusly from the notify thread.
                 /*if (ures.locationData) {

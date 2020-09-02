@@ -158,7 +158,8 @@ Falls du andere Piloten nicht hören kannst, oder nicht senden kannst, prüfe di
 - Stelle sicher, dass das Funkgerät Betriebsbereit ist (ist es angeschaltet? hat es Strom? Ist es defekt?)
 - Stelle sicher, dass du wirklich in Reichweite bist (niedrige Flughöhe begrenzt die Reichweite drastisch!)
 - Versuche, den `fgcom-mumble`-Channel zu verlassen und neu zu betreten.
-- Stelle sicher, dass die Clientsoftware (ATC, Flugsimulator) wirklich daten an den UDP-Port des Plugins übermittelt. Prüfe auch den Port des Plugins nochmal nach (die Portnummer wird vom Plugin in den Mumble-Chat berichtet)
+- Stelle sicher, dass die Clientsoftware (ATC, Flugsimulator) wirklich daten an den UDP-Port des Plugins übermittelt. Prüfe auch den Port des Plugins nochmal nach (die Portnummer wird vom Plugin in den Mumble-Chat berichtet).
+- Prüfe den Kommentar deines Mumbleclients, ob das Callsign und die Funkgeräte registriert wurden.
 - Prüfe die Plugin-Debugnachrichten (Starte dafür mumble über eine Kommandozeile; du brauchst außerdem eine spezielle Pluginversion mit aktiver Debug-Konfiguration)
 
 
