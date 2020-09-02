@@ -215,6 +215,7 @@ void fgcom_updateClientComment() {
         newComment += (fgcom_isPluginActive())? "active" : "inactive";
 
         // Add Identity and frequency information
+        fgcom_localcfg_mtx.lock();
         if (fgcom_local_client.size() > 0) {
             for (const auto &idty : fgcom_local_client) {
                 int iid          = idty.first;
@@ -233,7 +234,7 @@ void fgcom_updateClientComment() {
         }   else {
             newComment += "<br/>&nbsp;&nbsp;<i>no callsigns registered</i>";
         }
-            
+        fgcom_localcfg_mtx.unlock();
         
         // Finally request to set the new comment
         // (this will broadcast the comment to other clients)

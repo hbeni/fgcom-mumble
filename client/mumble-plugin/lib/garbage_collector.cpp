@@ -64,9 +64,11 @@ void fgcom_gc_clean_lcl() {
         pluginDbg("[GC] LCL  clean iid="+std::to_string(elem));
     }
     
-    if (staleIIDs.size() > 0) fgcom_updateClientComment();
-            
     fgcom_localcfg_mtx.unlock();
+    
+    // update client comment if we removed identities
+    if (staleIIDs.size() > 0) fgcom_updateClientComment();
+    
 }
 
 
