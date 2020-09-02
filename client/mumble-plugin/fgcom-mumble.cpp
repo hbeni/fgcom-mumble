@@ -198,12 +198,13 @@ void fgcom_updateClientComment() {
         char *comment;
         if (mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment) == STATUS_OK) {
             std::string comment_str(comment);
+            mumAPI.freeMemory(ownPluginID, &comment);
             std::smatch sm;
             std::regex re("^([\\w\\W]*)<p name=\"FGCOM\">.*");  // cool trick: . does not match newline, but \w with negated \W matches really everything
-            pluginDbg("fgcom_updateClientComment(): got previous comment: '"+comment_str+"'");
+            //pluginDbg("fgcom_updateClientComment(): got previous comment: '"+comment_str+"'");
             if (std::regex_match(comment_str, sm, re)) {
                 preservedComment = std::string(sm[1]);
-                pluginDbg("fgcom_updateClientComment(): extracted: '"+preservedComment+"'");
+                //pluginDbg("fgcom_updateClientComment(): extracted: '"+preservedComment+"'");
             } else {
                 preservedComment = comment_str;
             }
