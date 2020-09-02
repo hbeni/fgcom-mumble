@@ -144,7 +144,8 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 - Make sure the radio is operable (powered, switched on, serviceable)
 - Check that you really are in range (low altitude severely limits your available range!)
 - Try to leave and rejoin the channel, so the plugin reinitializes
-- Check that your software (ATC, flightsim) actually sends data to the plugin udp port. recheck the port the plugin listens to (the plugin tells you at startup in the mumble chat window)
+- Check that your software (ATC, flightsim) actually sends data to the plugin udp port. Recheck the port the plugin listens to (the plugin tells you at startup in the mumble chat window)
+- Check mumbles client comment if the callsign and radio frequencies are registered
 - Look at the plugins debug messages (start mumble from terminal; you need to make a debug build for that)
 
 

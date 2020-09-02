@@ -23,7 +23,7 @@
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
-#define FGCOM_VERSION_MINOR 4
+#define FGCOM_VERSION_MINOR 5
 #define FGCOM_VERSION_PATCH 0
 
 /*
@@ -48,5 +48,10 @@ void fgcom_handlePTT();
  * @return bool true, wehn it is
  */
 bool fgcom_radio_isOperable(fgcom_radio r);
+
+/*
+ * Update client comment
+ */
+void fgcom_updateClientComment();
 
 #endif

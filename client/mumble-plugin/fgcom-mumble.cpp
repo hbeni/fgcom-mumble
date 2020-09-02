@@ -42,6 +42,7 @@
 #include <map>
 #include <string>
 #include <thread>
+#include <regex>
 
 #ifdef DEBUG
 // include debug code
@@ -104,6 +105,7 @@ void fgcom_setPluginActive(bool active) {
     }
     
     fgcom_inSpecialChannel = active;
+    fgcom_updateClientComment();
     
 }
 bool fgcom_isPluginActive() {
@@ -182,6 +184,68 @@ void fgcom_handlePTT() {
     }
 }
 
+/*
+ * Update mumble client comment
+ */
+std::string prevComment;  // so we can detect changes
+void fgcom_updateClientComment() {
+    
+    if (fgcom_isConnectedToServer()) {
+        std::string newComment;
+        
+        // fetch the present comment and read the part we don't want to manage
+        std::string preservedComment;
+        char *comment;
+        if (mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment) == STATUS_OK) {
+            std::string comment_str(comment);
+            std::smatch sm;
+            std::regex re("^([\\w\\W]*)<p name=\"FGCOM\">.*");  // cool trick: . does not match newline, but \w with negated \W matches really everything
+            pluginDbg("fgcom_updateClientComment(): got previous comment: '"+comment_str+"'");
+            if (std::regex_match(comment_str, sm, re)) {
+                preservedComment = std::string(sm[1]);
+                pluginDbg("fgcom_updateClientComment(): extracted: '"+preservedComment+"'");
+            } else {
+                preservedComment = comment_str;
+            }
+        }
+        
+        // Add FGCom generic infos
+        newComment += "<b>FGCom</b> (v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+"): ";
+        newComment += (fgcom_isPluginActive())? "active" : "inactive";
+
+        // Add Identity and frequency information
+        if (fgcom_local_client.size() > 0) {
+            for (const auto &idty : fgcom_local_client) {
+                int iid          = idty.first;
+                fgcom_client lcl = idty.second;
+                std::string frqs;
+                if (lcl.radios.size() > 0) {
+                    for (int i=0; i<lcl.radios.size(); i++) {
+                        if (i >= 1) frqs += ", ";
+                        frqs += lcl.radios[i].frequency;
+                    }
+                } else {
+                    frqs = "-";
+                }
+                newComment += "<br/>&nbsp;&nbsp;<i>" + lcl.callsign + "</i>: " + frqs;
+            }
+        }   else {
+            newComment += "<br/>&nbsp;&nbsp;<i>no callsigns registered</i>";
+        }
+            
+        
+        // Finally request to set the new comment
+        // (this will broadcast the comment to other clients)
+        if (prevComment != newComment) {
+            std::string cmt = preservedComment + "<p name=\"FGCOM\">" + newComment;
+            if (mumAPI.requestSetLocalUserComment(ownPluginID, activeConnection, cmt.c_str()) != STATUS_OK) {
+                pluginLog("Failed at setting the local user's comment");
+            } else {
+                prevComment = newComment;
+            }
+        }
+    }
+}
 
 /*
  * To be called when plugin is initialized to set up
@@ -318,7 +382,11 @@ mumble_error_t fgcom_initPlugin() {
             std::thread notifyThread(fgcom_notifyThread);
             notifyThread.detach();
             
+            
+            // Update client comment
+            fgcom_updateClientComment();
 
+            
             // ... more needed?
             
             

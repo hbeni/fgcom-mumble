@@ -35,6 +35,7 @@
 #include "globalVars.h"
 #include "io_plugin.h"
 #include "garbage_collector.h"
+#include "fgcom-mumble.h"
 
 
 /*
@@ -62,6 +63,8 @@ void fgcom_gc_clean_lcl() {
         fgcom_local_client.erase(elem);
         pluginDbg("[GC] LCL  clean iid="+std::to_string(elem));
     }
+    
+    if (staleIIDs.size() > 0) fgcom_updateClientComment();
             
     fgcom_localcfg_mtx.unlock();
 }
