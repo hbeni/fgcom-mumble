@@ -77,18 +77,14 @@ Im Protokoll haben Fließkommazahlen außerdem immer den Punkt (`.`) als Dezimal
 - Starte Flightgear mit aktiviertem fgcom-mumble Protokoll (füge "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" im Startprogramm als zusätzlichen Parameter hinzu)
 - Nachdem Flightgear gestartet wurde, kannst du die Funkgeräte wie gewohnt benutzen (Standard ist *Leertaste* für Sprechen auf COM1 und *Umschalt-Leetaste* für COM2).
 
+
+### ATC-Pie specific
+ATC-Pie hat seit v1.7.1 eingebaute Unterstützung für FGCom-mumble.
+
+
 ### OpenRadar spezifisch
 Aktuell unterstützt OpenRadar nur ein Funkgerät pro UDP Port. Falls du also mehrere Funkgeräte benutzen möchtest (was sehr wahrscheinlich ist), musst du mehrere parrallele mumble-Instanzen mit jeweils aktivietem FGCom-Plugin  starten (`mumble -m`).
 Dies erzeugt pro Plugin einen eigenen UDP-Port, die in OpenRadar bei "fgcom standalone" Kommasepariert angegeben werden können.
-
-### ATC-Pie specific
-ATC-Pie hat aktuell die gleiche Einschränkung.  
-In der Entwicklungsversion gibt es allerdings bereits gute Unterstützung für FGCom-mumble.
-
-Aktuell wird also für jede ATC-Pie Instanz eine eigene mumble Instanz benötigt (siehe eben bei OpenRadar).  
-Das trifft zum Beispiel zu, wenn neben einer normalen Tower-Instanz eines Flughafens auch weitere Tower oder Streckenkontrollen bedient werden sollen.
-
-Sobald die FGCom-mumble Unterstützung veröffentlicht wurde, muss lediglich ein anderer *local UDP port* beim Sitzungsstart-Dialog angegeben werden.
 
 
 Spezielle FGCom Frequenzen
