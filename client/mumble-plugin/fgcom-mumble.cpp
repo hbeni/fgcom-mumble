@@ -322,7 +322,6 @@ mumble_error_t fgcom_initPlugin() {
             
             
             // fetch all channels from server in order to get the special fgcom-mumble channel ID
-            //fgcom_specialChannelID
             size_t channelCount;
             mumble_channelid_t *channels;
             if (mumAPI.getAllChannels(ownPluginID, activeConnection, &channels, &channelCount) != STATUS_OK) {
@@ -336,7 +335,7 @@ mumble_error_t fgcom_initPlugin() {
                     mumble_error_t cfres = mumAPI.getChannelName(ownPluginID, activeConnection, channels[ci], &channelName);
                     if (cfres == STATUS_OK) {
                         pluginDbg("  channelID="+std::to_string(channels[ci])+" '"+channelName+"'");
-                        if (strcmp("fgcom-mumble", channelName) == 0) {
+                        if (strcmp(fgcom_cfg.specialChannel.c_str(), channelName) == 0) {
                             fgcom_specialChannelID = channels[ci];
                             pluginDbg("    special channel id found! id="+std::to_string(fgcom_specialChannelID));
                             break;
@@ -349,8 +348,8 @@ mumble_error_t fgcom_initPlugin() {
                 }
                 
                 if (fgcom_specialChannelID == -1) {
-                    pluginLog("ERROR: FAILED TO RETRIEVE 'fgcom-mumble' CHANNEL! Please setup such an channel.");
-                    mumAPI.log(ownPluginID, std::string("Failed to retrieve 'fgcom-mumble' special channel! Please setup such an channel.").c_str());
+                    pluginLog("ERROR: FAILED TO RETRIEVE SPECIAL CHANNEL '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.");
+                    mumAPI.log(ownPluginID, std::string("Failed to retrieve special channel '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.").c_str());
                 }
             }
             mumAPI.freeMemory(ownPluginID, channels);
