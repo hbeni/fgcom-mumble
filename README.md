@@ -71,14 +71,13 @@ Also note that callsigns and frequencies are not allowed to contain the comma sy
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
 
-### OpenRadar specific
-Currently, OpenRadar just supports one Radio per UDP port. In case you want several Radios (which is likely), you need to invoke several dedicated mumble processes. This will give you separate FGCom-mumble plugin instances listening on different ports, and in OpenRadar you can thus specify that ports.
 
 ### ATC-Pie specific
-Currently ATC-Pie has the same issue (and the same workaround) as OpenRadar. There is a development version in the works that will enable better FGCom-mumble support.
+Since ATC-Pie v1.7.1 FGCom-mumble is supported out of the box.
 
-Currently, for each instance of ATC-Pie you will need a linked mumble client session. This applies for example, if you want to simultaniosly service several Airports, or additional CTR.  
-Once the ATC-Pie version with FGCom-mumble support is out, you just need to adjust the *local UDP port* option at the *start session* dialog to contain a uniqhe UDP source port per ATC-Session.
+
+### OpenRadar specific
+Currently, OpenRadar just supports one Radio per UDP port. In case you want several Radios (which is likely), you need to invoke several dedicated mumble processes. This will give you separate FGCom-mumble plugin instances listening on different ports, and in OpenRadar you can thus specify that ports.
 
 
 Support for FGCom special frequencies
