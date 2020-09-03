@@ -34,10 +34,12 @@
 // Currently the configuration cannot be done trough mumble, but that is planned.
 // Changing runtime configuration can be done trough the inbound RDP interface for now.
 struct fgcom_config {
-    bool radioAudioEffects;
+    bool        radioAudioEffects;
+    std::string specialChannel;
     
     fgcom_config()  {
-        radioAudioEffects   = true;
+        radioAudioEffects = true;
+        specialChannel    = "fgcom-mumble";
     };
 };
 extern struct fgcom_config fgcom_cfg;
