@@ -108,6 +108,12 @@ body div.footer {
     outline: none;
 }
 
+#donate_paypalme {  /* donation link */
+    position:absolute;
+    top:0;
+    right:0;
+}
+
 .section table {
     border-collapse: collapse;
     width: 100%;
