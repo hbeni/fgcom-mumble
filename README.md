@@ -3,7 +3,7 @@ FGCom-mumble - a flightsim radio simulation framework based on mumble
 
 This project aims to provide a modular, mumble based radio simulation for flight simulators. The project startet mainly as a successor for the asterisk based FGCom implementation.
 
-([-> deutsche Version](README-de_DE.md))
+([-> deutsche Version](README-de_DE.md)) | [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5)
 
 ### The main goals are:
 - Provide communication with geographic and channel separation
