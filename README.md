@@ -44,9 +44,18 @@ Setup requirements
 - have a standard mumble client with recent plugin support (>= v1.4.0)
 - a recent OpenSSL installation
 
+
 Installation
 -----------------------
 - copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
+
+
+Plugin configuration
+-----------------------
+Usually the default values are fine. Some features however can be configured differently, like disabling radio audio effects (white noise etc), changing the plugins UDP listen port or the name of the special `fgcom-mumble` channel.
+
+You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization.
+
 
 
 Running the client
@@ -56,6 +65,7 @@ Running the client
 - join the `fgcom-mumble` channel
 
 You are ready for radio usage! Some client needs to supply information to the plugin now, so it knows about your location and radio stack.
+
 
 ### Generic compatibility
 The plugin aims to be compatible to the legacy fgcom-standalone protocol, so vey much all halfway recent fgfs instances, ATC clients and aircraft should handle it out of the box at least with COM1.

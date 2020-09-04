@@ -36,10 +36,12 @@
 struct fgcom_config {
     bool        radioAudioEffects;
     std::string specialChannel;
+    int         udpServerPort;
     
     fgcom_config()  {
         radioAudioEffects = true;
         specialChannel    = "fgcom-mumble";
+        udpServerPort     = 16661;
     };
 };
 extern struct fgcom_config fgcom_cfg;
