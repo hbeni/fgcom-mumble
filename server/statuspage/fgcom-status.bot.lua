@@ -36,7 +36,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.2"
+fgcom.botversion = "1.3"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -203,6 +203,7 @@ end
 -- Called when the bot successfully connected to the server
 -- and has received all current channel and client data
 client:hook("OnServerSync", function(event)
+    if (event.welcome_text == nil) then event.welcome_text = "-" end
     fgcom.log("Sync done; server greeted with: "..event.welcome_text)
     
     -- try to join fgcom-mumble channel

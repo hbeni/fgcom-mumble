@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.1"
+fgcom.botversion = "1.2"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -341,6 +341,7 @@ local msg = "FRQ="..lastHeader.frequency
 end
 
 client:hook("OnServerSync", function(event)
+    if (event.welcome_text == nil) then event.welcome_text = "-" end
     fgcom.log("Sync done; server greeted with: "..event.welcome_text)
     
     -- try to join fgcom-mumble channel
