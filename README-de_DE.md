@@ -49,9 +49,17 @@ Vorraussetzungen
 - Du brauchst lediglich ein aktuelles Mumble mit Pluginunterstützung (>= v1.4.0)
 - Eine aktuelle OpenSSL Installation
 
+
 Installation
 -----------------------
 Das compilierte FGCom-mumble Plugin muss in den `plugins`-Ordner von mumble kopiert werden. Von dort aus erkennt Mumble es automatisch und du kannst es über den "Plugins"-Dialog aktivieren.
+
+
+Plugin konfigurieren
+-----------------------
+Normalerweise sind die Standardeinstellungen des Plugins ausreichend. Falls doch nicht, können einige Features (wie das Abschalten der Audioeffekte wie Rauschen, oder der Port des UPD-Servers) abweichend konfiguriert werden.
+
+Dies kannst du tun, indem du die [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) Beispieldatei in dein Benutzer-Heimatverzeichniss kopierst und dann entsprechend anpasst. Die Datei wird dann beim Initialisieren des Plugins einmalig geladen.
 
 
 Das Plugin einsetzen
@@ -62,6 +70,7 @@ Das Plugin einsetzen
 
 Jetzt bist du bereit, am Funkverkehr teilzunehmen!  
 Dein Flugsimulator oder ATC-Programm muss dem Plugin nun die notwendigen Informationen senden, damit es weiß, wo du bist und welche Funkgeräte zur Verfügung stehen.
+
 
 ### Allgemeine Kompatibilität
 Das Plugin versucht, weitestgehend zum alten FGCom UDP Protokoll kompatibel zu bleiben, d.h. alle halbwegs aktuellen Flightgear und ATC-Instanzen

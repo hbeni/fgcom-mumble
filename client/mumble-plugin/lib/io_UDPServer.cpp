@@ -446,7 +446,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
 }
 
 
-int fgcom_udp_port_used = FGCOM_SERVER_PORT;
+int fgcom_udp_port_used = fgcom_cfg.udpServerPort;
 bool fgcom_udp_shutdowncmd = false;
 void fgcom_spawnUDPServer() {
     pluginLog("[UDP-server] server starting");
@@ -469,7 +469,7 @@ void fgcom_spawnUDPServer() {
       
     // Bind the socket with the server address
     bool bind_ok = false;
-    for (fgcom_udp_port_used = FGCOM_SERVER_PORT; fgcom_udp_port_used < FGCOM_SERVER_PORT + 10; fgcom_udp_port_used++) {
+    for (fgcom_udp_port_used = fgcom_cfg.udpServerPort; fgcom_udp_port_used < fgcom_cfg.udpServerPort + 10; fgcom_udp_port_used++) {
         servaddr.sin_port = htons(fgcom_udp_port_used); 
         if ( bind(fgcom_UDPServer_sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) >= 0 ) { 
             perror("FGCom: [UDP-server] udp socket bind succeeded");

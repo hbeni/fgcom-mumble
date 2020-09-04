@@ -43,11 +43,14 @@
 #include <string>
 #include <thread>
 #include <regex>
+#include <fstream>
 
 #ifdef DEBUG
 // include debug code
 #include "debug.cpp"
 #endif
+
+
 
 
 // Mubmle API global vars.
@@ -249,6 +252,79 @@ void fgcom_updateClientComment() {
     }
 }
 
+
+/*
+ * Load config file
+ * This will parse the ini file and overwrite internal compile time defaults.
+ * 
+ * @return STATUS_OK on success, otherwise EC_GENERIC_ERROR 
+ */
+mumble_error_t fgcom_loadConfig() {
+    std::vector<std::string> configFilePaths;
+    std::string cfgName = "fgcom-mumble.ini";
+
+    // Try to get config file from home dir
+    char* pHomeDir;
+#ifdef MINGW_WIN64
+    std::string dirSep = "\\";
+    pHomeDir = getenv("USERPROFILE");
+    if (pHomeDir) {
+        configFilePaths.push_back(std::string(pHomeDir) + dirSep + cfgName);
+    } else {
+        pluginLog("[CFG] ERROR getting USERPROFILE from environment");
+        // do not bail out: just use defaults. return EC_GENERIC_ERROR;
+    }
+#else
+    std::string dirSep = "/";
+    pHomeDir = getenv("HOME");
+    if (pHomeDir) {
+        configFilePaths.push_back(std::string(pHomeDir) + dirSep + "."+cfgName); // support "hidden dotfiles" in linux
+        configFilePaths.push_back(std::string(pHomeDir) + dirSep + cfgName);
+    } else {
+        pluginLog("[CFG] ERROR getting HOME from environment");
+        // do not bail out: just use defaults.  return EC_GENERIC_ERROR;
+    }
+#endif
+
+    // Mumble plugin config
+    // TODO: Once mumble offers some generic plugin config interface, we should integrate that here!
+    //       -> try several locations, especially also the mumble plugin config dir (once that will be defined...)
+    //       see also: https://github.com/mumble-voip/mumble/pull/3743#issuecomment-687560636
+
+
+    // Try out to load the defined file locations.
+    // We load them all in the order given, so the can overwrite each other. Ths may come in handy when
+    // some distribution chooses to deliver adjusted defaults.
+    for(std::string cfgFilePath : configFilePaths) {
+        std::ifstream cfgFileStream(cfgFilePath);
+        pluginDbg("[CFG] looking for plugin ini file at '"+cfgFilePath+"'");
+        if (cfgFileStream.good()) {
+            pluginLog("[CFG]   reading plugin ini file '"+cfgFilePath+"'");
+            std::regex parse_key_value ("^([^;]\\w+?)\\s*=\\s*(.+?)(;.*)?\r?$");  // read ini style line, supporting spaces around the '=' and also linux/windows line endings
+            std::string cfgLine;
+            while (std::getline(cfgFileStream, cfgLine)) {
+                std::smatch sm;
+                if (std::regex_search(cfgLine, sm, parse_key_value)) {
+                    // this is a valid token. Lets parse it!
+                    std::string token_key   = sm[1];
+                    std::string token_value = sm[2];
+                    pluginDbg("[CFG] Parsing token: "+token_key+"="+token_value);
+
+                    if (token_key == "radioAudioEffects") fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
+                    if (token_key == "specialChannel")    fgcom_cfg.specialChannel    = token_value;
+                    if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
+                }
+            }
+        } else {
+            pluginLog("[CFG]   not using '"+cfgFilePath+"' (not existing or invalid format)");
+        }
+    }
+    
+    return STATUS_OK;
+}
+
+
+
 /*
  * To be called when plugin is initialized to set up
  * local stuff. the function gets called from
@@ -258,12 +334,25 @@ void fgcom_updateClientComment() {
  */
 bool fgcom_offlineInitDone = false;
 bool fgcom_onlineInitDone = false;
+bool fgcom_configDone = false;
 std::thread::id udpServerThread_id;
 std::thread::id gcThread_id;
 mumble_userid_t localMumId;
 mumble_error_t fgcom_initPlugin() {
     if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone)
         mumAPI.log(ownPluginID, ("Plugin v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+" initializing").c_str());
+    
+    
+    /*
+     * Load config ini file, if present
+     * The values given there will overwrite the defaults from the config struct.
+     */
+    if (! fgcom_configDone) {
+        mumble_error_t configureResult = fgcom_loadConfig();
+        if (configureResult != STATUS_OK) return configureResult;
+        fgcom_configDone = true;
+    }
+    
     
     /*
      * OFFLINE INIT: Here init stuff that can be initialized offline.
