@@ -186,6 +186,15 @@ $tpl_refreshbox = new HTMLTemplate(dirname(__FILE__).'/inc/refreshbox.tpl');
 $tpl_index->assignVar('refreshbox', $tpl_refreshbox->generate());
 
 
+/**
+* Add donation link
+*/
+if ($ini_config['donate']['paypalme']) {
+    $tpl_donation = new HTMLTemplate(dirname(__FILE__).'/inc/donate_paypalme.tpl');
+    $tpl_donation->assignVar('name', $ini_config['donate']['paypalme']);
+    $tpl_index->assignVar('donate', $tpl_donation->generate());
+}
+
 /*
 * All done: print the page
 */

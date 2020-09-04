@@ -32,6 +32,7 @@
                 <span %updatestale%>Last database update: %dbchanged%</span>
                 <span>| Users: %usercount% | Broadcasts: %playbackcount%</span>
                 %refreshbox%
+                %donate%
             </div>
             
             
