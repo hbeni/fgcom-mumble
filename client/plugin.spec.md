@@ -9,7 +9,10 @@ I have chosen a simple, text based UDP protocol for this reason.
 
 Initialization
 --------------
-The plugin initializes with emtpy internal data.
+The plugin initializes with emtpy internal data and default cofiguration options.
+
+After loading, the plugin searches for a config file in various locations, whose contents will be parsed (the format is ini-style, e.g `key=value`, comments start with `;`). Contents overwrite previously set state, so there can be potentially an hierarchy of config files. The [example `fgcom-mumble.ini`](mumble-plugin/fgcom-mumble.ini) shows what options are supported currently. Installation instructions (like paths) are given in the [client `README.md`](../README.md) file.
+
 When receiving local input data (see below), the internal state is updated (ie new radios get registered, frequencies set etc).
 
 If joining the special mumble channel `fgcom-mumble`, the plugin will start to handle all clients audio streams in that channel.  
@@ -114,7 +117,7 @@ The Following fields are configuration options that change plugin behaviour.
 
 | Field            | Format | Description                             | Default    |
 |------------------|--------|-----------------------------------------|------------|
-| `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (when RDF was activated; details below: "*UDP client interface / RDF data*")   | `0`|
+| `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (details below: "*UDP client interface / RDF data*")   | `0`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
 
 
@@ -130,8 +133,8 @@ Normally this is not needed, as UDP clients are supposed to keep the port stable
 
 | Field            | Format | Description                             | Default    |
 |------------------|--------|-----------------------------------------|------------|
-| `IID`          | Int    | Switch context of following UDP fields to ID of the identity `IID`. IDD is starting from `0`.  | derived from UDP client port |
-| `UDP_TGT_PORT`   | Int    | Switch the identities UDP target Port. | send to UDP client port of the identity |
+| `IID`            | Int    | Switch context of following UDP fields to ID of the identity `IID`. IDD is starting from `0`.  | derived from UDP client port |
+| `UDP_TGT_PORT`   | Int    | Switch the identities UDP target Port.  | send to UDP client port of the identity |
 
 
 Plugin output data
@@ -184,13 +187,13 @@ Each RDF enabled radio can receive multiple signals. It is up to the client to s
 
 Each active signal per radio is reported on a separate output line (separated by `\n`).  
 The signal source is reported by starting the RDF message string with `RDF:`, followed by the RDF data fields.  
-The reported frequency is the one tuned on the radio (and not effective wave frequency).
+The reported frequency is the effective real wave frequency in MHz.
 
 | Field      | Format | Description                                      |
 |------------|--------|--------------------------------------------------|
 | `CS_TX`    | String | Callsign of the sender                           |
-| `FRQ`      | String | Tuned frequency of the signal in MHz             |
-| `DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WSG84 north)|
+| `FRQ`      | String | Real wave frequency of the signal in MHz         |
+| `DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WGS84 north)|
 | `VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
 | `QLY`      | Float  | Signal quality (`0.00` to `1.0`)                 |
 
