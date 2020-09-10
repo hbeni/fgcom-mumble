@@ -50,8 +50,7 @@
         </div>
         
         <div class="footer">
-            Highscore: %highscore_clients% clients @ %highscore_date%
-            <br>
+            %highscore%
             <a href="https://github.com/hbeni/fgcom-mumble"><img height="15px" width="37px" src="inc/GitHub_Logo.png" />hbeni/fgcom-mumble</a> | <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img height="15px" width="44px" src="inc/gplv3-88x31.png" alt="GPLv3"/></a> | &copy; 2020 Benedikt Hallinger
         </div>
     </body>

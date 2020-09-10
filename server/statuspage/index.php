@@ -199,9 +199,13 @@ if ($ini_config['donate']['paypalme']) {
 /**
 * Add highscore info
 */
-date_default_timezone_set('UTC');
-$tpl_index->assignVar('highscore_clients', $db_data["meta"]["highscore_clients"]);
-$tpl_index->assignVar('highscore_date', date("Y-m-d H:i:s", $db_data["meta"]["highscore_date"])." UTC");
+if ($db_data["meta"]["highscore_clients"] > 0) {
+    date_default_timezone_set('UTC');
+    $tpl_highscore = new HTMLTemplate(dirname(__FILE__).'/inc/highscore.tpl');
+    $tpl_highscore->assignVar('highscore_clients', $db_data["meta"]["highscore_clients"]);
+    $tpl_highscore->assignVar('highscore_date', date("Y-m-d H:i:s", $db_data["meta"]["highscore_date"])." UTC");
+    $tpl_index->assignVar('highscore', $tpl_highscore->generate());
+}
 
 
 /*
