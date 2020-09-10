@@ -41,6 +41,7 @@ ttl="7200"  # default time-to-live after recordings in secs
 fnotify="/tmp/fgcom-fnotify-fifo"
 statusbot_db="/tmp/fgcom-web.db"
 statusbot_web=""
+statusbot_stats=""
 debug="0"
 
 recorderbot_log=/dev/null
@@ -85,6 +86,7 @@ function usage() {
     echo "    --slog=    Playback bot logfile (\"-\"=STDOUT) (default=$statusbot_log)"
     echo "    --sdb=     Database file to write           (default=$statusbot_db)"
     echo "    --sweb=    Advertise url in comment         (default=no commercials!)"
+    echo "    --sstats=  generate stats to this file      (default=no)"
 }
 
 # Parse cmdline args
@@ -109,6 +111,7 @@ for opt in "$@"; do
        --slog=*)  statusbot_log=$(echo $opt|cut -d"=" -f2);;
        --sdb=*)   statusbot_db=$(echo $opt|cut -d"=" -f2);;
        --sweb=*)  statusbot_web=$(echo $opt|cut -d"=" -f2);;
+       --sstats=*)  statusbot_stats=$(echo $opt|cut -d"=" -f2);;
        --debug)   debug="1";;
        --norec)    run_recorderbot="0";;
        --noplay)   run_playbackbot="0";;
@@ -135,6 +138,7 @@ echo "  --plog=$playbackbot_log"
 echo "  --slog=$statusbot_log"
 echo "  --sdb=$statusbot_db"
 echo "  --sweb=$statusbot_web"
+echo "  --sstats=$statusbot_stats"
 [[ $debug == "1" ]] && echo "  --debug"
 
 # define cmd options for the bot callups
@@ -189,6 +193,7 @@ fi
         if [[ $run_statusbot -gt "0" && -z "$botPID" ]]; then
             statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
+            [[ -n "$statusbot_stats" ]] && statusbot_cmd="$statusbot_cmd --stats=$statusbot_stats"
             echo "Spawn bot: $statusbot_cmd"
             if [ -n $statusbot_log ] && [ $statusbot_log != "-" ]; then
                 $statusbot_cmd > $statusbot_log &

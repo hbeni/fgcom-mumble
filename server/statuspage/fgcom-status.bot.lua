@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>. ]]
 The purpose of this bot is to monitor `fgcom-mumble` channel traffic and
 write the data periodically to a database. This database can then be read from the
 status page implementation.
+The bot also can optionally create usage statistic data, usable for example by gnuplot.
 
 The bot approach is currently needed, because the status page has no access to the plugin
 data via ICE bus. One approach for the future might be to let the plugins set specially formatted
@@ -48,7 +49,9 @@ local cert  = "statusbot.pem"
 local key   = "statusbot.key"
 local db    = "/tmp/fgcom-web.db"
 local speed = 5  -- update interval in seconds
-local weburl = "";
+local weburl = ""
+local stats = ""
+local speedStats = 60 -- write interval for statistic entries in seconds
 
 
 if arg[1] then
@@ -63,6 +66,7 @@ if arg[1] then
         print("    --db=      Path to the db                   (default="..db..")")
         print("    --speed=   update interval in seconds       (default="..speed..")")
         print("    --web=     Advertise url in comment         (default=no commercials!)")
+        print("    --stats=   append usage stats to this file  (default=no)")
         print("    --debug    print debug messages             (default=no)")
         print("    --version  print version and exit")
         os.exit(0)
@@ -78,6 +82,7 @@ if arg[1] then
         if k=="db"        then db=v end
         if k=="speed"     then speed=v end
         if k=="web"       then weburl=v end
+        if k=="stats"     then stats=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
     end
@@ -229,6 +234,29 @@ dbUpdateTimer_func = function(t)
 end
 
 
+-- Timed loop to write usage statistics file
+-- The data is intendet to be compatible to gnuplot: "<YYYYMMDDhhmmss> <clientcount>" for each line
+local statsWriterTimer = mumble.timer()
+statsWriterTimer_func = function(t)
+    local stats_fh = io.open(stats, "ab")
+    assert(stats_fh, "unable to open stats file"..stats)
+    fgcom.dbg("opened stats file '"..stats.."'")
+    
+    -- write the data
+    --   starting the time format with "!" means UTC
+    local statsData = os.date("!%Y%m%d%H%M%S").." "..#fgcom_clients.."\n"
+    local writeRes  = stats_fh:write(statsData)
+    if not writeRes then
+        fgcom.log("unable to write into stats file: "..stats)
+        -- lets try in next iteration  os.exit(1)
+        io.close(stats_fh)
+    else
+        -- write was okay
+        fgcom.dbg("wrote stats to '"..stats.."'")
+        stats_fh:flush()
+        io.close(stats_fh)
+    end
+end
 
 
 -- Called when the bot successfully connected to the server
@@ -255,6 +283,12 @@ client:hook("OnServerSync", function(event)
            
     -- start update timer
     dbUpdateTimer:start(dbUpdateTimer_func, 0.0, speed)
+    
+    -- start statistics collection
+    if stats:len() > 0 then
+        fgcom.log("Writing statistics to: "..stats)
+        statsWriterTimer:start(statsWriterTimer_func, 60, speedStats)
+    end
 end)
 
 
