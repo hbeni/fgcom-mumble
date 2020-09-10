@@ -114,6 +114,12 @@ body div.footer {
     right:0;
 }
 
+#highscore {  /* highscore box */
+    font-family: 'Open Sans', sans-serif;
+    font-size:10pt;
+    text-align: center;
+}
+
 .section table {
     border-collapse: collapse;
     width: 100%;
