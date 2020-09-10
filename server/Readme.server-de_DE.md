@@ -38,6 +38,13 @@ Die Komponenten kommunizieren über Netzwerk miteinander, daher können sie auch
 Aktuell muss der Botmanager und der Recorderbot gemeinsam betrieben werden.
 
 
+Nutzungsstatistiken
+--------------------
+Allgemein kann die Nutzung über mumble Standardschnittstellen ermittelt werden (z.B. ICE-Bus).  
+Der Statusbot kann allerindgs ebenfalls optiona Nutzungsstatistiken generieren, die sogar von der Statusseite angezeigt werden können - Details siehe [statuspage/Readme.statuspage.md](statuspage/Readme.statuspage.md).
+
+
+
 Der Botmanager
 ==================
 `./fgcom-botmanager.sh --help` zeigt Aufrufinformationen an.

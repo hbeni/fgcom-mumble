@@ -40,6 +40,13 @@ As the components connect to each other via network, there is no need to run eve
 Currently, the bot manager and recorder bot must run on the same machine.
 
 
+Usage statistics
+--------------------
+Usage statistics may be collected trough standard mumble means (like ICE bus).  
+The status bot can write out usage statistics too, which may be displayed from the status page - see the [statuspage/Readme.statuspage.md](statuspage/Readme.statuspage.md) file.
+
+
+
 The Bot manager
 ==================
 `./fgcom-botmanager.sh --help` will give usage instructions.
