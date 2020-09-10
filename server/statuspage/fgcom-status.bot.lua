@@ -124,6 +124,7 @@ local generateOutData = function()
 
     -- generate list of current users
     fgcom.dbg("generateOutData(): number of known users: "..#fgcom_clients)
+    local users_alive = 0
     for sid, remote_client in pairs(fgcom_clients) do
         for iid,user in pairs(remote_client) do
             fgcom.dbg("generateOutData(): processing user: "..sid.." with idty="..iid)
@@ -139,6 +140,8 @@ local generateOutData = function()
                 if mumbleUser:getName():find("FGCOM%-.*") then fgcom_clients[sid][iid].type = "playback-bot" end
                 if mumbleUser:getName():find("FGCOM%-BOTPILOT.*") then fgcom_clients[sid][iid].type = "client" end
                 userData.type = fgcom_clients[sid][iid].type
+                
+                if userData.type == "client" then  users_alive = users_alive + 1  end
             end
             
             userData.callsign = user.callsign
@@ -161,8 +164,8 @@ local generateOutData = function()
     
     
     -- generate metadata
-    if highscore.num < #data.clients then
-        highscore.num  = #data.clients
+    if highscore.num < users_alive then
+        highscore.num  = users_alive
         highscore.date = os.time()
     end
     data.meta.highscore_clients = highscore.num
@@ -238,13 +241,30 @@ end
 -- The data is intendet to be compatible to gnuplot: "<YYYYMMDDhhmmss> <clientcount>" for each line
 local statsWriterTimer = mumble.timer()
 statsWriterTimer_func = function(t)
+    -- get the current alive number of users
+    local allUsers = client:getUsers()
+    local users_alive = 0
+    for sid, remote_client in pairs(fgcom_clients) do
+        for iid,user in pairs(remote_client) do
+            local userData = {}   -- the return structure for generating the message
+            local mumbleUser = allUsers[sid]
+            if mumbleUser then
+                -- client is still connected to mumble
+                if fgcom_clients[sid][iid].type == "client" then
+                    users_alive = users_alive + 1
+                end
+            end
+        end
+    end
+
+
     local stats_fh = io.open(stats, "ab")
     assert(stats_fh, "unable to open stats file"..stats)
     fgcom.dbg("opened stats file '"..stats.."'")
     
     -- write the data
     --   starting the time format with "!" means UTC
-    local statsData = os.date("!%Y%m%d%H%M%S").." "..#fgcom_clients.."\n"
+    local statsData = os.date("!%Y%m%d%H%M%S").." "..users_alive.."\n"
     local writeRes  = stats_fh:write(statsData)
     if not writeRes then
         fgcom.log("unable to write into stats file: "..stats)
@@ -252,7 +272,7 @@ statsWriterTimer_func = function(t)
         io.close(stats_fh)
     else
         -- write was okay
-        fgcom.dbg("wrote stats to '"..stats.."'")
+        fgcom.dbg("wrote stats to '"..stats.."' ("..users_alive.." users)")
         stats_fh:flush()
         io.close(stats_fh)
     end

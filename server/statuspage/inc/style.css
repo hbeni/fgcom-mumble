@@ -118,6 +118,13 @@ body div.footer {
     font-family: 'Open Sans', sans-serif;
     font-size:10pt;
     text-align: center;
+    display:inline;
+}
+
+#usagelink {
+    display:inline;
+    border-left:1px solid black;
+    padding-left:5px;
 }
 
 .section table {

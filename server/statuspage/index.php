@@ -47,6 +47,44 @@ $ini_config = parse_ini_file(dirname(__FILE__).'/config.ini', true);
 //Array ( [json-database] => Array ( [file] => /tmp/fgcom-web.db ) ) 
 $ini_config = sanitize($ini_config);
 
+
+/**
+* Usage statistics output mode
+* This mode will show the gnuplot processed result of the status bot stats file.
+* The needed file is generated from the status bot when invoking it with the --stats parameter.
+* You need to enable this feature in the config file.
+*/
+if (array_key_exists('usage', $_GET)) {
+    if (!$ini_config['ui']['gnuplot_source']) die("ERROR: Feature not enabled in config. Enable 'gnuplot_source' option.");
+    if (!is_readable($ini_config['ui']['gnuplot_source'])) die("ERROR:".$ini_config['ui']['gnuplot_source']." not readbale or existing!");
+    $statfile_p = escapeshellcmd($ini_config['ui']['gnuplot_source']);
+
+    $handle = popen('cat '.$statfile_p.' | gnuplot stats2png.gnuplot', 'r');
+    $firstBytes = fread($handle, 1024);
+    if (!preg_match('/^.PNG/', $firstBytes)) die("ERROR generating image invoking gnuplot: ".$firstBytes);
+
+    header("Content-type: image/png");
+    print $firstBytes;
+    while(!feof($handle)) {
+        // send the current file part to the browser
+        print fread($handle, 1024);
+        // flush the content to the browser
+        flush();
+    }
+    fclose($handle); 
+
+    exit;
+}
+
+/**
+* Add link to usage statistics graph
+*/
+if ($ini_config['ui']['gnuplot_source'] && is_readable($ini_config['ui']['gnuplot_source'])) {
+    $usagelink = '<div id="usagelink"><a href="?usage" target="_blank">Usage stats</a></div>';
+    $tpl_index->assignVar('usagelink', $usagelink);
+}
+
+
 /**
 * Fetch database contents
 *
