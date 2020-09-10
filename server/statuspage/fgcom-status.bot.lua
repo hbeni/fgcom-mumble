@@ -36,7 +36,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.3"
+fgcom.botversion = "1.4"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -90,14 +90,34 @@ local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
 fgcom.log("connect and bind", "OK")
 
+
+-- Store for last highscore
+--   date is a unix timestamp
+local highscore = {num=0, date=0}
+local hsdb_fh = io.open(db, "rb")
+if hsdb_fh then
+    fgcom.log("loading past highscore from db "..db)
+    local hsdb_fhdbcontent = hsdb_fh:read("*all")
+    local json_parse_res = json.parse(hsdb_fhdbcontent, pos, end_delim)
+    hsdb_fhdbcontent = nil
+    io.close(hsdb_fh)
+    highscore.num  = json_parse_res.meta.highscore_clients
+    highscore.date = json_parse_res.meta.highscore_date
+    fgcom.log("  highscore: "..highscore.num.." clients at "..os.date('%Y-%m-%d %H:%M:%S', highscore.date).." ("..highscore.date..")")
+end
+
+
 -- Generate JSON data data from state
---   Expected format is a JSON array representing one user record each:
---   {"type":"client",  "callsign":"Calls-1",   "freqencies":["123.456"],
---    "lat":12.3456, "lon":20.11111,  "alt":1234.45,  "updated":1111111122}
+--   Expected format is a JSON array representing the data; in the "clients" member, one user record each:
+--   {
+--     "clients": [{"type":"client", "callsign":"Calls-1", "freqencies":["123.456"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...],
+--     "meta": {"highscore_clients":12, "highscore_date":1599719381}
+--   }
 local generateOutData = function()
     local allUsers = client:getUsers()
-    local data     = {}  -- final return array
-    
+    local data     = {clients={}, meta={}}  -- final return array
+
+    -- generate list of current users
     fgcom.dbg("generateOutData(): number of known users: "..#fgcom_clients)
     for sid, remote_client in pairs(fgcom_clients) do
         for iid,user in pairs(remote_client) do
@@ -130,10 +150,21 @@ local generateOutData = function()
             userData.alt = user.alt
             userData.updated = fgcom_clients[sid][iid].lastUpdate
             
-            table.insert(data, userData)
+            table.insert(data.clients, userData)
         end
     end
     
+    
+    -- generate metadata
+    if highscore.num < #data.clients then
+        highscore.num  = #data.clients
+        highscore.date = os.time()
+    end
+    data.meta.highscore_clients = highscore.num
+    data.meta.highscore_date    = highscore.date
+    
+    
+    -- generate JSON structure
     dataJsonString = json.stringify(data)
     fgcom.dbg("JSON RESULT: "..dataJsonString)
     return dataJsonString
@@ -218,7 +249,7 @@ client:hook("OnServerSync", function(event)
                       .."<a href=\""..weburl.."\">"..weburl.."</a>")
     end
 
-    -- ask all already prsent lients for their data
+    -- ask all already present clients for their data
     updateAllChannelUsersforSend(client)
     client:sendPluginData("FGCOM:ICANHAZDATAPLZ", "orly!", playback_targets)
            

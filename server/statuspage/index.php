@@ -50,13 +50,13 @@ $ini_config = sanitize($ini_config);
 /**
 * Fetch database contents
 *
-* Expected format is a JSON array representing one user record each:
-* {"type":"client",  "callsign":"Calls-1",   "frequencies":["123.456"],
-*  "lat":12.3456, "lon":20.11111,  "alt":1234.45,  "updated":1111111122}
+* Expected format is a JSON structure containing:
+*  "meta": metadata table {"highscore_num":12, "highscore_date":1599719381}
+*  "clients": table holds elements representing one user record each:
+*     [{"type":"client", "callsign":"Calls-1", "frequencies":["123.456"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...]
 */
 $allClients = array();
 $allBots    = array();
-$tpl_index->assignVar('dbchanged', "TODO: from modifyTime file");
 if (!is_readable($ini_config['json-database']['file'])) {
     $tpl_index->assignVar('dbchanged', "???");
     $tpl_msg->assignVar('msg', "Info: Database not initialized yet. Please try again later.");
@@ -87,7 +87,7 @@ $db_data = sanitize($db_data);
 $tpl_users_body = "";
 $numUsers = 0;
 $id=0;
-foreach ($db_data as $u) {
+foreach ($db_data["clients"] as $u) {
     $id++;
     if ($u['type'] != "client") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
@@ -120,7 +120,7 @@ $tpl_index->assignVar('usercount', $numUsers);
 $tpl_bots_body = "";
 $numBots = 0;
 $id=0;
-foreach ($db_data as $u) {
+foreach ($db_data["clients"] as $u) {
     $id++;
     if ($u['type'] != "playback-bot") continue;
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
@@ -152,7 +152,7 @@ $tpl_index->assignVar('playbackcount', $numBots);
 */
 $tpl_clients_body = "";
 $id=1;
-foreach ($db_data as $u) {
+foreach ($db_data["clients"] as $u) {
     // draw a nice marker on the map for each client
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/map_client.tpl');
     $utpl->assignVar('id',$id++);
@@ -194,6 +194,15 @@ if ($ini_config['donate']['paypalme']) {
     $tpl_donation->assignVar('name', $ini_config['donate']['paypalme']);
     $tpl_index->assignVar('donate', $tpl_donation->generate());
 }
+
+
+/**
+* Add highscore info
+*/
+date_default_timezone_set('UTC');
+$tpl_index->assignVar('highscore_clients', $db_data["meta"]["highscore_clients"]);
+$tpl_index->assignVar('highscore_date', date("Y-m-d H:i:s", $db_data["meta"]["highscore_date"])." UTC");
+
 
 /*
 * All done: print the page

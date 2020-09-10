@@ -304,7 +304,7 @@ client:hook("OnServerSync", function(event)
             lon = lon + lonmv
             alt = alt + math.random(-50, 50)
             if alt < 100 then alt = math.abs(alt) end
-            local msg = ",LON="..lat
+            local msg = "LON="..lat
                     ..",LAT="..lon
                     ..",ALT="..alt
             --print("Bot sets location: "..msg)
