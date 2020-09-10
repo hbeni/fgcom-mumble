@@ -42,8 +42,8 @@ Shared data interface
 ---------------------
 The shared data interface is currently a simple file containing json records. The bot and the webpage must be pointed to the same file. The bot is the data povider, the webpage the consumer.
 
-The default path is `/tmp/fgcom-web.db` so the database usually lives in memory and won't survive a reboot. This is on purpose.
+The default path is `/tmp/fgcom-web.db` so the database lives in memory and usually won't survive a reboot. You probably want to change that in the statusbot and statuspage configs.
 
 
 ### Schema description
-There is just a single table containing the information per connected client. In addition to that, the timestamp-collumn "updated" will contain the last time the data was updated. The webpage will skip old entries.
+There is just a single table containing metadata and a table with the information per connected client. In addition to that, the timestamp-collumn "updated" will contain the last time the data was updated. The webpage will skip old entries.
