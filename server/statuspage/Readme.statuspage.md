@@ -37,6 +37,9 @@ The bot will usually be started from the bot manager script, but in case you wan
 
 The bot will initialize the database at startup, if not done yet. For this he will wipe clean an existing database. then he asks all other FGCom clients to provide their data to the bot, who will add it to the database.
 
+#### usage statistics
+The status bot can also write usage statistics to a file. Use `--stats <file>` to specify which file should be appended.  
+The generated file can be parsed trough gnuplot: `statuspage$ cat usage.stats | gnuplot stats2png.gnuplot > usage.png`
 
 Shared data interface
 ---------------------
