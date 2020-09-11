@@ -61,6 +61,7 @@ if arg[1] then
         print("  Options:")
         print("    --host=    host to connect to               (default="..host..")")
         print("    --port=    port to connect to               (default="..port..")")
+        print("    --channel= channel to join                  (default="..fgcom.channel..")")
         print("    --cert=    path to PEM encoded cert         (default="..cert..")")
         print("    --key=     path to the certs key            (default="..key..")")
         print("    --db=      Path to the db                   (default="..db..")")
@@ -77,6 +78,7 @@ if arg[1] then
         --print("KEY='"..k.."'; VAL='"..v.."'")
         if k=="host"      then host=v end
         if k=="port"      then port=v end
+        if k=="channel"   then fgcom.channel=v end
         if k=="cert"      then cert=v end
         if k=="key"       then key=v end
         if k=="db"        then db=v end
@@ -90,7 +92,7 @@ if arg[1] then
 end
 
 -- Connect to server, so we get the API
-fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
+fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
 fgcom.log("connect and bind", "OK")

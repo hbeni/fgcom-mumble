@@ -23,7 +23,7 @@ More functionality like ATIS recordings come with serverside bots. To run those 
 Running a server
 ----------------------
 - Have mumble server up and running
-- Create a new channel named `fgcom-mumble` for the airspace. The plugin only does it's things when on this channel.
+- Create a new channel starting with `fgcom-mumble` for the airspace. The plugin only does it's things when on such channels (you may create several channels this way to simulate different "worlds" at a single server).
 - Clients will connect and enable their local fgcom plugin. This handles all human communication on frequencies
 - Make a certificate for the bots (details below)
 - Start the `fgcom-bot-manager` which handles all needed bots: `./fgcom-botmanager.sh`

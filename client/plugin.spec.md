@@ -15,7 +15,7 @@ After loading, the plugin searches for a config file in various locations, whose
 
 When receiving local input data (see below), the internal state is updated (ie new radios get registered, frequencies set etc).
 
-If joining the special mumble channel `fgcom-mumble`, the plugin will start to handle all clients audio streams in that channel.  
+If joining a mumble channel starting with `fgcom-mumble`, the plugin will start to handle all clients audio streams in that channel.  
 When leaving that special channel, the plugin enters some 'noop' state so it will continue to collect updates from other client plugins, but mumble communication is unaffected otherwise.
 
 Your local microphone will get switched to push-to-talk mode when entering the special channel (as well as restored when leaving it). When activating your flightsims PTT button on a radio, it will get switched on if that radio is operable.
