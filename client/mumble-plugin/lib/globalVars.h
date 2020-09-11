@@ -40,7 +40,7 @@ struct fgcom_config {
     
     fgcom_config()  {
         radioAudioEffects = true;
-        specialChannel    = "fgcom-mumble";
+        specialChannel    = "^fgcom-mumble.*";
         udpServerPort     = 16661;
     };
 };
@@ -109,7 +109,7 @@ extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
 extern std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
 
 // Global plugin state
-extern int fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp
+extern std::vector<mumble_channelid_t>  fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp
 
 
 #endif

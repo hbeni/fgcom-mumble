@@ -73,6 +73,7 @@ if arg[1] then
         print("    --id=      id to join with              (default=random)")
         print("    --host=    host to connect to           (default="..host..")")
         print("    --port=    port to connect to           (default="..port..")")
+        print("    --channel= channel to join                  (default="..fgcom.channel..")")
         print("    --cert=    path to PEM encoded cert     (default="..cert..")")
         print("    --key=     path to the certs key        (default="..key..")")
         print("    --sample=  FGCS sample file to transmit")
@@ -88,6 +89,7 @@ if arg[1] then
         if k=="id"      then botid=v end
         if k=="host"    then host=v end
         if k=="port"    then port=v end
+        if k=="channel"   then fgcom.channel=v end
         if k=="cert"    then cert=v end
         if k=="key"     then key=v end
         if k=="sample"  then sample=v end

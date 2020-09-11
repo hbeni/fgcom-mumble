@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.2"
+fgcom.botversion = "1.3"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -65,6 +65,7 @@ if arg[1] then
         print("  Options:")
         print("    --host=    host to connect to           (default="..host..")")
         print("    --port=    port to connect to           (default="..port..")")
+        print("    --channel= channel to join              (default="..fgcom.channel..")")
         print("    --cert=    path to PEM encoded cert     (default="..cert..")")
         print("    --key=     path to the certs key        (default="..key..")")
         print("    --sample=  Path to the FGCS sample file (default="..sample..")")
@@ -81,6 +82,7 @@ if arg[1] then
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         if k=="host"   then host=v end
         if k=="port"   then port=v end
+        if k=="channel"   then fgcom.channel=v end
         if k=="cert"   then cert=v end
         if k=="key"    then key=v end
         if k=="sample" then sample=v end
@@ -171,7 +173,7 @@ end
 
 
 -- Connect to server, so we get the API
-fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
+fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(fgcom.callsign)
 fgcom.dbg("connect and bind: OK")

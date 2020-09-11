@@ -57,7 +57,7 @@ Das compilierte FGCom-mumble Plugin muss in den `plugins`-Ordner von mumble kopi
 
 Plugin konfigurieren
 -----------------------
-Normalerweise sind die Standardeinstellungen des Plugins ausreichend. Falls doch nicht, können einige Features (wie das Abschalten der Audioeffekte wie Rauschen, oder der Port des UPD-Servers) abweichend konfiguriert werden.
+Normalerweise sind die Standardeinstellungen des Plugins ausreichend. Falls doch nicht, können einige Features (wie das Abschalten der Audioeffekte wie Rauschen, oder der Port des UPD-Servers, oder die Erkennung des speziellen Chatraums) abweichend konfiguriert werden.
 
 Dies kannst du tun, indem du die [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) Beispieldatei in dein Benutzer-Heimatverzeichniss kopierst und dann entsprechend anpasst. Die Datei wird dann beim Initialisieren des Plugins einmalig geladen.
 
@@ -66,7 +66,7 @@ Das Plugin einsetzen
 ====================
 - Verbinde dich auf den mumble server
 - Aktiviere das FGCom-mumble plugin
-- betrete den `fgcom-mumble` Chatraum
+- betrete einen Chatraum der mit `fgcom-mumble` beginnt
 
 Jetzt bist du bereit, am Funkverkehr teilzunehmen!  
 Dein Flugsimulator oder ATC-Programm muss dem Plugin nun die notwendigen Informationen senden, damit es weiß, wo du bist und welche Funkgeräte zur Verfügung stehen.

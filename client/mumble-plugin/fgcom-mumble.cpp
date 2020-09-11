@@ -59,7 +59,7 @@ mumble_connection_t activeConnection;
 plugin_id_t ownPluginID;
 
 // Global plugin state
-int  fgcom_specialChannelID = -1;
+std::vector<mumble_channelid_t>  fgcom_specialChannelID;
 bool fgcom_inSpecialChannel = false; // adjust using fgcom_setPluginActive()!
 
 struct fgcom_config fgcom_cfg;
@@ -417,17 +417,18 @@ mumble_error_t fgcom_initPlugin() {
                 pluginLog("Failed to retrieve all channel IDs");
                 return EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
             } else {
-                pluginLog("Server has "+std::to_string(channelCount)+" channels:");
+                pluginLog("Server has "+std::to_string(channelCount)+" channels, looking for special ones");
+                pluginDbg("  fgcom.specialChannel='"+fgcom_cfg.specialChannel+"'");
                 for (size_t ci=0; ci<channelCount; ci++) {
                     pluginDbg("  resolving channel name for id="+std::to_string(channels[ci]));
                     char *channelName;
                     mumble_error_t cfres = mumAPI.getChannelName(ownPluginID, activeConnection, channels[ci], &channelName);
                     if (cfres == STATUS_OK) {
                         pluginDbg("  channelID="+std::to_string(channels[ci])+" '"+channelName+"'");
-                        if (strcmp(fgcom_cfg.specialChannel.c_str(), channelName) == 0) {
-                            fgcom_specialChannelID = channels[ci];
-                            pluginDbg("    special channel id found! id="+std::to_string(fgcom_specialChannelID));
-                            break;
+                        std::string channelName_str(channelName);
+                        if (std::regex_match(channelName_str, std::regex(fgcom_cfg.specialChannel, std::regex_constants::icase) )) {
+                            fgcom_specialChannelID.push_back(channels[ci]);
+                            pluginDbg("    special channel id found! name='"+channelName_str+"'; id="+std::to_string(channels[ci]));
                         }
                         mumAPI.freeMemory(ownPluginID, channelName);
                     } else {
@@ -436,7 +437,7 @@ mumble_error_t fgcom_initPlugin() {
                     }
                 }
                 
-                if (fgcom_specialChannelID == -1) {
+                if (fgcom_specialChannelID.size() == 0) {
                     pluginLog("ERROR: FAILED TO RETRIEVE SPECIAL CHANNEL '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.");
                     mumAPI.log(ownPluginID, std::string("Failed to retrieve special channel '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.").c_str());
                 }
@@ -451,13 +452,13 @@ mumble_error_t fgcom_initPlugin() {
             mumble_channelid_t localChannelID;
             mumble_error_t glcres = mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID);
             if (glcres == STATUS_OK) {
-                if (fgcom_specialChannelID == localChannelID) {
-                    pluginDbg("Already in special channel at init time");
+                if (std::find(fgcom_specialChannelID.begin(), fgcom_specialChannelID.end(), localChannelID) != fgcom_specialChannelID.end()) {
+                    pluginDbg("Already in special channel at init time: activating plugin.");
                     fgcom_setPluginActive(true);
                     notifyRemotes(0, NTFY_ALL); // send our state to all clients
                     notifyRemotes(0, NTFY_ASK); // request all other state
                 } else {
-                    pluginDbg("Channels not equal: special="+std::to_string(fgcom_specialChannelID)+" == cur="+std::to_string(localChannelID));
+                    pluginDbg("Not in special channel at init time: nothing to do.");
                 }
             } else {
                 pluginLog("Error fetching current active channel: rc="+std::to_string(glcres));
@@ -682,7 +683,7 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
     
     if (userID == localMumId) {
         //stream << " OH! thats me! hello myself!";
-        if (newChannelID == fgcom_specialChannelID) {
+        if (std::find(fgcom_specialChannelID.begin(), fgcom_specialChannelID.end(), newChannelID) != fgcom_specialChannelID.end()) {
             pluginDbg("joined special channel, activating plugin functions");
             fgcom_setPluginActive(true);
             notifyRemotes(0, NTFY_ALL); // send our state to all users

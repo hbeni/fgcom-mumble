@@ -25,7 +25,7 @@ Weitere Funktionalität, wie ATIS-Aufzeichnungen, werden durch einige serverseit
 Einen Server betreiben
 ----------------------
 - Der Mumbleserver muss laufen
-- Erstelle einen Kanal, der `fgcom-mumble` heißt. Das Plugin arbeitet nur für Teilnehmer in diesem speziellen Kanal.
+- Erstelle einen Kanal, der mit `fgcom-mumble` beginnt. Das Plugin arbeitet nur für Teilnehmer in diesen speziellen Kanälen (auf diese Weise kannst du mehrere unabhängige "Welten" in einem einzigen Server aufsetzen).
 - Teilnehmer verbinden sich auf den Server und aktivieren ihr FGCom Plugin. Dieses kümmert sich um sämtlichen Funkverkehr auf allen Frequenzen.
 - Erzeuge Zertifikate für die Bots (details siehe unten)
 - Starte den `fgcom-bot-manager`, der sich um die benötigten Bots kümmert: `./fgcom-botmanager.sh`

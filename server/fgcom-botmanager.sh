@@ -29,6 +29,7 @@
 # Define defaults
 host="localhost"
 port="64738"
+channel="fgcom-mumble"
 rcert="recbot.pem"
 rkey="recbot.key"
 pcert="playbot.pem"
@@ -61,6 +62,7 @@ function usage() {
     echo "Common options, that will be passed to bots:"
     echo "    --host=    host to connect to               (default=$host)"
     echo "    --port=    port to connect to               (default=$port)"
+    echo "    --channel= channel to join                  (default=$channel)"
     echo "    --debug    enable debug mode"
     echo ""
     echo "Recording bot options:"
@@ -96,6 +98,7 @@ for opt in "$@"; do
        -h)      usage; exit 0 ;;
        --host=*)  host=$(echo $opt|cut -d"=" -f2);;
        --port=*)  port=$(echo $opt|cut -d"=" -f2);;
+       --channel=*)   channel=$(echo $opt|cut -d"=" -f2);;
        --rcert=*) rcert=$(echo $opt|cut -d"=" -f2);;
        --rkey=*)  rkey=$(echo $opt|cut -d"=" -f2);;
        --pcert=*) pcert=$(echo $opt|cut -d"=" -f2);;
@@ -124,6 +127,7 @@ done
 echo "Starting FGCom-mumble bot manager..."
 echo "  --host=$host"
 echo "  --port=$port"
+echo "  --channel=$channel"
 echo "  --rcert=$rcert"
 echo "  --rkey=$rkey"
 echo "  --pcert=$pcert"
@@ -142,7 +146,7 @@ echo "  --sstats=$statusbot_stats"
 [[ $debug == "1" ]] && echo "  --debug"
 
 # define cmd options for the bot callups
-common_opts="--host=$host --port=$port"
+common_opts="--host=$host --port=$port --channel=$channel"
 [[ $debug == "1" ]] && common_opts="$common_opts --debug"
 playback_opts="$common_opts --cert=$pcert --key=$pkey"
 recorder_opts="$common_opts --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
@@ -152,7 +156,9 @@ status_opts="$common_opts --cert=$scert --key=$skey --db=$statusbot_db"
 # define cleanup routine
 function cleanup()
 {
+    echo "cleanup..."
     rm -f $fnotify
+    sleep 1  # so the watchdog can shut down properly, removing the notify pipe signals this
     pkill -f "fgcom-radio-recorder.bot.lua"
     pkill -f "fgcom-status.bot.lua"
 }
