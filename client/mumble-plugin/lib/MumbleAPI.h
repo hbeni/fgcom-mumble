@@ -81,7 +81,7 @@ struct MumbleAPI {
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *getUserName)(plugin_id_t callerID, mumble_connection_t connection,
-			mumble_userid_t userID, char **userName);
+			mumble_userid_t userID, const char **userName);
 
 	/// Fills in the information about the given channel's name.
 	///
@@ -94,7 +94,7 @@ struct MumbleAPI {
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *getChannelName)(plugin_id_t callerID, mumble_connection_t connection,
-			mumble_channelid_t channelID, char **channelName);
+			mumble_channelid_t channelID, const char **channelName);
 
 	/// Gets an array of all users that are currently connected to the provided server. Passing a nullptr as any of the out-parameter
 	/// will prevent that property to be set/allocated. If you are only interested in the user count you can thus pass nullptr as the
@@ -181,7 +181,7 @@ struct MumbleAPI {
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *getUserHash)(plugin_id_t callerID, mumble_connection_t connection,
-			mumble_userid_t userID, char **hash);
+			mumble_userid_t userID, const char **hash);
 
 	/// Gets the hash of the server for the given connection (can be used to recognize servers between restarts)
 	///
@@ -192,7 +192,7 @@ struct MumbleAPI {
 	/// 	allocated if this function returns STATUS_OK.
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *getServerHash)(plugin_id_t callerID, mumble_connection_t connection, char **hash);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *getServerHash)(plugin_id_t callerID, mumble_connection_t connection, const char **hash);
 
 	/// Gets the comment of the given user. Note that a user might have a comment configured that hasn't been synchronized
 	/// to this client yet. In this case this function will return EC_UNSYNCHRONIZED_BLOB. As of now there is now way
@@ -207,7 +207,7 @@ struct MumbleAPI {
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *getUserComment)(plugin_id_t callerID, mumble_connection_t connection,
-			mumble_userid_t userID, char **comment);
+			mumble_userid_t userID, const char **comment);
 
 	/// Gets the description of the given channel. Note that a channel might have a description configured that hasn't been synchronized
 	/// to this client yet. In this case this function will return EC_UNSYNCHRONIZED_BLOB. As of now there is now way
@@ -222,7 +222,7 @@ struct MumbleAPI {
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *getChannelDescription)(plugin_id_t callerID, mumble_connection_t connection,
-			mumble_channelid_t channelID, char **description);
+			mumble_channelid_t channelID, const char **description);
 
 
 	// -------- Request functions --------

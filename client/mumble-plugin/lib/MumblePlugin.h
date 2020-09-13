@@ -220,35 +220,44 @@ extern "C" {
 	/// Called whenever there is audio input.
 	///
 	/// @param inputPCM A pointer to a short-array holding the pulse-code-modulation (PCM) representing the audio input. Its length
-	/// 	is sampleCount * channelCount.
+	/// 	is sampleCount * channelCount. The PCM format for stereo input is [LRLRLR...] where L and R are samples of the left and right
+	/// 	channel respectively.
 	/// @param sampleCount The amount of sample points per channel
 	/// @param channelCount The amount of channels in the audio
+	/// @param sampleRate The used sample rate in Hz
 	/// @param isSpeech A boolean flag indicating whether Mumble considers the input as part of speech (instead of background noise)
 	/// @returns Whether this callback has modified the audio input-array
-	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech);
+	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount,
+			uint32_t sampleRate, bool isSpeech);
 
 	/// Called whenever Mumble fetches data from an active audio source (could be a voice packet or a playing sample).
 	/// The provided audio buffer is the raw buffer without any processing applied to it yet.
 	///
 	/// @param outputPCM A pointer to a float-array holding the pulse-code-modulation (PCM) representing the audio output. Its length
-	/// 	is sampleCount * channelCount.
+	/// 	is sampleCount * channelCount. The PCM format for stereo output is [LRLRLR...] where L and R are samples of the left and right
+	/// 	channel respectively.
 	/// @param sampleCount The amount of sample points per channel
 	/// @param channelCount The amount of channels in the audio
+	/// @param sampleRate The used sample rate in Hz
 	/// @param isSpeech Whether this audio belongs to a received voice packet (and will thus (most likely) contain speech)
 	/// @param userID If isSpeech is true, this contains the ID of the user this voice packet belongs to. If isSpeech is false,
 	/// 	the content of this parameter is unspecified and should not be accessed
 	/// @returns Whether this callback has modified the audio output-array
-	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech, mumble_userid_t userID);
+	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount,
+			uint32_t sampleRate, bool isSpeech, mumble_userid_t userID);
 
 	/// Called whenever the fully mixed and processed audio is about to be handed to the audio backend (about to be played).
 	/// Note that this happens immediately before Mumble clips the audio buffer.
 	///
 	/// @param outputPCM A pointer to a float-array holding the pulse-code-modulation (PCM) representing the audio output. Its length
-	/// 	is sampleCount * channelCount.
+	/// 	is sampleCount * channelCount. The PCM format for stereo output is [LRLRLR...] where L and R are samples of the left and right
+	/// 	channel respectively.
 	/// @param sampleCount The amount of sample points per channel
 	/// @param channelCount The amount of channels in the audio
+	/// @param sampleRate The used sample rate in Hz
 	/// @returns Whether this callback has modified the audio output-array
-	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioOutputAboutToPlay(float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
+	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_onAudioOutputAboutToPlay(float *outputPCM, uint32_t sampleCount, uint16_t channelCount,
+			uint32_t sampleRate);
 
 	/// Called whenever data has been received that has been sent by a plugin. This data should only be processed by the
 	/// intended plugin. For this reason a dataID is provided that should be used to determine whether the data is intended

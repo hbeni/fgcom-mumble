@@ -198,7 +198,7 @@ void fgcom_updateClientComment() {
         
         // fetch the present comment and read the part we don't want to manage
         std::string preservedComment;
-        char *comment;
+        const char *comment;
         if (mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment) == STATUS_OK) {
             std::string comment_str(comment);
             mumAPI.freeMemory(ownPluginID, &comment);
@@ -421,7 +421,7 @@ mumble_error_t fgcom_initPlugin() {
                 pluginDbg("  fgcom.specialChannel='"+fgcom_cfg.specialChannel+"'");
                 for (size_t ci=0; ci<channelCount; ci++) {
                     pluginDbg("  resolving channel name for id="+std::to_string(channels[ci]));
-                    char *channelName;
+                    const char *channelName;
                     mumble_error_t cfres = mumAPI.getChannelName(ownPluginID, activeConnection, channels[ci], &channelName);
                     if (cfres == STATUS_OK) {
                         pluginDbg("  channelID="+std::to_string(channels[ci])+" '"+channelName+"'");
@@ -652,7 +652,7 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 	pLog() << "There are " << userCount << " users on this server. Their names are:" << std::endl;
 
 	for(size_t i=0; i<userCount; i++) {
-		char *userName;
+		const char *userName;
 		mumAPI.getUserName(ownPluginID, connection, userIDs[i], &userName);
 		
 		pLog() << "\t" << userName << std::endl;
@@ -731,7 +731,7 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 	return false;
 }
 
-bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech, mumble_userid_t userID) {
+bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRate, bool isSpeech, mumble_userid_t userID) {
 	//std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
     // the PCM format is an float array. The cells are inidvidual apmplitudes.
     // With two channels, the first float at outputPCM[0] the left channel, outputPCM[1] right, [2] left etc.
@@ -914,14 +914,14 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // we got a landline connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected (phone)");
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount);
+            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
             fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
             
         } else if (bestSignalStrength > 0.0) { 
             // we got a connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount);
+            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
             if (fgcom_cfg.radioAudioEffects) fgcom_audio_addNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
             fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
             
