@@ -43,6 +43,6 @@ void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t chann
 /*
  * Apply audio filter
  */
-void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
+void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
 
 #endif

@@ -94,7 +94,7 @@ void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t chann
 }
 
 
-void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
+void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
     
     // Ok, first some assupmtions to save runtime:
     //  - we are assuming a mono stream, ie. all channels contain the same float values already!
@@ -118,7 +118,6 @@ void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCo
      * Apply filtering
      */
     // numer in parenthesis after new... is the number of samples over which to fade parameter changes
-    int sampleRateHz = 48000; // currently fixed at 48kHz (may be supplied from the API some day)
     
     int highpass_cutoff = 4000;
     Dsp::Filter* f_lowpass = new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (1024);
