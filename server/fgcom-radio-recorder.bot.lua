@@ -304,7 +304,7 @@ client:hook("OnUserSpeak", function(event)
                     timetolive   = ttl,
                     timestamp    = os.time(),
                     voicecodec   = event.codec,
-                    samplespeed  = 0.02          -- TODO: fixed for now; we should calulate this
+                    samplespeed  = 0.02          -- TODO: fixed for now; we should calulate this (otherwise speech might play too fast/slow), see: https://github.com/bkacjios/lua-mumble/issues/16
                 }
             
                 -- define current recording limit
