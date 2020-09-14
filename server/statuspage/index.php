@@ -118,6 +118,18 @@ if (!is_array($db_data)) {
 $db_data = sanitize($db_data);
 
 
+/**
+* RAW mode (like for inclusion in other aplications)
+* outputs JSON data in the above specified format:
+*  "meta": metadata table {"highscore_num":12, "highscore_date":1599719381}
+*  "clients": table holds elements representing one user record each:
+*     [{"type":"client", "callsign":"Calls-1", "frequencies":["123.456"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...]
+*/
+if (array_key_exists('raw', $_GET) && $ini_config['ui']['allow_raw_mode']) {
+    echo json_encode($db_data);
+    exit(0);
+}
+
 
 /*
 * Get regular users
