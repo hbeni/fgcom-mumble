@@ -31,7 +31,7 @@
 #include <chrono>
 #include <thread>
 
-#include "MumblePlugin.h"
+#include "mumble/MumblePlugin.h"
 #include "globalVars.h"
 #include "io_plugin.h"
 #include "garbage_collector.h"

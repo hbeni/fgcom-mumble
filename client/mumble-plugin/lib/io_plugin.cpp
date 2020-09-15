@@ -57,7 +57,7 @@
 #include "globalVars.h"
 #include "io_plugin.h"
 #include "io_UDPClient.h"
-#include "MumblePlugin.h"
+#include "mumble/MumblePlugin.h"
 #include "fgcom-mumble.h"
 
 
