@@ -7,9 +7,9 @@ SSLFLAGS+=-lssl -lcrypto
 # get version
 GITCOMMIT:=$(shell git log -1 --pretty=format:"%h")
 GITDATE:=$(shell git log -1 --pretty=format:"%cd" --date=short)
-VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR lib/fgcom-mumble.h |grep -E -o '[0-9]')
-VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR lib/fgcom-mumble.h |grep -E -o '[0-9]')
-VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH lib/fgcom-mumble.h |grep -E -o '[0-9]')
+VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR fgcom-mumble.h |grep -E -o '[0-9]')
+VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR fgcom-mumble.h |grep -E -o '[0-9]')
+VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH fgcom-mumble.h |grep -E -o '[0-9]')
 VERSION:=$(VERSION_V).$(VERSION_M).$(VERSION_P)
 
 
@@ -52,7 +52,7 @@ clean:
 
 # clean compile results and binarys
 clean-all: clean
-	rm -f test/geotest
+	rm -f test/geotest test/frqtest
 	rm -f fgcom-mumble.so
 	rm -f *.exe test/*.exe *.dll lib/*.dll
 
@@ -112,6 +112,8 @@ release: clean-all plugin plugin-win64
 	rm -rf fgcom-mumble-windows-$(VERSION)
 	
 	rm releaseReadme.md
+	@echo "\nRelease $(VERSION) built successfully:"
+	@ls -alh *$(VERSION)*
 
 showVer:
 	@echo "GITCOMMIT:$(GITCOMMIT)"

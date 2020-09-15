@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 #include "audio.h"
-#include "phil_burk_19990905_patest_pink.c"  // pink noise generator from  Phil Burk, http://www.softsynth.com
+#include "noise/phil_burk_19990905_patest_pink.c"  // pink noise generator from  Phil Burk, http://www.softsynth.com
 
 // DSP Filter framework; i want it statically in audio.o without adjusting makefile (so we can swap easily later if needed)
 #include "DspFilters/Dsp.h"

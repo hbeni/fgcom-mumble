@@ -32,7 +32,7 @@
 
 // HTTPLib from https://github.com/yhirose/cpp-httplib (MIT-License)
 #define CPPHTTPLIB_OPENSSL_SUPPORT 1
-#include "lib/http/httplib.h"
+#include "http/httplib.h"
 using namespace httplib;
 
 // JSON lib from https://github.com/nlohmann/json (MIT-License)

@@ -24,8 +24,8 @@
 // Include the definitions of the plugin functions
 // Note that this will also include PluginComponents.h
 #include "globalVars.h"
-#include "MumblePlugin.h"
-#include "MumbleAPI.h"
+#include "mumble/MumblePlugin.h"
+#include "mumble/MumbleAPI.h"
 #include "fgcom-mumble.h"
 #include "io_plugin.h"
 #include "io_UDPServer.h"
