@@ -10,7 +10,11 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <string>
+#include <stdbool.h>
+
+#ifdef __cplusplus
+#	include <string>
+#endif
 
 #ifdef QT_VERSION
 	#include <QString>
@@ -304,6 +308,17 @@ inline const char* errorMessage(int16_t errorCode) {
 }
 
 
+struct MumbleStringWrapper {
+	/// The pointer to the actual String data
+	const char *data;
+	/// The size of the pointed String data
+	size_t size;
+	/// Whether the wrapped String needs to be released
+	/// after its usage. Instances for which this would be
+	/// false: Static Strings
+	bool needsReleasing;
+};
+
 /// Typedef for the type of a talking state
 typedef enum Mumble_TalkingState talking_state_t;
 /// Typedef for the type of a transmission mode
@@ -321,6 +336,6 @@ typedef enum Mumble_ErrorCode mumble_error_t;
 /// Typedef for the type of a plugin ID
 typedef uint32_t plugin_id_t;
 /// Typedef for the type of a key-code
-typedef Mumble_KeyCode keycode_t;
+typedef enum Mumble_KeyCode keycode_t;
 
 #endif // MUMBLE_PLUGINCOMPONENT_H_
