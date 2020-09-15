@@ -300,12 +300,12 @@ bool mumble_hasUpdate() {
 /*
  * Generates the URL to the latest release tarball suitable for the platform
  */
-bool mumble_getUpdateDownloadURL(char *buffer, uint16_t bufferSize, uint16_t offset) {
+MumbleStringWrapper mumble_getUpdateDownloadURL() {
     // fetch latest info
     fgcom_getLatestReleaseFromGithub_Web();
     
     // check for errors
-    if (fgcom_release_latest.version.major <= -1) return false;
+    if (fgcom_release_latest.version.major <= -1) throw "Error generating FGCOM update URL! Could not fetch latest version!";
     
     // generate download url for target platform
     std::string verStr = std::to_string(fgcom_release_latest.version.major)
@@ -316,17 +316,14 @@ bool mumble_getUpdateDownloadURL(char *buffer, uint16_t bufferSize, uint16_t off
 #else
     static std::string url = fgcom_release_latest.downUrl+"/fgcom-mumble-linux-"+verStr+".tar.gz";
 #endif
-    
-    
-    // finally write the generated URL to mumbles buffer
-    size_t writtenChars = url.copy(buffer, bufferSize, offset);
-    if (writtenChars < bufferSize) {
-        // URL has fit into the buffer -> append null byte and be done with it
-        buffer[writtenChars] = '\0';
-        return true;
-    } else {
-        std::cout << "Overflow" << std::endl;
-        return false;
-    }
-    
+
+    // build return wrapper
+    const char* url_c = url.c_str();
+    MumbleStringWrapper wrapper;
+    wrapper.data = url_c;
+    wrapper.size = strlen(url_c);
+    wrapper.needsReleasing = false; // It's a static String and therefore doesn't need releasing
+
+    return wrapper;
+
 }

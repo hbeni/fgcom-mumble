@@ -546,18 +546,29 @@ void mumble_shutdown() {
 	mumAPI.log(ownPluginID, "Plugin deactivated");
 }
 
-const char* mumble_getName() {
-	// The pointer returned by this functions has to remain valid forever and it must be able to return
-	// one even if the plugin hasn't loaded (yet). Thus it may not require any variables that are only set
-	// once the plugin is initialized
-	// For most cases returning a hard-coded String-literal should be what you aim for
-	return "FGCom";
+MumbleStringWrapper mumble_getName() {
+    static const char *name = "FGCom";
+
+    MumbleStringWrapper wrapper;
+    wrapper.data = name;
+    wrapper.size = strlen(name);
+    wrapper.needsReleasing = false;  // It's a static String and therefore doesn't need releasing
+
+    return wrapper;
 }
 
 version_t mumble_getAPIVersion() {
 	// MUMBLE_PLUGIN_API_VERSION will always contain the API version of the used header file (the one used to build
 	// this plugin against). Thus you should always return that here in order to no have to worry about it.
 	return MUMBLE_PLUGIN_API_VERSION;
+}
+
+void mumble_releaseResource(const void *pointer) {
+    throw "";
+    //TODO: Implement me (is this really neccessary here? maybe for the global vars? Please, someone enlight me!
+
+    // Mark as unused
+    (void) pointer;
 }
 
 void mumble_registerAPIFunctions(MumbleAPI api) {
@@ -589,16 +600,25 @@ version_t mumble_getVersion() {
 	return { FGCOM_VERSION_MAJOR, FGCOM_VERSION_MINOR, FGCOM_VERSION_PATCH };
 }
 
-const char* mumble_getAuthor() {
-	// For the returned pointer the same rules as for getName() apply
-	// In short: in the vast majority of cases you'll want to return a hard-coded String-literal
-	return "Benedikt Hallinger";
+MumbleStringWrapper mumble_getAuthor() {
+    static const char *author = "Benedikt Hallinger";
+
+    MumbleStringWrapper wrapper;
+    wrapper.data = author;
+    wrapper.size = strlen(author);
+    wrapper.needsReleasing = false;  // It's a static String and therefore doesn't need releasing
+
+    return wrapper;
 }
 
-const char* mumble_getDescription() {
-	// For the returned pointer the same rules as for getName() apply
-	// In short: in the vast majority of cases you'll want to return a hard-coded String-literal
-	return "FGCOM provides an aircraft radio simulation.";
+MumbleStringWrapper mumble_getDescription() {
+    static const char *description = "FGCOM provides an aircraft radio simulation.";
+    MumbleStringWrapper wrapper;
+    wrapper.data = description;
+    wrapper.size = strlen(description);
+    wrapper.needsReleasing = false;  // It's a static String and therefore doesn't need releasing
+
+    return wrapper;
 }
 
 uint32_t mumble_getFeatures() {

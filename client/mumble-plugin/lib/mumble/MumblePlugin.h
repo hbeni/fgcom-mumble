@@ -43,14 +43,17 @@ extern "C" {
 	/// Gets called when unloading the plugin in order to allow it to clean up after itself.
 	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_shutdown();
 
-	/// Gets the name of the plugin. The plugin has to guarantee that the returned pointer will still be valid. The string will be copied
-	/// for further usage though.
+	/// Gets the name of the plugin.
 	///
-	/// @returns A pointer to the plugin name (encoded as a C-String)
-	PLUGIN_EXPORT const char* PLUGIN_CALLING_CONVENTION mumble_getName();
+	/// NOTE: This function may be called without the plugin being loaded
+	///
+	/// @returns A String-wrapper containing the requested name
+	PLUGIN_EXPORT struct MumbleStringWrapper PLUGIN_CALLING_CONVENTION mumble_getName();
 
 	/// Gets the Version of the plugin-API this plugin intends to use.
 	/// Mumble will decide whether this plugin is loadable or not based on the return value of this function.
+	///
+	/// NOTE: This function may be called without the plugin being loaded
 	///
 	/// @return The respective API Version
 	PLUGIN_EXPORT version_t PLUGIN_CALLING_CONVENTION mumble_getAPIVersion();
@@ -59,8 +62,30 @@ extern "C" {
 	/// to interact with the Mumble client. It is up to the plugin to store this struct somewhere if it wants to make use
 	/// of it at some point.
 	///
+	/// NOTE: This function may be called without the plugin being loaded
+	///
 	/// @param api The MumbleAPI struct
 	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_registerAPIFunctions(struct MumbleAPI api);
+
+	/// Releases the resource pointed to by the given pointer. If the respective resource has been allocated before,
+	/// this would be the time to free/delete it.
+	///
+	/// NOTE1: This function may be called without the plugin being loaded
+	///
+	/// NOTE2: that the pointer might be pointing to memory that had to be allocated without the plugin being loaded.
+	/// Therefore you should be very sure that there'll be another callback in which you want to free this memory,
+	/// should you decide to not do it here (which is hereby explcitly advised against).
+	///
+	/// NOTE3: The pointer is const as Mumble won't mess with the memory allocated by the plugin (no modifications).
+	/// Nontheless this function is explicitly responsible for freeing the respective memory parts. If the memory has
+	/// been allocated using malloc(), it needs to be freed using free() which requires a const-cast. If however the
+	/// memory has been created using the new operator you have to cast the pointer back to its original type and then
+	/// use the  delete operator on it (no const-cast necessary in this case).
+	/// See https://stackoverflow.com/questions/2819535/unable-to-free-const-pointers-in-c
+	/// and https://stackoverflow.com/questions/941832/is-it-safe-to-delete-a-void-pointer
+	///
+	/// @param pointer The pointer to the memory that needs free-ing
+	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_releaseResource(const void *pointer);
 
 
 
@@ -79,23 +104,29 @@ extern "C" {
 
 	/// Gets the Version of this plugin
 	///
+	/// NOTE: This function may be called without the plugin being loaded
+	///
 	/// @returns The plugin's version
 	PLUGIN_EXPORT version_t PLUGIN_CALLING_CONVENTION mumble_getVersion();
 
-	/// Gets the name of the plugin author(s). The plugin has to guarantee that the returned pointer will still be valid. The string will
-	/// be copied for further usage though.
+	/// Gets the name of the plugin author(s).
 	///
-	/// @returns A pointer to the author(s) name(s) (encoded as a C-String)
-	PLUGIN_EXPORT const char* PLUGIN_CALLING_CONVENTION mumble_getAuthor();
+	/// NOTE: This function may be called without the plugin being loaded
+	///
+	/// @returns A String-wrapper containing the requested author name(s)
+	PLUGIN_EXPORT struct MumbleStringWrapper PLUGIN_CALLING_CONVENTION mumble_getAuthor();
 
-	/// Gets the description of the plugin. The plugin has to guarantee that the returned pointer will still be valid. The string will
-	/// be copied for further usage though.
+	/// Gets the description of the plugin.
 	///
-	/// @returns A pointer to the description (encoded as a C-String)
-	PLUGIN_EXPORT const char* PLUGIN_CALLING_CONVENTION mumble_getDescription();
+	/// NOTE: This function may be called without the plugin being loaded
+	///
+	/// @returns A String-wrapper containing the requested description
+	PLUGIN_EXPORT struct MumbleStringWrapper PLUGIN_CALLING_CONVENTION mumble_getDescription();
 
 	/// Gets the feature set of this plugin. The feature set is described by bitwise or'ing the elements of the Mumble_PluginFeature enum
 	/// together.
+	///
+	/// NOTE: This function may be called without the plugin being loaded
 	///
 	/// @returns The feature set of this plugin
 	PLUGIN_EXPORT uint32_t PLUGIN_CALLING_CONVENTION mumble_getFeatures();
@@ -338,17 +369,11 @@ extern "C" {
 	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_hasUpdate();
 
 	/// This function is used to retrieve the URL for downloading the newer/updated version of this plugin.
-	/// If the URL is too long for the provided buffer, it will have to be split up and be read chunk by chunk. Make sure
-	/// though that you don't forget about the trailing null byte.
 	///
 	/// NOTE: This function may be called without the plugin being loaded
 	///
-	/// @param buffer A pointer to the char buffer to write the UTF-8 encoded URL (as C-string) into
-	/// @param bufferSize The size of the buffer
-	/// @param offset The offset in the URL from which this functions should start writing it to the buffer
-	/// @param Whether the URL has been completely written into the buffer yet. If this is false, this function will be called
-	/// 	again with a modified offset until the URL has been completely transferred.
-	PLUGIN_EXPORT bool PLUGIN_CALLING_CONVENTION mumble_getUpdateDownloadURL(char *buffer, uint16_t bufferSize, uint16_t offset);
+	/// @returns A String-wrapper containing the requested URL
+	PLUGIN_EXPORT struct MumbleStringWrapper PLUGIN_CALLING_CONVENTION mumble_getUpdateDownloadURL();
 
 
 #ifdef __cplusplus
