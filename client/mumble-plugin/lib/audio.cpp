@@ -118,27 +118,26 @@ void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCo
      * Apply filtering
      */
     // numer in parenthesis after new... is the number of samples over which to fade parameter changes
-    
     int highpass_cutoff = 4000;
-    Dsp::Filter* f_lowpass = new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (1024);
-    Dsp::Params f_lowpass_p;
-    f_lowpass_p[0] = sampleRateHz; // sample rate
-    f_lowpass_p[1] = highpass_cutoff; // cutoff frequency
-    f_lowpass_p[2] = 2.0; // Q
-    f_lowpass->setParams (f_lowpass_p);
-    f_lowpass->process (sampleCount, audioData);
+    std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (1024));
+    Dsp::Params f_highpass_p;
+    f_highpass_p[0] = sampleRateHz; // sample rate
+    f_highpass_p[1] = highpass_cutoff; // cutoff frequency
+    f_highpass_p[2] = 2.0; // Q
+    f_highpass->setParams (f_highpass_p);
+    f_highpass->process (sampleCount, audioData);
     
     // lowpass cutoff depending on signal quality:
     //  worst is 300@10% signal; best is 1000@1.0
     int lowpass_cutoff = signalQuality * 1500 + 250;
     if (lowpass_cutoff > 1000) lowpass_cutoff = 1000; // upside ceiling
-    Dsp::Filter* f_highpass = new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (1024);
-    Dsp::Params f_highpass_p;
-    f_highpass_p[0] = sampleRateHz; // sample rate
-    f_highpass_p[1] = lowpass_cutoff; // cutoff frequency
-    f_highpass_p[2] = 0.97; // Q
-    f_highpass->setParams (f_highpass_p);
-    f_highpass->process (sampleCount, audioData);
+    std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (1024));
+    Dsp::Params f_lowpass_p;
+    f_lowpass_p[0] = sampleRateHz; // sample rate
+    f_lowpass_p[1] = lowpass_cutoff; // cutoff frequency
+    f_lowpass_p[2] = 0.97; // Q
+    f_lowpass->setParams (f_lowpass_p);
+    f_lowpass->process (sampleCount, audioData);
     
     
     /*

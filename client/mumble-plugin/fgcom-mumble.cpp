@@ -44,6 +44,7 @@
 #include <thread>
 #include <regex>
 #include <fstream>
+#include <memory>
 
 #ifdef DEBUG
 // include debug code
@@ -564,11 +565,10 @@ version_t mumble_getAPIVersion() {
 }
 
 void mumble_releaseResource(const void *pointer) {
-    throw "";
-    //TODO: Implement me (is this really neccessary here? maybe for the global vars? Please, someone enlight me!
-
-    // Mark as unused
-    (void) pointer;
+    // currently a naive implementation just assuming char arrays to be cleaned that were established using 'new'.
+    // (once we need to differentiate that more, we should maybe introduce some map/vector that gives us the information
+    // which memory address to cast into the proper type?)
+    delete [] (char*)pointer;  // to delete char arrays
 }
 
 void mumble_registerAPIFunctions(MumbleAPI api) {
@@ -825,9 +825,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 // calculate frequency match
                                 float signalMatchFilter;
                                 fgcom_radiowave_freqConvRes rmt_frq_p = FGCom_radiowaveModel::splitFreqString(rmt.radios[ri].frequency);
-                                FGCom_radiowaveModel *radio_model_lcl = FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency);
-                                FGCom_radiowaveModel *radio_model_rmt = FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency);
-                                if (radio_model_lcl->isCompatible(radio_model_rmt)) {
+                                std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency));
+                                std::unique_ptr<FGCom_radiowaveModel> radio_model_rmt(FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency));
+                                if (radio_model_lcl->isCompatible(radio_model_rmt.get())) {
                                     signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri].frequency, rmt.radios[ri].frequency);
                                     
                                 } else {
