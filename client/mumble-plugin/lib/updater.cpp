@@ -153,7 +153,17 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                     
                     //construct download url base
                     // https://github.com/hbeni/fgcom-mumble/releases/download/v.0.3.0/fgcom-mumble-linux-0.3.0.tar.gz
-                    fgcom_release_latest.downUrl = scheme + host + path + "/download/" + tag_name;
+                    std::string dlurlbase(scheme + host + path + "/download/" + tag_name); 
+                    
+                    // generate download url for target platform
+                    std::string verStr = std::to_string(fgcom_release_latest.version.major)
+                                        + "." + std::to_string(fgcom_release_latest.version.minor)
+                                        + "." + std::to_string(fgcom_release_latest.version.patch);
+#ifdef MINGW_WIN64
+                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-windows-"+verStr+".zip";
+#else
+                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-linux-"+verStr+".zip";
+#endif
                     
                 } else {
                     // something went wrong.
@@ -178,6 +188,7 @@ void fgcom_getLatestReleaseFromGithub_Web() {
         pluginLog("[UPDATER] ERROR fetching latest release info from web: "+std::to_string(err));
     }
 }
+
 
 
 /**
@@ -269,14 +280,15 @@ void fgcom_getLatestReleaseFromGithub_JSON_API() {
  */
 bool mumble_hasUpdate() {
     
-    // fetch latest info
+    // fetch latest info; this will populate the struct fgcom_release_latest
     fgcom_getLatestReleaseFromGithub_Web();
     
     // check for errors
-    if (fgcom_release_latest.version.major <= -1) {
+    if (fgcom_release_latest.version.major <= -1
+    || fgcom_release_latest.downUrl == ""   ) {
         pluginLog("ERROR fetching release info: i have no idea if there is an update!");
         return false;
-        
+
     } else {
         bool updatePending = fgcom_isVersionNewer(fgcom_release_latest.version);
         std::string verStr = std::to_string(fgcom_release_latest.version.major)
@@ -298,31 +310,22 @@ bool mumble_hasUpdate() {
 
 
 /*
- * Generates the URL to the latest release tarball suitable for the platform
+ * Generates the URL to the latest release tarball suitable for the platform.
+ * Will be called in case there is an update pendig (ie. mumble_hasUpdate()==true).
  */
 MumbleStringWrapper mumble_getUpdateDownloadURL() {
-    // fetch latest info
-    fgcom_getLatestReleaseFromGithub_Web();
-    
-    // check for errors
-    if (fgcom_release_latest.version.major <= -1) throw "Error generating FGCOM update URL! Could not fetch latest version!";
-    
-    // generate download url for target platform
-    std::string verStr = std::to_string(fgcom_release_latest.version.major)
-                         + "." + std::to_string(fgcom_release_latest.version.minor)
-                         + "." + std::to_string(fgcom_release_latest.version.patch);
-#ifdef MINGW_WIN64
-    static std::string url = fgcom_release_latest.downUrl+"/fgcom-mumble-windows-"+verStr+".zip";
-#else
-    static std::string url = fgcom_release_latest.downUrl+"/fgcom-mumble-linux-"+verStr+".zip";
-#endif
+    std::string url = fgcom_release_latest.downUrl;
+
+    // write the generated URL to a char buffer
+    char * buffer = new char[url.size() + 1];
+    std::copy(url.begin(), url.end(), buffer);
+    buffer[url.size()] = '\0'; // don't forget the terminating 0
 
     // build return wrapper
-    const char* url_c = url.c_str();
     MumbleStringWrapper wrapper;
-    wrapper.data = url_c;
-    wrapper.size = strlen(url_c);
-    wrapper.needsReleasing = false; // It's a static String and therefore doesn't need releasing
+    wrapper.data = buffer;
+    wrapper.size = strlen(buffer);
+    wrapper.needsReleasing = true; // will make mumble call mumble_releaseResource() after usage
 
     return wrapper;
 

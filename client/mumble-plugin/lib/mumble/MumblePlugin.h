@@ -69,6 +69,10 @@ extern "C" {
 
 	/// Releases the resource pointed to by the given pointer. If the respective resource has been allocated before,
 	/// this would be the time to free/delete it.
+	/// The resources processed by this functions are only those that have been specifically allocated in order to return
+	/// them in one of the plugin functions to Mumble (e.g. the String returned by mumble_getName) and has nothing to do
+	/// with your plugin's internal resource management.
+	/// In short: Only resources passed from the plugin to Mumble via a return value may be processed by this function.
 	///
 	/// NOTE1: This function may be called without the plugin being loaded
 	///
