@@ -314,7 +314,7 @@ MumbleStringWrapper mumble_getUpdateDownloadURL() {
 #ifdef MINGW_WIN64
     static std::string url = fgcom_release_latest.downUrl+"/fgcom-mumble-windows-"+verStr+".zip";
 #else
-    static std::string url = fgcom_release_latest.downUrl+"/fgcom-mumble-linux-"+verStr+".tar.gz";
+    static std::string url = fgcom_release_latest.downUrl+"/fgcom-mumble-linux-"+verStr+".zip";
 #endif
 
     // build return wrapper
