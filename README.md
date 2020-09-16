@@ -179,4 +179,4 @@ Other interesting compile targets:
  debug code that will print lots of stuff to the terminal window when running the plugin
   - `make plugin` will build just the the plugin for linux
   - `make plugin-win64` will build it for windows
-  - `make release` builds a tar.gz and a zip containing linux/windows binaries
+  - `make release` builds zip release files containing linux/windows binaries
