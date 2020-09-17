@@ -36,6 +36,9 @@
 #include <sys/types.h> 
 #include <math.h>
 
+#include <chrono>
+#include <iomanip>
+
 #ifdef MINGW_WIN64
     #include <winsock2.h>
     //#include <windows.h>
@@ -64,7 +67,16 @@
 // These are just some utility functions facilitating writing logs and the like
 // The actual implementation of the plugin is further down
 std::ostream& pLog() {
-    std::cout << "FGCom: ";
+    // make milliseconds timestamp
+    const auto now = std::chrono::system_clock::now();
+    const auto nowAsTimeT = std::chrono::system_clock::to_time_t(now);
+    const auto nowMs = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+    std::stringstream nowStringStream;
+    nowStringStream
+      << std::put_time(std::localtime(&nowAsTimeT), "%Y-%m-%d %T")
+      << '.' << std::setfill('0') << std::setw(3) << nowMs.count();
+
+    std::cout << "FGCom [" << nowStringStream.str() <<"]: ";
     return std::cout;
 }
 
