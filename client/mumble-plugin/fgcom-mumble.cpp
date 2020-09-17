@@ -965,13 +965,13 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
     return rv;   // This function returns whether it has modified the audio stream
 }
 
-
-bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender, const char *data, size_t dataLength, const char *dataID) {
+bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender, const uint8_t *data, size_t dataLength, const char *dataID) {
     pluginDbg("Received data with ID '"+std::string(dataID)+"' from user with ID '"+std::to_string(sender)+"'. Its length is '"+std::to_string(dataLength)+". (ServerConnection:"+std::to_string(connection)+")");
 
     if (dataLength > 0) {
         // if there is payload: handle it
-        return handlePluginDataReceived(sender, std::string(dataID), std::string(data));
+        std::string data_string(reinterpret_cast<const char *>(data));   // We know that data is only a normal C-encoded String, so the reinterpret_cast is safe
+        return handlePluginDataReceived(sender, std::string(dataID), data_string);
     }
 
     return false;
