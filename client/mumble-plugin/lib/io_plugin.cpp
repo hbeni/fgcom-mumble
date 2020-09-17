@@ -140,6 +140,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     
     // @param what:  0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping
     // @param selector: ignored, when 'what'=NTFY_COM: id of radio (0=COM1,1=COM2,...); -1 sends all radios
+    // TODO: to help with rate throtteling, the summarizing selectors should generate a single message. Currently they just invoke the single message invocations. Alternatively: We may also make a new fast running thread that looks at a "urgent" notification queue and summarizes messages there?
     switch (what) {
         case NTFY_ALL:
             // notify all info

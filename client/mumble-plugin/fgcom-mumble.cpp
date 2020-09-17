@@ -707,12 +707,14 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
             pluginDbg("joined special channel, activating plugin functions");
             fgcom_setPluginActive(true);
             notifyRemotes(0, NTFY_ALL); // send our state to all users
+            notifyRemotes(0, NTFY_ASK); // request all other state
         }
     } else {
         if (fgcom_isPluginActive()) { //TODO: Don't do this if we just joined the channel. Currently we notifiy two times :/
             // if we are in the special channel, update new clinets with our state
-            pluginDbg("send state to freshly joined user");
-            notifyRemotes(0, NTFY_ALL, NTFY_ALL, userID);
+            // We should not send info to newly joined clients. The reason is, that we don't know if they have the plugin active already; so we will wait for them asking to send a NTFY_ASK packet.
+            //pluginDbg("send state to freshly joined user");
+            //notifyRemotes(0, NTFY_ALL, NTFY_ALL, userID);
         }
     }
 
