@@ -778,7 +778,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
     
     // See if the plugin is activated and if the audio source is speech.
     // We let the audio trough in case plugin is not active.
-    pluginDbg("mumble_onAudioSourceFetched(): plugin active="+std::to_string(fgcom_isPluginActive()));
+    pluginDbg("mumble_onAudioSourceFetched(): plugin active="+std::to_string(fgcom_isPluginActive())+"; isSpeech="+std::to_string(isSpeech));
     bool rv = false;  // return value; false means the stream was not touched
     if (fgcom_isPluginActive() && isSpeech) {
         // This means, that the remote client was able to send, ie. his radio had power to transmit (or its a pluginless mumble client).
