@@ -57,7 +57,7 @@
 // Mubmle API global vars.
 MumbleAPI mumAPI;
 mumble_connection_t activeConnection;
-plugin_id_t ownPluginID;
+mumble_plugin_id_t ownPluginID;
 
 // Global plugin state
 std::vector<mumble_channelid_t>  fgcom_specialChannelID;

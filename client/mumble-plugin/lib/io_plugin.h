@@ -30,7 +30,7 @@
 // They get initialized from the plugin interface (see fgcom-mumble.cpp)
 extern MumbleAPI mumAPI;
 extern mumble_connection_t activeConnection;
-extern plugin_id_t ownPluginID;
+extern mumble_plugin_id_t ownPluginID;
 extern mumble_userid_t localMumId;
 
 // Notification types
