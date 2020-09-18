@@ -159,12 +159,8 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                     std::string verStr = std::to_string(fgcom_release_latest.version.major)
                                         + "." + std::to_string(fgcom_release_latest.version.minor)
                                         + "." + std::to_string(fgcom_release_latest.version.patch);
-#ifdef MINGW_WIN64
-                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-windows-"+verStr+".zip";
-#else
-                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-linux-"+verStr+".zip";
-#endif
-                    
+                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-"+verStr+".zip";
+
                 } else {
                     // something went wrong.
                     pluginLog("[UPDATER] ERROR: Can't obtain release version number from '"+tag_name+"'");

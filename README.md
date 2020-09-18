@@ -47,7 +47,10 @@ Setup requirements
 
 Installation
 -----------------------
-- copy the plugin to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
+- The release ZIP contains all binary plugins for all supported operating systems.
+- copy the plugin for your operating system to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
+  - `fgcom-mumble.so` for Linux (64 bit)
+  - `fgcom-mumble.dll` for Windows (64 bit)
 
 
 Plugin configuration

@@ -91,27 +91,17 @@ release: clean-all plugin plugin-win64
 	@echo Version: $(VERSION) \($(GITCOMMIT) $(GITDATE)\) >> releaseReadme.md
 	tail +2 ../../README.md >> releaseReadme.md
 	
-	# Linux
-	mkdir fgcom-mumble-linux-$(VERSION)
-	mkdir fgcom-mumble-linux-$(VERSION)/plugin
-	rm -f fgcom-mumble-linux*.tar.gz
-	cp releaseReadme.md fgcom-mumble-linux-$(VERSION)/README.md
-	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-linux-$(VERSION)
-	cp fgcom-mumble.so fgcom-mumble-linux-$(VERSION)/plugin
-	cp -r ../fgfs/ fgcom-mumble-linux-$(VERSION)
-	zip -r fgcom-mumble-linux-$(VERSION).zip fgcom-mumble-linux-$(VERSION)
-	rm -rf fgcom-mumble-linux-$(VERSION)
-	
-	# Windows
-	mkdir fgcom-mumble-windows-$(VERSION)
-	mkdir fgcom-mumble-windows-$(VERSION)/plugin
-	rm -f fgcom-mumble-windows*.zip
-	cp releaseReadme.md fgcom-mumble-windows-$(VERSION)/README.md
-	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-windows-$(VERSION)
-	cp fgcom-mumble.dll fgcom-mumble-windows-$(VERSION)/plugin
-	cp -r ../fgfs/ fgcom-mumble-windows-$(VERSION)
-	zip -r fgcom-mumble-windows-$(VERSION).zip fgcom-mumble-windows-$(VERSION)
-	rm -rf fgcom-mumble-windows-$(VERSION)
+	# Linux + Windows combined
+	mkdir fgcom-mumble-$(VERSION)
+	mkdir fgcom-mumble-$(VERSION)/doc
+	rm -f fgcom-mumble-*.zip
+	cp releaseReadme.md fgcom-mumble-$(VERSION)/doc/README.md
+	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-$(VERSION)/doc
+	cp fgcom-mumble.so  fgcom-mumble-$(VERSION)/
+	cp fgcom-mumble.dll fgcom-mumble-$(VERSION)/
+	cp -r ../fgfs/ fgcom-mumble-$(VERSION)
+	cd fgcom-mumble-$(VERSION) && zip -r ../fgcom-mumble-$(VERSION).zip .
+	rm -rf fgcom-mumble-$(VERSION)
 	
 	rm releaseReadme.md
 	@echo "\nRelease $(VERSION) built successfully:"
