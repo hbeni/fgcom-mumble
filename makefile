@@ -7,8 +7,7 @@ release: release-server
 	@echo "GITVER: $(GITVER)  PLUGINVER:$(PLUGINVER)"
 	@echo "-------------------------------------------------"
 	$(MAKE) -C client/mumble-plugin/ release
-	cp client/mumble-plugin/*.tar.gz .
-	cp client/mumble-plugin/*.zip .
+	mv client/mumble-plugin/*.zip .
 
 release-server:
 	# Build server components release
@@ -16,7 +15,7 @@ release-server:
 	mkdir fgcom-mumble-server-$(PLUGINVER)/recordings
 	cp server/recordings/readme.md server/recordings/fgcom.rec.testsample.fgcs fgcom-mumble-server-$(PLUGINVER)/recordings
 	head -n 1 server/Readme.server.md > fgcom-mumble-server-$(PLUGINVER)/README.md
-	@echo Version: $(VERSION) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-server-$(PLUGINVER)/README.md
+	@echo Version: $(PLUGINVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-server-$(PLUGINVER)/README.md
 	tail +2 server/Readme.server.md >> fgcom-mumble-server-$(PLUGINVER)/README.md
 	cp -r server/statuspage/ fgcom-mumble-server-$(PLUGINVER)
 	mv fgcom-mumble-server-$(PLUGINVER)/statuspage/Readme.statuspage.md fgcom-mumble-server-$(PLUGINVER)
