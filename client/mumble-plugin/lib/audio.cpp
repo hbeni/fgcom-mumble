@@ -117,9 +117,19 @@ void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCo
     /*
      * Apply filtering
      */
-    // numer in parenthesis after new... is the number of samples over which to fade parameter changes
-    int highpass_cutoff = 4000;
-    std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (1024));
+    
+    // Human speak frequencies range roughly from about 300Hz to 5000Hz.
+    // Playing with audacitys filter courve effect allows for testing results.
+    
+    const int fadeOverNumSamples = 1024; // fade changes in parameters over that much samples
+    
+    // HighPass filter cuts away lower frequency ranges and let higher ones pass
+    // Lower cutoff limit depends on signal quality: the less quality, the more to cut away
+    //   worst is 1000@30% signal; best is 300@1.0
+    int highpass_cutoff = (1-signalQuality) * 1000 + 300;
+    if (highpass_cutoff <  300) highpass_cutoff =  300; // lower ceiling
+    if (highpass_cutoff > 1000) highpass_cutoff = 1000; // upside ceiling
+    std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (fadeOverNumSamples));
     Dsp::Params f_highpass_p;
     f_highpass_p[0] = sampleRateHz; // sample rate
     f_highpass_p[1] = highpass_cutoff; // cutoff frequency
@@ -127,11 +137,12 @@ void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCo
     f_highpass->setParams (f_highpass_p);
     f_highpass->process (sampleCount, audioData);
     
-    // lowpass cutoff depending on signal quality:
-    //  worst is 300@10% signal; best is 1000@1.0
-    int lowpass_cutoff = signalQuality * 1500 + 250;
-    if (lowpass_cutoff > 1000) lowpass_cutoff = 1000; // upside ceiling
-    std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (1024));
+    // LowPass filter cuts away higher frequency ranges and lets lower ones pass
+    //   worst is 2000@035; best is 4000@0.95
+    int lowpass_cutoff = signalQuality * 4000 + 500;
+    if (lowpass_cutoff < 2000) lowpass_cutoff = 2000; // lower ceiling
+    if (lowpass_cutoff > 4000) lowpass_cutoff = 4000; // upper ceiling
+    std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (fadeOverNumSamples));
     Dsp::Params f_lowpass_p;
     f_lowpass_p[0] = sampleRateHz; // sample rate
     f_lowpass_p[1] = lowpass_cutoff; // cutoff frequency
