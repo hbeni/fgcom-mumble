@@ -334,7 +334,7 @@ typedef int32_t mumble_channelid_t;
 /// Typedef for the type of an error (code)
 typedef enum Mumble_ErrorCode mumble_error_t;
 /// Typedef for the type of a plugin ID
-typedef uint32_t plugin_id_t;
+typedef uint32_t mumble_plugin_id_t;
 /// Typedef for the type of a key-code
 typedef enum Mumble_KeyCode keycode_t;
 
