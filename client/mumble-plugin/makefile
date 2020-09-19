@@ -92,16 +92,21 @@ release: clean-all plugin plugin-win64
 	tail +2 ../../README.md >> releaseReadme.md
 	
 	# Linux + Windows combined
-	mkdir fgcom-mumble-$(VERSION)
-	mkdir fgcom-mumble-$(VERSION)/doc
+	mkdir fgcom-mumble-client-$(VERSION)
+	mkdir fgcom-mumble-client-$(VERSION)/plugin
 	rm -f fgcom-mumble-*.zip
-	cp releaseReadme.md fgcom-mumble-$(VERSION)/doc/README.md
-	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-$(VERSION)/doc
-	cp fgcom-mumble.so  fgcom-mumble-$(VERSION)/
-	cp fgcom-mumble.dll fgcom-mumble-$(VERSION)/
-	cp -r ../fgfs/ fgcom-mumble-$(VERSION)
-	cd fgcom-mumble-$(VERSION) && zip -r ../fgcom-mumble-$(VERSION).zip .
-	rm -rf fgcom-mumble-$(VERSION)
+	cp releaseReadme.md fgcom-mumble-client-$(VERSION)/README.md
+	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-client-$(VERSION)/
+	cp fgcom-mumble.so  fgcom-mumble-client-$(VERSION)/plugin
+	cp fgcom-mumble.dll fgcom-mumble-client-$(VERSION)/plugin
+	cp fgcom-mumble.ini fgcom-mumble-client-$(VERSION)/plugin
+	cp -r ../fgfs/ fgcom-mumble-client-$(VERSION)
+	zip -r fgcom-mumble-client-$(VERSION).zip fgcom-mumble-client-$(VERSION)
+	rm -rf fgcom-mumble-client-$(VERSION)
+	
+	# Just a binary package for the mumble updater
+	# Note: this ZIP may has a special format
+	zip fgcom-mumble-client-binOnly-$(VERSION).zip fgcom-mumble.so fgcom-mumble.dll
 	
 	rm releaseReadme.md
 	@echo "\nRelease $(VERSION) built successfully:"
