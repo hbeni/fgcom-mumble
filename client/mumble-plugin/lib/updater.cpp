@@ -159,7 +159,7 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                     std::string verStr = std::to_string(fgcom_release_latest.version.major)
                                         + "." + std::to_string(fgcom_release_latest.version.minor)
                                         + "." + std::to_string(fgcom_release_latest.version.patch);
-                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-"+verStr+".zip";
+                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-client-binOnly-"+verStr+".zip";
 
                 } else {
                     // something went wrong.
