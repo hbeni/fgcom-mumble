@@ -83,7 +83,10 @@ enum Mumble_ErrorCode {
 	EC_INVALID_MUTE_TARGET,
 	EC_CONNECTION_UNSYNCHRONIZED,
 	EC_INVALID_API_VERSION,
-	EC_UNSYNCHRONIZED_BLOB
+	EC_UNSYNCHRONIZED_BLOB,
+	EC_UNKNOWN_SETTINGS_KEY,
+	EC_WRONG_SETTINGS_TYPE,
+	EC_SETTING_WAS_REMOVED
 };
 
 /// This enum's values represent error codes specific to the framework of handling positional data
@@ -96,6 +99,14 @@ enum Mumble_PositionalDataErrorCode {
 	PDEC_ERROR_TEMP,
 	/// Positional data is permanently unavailable (e.g. because the respective memory offsets are outdated).
 	PDEC_ERROR_PERM
+};
+
+/// This enum's values represent keys for specific settings inside Mumble.
+enum Mumble_SettingsKey {
+	MSK_INVALID = -1,
+	MSK_AUDIO_INPUT_VOICE_HOLD = 0,
+	MSK_AUDIO_INPUT_VAD_SILENCE_THRESHOLD = 1,
+	MSK_AUDIO_INPUT_VAD_SPEECH_THRESHOLD = 2,
 };
 
 /// This enum's values represent the key-codes Mumble's API uses to reference keys on the keyboard.
@@ -302,6 +313,12 @@ inline const char* errorMessage(int16_t errorCode) {
 			return "The used API version is invalid or not supported";
 		case EC_UNSYNCHRONIZED_BLOB:
 			return "The requested blob (content) has not yet been synchronized between the client and the server";
+		case EC_UNKNOWN_SETTINGS_KEY:
+			return "The used settings-key does not match any key known to Mumble";
+		case EC_WRONG_SETTINGS_TYPE:
+			return "The referenced setting has a different type than requested";
+		case EC_SETTING_WAS_REMOVED:
+			return "The referenced setting got removed from Mumble and is no longer used";
 		default:
 			return "Unknown error code";
 	}
@@ -320,11 +337,11 @@ struct MumbleStringWrapper {
 };
 
 /// Typedef for the type of a talking state
-typedef enum Mumble_TalkingState talking_state_t;
+typedef enum Mumble_TalkingState mumble_talking_state_t;
 /// Typedef for the type of a transmission mode
-typedef enum Mumble_TransmissionMode transmission_mode_t;
+typedef enum Mumble_TransmissionMode mumble_transmission_mode_t;
 /// Typedef for the type of a version
-typedef struct Version version_t;
+typedef struct Version mumble_version_t;
 /// Typedef for the type of a connection
 typedef int32_t mumble_connection_t;
 /// Typedef for the type of a user
@@ -335,7 +352,9 @@ typedef int32_t mumble_channelid_t;
 typedef enum Mumble_ErrorCode mumble_error_t;
 /// Typedef for the type of a plugin ID
 typedef uint32_t mumble_plugin_id_t;
+/// Typedef for the type of a key to a setting in Mumble
+typedef enum Mumble_SettingsKey mumble_settings_key_t;
 /// Typedef for the type of a key-code
-typedef enum Mumble_KeyCode keycode_t;
+typedef enum Mumble_KeyCode mumble_keycode_t;
 
 #endif // MUMBLE_PLUGINCOMPONENT_H_
