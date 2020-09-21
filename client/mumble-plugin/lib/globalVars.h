@@ -25,7 +25,7 @@
 #include <string>
 #include <mutex>
 #include <map>
-#include "mumble/MumblePlugin.h"
+#include "mumble/MumblePlugin_v_1_0_x.h"
 #include "radio_model.h"
 
 

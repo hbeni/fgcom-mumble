@@ -16,7 +16,7 @@
  */
 #ifndef FGCOM_AUDIO_H
 #define FGCOM_AUDIO_H
-#include "mumble/PluginComponents.h"
+#include "mumble/PluginComponents_v_1_0_x.h"
 
 /*
  * Add static noise to the signal

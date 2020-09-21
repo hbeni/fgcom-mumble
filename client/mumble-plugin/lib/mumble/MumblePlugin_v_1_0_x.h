@@ -8,8 +8,8 @@
 #ifndef EXTERNAL_MUMBLE_PLUGIN_H_
 #define EXTERNAL_MUMBLE_PLUGIN_H_
 
-#include "PluginComponents.h"
-#include "MumbleAPI.h"
+#include "PluginComponents_v_1_0_x.h"
+#include "MumbleAPI_v_1_0_x.h"
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -23,6 +23,23 @@
 #else
 	#error No PLUGIN_EXPORT definition available
 #endif
+
+// API version
+#define MUMBLE_PLUGIN_API_MAJOR_PREPR 1
+#define MUMBLE_PLUGIN_API_MINOR_PREPR 0
+#define MUMBLE_PLUGIN_API_PATCH_PREPR 0
+
+const int32_t MUMBLE_PLUGIN_API_MAJOR = MUMBLE_PLUGIN_API_MAJOR_PREPR;
+const int32_t MUMBLE_PLUGIN_API_MINOR = MUMBLE_PLUGIN_API_MINOR_PREPR;
+const int32_t MUMBLE_PLUGIN_API_PATCH = MUMBLE_PLUGIN_API_PATCH_PREPR;
+const mumble_version_t MUMBLE_PLUGIN_API_VERSION = { MUMBLE_PLUGIN_API_MAJOR, MUMBLE_PLUGIN_API_MINOR, MUMBLE_PLUGIN_API_PATCH };
+
+// Create macro for casting the pointer to the API object to the proper struct.
+// Note that this must only be used if the API uses MUMBLE_PLUGIN_API_VERSION of the API.
+#define MUMBLE_CONCAT_HELPER(a, b) a ## _ ## b
+#define MUMBLE_CONCAT(a, b) MUMBLE_CONCAT_HELPER(a, b)
+#define MUMBLE_API_STRUCT MUMBLE_CONCAT(MumbleAPI_v, MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MAJOR_PREPR, MUMBLE_CONCAT(MUMBLE_PLUGIN_API_MINOR_PREPR, x)))
+#define MUMBLE_API_CAST(ptrName) ( *((struct MUMBLE_API_STRUCT *) ptrName) )
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,7 +73,7 @@ extern "C" {
 	/// NOTE: This function may be called without the plugin being loaded
 	///
 	/// @return The respective API Version
-	PLUGIN_EXPORT version_t PLUGIN_CALLING_CONVENTION mumble_getAPIVersion();
+	PLUGIN_EXPORT mumble_version_t PLUGIN_CALLING_CONVENTION mumble_getAPIVersion();
 
 	/// Provides the MumbleAPI struct to the plugin. This struct contains function pointers that can be used
 	/// to interact with the Mumble client. It is up to the plugin to store this struct somewhere if it wants to make use
@@ -64,8 +81,11 @@ extern "C" {
 	///
 	/// NOTE: This function may be called without the plugin being loaded
 	///
-	/// @param api The MumbleAPI struct
-	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_registerAPIFunctions(struct MumbleAPI api);
+	/// @param api A pointer to the MumbleAPI struct. The API struct must be cast to the version corresponding to the
+	/// 	user API version. If your plugin is e.g. using the 1.0.x API, then you have to cast this pointer to
+	/// 	MumbleAPI_v_1_0_x. Note also that you **must not store this pointer**. It will become invalid. Therefore
+	/// 	you have to copy the struct in order to use it later on.
+	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_registerAPIFunctions(void *apiStruct);
 
 	/// Releases the resource pointed to by the given pointer. If the respective resource has been allocated before,
 	/// this would be the time to free/delete it.
@@ -104,14 +124,14 @@ extern "C" {
 	/// @param mumbleVersion The Version of the Mumble client
 	/// @param mumbleAPIVersion The Version of the plugin-API the Mumble client runs with
 	/// @param minimalExpectedAPIVersion The minimal Version the Mumble clients expects this plugin to meet in order to load it
-	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_setMumbleInfo(version_t mumbleVersion, version_t mumbleAPIVersion, version_t minimalExpectedAPIVersion);
+	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_setMumbleInfo(mumble_version_t mumbleVersion, mumble_version_t mumbleAPIVersion, mumble_version_t minimalExpectedAPIVersion);
 
 	/// Gets the Version of this plugin
 	///
 	/// NOTE: This function may be called without the plugin being loaded
 	///
 	/// @returns The plugin's version
-	PLUGIN_EXPORT version_t PLUGIN_CALLING_CONVENTION mumble_getVersion();
+	PLUGIN_EXPORT mumble_version_t PLUGIN_CALLING_CONVENTION mumble_getVersion();
 
 	/// Gets the name of the plugin author(s).
 	///
@@ -250,7 +270,7 @@ extern "C" {
 	/// @param connection The ID of the server-connection this event is connected to
 	/// @param userID The ID of the user whose talking state has been changed
 	/// @param talkingState The new TalkingState the user has switched to.
-	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_userid_t userID, talking_state_t talkingState);
+	PLUGIN_EXPORT void PLUGIN_CALLING_CONVENTION mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_userid_t userID, mumble_talking_state_t talkingState);
 
 	/// Called whenever there is audio input.
 	///
