@@ -59,7 +59,7 @@
 #include "io_plugin.h"
 #include "io_UDPServer.h"
 #include "io_UDPClient.h"
-#include "mumble/MumblePlugin.h"
+#include "mumble/MumblePlugin_v_1_0_x.h"
 #include "fgcom-mumble.h"
 
 

@@ -8,17 +8,12 @@
 #ifndef MUMBLE_PLUGIN_API_H_
 #define MUMBLE_PLUGIN_API_H_
 
-#include "PluginComponents.h"
+#include "PluginComponents_v_1_0_x.h"
 #include <stdint.h>
 
-// API version
-const int32_t MUMBLE_PLUGIN_API_MAJOR = 1;
-const int32_t MUMBLE_PLUGIN_API_MINOR = 0;
-const int32_t MUMBLE_PLUGIN_API_PATCH = 0;
-const version_t MUMBLE_PLUGIN_API_VERSION = { MUMBLE_PLUGIN_API_MAJOR, MUMBLE_PLUGIN_API_MINOR, MUMBLE_PLUGIN_API_PATCH };
 
 
-struct MumbleAPI {
+struct MumbleAPI_v_1_0_x {
 	/////////////////////////////////////////////////////////
 	////////////////////// GENERAL NOTE /////////////////////
 	/////////////////////////////////////////////////////////
@@ -157,18 +152,36 @@ struct MumbleAPI {
 	/// @param[out] transmissionMode A pointer to where the transmission mode shall be written.
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *getLocalUserTransmissionMode)(mumble_plugin_id_t callerID, transmission_mode_t *transmissionMode);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *getLocalUserTransmissionMode)(mumble_plugin_id_t callerID, mumble_transmission_mode_t *transmissionMode);
 
 	/// Checks whether the given user is currently locally muted.
 	///
 	/// @param callerID The ID of the plugin calling this function
 	/// @param connection The ID of the server-connection to use as a context
-	/// @param userID The ID of the user to search for
+	/// @param userID The ID of the user to check for
 	/// @param[out] muted A pointer to where the local mute state of that user shall be written
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *isUserLocallyMuted)(mumble_plugin_id_t callerID, mumble_connection_t connection,
 			mumble_userid_t userID, bool *muted);
+
+	/// Checks whether the local user is currently muted.
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param connection The ID of the server-connection to use as a context
+	/// @param[out] muted A pointer to where the mute state of the local user shall be written
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
+	/// 	may be accessed
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserMuted)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool *muted);
+
+	/// Checks whether the local user is currently deafened.
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param connection The ID of the server-connection to use as a context
+	/// @param[out] deafened A pointer to where the deaf state of the local user shall be written
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
+	/// 	may be accessed
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserDeafed)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool *deafened);
 
 	/// Gets the hash of the given user (can be used to recognize users between restarts)
 	///
@@ -234,7 +247,7 @@ struct MumbleAPI {
 	/// @param callerID The ID of the plugin calling this function
 	/// @param transmissionMode The requested transmission mode
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserTransmissionMode)(mumble_plugin_id_t callerID, transmission_mode_t transmissionMode);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserTransmissionMode)(mumble_plugin_id_t callerID, mumble_transmission_mode_t transmissionMode);
 
 	/// Requests Mumble to move the given user into the given channel
 	///
@@ -263,14 +276,31 @@ struct MumbleAPI {
 	/// Furthermore it must be noted that muting the local user with this function does not work (it doesn't make sense). If
 	/// you try to do so, this function will fail. In order to make this work, this function will also fail if the server
 	/// has not finished synchronizing with the client yet.
+	/// For muting the local user, use requestLocalUserMute instead.
 	///
 	/// @param callerID The ID of the plugin calling this function.
 	/// @param connection The ID of the server-connection to use as a context
-	/// @param userID The ID of the user that shall be moved
+	/// @param userID The ID of the user that shall be muted
 	/// @param muted Whether to locally mute the given client (opposed to unmuting it)
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalMute)(mumble_plugin_id_t callerID, mumble_connection_t connection, 
 				mumble_userid_t userID, bool muted);
+
+	/// Requests Mumble to set the mute state of the local user. In the UI this is referred to as "self-mute".
+	///
+	/// @param callerID The ID of the plugin calling this function.
+	/// @param connection The ID of the server-connection to use as a context
+	/// @param muted Whether to locally mute the local user (opposed to unmuting it)
+	/// @returns The error code. If everything went well, STATUS_OK will be returned.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserMute)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool muted);
+
+	/// Requests Mumble to set the deaf state of the local user. In the UI this is referred to as "self-deaf".
+	///
+	/// @param callerID The ID of the plugin calling this function.
+	/// @param connection The ID of the server-connection to use as a context
+	/// @param deafened Whether to locally deafen the local user (opposed to undeafening it)
+	/// @returns The error code. If everything went well, STATUS_OK will be returned.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserDeaf)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool deafened);
 
 	/// Sets the comment of the local user
 	///
@@ -307,6 +337,90 @@ struct MumbleAPI {
 	/// 	be accessed.
 	mumble_error_t (PLUGIN_CALLING_CONVENTION *findChannelByName)(mumble_plugin_id_t callerID, mumble_connection_t connection,
 			const char *channelName, mumble_channelid_t *channelID);
+
+
+
+	// -------- Settings --------
+
+	/// Fills in the current value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is a bool!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param[out] outValue A pointer to the memory the setting's value shall be written to.
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer may
+	/// 	be accessed.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *getMumbleSetting_bool)(mumble_plugin_id_t callerID, mumble_settings_key_t key, bool *outValue);
+
+	/// Fills in the current value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is an int!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param[out] outValue A pointer to the memory the setting's value shall be written to.
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer may
+	/// 	be accessed.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *getMumbleSetting_int)(mumble_plugin_id_t callerID, mumble_settings_key_t key, int *outValue);
+
+	/// Fills in the current value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is a double!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param[out] outValue A pointer to the memory the setting's value shall be written to.
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer may
+	/// 	be accessed.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *getMumbleSetting_double)(mumble_plugin_id_t callerID, mumble_settings_key_t key, double *outValue);
+
+	/// Fills in the current value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is a String!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param[out] outValue The memory address to which the pointer to the setting's value (the String) will be written. The
+	/// 	allocated memory has to be freed by a call to freeMemory by the plugin eventually. The memory will only be
+	/// 	allocated if this function returns STATUS_OK.
+	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer may
+	/// 	be accessed.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *getMumbleSetting_string)(mumble_plugin_id_t callerID, mumble_settings_key_t key, const char **outValue);
+
+
+	/// Sets the value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is a bool!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param value The value that should be set for the given setting
+	/// @returns The error code. If everything went well, STATUS_OK will be returned.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *setMumbleSetting_bool)(mumble_plugin_id_t callerID, mumble_settings_key_t, bool value);
+
+	/// Sets the value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is an int!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param value The value that should be set for the given setting
+	/// @returns The error code. If everything went well, STATUS_OK will be returned.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *setMumbleSetting_int)(mumble_plugin_id_t callerID, mumble_settings_key_t, int value);
+
+	/// Sets the value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is a double!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param value The value that should be set for the given setting
+	/// @returns The error code. If everything went well, STATUS_OK will be returned.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *setMumbleSetting_double)(mumble_plugin_id_t callerID, mumble_settings_key_t, double value);
+
+	/// Sets the value of the setting with the given key. Note that this function can only be used for settings whose value
+	/// is a string!
+	///
+	/// @param callerID The ID of the plugin calling this function
+	/// @param key The key to the desired setting
+	/// @param value The value that should be set for the given setting
+	/// @returns The error code. If everything went well, STATUS_OK will be returned.
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *setMumbleSetting_string)(mumble_plugin_id_t callerID, mumble_settings_key_t, const char *value);
+
 
 
 
