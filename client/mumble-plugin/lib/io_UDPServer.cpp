@@ -62,6 +62,10 @@
 #include "mumble/MumblePlugin_v_1_0_x.h"
 #include "fgcom-mumble.h"
 
+#ifdef DEBUG
+    float fgcom_debug_signalstrength = -1;
+#endif
+
 
 /*
  * Process a received message:
@@ -401,6 +405,17 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 if (token_key == "AUDIO_FX_RADIO") {
                     fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
                 }
+                
+                
+#ifdef DEBUG
+                // DEBUG: allow override of signal quality for incoming transmissions
+                if (token_key == "DEBUG_SIGQLY") {
+                    fgcom_debug_signalstrength = std::stof(token_value);
+                    if (fgcom_debug_signalstrength > 1) fgcom_debug_signalstrength = 1;
+                    if (fgcom_debug_signalstrength < 0) fgcom_debug_signalstrength = -1;
+                    pluginDbg("[UDP-server] debug override of signal quality updated to "+std::to_string(fgcom_debug_signalstrength));
+                }
+#endif
             
            
             } else {
