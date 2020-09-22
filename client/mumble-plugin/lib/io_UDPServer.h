@@ -25,6 +25,11 @@
 #define MAXLINE             1024  // max byte size of a udp packet
 
 
+#ifdef DEBUG
+    // Debug code: Allow override of signal quality for debugging purposes
+    extern float fgcom_debug_signalstrength;  // <0 to disable
+#endif
+
 
 /*
  * Spawn the udp server thread.

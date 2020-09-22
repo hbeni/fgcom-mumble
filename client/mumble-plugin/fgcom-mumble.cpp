@@ -938,6 +938,14 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         //   - we did not have any info on the client
         //   - the client was out of range
         //   - we did not tune the frequency (or radio was broken, or radio squelch cut off)
+#ifdef DEBUG
+        // Debug code: Allow override of signal quality for debugging purposes
+        if (fgcom_debug_signalstrength >= 0) {
+            bestSignalStrength = fgcom_debug_signalstrength;
+            pluginDbg("mumble_onAudioSourceFetched():   signalQuality debug override to "+std::to_string(fgcom_debug_signalstrength)+" in effect!");
+        }
+#endif
+
         rv = true; // we adjust the stream in any case
         if (isLandline) {
             // we got a landline connection!
