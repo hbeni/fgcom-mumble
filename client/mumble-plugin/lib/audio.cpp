@@ -45,8 +45,7 @@ void fgcom_audio_addNoise(float signalQuality, float *outputPCM, uint32_t sample
     float noiseVolume;
     float minimumNoiseVolume = 0.05;
     signalVolume = signalQuality;
-    noiseVolume  = 1-signalQuality;
-    if (noiseVolume < minimumNoiseVolume)  noiseVolume = minimumNoiseVolume;
+    noiseVolume  = pow(0.9 - 0.9*signalQuality, 2) + minimumNoiseVolume;
     
     // Now tune down the signal according to calculated volume level
     fgcom_audio_applyVolume(signalVolume, outputPCM, sampleCount, channelCount);
