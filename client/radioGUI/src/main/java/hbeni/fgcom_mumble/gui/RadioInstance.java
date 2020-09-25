@@ -7,6 +7,7 @@ package hbeni.fgcom_mumble.gui;
 
 import hbeni.fgcom_mumble.Radio;
 import hbeni.fgcom_mumble.radioGUI;
+import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ButtonModel;
@@ -28,6 +29,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
     public RadioInstance(Radio r) {
         radioBackend = r;
         initComponents();
+        jTextField_frqActive.setForeground(Color.black); // make the font black
         jTextField_frqActive.setText(r.getFrequency());
         if (r.getFrequency() == "") {
             jTextField_frqSpare.setText("<Enter Frequency>");
@@ -39,6 +41,9 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jSlider_squelch.setValue(Math.round(r.getSquelch()*100));
         jToggleButton_ONOFF.setSelected(r.getPwrBtn());
         updateLabels();
+        updateONOFFTooltip();
+        
+        
         
         
         // Add a listener to detect closing
@@ -58,6 +63,16 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jLabel_squelch.setText(Float.toString(jSlider_squelch.getValue())+"%");
         jLabel_PWRVal.setText(Float.toString(jSlider_txPWR.getValue())+"W");
         jLabel_VolVal.setText(Float.toString(jSlider_volume.getValue())+"%");
+    }
+    
+    public void updateONOFFTooltip() {
+        String genericTooltipText = "Switch on (pressed) or off (depressed)."+System.lineSeparator();
+        if (jToggleButton_ONOFF.isSelected()) {
+            jToggleButton_ONOFF.setToolTipText(genericTooltipText+"(Radio is currently turned ON)");
+        } else {
+            jToggleButton_ONOFF.setToolTipText(genericTooltipText+"(Radio is currently turned OFF)");
+        }
+       
     }
 
     /**
@@ -79,23 +94,21 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jLabel_VolVal = new javax.swing.JLabel();
         jLabel_PWRVal = new javax.swing.JLabel();
         jButton_PTT = new javax.swing.JButton();
-        jButton_ATIS = new javax.swing.JButton();
-        jButton_Landline = new javax.swing.JButton();
         jSlider_squelch = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
         jLabel_squelch = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jToggleButton_ONOFF = new javax.swing.JToggleButton();
+        jComboBox_Templates = new javax.swing.JComboBox<>();
 
         setClosable(true);
-        setMaximumSize(new java.awt.Dimension(600, 200));
-        setMinimumSize(new java.awt.Dimension(600, 200));
+        setMaximumSize(new java.awt.Dimension(620, 200));
+        setMinimumSize(new java.awt.Dimension(620, 200));
         setPreferredSize(new java.awt.Dimension(600, 200));
 
         jTextField_frqActive.setEditable(false);
         jTextField_frqActive.setBackground(new java.awt.Color(224, 224, 224));
-        jTextField_frqActive.setForeground(new java.awt.Color(0, 0, 0));
         jTextField_frqActive.setText("FRQ_active");
         jTextField_frqActive.setToolTipText("The radio is currently tuned to this frequency");
 
@@ -151,24 +164,6 @@ public class RadioInstance extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton_ATIS.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
-        jButton_ATIS.setText("ATIS");
-        jButton_ATIS.setToolTipText("Template: prepare ATIS-Recording template in standy FRQ field");
-        jButton_ATIS.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_ATISActionPerformed(evt);
-            }
-        });
-
-        jButton_Landline.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
-        jButton_Landline.setText("Landline");
-        jButton_Landline.setToolTipText("Template: prepare landline template in standy FRQ field");
-        jButton_Landline.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_LandlineActionPerformed(evt);
-            }
-        });
-
         jSlider_squelch.setMajorTickSpacing(10);
         jSlider_squelch.setMinorTickSpacing(5);
         jSlider_squelch.setPaintTicks(true);
@@ -188,10 +183,19 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jLabel5.setText("FRQ standby");
 
         jToggleButton_ONOFF.setText("ON/OFF");
-        jToggleButton_ONOFF.setToolTipText("Switch on (pressed) or off (depressed). ");
+        jToggleButton_ONOFF.setToolTipText("tooltip set in code");
         jToggleButton_ONOFF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton_ONOFFActionPerformed(evt);
+            }
+        });
+
+        jComboBox_Templates.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        jComboBox_Templates.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FRQ-Templates", "RECORD_<tgt-frq-here>", "PHONE:<ICAO>:<POS>:<LINE>", "910.00 Echotest" }));
+        jComboBox_Templates.setToolTipText("You can select frequency presets here");
+        jComboBox_Templates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox_TemplatesActionPerformed(evt);
             }
         });
 
@@ -200,20 +204,8 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jTextField_frqActive, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton_swapFRQ))
-                            .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 171, Short.MAX_VALUE))
-                            .addComponent(jTextField_frqSpare)))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -228,22 +220,31 @@ public class RadioInstance extends javax.swing.JInternalFrame {
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel_PWRVal)))
-                        .addGap(2, 2, 2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSlider_volume, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSlider_txPWR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSlider_squelch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(50, 50, 50)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jSlider_volume, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton_ATIS, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton_Landline)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jComboBox_Templates, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jToggleButton_ONOFF))
+                            .addComponent(jButton_PTT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jSlider_txPWR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jSlider_squelch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jTextField_frqActive, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton_PTT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                .addComponent(jButton_swapFRQ))
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jTextField_frqSpare))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -263,10 +264,9 @@ public class RadioInstance extends javax.swing.JInternalFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel1)
                         .addComponent(jLabel_VolVal))
-                    .addComponent(jButton_ATIS)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton_Landline)
-                        .addComponent(jToggleButton_ONOFF)))
+                        .addComponent(jToggleButton_ONOFF)
+                        .addComponent(jComboBox_Templates, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -280,10 +280,9 @@ public class RadioInstance extends javax.swing.JInternalFrame {
                             .addComponent(jSlider_squelch, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel_squelch)
-                                .addComponent(jLabel3)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jButton_PTT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                                .addComponent(jLabel3))))
+                    .addComponent(jButton_PTT, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -312,16 +311,6 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         updateLabels();
     }//GEN-LAST:event_jSlider_txPWRStateChanged
 
-    private void jButton_ATISActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_ATISActionPerformed
-        // This is just a template button hiting the user
-        jTextField_frqSpare.setText("RECORD_<tgt-frq-here>");
-    }//GEN-LAST:event_jButton_ATISActionPerformed
-
-    private void jButton_LandlineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_LandlineActionPerformed
-        // This is just a template button hiting the user
-        jTextField_frqSpare.setText("PHONE:<ICAO>:<POS>:<LINE>");
-    }//GEN-LAST:event_jButton_LandlineActionPerformed
-
     private void jSlider_squelchStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_squelchStateChanged
         float v = (float)jSlider_squelch.getValue();
         radioBackend.setSquelch(v / 100);
@@ -336,14 +325,23 @@ public class RadioInstance extends javax.swing.JInternalFrame {
 
     private void jToggleButton_ONOFFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton_ONOFFActionPerformed
         radioBackend.setPwrBtn(jToggleButton_ONOFF.isSelected());
+        updateONOFFTooltip();
     }//GEN-LAST:event_jToggleButton_ONOFFActionPerformed
+
+    private void jComboBox_TemplatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox_TemplatesActionPerformed
+        String selection = (String) jComboBox_Templates.getSelectedItem();
+        if (selection != "FRQ-Templates") {
+            if (selection == "910.00 Echotest") selection = "910.00";
+            jTextField_frqSpare.setText(selection);
+        }
+        jComboBox_Templates.setSelectedIndex(0);
+    }//GEN-LAST:event_jComboBox_TemplatesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton_ATIS;
-    private javax.swing.JButton jButton_Landline;
     private javax.swing.JButton jButton_PTT;
     private javax.swing.JButton jButton_swapFRQ;
+    private javax.swing.JComboBox<String> jComboBox_Templates;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
