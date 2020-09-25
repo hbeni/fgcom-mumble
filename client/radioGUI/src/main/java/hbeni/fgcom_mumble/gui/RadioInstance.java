@@ -322,6 +322,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
 
     private void jToggleButton_ONOFFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton_ONOFFActionPerformed
         radioBackend.setPwrBtn(jToggleButton_ONOFF.isSelected());
+        jButton_PTT.setEnabled(jToggleButton_ONOFF.isSelected());
         updateONOFFTooltip();
     }//GEN-LAST:event_jToggleButton_ONOFFActionPerformed
 

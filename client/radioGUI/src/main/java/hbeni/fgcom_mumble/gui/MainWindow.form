@@ -74,7 +74,6 @@
     <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
       <ResourceString bundle="project.properties" key="version" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
     </Property>
-    <Property name="autoRequestFocus" type="boolean" value="false"/>
     <Property name="bounds" type="java.awt.Rectangle" editor="org.netbeans.beaninfo.editors.RectangleEditor">
       <Rectangle value="[0, 0, 0, 0]"/>
     </Property>
@@ -216,11 +215,13 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Callsing:"/>
+        <Property name="toolTipText" type="java.lang.String" value="How you are called on the radio"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField_callsign">
       <Properties>
         <Property name="text" type="java.lang.String" value="XYZ"/>
+        <Property name="toolTipText" type="java.lang.String" value="How you are called on the radio"/>
       </Properties>
       <Events>
         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_callsignKeyReleased"/>
@@ -229,21 +230,25 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="LAT:"/>
+        <Property name="toolTipText" type="java.lang.String" value="Latitude in decimal degrees (WGS84): &quot;12.345678&quot; (south of equator is given negative)"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" value="LON:"/>
+        <Property name="toolTipText" type="java.lang.String" value="Longitude in decimal degrees (WGS84): &quot;12.345678&quot; (west of prime meridian is given negative)"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
         <Property name="text" type="java.lang.String" value="HGT:"/>
+        <Property name="toolTipText" type="java.lang.String" value="Height in feet above ground level"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField_LAT">
       <Properties>
         <Property name="text" type="java.lang.String" value="12.345678"/>
+        <Property name="toolTipText" type="java.lang.String" value="Latitude in decimal degrees (WGS84): &quot;12.345678&quot; (south of equator is given negative)"/>
       </Properties>
       <Events>
         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_LATKeyReleased"/>
@@ -252,6 +257,7 @@
     <Component class="javax.swing.JTextField" name="jTextField_LON">
       <Properties>
         <Property name="text" type="java.lang.String" value="12.345678"/>
+        <Property name="toolTipText" type="java.lang.String" value="Longitude in decimal degrees (WGS84): &quot;12.345678&quot; (west of prime meridian is given negative)"/>
       </Properties>
       <Events>
         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_LONKeyReleased"/>
@@ -260,6 +266,7 @@
     <Component class="javax.swing.JTextField" name="jTextField_HGT">
       <Properties>
         <Property name="text" type="java.lang.String" value="1234"/>
+        <Property name="toolTipText" type="java.lang.String" value="Height in feet above ground level"/>
       </Properties>
       <Events>
         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_HGTKeyReleased"/>

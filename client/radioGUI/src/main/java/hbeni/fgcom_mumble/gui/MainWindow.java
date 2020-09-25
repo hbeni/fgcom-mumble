@@ -107,7 +107,6 @@ public class MainWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("project"); // NOI18N
         setTitle(bundle.getString("version")); // NOI18N
-        setAutoRequestFocus(false);
         setBounds(new java.awt.Rectangle(0, 0, 0, 0));
 
         jToggleButton_Connect.setText("Connect");
@@ -127,8 +126,10 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPanel_RadioPanel.setOpaque(false);
 
         jLabel1.setText("Callsing:");
+        jLabel1.setToolTipText("How you are called on the radio");
 
         jTextField_callsign.setText("XYZ");
+        jTextField_callsign.setToolTipText("How you are called on the radio");
         jTextField_callsign.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField_callsignKeyReleased(evt);
@@ -136,12 +137,16 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jLabel2.setText("LAT:");
+        jLabel2.setToolTipText("Latitude in decimal degrees (WGS84): \"12.345678\" (south of equator is given negative)");
 
         jLabel3.setText("LON:");
+        jLabel3.setToolTipText("Longitude in decimal degrees (WGS84): \"12.345678\" (west of prime meridian is given negative)");
 
         jLabel4.setText("HGT:");
+        jLabel4.setToolTipText("Height in feet above ground level");
 
         jTextField_LAT.setText("12.345678");
+        jTextField_LAT.setToolTipText("Latitude in decimal degrees (WGS84): \"12.345678\" (south of equator is given negative)");
         jTextField_LAT.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField_LATKeyReleased(evt);
@@ -149,6 +154,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jTextField_LON.setText("12.345678");
+        jTextField_LON.setToolTipText("Longitude in decimal degrees (WGS84): \"12.345678\" (west of prime meridian is given negative)");
         jTextField_LON.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField_LONKeyReleased(evt);
@@ -156,6 +162,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jTextField_HGT.setText("1234");
+        jTextField_HGT.setToolTipText("Height in feet above ground level");
         jTextField_HGT.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField_HGTKeyReleased(evt);

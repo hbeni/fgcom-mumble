@@ -40,7 +40,7 @@
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="181" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="213" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -55,7 +55,7 @@
               <EmptySpace type="separate" max="32767" attributes="0"/>
               <Component id="jLabel2" min="-2" pref="19" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="295" max="-2" attributes="0"/>
+              <Component id="jScrollPane1" min="-2" pref="422" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -75,7 +75,7 @@
             <Property name="columns" type="int" value="20"/>
             <Property name="lineWrap" type="boolean" value="true"/>
             <Property name="rows" type="int" value="5"/>
-            <Property name="text" type="java.lang.String" value="When opening, you are presented with an empty application.&#xa;&#xa;After startup the GUI initializes with a default config (location, radio stack). Adjust that as needed and then hit the &quot;connect&quot; button to actually send data to the mumble plugin.&#xa;&#xa;You can run several instances of the application at once to have different clients connecting to the same mumble plugin.&#xa;&#xa;You can add and remove arbitary numbers of radios. Using the radios is simple:&#xa; - Tune the frequency&#xa; - push PTT for transmitting."/>
+            <Property name="text" type="java.lang.String" value="After startup the GUI initializes with a default config (location, radio stack). Adjust that as needed and then hit the &quot;connect&quot; button to actually send data to the mumble plugin.&#xa;You may, for example add more Radios &#xa;&#xa;You can run several instances of the application at once to have different clients connecting to the same mumble plugin.&#xa;&#xa;You can add and remove arbitary numbers of radios from the &quot;RadioGUI&quot; menu.&#xa;Using the radios is simple:&#xa; - Tune the frequency&#xa; - Push PTT for transmitting.&#xa; - You can deactivate a radio by toggling the ON/OFF button. Disabled radios will not send, neither receive.&#xa;&#xa;Most elements supply a short description when you hover your mouse over them."/>
             <Property name="wrapStyleWord" type="boolean" value="true"/>
             <Property name="opaque" type="boolean" value="false"/>
           </Properties>
