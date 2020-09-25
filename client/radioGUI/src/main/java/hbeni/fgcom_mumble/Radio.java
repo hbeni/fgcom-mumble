@@ -13,7 +13,8 @@ public class Radio {
     protected float   volume;
     protected float   power;
     protected float   squelch;
-    protected boolean ptt;
+    protected boolean ptt;     // tx-pwr in Watts
+    protected boolean pwrbtn;
 
     public Radio() {
         setFrequency("");
@@ -21,6 +22,7 @@ public class Radio {
         setVolume(1.0f);
         setSquelch(0.1f);
         setPTT(false);
+        setPwrBtn(true);
     }
     public Radio(String frq) {
         this();
@@ -39,6 +41,9 @@ public class Radio {
     public synchronized void setSquelch(float s) {
         squelch = s;
     }
+    public synchronized void setPwrBtn(boolean b) {
+        pwrbtn = b;
+    }
 
     public synchronized String getFrequency() {
         return frq;
@@ -51,6 +56,9 @@ public class Radio {
     }
     public synchronized float getSquelch() {
         return squelch;
+    }
+    public synchronized boolean getPwrBtn() {
+        return pwrbtn;
     }
     
     /**
