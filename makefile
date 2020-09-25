@@ -29,7 +29,7 @@ release-server:
 release-radioGUI: radioGUI
 	mkdir fgcom-mumble-radioGUI-$(RADIOGUIVER)
 	cp LICENSE fgcom-mumble-radioGUI-$(RADIOGUIVER)
-	cp client/radioGUI/target/FGCom-mumble-radioGUI*.jar fgcom-mumble-radioGUI-$(RADIOGUIVER)/FGCom-mumble-radioGUI.jar
+	cp client/radioGUI/target/FGCom-mumble-radioGUI-*-jar-with-dependencies.jar fgcom-mumble-radioGUI-$(RADIOGUIVER)/FGCom-mumble-radioGUI.jar
 	head -n 1 client/radioGUI/Readme.RadioGUI.md > fgcom-mumble-radioGUI-$(RADIOGUIVER)/Readme.RadioGUI.md
 	@echo Version: $(RADIOGUIVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-radioGUI-$(RADIOGUIVER)/Readme.RadioGUI.md
 	tail +2 client/radioGUI/Readme.RadioGUI.md >> fgcom-mumble-radioGUI-$(RADIOGUIVER)/Readme.RadioGUI.md
