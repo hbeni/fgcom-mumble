@@ -95,6 +95,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
 
         jTextField_frqActive.setEditable(false);
         jTextField_frqActive.setBackground(new java.awt.Color(224, 224, 224));
+        jTextField_frqActive.setForeground(new java.awt.Color(0, 0, 0));
         jTextField_frqActive.setText("FRQ_active");
         jTextField_frqActive.setToolTipText("The radio is currently tuned to this frequency");
 

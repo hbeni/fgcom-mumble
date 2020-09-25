@@ -11,6 +11,14 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
     
+    <dependencies>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>0.42</version>
+        </dependency>
+    </dependencies>
+    
     <build>
         <resources>
             <resource>
@@ -19,7 +27,7 @@
             </resource>
         </resources>
         <plugins>
-          <plugin>
+          <!--<plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
             <version>3.1.2</version>
@@ -30,6 +38,27 @@
                   <mainClass>hbeni.fgcom_mumble.radioGUI</mainClass>
                 </manifest>
               </archive>
+            </configuration>
+          </plugin>-->
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+                <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+                <archive>
+                  <manifest>
+                    <mainClass>hbeni.fgcom_mumble.radioGUI</mainClass>
+                  </manifest>
+                </archive>
             </configuration>
           </plugin>
         </plugins>
