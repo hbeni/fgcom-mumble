@@ -16,9 +16,10 @@
  */
 package hbeni.fgcom_mumble;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import hbeni.fgcom_mumble.UDPclient.SendRes;
 import hbeni.fgcom_mumble.gui.MainWindow;
-import java.util.List;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * FGCom-mumble radio GUI client
@@ -52,27 +53,15 @@ public class radioGUI {
      * 
      * @param args 
      */
-    public static void main(String[] args) throws InterruptedException{
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+    public static void main(String[] args) throws InterruptedException {
+       
+        /* Initialize the cool flatlaf Look&Feel */
+        FlatDarkLaf.install();
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            javax.swing.UIManager.setLookAndFeel(new FlatDarkLaf());
+            //javax.swing.UIManager.setCurrentTheme(new OceanTheme());
+        } catch (UnsupportedLookAndFeelException ex) {
+            // ignore: default theme will be used
         }
 
         /* init internal data model (state) */

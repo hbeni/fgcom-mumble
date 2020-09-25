@@ -105,15 +105,15 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPanel_RadioPanel" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Group type="102" attributes="0">
                               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jTextField_callsign" max="32767" attributes="0"/>
+                              <Component id="jTextField_callsign" min="-2" pref="142" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="jTextField_LAT" min="-2" pref="142" max="-2" attributes="0"/>
                           </Group>
                       </Group>

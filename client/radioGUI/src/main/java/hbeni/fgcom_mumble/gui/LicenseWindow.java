@@ -37,7 +37,9 @@ public class LicenseWindow extends javax.swing.JFrame {
            +"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU "
            +"General Public License for more details."+nl+nl
            +"You should have received a copy of the GNU General Public License "
-           +"along with this program. If not, see <http://www.gnu.org/licenses>."+nl
+           +"along with this program. If not, see <http://www.gnu.org/licenses>."+nl+nl
+           +"This project uses the FlatLaf Look&Feel, which is distributed "
+           +"under the Apache License 2.0. (<https://github.com/JFormDesigner/FlatLaf>)"
         );
     }
 
