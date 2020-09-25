@@ -80,8 +80,10 @@ public class UDPclient {
             msg += ",COM"+i+"_PWR="+r.getPower();
             msg += ",COM"+i+"_SQC="+r.getSquelch();
             
-            // TODO: implement PBT, VLT, SRV
-            //msg += ",COM"+i+"_PBT="+r.isSwitchedOn();
+            String pbtn = (r.getPwrBtn())? "1" : "0";
+            msg += ",COM"+i+"_PBT="+pbtn;
+            
+            // TODO: implement VLT, SRV
             //msg += ",COM"+i+"_VLT="+r.getVolts();
             //msg += ",COM"+i+"_SRQ="+r.isServiceable();
             

@@ -21,6 +21,7 @@ import hbeni.fgcom_mumble.State;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ContainerEvent;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 /**
@@ -49,21 +50,8 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         
         // Adjust the scroll panel
-        radioContainer = new JPanel(new GridLayout(0, 1)); // 1 column, variable number of rows
-        radioContainer.addContainerListener(new java.awt.event.ContainerListener() {
-            public void componentAdded(ContainerEvent e) {
-                // TODO: Resize the container when an radio was added
-                //radioContainer.repaint();
-                //System.out.println("radio instance added");
-                jScrollPanel_RadioPanel.invalidate();
-            }
-
-            public void componentRemoved(ContainerEvent arg0) {
-                // TODO: Resize the container when an radio was removed
-                //radioContainer.repaint();
-                //System.out.println("radio instance removed");
-            }
-        });
+        radioContainer = new JPanel();
+        radioContainer.setLayout(new BoxLayout(radioContainer, BoxLayout.PAGE_AXIS));
         
         // Update basic state
         updateFromState();
@@ -93,7 +81,6 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel_Statusbar = new javax.swing.JLabel();
         jToggleButton_Connect = new javax.swing.JToggleButton();
         jLabel_ConnectionStatus = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
@@ -106,6 +93,7 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField_LAT = new javax.swing.JTextField();
         jTextField_LON = new javax.swing.JTextField();
         jTextField_HGT = new javax.swing.JTextField();
+        jLabel_Statusbar = new javax.swing.JTextField();
         MainMenu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem_AddIdentity = new javax.swing.JMenuItem();
@@ -122,25 +110,23 @@ public class MainWindow extends javax.swing.JFrame {
         setAutoRequestFocus(false);
         setBounds(new java.awt.Rectangle(0, 0, 0, 0));
 
-        jLabel_Statusbar.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
-        jLabel_Statusbar.setText("not connected");
-        jLabel_Statusbar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-
         jToggleButton_Connect.setText("Connect");
         jToggleButton_Connect.setToolTipText("Toggle sending of UDP packets to mumble plugin");
 
         jLabel_ConnectionStatus.setBackground(new java.awt.Color(255, 255, 0));
         jLabel_ConnectionStatus.setText(" ");
+        jLabel_ConnectionStatus.setToolTipText("Grren=All OK; Red: sending disabled or error occured");
         jLabel_ConnectionStatus.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabel_ConnectionStatus.setOpaque(true);
 
         jSeparator2.setForeground(new java.awt.Color(153, 153, 153));
         jSeparator2.setMaximumSize(new java.awt.Dimension(3500, 1));
 
-        jScrollPanel_RadioPanel.setViewportBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jScrollPanel_RadioPanel.setAutoscrolls(true);
+        jScrollPanel_RadioPanel.setMinimumSize(new java.awt.Dimension(24, 200));
         jScrollPanel_RadioPanel.setOpaque(false);
 
-        jLabel1.setText("Callsing");
+        jLabel1.setText("Callsing:");
 
         jTextField_callsign.setText("XYZ");
         jTextField_callsign.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -149,11 +135,11 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("LAT");
+        jLabel2.setText("LAT:");
 
-        jLabel3.setText("LON");
+        jLabel3.setText("LON:");
 
-        jLabel4.setText("HGT");
+        jLabel4.setText("HGT:");
 
         jTextField_LAT.setText("12.345678");
         jTextField_LAT.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -173,6 +159,16 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField_HGT.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField_HGTKeyReleased(evt);
+            }
+        });
+
+        jLabel_Statusbar.setEditable(false);
+        jLabel_Statusbar.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
+        jLabel_Statusbar.setText("connection status");
+        jLabel_Statusbar.setToolTipText("Shows the UDP sending status and its content");
+        jLabel_Statusbar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jLabel_StatusbarActionPerformed(evt);
             }
         });
 
@@ -237,20 +233,17 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jToggleButton_Connect)
-                        .addGap(2, 2, 2)
-                        .addComponent(jLabel_ConnectionStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel_Statusbar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField_callsign, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField_LAT, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField_callsign))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(43, 43, 43)
+                                .addComponent(jTextField_LAT, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -258,10 +251,14 @@ public class MainWindow extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField_HGT, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE))
+                        .addComponent(jTextField_HGT, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 102, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 680, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jToggleButton_Connect)
+                        .addGap(2, 2, 2)
+                        .addComponent(jLabel_ConnectionStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel_Statusbar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -270,22 +267,24 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField_callsign, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField_callsign, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField_LAT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField_LON, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
+                    .addComponent(jTextField_LON, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(jTextField_HGT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel_Statusbar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jToggleButton_Connect)
-                    .addComponent(jLabel_ConnectionStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel_ConnectionStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel_Statusbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
@@ -342,6 +341,10 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextField_HGTKeyReleased
 
+    private void jLabel_StatusbarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLabel_StatusbarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabel_StatusbarActionPerformed
+
     /**
      * Get state of connection button (should we send?)
      */
@@ -374,7 +377,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel_ConnectionStatus;
-    private javax.swing.JLabel jLabel_Statusbar;
+    private javax.swing.JTextField jLabel_Statusbar;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem_AddIdentity;
