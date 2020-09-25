@@ -6,7 +6,7 @@ The FGCom-mumble Radio GUI is a small Java Application that acts as client to th
 
 Install / Setup
 ----------------
-In order to run the tool, you need a java runtime with JavaFX support.
+In order to run the tool, you need a java runtime version >= 11.
 
 
 Running and usage
