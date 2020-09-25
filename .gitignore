@@ -48,3 +48,5 @@ frqtest
 
 # runtime config
 server/statuspage/config.ini
+*.stats
+*.db
