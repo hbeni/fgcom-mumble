@@ -32,6 +32,8 @@
 *.app
 geotest
 frqtest
+fgcom*.jar
+FGCom*.jar
 
 # Certs
 *.pem
