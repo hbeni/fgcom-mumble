@@ -51,7 +51,7 @@ public class About_Help extends javax.swing.JFrame {
         jTextArea1.setColumns(20);
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
-        jTextArea1.setText("When opening, you are presented with an empty application.\n\nAfter startup the GUI initializes with a default config (location, radio stack). Adjust that as needed and then hit the \"connect\" button to actually send data to the mumble plugin.\n\nYou can run several instances of the application at once to have different clients connecting to the same mumble plugin.\n\nYou can add and remove arbitary numbers of radios. Using the radios is simple:\n - Tune the frequency\n - push PTT for transmitting.");
+        jTextArea1.setText("After startup the GUI initializes with a default config (location, radio stack). Adjust that as needed and then hit the \"connect\" button to actually send data to the mumble plugin.\nYou may, for example add more Radios \n\nYou can run several instances of the application at once to have different clients connecting to the same mumble plugin.\n\nYou can add and remove arbitary numbers of radios from the \"RadioGUI\" menu.\nUsing the radios is simple:\n - Tune the frequency\n - Push PTT for transmitting.\n - You can deactivate a radio by toggling the ON/OFF button. Disabled radios will not send, neither receive.\n\nMost elements supply a short description when you hover your mouse over them.");
         jTextArea1.setWrapStyleWord(true);
         jTextArea1.setOpaque(false);
         jScrollPane1.setViewportView(jTextArea1);
@@ -83,7 +83,7 @@ public class About_Help extends javax.swing.JFrame {
                                 .addComponent(jLabel3))
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
-                        .addGap(0, 181, Short.MAX_VALUE))))
+                        .addGap(0, 213, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -94,7 +94,7 @@ public class About_Help extends javax.swing.JFrame {
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
