@@ -55,6 +55,12 @@
     <node>/instrumentation/comm[0]/frequencies/selected-real-frequency-mhz</node>
    </chunk>
    <chunk>
+    <name>com1-channel-width-khz</name>
+    <type>string</type>
+    <format>COM1_CWKHZ=%s</format>
+    <node>/instrumentation/comm[0]/frequencies/selected-channel-width-khz</node>
+   </chunk>
+   <chunk>
     <name>com1-powered</name>
     <type>string</type>
     <format>COM1_VLT=%s</format> <!-- in volts -->
@@ -109,6 +115,12 @@
     <type>string</type>
     <format>COM2_FRQ=%s</format>
     <node>/instrumentation/comm[1]/frequencies/selected-real-frequency-mhz</node>
+   </chunk>
+   <chunk>
+    <name>com2-channel-width-khz</name>
+    <type>string</type>
+    <format>COM2_CWKHZ=%s</format>
+    <node>/instrumentation/comm[1]/frequencies/selected-channel-width-khz</node>
    </chunk>
    <chunk>
     <name>com2-powered</name>
