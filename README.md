@@ -27,6 +27,7 @@ The documentation is split up into relevant parts:
 - Readme.md (*this file*): General overview and client documentation ([deutsche Version](README-de_DE.md))
 - [Readme.architecture.md](Readme.architecture.md) Details about the components that make up the system
 - [client/plugin.spec.md](client/plugin.spec.md) Technical details on plugin design and its input/output data formats
+- [client/radioGUI/Readme.RadioGUI.md](client/radioGUI/Readme.RadioGUI.md) Documentation for the Radio GUI client
 - [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
 
@@ -136,7 +137,7 @@ Test frequencies are provided by a specialized server side bot. Look for the bot
 The following traditional FGCom frequencies are not special anymore; these are now implemented trough "default" comms (they were special before because of asterisk implementation details).
 
 - 121.000 MHz, 121.500 MHz: "guard" frequencies reserved for emergency communications;
-- 123.450 MHz, 123.500 MHz, 122.750 MHz: general chat frequencies;
+- 123.450 MHz, 123.500 MHz, 122.750 MHz: general chat frequencies (they are obsolete anyway since 8.33 channels where introduced 20.12.2019! -> new is 122.540, 122.555, 130.430 MHz);
 - 700.000 MHz: radio station frequency. Depending on the FGCom server in use, a recorded radio message will be played;
 - 723.340 MHz: French Air Patrol communication frequency;
 
@@ -159,6 +160,7 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 - Check that your software (ATC, flightsim) actually sends data to the plugin udp port. Recheck the port the plugin listens to (the plugin tells you at startup in the mumble chat window)
 - Check mumbles client comment if the callsign and radio frequencies are registered
 - Look at the plugins debug messages (start mumble from terminal; you need to make a debug build for that)
+- Look at the murmur server log for possible dropped plugin messages (`murmur.ini` *`pluginmessagelimit`* may be too restrictive)
 
 
 Compiling the plugin
