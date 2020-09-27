@@ -50,3 +50,4 @@ frqtest
 server/statuspage/config.ini
 *.stats
 *.db
+/client/radioGUI/target/
