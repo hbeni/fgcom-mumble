@@ -342,8 +342,11 @@ public class RadioInstance extends javax.swing.JInternalFrame {
 
     private void jSlider_txPWRStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_txPWRStateChanged
         float v = (float)jSlider_txPWR.getValue();
-        radioBackend.setPower(v);
         updateLabels();
+        
+        // RadioBackend should ony be updated once the slider settles down.
+        // this avoids excessive plugin updates to remote instances.
+        if(!jSlider_txPWR.getValueIsAdjusting()) radioBackend.setPower(v);
     }//GEN-LAST:event_jSlider_txPWRStateChanged
 
     private void jSlider_squelchStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_squelchStateChanged
