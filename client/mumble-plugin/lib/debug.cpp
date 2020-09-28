@@ -47,6 +47,7 @@ void debug_out_internal_state() {
                     printf("  Radio %i:      volume=%f\n", i, lcl.radios[i].volume);
                     printf("  Radio %i:         pwr=%f\n", i, lcl.radios[i].pwr);
                     printf("  Radio %i:     squelch=%f\n", i, lcl.radios[i].squelch);
+                    printf("  Radio %i:  chan_width=%2.2f\n", i, lcl.radios[i].channelWidth);
                     printf("  Radio %i: RDF_enabled=%i\n", i, lcl.radios[i].rdfEnabled);
                 }
             }
@@ -70,15 +71,15 @@ void debug_out_internal_state() {
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
                         printf("  Radio %i:   frequency='%s'\n", i, rmt.radios[i].frequency.c_str());
-                        printf("  Radio %i:   power_btn=%i\n", i, rmt.radios[i].power_btn);
-                        printf("  Radio %i:       volts=%f\n", i, rmt.radios[i].volts);
-                        printf("  Radio %i: serviceable=%i\n", i, rmt.radios[i].serviceable);
-                        printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(rmt.radios[i]));
+                        //printf("  Radio %i:   power_btn=%i\n", i, rmt.radios[i].power_btn);
+                        //printf("  Radio %i:       volts=%f\n", i, rmt.radios[i].volts);
+                        //printf("  Radio %i: serviceable=%i\n", i, rmt.radios[i].serviceable);
+                        //printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(rmt.radios[i]));
                         printf("  Radio %i:         ptt=%i\n", i, rmt.radios[i].ptt);
-                        printf("  Radio %i:      volume=%f\n", i, rmt.radios[i].volume);
+                        //printf("  Radio %i:      volume=%f\n", i, rmt.radios[i].volume);
                         printf("  Radio %i:         pwr=%f\n", i, rmt.radios[i].pwr);
-                        printf("  Radio %i:     squelch=%f\n", i, rmt.radios[i].squelch);
-                        printf("  Radio %i: RDF_enabled=%i\n", i, rmt.radios[i].rdfEnabled);
+                        //printf("  Radio %i:     squelch=%f\n", i, rmt.radios[i].squelch);
+                        //printf("  Radio %i: RDF_enabled=%i\n", i, rmt.radios[i].rdfEnabled);
                     }
                 }
             }
