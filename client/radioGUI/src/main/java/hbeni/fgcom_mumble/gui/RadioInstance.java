@@ -37,6 +37,8 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jSlider_volume.setValue(Math.round(r.getVolume()*100));
         jSlider_squelch.setValue(Math.round(r.getSquelch()*100));
         jToggleButton_ONOFF.setSelected(r.getPwrBtn());
+        if (r.getChannelWidth() == 8.33f) jRadioButton_radioType833.setSelected(true);
+        if (r.getChannelWidth() == 25.0f) jRadioButton_radioType25.setSelected(true);
         updateLabels();
         updateONOFFTooltip();
         
@@ -81,6 +83,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        radioTypeGroup = new javax.swing.ButtonGroup();
         jTextField_frqActive = new javax.swing.JTextField();
         jTextField_frqSpare = new javax.swing.JTextField();
         jButton_swapFRQ = new javax.swing.JButton();
@@ -98,6 +101,9 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         jToggleButton_ONOFF = new javax.swing.JToggleButton();
         jComboBox_Templates = new javax.swing.JComboBox<>();
+        jRadioButton_radioType833 = new javax.swing.JRadioButton();
+        jRadioButton_radioType25 = new javax.swing.JRadioButton();
+        jLabel6 = new javax.swing.JLabel();
 
         setClosable(true);
         setMaximumSize(new java.awt.Dimension(620, 200));
@@ -196,6 +202,24 @@ public class RadioInstance extends javax.swing.JInternalFrame {
             }
         });
 
+        radioTypeGroup.add(jRadioButton_radioType833);
+        jRadioButton_radioType833.setText("8.33 kHz");
+        jRadioButton_radioType833.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton_radioType833ActionPerformed(evt);
+            }
+        });
+
+        radioTypeGroup.add(jRadioButton_radioType25);
+        jRadioButton_radioType25.setText("25 kHz");
+        jRadioButton_radioType25.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton_radioType25ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("Type");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -222,13 +246,21 @@ public class RadioInstance extends javax.swing.JInternalFrame {
                             .addComponent(jSlider_volume, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jSlider_txPWR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jSlider_squelch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(50, 50, 50)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jComboBox_Templates, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(38, 38, 38)
+                                .addComponent(jComboBox_Templates, 0, 1, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jToggleButton_ONOFF))
-                            .addComponent(jButton_PTT, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(4, 4, 4)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jRadioButton_radioType833)
+                                    .addComponent(jRadioButton_radioType25))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton_PTT, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -278,7 +310,13 @@ public class RadioInstance extends javax.swing.JInternalFrame {
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel_squelch)
                                 .addComponent(jLabel3))))
-                    .addComponent(jButton_PTT, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton_PTT, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jRadioButton_radioType833))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButton_radioType25)))
                 .addContainerGap(13, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -335,6 +373,18 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jComboBox_Templates.setSelectedIndex(0);
     }//GEN-LAST:event_jComboBox_TemplatesActionPerformed
 
+    private void jRadioButton_radioType833ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton_radioType833ActionPerformed
+        if (jRadioButton_radioType833.isSelected()) {
+            radioBackend.setChannelWidth(8.33f);
+        }
+    }//GEN-LAST:event_jRadioButton_radioType833ActionPerformed
+
+    private void jRadioButton_radioType25ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton_radioType25ActionPerformed
+        if (jRadioButton_radioType25.isSelected()) {
+            radioBackend.setChannelWidth(25.00f);
+        }
+    }//GEN-LAST:event_jRadioButton_radioType25ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_PTT;
@@ -345,14 +395,18 @@ public class RadioInstance extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel_PWRVal;
     private javax.swing.JLabel jLabel_VolVal;
     private javax.swing.JLabel jLabel_squelch;
+    private javax.swing.JRadioButton jRadioButton_radioType25;
+    private javax.swing.JRadioButton jRadioButton_radioType833;
     private javax.swing.JSlider jSlider_squelch;
     private javax.swing.JSlider jSlider_txPWR;
     private javax.swing.JSlider jSlider_volume;
     private javax.swing.JTextField jTextField_frqActive;
     private javax.swing.JTextField jTextField_frqSpare;
     private javax.swing.JToggleButton jToggleButton_ONOFF;
+    private javax.swing.ButtonGroup radioTypeGroup;
     // End of variables declaration//GEN-END:variables
 }

@@ -15,6 +15,7 @@ public class Radio {
     protected float   squelch;
     protected boolean ptt;     // tx-pwr in Watts
     protected boolean pwrbtn;
+    protected float   channelWidth;
 
     public Radio() {
         setFrequency("");
@@ -23,6 +24,7 @@ public class Radio {
         setSquelch(0.1f);
         setPTT(false);
         setPwrBtn(true);
+        setChannelWidth(8.33f);
     }
     public Radio(String frq) {
         this();
@@ -44,6 +46,9 @@ public class Radio {
     public synchronized void setPwrBtn(boolean b) {
         pwrbtn = b;
     }
+    public synchronized void setChannelWidth(float kHz) {
+        channelWidth = kHz;
+    }
 
     public synchronized String getFrequency() {
         return frq;
@@ -59,6 +64,9 @@ public class Radio {
     }
     public synchronized boolean getPwrBtn() {
         return pwrbtn;
+    }
+    public float getChannelWidth() {
+        return channelWidth;
     }
     
     /**
