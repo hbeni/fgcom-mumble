@@ -79,6 +79,7 @@ public class UDPclient {
             msg += ",COM"+i+"_VOL="+r.getVolume();
             msg += ",COM"+i+"_PWR="+r.getPower();
             msg += ",COM"+i+"_SQC="+r.getSquelch();
+            msg += ",COM"+i+"_CWKHZ="+r.getChannelWidth();
             
             String pbtn = (r.getPwrBtn())? "1" : "0";
             msg += ",COM"+i+"_PBT="+pbtn;
