@@ -40,8 +40,8 @@ int main (int argc, char **argv) {
     std::string frq1 = argv[1];
     std::string frq2 = argv[2];
     
-    FGCom_radiowaveModel *frq1_model = FGCom_radiowaveModel::selectModel(frq1);
-    FGCom_radiowaveModel *frq2_model = FGCom_radiowaveModel::selectModel(frq2);
+    std::unique_ptr<FGCom_radiowaveModel> frq1_model = FGCom_radiowaveModel::selectModel(frq1);
+    std::unique_ptr<FGCom_radiowaveModel> frq2_model = FGCom_radiowaveModel::selectModel(frq2);
     
     fgcom_radiowave_freqConvRes frq1_p = FGCom_radiowaveModel::splitFreqString(frq1);
     std::string frq1_real = frq1_model->conv_chan2freq(frq1_p.frequency);
@@ -57,7 +57,7 @@ int main (int argc, char **argv) {
     printf("pFrq[2]    = '%s' \n", frq2_p.frequency.c_str());
     printf("realFrq[2] = '%s' \n", frq2_real.c_str());
     
-    if (frq1_model->isCompatible(frq2_model)) {
+    if (frq1_model->isCompatible(frq2_model.get())) {
         printf("matchFilter = (%s==%s) %.5f \n", frq1_real.c_str(), frq2_real.c_str(), frq1_model->getFrqMatch(frq1_real, frq2_real));
     } else {
         printf("matchFilter = (%s==%s) models not compatible\n", frq1_real.c_str(), frq2_real.c_str());
