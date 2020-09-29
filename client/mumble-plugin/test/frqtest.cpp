@@ -29,16 +29,16 @@ using namespace std;
 
 int main (int argc, char **argv) {
 
-    if (argc != 3) {
+    if (argc < 3) {
         cout << "Test tool for FGCom radio lib\n";
         cout << "The tool accepts two frequencies and prints informations about them.\n";
-        cout << "\nUsage: " << argv[0] << " frq1 frq2\n";
-        cout << "\nExample: `" << argv[0] << " 118.030  118.035`\n";
+        cout << "\nUsage: " << argv[0] << " frq1 frq2 [ch_width]\n";
+        cout << "\nExample: `" << argv[0] << " 118.030  118.035  8.33`\n";
         return 0;
     }
     
-    std::string frq1 = argv[1];
-    std::string frq2 = argv[2];
+    std::string frq1    = argv[1];
+    std::string frq2    = argv[2];
     
     std::unique_ptr<FGCom_radiowaveModel> frq1_model = FGCom_radiowaveModel::selectModel(frq1);
     std::unique_ptr<FGCom_radiowaveModel> frq2_model = FGCom_radiowaveModel::selectModel(frq2);
@@ -58,7 +58,15 @@ int main (int argc, char **argv) {
     printf("realFrq[2] = '%s' \n", frq2_real.c_str());
     
     if (frq1_model->isCompatible(frq2_model.get())) {
-        printf("matchFilter = (%s==%s) %.5f \n", frq1_real.c_str(), frq2_real.c_str(), frq1_model->getFrqMatch(frq1_real, frq2_real));
+        fgcom_radio r1;
+        r1.frequency = frq1_real;
+        if (argc > 3) {
+            r1.channelWidth = std::stof(argv[3]);
+            printf("channelWidth = '%s' \n", argv[3]);
+        }
+        fgcom_radio r2;
+        r2.frequency = frq2_real;
+        printf("matchFilter = (%s==%s) %.5f \n", frq1_real.c_str(), frq2_real.c_str(), frq1_model->getFrqMatch(r1, r2));
     } else {
         printf("matchFilter = (%s==%s) models not compatible\n", frq1_real.c_str(), frq2_real.c_str());
     }

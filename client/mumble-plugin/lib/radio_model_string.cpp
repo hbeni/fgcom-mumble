@@ -48,8 +48,8 @@ public:
 
 
     // frequencies match if the string is case-sensitively the same
-    float getFrqMatch(std::string frq1_real, std::string frq2_real) {
-        return (frq1_real == frq2_real)? 1.0 : 0.0 ;
+    float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
+        return (r1.frequency == r2.frequency)? 1.0 : 0.0 ;
     }
     
 };

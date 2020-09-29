@@ -195,3 +195,31 @@ double FGCom_radiowaveModel::getSurfaceDistance(double lat1, double lon1,
     double c = 2 * asin(sqrt(a)); 
     return rad * c; 
 }
+
+
+//Generic channel width/spacing detection; may be used from the getFrqMatch() implementations
+float FGCom_radiowaveModel::getChannelAlignment(float frq1_real, float frq2_real, float width_kHz, float core_kHz) {
+    //std::cout << "DBG: FGCom_radiowaveModel::getChannelAlignment() called with:  frq1_real="<<frq1_real<<"; frq2_real="<<frq2_real<<"; width_kHZ="<<width_kHZ<<"; core_kHz=" << core_kHz << std::endl;
+    
+    // param checks: those need to be defined with concrete values
+    if (width_kHz < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: width_kHz not defined!";
+    if (core_kHz  < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: core_kHz not defined!";
+    
+    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    float filter = 0.0; // no match in case of errors
+    
+    // TODO: currently a naive linear function, maybe adjust to curve:
+    //       We make the difference absolute, so just looking at the half channel (it's mirrored on the left side of the center).
+    //       If inside the core, we have 100% match. Outside, we decline linearly to zero.
+    float diff_kHz     = std::fabs(frq1_real - frq2_real) * 1000; // difference in kHz
+    float widthKhz_eff = (width_kHz) / 2;  // half band
+    float corekHz_eff  = core_kHz  / 2;  // half band
+
+    filter = 1 - diff_kHz + corekHz_eff;
+    filter = 1 - (1/(widthKhz_eff-corekHz_eff)) * diff_kHz + corekHz_eff*1/(widthKhz_eff-corekHz_eff);  // 1-(1/(6-2.5))*x+2.5*1/(6-2.5)
+    //std::cout << "DBG: FGCom_radiowaveModel::getChannelAlignment(): calc result="<<filter<<"; params: diff_kHz=" << diff_kHz << "; widthKhZ_eff="<< widthKhz_eff << "; corekHz_eff="<<corekHz_eff  <<std::endl;
+    if (filter > 1.0) filter = 1.0;
+    if (filter < 0.0) filter = 0.0;
+
+    return filter;
+}

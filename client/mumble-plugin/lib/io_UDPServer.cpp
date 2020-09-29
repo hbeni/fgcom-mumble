@@ -312,7 +312,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                             pluginDbg("[UDP-server] UDP-client started");
                         }
                     }
-                  
+                    if (radio_var == "CWKHZ") {
+                        float oldValue = fgcom_local_client[iid].radios[radio_id].channelWidth;
+                        fgcom_local_client[iid].radios[radio_id].channelWidth = std::stof(token_value);
+                        // do not send right now: if (fgcom_local_client[iid].radios[radio_id].channelWidth != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                    }
+                    
                 }
                 
                 

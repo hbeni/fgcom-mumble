@@ -22,7 +22,7 @@
 /**
  * A HF based radio model for the FGCom-mumble plugin
  *
- * The model implements basic high frequency propagation.
+ * The model implements basic high frequency propagation (between 3 and 30 MHz).
  * Currently this is a simple model that justs takes distance and wattage into account.
  * Transmissions behind the radio horizon travel via ground waves, we simulate this by applying some loss to the signal.
  * TODO: advanced stuff like influences of day/night, terminator, sun spots, etc are not modelled yet.
@@ -93,40 +93,25 @@ public:
 
 
     // Frequency match is done with a band method, ie. a match is there if the bands overlap
-    float getFrqMatch(std::string frq1_real, std::string frq2_real) {
-        std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
-    
-        float filter = 0.0; // no match in case of errors
-        
-    //     std::cout << "FGCom_radiowaveModel_HF::getFrqMatch('" << frq1_real.c_str() << "', '" <<frq2_real.c_str() << "')" << std::endl;
-    //     std::cout << "FGCom_radiowaveModel_HF::getFrqMatch() default string match=" << filter << std::endl;
+    float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
+        // channel definition
+        // TODO: Note, i completely made up those numbers. I have no idea of tuning HF radios.
+        // TODO: I have read somewhere about 3kHz width: https://onlinelibrary.wiley.com/doi/abs/10.1002/0471208051.fre015
+        float width_kHz = r1.channelWidth;
+        if (width_kHz <= 0) width_kHz = 3.00;
+        float channel_core = 1.00;  // 1kHz = 0.5kHz to each side
         
         // see if we can it make more precise.
         // that is the case if we have numerical values (after ignoring prefixes).
+        float filter = 0.0;
         try {
-            fgcom_radiowave_freqConvRes frq1_p = FGCom_radiowaveModel::splitFreqString(frq1_real);
-            fgcom_radiowave_freqConvRes frq2_p = FGCom_radiowaveModel::splitFreqString(frq2_real);
+            fgcom_radiowave_freqConvRes frq1_p = FGCom_radiowaveModel::splitFreqString(r1.frequency);
+            fgcom_radiowave_freqConvRes frq2_p = FGCom_radiowaveModel::splitFreqString(r2.frequency);
             if (frq1_p.isNumeric && frq2_p.isNumeric) {
                 // numeric frequencies
                 float frq1_f = std::stof(frq1_p.frequency);
                 float frq2_f = std::stof(frq2_p.frequency);
-                
-                // calculate absolute "off" tuning / tunable window
-                // 2-4000x   => gives >1.0 at 0.00025 (1/4kHz) difference, declining to 0.0. at 0.0005 (1/2 kHz),
-                //              yielding a tunable band of 1kHz around the channel center,
-                //              where the range +-1/4kHz is perfect signal and 50% signal is at about 1/8kHz off.
-                // TODO: Note, i completely made up those numbers. I have no idea of tuning HF radios.
-                float diff = std::fabs(frq1_f - frq2_f);
-    //             std::cout << "DBG CALC:" << std::endl;
-    //             std::cout << "   frq1_p=" << frq1_p.frequency << std::endl;
-    //             std::cout << "   frq1_f=" << frq1_f << std::endl;
-    //             std::cout << "   frq2_p=" << frq2_p.frequency << std::endl;
-    //             std::cout << "   frq2_f=" << frq1_f << std::endl;
-                filter     = 2 - 4000 * diff;
-    //             std::cout << "   diff=" << diff << "; filter=" << filter << std::endl;
-                if (filter > 1.0) filter = 1.0;
-                if (filter < 0.0) filter = 0.0;
-                
+                filter = this->getChannelAlignment(frq1_f, frq2_f, width_kHz, channel_core);
                 return filter;
             } else {
                 // not numeric: return default

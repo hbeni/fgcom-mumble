@@ -22,7 +22,7 @@
 /**
  * A VHF based radio model for the FGCom-mumble plugin
  *
- * The model implements basic line-of-sight characteristics.
+ * The model implements basic line-of-sight characteristics for VHF spectrum (30 to 300 MHz).
  */
 class FGCom_radiowaveModel_VHF : public FGCom_radiowaveModel {
 protected:
@@ -163,7 +163,7 @@ public:
                     return tgtfrq+"00";
                 } else {
                     // get the nearest multiple of the spacing
-                    float spacing_MHz = .025 / 3;   // 8.33 kHz in mHz = 0.00833333
+                    float spacing_MHz = .025 / 3;   // 8.33 kHz in MHz = 0.00833333
                     float tgtfrq_f = std::stof(tgtfrq);
                     int ch_833 = round(tgtfrq_f / spacing_MHz);    // get 8.33 channel number; eg round( 118.025 / 0.0083333)
                     float realFrq_f = ch_833 * spacing_MHz; // calculate 8real .33 channel numbers frequency
@@ -190,40 +190,23 @@ public:
 
 
     // Frequency match is done with a band method, ie. a match is there if the bands overlap
-    float getFrqMatch(std::string frq1_real, std::string frq2_real) {
-        std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
-    
-        float filter = 0.0; // no match in case of errors
-        
-    //     std::cout << "FGCom_radiowaveModel_VHF::getFrqMatch('" << frq1_real.c_str() << "', '" <<frq2_real.c_str() << "')" << std::endl;
-    //     std::cout << "FGCom_radiowaveModel_VHF::getFrqMatch() default string match=" << filter << std::endl;
+    float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
+        // channel definition
+        float width_kHz = r1.channelWidth;
+        if (width_kHz <= 0) width_kHz = 8.33;
+        float channel_core = 2.00;  // 2000Hz channel core, where tunings result in perfect condition (7.33->9.33kHz, 1kHz to each side)
         
         // see if we can it make more precise.
         // that is the case if we have numerical values (after ignoring prefixes).
+        float filter = 0.0;
         try {
-            fgcom_radiowave_freqConvRes frq1_p = FGCom_radiowaveModel::splitFreqString(frq1_real);
-            fgcom_radiowave_freqConvRes frq2_p = FGCom_radiowaveModel::splitFreqString(frq2_real);
+            fgcom_radiowave_freqConvRes frq1_p = FGCom_radiowaveModel::splitFreqString(r1.frequency);
+            fgcom_radiowave_freqConvRes frq2_p = FGCom_radiowaveModel::splitFreqString(r2.frequency);
             if (frq1_p.isNumeric && frq2_p.isNumeric) {
                 // numeric frequencies
                 float frq1_f = std::stof(frq1_p.frequency);
                 float frq2_f = std::stof(frq2_p.frequency);
-                
-                // calculate absolute "off" tuning / tunable window
-                // 1.5-500x  => gives >1.0 at 0.001 (1kHz) difference, declining to 0.0. at 0.003 (3 kHz),
-                //              yielding a tunable band of 6kHz around the 8.33kHz channel center,
-                //              where the range 7.33->9.33 is perfect signal and 50% signal is at about 2kHz off.
-                // TODO: Note, i completely made up those numbers. I have no idea of tuning radios. I just wanted to make sure, that 25kHz radios will receive 8.33 channels with overlapping stepsize while keeping the 8.33 channels distinct and with a gap between windows...
-                float diff = std::fabs(frq1_f - frq2_f);
-    //             std::cout << "DBG CALC:" << std::endl;
-    //             std::cout << "   frq1_p=" << frq1_p.frequency << std::endl;
-    //             std::cout << "   frq1_f=" << frq1_f << std::endl;
-    //             std::cout << "   frq2_p=" << frq2_p.frequency << std::endl;
-    //             std::cout << "   frq2_f=" << frq1_f << std::endl;
-                filter     = 1.5 - 500 * diff;
-    //             std::cout << "   diff=" << diff << "; filter=" << filter << std::endl;
-                if (filter > 1.0) filter = 1.0;
-                if (filter < 0.0) filter = 0.0;
-                
+                filter = this->getChannelAlignment(frq1_f, frq2_f, width_kHz, channel_core);
                 return filter;
             } else {
                 // not numeric: return default
@@ -234,5 +217,5 @@ public:
             return filter;
         }
     }
-    
+
 };
