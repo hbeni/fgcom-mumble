@@ -31,6 +31,34 @@
 #define EARTH_RADIUS_AVG   6371  // earth radius constant in km
 
 
+// This represents the state of a radio
+struct fgcom_radio {
+	std::string  frequency; // tuned frequency (real carrier frequency)
+	bool  power_btn;     // true if switched on
+	float volts;         // how much electric power it has (>0 = on)
+	bool  serviceable;   // false if broken
+	bool  ptt;           // true if PTT is pushed
+	float volume;        // volume, 0.0->1.0
+	float pwr;           // tx power in watts
+	float squelch;       // squelch setting (cutoff signal below this quality)
+	bool  rdfEnabled;    // if radio can receive RDF information
+	float channelWidth;  // channel width in kHz
+	
+	fgcom_radio()  {
+        frequency   = "";
+        power_btn   = true;
+        volts       = 12;
+        serviceable = true;
+        ptt         = false;
+        volume      = 1.0;
+        pwr         = 10;
+        squelch     = 0.1;
+        rdfEnabled  = false;
+        channelWidth = -1;   // let the selected radio model decide on defaults
+    };
+};
+
+
 // Received signal information for a radio instance
 // direction and verticalAngle are only valid if qualtiy > 0.0
 struct fgcom_radiowave_signal {
@@ -100,31 +128,47 @@ public:
     */
     virtual std::string conv_chan2freq(std::string frq) = 0;
 
-
+    
     /*
-    * See if the frequencies match.
-    * 
-    * To see how "good" the frequencies match, a signal filter factor is returned.
-    * This may be used to simulate frequency overlap.
-    * if either frq1 or frq2 is non-numeric, a case sensitive string match is
-    * 
-    * Before comparing, invoke isCompatible() to see if comparison is possible.
-    * 
-    * @param  frq1  first frequency (real wave freq)
-    * @param  frq2  second frequency (real wave freq)
-    * @return float signal filter factor, 0.0=no match, 1.0=perfect match
+    * See how good frequencies of two radios align.
+    *
+    * This method may call getChannelAlignment() for convinience.
+    *
+    * @param  r1 first radio
+    * @param  r2 second radio
+    * @return float alignment factor: 0.0=outside band, 1.0=in core region
     */
-    virtual float getFrqMatch(std::string frq1_real, std::string frq2_real) = 0;
-    
-    
-    
-    
+    virtual float getFrqMatch(fgcom_radio r1, fgcom_radio r2) = 0;
+
 
     /********************************************************************/
     /*  Abstract methods; they are usually not needed to be overloaded, */
     /*  the base class defines defaults and concrete models are         */
     /*  supposed to use those.                                          */
     /********************************************************************/
+    
+    
+    /*
+    * See how good frequencies align, based on a channel definition.
+    *
+    * We assume that the frequencies are discrete frequencies, so no off-band tuning is possible.
+    * (ie. one of the frequencies is always assumed to aligned with the channels center carrier frequency;
+    *  This may be easily used to check if a channel is tuned to the carrier channel spacing correctly.)
+    *
+    * A channel has a defined bandwidth. The core region defines the range where a "perfect" fit is assumed.
+    * The difference of channel width and core region define the steepness of the tuning courve outside the core region.
+    *
+    * This method is intended to be use by concrete getFrqMatch() implementations of the models. They may call
+    * the parameterized abstract implementation given here.
+    * The paameters width_kHz and core_kHz must be greater zero, otherwise an error is thrown.
+    *
+    * @param  frq1_real   first frequency (real wave freq in mHz)
+    * @param  frq2_real   second frequency (real wave freq in mHz)
+    * @param  width_kHz   channel width in kHz
+    * @param  core_kHz    core region width in kHz
+    * @return float alignment factor: 0.0=outside band, 1.0=in core region
+    */
+    virtual float getChannelAlignment(float frq1_real, float frq2_real, float width_kHz, float core_kHz);
     
     
     /*
