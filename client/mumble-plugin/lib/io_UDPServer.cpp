@@ -222,7 +222,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                                 // we expect 25kHz or 8.33 channel names here.
                                 // So if we encounter such data, we probably need to convert the frequency part
                                 pluginDbg("[UDP-server] detected old FGCom frequency format="+token_value);
-                                FGCom_radiowaveModel *radio_model = FGCom_radiowaveModel::selectModel(frq_parsed.frequency);
+                                std::unique_ptr<FGCom_radiowaveModel> radio_model = FGCom_radiowaveModel::selectModel(frq_parsed.frequency);
                                 finalParsedFRQ = frq_parsed.prefix + radio_model->conv_chan2freq(frq_parsed.frequency);
                                 pluginDbg("[UDP-server] conversion result to realFreq="+finalParsedFRQ);
                             }

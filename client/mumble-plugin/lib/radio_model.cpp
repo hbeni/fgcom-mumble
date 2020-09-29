@@ -45,24 +45,24 @@
 * @param  freq the frequency string
 * @return FGCom_radiowaveModel instance that handles the frequency
 */
-FGCom_radiowaveModel* FGCom_radiowaveModel::selectModel(std::string freq) {
+std::unique_ptr<FGCom_radiowaveModel> FGCom_radiowaveModel::selectModel(std::string freq) {
     fgcom_radiowave_freqConvRes freq_p = FGCom_radiowaveModel::splitFreqString(freq);
     if (freq_p.isNumeric) {
         // Select model based on frequency band.
         // Models, that say they are compatible to each other may implement frequency band overlapping.
         
         float frq_num = std::stof(freq_p.frequency);
-        if (frq_num == 910.00) return new FGCom_radiowaveModel_VHF();  // echo test frequency (it is UHF, but needs to be treatened as VHF)
+        if (frq_num == 910.00) return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());  // echo test frequency (it is UHF, but needs to be treatened as VHF)
         
-        if (frq_num <=  30.0)                    return new FGCom_radiowaveModel_HF();
-        if (frq_num >  30.0 && frq_num <= 300.0) return new FGCom_radiowaveModel_VHF();
-        if (frq_num > 300.0)                     return new FGCom_radiowaveModel_UHF();
+        if (frq_num <=  30.0)                    return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_HF());
+        if (frq_num >  30.0 && frq_num <= 300.0) return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
+        if (frq_num > 300.0)                     return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_UHF());
         
         // every other case = frequency not handled specially yet: use VHF (line-of-sight) model
-        return new FGCom_radiowaveModel_VHF();
+        return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
     } else {
         // non-numeric: use string model
-        return new FGCom_radiowaveModel_String();
+        return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_String());
     }
 }
 

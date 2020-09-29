@@ -213,9 +213,9 @@ public:
     * This is implemented in the radio_model.cpp file, when all available radio models are known.
     * 
     * @param  freq the frequency string
-    * @return FGCom_radiowaveModel pointer to instance that handles the frequency stuff
+    * @return FGCom_radiowaveModel unique_ptr smart pointer to instance that handles the frequency stuff
     */
-    static FGCom_radiowaveModel* selectModel(std::string freq);
+    static std::unique_ptr<FGCom_radiowaveModel> selectModel(std::string freq);
     
     
     /*

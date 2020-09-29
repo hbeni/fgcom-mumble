@@ -60,7 +60,7 @@ int main (int argc, char **argv)
     cout << "  posA:  lat(" << lat1 << ") lon(" << lon1 << ") alt(" << h1 << ")" <<endl;
     cout << "  posB:  lat(" << lat2 << ") lon(" << lon2 << ") alt(" << h2 << ")" <<endl;
     
-    FGCom_radiowaveModel *radio_model_base = FGCom_radiowaveModel::selectModel("TEST");
+    std::unique_ptr<FGCom_radiowaveModel> radio_model_base = FGCom_radiowaveModel::selectModel("TEST");
     
     double dist = radio_model_base->getSurfaceDistance(lat1, lon1, lat2, lon2);
     printf("  posA <surface> posB = %.2fkm \n", dist);
@@ -90,7 +90,7 @@ int main (int argc, char **argv)
     
     if (argc >= 8) {
         // Radio frequency model range test
-        FGCom_radiowaveModel *radio_model = FGCom_radiowaveModel::selectModel(std::string(argv[7]));
+        std::unique_ptr<FGCom_radiowaveModel> radio_model = FGCom_radiowaveModel::selectModel(std::string(argv[7]));
         printf("  conducting radio range test for model '%s':\n", radio_model->getType().c_str());
         for (int pwr=0; pwr<=30; true) {
             struct fgcom_radiowave_signal sigStrengthAB = radio_model->getSignal(lat1, lon1, h1, lat2, lon2, h2, pwr);
