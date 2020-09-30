@@ -47,31 +47,6 @@ struct fgcom_config {
 extern struct fgcom_config fgcom_cfg;
 
 
-// This represents the state of a radio
-struct fgcom_radio {
-	std::string  frequency; // tuned frequency (real carrier frequency)
-	bool  power_btn;     // true if switched on
-	float volts;         // how much electric power it has (>0 = on)
-	bool  serviceable;   // false if broken
-	bool  ptt;           // true if PTT is pushed
-	float volume;        // volume, 0.0->1.0
-	float pwr;           // tx power in watts
-	float squelch;       // squelch setting (cutoff signal below this quality)
-	bool  rdfEnabled;    // if radio can receive RDF information
-	
-	fgcom_radio()  {
-        frequency   = "";
-        power_btn   = true;
-        volts       = 12;
-        serviceable = true;
-        ptt         = false;
-        volume      = 1.0;
-        pwr         = 10;
-        squelch     = 0.1;
-        rdfEnabled  = false;
-    };
-};
-
 // This represents a clients metadata
 struct fgcom_client {
 	mumble_userid_t mumid;  // mumble client ID

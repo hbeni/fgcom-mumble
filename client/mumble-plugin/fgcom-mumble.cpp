@@ -837,7 +837,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency));
                                 std::unique_ptr<FGCom_radiowaveModel> radio_model_rmt(FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency));
                                 if (radio_model_lcl->isCompatible(radio_model_rmt.get())) {
-                                    signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri].frequency, rmt.radios[ri].frequency);
+                                    signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri], rmt.radios[ri]);
                                     
                                 } else {
                                     pluginDbg("mumble_onAudioSourceFetched():       radio models not compatible: lcl_type="+radio_model_lcl->getType()+"; rmt_type="+radio_model_rmt->getType());
