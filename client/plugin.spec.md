@@ -48,14 +48,13 @@ Internal State Updates
 ----------------------
 Communication between plugins is handled by mumbles internal plugin data interface.
 
-When entering the fgcom-channel, your client will start to broadcast its state (and following changes) to remote clients.
-
-Each time a new client joins the fgcom channel, local plugins will broadcast their state to that client to get it updated with current data.
+When entering the `fgcom-mumble` channel, your client will broadcast its state (and following changes) to remote clients. Your client will then ask the already present clients in the channel for their state. Each remote client will then send his state to your client independently. (Both that actions will also occur if you activate your plugin while already inside the special channel).
 
 Notification of other clients take place on special events (like joining the channel or activating the plugin) and potentially when new data is recieved trough the UDP input interface:
 
  - Radio state updates and userstate are sent immediately ("urgent" notification).
  - Locationdata is sent at most at a rate of 1 Hz ("non-urgent"). If said data did not change for a period of time (10 seconds), a "ping" notification will be sent to others, notifying that the own plugin is still connected and alive.
+ - All state is sent in reply to the asking client on incoming data synchronization requests.
 
 
 Plugin input data
