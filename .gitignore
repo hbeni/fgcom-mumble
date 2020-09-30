@@ -32,6 +32,8 @@
 *.app
 geotest
 frqtest
+fgcom*.jar
+FGCom*.jar
 
 # Certs
 *.pem
@@ -50,3 +52,4 @@ frqtest
 server/statuspage/config.ini
 *.stats
 *.db
+/client/radioGUI/target/

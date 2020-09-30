@@ -31,6 +31,7 @@ Die Doku ist in folgende Dateien aufgeteilt:
 - Readme-de_DE.md (*diese Datei*): allgemeine Übersicht ([englisch](README.md))
 - [Readme.architecture.md](Readme.architecture.md) (engl.) Details über die Komponenten des Systems
 - [client/plugin.spec.md](client/plugin.spec.md) (engl.) Technische Spezifikation des mumble Plugins und seiner Schnittstellen
+- [client/radioGUI/Readme.RadioGUI.md](client/radioGUI/Readme.RadioGUI.md) Doku der Radio GUI Anwendung
 - [server/Readme.server-de_DE.md](server/Readme.server-de_DE.md) (deutsch) Details über die serverseitigen Koponenten und ihre Installation/Betrieb
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) (engl.) Technische Details über die Statuswebseite und deren Komponenten
 
@@ -127,7 +128,7 @@ Festnetz und Intercoms ist ein Feature, das vor allem für ATC-Clients gedacht i
 
 Um auf einer Festnetzleitung zu sprechen musst du:
 
-- Ein Funkgerät auf die Frequenz `PHONE:[ICAO]:[POS](:[Leitung])` stellen, z.B. `PHONE:EDDM:TWR:1` pder `PHONE:EDMO:GND`.
+- Ein Funkgerät auf die Frequenz `PHONE:[ICAO]:[POS](:[Leitung])` stellen, z.B. `PHONE:EDDM:TWR:1` oder `PHONE:EDMO:GND`.
 
 - Den push-to-talk Knopf wie üblich benutzen.
 
@@ -146,7 +147,7 @@ Testfrequenzen werden über einen speziellen serverseitigen mumblebot bereitgest
 Die folenden traditionellen FGCom Frequenzen sind nicht mher "speziell", sondern werden über die normale Implementierung abgedeckt (sie waren lediglich wegen Asterisk-Internas speziell).
 
 - 121.000 MHz, 121.500 MHz: Schutzfrequenzen für Notfälle;
-- 123.450 MHz, 123.500 MHz, 122.750 MHz: allgemeine Sprechfrequenzen;
+- 123.450 MHz, 123.500 MHz, 122.750 MHz: allgemeine Sprechfrequenzen (diese sind seit Einführung der 8.33-Kanälen am 20.12.2019 sowiso veraltet -> neu: 122.540, 122.555, 130.430 MHz);
 - 700.000 MHz: Radiosenderfrequenz (abhängig von der alten FGCom-Implementierung)
 - 723.340 MHz: Mil. Frequenz (Fanz. Flugpatroullie)
 
@@ -169,6 +170,7 @@ Falls du andere Piloten nicht hören kannst, oder nicht senden kannst, prüfe di
 - Stelle sicher, dass die Clientsoftware (ATC, Flugsimulator) wirklich daten an den UDP-Port des Plugins übermittelt. Prüfe auch den Port des Plugins nochmal nach (die Portnummer wird vom Plugin in den Mumble-Chat berichtet).
 - Prüfe den Kommentar deines Mumbleclients, ob das Callsign und die Funkgeräte registriert wurden.
 - Prüfe die Plugin-Debugnachrichten (Starte dafür mumble über eine Kommandozeile; du brauchst außerdem eine spezielle Pluginversion mit aktiver Debug-Konfiguration)
+- Prüfe das murmur server Fehlerlog nach Nachrichten zu abgewiesenen Pluginnachrichten (`murmur.ini` *`pluginmessagelimit`* ist möglicherweise zu restriktiv)
 
 
 Das Plugin selbst Kompilieren
