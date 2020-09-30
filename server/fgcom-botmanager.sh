@@ -181,6 +181,7 @@ fi
 # Botmanager watchdog
 {
     echo "watchdog starting..."
+    trap cleanup EXIT
     while [[ -p $fnotify ]]; do
         # Spawn the radio recorder bot
         botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua")
@@ -243,4 +244,4 @@ while true; do
     fi
 done
 
-echo "Reader exiting"
+echo "Botmanager exiting"
