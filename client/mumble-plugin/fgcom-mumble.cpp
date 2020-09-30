@@ -446,7 +446,7 @@ mumble_error_t fgcom_initPlugin() {
             mumAPI.freeMemory(ownPluginID, channels);
             
             
-            // In case we are already in the special channel, broadcast our state.
+            // In case we are already in the special channel, synchronize state.
             // This is especially for the case when we did connect and join the channel without
             // active plugin and are activating it now.
             pluginDbg("Check if we are already in the special channel and thus need to activate");
@@ -454,6 +454,7 @@ mumble_error_t fgcom_initPlugin() {
             mumble_error_t glcres = mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID);
             if (glcres == STATUS_OK) {
                 if (std::find(fgcom_specialChannelID.begin(), fgcom_specialChannelID.end(), localChannelID) != fgcom_specialChannelID.end()) {
+                    // Activate the plugin, and initialize synch (send state+ask for remote state)
                     pluginDbg("Already in special channel at init time: activating plugin.");
                     fgcom_setPluginActive(true);
                     notifyRemotes(0, NTFY_ALL); // send our state to all clients
@@ -711,14 +712,15 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
     if (userID == localMumId) {
         //stream << " OH! thats me! hello myself!";
         if (std::find(fgcom_specialChannelID.begin(), fgcom_specialChannelID.end(), newChannelID) != fgcom_specialChannelID.end()) {
+            // We joined a special channel. Let's update all channel members and request their state
             pluginDbg("joined special channel, activating plugin functions");
             fgcom_setPluginActive(true);
             notifyRemotes(0, NTFY_ALL); // send our state to all users
             notifyRemotes(0, NTFY_ASK); // request all other state
         }
     } else {
-        if (fgcom_isPluginActive()) { //TODO: Don't do this if we just joined the channel. Currently we notifiy two times :/
-            // if we are in the special channel, update new clinets with our state
+        if (fgcom_isPluginActive()) {
+            // Someone else joined this channel.
             // We should not send info to newly joined clients. The reason is, that we don't know if they have the plugin active already; so we will wait for them asking to send a NTFY_ASK packet.
             //pluginDbg("send state to freshly joined user");
             //notifyRemotes(0, NTFY_ALL, NTFY_ALL, userID);

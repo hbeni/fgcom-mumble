@@ -78,6 +78,11 @@ Note that frequencies can be arbitary strings. That said, all participating clie
 Also note that callsigns and frequencies are not allowed to contain the comma symbol (`,`). Decimal point symbol has always to be a point (`.`).
 
 
+### RadioGUI
+FGCom-mumble releases ship with a cross-plattform java application that implements most of the UDP protocol and thus can be used not only for testing purposes, but also real operations without the need for another client.  
+Core features are supported by any radioGUI version but use the latest to be sure to get all features (if in doubt, read the release notes).
+
+
 ### Flightgear specific
 - copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
 - start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
