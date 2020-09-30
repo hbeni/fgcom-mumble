@@ -120,7 +120,8 @@ Um eine ATIS-Aufzeichnung aufzunehmen, musst du:
 
 Normale Aufnahmen haben standardmäßig ein Serverseitigs Limit von 120 Sekunden.
 
-Bitte beachte: Es ist wahrscheinlich, dass dein ATC-Programm dies alles für dich bereits erleidgt und du nur einen "ATIS-Aufnahme"-Knopf zu drücken brauchst.
+Bitte beachte: Es ist wahrscheinlich, dass dein ATC-Programm dies alles für dich bereits erleidgt und du nur einen "ATIS-Aufnahme"-Knopf zu drücken brauchst.  
+Die FGCom-mumble RadioGUI hat eine Vorlage hierfür.
 
 
 ### Festnetz / Intercom
