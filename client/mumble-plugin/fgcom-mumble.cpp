@@ -228,7 +228,7 @@ void fgcom_updateClientComment() {
                 if (lcl.radios.size() > 0) {
                     for (int i=0; i<lcl.radios.size(); i++) {
                         if (i >= 1) frqs += ", ";
-                        frqs += lcl.radios[i].frequency;
+                        frqs += lcl.radios[i].dialedFRQ;
                     }
                 } else {
                     frqs = "-";
