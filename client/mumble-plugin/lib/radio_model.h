@@ -34,6 +34,7 @@
 // This represents the state of a radio
 struct fgcom_radio {
 	std::string  frequency; // tuned frequency (real carrier frequency)
+	std::string  dialedFRQ; // dialed frequency (aka "channel"; what was supplied from the COMn_FRQ= field)
 	bool  power_btn;     // true if switched on
 	float volts;         // how much electric power it has (>0 = on)
 	bool  serviceable;   // false if broken
@@ -46,6 +47,7 @@ struct fgcom_radio {
 	
 	fgcom_radio()  {
         frequency   = "";
+        dialedFRQ   = "";
         power_btn   = true;
         volts       = 12;
         serviceable = true;

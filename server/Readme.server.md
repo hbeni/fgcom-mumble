@@ -98,18 +98,19 @@ Its content begins with a linewise human readable `string` formatted header, eac
 
 | Line | Content                                |
 |------|----------------------------------------|
-|   1  | Version and Type field: "1.0 FGCS"     |
+|   1  | Version and Type field: "1.1 FGCS"     |
 |   2  | Callsign                               |
 |   3  | LAT          (decimal)                 |
 |   4  | LON          (decimal)                 |
 |   5  | HGT          (altitude in meter AGL)   |
-|   6  | Frequency                              |
-|   7  | TX-Power     (in Watts)                |
-|   8  | PlaybackType (`oneshot` or `loop`)     |
-|   9  | TimeToLive   (seconds; `0`=persistent) |
-|  10  | RecTimestamp (unix timestamp)          |
-|  11  | VoiceCodec   (`int` from lua-mumble)   |
-|  12  | SampleSpeed  (seconds between samples) |
+|   6  | Frequency    (real wave carrier)       |
+|   7  | Dialed Frequency                       |
+|   8  | TX-Power     (in Watts)                |
+|   9  | PlaybackType (`oneshot` or `loop`)     |
+|  10  | TimeToLive   (seconds; `0`=persistent) |
+|  11  | RecTimestamp (unix timestamp)          |
+|  12  | VoiceCodec   (`int` from lua-mumble)   |
+|  13  | SampleSpeed  (seconds between samples) |
 
 This header is directly followed with a variable ammount of voice packets; they each have the format `<(2 bytes)length><(n bytes)voice>`.
 

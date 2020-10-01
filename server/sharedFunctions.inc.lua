@@ -70,7 +70,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.2",
+    libversion = "1.3",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -115,18 +115,19 @@ fgcom = {
         -- Read and parse FGCS header
         -- | Line | Content                                |
         -- |------|----------------------------------------|
-        -- |   1  | Version and Type field: "1.0 FGCS"     |
+        -- |   1  | Version and Type field: "1.1 FGCS"     |
         -- |   2  | Callsign                               |
         -- |   3  | LAT          (decimal)                 |
         -- |   4  | LON          (decimal)                 |
         -- |   5  | HGT          (altitude in meter AGL)   |
-        -- |   6  | Frequency                              |
-        -- |   7  | TX-Power     (in Watts)                |
-        -- |   8  | PlaybackType (`oneshot` or `loop`)     |
-        -- |   9  | TimeToLive   (seconds; `0`=persistent) |
-        -- |  10  | RecTimestamp (unix timestamp)          |
-        -- |  11  | VoiceCodec   (`int` from lua-mumble)   |
-        -- |  12  | SampleSpeed  (seconds between samples) |
+        -- |   6  | Frequency    (real wave carrier)       |
+        -- |   7  | Dialed Frequency                       |
+        -- |   8  | TX-Power     (in Watts)                |
+        -- |   9  | PlaybackType (`oneshot` or `loop`)     |
+        -- |  10  | TimeToLive   (seconds; `0`=persistent) |
+        -- |  11  | RecTimestamp (unix timestamp)          |
+        -- |  12  | VoiceCodec   (`int` from lua-mumble)   |
+        -- |  13  | SampleSpeed  (seconds between samples) |
         --
         -- @param fh filehandle to read from
         -- @return table with the header data or false on error
@@ -138,6 +139,7 @@ fgcom = {
             header.lon          = fh:read("*line")
             header.height       = fh:read("*line")
             header.frequency    = fh:read("*line")
+            header.dialedFRQ    = fh:read("*line")
             header.txpower      = fh:read("*line")
             header.playbacktype = fh:read("*line")
             header.timetolive   = fh:read("*line")
@@ -147,6 +149,7 @@ fgcom = {
             if not header.version then return false end
             _, _, ver, const = string.find(header.version, "(%d%.%d+) FGCS")
             if not ver then return false end
+            if not header.version:find("1.1 FGCS") then fgcom.log("ERROR: Incompatible FGCS version: "..ver) return false end
             -- TODO: better header checks
             
             return header
@@ -157,13 +160,14 @@ fgcom = {
         -- @param header table with the header data, as returned from readFGCSHeader()
         -- @return boolean showing success or failure
         writeFGCSHeader = function(fh, header)
-            if fh and header.version then
+            if fh and header.version:find("1.1 FGCS") then
                 fh:write(header.version.."\n")
                 fh:write(header.callsign.."\n")
                 fh:write(header.lat.."\n")
                 fh:write(header.lon.."\n")
                 fh:write(header.height.."\n")
                 fh:write(header.frequency.."\n")
+                fh:write(header.dialedFRQ.."\n")
                 fh:write(header.txpower.."\n")
                 fh:write(header.playbacktype.."\n")
                 fh:write(header.timetolive.."\n")
@@ -172,6 +176,7 @@ fgcom = {
                 fh:write(header.samplespeed.."\n")
                 return true
             else
+                fgcom.log("ERROR: Incompatible FGCS version: "..header.version)
                 return false
             end
         end,
@@ -314,12 +319,14 @@ fgcom = {
                                     -- if radio unknown yet, add template
                                     fgcom_clients[sid][iid].radios[radioID] = {
                                         frequency = "",
+                                        dialedFRQ = "",
                                         ptt = 0
                                         -- todo: more needed?
                                     }
                                 end
                                 
                                 if "FRQ" == field[1] then fgcom_clients[sid][iid].radios[radioID].frequency = field[2] end
+                                if "CHN" == field[1] then fgcom_clients[sid][iid].radios[radioID].dialedFRQ = field[2] end
                                 if "PTT" == field[1] then fgcom_clients[sid][iid].radios[radioID].ptt = field[2] end
                                 if "PWR" == field[1] then fgcom_clients[sid][iid].radios[radioID].power = field[2] end
                             end
@@ -351,6 +358,7 @@ fgcom = {
                         if k=="radios" then
                             for radio_id,radio in pairs(idty.radios) do
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.." frequency='"..radio.frequency.."'")
+                                fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.." dialedFRQ='"..radio.dialedFRQ.."'")
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
                             end
                         else

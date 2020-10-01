@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.4"
+fgcom.botversion = "1.5"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -150,9 +150,9 @@ local generateOutData = function()
             
             userData.frequencies = {}
             for radio_id,radio in pairs(user.radios) do
-                fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."'")
+                fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."', dialedFRQ='"..radio.dialedFRQ.."'")
                 if radio.frequency ~= "<del>" then
-                    table.insert(userData.frequencies, radio.frequency)
+                    table.insert(userData.frequencies, radio.dialedFRQ)
                 end
             end
             userData.lat = user.lat

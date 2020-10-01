@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.4"
+fgcom.botversion  = "1.5"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -146,12 +146,15 @@ local isClientTalkingToUs = function(user)
                 
                 -- ATIS/Radio Recording request for tgt frequency
                 local record_tgtFrq = ""
+                local record_tgtChn = ""
                 _, _, record_tgtFrq = radio.frequency:find("^RECORD_(.+)")
+                _, _, record_tgtChn = radio.dialedFRQ:find("^RECORD_(.+)")
                 if record_tgtFrq and radio.ptt then
                     -- remote is on Recording-TGT frequency AND his ptt is active
                     remote.record_mode = "NORMAL"
                     remote.record_tgt_frq = record_tgtFrq
-                    fgcom.dbg("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
+                    remote.record_tgtChn  = record_tgtChn
+                    fgcom.dbg("   RECORD frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq.." / CHN="..remote.record_tgtChn..")")
                     return remote, radio
                 end
                 
@@ -160,7 +163,8 @@ local isClientTalkingToUs = function(user)
                     -- remote is on echotest-frequency AND his ptt is active
                     remote.record_mode = "ECHOTEST"
                     remote.record_tgt_frq = "910.00"
-                    fgcom.dbg("   ECHOTEST frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq..")")
+                    remote.record_tgtChn  = remote.record_tgt_frq
+                    fgcom.dbg("   ECHOTEST frequency match at radio #"..radio_id.." (tgtFreq="..remote.record_tgt_frq.." / CHN="..remote.record_tgtChn..")")
                     return remote, radio
                 end
                 
@@ -313,12 +317,13 @@ client:hook("OnUserSpeak", function(event)
                 ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' started.")
            
                 local header = {
-                    version      = "1.0 FGCS",
+                    version      = "1.1 FGCS",
                     callsign     = remote.callsign,
                     lat          = remote.lat,
                     lon          = remote.lon,
                     height       = remote.alt,
                     frequency    = remote.record_tgt_frq,
+                    dialedFRQ    = remote.record_tgtChn,
                     txpower      = matchedRadio.power,
                     playbacktype = "looped",
                     timetolive   = ttl,

@@ -236,6 +236,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
                         fgcom_radiowave_freqConvRes frq_ori = FGCom_radiowaveModel::splitFreqString(oldValue);
                         fgcom_local_client[iid].radios[radio_id].frequency = finalParsedFRQ; // already cleaned value
+                        fgcom_local_client[iid].radios[radio_id].dialedFRQ = token_value;    // supplied raw value
                         
                         // see if we need to notify:
                         // - for changed non-numeric, always if its different
