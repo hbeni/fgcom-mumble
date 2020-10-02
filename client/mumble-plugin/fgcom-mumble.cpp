@@ -340,10 +340,14 @@ std::thread::id udpServerThread_id;
 std::thread::id gcThread_id;
 mumble_userid_t localMumId;
 mumble_error_t fgcom_initPlugin() {
-    if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone)
-        mumAPI.log(ownPluginID, ("Plugin v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+" initializing").c_str());
-    
-    
+    if (! fgcom_offlineInitDone && ! fgcom_onlineInitDone) {
+        std::string debuginfo;
+#ifdef DEBUG
+        debuginfo = "(notice: this is a debug build)";
+#endif
+        mumAPI.log(ownPluginID, ("Plugin v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+" initializing "+debuginfo).c_str());
+    }
+
     /*
      * Load config ini file, if present
      * The values given there will overwrite the defaults from the config struct.
@@ -600,6 +604,11 @@ void mumble_setMumbleInfo(mumble_version_t mumbleVersion, mumble_version_t mumbl
 	// In here you can get info about the Mumble version this plugin is about to run in.
 	pLog() << "Plugin version: " << mumble_getVersion() << "; Mumble version: " << mumbleVersion << "; Mumble API-Version: " << mumbleAPIVersion << "; Minimal expected API-Version: "
 		<< minimalExpectedAPIVersion << std::endl;
+
+#ifdef DEBUG
+        pLog() << "NOTICE: this is a debug build." <<std::endl;
+#endif
+
 }
 
 mumble_version_t mumble_getVersion() {
