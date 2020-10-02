@@ -183,6 +183,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                 pluginDbg("notifyRemotes():    send state of COM"+std::to_string(selector+1) );
                 dataID  = "FGCOM:UPD_COM:"+std::to_string(iid)+":"+std::to_string(selector);
                 message = "FRQ="+lcl.radios[selector].frequency+","
+                        + "CHN="+lcl.radios[selector].dialedFRQ+","
                         //+ "VLT="+std::to_string(lcl.radios[selector].volts)+","
                         //+ "PBT="+std::to_string(lcl.radios[selector].power_btn)+","
                         //+ "SRV="+std::to_string(lcl.radios[selector].serviceable)+","
@@ -420,6 +421,10 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         if (token_key == "FRQ") {
                             // expected is real wave carrier frequency, so something with at least 4 decimals
                             fgcom_remote_clients[clientID][iid].radios[radio_id].frequency = token_value;
+                        }
+                        if (token_key == "CHN") {
+                            // expected is a raw channel selector (what was supplied from the remote client in COMn_FRQ=)
+                            fgcom_remote_clients[clientID][iid].radios[radio_id].dialedFRQ = token_value;
                         }
                         if (token_key == "VLT") fgcom_remote_clients[clientID][iid].radios[radio_id].volts       = std::stof(token_value);
                         if (token_key == "PBT") fgcom_remote_clients[clientID][iid].radios[radio_id].power_btn   = (token_value == "1")? true : false;

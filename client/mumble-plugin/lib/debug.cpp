@@ -39,6 +39,7 @@ void debug_out_internal_state() {
             if (lcl.radios.size() > 0) {
                 for (int i=0; i<lcl.radios.size(); i++) {
                     printf("  Radio %i:   frequency='%s'\n", i, lcl.radios[i].frequency.c_str());
+                    printf("  Radio %i:   dialedFRQ='%s'\n", i, lcl.radios[i].dialedFRQ.c_str());
                     printf("  Radio %i:   power_btn=%i'\n", i, lcl.radios[i].power_btn);
                     printf("  Radio %i:       volts=%f\n", i, lcl.radios[i].volts);
                     printf("  Radio %i: serviceable=%i\n", i, lcl.radios[i].serviceable);
@@ -71,6 +72,7 @@ void debug_out_internal_state() {
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
                         printf("  Radio %i:   frequency='%s'\n", i, rmt.radios[i].frequency.c_str());
+                        printf("  Radio %i:   dialedFRQ='%s'\n", i, rmt.radios[i].dialedFRQ.c_str());
                         //printf("  Radio %i:   power_btn=%i\n", i, rmt.radios[i].power_btn);
                         //printf("  Radio %i:       volts=%f\n", i, rmt.radios[i].volts);
                         //printf("  Radio %i: serviceable=%i\n", i, rmt.radios[i].serviceable);

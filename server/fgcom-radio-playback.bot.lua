@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.3"
+fgcom.botversion = "1.4"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -202,6 +202,7 @@ shutdownBot = function()
     -- send update to mute our radio
     -- TODO: send deregister request, once implemented
     local msg = "FRQ="..lastHeader.frequency
+             ..",CHN="..lastHeader.dialedFRQ
              ..",PWR="..lastHeader.txpower
              ..",PTT=0"
     client:sendPluginData("FGCOM:UPD_COM:0:0", msg, playback_targets)
