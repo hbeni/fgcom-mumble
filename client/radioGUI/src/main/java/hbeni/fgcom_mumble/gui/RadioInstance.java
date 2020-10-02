@@ -106,6 +106,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jLabel6 = new javax.swing.JLabel();
 
         setClosable(true);
+        setFrameIcon(null);
         setMaximumSize(new java.awt.Dimension(620, 200));
         setMinimumSize(new java.awt.Dimension(620, 200));
         setPreferredSize(new java.awt.Dimension(600, 200));
