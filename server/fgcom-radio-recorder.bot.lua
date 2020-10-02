@@ -227,6 +227,22 @@ isIgnored = function(user)
 end
 
 
+-- function to get all channel users
+-- this updates the global playback_target table
+local playback_targets = nil -- holds updated list of all channel users
+updateAllChannelUsersforSend = function(cl)
+    --fgcom.dbg("udpate channelusers")
+    local ch = cl:getChannel(fgcom.channel)
+    local users = ch:getUsers()
+    playback_targets = {}
+    --fgcom.dbg("ok: "..ch:getName())
+    for k,v in pairs(users) do
+        --fgcom.dbg("  k="..tostring(k).."v="..tostring(v))
+        table.insert(playback_targets, v)
+    end
+end
+
+
 -- Called when the bot successfully connected to the server
 -- and has received all current channel and client data
 client:hook("OnServerSync", function(event)
@@ -237,6 +253,10 @@ client:hook("OnServerSync", function(event)
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
     fgcom.log("joined channel "..fgcom.channel)
+           
+    -- ask all already present clients for their data
+    updateAllChannelUsersforSend(client)
+    client:sendPluginData("FGCOM:ICANHAZDATAPLZ", "orly!", playback_targets)
            
     -- Adjust comment
     client:setComment("<b><i><u>FGCom:</u></i></b><br/>Listening on the following frequencies:"
