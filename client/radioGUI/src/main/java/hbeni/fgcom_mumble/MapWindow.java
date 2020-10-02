@@ -150,7 +150,7 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         panel.add(panelTop, BorderLayout.NORTH);
         panel.add(panelBottom, BorderLayout.SOUTH);
         JLabel helpLabel = new JLabel("Left mouse click selects position. \nUse right mouse button to move,\n "
-                + "left double click or mouse wheel to zoom.");
+                + " and mouse wheel to zoom.");
         helpPanel.add(helpLabel);
         
         
