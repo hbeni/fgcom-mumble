@@ -34,6 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
+import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.events.JMVCommandEvent;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -172,6 +173,9 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
                 }
             }
         });
+        
+        // Add a marker at current position
+        map().addMapMarker(new MapMarkerDot("Position", new Coordinate(state.getLatitutde(), state.getLongitude())));
         
         
         setExtendedState(JFrame.NORMAL);
