@@ -113,7 +113,7 @@ release: clean-all plugin plugin-win64
 	zip fgcom-mumble-client-binOnly-$(VERSION).zip fgcom-mumble.so fgcom-mumble.dll
 	
 	rm releaseReadme.md
-	@echo "\nRelease $(VERSION) built successfully:"
+	@echo "\nPluginrelease $(VERSION) built successfully:"
 	@ls -alh *$(VERSION)*
 	@md5sum *$(VERSION)*
 

@@ -9,6 +9,9 @@ release: release-server release-radioGUI
 	@echo "-------------------------------------------------"
 	$(MAKE) -C client/mumble-plugin/ release
 	mv client/mumble-plugin/*.zip .
+	@echo "\nRelease $(PLUGINVER) built successfully:"
+	@ls -alh *client*$(PLUGINVER)* *server*$(PLUGINVER)* *radioGUI*$(PLUGINVER)*
+	@md5sum *client*$(PLUGINVER)* *server*$(PLUGINVER)* *radioGUI*$(PLUGINVER)*
 
 release-server:
 	# Build server components release
