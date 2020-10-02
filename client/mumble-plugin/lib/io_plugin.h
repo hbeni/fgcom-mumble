@@ -25,6 +25,8 @@
 #define NOTIFYINTERVAL      1000  // minimal time between notifications (ms)
 #define NOTIFYPINGINTERVAL 10000  // time between pings (ms), if no notification was done
 
+#define MAX_PLUGINIO_FIELDLENGTH      32    // maximum plugin-io field size, should correspond to MAX_UDPSRV_FIELDLENGTH
+
 
 // Mubmle API global vars.
 // They get initialized from the plugin interface (see fgcom-mumble.cpp)

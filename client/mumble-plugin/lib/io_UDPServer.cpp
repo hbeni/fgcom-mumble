@@ -116,6 +116,13 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 std::string token_value = sm[2];
                 pluginDbg("[UDP-server] Parsing token: "+token_key+"="+token_value);
                 
+                // Ensure field content doesn't get overboard
+                int curlength = token_value.length();
+                if (curlength > MAX_UDPSRV_FIELDLENGTH) {
+                    token_value = token_value.substr(0, MAX_UDPSRV_FIELDLENGTH); 
+                    pluginLog("[UDP-server] WARNING: supplied token "+token_key+" length="+std::to_string(curlength)+" is greater than allowed "+std::to_string(MAX_UDPSRV_FIELDLENGTH)+": Field truncated!");
+                }
+                
                 /* Get IID for this connection.
                 * Either it is overridden from the IID token,
                 * othwerwise an IID from the client portmapper.
