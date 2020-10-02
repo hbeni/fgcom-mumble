@@ -19,9 +19,9 @@ package hbeni.fgcom_mumble.gui;
 import hbeni.fgcom_mumble.Radio;
 import hbeni.fgcom_mumble.State;
 import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.event.ContainerEvent;
+import java.net.URL;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 /**
@@ -30,9 +30,9 @@ import javax.swing.JPanel;
  */
 public class MainWindow extends javax.swing.JFrame {
 
-    private About_Help helpWindow;
-    private OptionsWindow optionsWindow;
-    private LicenseWindow licenseWindow;
+    private final About_Help helpWindow;
+    private final OptionsWindow optionsWindow;
+    private final LicenseWindow licenseWindow;
     
     protected State state;
     
@@ -48,6 +48,9 @@ public class MainWindow extends javax.swing.JFrame {
         state         = st;
         
         initComponents();
+        URL iconURL = getClass().getResource("/fgcom_logo.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+        this.setIconImage(icon.getImage());
         
         // Adjust the scroll panel
         radioContainer = new JPanel();
@@ -401,4 +404,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField_callsign;
     private javax.swing.JToggleButton jToggleButton_Connect;
     // End of variables declaration//GEN-END:variables
+
+    private void setFrameIcon(ImageIcon imageIcon) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
