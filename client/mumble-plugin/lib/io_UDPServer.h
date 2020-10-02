@@ -22,7 +22,8 @@
 #define FGCOM_IO_UDPSERVER_H
 
 
-#define MAXLINE             1024  // max byte size of a udp packet
+#define MAXLINE                 1024  // max byte size of a udp packet
+#define MAX_UDPSRV_FIELDLENGTH    32  // maximum udp field size
 
 
 #ifdef DEBUG

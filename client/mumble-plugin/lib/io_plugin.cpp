@@ -371,6 +371,13 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         std::string token_value = sm[2];
                         pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
                         
+                        // Ensure field content doesn't get overboard
+                        int curlength = token_value.length();
+                        if (curlength > MAX_PLUGINIO_FIELDLENGTH) {
+                            token_value = token_value.substr(0, MAX_PLUGINIO_FIELDLENGTH); 
+                            pluginLog("[UDP-server] WARNING: supplied token "+token_key+" length="+std::to_string(curlength)+" is greater than allowed "+std::to_string(MAX_PLUGINIO_FIELDLENGTH)+": Field truncated!");
+                        }
+                        
                         // Location data
                         if (token_key == "LON")      fgcom_remote_clients[clientID][iid].lon      = std::stof(token_value);
                         if (token_key == "LAT")      fgcom_remote_clients[clientID][iid].lat      = std::stof(token_value);
@@ -417,6 +424,13 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         std::string token_key   = sm[1];
                         std::string token_value = sm[2];
                         pluginDbg("[mum_pluginIO] Parsing token: "+token_key+"="+token_value);
+                        
+                        // Ensure field content doesn't get overboard
+                        int curlength = token_value.length();
+                        if (curlength > MAX_PLUGINIO_FIELDLENGTH) {
+                            token_value = token_value.substr(0, MAX_PLUGINIO_FIELDLENGTH); 
+                            pluginLog("[UDP-server] WARNING: supplied token "+token_key+" length="+std::to_string(curlength)+" is greater than allowed "+std::to_string(MAX_PLUGINIO_FIELDLENGTH)+": Field truncated!");
+                        }
                         
                         if (token_key == "FRQ") {
                             // expected is real wave carrier frequency, so something with at least 4 decimals
