@@ -19,6 +19,10 @@ VERSION:=$(VERSION_V).$(VERSION_M).$(VERSION_P)
 # `make CFLAGS+="-DNO_UPDATER" SSLFLAGS=`  skip auto-updater code
 #
 
+# FOR PRERELEASES: make always debug builds
+ifneq (,$(findstring 0,$(VERSION_V)))
+    DEBUG+=-g3 -DDEBUG
+endif
 
 
 # Compile all that stuff
