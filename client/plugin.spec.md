@@ -161,11 +161,12 @@ The following internal plugin data packets are defined:
   - `ALT` (height above ground in meters, not to be confused with ALT from UDP packet!)
 - `FGCOM:UPD_COM:`*iid*`:`*n* keys a radio data update for radio *n* (=radio-id, starting at zero; so COM1 = `0`)
   - `FRQ` the real wave carrier frequency in MHz
+  - `CHN` a raw value (what was given from the client in `COMn_FRQ`)
   - `VLT` (not transmitted currently)
   - `PBT` (not transmitted currently)
-  - `PTT`
+  - `PTT` If PTT is active
   - `VOL` (not transmitted currently)
-  - `PWR`
+  - `PWR` tx power in Watts
 - `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us (payload is insignificant)
 - `FGCOM:PING` keys a ping package and lets others know which local identities are still alive but don't had any updates for some time (payload is INT list of alive IIDs).
 
