@@ -337,6 +337,7 @@ end
 
 notifyRadio = function(tgts)
 local msg = "FRQ="..lastHeader.frequency
+             ..",CHN="..lastHeader.dialedFRQ
              ..",PWR="..lastHeader.txpower
              ..",PTT=1"
     fgcom.dbg("Bot sets radio: "..msg)

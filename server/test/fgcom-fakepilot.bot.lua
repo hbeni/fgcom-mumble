@@ -218,6 +218,7 @@ playbackTimer_func = function(t)
             updateAllChannelUsersforSend(client)
             if #playback_targets > 0 then
                 local msg = "FRQ="..freq
+                        ..",CHN="..freq
                         ..",PWR=10"
                         ..",PTT=1"
                 print(fgcom.callsign.."  Bot sets radio: "..msg)
@@ -252,6 +253,7 @@ playbackTimer_func = function(t)
                 updateAllChannelUsersforSend(client)
                 if #playback_targets > 0 then
                     local msg = "FRQ="..freq
+                            ..",CHN="..freq
                             ..",PWR=10"
                             ..",PTT=0"
                     print("  Bot sets radio: "..msg)
