@@ -1,6 +1,7 @@
 FGCom-mumble - eine (Flugsimulator-) Funksimulation basierend auf Mumble
 =======================================================================
 
+<img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
 Dieses Projekt möchte eine erweiterbare, Mumblebasierende Funksimulation für Flugsimulatoren bereitstellen.
 Das Projekt begann hauptsächlich als Nachfolger der Asterisk-basierten FGCom Implementierung für Flightgear.
 

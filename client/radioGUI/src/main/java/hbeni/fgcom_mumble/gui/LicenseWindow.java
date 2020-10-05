@@ -16,6 +16,9 @@
  */
 package hbeni.fgcom_mumble.gui;
 
+import java.net.URL;
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author beni
@@ -27,6 +30,11 @@ public class LicenseWindow extends javax.swing.JFrame {
      */
     public LicenseWindow() {
         initComponents();
+        
+        URL iconURL = getClass().getResource("/fgcom_logo.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+        this.setIconImage(icon.getImage());
+        
         final String nl = System.lineSeparator();
         this.jTextArea1.setText(
             "This program is free software: you can redistribute it and/or modify "
@@ -38,9 +46,10 @@ public class LicenseWindow extends javax.swing.JFrame {
            +"General Public License for more details."+nl+nl
            +"You should have received a copy of the GNU General Public License "
            +"along with this program. If not, see <http://www.gnu.org/licenses>."+nl+nl
+           +"The original mumble logo was supplied under a 3-clause BSD licence."+nl+nl
            +"This project uses the FlatLaf Look&Feel, which is distributed "
            +"under the Apache License 2.0. (<https://github.com/JFormDesigner/FlatLaf>)."+nl+nl
-           +"The location picker uses JMapViewer from the OpenStreetMap project (GPLv2)."
+           +"The location picker uses JMapViewer from the OpenStreetMap project (GPLv2)."+nl+nl
         );
     }
 
