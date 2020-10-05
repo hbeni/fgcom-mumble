@@ -17,6 +17,8 @@
 package hbeni.fgcom_mumble.gui;
 
 import hbeni.fgcom_mumble.radioGUI;
+import java.net.URL;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -29,6 +31,10 @@ public class OptionsWindow extends javax.swing.JFrame {
      */
     public OptionsWindow() {
         initComponents();
+        
+        URL iconURL = getClass().getResource("/fgcom_logo.png");
+        ImageIcon icon = new ImageIcon(iconURL);
+        this.setIconImage(icon.getImage());
     }
 
     /**
