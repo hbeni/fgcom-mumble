@@ -372,6 +372,9 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         String selection = (String) jComboBox_Templates.getSelectedItem();
         if (selection != "FRQ-Templates") {
             if (selection == "910.00 Echotest") selection = "910.00";
+            if (selection.matches("RECORD.+") && jTextField_frqSpare.getText().matches("^\\d+(\\.\\d+)?$"))
+                selection = "RECORD_"+jTextField_frqSpare.getText();
+            
             jTextField_frqSpare.setText(selection);
         }
         jComboBox_Templates.setSelectedIndex(0);
