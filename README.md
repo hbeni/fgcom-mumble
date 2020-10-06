@@ -120,7 +120,7 @@ To record an ATIS sample, you need to:
 Regular recordings have a serverside limit of 120 seconds by default.
 
 Note: Chances are good that your ATC client does all this for you and you just need to push some "Record ATIS" button.  
-The RadioGUI has a tuning template for that.
+The RadioGUI has a tuning template for that. It may be a good idea to start a separate instance of the RadioGUI for recording in order to be able to leave the original client data untouched.
 
 ### Landlines/Intercom
 Landlines/Intercom connections are a feature meant to be used by ATC instances. They are not subject to radio limits like range or signal quality. They operate worldwide.
