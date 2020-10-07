@@ -68,12 +68,12 @@ all-win: plugin-win64 test-win64 clean
 
 # build win64 test tools
 test-win64:
-	x86_64-w64-mingw32-g++ -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
-	x86_64-w64-mingw32-g++ -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	x86_64-w64-mingw32-g++-posix -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	x86_64-w64-mingw32-g++-posix -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
 # build win64 plugin-dll
 plugin-win64: openssl-win
-	x86_64-w64-mingw32-g++ -static -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -Wl,-Bstatic -lpthread -lws2_32 $(SSLFLAGS) $(CFLAGS) -I./lib/openssl/include -L./lib/openssl/ -lcrypt32
+	x86_64-w64-mingw32-g++-posix -static -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp --shared -static-libgcc -static-libstdc++ -DMINGW_WIN64 -Wl,-Bstatic -lpthread -lws2_32 $(SSLFLAGS) $(CFLAGS) -I./lib/openssl/include -L./lib/openssl/ -lcrypt32
 
 
 # OpenSSL
