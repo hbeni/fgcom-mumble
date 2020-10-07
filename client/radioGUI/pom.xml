@@ -24,6 +24,8 @@
             <artifactId>jmapviewer</artifactId>
             <version>2.14</version>
             <type>jar</type>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/jmapviewer-2.9/JMapViewer.jar</systemPath>
         </dependency>
     </dependencies>
     
