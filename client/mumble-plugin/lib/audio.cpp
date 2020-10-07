@@ -79,9 +79,8 @@ void fgcom_audio_applyVolume(float volume, float *outputPCM, uint32_t sampleCoun
 void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
     if (channelCount == 1) return; // no need to convert ono to mono!
     
-    unsigned long sizeOfStream = channelCount*sampleCount;
- 
     // loop over every set of samples for each channel
+    // (sizeOfStream = channelCount*sampleCount)
     for (uint32_t s=0; s<channelCount*sampleCount; s+=channelCount) {
         float sum = 0;
         for (uint32_t c=0; c<channelCount; c++) {

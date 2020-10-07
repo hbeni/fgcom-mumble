@@ -95,7 +95,7 @@ int main (int argc, char **argv)
         for (int pwr=0; pwr<=30; true) {
             struct fgcom_radiowave_signal sigStrengthAB = radio_model->getSignal(lat1, lon1, h1, lat2, lon2, h2, pwr);
             struct fgcom_radiowave_signal sigStrengthBA = radio_model->getSignal(lat2, lon2, h2, lat1, lon1, h1, pwr);
-            printf("    signal posA->posB @%iw = %.0f% \n", pwr, sigStrengthAB.quality*100);
+            printf("    signal posA->posB @%iw = %.0f%% \n", pwr, sigStrengthAB.quality*100);
             // its the same (it should at least) printf("  VHF signal posB->posA @%iw = %.0f% \n", pwr, sigStrengthBA.quality*100);
             if      (pwr <  5) { pwr++; }
             else if (pwr < 20) { pwr += 5; }
