@@ -35,7 +35,7 @@ void debug_out_internal_state() {
             std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%T", std::localtime(&lastUpdate_t));
             printf("[mumid=%i; iid=%i] %s: lastUpdate=%s\n", lcl.mumid, iid, lcl.callsign.c_str(), lastUpdate_str.c_str());
             
-            printf("[mumid=%i; iid=%i] %s: %i radios registered\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.radios.size());
+            printf("[mumid=%i; iid=%i] %s: %lli radios registered\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.radios.size());
             if (lcl.radios.size() > 0) {
                 for (int i=0; i<lcl.radios.size(); i++) {
                     printf("  Radio %i:   frequency='%s'\n", i, lcl.radios[i].frequency.c_str());
@@ -61,7 +61,7 @@ void debug_out_internal_state() {
                 int iid          = idty.first;
                 fgcom_client rmt = idty.second;
                 printf("[id=%i; mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.lat, rmt.lon, rmt.alt);
-                printf("[id=%i; mumid=%i; iid=%i] %s: %i radios registered\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.radios.size());
+                printf("[id=%i; mumid=%i; iid=%i] %s: %lli radios registered\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.radios.size());
                 printf("[mumid=%i; iid=%i] %s: clientPort=%i\n", rmt.mumid, iid, rmt.callsign.c_str(), rmt.clientPort);
                 
                 std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(rmt.lastUpdate);
