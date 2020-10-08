@@ -13,6 +13,7 @@ on:
     branches: [master]
   schedule:
     - cron: '0 21 * * 0'
+  workflow_dispatch:
 
 jobs:
   analyze:
@@ -74,9 +75,10 @@ jobs:
 
     - if: matrix.language == 'cpp'
       name: Build C++ (Windows x64 mingw-crosscompile)
+      # skip openssl build, it takes long and will trigger false-positives
       run: |
         make clean
-        make all-win
+        make SSLFLAGS= all-win
 
 
     - name: Perform CodeQL Analysis

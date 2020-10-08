@@ -49,7 +49,9 @@
 
 // HTTPLib from https://github.com/yhirose/cpp-httplib (MIT-License)
 // This needs OpenSSL.
+#ifdef SSLFLAGS
 #define CPPHTTPLIB_OPENSSL_SUPPORT 1
+#endif
 #include "http/httplib.h"
 using namespace httplib;
 
@@ -139,8 +141,12 @@ void fgcom_getLatestReleaseFromGithub_Web() {
     std::string rel("");
     std::string url(scheme + host + path + rel);
     
-    // fetch release info JSON from github API
+    // fetch release info from github API
+#ifdef SSLFLAGS
     httplib::SSLClient cli(host.c_str());
+#else
+    httplib::Client cli(host.c_str());
+#endif
     httplib::Headers headers = {
         { "User-Agent", "hbeni/fgcom-mumble:release-checker" }
     };

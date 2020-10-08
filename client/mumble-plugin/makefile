@@ -80,12 +80,14 @@ plugin-win64: openssl-win
 # The sources are located under lib/openssl as git submodule, and supposed to point to the latest stable head
 # Info on configure options: https://wiki.openssl.org/index.php/Compilation_and_Installation
 openssl-win:
+ifdef SSLFLAGS
 	@echo "BUILD OpenSSL"
 	git submodule init
 	git submodule update
 	cd lib/openssl/ && ./Configure mingw64 no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=x86_64-w64-mingw32- && make clean && make
 	cp lib/openssl/libssl.dll.a lib/openssl/libssl.a        # so -lssl finds the correct lib
 	cp lib/openssl/libcrypto.dll.a lib/openssl/libcrypto.a  # so -lcrypto finds the correct lib
+endif
 
 
 # Build release archives
