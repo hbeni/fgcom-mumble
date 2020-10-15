@@ -99,6 +99,8 @@ Since ATC-Pie v1.7.1 FGCom-mumble is supported out of the box.
 ### OpenRadar specific
 Currently, OpenRadar just supports one Radio per UDP port. In case you want several Radios (which is likely), you need to invoke several dedicated mumble processes. This will give you separate FGCom-mumble plugin instances listening on different ports, and in OpenRadar you can thus specify that ports.
 
+For better FGCom-mumble support, [patches are already pending](https://sourceforge.net/p/openradar/tickets/) and there is a [binary package available](https://github.com/hbeni/openradar/releases).
+
 
 Support for FGCom special frequencies
 -------------------------------------
