@@ -2,7 +2,7 @@
 CC=g++
 DEBUG=
 override CFLAGS+=-I. -I./lib -pthread $(DEBUG)
-SSLFLAGS+=-lssl -lcrypto
+SSLFLAGS+=-lssl -lcrypto -DSSLFLAGS
 
 # get version
 GITCOMMIT:=$(shell git log -1 --pretty=format:"%h")
