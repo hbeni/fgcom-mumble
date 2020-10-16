@@ -100,7 +100,8 @@ ATC-Pie hat seit v1.7.1 eingebaute Unterstützung für FGCom-mumble.
 Aktuell unterstützt OpenRadar nur ein Funkgerät pro UDP Port. Falls du also mehrere Funkgeräte benutzen möchtest (was sehr wahrscheinlich ist), musst du mehrere parrallele mumble-Instanzen mit jeweils aktivietem FGCom-Plugin  starten (`mumble -m`).
 Dies erzeugt pro Plugin einen eigenen UDP-Port, die in OpenRadar bei "fgcom standalone" Kommasepariert angegeben werden können.
 
-Für die bessereUnterstützung von FGCom-mumble sind bereits [patches eingereicht](https://sourceforge.net/p/openradar/tickets/) und es gibt eine [kompilierte Version](https://github.com/hbeni/openradar/releases).
+Für die bessereUnterstützung von FGCom-mumble sind bereits [patches eingereicht](https://sourceforge.net/p/openradar/tickets/) und es gibt eine [kompilierte Version](https://github.com/hbeni/openradar/releases).  
+Mit dieser Unterstützung kann man FGCom-mumble auswählen und dann einfach mehrmals den gleichen Port für jedes gewünschte Funkgerät angeben (bspw. "`16661,16661`" für zwei Geräte, die mit der einzigen Plugininstanz verbunden werden).
 
 
 Spezielle FGCom Frequenzen
