@@ -20,6 +20,8 @@ When leaving that special channel, the plugin enters some 'noop' state so it wil
 
 Your local microphone will get switched to push-to-talk mode when entering the special channel (as well as restored when leaving it). When activating your flightsims PTT button on a radio, it will get switched on if that radio is operable.
 
+FGCom-mumble activated channels can also be marked with the string `fgcom-mumble activated` in its description, but this is notorious unstable, because mumble does only sync channel comments <128 bytes currently. Longer comments will only be synched on-demand (when the user hovers with the mouse over the channel), which  is too late for plugin initialization.
+
 
 Internal state
 --------------
@@ -48,7 +50,7 @@ Internal State Updates
 ----------------------
 Communication between plugins is handled by mumbles internal plugin data interface.
 
-When entering the `fgcom-mumble` channel, your client will broadcast its state (and following changes) to remote clients. Your client will then ask the already present clients in the channel for their state. Each remote client will then send his state to your client independently. (Both that actions will also occur if you activate your plugin while already inside the special channel).
+When entering an plugin-enabled channel, your client will broadcast its state (and following changes) to remote clients. Your client will then ask the already present clients in the channel for their state. Each remote client will then send his state to your client independently. (Both that actions will also occur if you activate your plugin while already inside the special channel).
 
 Notification of other clients take place on special events (like joining the channel or activating the plugin) and potentially when new data is recieved trough the UDP input interface:
 

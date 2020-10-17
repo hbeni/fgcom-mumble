@@ -68,7 +68,7 @@ Running the client
 ======================
 - connect your mumble client to fgfs mumble server
 - enable your plugin in your standard mumble client
-- join a channel starting with `fgcom-mumble` 
+- join a channel starting with `fgcom-mumble` or with `fgcom-mumble activated` in its description. 
 
 You are ready for radio usage! Some client needs to supply information to the plugin now, so it knows about your location and radio stack.
 
