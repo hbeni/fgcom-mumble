@@ -20,13 +20,6 @@ You can run several instances of the application at once to have different clien
 
 Compiling
 -----------------
-The client is written using netbeans, so you may just checkout the netbeans project file and build it with there.
-
-Otherwise use maven:
-```sh
-apt-get install maven libmaven-jar-plugin-java
-cd FGCom-mumble/client/radioGUI
-mvn clean package
-```
-
 A release package can be built from the top-level makefile using `make release-radioGUI` (which invokes the make target `radioGUI` that invokes maven).
+
+The client is written using netbeans, so you may just checkout the netbeans project file and build it with there. However, you should build once with `make radioGUI`, because it will set up the build environment.
