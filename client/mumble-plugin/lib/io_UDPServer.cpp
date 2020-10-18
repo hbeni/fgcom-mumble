@@ -419,6 +419,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
                 }
                 
+                // Allow hearing of non-plugin users
+                if (token_key == "AUDIO_HEAR_ALL") {
+                    fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
+                    pluginDbg("[UDP-server] override AUDIO_HEAR_ALL updated to "+std::to_string(fgcom_cfg.allowHearingNonPluginUsers));
+                }
+                
                 
 #ifdef DEBUG
                 // DEBUG: allow override of signal quality for incoming transmissions
