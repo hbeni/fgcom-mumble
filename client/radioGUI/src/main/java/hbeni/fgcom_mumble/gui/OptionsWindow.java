@@ -62,6 +62,8 @@ public class OptionsWindow extends javax.swing.JFrame {
         jTextField_udpPort = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jCheckBox_EnableAudioEffects = new javax.swing.JCheckBox();
+        jLabel10 = new javax.swing.JLabel();
+        jCheckBox_HearAllUsers = new javax.swing.JCheckBox();
 
         setTitle("Options");
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -202,6 +204,14 @@ public class OptionsWindow extends javax.swing.JFrame {
             }
         });
 
+        jLabel10.setText("Hear non-plugin users");
+
+        jCheckBox_HearAllUsers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox_HearAllUsersActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -210,11 +220,13 @@ public class OptionsWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel10))
                 .addGap(99, 99, 99)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCheckBox_EnableAudioEffects)
-                    .addComponent(jTextField_udpPort, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField_udpPort, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBox_HearAllUsers))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -226,9 +238,15 @@ public class OptionsWindow extends javax.swing.JFrame {
                     .addComponent(jTextField_udpPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox_EnableAudioEffects)
-                    .addComponent(jLabel3))
-                .addContainerGap(18, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jCheckBox_EnableAudioEffects)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheckBox_HearAllUsers))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel10)))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -246,7 +264,7 @@ public class OptionsWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -294,11 +312,17 @@ public class OptionsWindow extends javax.swing.JFrame {
         radioGUI.Options.enableAudioEffecs = jCheckBox_EnableAudioEffects.isSelected();
     }//GEN-LAST:event_jCheckBox_EnableAudioEffectsActionPerformed
 
+    private void jCheckBox_HearAllUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_HearAllUsersActionPerformed
+        radioGUI.Options.allowHearingNonPluginUsers = jCheckBox_HearAllUsers.isSelected();
+    }//GEN-LAST:event_jCheckBox_HearAllUsersActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton_OK;
     private javax.swing.JCheckBox jCheckBox_EnableAudioEffects;
+    private javax.swing.JCheckBox jCheckBox_HearAllUsers;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

@@ -36,6 +36,7 @@ public class radioGUI {
         public static int     udpPort             = 16661;
         public static int     debugSignalOverride = -5;
         public static boolean enableAudioEffecs   = true;
+        public static boolean allowHearingNonPluginUsers = false;
     }
     
     /* A structure with the internal model */

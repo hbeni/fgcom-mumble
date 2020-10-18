@@ -312,6 +312,7 @@ mumble_error_t fgcom_loadConfig() {
                     pluginDbg("[CFG] Parsing token: "+token_key+"="+token_value);
 
                     if (token_key == "radioAudioEffects") fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
+                    if (token_key == "allowHearingNonPluginUsers") fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
                     if (token_key == "specialChannel")    fgcom_cfg.specialChannel    = token_value;
                     if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
                 }
@@ -805,6 +806,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         float bestSignalStrength = -1.0; // we want to get the connections signal strength.
         fgcom_radio matchedLocalRadio;
         bool isLandline = false;
+        bool useRawData = false;
         
         // Fetch the remote clients data
         fgcom_remotecfg_mtx.lock();
@@ -936,10 +938,16 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             }
             
         } else {
-            // we have no idea about the remote yet: treat him as if hes not in range
+            // we have no idea about the remote yet: 
             // (this may especially happen with sending clients without enabled plugin!)
             pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state. muting stream.");
-            bestSignalStrength = 0.0;
+            if (fgcom_cfg.allowHearingNonPluginUsers) {
+                // let audio trough unaffected
+                useRawData = true;
+            } else {
+                // treat him as if hes not in range
+                bestSignalStrength = 0.0;
+            }
         }
         fgcom_remotecfg_mtx.unlock();
         
@@ -957,8 +965,13 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         }
 #endif
 
-        rv = true; // we adjust the stream in any case
-        if (isLandline) {
+        rv = true;
+        if (useRawData) {
+            // we should use the raw audio packets unaffected
+            pluginDbg("mumble_onAudioSourceFetched():   connected (use raw data)");
+            rv = false;
+            
+        } else if (isLandline) {
             // we got a landline connection!
             pluginDbg("mumble_onAudioSourceFetched():   connected (phone)");
             fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);

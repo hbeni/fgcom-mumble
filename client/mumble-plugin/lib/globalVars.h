@@ -34,11 +34,13 @@
 // Currently the configuration cannot be done trough mumble, but that is planned.
 // Changing runtime configuration can be done trough the inbound RDP interface for now.
 struct fgcom_config {
+    bool        allowHearingNonPluginUsers;
     bool        radioAudioEffects;
     std::string specialChannel;
     int         udpServerPort;
     
     fgcom_config()  {
+        allowHearingNonPluginUsers = false;
         radioAudioEffects = true;
         specialChannel    = "^fgcom-mumble.*";
         udpServerPort     = 16661;

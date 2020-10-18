@@ -96,7 +96,9 @@ public class UDPclient {
         msg += ",DEBUG_SIGQLY="+dbgSignalQLY;
         String audioFX = (radioGUI.Options.enableAudioEffecs)? "1" : "0";
         msg += ",AUDIO_FX_RADIO="+audioFX;
-        
+        String audioHearall = (radioGUI.Options.allowHearingNonPluginUsers)? "1" : "0";
+        msg += ",AUDIO_HEAR_ALL="+audioHearall;
+                
         return msg;
     }
 

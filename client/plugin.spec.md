@@ -119,6 +119,7 @@ The Following fields are configuration options that change plugin behaviour.
 |------------------|--------|-----------------------------------------|------------|
 | `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (details below: "*UDP client interface / RDF data*")   | `0`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
+| `AUDIO_HEAR_ALL` | Bool   | `1` will enable hearing of non-plugin users. | `0` |
 
 
 ### Testing UDP input
@@ -127,6 +128,12 @@ sets the callsign and frequency for COM1 for the default identity (make sure the
 
 
 ### Special usecases
+#### Allow hearing of non-plugin users
+By default, unknown users are muted (those without valid plugin data sent and wich are unknown to the local instance, i.e. the ones without active plugin).  
+Mixing plugin users and those without plugin is discouraged, because it may be the source of communcation confusion. In some special situations it might be beneficial to hear all users on the channel. An example for that is if you are the ATC, the mumble channel represents not the entire world but just a small region (your airport) and you want to serve FGCom-mumble users and parallel users without the plugin.  
+Hearing others can be switched on using the configuration file.
+
+
 #### Force Identities
 Each UDP client is considered as one "identity" for the plugin and thus has its own state. In case your client application switches UDP ports randomly, you can manually select an identity to which to apply the UDP fields to.  
 Normally this is not needed, as UDP clients are supposed to keep the port stable and receive data at their source port.
