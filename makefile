@@ -41,6 +41,11 @@ release-radioGUI: radioGUI
 
 radioGUI:
 	# Build radio gui with maven
+	mvn install:install-file -Dfile=client/radioGUI/lib/jmapviewer-2.9/JMapViewer.jar \
+		-DgroupId=org.openstreetmap.jmapviewer \
+		-DartifactId=jmapviewer \
+		-Dversion=2.14 \
+		-Dpackaging=jar
 	cd client/radioGUI/ && mvn clean package
 
 # relay everything else to the mumble-plugin makefile
