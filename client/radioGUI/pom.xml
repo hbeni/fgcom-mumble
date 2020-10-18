@@ -19,13 +19,11 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.openstreetmap.jmapviewer/jmapviewer -->
         <!-- you must install the dependency to your local repo; kindly use the provided jar in the projects lib tree -->
+        <!-- eg. `mvn install:install-file ...`; see the makefile for the command -->
         <dependency>
             <groupId>org.openstreetmap.jmapviewer</groupId>
             <artifactId>jmapviewer</artifactId>
             <version>2.14</version>
-            <type>jar</type>
-            <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/jmapviewer-2.9/JMapViewer.jar</systemPath>
         </dependency>
     </dependencies>
     
@@ -37,54 +35,6 @@
             </resource>
         </resources>
         <plugins>
-          <!--<plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.1.2</version>
-            <configuration>
-              <archive>
-                <manifest>
-                  <addClasspath>true</addClasspath>
-                  <mainClass>hbeni.fgcom_mumble.radioGUI</mainClass>
-                </manifest>
-              </archive>
-            </configuration>
-          </plugin>-->
-          
-          <!-- extract classes of jMapViewer for inclusion -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.1.2</version>
-            <executions>
-              <execution>
-                <id>unpack</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>unpack</goal>
-                </goals>
-                <configuration>
-                  <artifactItems>
-                    <artifactItem>
-                      <groupId>org.openstreetmap.jmapviewer</groupId>
-                      <artifactId>jmapviewer</artifactId>
-                      <version>2.14</version>
-                      <overWrite>false</overWrite>
-                      <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                      <destFileName>optional-new-name.jar</destFileName>
-                      <includes>**/*.class,**/*.xml</includes>
-                      <excludes>**/*test.class</excludes>
-                    </artifactItem>
-                  </artifactItems>
-                  <includes>**/*.java</includes>
-                  <excludes>**/*.properties</excludes>
-                  <outputDirectory>${project.build.directory}/</outputDirectory>
-                  <overWriteReleases>false</overWriteReleases>
-                  <overWriteSnapshots>true</overWriteSnapshots>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <artifactId>maven-assembly-plugin</artifactId>
             <executions>
