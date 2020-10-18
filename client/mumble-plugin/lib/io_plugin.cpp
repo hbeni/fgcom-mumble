@@ -313,10 +313,12 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         fgcom_remotecfg_mtx.lock();
         
         // check if user is already known to us; if not add him to the local clients store
+        bool clientAlreadyknown = true;
         auto search = fgcom_remote_clients.find(clientID);
         if (iid > -1 && search == fgcom_remote_clients.end()) {
             pluginDbg("[mum_pluginIO] registering new remote: Sender="+std::to_string(clientID)+" identity="+std::to_string(iid));
             fgcom_remote_clients[clientID][iid]       = fgcom_client();
+            clientAlreadyknown = false;
         }
         
         // store that we have seen something for a valid identity
@@ -335,18 +337,23 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         } else if (dataID == "FGCOM:PING") {
             // ping packet contains list of IIDs which are alive.
             pluginDbg("FGCom: [mum_pluginIO] ping received, idtys="+data);
-            std::stringstream streambuffer(data);
-            std::string segment;
-            while(std::getline(streambuffer, segment, ',')) {
-                try {
-                    int rmt_iid = stoi(segment);
-                    if (fgcom_remote_clients[clientID].count(rmt_iid) > 0) {
-                        fgcom_remote_clients[clientID][rmt_iid].lastUpdate = std::chrono::system_clock::now();
+            if (clientAlreadyknown) {
+                std::stringstream streambuffer(data);
+                std::string segment;
+                while(std::getline(streambuffer, segment, ',')) {
+                    try {
+                        int rmt_iid = stoi(segment);
+                        if (fgcom_remote_clients[clientID].count(rmt_iid) > 0) {
+                            fgcom_remote_clients[clientID][rmt_iid].lastUpdate = std::chrono::system_clock::now();
+                        }
+                    
+                    } catch (const std::exception& e) {
+                        pluginDbg("[mum_pluginIO] Parsing ping packet throw exception, ignoring token "+segment);
                     }
-                
-                } catch (const std::exception& e) {
-                    pluginDbg("[mum_pluginIO] Parsing ping packet throw exception, ignoring token "+segment);
                 }
+            } else {
+                // Technically this shouldn't happen, but request state from the unknown client
+                notifyRemotes(NTFY_ALL, NTFY_ASK, clientID);
             }
             
         
