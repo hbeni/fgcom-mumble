@@ -18,10 +18,14 @@
 // FOR TESTING PURPOSES ONLY.
 // This is a simple thread function that puts internal state to the terminal every second.
 bool fgcom_isPluginActive();
+bool fgcom_debugthread_shutdown = false;
+bool fgcom_debugthread_running = false;
 void debug_out_internal_state() { 
     std::cout.setf(std::ios::unitbuf); // unbuffered cout writes
+    std::cout << "---------STARTING DEBUG THREAD---------\n";
+    fgcom_debugthread_running = true;
     
-    while (true) {
+    while (!fgcom_debugthread_shutdown) {
         std::cout << "---------LOCAL STATE-----------\n";
         printf("plugin state: %s\n", (fgcom_isPluginActive())?"active":"inactive");
         for (const auto &idty : fgcom_local_client) {
@@ -91,5 +95,7 @@ void debug_out_internal_state() {
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
     
+    std::cout << "---------DEBUG THREAD FINISHED---------\n";
+    fgcom_debugthread_running = false;
 }
  

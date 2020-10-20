@@ -482,6 +482,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
 
 int fgcom_udp_port_used = fgcom_cfg.udpServerPort;
 bool fgcom_udp_shutdowncmd = false;
+bool udpServerRunning = false;
 void fgcom_spawnUDPServer() {
     pluginLog("[UDP-server] server starting");
     int  fgcom_UDPServer_sockfd; 
@@ -525,7 +526,8 @@ void fgcom_spawnUDPServer() {
     socklen_t len;
     std::map<uint16_t, bool> firstdata;
     uint16_t clientPort;
-    while (true) {
+    udpServerRunning = true;
+    while (!fgcom_udp_shutdowncmd) {
         len = sizeof(cliaddr);  //len is value/result 
         n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,  
                     MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len); 
@@ -582,7 +584,9 @@ void fgcom_spawnUDPServer() {
             
         }
     }
-      
+
+    udpServerRunning = false;
+    pluginLog("[UDP-server] thread finished.");
     return;
 }
 
