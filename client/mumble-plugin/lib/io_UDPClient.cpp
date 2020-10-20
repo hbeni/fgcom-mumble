@@ -121,6 +121,7 @@ std::string fgcom_rdf_generateMsg(uint16_t selectedPort) {
 
 // Spawns the UDP client thread
 bool udpClientRunning = false;
+bool udpClientTerminate = false;
 std::map<int, uint16_t> fgcom_cliudp_portCfg;
 void fgcom_spawnUDPClient() {
     pluginLog("[UDP-client] client initializing at rate "+std::to_string(FGCOM_UDPCLIENT_RATE)+" pakets/s");
@@ -158,16 +159,18 @@ void fgcom_spawnUDPClient() {
     }
 
     udpClientRunning = true;
+    udpClientTerminate = false;
     
     // Generate Data packets and send them in a loop
-    while (true) {
+    while (!udpClientTerminate) {
         
         // sleep for datarate-time microseconds
         //pluginDbg("[UDP-client] client sleep for "+std::to_string(datarate)+" microseconds");
-        if(usleep(datarate) < 0) {
-            pluginLog("[UDP-client] client socket creation failed"); 
-            break;
-        }
+        std::this_thread::sleep_for(std::chrono::microseconds(datarate));
+        //if(usleep(datarate) < 0) {
+        //    pluginLog("[UDP-client] client socket creation failed"); 
+        //    break;
+        //}
         
         // evaluate all local identites and generate messages to their configured ports
         for (const auto &lcl_idty : fgcom_local_client) {
@@ -225,5 +228,10 @@ void fgcom_spawnUDPClient() {
     
     close(fgcom_UDPClient_sockfd);
     udpClientRunning = false;
-    pluginLog("[UDP-client] client finished.");
+    udpClientTerminate = false;
+    pluginLog("[UDP-client] thread finished.");
+}
+
+void fgcom_stopUDPClient() {
+    udpClientTerminate = true;
 }

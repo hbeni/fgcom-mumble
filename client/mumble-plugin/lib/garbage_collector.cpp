@@ -123,10 +123,25 @@ void fgcom_gc_clean_rmt() {
 /*
  * GC thread
  */
+bool fgcom_gcThreadRunning = false;
+bool fgcom_gcThreadShutdown = false;
 void fgcom_spawnGarbageCollector() {
-    while (true) {
+    fgcom_gcThreadRunning = true;
+    pluginDbg("[GC] thread starting");
+    
+    while (!fgcom_gcThreadShutdown) {
         fgcom_gc_clean_lcl();
         fgcom_gc_clean_rmt();
         std::this_thread::sleep_for(std::chrono::milliseconds(FGCOM_GARBAGECOLLECT_INTERVAL));
     }
+    
+    fgcom_gcThreadRunning = false;
+    fgcom_gcThreadShutdown = false;
+    
+    pluginDbg("[GC] thread finished");
+}
+
+
+void fgcom_shutdownGarbageCollector() {
+    fgcom_gcThreadShutdown = true;
 }
