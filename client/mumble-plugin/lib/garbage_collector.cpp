@@ -129,16 +129,24 @@ void fgcom_spawnGarbageCollector() {
     fgcom_gcThreadRunning = true;
     pluginDbg("[GC] thread starting");
     
+    // The check interval might be long, which delays plugin shutdown;
+    // because of this we decouple actual cleanup from the check time interval.
+    std::chrono::milliseconds checkInt(FGCOM_GARBAGECOLLECT_INTERVAL);
+    std::chrono::system_clock::time_point lastCheck = std::chrono::system_clock::now();
     while (!fgcom_gcThreadShutdown) {
-        fgcom_gc_clean_lcl();
-        fgcom_gc_clean_rmt();
-        std::this_thread::sleep_for(std::chrono::milliseconds(FGCOM_GARBAGECOLLECT_INTERVAL));
+        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+        std::chrono::milliseconds since = std::chrono::duration_cast<std::chrono::milliseconds> (now-lastCheck);
+        if (since > checkInt) {
+            fgcom_gc_clean_lcl();
+            fgcom_gc_clean_rmt();
+            lastCheck = now;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-    
+
+    pluginDbg("[GC] thread finished");
     fgcom_gcThreadRunning = false;
     fgcom_gcThreadShutdown = false;
-    
-    pluginDbg("[GC] thread finished");
 }
 
 

@@ -491,7 +491,7 @@ void fgcom_spawnUDPServer() {
       
     // Creating socket file descriptor 
     if ( (fgcom_UDPServer_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        pluginLog("FGCom: [UDP-server] socket creation failed"); 
+        pluginLog("[UDP-server] socket creation failed"); 
         exit(EXIT_FAILURE); 
     } 
       
@@ -507,13 +507,13 @@ void fgcom_spawnUDPServer() {
     for (fgcom_udp_port_used = fgcom_cfg.udpServerPort; fgcom_udp_port_used < fgcom_cfg.udpServerPort + 10; fgcom_udp_port_used++) {
         servaddr.sin_port = htons(fgcom_udp_port_used); 
         if ( bind(fgcom_UDPServer_sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) >= 0 ) { 
-            perror("FGCom: [UDP-server] udp socket bind succeeded");
+            pluginLog("[UDP-server] udp socket bind succeeded");
             bind_ok = true;
             break;
         }
     }
     if (!bind_ok) {
-        perror("FGCom: [UDP-server] udp socket bind to port failed");
+        pluginLog("[UDP-server] udp socket bind to port failed");
         exit(EXIT_FAILURE); 
     }
     
@@ -586,7 +586,7 @@ void fgcom_spawnUDPServer() {
     }
 
     udpServerRunning = false;
-    pluginLog("[UDP-server] thread finished.");
+    pluginDbg("[UDP-server] thread finished.");
     return;
 }
 
