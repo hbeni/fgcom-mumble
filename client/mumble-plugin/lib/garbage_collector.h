@@ -32,6 +32,13 @@
  * Spawn the garbage collector thread.
  */
 void fgcom_spawnGarbageCollector();
+extern bool fgcom_gcThreadRunning; // will be managed by thread
+
+
+/*
+ * Trigger shutdown of the udp server
+ */
+void fgcom_shutdownGarbageCollector();
 
 
 #endif
