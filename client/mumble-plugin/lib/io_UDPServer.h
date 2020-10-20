@@ -40,6 +40,7 @@
  * @return nothing so far. Maybe thread handle?
  */
 void fgcom_spawnUDPServer();
+extern bool udpServerRunning; // will be managed by thread
 
 
 /*

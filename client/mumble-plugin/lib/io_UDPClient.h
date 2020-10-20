@@ -13,6 +13,7 @@
  */
 extern bool udpClientRunning; // will be managed by client thread
 void fgcom_spawnUDPClient(); 
+void fgcom_stopUDPClient();
 
 // This represents an RDF signal recording
 struct fgcom_rdfInfo {

@@ -50,6 +50,9 @@
 // include debug code
 #include "debug.cpp"
 #endif
+#ifndef DEBUG
+    bool fgcom_debugthread_running = false;
+#endif
 
 
 
@@ -545,11 +548,34 @@ mumble_error_t mumble_init(uint32_t id) {
 void mumble_shutdown() {
 	pluginLog("Shutdown plugin");
 
-    // Let the UDP server shutdown itself
+    pluginDbg("stopping threads");
     fgcom_shutdownUDPServer();
+    fgcom_stopUDPClient();
+    fgcom_shutdownGarbageCollector();
     
     fgcom_setPluginActive(false); // stop plugin handling
     
+#ifdef DEBUG
+    fgcom_debugthread_shutdown = true;
+#endif
+
+    // wait for all threads to have terminated
+    pluginDbg("waiting for threads to finish");
+    while (udpServerRunning || udpClientRunning || fgcom_gcThreadRunning || fgcom_debugthread_running) {
+        // just wait for the servers to come down. This should not take long.
+        // TODO: this may block forever. We probably should have some kind of timeout here.
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    
+    // reenable a future init and reloading of config
+    fgcom_offlineInitDone = false;
+    fgcom_onlineInitDone  = false;
+    fgcom_configDone      = false;
+#ifdef DEBUG
+    fgcom_debugthread_shutdown = false;
+#endif
+    
+    pluginDbg("mumble_shutdown() complete.");
 	mumAPI.log(ownPluginID, "Plugin deactivated");
 }
 
