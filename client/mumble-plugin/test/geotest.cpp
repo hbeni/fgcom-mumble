@@ -39,7 +39,7 @@ int main (int argc, char **argv)
     double lon2 = 74.0445; */
     
     if (argc < 7 || argc > 8) {
-        cout << argc<< "Test tool for FGCom geolib\n";
+        cout << "Test tool for FGCom geolib\n";
         cout << "The tool accepts two x/y/z coordinates and prints informations about\n";
         cout << "the geoid like distance, visible horizont distance and if the points\n";
         cout << "can see each other or are hidden by earth.\n";
