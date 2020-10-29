@@ -11,6 +11,7 @@ numBots=1
 
 if [[ -z "$1" ]]; then
 	echo "Usage $0 <startAtNr> <numberOfBots> <spacingInSeconds> <checkInterval> <host> <channel>"
+	exit 1
 fi
 if [[ -n $1 ]]; then startat=$1; fi
 if [[ -n $2 ]]; then numBots=$2; fi
