@@ -119,7 +119,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel_ConnectionStatus.setBackground(new java.awt.Color(255, 255, 0));
         jLabel_ConnectionStatus.setText(" ");
-        jLabel_ConnectionStatus.setToolTipText("Grren=All OK; Red: sending disabled or error occured");
+        jLabel_ConnectionStatus.setToolTipText("Green=All OK; Red=sending disabled or error occured");
         jLabel_ConnectionStatus.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabel_ConnectionStatus.setOpaque(true);
 
