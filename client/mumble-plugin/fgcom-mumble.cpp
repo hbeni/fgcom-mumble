@@ -656,7 +656,7 @@ MumbleStringWrapper mumble_getAuthor() {
 }
 
 MumbleStringWrapper mumble_getDescription() {
-    static const char *description = "FGCOM provides an aircraft radio simulation.";
+    static const char *description = "FGCOM provides an (aircraft) radio simulation.\n\nhttps://github.com/hbeni/fgcom-mumble";
     MumbleStringWrapper wrapper;
     wrapper.data = description;
     wrapper.size = strlen(description);
