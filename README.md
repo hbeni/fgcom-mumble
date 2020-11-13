@@ -49,10 +49,11 @@ Setup requirements
 
 Installation
 -----------------------
-- The release ZIP contains all binary plugins for all supported operating systems.
-- copy the plugin for your operating system to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.
+- The release ZIP contains all binary plugins for all supported operating systems:
   - `fgcom-mumble.so` for Linux (64 bit)
   - `fgcom-mumble.dll` for Windows (64 bit)
+- Copy the plugin for your operating system to mumbles `plugins`-folder. Mumble will pick it up automatically and show it in the plugins dialog.  
+The installation can also be started by calling mumble from the commandline with the plugin binary release, like: `mumble fgcom-mumble-client-binOnly-0.7.0.zip`
 
 
 Plugin configuration

@@ -54,10 +54,11 @@ Vorraussetzungen
 
 Installation
 -----------------------
-- Das ZIP Releasepaket enthält die plugins für alle unterstützten Betriebssysteme.
-- Das compilierte FGCom-mumble Plugin muss in den `plugins`-Ordner von mumble kopiert werden. Von dort aus erkennt Mumble es automatisch und du kannst es über den "Plugins"-Dialog aktivieren:
+- Das ZIP Releasepaket enthält die plugins für alle unterstützten Betriebssysteme:  
  - `fgcom-mumble.so` für Linux (64 Bit)
  - `fgcom-mumble.dll` für Windows (64 Bit)
+- Das compilierte FGCom-mumble Plugin muss in den `plugins`-Ordner von mumble kopiert werden. Von dort aus erkennt Mumble es automatisch und du kannst es über den "Plugins"-Dialog aktivieren.  
+Die Installation kann auch über eine Kommandozeile gestartet werden, indem man das Binärrelease als Parameter angibt; z.B.: `mumble fgcom-mumble-client-binOnly-0.7.0.zip`
 
 
 Plugin konfigurieren
