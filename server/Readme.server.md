@@ -155,6 +155,6 @@ Compiling server parts
 - Compiling the mumble server is usually not neccessary, just use your distibutions version; this holds true also for the client.
 
 - Information for compiling the lua *mumble.so* is given at [bkacjios github page](https://github.com/bkacjios/lua-mumble). You need it deployed in your systems lua libs folder for running the lua bots.  
-  - Build dependencys on debian: `apt-get install libluajit-5.1-dev protobuf-c-compiler libprotobuf-c-dev libssl-dev libopus-dev libev-dev`
+  - Build dependencys on debian: `apt-get install build-essential pkg-config libluajit-5.1-dev protobuf-c-compiler libprotobuf-c-dev libssl-dev libopus-dev libev-dev`
   - lua lib build process: `$ make all`
   - deploy the lib: `$ cp mumble.so /usr/lib/x86_64-linux-gnu/lua/5.1/`
