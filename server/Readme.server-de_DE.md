@@ -136,6 +136,6 @@ Serverseitige Komponenten selbst kompilieren
 - Informationen, um das Lua mumble-modul *mumble.so* zu kompilieren, gibt es auf [bkacjios Githubseite](https://github.com/bkacjios/lua-mumble).
   Diese Bibliothek muss im lua Bibliotheksverzeichnis abgelegt werden.
 - Zusammengefasst für ein Debiansystem:
-  - Build dependencys: `apt-get install libluajit-5.1-dev protobuf-c-compiler libprotobuf-c-dev libssl-dev libopus-dev libev-dev`
+  - Build dependencys: `apt-get install build-essential pkg-config libluajit-5.1-dev protobuf-c-compiler libprotobuf-c-dev libssl-dev libopus-dev libev-dev`
   - lua mumble lib bauen: `~/lua-mumble$ make all`
   - lua mumble lib installieren: `~/lua-mumble$ cp mumble.so /usr/lib/x86_64-linux-gnu/lua/5.1/`
