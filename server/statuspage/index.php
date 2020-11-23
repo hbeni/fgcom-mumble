@@ -103,6 +103,7 @@ if (!is_readable($ini_config['json-database']['file'])) {
     exit(1);
 }
 $db_lastUpdate = filemtime($ini_config['json-database']['file']);
+date_default_timezone_set('UTC');
 $tpl_index->assignVar('dbchanged', date("d.m.Y H:i:s", $db_lastUpdate));
 if (time()-$db_lastUpdate > $ini_config['ui']['db_stale']) $tpl_index->assignVar('updatestale', 'class="stale"');
 $db_content = file_get_contents($ini_config['json-database']['file']);
