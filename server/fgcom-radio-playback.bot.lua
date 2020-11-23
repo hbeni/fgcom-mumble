@@ -344,7 +344,7 @@ local msg = "FRQ="..lastHeader.frequency
     client:sendPluginData("FGCOM:UPD_COM:0:0", msg, tgts)
 end
 
-client:hook("OnServerSync", function(event)
+client:hook("OnServerSync", function(client, event)
     if (event.welcome_text == nil) then event.welcome_text = "-" end
     fgcom.log("Sync done; server greeted with: "..event.welcome_text)
     
@@ -387,7 +387,7 @@ client:hook("OnServerSync", function(event)
 end)
 
 
-client:hook("OnPluginData", function(event)
+client:hook("OnPluginData", function(client, event)
     --["sender"] = mumble.user sender, -- Who sent this data packet
 	--["id"]     = Number id,          -- The data ID of this packet
 	--["data"]   = String data,        -- The data sent (can be binary data)
@@ -407,7 +407,7 @@ client:hook("OnPluginData", function(event)
 end)
 
 
-client:hook("OnUserChannel", function(event)
+client:hook("OnUserChannel", function(client, event)
 	--["user"]	= mumble.user user,
 	--["actor"]	= mumble.user actor,
 	--["from"]	= mumble.channel from,

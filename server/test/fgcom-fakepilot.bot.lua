@@ -285,7 +285,7 @@ local lon   = math.random(-150, 150)/100 + math.random(-100000, 100000)/100000
 local alt   = math.random(15, 8000)
 local latmv = math.random(-100, 100)/100000
 local lonmv = math.random(-100, 100)/100000
-client:hook("OnServerSync", function(event)
+client:hook("OnServerSync", function(client, event)
     print("Sync done; server greeted with: ", event.welcome_text)
     
     -- try to join fgcom-mumble channel
