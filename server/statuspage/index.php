@@ -59,7 +59,7 @@ if (array_key_exists('usage', $_GET)) {
     if (!is_readable($ini_config['ui']['gnuplot_source'])) die("ERROR:".$ini_config['ui']['gnuplot_source']." not readbale or existing!");
     $statfile_p = escapeshellcmd($ini_config['ui']['gnuplot_source']);
 
-    $handle = popen('cat '.$statfile_p.' | gnuplot stats2png.gnuplot', 'r');
+    $handle = popen("gnuplot -e 'filename=\"".$statfile_p."\"' stats2png.gnuplot", 'r');
     $firstBytes = fread($handle, 1024);
     if (!preg_match('/^.PNG/', $firstBytes)) die("ERROR generating image invoking gnuplot: ".$firstBytes);
 
