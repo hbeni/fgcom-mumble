@@ -240,12 +240,13 @@ end
 
 
 -- Timed loop to write usage statistics file
--- The data is intendet to be compatible to gnuplot: "<YYYYMMDDhhmmss> <clientcount>" for each line
+-- The data is intendet to be compatible to gnuplot: "<YYYYMMDDhhmmss> <clientcount> <playbacks>" for each line
 local statsWriterTimer = mumble.timer()
 statsWriterTimer_func = function(t)
     -- get the current alive number of users
     local allUsers = client:getUsers()
-    local users_alive = 0
+    local users_alive      = 0
+    local broadcasts_alive = 0
     for sid, remote_client in pairs(fgcom_clients) do
         for iid,user in pairs(remote_client) do
             local userData = {}   -- the return structure for generating the message
@@ -254,6 +255,9 @@ statsWriterTimer_func = function(t)
                 -- client is still connected to mumble
                 if fgcom_clients[sid][iid].type == "client" then
                     users_alive = users_alive + 1
+                end
+                if fgcom_clients[sid][iid].type == "playback-bot" then
+                    broadcasts_alive = broadcasts_alive + 1
                 end
             end
         end
@@ -266,7 +270,7 @@ statsWriterTimer_func = function(t)
     
     -- write the data
     --   starting the time format with "!" means UTC
-    local statsData = os.date("!%Y%m%d%H%M%S").." "..users_alive.."\n"
+    local statsData = os.date("!%Y%m%d%H%M%S").." "..users_alive.." "..broadcasts_alive.."\n"
     local writeRes  = stats_fh:write(statsData)
     if not writeRes then
         fgcom.log("unable to write into stats file: "..stats)

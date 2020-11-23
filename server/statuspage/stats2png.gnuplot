@@ -1,9 +1,10 @@
 # Plot the statstics file from the stats bot to PNG format
 #
-# invoke using: `cat usage.stats | gnuplot stats2png.gnuplot > usage.png`
+# invoke using: `gnuplot -e "file = 'usage.stats'" stats2png.gnuplot > usage.png`
 
 set terminal png
 set autoscale
+set datafile separator whitespace
 set xdata time
 set timefmt "%Y%m%d%H%M%S"
 set xlabel "Time (UTC)"
@@ -15,4 +16,4 @@ set mytics 5
 set yrange [0:*]
 set grid back
 set offsets 0, 0, 5, 0
-plot '<cat' using 1:2 notitle with lines lt rgb "#f00000"
+plot filename using 1:2 title "Users" with lines lt rgb "#f00000", '' using 1:3 title "Broadcasts" with lines lt rgb "#0000f0"
