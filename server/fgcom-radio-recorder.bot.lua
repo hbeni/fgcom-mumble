@@ -249,7 +249,7 @@ end
 
 -- Called when the bot successfully connected to the server
 -- and has received all current channel and client data
-client:hook("OnServerSync", function(event)
+client:hook("OnServerSync", function(client, event)
     if (event.welcome_text == nil) then event.welcome_text = "-" end
     fgcom.log("Sync done; server greeted with: "..event.welcome_text)
     
@@ -271,7 +271,7 @@ client:hook("OnServerSync", function(event)
 end)
 
 
-client:hook("OnPluginData", function(event)
+client:hook("OnPluginData", function(client, event)
     --["sender"] = mumble.user sender, -- Who sent this data packet
 	--["id"]     = Number id,          -- The data ID of this packet
 	--["data"]   = String data,        -- The data sent (can be binary data)
@@ -290,11 +290,11 @@ client:hook("OnPluginData", function(event)
 end)
 
 
-client:hook("OnUserStartSpeaking", function(user)
+client:hook("OnUserStartSpeaking", function(client, user)
     fgcom.dbg("OnUserStartSpeaking, user["..user:getSession().."]="..user:getName())
 end)
 
-client:hook("OnUserSpeak", function(event)
+client:hook("OnUserSpeak", function(client, event)
     --fgcom.dbg("OnUserSpeak, from=["..event.user:getSession().."] '"..event.user:getName().."'")
     --fgcom.dbg("  codec="..event.codec)
     --fgcom.dbg("  target="..event.target)
@@ -376,7 +376,7 @@ client:hook("OnUserSpeak", function(event)
 end)
 
 
-client:hook("OnUserStopSpeaking", function(user)
+client:hook("OnUserStopSpeaking", function(client, user)
     fgcom.dbg("OnUserStopSpeaking, user["..user:getSession().."]="..user:getName())
            
     if isIgnored(user) then return end   -- ignore other bots!
