@@ -35,6 +35,8 @@ public class OptionsWindow extends javax.swing.JFrame {
         URL iconURL = getClass().getResource("/fgcom_logo.png");
         ImageIcon icon = new ImageIcon(iconURL);
         this.setIconImage(icon.getImage());
+        
+        qlyLabelUpdate();
     }
 
     /**
@@ -273,6 +275,8 @@ public class OptionsWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void qlyLabelUpdate() {
+        jTextField_udpPort.setText(Integer.toString(radioGUI.Options.udpPort));
+        
         String tgt;
         if (radioGUI.Options.debugSignalOverride >= 0.0) {
             tgt =  Integer.toString(radioGUI.Options.debugSignalOverride)+"%";
@@ -280,10 +284,12 @@ public class OptionsWindow extends javax.swing.JFrame {
             tgt = new String("off");
         }
         jLabel_qlyvalue.setText(tgt);
+        
+        jCheckBox_EnableAudioEffects.setSelected(radioGUI.Options.enableAudioEffecs);
+        jCheckBox_HearAllUsers.setSelected(radioGUI.Options.allowHearingNonPluginUsers);
     }
     
     private void jButton_OKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_OKActionPerformed
-        // TODO add your handling code here:
         this.setVisible(false);
     }//GEN-LAST:event_jButton_OKActionPerformed
 
