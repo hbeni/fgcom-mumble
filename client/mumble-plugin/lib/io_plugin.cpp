@@ -336,7 +336,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         
         } else if (dataID == "FGCOM:PING") {
             // ping packet contains list of IIDs which are alive.
-            pluginDbg("FGCom: [mum_pluginIO] ping received, idtys="+data);
+            pluginDbg("[mum_pluginIO] ping received, idtys="+data);
             if (clientAlreadyknown) {
                 std::stringstream streambuffer(data);
                 std::string segment;
@@ -470,12 +470,12 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
 
             
         } else {
-            pluginDbg("FGCom: [mum_pluginIO] dataID='"+dataID+"' not known. Ignoring.");
+            pluginDbg("[mum_pluginIO] dataID='"+dataID+"' not known. Ignoring.");
         }
         
         fgcom_remotecfg_mtx.unlock();
         
-        pluginDbg("FGCom: [mum_pluginIO] Parsing done.");
+        pluginDbg("[mum_pluginIO] Parsing done.");
         return true; // signal to other plugins that the data was handled already
         
     } else {
@@ -524,21 +524,21 @@ void fgcom_notifyThread() {
                 // We did not have a change for several seconds.
                 // We should send something so other clients know we are still alive!
                 if (!notifyUserData && std::chrono::system_clock::now() > lastPing + notifyPingInterval) {
-                    pluginDbg("FGCom: [mum_pluginIO] fgcom_notifyThread() Ping is due.");
+                    pluginDbg("[mum_pluginIO] fgcom_notifyThread() Ping is due.");
                     lastPing = std::chrono::system_clock::now();
                     notifyRemotes(iid, NTFY_PNG);
                 }
                 
                 // Location has changed significantly: notify!
                 if (notifyLocationData) {
-                    pluginDbg("FGCom: [mum_pluginIO] fgcom_notifyThread() locationdata was changed.");
+                    pluginDbg("[mum_pluginIO] fgcom_notifyThread() locationdata was changed.");
                     lastPing = std::chrono::system_clock::now();
                     notifyRemotes(iid, NTFY_LOC);
                 }
                 
                 // userdata has changed: notify!
                 if (notifyUserData) {
-                    pluginDbg("FGCom: [mum_pluginIO] fgcom_notifyThread() userdata was changed.");
+                    pluginDbg("[mum_pluginIO] fgcom_notifyThread() userdata was changed.");
                     lastPing = std::chrono::system_clock::now();
                     notifyRemotes(iid, NTFY_USR);
                 }
