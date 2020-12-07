@@ -97,6 +97,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     // iid => new_value
     std::map<int, float> hgt_value;
     std::map<int, float> alt_value;
+    std::map<int, std::pair<std::string, std::string>> parsed_frq_valAndToken; // last parsed frequency per radio-id (<value>,<token>)
 
     // convert to stringstream so we can easily tokenize
     // TODO: why not simply refactor to strtok()?
@@ -240,24 +241,8 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         }
                         
                         // handle final COMn_FRQ parsing result
-                        std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
-                        fgcom_radiowave_freqConvRes frq_ori = FGCom_radiowaveModel::splitFreqString(oldValue);
-                        fgcom_local_client[iid].radios[radio_id].frequency = finalParsedFRQ; // already cleaned value
-                        fgcom_local_client[iid].radios[radio_id].dialedFRQ = token_value;    // supplied raw value
-                        
-                        // see if we need to notify:
-                        // - for changed non-numeric, always if its different
-                        // - for change in numeric/non-numeric, also always if its different
-                        // - for numeric ones, if the prefix did change, or the frequency is different for more than rounding errors
-                        fgcom_radiowave_freqConvRes frq_new = FGCom_radiowaveModel::splitFreqString(finalParsedFRQ);
-                        if (frq_ori.isNumeric && frq_new.isNumeric && frq_ori.prefix == frq_new.prefix) {
-                            // both are numeric and the prefix did not change: only notify if frequency changed that much
-                            float frq_diff = std::fabs(std::stof(frq_ori.frequency) - std::stof(frq_new.frequency));
-                            //pluginDbg("[UDP-server] COMM frq diff="+std::to_string(frq_diff)+"; old="+oldValue+"; new="+finalParsedFRQ);
-                            if ( frq_diff > 0.000010 ) parseResult[iid].radioData.insert(radio_id);
-                        } else {
-                            if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
-                        }
+                        // store parsing result for later comparison (only the last COMn_FRQ instance should be used)
+                        parsed_frq_valAndToken[radio_id] = std::pair<std::string,std::string>(finalParsedFRQ, token_value);
                     }
                     if (radio_var == "VLT") {
                         float oldValue = fgcom_local_client[iid].radios[radio_id].volts;
@@ -449,6 +434,38 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
         
     }  //endwhile
     
+    
+    /*
+     * Inspect COM frequency changes
+     *
+     * We may receive several COM_FRQ fields, but only the last one should be used.
+     * Consecutive appearances are to be overwriting previous ones.
+     * The parsed_frq_valAndToken contains the last seen successfully parsed token.
+     */
+    for (const auto &p : parsed_frq_valAndToken) { // parsed_frq_valAndToken=(finalParsedFRQ, token_value)
+        int                                 radio_id      = p.first;
+        std::pair<std::string, std::string> parsed_values = p.second;
+        
+        std::string oldValue = fgcom_local_client[iid].radios[radio_id].frequency;
+        fgcom_radiowave_freqConvRes frq_ori = FGCom_radiowaveModel::splitFreqString(oldValue);
+        fgcom_local_client[iid].radios[radio_id].frequency = parsed_values.first;  // already cleaned value
+        fgcom_local_client[iid].radios[radio_id].dialedFRQ = parsed_values.second; // supplied raw value
+        
+        // see if we need to notify:
+        // - for changed non-numeric, always if its different
+        // - for change in numeric/non-numeric, also always if its different
+        // - for numeric ones, if the prefix did change, or the frequency is different for more than rounding errors
+        fgcom_radiowave_freqConvRes frq_new = FGCom_radiowaveModel::splitFreqString(parsed_values.first);
+        if (frq_ori.isNumeric && frq_new.isNumeric && frq_ori.prefix == frq_new.prefix) {
+            // both are numeric and the prefix did not change: only notify if frequency changed that much
+            float frq_diff = std::fabs(std::stof(frq_ori.frequency) - std::stof(frq_new.frequency));
+            //pluginDbg("[UDP-server] COMM frq diff="+std::to_string(frq_diff)+"; old="+oldValue+"; new="+parsed_values.first);
+            if ( frq_diff > 0.000010 ) parseResult[iid].radioData.insert(radio_id);
+        } else {
+            if (fgcom_local_client[iid].radios[radio_id].frequency != oldValue ) parseResult[iid].radioData.insert(radio_id);
+        }
+    }
+
     
     /*
      * Inspect HGT/ALT state
