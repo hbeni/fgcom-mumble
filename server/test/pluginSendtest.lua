@@ -1,6 +1,6 @@
 mumble = require("mumble")  -- get the mumble API
 
-local host = "localhost"
+local host = "fgcom.hallinger.org"
 local port = 64738
 local cert = "bot.pem"
 local key  = "bot.key"
@@ -11,7 +11,7 @@ client:auth("test")
 print("  connect and bind: OK")
 
 local timer = mumble.timer()
-client:hook("OnServerSync", function(event)
+client:hook("OnServerSync", function(user, event)
     print("Sync done; server greeted with: ", event.welcome_text)
            
     -- try to join fgcom-mumble channel
