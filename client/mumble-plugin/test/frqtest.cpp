@@ -49,6 +49,7 @@ int main (int argc, char **argv) {
     printf("prefix[1]  = '%s' \n", frq1_p.prefix.c_str());
     printf("pFrq[1]    = '%s' \n", frq1_p.frequency.c_str());
     printf("realFrq[1] = '%s' \n", frq1_real.c_str());
+    printf("chan[1]    = '%s' \n", frq1_model->conv_freq2chan(frq1).c_str());
     
     fgcom_radiowave_freqConvRes frq2_p = FGCom_radiowaveModel::splitFreqString(frq2);
     std::string frq2_real = frq2_model->conv_chan2freq(frq2_p.frequency);
@@ -56,6 +57,7 @@ int main (int argc, char **argv) {
     printf("prefix[2]  = '%s' \n", frq2_p.prefix.c_str());
     printf("pFrq[2]    = '%s' \n", frq2_p.frequency.c_str());
     printf("realFrq[2] = '%s' \n", frq2_real.c_str());
+    printf("chan[2]    = '%s' \n", frq1_model->conv_freq2chan(frq2).c_str());
     
     if (frq1_model->isCompatible(frq2_model.get())) {
         fgcom_radio r1;
