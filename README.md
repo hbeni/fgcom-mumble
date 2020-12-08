@@ -171,7 +171,9 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 - Check that your software (ATC, flightsim) actually sends data to the plugin udp port. Recheck the port the plugin listens to (the plugin tells you at startup in the mumble chat window)
 - Check mumbles client comment if the callsign and radio frequencies are registered
 - Look at the plugins debug messages (start mumble from terminal; you need to make a debug build for that)
-- Look at the murmur server log for possible dropped plugin messages (`murmur.ini` *`pluginmessagelimit`* may be too restrictive)
+- Look at the murmur server log for possible dropped plugin messages (look for the string `Dropping plugin message`), they may cause out of sync state. Reasons can be:
+  - the setting *`pluginmessagelimit`* in `murmur.ini`  may be too restrictive.
+  - a bug in the plugin-io code: The plugin is expected to work well with default settings, so dropped messages may indicate a plugin bug; especially if they appear rapidly over a longer time.
 
 
 Compiling the plugin

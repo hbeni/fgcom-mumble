@@ -51,21 +51,23 @@ extern struct fgcom_config fgcom_cfg;
 
 // This represents a clients metadata
 struct fgcom_client {
-	mumble_userid_t mumid;  // mumble client ID
-	uint16_t clientPort;  // client port of the identity, we may send packets to this port
-	std::chrono::system_clock::time_point lastUpdate;
+    mumble_userid_t mumid;  // mumble client ID
+    uint16_t clientPort;  // client port of the identity, we may send packets to this port
+    std::chrono::system_clock::time_point lastUpdate;       // when we received the last data
+    std::chrono::system_clock::time_point lastNotification; // when we sent the last answer for incoming NTF_ASK packets
     float lon;
-	float lat;
-	float alt;  // in meters
-	std::string  callsign;
-	std::vector<fgcom_radio> radios;
-	fgcom_client()  {
-		lon = -130.000;   // 60°S / 130°W is somewhere in the middle of the pacific ocean... 
-		lat = -60.000;
-		alt = -1;
-		callsign = "ZZZZ";
+    float lat;
+    float alt;  // in meters
+    std::string  callsign;
+    std::vector<fgcom_radio> radios;
+    fgcom_client()  {
+        lon = -130.000;   // 60°S / 130°W is somewhere in the middle of the pacific ocean... 
+        lat = -60.000;
+        alt = -1;
+        callsign = "ZZZZ";
         lastUpdate = std::chrono::system_clock::now();
-	};
+        lastNotification = std::chrono::system_clock::from_time_t((std::time_t)0);
+    };
 };
 
 

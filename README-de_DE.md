@@ -176,7 +176,9 @@ Falls du andere Piloten nicht hören kannst, oder nicht senden kannst, prüfe di
 - Stelle sicher, dass die Clientsoftware (ATC, Flugsimulator) wirklich daten an den UDP-Port des Plugins übermittelt. Prüfe auch den Port des Plugins nochmal nach (die Portnummer wird vom Plugin in den Mumble-Chat berichtet).
 - Prüfe den Kommentar deines Mumbleclients, ob das Callsign und die Funkgeräte registriert wurden.
 - Prüfe die Plugin-Debugnachrichten (Starte dafür mumble über eine Kommandozeile; du brauchst außerdem eine spezielle Pluginversion mit aktiver Debug-Konfiguration)
-- Prüfe das murmur server Fehlerlog nach Nachrichten zu abgewiesenen Pluginnachrichten (`murmur.ini` *`pluginmessagelimit`* ist möglicherweise zu restriktiv)
+- Prüfe das murmur server Fehlerlog nach Nachrichten zu abgewiesenen Pluginnachrichten (`Dropping plugin message`), diese können zum Verlust der Synchronizität führen. Ursachen können sein:
+  -  Die Einstellung *`pluginmessagelimit`* in der `murmur.ini` ist möglicherweise zu restriktiv.
+  - Ein Fehler im Plugin-IO Code: dieser sollte gut mit den Standardeinstellungen funktionieren. Verworfene Nachrichten können auf einen Codefehler hinweisen, insbesondere wenn sie in rascher Abfolge über eine längere Zeit auftauchen.
 
 
 Das Plugin selbst Kompilieren

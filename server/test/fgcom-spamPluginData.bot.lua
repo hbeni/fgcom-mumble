@@ -134,7 +134,7 @@ updateLocData = function(t)
 end
 
 
-client:hook("OnServerSync", function(event)
+client:hook("OnServerSync", function(user, event)
     print("Sync done; server greeted with: ", event.welcome_text)
     
     -- try to join fgcom-mumble channel

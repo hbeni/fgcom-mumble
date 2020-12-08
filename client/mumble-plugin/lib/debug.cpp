@@ -72,6 +72,11 @@ void debug_out_internal_state() {
                 std::string lastUpdate_str(30, '\0');
                 std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%T", std::localtime(&lastUpdate_t));
                 printf("[mumid=%i; iid=%i] %s: lastUpdate=%s\n", rmt.mumid, iid, rmt.callsign.c_str(), lastUpdate_str.c_str());
+                
+                std::time_t lastNotify_t = std::chrono::system_clock::to_time_t(rmt.lastNotification);
+                std::string lastNotify_str(30, '\0');
+                std::strftime(&lastNotify_str[0], lastNotify_str.size(), "%T", std::localtime(&lastNotify_t));
+                printf("[mumid=%i; iid=%i] %s: lastNotify=%s\n", rmt.mumid, iid, rmt.callsign.c_str(), lastNotify_str.c_str());
             
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
