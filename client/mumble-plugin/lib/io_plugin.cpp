@@ -330,8 +330,16 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         // Parse the data, depending on packet type
         if (dataID == "FGCOM:ICANHAZDATAPLZ") {
             // client asks for our current state
-            pluginDbg("Data update requested: Sender="+std::to_string(clientID)+" DataID="+dataID);
-            notifyRemotes(NTFY_ALL, NTFY_ALL, -1, clientID); // notify the sender with all our data
+            pluginDbg("[mum_pluginIO] Data update requested: Sender="+std::to_string(clientID)+" DataID="+dataID);
+            
+            // Throttle answers per client per second (prevent https://github.com/hbeni/fgcom-mumble/issues/60)
+            const std::chrono::milliseconds ntf_ask_answerInterval = std::chrono::milliseconds(MIN_NTFYANSWER_INTVAL);
+            if (fgcom_remote_clients[clientID][iid].lastNotification + ntf_ask_answerInterval < std::chrono::system_clock::now()) {
+                fgcom_remote_clients[clientID][iid].lastNotification = std::chrono::system_clock::now();
+                notifyRemotes(NTFY_ALL, NTFY_ALL, -1, clientID); // notify the sender with all our data
+            } else {
+                pluginLog("[mum_pluginIO] <WARN> Dropped excess NTFY_ASK packet from sender="+std::to_string(clientID));
+            }
         
         
         } else if (dataID == "FGCOM:PING") {

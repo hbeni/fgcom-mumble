@@ -27,6 +27,7 @@
 
 #define MAX_PLUGINIO_FIELDLENGTH      32    // maximum plugin-io field size, should correspond to MAX_UDPSRV_FIELDLENGTH
 
+#define MIN_NTFYANSWER_INTVAL 1000   // minimum time interval between answers to incoming NTF_ASK requests
 
 // Mubmle API global vars.
 // They get initialized from the plugin interface (see fgcom-mumble.cpp)
