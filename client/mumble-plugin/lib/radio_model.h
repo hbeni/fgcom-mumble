@@ -123,12 +123,21 @@ public:
 
     
     /*
-    * Convert /for ecample 25kHz/8.33kHz) channel names to a physical carrier wave frequency
+    * Convert (for ecample 25kHz/8.33kHz) channel names to a physical carrier wave frequency
     * 
     * @param frq the frequency string to normalize
-    * @return fgcom_radiowave_freqConvRes; frequency key is always set, prefix only if parsed correctly.
+    * @return std::string the physical carrier wave frequency
     */
     virtual std::string conv_chan2freq(std::string frq) = 0;
+    
+
+    /*
+    * Convert (for ecample 25kHz/8.33kHz) physical carrier wave frequency to channel name
+    * 
+    * @param frq the frequency string to get the channel name for
+    * @return std::string the channel name
+    */
+    virtual std::string conv_freq2chan(std::string frq) = 0;
 
     
     /*
