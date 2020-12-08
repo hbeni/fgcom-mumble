@@ -49,6 +49,9 @@ public:
         return frq;
     }
     
+    std::string conv_freq2chan(std::string frq) {
+        return frq;
+    }
     
     // Frequency match is done with a band method, ie. a match is there if the bands overlap
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
