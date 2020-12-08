@@ -187,6 +187,67 @@ public:
         }
         
     }
+    
+    
+    /*
+    * Convert (for ecample 25kHz/8.33kHz) physical carrier wave frequency to channel name
+    * 
+    * @param frq the frequency string to get the channel name for
+    * @return std::string the channel name
+    */
+    std::string conv_freq2chan(std::string frq) {
+        std::setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
+        
+        std::smatch sm;
+        if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d\\d\\d\\d+)$") )) {
+            // we have a proper frequency with at least 4 digits -> assume real wave carrier frequency
+            std::string tgtfrq = std::string(sm[1]) + "." + std::string(sm[2]);
+            double tgtfrq_f = std::stod(tgtfrq);
+            double tgtfrq_MHz = std::stod(sm[1]);
+            double tgtfrq_kHz = std::stod("0."+std::string(sm[2]));
+            
+            /*
+             * AIRBAND: try to resolve to 8.33/25 channel names (like "118.015")
+             */
+            if (tgtfrq_MHz >= 118 && tgtfrq_MHz < 137) {
+                //printf("  '%s' (%.5f) is in Airband\n", frq.c_str(), tgtfrq_f);
+                double tgt_ch_MHz;
+                if ((long)(tgtfrq_kHz*1000) % 25 == 0) {
+                    // this is a 25kHz channel: use as-is
+                    tgt_ch_MHz = tgtfrq_f;
+                
+                } else {
+                    // this is a 8.33 channel: convert
+                    double spacing_MHz = .025 / 3;   // 8.33 kHz in MHz = 0.00833333
+                    
+                    int kHz25Ch = tgtfrq_kHz / 0.025;
+                    long chnr = std::lround(tgtfrq_kHz / spacing_MHz); // 25kHz channels are 8.33 compatible!
+                    
+                    // calculate target channel kHz component
+                    tgt_ch_MHz = tgtfrq_MHz + (chnr * 0.005);
+                    tgt_ch_MHz += kHz25Ch * 2 * 0.005;
+                    if ((long)(tgtfrq_kHz*1000) % 25 > 0) tgt_ch_MHz += 0.005; // if != 25kHz frequency, add 0.005 to signify 8.33 channel
+                    //printf(" khz-block=%i, chnr (%.5f / %.5f): %li = channel %.3f \n", kHz25Ch, tgtfrq_kHz, spacing_MHz, chnr, tgt_ch_MHz);
+                    //printf("DBG: fmod(%.5f, 0.025)=%li \n", tgtfrq_kHz, (long)(tgtfrq_kHz*1000) % 25 );
+                }
+                
+                // format to 3 decimals and go home
+                char str[40];
+                sprintf(str, "%.3f", tgt_ch_MHz);
+                return std::string(str);
+            }
+
+        
+            /*
+             * Future: more bands/channels?
+             */
+        
+            
+            return frq;  // fallback, no band conversions defined
+        } else {
+            return frq; // not a decimal frequency
+        }
+    }
 
 
     // Frequency match is done with a band method, ie. a match is there if the bands overlap

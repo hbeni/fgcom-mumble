@@ -46,6 +46,9 @@ public:
         return frq;
     }
 
+    std::string conv_freq2chan(std::string frq) {
+        return frq;
+    }
 
     // frequencies match if the string is case-sensitively the same
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
