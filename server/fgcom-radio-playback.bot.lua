@@ -366,6 +366,7 @@ client:hook("OnServerSync", function(client, event)
     -- Adjust comment
     client:setComment("<b><i><u>FGCom:</u></i></b><table>"
                       .."<tr><th>Callsign:</th><td><tt>"..lastHeader.callsign.."</tt></td></tr>"
+                     .."<tr><th>Channel:</th><td><tt>"..lastHeader.dialedFRQ.."</tt></td></tr>"
                      .."<tr><th>Frequency:</th><td><tt>"..lastHeader.frequency.."</tt></td></tr>"
                      .."<tr><th>Power:</th><td><tt>"..lastHeader.txpower.."</tt></td></tr>"
                      .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..lastHeader.lat.."</tt></td></tr><tr><td>Lon:</td><td><tt>"..lastHeader.lon.."</tt></td></tr><tr><td>Height:</td><td><tt>"..lastHeader.height.."</tt></td></tr></table></td></tr>"
