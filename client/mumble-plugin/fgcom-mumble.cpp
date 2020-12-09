@@ -317,6 +317,7 @@ mumble_error_t fgcom_loadConfig() {
                     if (token_key == "radioAudioEffects") fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
                     if (token_key == "allowHearingNonPluginUsers") fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
                     if (token_key == "specialChannel")    fgcom_cfg.specialChannel    = token_value;
+                    if (token_key == "udpServerHost")     fgcom_cfg.udpServerHost     = token_value;
                     if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
                 }
             }

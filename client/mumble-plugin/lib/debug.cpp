@@ -32,7 +32,7 @@ void debug_out_internal_state() {
             int iid          = idty.first;
             fgcom_client lcl = idty.second;
             printf("[mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.lat, lcl.lon, lcl.alt);
-            printf("[mumid=%i; iid=%i] %s: clientPort=%i\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.clientPort);
+            printf("[mumid=%i; iid=%i] %s: clientHostPort=%s:%i\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.clientHost.c_str(), lcl.clientPort);
             
             std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(lcl.lastUpdate);
             std::string lastUpdate_str(30, '\0');
@@ -66,7 +66,7 @@ void debug_out_internal_state() {
                 fgcom_client rmt = idty.second;
                 printf("[id=%i; mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.lat, rmt.lon, rmt.alt);
                 printf("[id=%i; mumid=%i; iid=%i] %s: %lli radios registered\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.radios.size());
-                printf("[mumid=%i; iid=%i] %s: clientPort=%i\n", rmt.mumid, iid, rmt.callsign.c_str(), rmt.clientPort);
+                printf("[mumid=%i; iid=%i] %s: clientHostPort=%s:%i\n", rmt.mumid, iid, rmt.callsign.c_str(), rmt.clientHost.c_str(), rmt.clientPort);
                 
                 std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(rmt.lastUpdate);
                 std::string lastUpdate_str(30, '\0');
