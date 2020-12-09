@@ -84,6 +84,7 @@ ifdef SSLFLAGS
 	@echo "BUILD OpenSSL"
 	git submodule init
 	git submodule update
+	cd lib/openssl/ && git reset --hard
 	cd lib/openssl/ && ./Configure mingw64 no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=x86_64-w64-mingw32- && make clean && make
 	cp lib/openssl/libssl.dll.a lib/openssl/libssl.a        # so -lssl finds the correct lib
 	cp lib/openssl/libcrypto.dll.a lib/openssl/libcrypto.a  # so -lcrypto finds the correct lib
