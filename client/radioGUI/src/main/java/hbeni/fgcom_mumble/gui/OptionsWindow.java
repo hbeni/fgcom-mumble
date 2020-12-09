@@ -35,8 +35,6 @@ public class OptionsWindow extends javax.swing.JFrame {
         URL iconURL = getClass().getResource("/fgcom_logo.png");
         ImageIcon icon = new ImageIcon(iconURL);
         this.setIconImage(icon.getImage());
-        
-        qlyLabelUpdate();
     }
 
     /**
@@ -58,7 +56,6 @@ public class OptionsWindow extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jButton_OK = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jTextField_udpPort = new javax.swing.JTextField();
@@ -66,6 +63,10 @@ public class OptionsWindow extends javax.swing.JFrame {
         jCheckBox_EnableAudioEffects = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
         jCheckBox_HearAllUsers = new javax.swing.JCheckBox();
+        jLabel11 = new javax.swing.JLabel();
+        jTextField_udpHost = new javax.swing.JTextField();
+        jButton_OK = new javax.swing.JButton();
+        jButton_Cancel = new javax.swing.JButton();
 
         setTitle("Options");
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -117,13 +118,6 @@ public class OptionsWindow extends javax.swing.JFrame {
         jLabel9.setText("100%");
         jLabel9.setToolTipText("Received signals will always be of the given quality. Needs a debug build of the mumble plugin!");
 
-        jButton_OK.setText("OK");
-        jButton_OK.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton_OKActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -131,31 +125,26 @@ public class OptionsWindow extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel_qlyvalue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(47, 47, 47)
-                                .addComponent(jLabel6)
-                                .addGap(34, 34, 34)
-                                .addComponent(jLabel7)
-                                .addGap(40, 40, 40)
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel9))
-                            .addComponent(jSlider_qlysetting, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton_OK)))
+                        .addComponent(jLabel_qlyvalue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(47, 47, 47)
+                        .addComponent(jLabel6)
+                        .addGap(34, 34, 34)
+                        .addComponent(jLabel7)
+                        .addGap(40, 40, 40)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel9))
+                    .addComponent(jSlider_qlysetting, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -177,42 +166,33 @@ public class OptionsWindow extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
-                .addComponent(jButton_OK)
-                .addContainerGap())
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Common Options"));
+        jPanel2.setPreferredSize(new java.awt.Dimension(394, 250));
 
         jLabel1.setText("Plugin UDP Port");
         jLabel1.setToolTipText("Where Radio GUI sends its packets");
 
         jTextField_udpPort.setText("err");
         jTextField_udpPort.setToolTipText("Where Radio GUI sends its packets");
-        jTextField_udpPort.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField_udpPortKeyReleased(evt);
-            }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField_udpPortKeyTyped(evt);
-            }
-        });
 
         jLabel3.setText("Enable audio effects");
+        jLabel3.setToolTipText("If enabled, you will hear static and degraded signal quality based on signal reception");
 
-        jCheckBox_EnableAudioEffects.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox_EnableAudioEffectsActionPerformed(evt);
-            }
-        });
+        jCheckBox_EnableAudioEffects.setToolTipText("If enabled, you will hear static and degraded signal quality based on signal reception");
 
         jLabel10.setText("Hear non-plugin users");
+        jLabel10.setToolTipText("When enabled, you will hear mumble users that do not use the plugin");
 
-        jCheckBox_HearAllUsers.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox_HearAllUsersActionPerformed(evt);
-            }
-        });
+        jCheckBox_HearAllUsers.setToolTipText("When enabled, you will hear mumble users that do not use the plugin");
+
+        jLabel11.setText("Plugin UDP Host");
+        jLabel11.setToolTipText("Where Radio GUI sends its packets");
+
+        jTextField_udpHost.setText("err");
+        jTextField_udpHost.setToolTipText("Where Radio GUI sends its packets");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -223,22 +203,28 @@ public class OptionsWindow extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel10))
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel11))
                 .addGap(99, 99, 99)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jCheckBox_EnableAudioEffects)
                     .addComponent(jTextField_udpPort, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox_HearAllUsers))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jCheckBox_HearAllUsers)
+                    .addComponent(jTextField_udpHost))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(jTextField_udpHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField_udpPort, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jCheckBox_EnableAudioEffects)
@@ -248,35 +234,69 @@ public class OptionsWindow extends javax.swing.JFrame {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel10)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addGap(53, 53, 53))
         );
+
+        jButton_OK.setText("OK");
+        jButton_OK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_OKActionPerformed(evt);
+            }
+        });
+
+        jButton_Cancel.setText("Cancel");
+        jButton_Cancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_CancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton_Cancel, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton_OK, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton_OK)
+                    .addComponent(jButton_Cancel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void qlyLabelUpdate() {
-        jTextField_udpPort.setText(Integer.toString(radioGUI.Options.udpPort));
+    
+    private void jButton_OKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_OKActionPerformed
+        // Save settings
+        radioGUI.Options.udpHost = jTextField_udpHost.getText();
+        radioGUI.Options.udpPort = Integer.parseInt(jTextField_udpPort.getText());
+        radioGUI.Options.enableAudioEffecs = jCheckBox_EnableAudioEffects.isSelected();
+        radioGUI.Options.allowHearingNonPluginUsers = jCheckBox_HearAllUsers.isSelected();
+        radioGUI.Options.debugSignalOverride = jSlider_qlysetting.getValue();
         
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton_OKActionPerformed
+
+    /* called on showing of the frame */
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         String tgt;
         if (radioGUI.Options.debugSignalOverride >= 0.0) {
             tgt =  Integer.toString(radioGUI.Options.debugSignalOverride)+"%";
@@ -284,51 +304,39 @@ public class OptionsWindow extends javax.swing.JFrame {
             tgt = new String("off");
         }
         jLabel_qlyvalue.setText(tgt);
+        jSlider_qlysetting.setValue(radioGUI.Options.debugSignalOverride);
+        
+        jTextField_udpHost.setText(radioGUI.Options.udpHost);
+        jTextField_udpPort.setText(Integer.toString(radioGUI.Options.udpPort));
+        jCheckBox_EnableAudioEffects.setSelected(radioGUI.Options.enableAudioEffecs);
         
         jCheckBox_EnableAudioEffects.setSelected(radioGUI.Options.enableAudioEffecs);
         jCheckBox_HearAllUsers.setSelected(radioGUI.Options.allowHearingNonPluginUsers);
-    }
-    
-    private void jButton_OKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_OKActionPerformed
-        this.setVisible(false);
-    }//GEN-LAST:event_jButton_OKActionPerformed
-
-    /* called on showing of the frame */
-    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        qlyLabelUpdate();
-        jSlider_qlysetting.setValue(radioGUI.Options.debugSignalOverride);
-        jTextField_udpPort.setText(Integer.toString(radioGUI.Options.udpPort));
-        jCheckBox_EnableAudioEffects.setSelected(radioGUI.Options.enableAudioEffecs);
     }//GEN-LAST:event_formComponentShown
 
     private void jSlider_qlysettingStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_qlysettingStateChanged
-        radioGUI.Options.debugSignalOverride = jSlider_qlysetting.getValue();
-        qlyLabelUpdate();
+        String tgt;
+        if (jSlider_qlysetting.getValue() >= 0.0) {
+            tgt =  Integer.toString(jSlider_qlysetting.getValue())+"%";
+        } else {
+            tgt = new String("off");
+        }
+        jLabel_qlyvalue.setText(tgt);
     }//GEN-LAST:event_jSlider_qlysettingStateChanged
 
-    private void jTextField_udpPortKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_udpPortKeyTyped
-        //radioGUI.Options.udpPort = Integer.parseInt(jTextField_udpPort.getText());
-    }//GEN-LAST:event_jTextField_udpPortKeyTyped
-
-    private void jTextField_udpPortKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_udpPortKeyReleased
-        radioGUI.Options.udpPort = Integer.parseInt(jTextField_udpPort.getText());
-    }//GEN-LAST:event_jTextField_udpPortKeyReleased
-
-    private void jCheckBox_EnableAudioEffectsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_EnableAudioEffectsActionPerformed
-        radioGUI.Options.enableAudioEffecs = jCheckBox_EnableAudioEffects.isSelected();
-    }//GEN-LAST:event_jCheckBox_EnableAudioEffectsActionPerformed
-
-    private void jCheckBox_HearAllUsersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_HearAllUsersActionPerformed
-        radioGUI.Options.allowHearingNonPluginUsers = jCheckBox_HearAllUsers.isSelected();
-    }//GEN-LAST:event_jCheckBox_HearAllUsersActionPerformed
+    private void jButton_CancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_CancelActionPerformed
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton_CancelActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_Cancel;
     private javax.swing.JButton jButton_OK;
     private javax.swing.JCheckBox jCheckBox_EnableAudioEffects;
     private javax.swing.JCheckBox jCheckBox_HearAllUsers;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -341,6 +349,7 @@ public class OptionsWindow extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSlider jSlider_qlysetting;
+    private javax.swing.JTextField jTextField_udpHost;
     private javax.swing.JTextField jTextField_udpPort;
     // End of variables declaration//GEN-END:variables
 }
