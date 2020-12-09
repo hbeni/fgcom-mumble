@@ -37,12 +37,14 @@ struct fgcom_config {
     bool        allowHearingNonPluginUsers;
     bool        radioAudioEffects;
     std::string specialChannel;
+    std::string udpServerHost;
     int         udpServerPort;
     
     fgcom_config()  {
         allowHearingNonPluginUsers = false;
         radioAudioEffects = true;
         specialChannel    = "^fgcom-mumble.*";
+        udpServerHost     = "127.0.0.1";
         udpServerPort     = 16661;
     };
 };
@@ -52,7 +54,8 @@ extern struct fgcom_config fgcom_cfg;
 // This represents a clients metadata
 struct fgcom_client {
     mumble_userid_t mumid;  // mumble client ID
-    uint16_t clientPort;  // client port of the identity, we may send packets to this port
+    uint16_t clientPort;    // client port of the identity, we may send packets to this port
+    std::string clientHost; // client host of the identity
     std::chrono::system_clock::time_point lastUpdate;       // when we received the last data
     std::chrono::system_clock::time_point lastNotification; // when we sent the last answer for incoming NTF_ASK packets
     float lon;

@@ -66,7 +66,9 @@
 
 // These are just some utility functions facilitating writing logs and the like
 // The actual implementation of the plugin is further down
+std::mutex fgcom_plog_mtx;
 std::ostream& pLog() {
+    fgcom_plog_mtx.lock();
     // make milliseconds timestamp
     const auto now = std::chrono::system_clock::now();
     const auto nowAsTimeT = std::chrono::system_clock::to_time_t(now);
@@ -77,6 +79,7 @@ std::ostream& pLog() {
       << '.' << std::setfill('0') << std::setw(3) << nowMs.count();
 
     std::cout << "FGCom [" << nowStringStream.str() <<"]: ";
+    fgcom_plog_mtx.unlock();
     return std::cout;
 }
 
