@@ -34,7 +34,9 @@ public class UDPclient {
     protected State state;
     
     
+    
     /* UDP stuff */
+    InetAddress address;
     DatagramSocket socket;
 
     /**
@@ -43,6 +45,13 @@ public class UDPclient {
     public UDPclient(State s) {
         this.active = false;
         this.state = s;
+    }
+    
+    /**
+     * Lookup host
+     */
+    public void openHost() throws UnknownHostException {
+        address = InetAddress.getByName(radioGUI.Options.udpHost);
     }
     
     /**
@@ -112,9 +121,9 @@ public class UDPclient {
         String msg  = prepare()+'\n';
         if (this.active) {
             try {
-                openSocket();
-                InetAddress address = InetAddress.getLoopbackAddress(); // fixed for now - the plugin does not support networking on purpose.
                 
+                openHost();   // result is cached
+                openSocket();
                 
                 byte[] buffer = msg.getBytes();
                 //buffer = msg.getBytes();
