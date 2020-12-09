@@ -179,7 +179,7 @@ The following internal plugin data packets are defined:
 
 
 ### UDP client interface
-The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is localhost, on the respective identities client port (can be overridden by `UDP_TGT_PORT`). The client port is derived from the UDP input servers packet for the identity.  
+The plugin can send information via an UDP interface to third party software at max 10Hz. The UDP target address is taken from the respective identities client port (can be overridden by `UDP_TGT_PORT`). The client host and port is derived from the UDP input servers packet for the identity.  
 If there is no data to send, nothing will be transmitted over the wire.  
 
 The packet format is similar to the UDP input format: a simple `Key=Value` ASCII string. Pairs are separated using comma, each packet is terminated by newline. Floats are always output with a point as decimal-point character.  

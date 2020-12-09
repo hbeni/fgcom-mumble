@@ -33,6 +33,7 @@ public class radioGUI {
     
     /* A class containing the options */
     public static class Options {
+        public static String  udpHost             = "localhost";
         public static int     udpPort             = 16661;
         public static int     debugSignalOverride = -5;
         public static boolean enableAudioEffecs   = true;

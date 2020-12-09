@@ -81,9 +81,9 @@
  */
 std::mutex fgcom_localcfg_mtx;
 std::map<int, fgcom_client> fgcom_local_client;
-std::map<uint16_t, int> fgcom_udp_portMap; // port2iid
+std::map<std::pair<std::string,uint16_t>, int> fgcom_udp_portMap; // host,port2iid
 bool fgcom_com_ptt_compatmode = false;
-std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort) {
+std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort, std::string clientHost) {
     pluginDbg("[UDP-server] received message (clientPort="+std::to_string(clientPort)+"): "+std::string(buffer));
     //std::cout << "DBG: Stored local userID=" << localMumId <<std::endl;
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
@@ -92,6 +92,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     std::map<int, fgcom_udp_parseMsg_result> parseResult;
     
     int iid = -1; // current IID selector for this message
+    std::pair<std::string,uint16_t> clientHostPort(clientHost, clientPort); // connection pair for the portmapper
     
     // markers for ALT/HGT resolution
     // iid => new_value
@@ -139,7 +140,9 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         if (pm.second == iid) {
                             // we had seen that iid before, use it's port
                             iid_port_found = true;
-                            clientPort = pm.first;
+                            clientHost = pm.first.first;
+                            clientPort = pm.first.second;
+                            clientHostPort = std::make_pair(clientHost, clientPort);
                             break;
                         }
                     }
@@ -147,7 +150,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // we did not see this iid so far so we need to establish it new.
                         // this happens automatically and defaults to the current client port.
                         // it may later be overridden by RDP_PORT= field.
-                        fgcom_udp_portMap[clientPort] = iid;  // add info to portmapper, so it reports the right iid
+                        fgcom_udp_portMap[clientHostPort] = iid;  // add info to portmapper, so it reports the right iid
                     }
                 }
 
@@ -156,31 +159,31 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 // This will map UDP client ports to identity IDs, so basicly we establish
                 // that each UDP client is a unique identity (unless already overridden).
                 if (iid == -1) {
-                    if (fgcom_udp_portMap.count(clientPort) == 0) {
+                    if (fgcom_udp_portMap.count(clientHostPort) == 0) {
                         // register new client port to portmap.
                         // (IIDs are counted upwards from zero, so we save bandwith when transmitting packets)
                         int freeIID = 0;
                         for (const auto &fc : fgcom_udp_portMap) {
                             if (fc.second >= freeIID) freeIID = fc.second + 1;
                         }
-                        fgcom_udp_portMap[clientPort] = freeIID;
+                        fgcom_udp_portMap[clientHostPort] = freeIID;
                     }
-                    iid = fgcom_udp_portMap[clientPort];
-                    pluginDbg("[UDP-server] identity portmap result: port("+std::to_string(clientPort)+") => iid("+std::to_string(iid)+")");
+                    iid = fgcom_udp_portMap[clientHostPort];
+                    pluginDbg("[UDP-server] identity portmap result: clientHostPort("+clientHost+":"+std::to_string(clientPort)+") => iid("+std::to_string(iid)+")");
                 }
                 
                 // see if we need to establish the local client state for the iid
                 if (fgcom_local_client.count(iid) == 0 ) {
                     fgcom_local_client[iid]       = fgcom_client();
                     fgcom_local_client[iid].mumid = localMumId; // copy default id
-                    pluginDbg("[UDP-server] new identity registered: iid="+std::to_string(iid)+"; clientPort="+std::to_string(clientPort));
+                    fgcom_local_client[iid].clientHost = clientHost; // ensure valid and current clientHost
+                    fgcom_local_client[iid].clientPort = clientPort; // ensure valid and current clientPort
+                    pluginDbg("[UDP-server] new identity registered: iid="+std::to_string(iid)+"; clientHostPort="+clientHost+":"+std::to_string(clientPort));
                 } else {
                     // Update that we have received some data
                     if (token_key != "IID") {
                         fgcom_local_client[iid].lastUpdate = std::chrono::system_clock::now();
                     }
-                    
-                    fgcom_local_client[iid].clientPort = clientPort; // ensure valid and current clientPort
                 }
                 
                 std::smatch smc;
@@ -389,9 +392,11 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                  */
                 if (token_key == "UDP_TGT_PORT") {
                     // UDP client Port change request: we need to adjust portmapper and local port
-                    clientPort                         = std::stoi(token_value);
+                    fgcom_udp_portMap.erase(clientHostPort); 
+                    clientPort = std::stoi(token_value);
+                    std::pair<std::string,uint16_t> new_clientHostPort(clientHost, clientPort);
                     fgcom_local_client[iid].clientPort = clientPort;
-                    fgcom_udp_portMap[clientPort]      = iid;        // add info to portmapper, so it reports the right iid
+                    fgcom_udp_portMap[new_clientHostPort] = iid; // add info to portmapper, so it reports the right iid
                     if (udpClientRunning) {
                         pluginDbg("[UDP-server] client port info change: iid="+std::to_string(iid)+"; port="+std::to_string(fgcom_local_client[iid].clientPort));
                         // running thread will handle the change to fgcom_local_client[iid].clientPort
@@ -515,10 +520,21 @@ void fgcom_spawnUDPServer() {
     memset(&servaddr, 0, sizeof(servaddr)); 
     memset(&cliaddr, 0, sizeof(cliaddr)); 
       
-    // Filling server information 
+    // Filling server information
     servaddr.sin_family    = AF_INET; // IPv4 
-    servaddr.sin_addr.s_addr = INADDR_ANY; 
-      
+    if (fgcom_cfg.udpServerHost == "*") {
+        servaddr.sin_addr.s_addr = INADDR_ANY;
+    } else {
+        servaddr.sin_addr.s_addr = inet_addr(fgcom_cfg.udpServerHost.c_str());
+    }
+    if (servaddr.sin_addr.s_addr == -1) {
+        pluginLog("[UDP-server] socket server address invalid: "+fgcom_cfg.udpServerHost);
+        mumAPI.log(ownPluginID, std::string("UDP server failed: server address invalid: "+fgcom_cfg.udpServerHost).c_str());
+        return;
+//        exit(EXIT_FAILURE);
+    }
+    
+
     // Bind the socket with the server address
     bool bind_ok = false;
     for (fgcom_udp_port_used = fgcom_cfg.udpServerPort; fgcom_udp_port_used < fgcom_cfg.udpServerPort + 10; fgcom_udp_port_used++) {
@@ -535,13 +551,14 @@ void fgcom_spawnUDPServer() {
     }
     
     
-    pluginLog("[UDP-server] server up and waiting for data at port "+std::to_string(fgcom_udp_port_used));
-    mumAPI.log(ownPluginID, std::string("UDP server up and waiting for data at port "+std::to_string(fgcom_udp_port_used)).c_str());
+    pluginLog("[UDP-server] server up and waiting for data at "+fgcom_cfg.udpServerHost+":"+std::to_string(fgcom_udp_port_used));
+    mumAPI.log(ownPluginID, std::string("UDP server up and waiting for data at "+fgcom_cfg.udpServerHost+":"+std::to_string(fgcom_udp_port_used)).c_str());
     
     // wait for incoming data
     int n; 
     socklen_t len;
     std::map<uint16_t, bool> firstdata;
+    char* clientHost;
     uint16_t clientPort;
     udpServerRunning = true;
     while (!fgcom_udp_shutdowncmd) {
@@ -550,11 +567,13 @@ void fgcom_spawnUDPServer() {
                     MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len); 
         buffer[n] = '\0';
         clientPort = ntohs(cliaddr.sin_port);
+        clientHost = inet_ntoa(cliaddr.sin_addr);
+        std::string clientHost_str = std::string(clientHost);
         
         // Print info to client, so we know what ports are in use
         if (firstdata.count(clientPort) == 0 && sizeof(buffer) > 4) {
             firstdata[clientPort] = true;
-            mumAPI.log(ownPluginID, std::string("UDP server connection established from port "+std::to_string(clientPort)).c_str());
+            mumAPI.log(ownPluginID, std::string("UDP server connection established from "+clientHost_str+":"+std::to_string(clientPort)).c_str());
         }
         
         // Allow the udp server to be shut down when receiving SHUTDOWN command
@@ -569,7 +588,7 @@ void fgcom_spawnUDPServer() {
             // let the incoming data be handled
             
             std::map<int, fgcom_udp_parseMsg_result> updates; // so we can send updates to remotes
-            updates = fgcom_udp_parseMsg(buffer, clientPort);
+            updates = fgcom_udp_parseMsg(buffer, clientPort, clientHost_str);
             
             /* Process pending urgent notifications
              * (not-urgent updates are dealt from the notification thread) */
@@ -620,12 +639,20 @@ void fgcom_shutdownUDPServer() {
 
 	// creates binary representation of server name
 	// and stores it as sin_addr
-	// http://beej.us/guide/bgnet/output/html/multipage/inet_ntopman.html
+	// see: https://beej.us/guide/bgnet/html/
+    if (fgcom_cfg.udpServerHost == "*") {
 #ifdef MINGW_WIN64
-    server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);    // 127.0.0.1 on purpose: don't change for securites sake
+        server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 #else
-	inet_pton(AF_INET, "localhost", &server_address.sin_addr);  // 127.0.0.1 on purpose: don't change for securites sake
+        inet_pton(AF_INET, "127.0.0.1", &server_address.sin_addr);
 #endif
+    } else {
+#ifdef MINGW_WIN64
+        server_address.sin_addr.s_addr = inet_addr(fgcom_cfg.udpServerHost.c_str());
+#else
+        inet_pton(AF_INET, fgcom_cfg.udpServerHost.c_str(), &server_address.sin_addr);
+#endif
+    }
 
 	// htons: port in network order format
 	server_address.sin_port = htons(fgcom_udp_port_used);
