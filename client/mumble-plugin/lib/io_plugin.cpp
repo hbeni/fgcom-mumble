@@ -66,7 +66,7 @@
 
 // These are just some utility functions facilitating writing logs and the like
 // The actual implementation of the plugin is further down
-std::mutex fgcom_plog_mtx;
+std::mutex fgcom_plog_mtx; // thread safety for logging
 std::ostream& pLog() {
     fgcom_plog_mtx.lock();
     // make milliseconds timestamp
