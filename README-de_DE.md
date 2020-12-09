@@ -72,7 +72,7 @@ Das Plugin einsetzen
 ====================
 - Verbinde dich auf den mumble server
 - Aktiviere das FGCom-mumble plugin
-- betrete einen Chatraum der mit `fgcom-mumble` beginnt
+- betrete einen Chatraum der mit `fgcom-mumble` beginnt oder dessen Beschreibung `fgcom-mumble activated` enthält
 
 Jetzt bist du bereit, am Funkverkehr teilzunehmen!  
 Dein Flugsimulator oder ATC-Programm muss dem Plugin nun die notwendigen Informationen senden, damit es weiß, wo du bist und welche Funkgeräte zur Verfügung stehen.

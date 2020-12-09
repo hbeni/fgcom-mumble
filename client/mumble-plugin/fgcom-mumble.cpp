@@ -314,11 +314,12 @@ mumble_error_t fgcom_loadConfig() {
                     std::string token_value = sm[2];
                     pluginDbg("[CFG] Parsing token: "+token_key+"="+token_value);
 
-                    if (token_key == "radioAudioEffects") fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
+                    if (token_key == "radioAudioEffects")          fgcom_cfg.radioAudioEffects          = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
                     if (token_key == "allowHearingNonPluginUsers") fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
-                    if (token_key == "specialChannel")    fgcom_cfg.specialChannel    = token_value;
-                    if (token_key == "udpServerHost")     fgcom_cfg.udpServerHost     = token_value;
-                    if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
+                    if (token_key == "specialChannelName")         fgcom_cfg.specialChannelName         = token_value;
+                    if (token_key == "specialChannelDescription")  fgcom_cfg.specialChannelDescription  = token_value;
+                    if (token_key == "udpServerHost")              fgcom_cfg.udpServerHost              = token_value;
+                    if (token_key == "udpServerPort")              fgcom_cfg.udpServerPort              = std::stoi(token_value);
                 }
             }
         } else {
@@ -428,7 +429,7 @@ mumble_error_t fgcom_initPlugin() {
                 return EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
             } else {
                 pluginLog("Server has "+std::to_string(channelCount)+" channels, looking for special ones");
-                pluginDbg("  fgcom.specialChannel='"+fgcom_cfg.specialChannel+"'");
+                pluginDbg("  fgcom.specialChannelName='"+fgcom_cfg.specialChannelName+"'");
                 for (size_t ci=0; ci<channelCount; ci++) {
                     pluginDbg("  resolving channel name for id="+std::to_string(channels[ci]));
                     const char *channelName;
@@ -436,20 +437,37 @@ mumble_error_t fgcom_initPlugin() {
                     if (cfres == STATUS_OK) {
                         pluginDbg("  channelID="+std::to_string(channels[ci])+" '"+channelName+"'");
                         std::string channelName_str(channelName);
-                        if (std::regex_match(channelName_str, std::regex(fgcom_cfg.specialChannel, std::regex_constants::icase) )) {
+                        if (std::regex_match(channelName_str, std::regex(fgcom_cfg.specialChannelName, std::regex_constants::icase) )) {
                             fgcom_specialChannelID.push_back(channels[ci]);
                             pluginDbg("    special channel id found! name='"+channelName_str+"'; id="+std::to_string(channels[ci]));
                         }
+
+                        pluginDbg("  resolving channel description for id="+std::to_string(channels[ci]));
+                        const char *channelDesc;
+                        mumble_error_t cdres = mumAPI.getChannelDescription(ownPluginID, activeConnection, channels[ci], &channelDesc);
+                        if (cdres == STATUS_OK) {
+                            pluginDbg("  channelDescription="+std::to_string(channels[ci])+" '"+channelDesc+"'");
+                            std::string channelDesc_str(channelDesc);
+                            if (std::regex_match(channelDesc_str, std::regex(fgcom_cfg.specialChannelDescription, std::regex_constants::icase) )) {
+                                fgcom_specialChannelID.push_back(channels[ci]);
+                                pluginDbg("    special channel id found! name='"+channelName_str+"'; id="+std::to_string(channels[ci]));
+                            }
+                            mumAPI.freeMemory(ownPluginID, channelName);
+                        } else if (cdres == EC_UNSYNCHRONIZED_BLOB) {
+                            pluginDbg("  channel description not synched yet for id="+std::to_string(channels[ci]));
+                        }
+
                         mumAPI.freeMemory(ownPluginID, channelName);
                     } else {
                         pluginDbg("Error fetching channel names: rc="+std::to_string(cfres));
                         return EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
                     }
+                    
                 }
                 
                 if (fgcom_specialChannelID.size() == 0) {
-                    pluginLog("ERROR: FAILED TO RETRIEVE SPECIAL CHANNEL '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.");
-                    mumAPI.log(ownPluginID, std::string("Failed to retrieve special channel '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.").c_str());
+                    pluginLog("ERROR: FAILED TO RETRIEVE SPECIAL CHANNEL '"+fgcom_cfg.specialChannelName+"'! Please setup such an channel.");
+                    mumAPI.log(ownPluginID, std::string("Failed to retrieve special channel '"+fgcom_cfg.specialChannelName+"'! Please setup such an channel.").c_str());
                 }
             }
             mumAPI.freeMemory(ownPluginID, channels);
