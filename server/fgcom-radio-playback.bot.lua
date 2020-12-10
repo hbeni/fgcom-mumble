@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.4"
+fgcom.botversion = "1.5.0"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
