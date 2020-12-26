@@ -168,20 +168,18 @@ struct MumbleAPI_v_1_0_x {
 	/// Checks whether the local user is currently muted.
 	///
 	/// @param callerID The ID of the plugin calling this function
-	/// @param connection The ID of the server-connection to use as a context
 	/// @param[out] muted A pointer to where the mute state of the local user shall be written
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserMuted)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool *muted);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserMuted)(mumble_plugin_id_t callerID, bool *muted);
 
 	/// Checks whether the local user is currently deafened.
 	///
 	/// @param callerID The ID of the plugin calling this function
-	/// @param connection The ID of the server-connection to use as a context
 	/// @param[out] deafened A pointer to where the deaf state of the local user shall be written
 	/// @returns The error code. If everything went well, STATUS_OK will be returned. Only then the passed pointer
 	/// 	may be accessed
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserDeafed)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool *deafened);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *isLocalUserDeafened)(mumble_plugin_id_t callerID, bool *deafened);
 
 	/// Gets the hash of the given user (can be used to recognize users between restarts)
 	///
@@ -289,18 +287,16 @@ struct MumbleAPI_v_1_0_x {
 	/// Requests Mumble to set the mute state of the local user. In the UI this is referred to as "self-mute".
 	///
 	/// @param callerID The ID of the plugin calling this function.
-	/// @param connection The ID of the server-connection to use as a context
 	/// @param muted Whether to locally mute the local user (opposed to unmuting it)
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserMute)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool muted);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserMute)(mumble_plugin_id_t callerID, bool muted);
 
 	/// Requests Mumble to set the deaf state of the local user. In the UI this is referred to as "self-deaf".
 	///
 	/// @param callerID The ID of the plugin calling this function.
-	/// @param connection The ID of the server-connection to use as a context
 	/// @param deafened Whether to locally deafen the local user (opposed to undeafening it)
 	/// @returns The error code. If everything went well, STATUS_OK will be returned.
-	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserDeaf)(mumble_plugin_id_t callerID, mumble_connection_t connection, bool deafened);
+	mumble_error_t (PLUGIN_CALLING_CONVENTION *requestLocalUserDeaf)(mumble_plugin_id_t callerID, bool deafened);
 
 	/// Sets the comment of the local user
 	///
