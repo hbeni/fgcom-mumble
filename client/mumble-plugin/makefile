@@ -83,7 +83,7 @@ test-win64:
 	x86_64-w64-mingw32-g++-posix -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
 # build win64 plugin-dll
-plugin-win64: #openssl-win
+plugin-win64: openssl-win
 	x86_64-w64-mingw32-g++-posix -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 
