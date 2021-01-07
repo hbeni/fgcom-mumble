@@ -84,7 +84,7 @@ std::map<int, fgcom_client> fgcom_local_client;
 std::map<std::pair<std::string,uint16_t>, int> fgcom_udp_portMap; // host,port2iid
 bool fgcom_com_ptt_compatmode = false;
 std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort, std::string clientHost) {
-    pluginDbg("[UDP-server] received message (clientPort="+std::to_string(clientPort)+"): "+std::string(buffer));
+    pluginDbg("[UDP-server] received message (client="+clientHost+":"+std::to_string(clientPort)+"): "+std::string(buffer));
     //std::cout << "DBG: Stored local userID=" << localMumId <<std::endl;
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
     
