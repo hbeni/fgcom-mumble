@@ -14,93 +14,105 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include "io_plugin.h"
 
 // FOR TESTING PURPOSES ONLY.
 // This is a simple thread function that puts internal state to the terminal every second.
 bool fgcom_isPluginActive();
 bool fgcom_debugthread_shutdown = false;
 bool fgcom_debugthread_running = false;
-void debug_out_internal_state() { 
-    std::cout.setf(std::ios::unitbuf); // unbuffered cout writes
-    std::cout << "---------STARTING DEBUG THREAD---------\n";
+void debug_out_internal_state() {
+    pluginDbg("---------STARTING DEBUG THREAD---------");
     fgcom_debugthread_running = true;
     
     while (!fgcom_debugthread_shutdown) {
-        std::cout << "---------LOCAL STATE-----------\n";
-        printf("plugin state: %s\n", (fgcom_isPluginActive())?"active":"inactive");
+        std::string state_str = "Internal state is as following:\n";
+        state_str += "---------LOCAL STATE-----------\n";
+        std::string pluginActive = fgcom_isPluginActive()? "active" : "inactive";
+        state_str += "plugin state: "+ pluginActive + "\n";
         for (const auto &idty : fgcom_local_client) {
             int iid          = idty.first;
             fgcom_client lcl = idty.second;
-            printf("[mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.lat, lcl.lon, lcl.alt);
-            printf("[mumid=%i; iid=%i] %s: clientHostPort=%s:%i\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.clientHost.c_str(), lcl.clientPort);
+            std::string lcl_prefix = "[mumid="+std::to_string(lcl.mumid)+"; iid="+std::to_string(iid)+"] "+lcl.callsign+": ";
+            
+            state_str += lcl_prefix + "location: LAT="+std::to_string(lcl.lat)+" LON="+std::to_string(lcl.lon)+" ALT="+std::to_string(lcl.alt)+"\n";
+            state_str += lcl_prefix + "clientHostPort="+lcl.clientHost+":"+std::to_string(lcl.clientPort)+"\n";
             
             std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(lcl.lastUpdate);
             std::string lastUpdate_str(30, '\0');
-            std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%T", std::localtime(&lastUpdate_t));
-            printf("[mumid=%i; iid=%i] %s: lastUpdate=%s\n", lcl.mumid, iid, lcl.callsign.c_str(), lastUpdate_str.c_str());
+            std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%H:%M:%S", std::localtime(&lastUpdate_t));
+            std::string lastUpdate_str_f(lastUpdate_str.c_str());
+            state_str += lcl_prefix + "lastUpdate="+lastUpdate_str_f+"\n";
             
-            printf("[mumid=%i; iid=%i] %s: %lli radios registered\n", lcl.mumid, iid, lcl.callsign.c_str(), lcl.radios.size());
+            state_str += lcl_prefix + std::to_string(lcl.radios.size()) + "radios registered\n";
             if (lcl.radios.size() > 0) {
                 for (int i=0; i<lcl.radios.size(); i++) {
-                    printf("  Radio %i:   frequency='%s'\n", i, lcl.radios[i].frequency.c_str());
-                    printf("  Radio %i:   dialedFRQ='%s'\n", i, lcl.radios[i].dialedFRQ.c_str());
-                    printf("  Radio %i:   power_btn=%i'\n", i, lcl.radios[i].power_btn);
-                    printf("  Radio %i:       volts=%f\n", i, lcl.radios[i].volts);
-                    printf("  Radio %i: serviceable=%i\n", i, lcl.radios[i].serviceable);
-                    printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(lcl.radios[i]));
-                    printf("  Radio %i:         ptt=%i\n", i, lcl.radios[i].ptt);
-                    printf("  Radio %i:      volume=%f\n", i, lcl.radios[i].volume);
-                    printf("  Radio %i:         pwr=%f\n", i, lcl.radios[i].pwr);
-                    printf("  Radio %i:     squelch=%f\n", i, lcl.radios[i].squelch);
-                    printf("  Radio %i:  chan_width=%2.2f\n", i, lcl.radios[i].channelWidth);
-                    printf("  Radio %i: RDF_enabled=%i\n", i, lcl.radios[i].rdfEnabled);
+                    state_str += "  Radio "+std::to_string(i)+":   frequency='"+lcl.radios[i].frequency+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+lcl.radios[i].dialedFRQ+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(lcl.radios[i].power_btn)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":       volts='"+std::to_string(lcl.radios[i].volts)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+": serviceable='"+std::to_string(lcl.radios[i].serviceable)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+": => operable='"+std::to_string(fgcom_radio_isOperable(lcl.radios[i]))+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":         ptt='"+std::to_string(lcl.radios[i].ptt)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":      volume='"+std::to_string(lcl.radios[i].volume)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":         pwr='"+std::to_string(lcl.radios[i].pwr)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(lcl.radios[i].squelch)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":  chan_width='"+std::to_string(lcl.radios[i].channelWidth)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+": RDF_enabled='"+std::to_string(lcl.radios[i].rdfEnabled)+"'\n";
                 }
             }
         }
         
-        std::cout << "---------REMOTE STATE-----------\n";
+        state_str += "---------REMOTE STATE-----------\n";
         fgcom_remotecfg_mtx.lock();
         for (const auto &p : fgcom_remote_clients) {
             for (const auto &idty : fgcom_remote_clients[p.first]) {
                 int iid          = idty.first;
                 fgcom_client rmt = idty.second;
-                printf("[id=%i; mumid=%i; iid=%i] %s: location: LAT=%f LON=%f ALT=%f\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.lat, rmt.lon, rmt.alt);
-                printf("[id=%i; mumid=%i; iid=%i] %s: %lli radios registered\n", p.first, rmt.mumid, iid, rmt.callsign.c_str(), rmt.radios.size());
-                printf("[mumid=%i; iid=%i] %s: clientHostPort=%s:%i\n", rmt.mumid, iid, rmt.callsign.c_str(), rmt.clientHost.c_str(), rmt.clientPort);
+                std::string rmt_prefix = "[mumid="+std::to_string(rmt.mumid)+"; iid="+std::to_string(iid)+"] "+rmt.callsign+": ";
+                
+                state_str += rmt_prefix + "location: LAT="+std::to_string(rmt.lat)+" LON="+std::to_string(rmt.lon)+" ALT="+std::to_string(rmt.alt)+"\n";
+                state_str += rmt_prefix + "clientHostPort="+rmt.clientHost+":"+std::to_string(rmt.clientPort)+"\n";
                 
                 std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(rmt.lastUpdate);
                 std::string lastUpdate_str(30, '\0');
-                std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%T", std::localtime(&lastUpdate_t));
-                printf("[mumid=%i; iid=%i] %s: lastUpdate=%s\n", rmt.mumid, iid, rmt.callsign.c_str(), lastUpdate_str.c_str());
+                std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%H:%M:%S", std::localtime(&lastUpdate_t));
+                std::string lastUpdate_str_f(lastUpdate_str.c_str());
+                state_str += rmt_prefix + "lastUpdate="+lastUpdate_str_f+"\n";
                 
                 std::time_t lastNotify_t = std::chrono::system_clock::to_time_t(rmt.lastNotification);
                 std::string lastNotify_str(30, '\0');
                 std::strftime(&lastNotify_str[0], lastNotify_str.size(), "%T", std::localtime(&lastNotify_t));
-                printf("[mumid=%i; iid=%i] %s: lastNotify=%s\n", rmt.mumid, iid, rmt.callsign.c_str(), lastNotify_str.c_str());
+                std::string lastNotify_str_f(lastNotify_str.c_str());
+                state_str += rmt_prefix + "lastNotify="+lastNotify_str_f+"\n";
             
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
-                        printf("  Radio %i:   frequency='%s'\n", i, rmt.radios[i].frequency.c_str());
-                        printf("  Radio %i:   dialedFRQ='%s'\n", i, rmt.radios[i].dialedFRQ.c_str());
-                        //printf("  Radio %i:   power_btn=%i\n", i, rmt.radios[i].power_btn);
-                        //printf("  Radio %i:       volts=%f\n", i, rmt.radios[i].volts);
-                        //printf("  Radio %i: serviceable=%i\n", i, rmt.radios[i].serviceable);
-                        //printf("  Radio %i: => operable=%i\n", i, fgcom_radio_isOperable(rmt.radios[i]));
-                        printf("  Radio %i:         ptt=%i\n", i, rmt.radios[i].ptt);
-                        //printf("  Radio %i:      volume=%f\n", i, rmt.radios[i].volume);
-                        printf("  Radio %i:         pwr=%f\n", i, rmt.radios[i].pwr);
-                        //printf("  Radio %i:     squelch=%f\n", i, rmt.radios[i].squelch);
-                        //printf("  Radio %i: RDF_enabled=%i\n", i, rmt.radios[i].rdfEnabled);
+                        state_str += "  Radio "+std::to_string(i)+":   frequency='"+rmt.radios[i].frequency+"'\n";
+                        state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+rmt.radios[i].dialedFRQ+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(rmt.radios[i].power_btn)+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+":       volts='"+std::to_string(rmt.radios[i].volts)+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+": serviceable='"+std::to_string(rmt.radios[i].serviceable)+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+": => operable='"+std::to_string(fgcom_radio_isOperable(rmt.radios[i]))+"'\n";
+                        state_str += "  Radio "+std::to_string(i)+":         ptt='"+std::to_string(rmt.radios[i].ptt)+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+":      volume='"+std::to_string(rmt.radios[i].volume)+"'\n";
+                        state_str += "  Radio "+std::to_string(i)+":         pwr='"+std::to_string(rmt.radios[i].pwr)+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(rmt.radios[i].squelch)+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+":  chan_width='"+std::to_string(rmt.radios[i].channelWidth)+"'\n";
+                        //state_str += "  Radio "+std::to_string(i)+": RDF_enabled='"+std::to_string(rmt.radios[i].rdfEnabled)+"'\n";
                     }
                 }
             }
         }
         fgcom_remotecfg_mtx.unlock();
-        
+
+        state_str += "--------------------------------\n";
+        pluginDbg(state_str);
+
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
     
-    std::cout << "---------DEBUG THREAD FINISHED---------\n";
+    pluginDbg("---------DEBUG THREAD FINISHED---------");
     fgcom_debugthread_running = false;
 }
  
