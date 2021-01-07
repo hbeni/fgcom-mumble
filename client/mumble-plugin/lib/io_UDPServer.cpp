@@ -565,6 +565,23 @@ void fgcom_spawnUDPServer() {
         len = sizeof(cliaddr);  //len is value/result 
         n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,  
                     MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len); 
+        if (n < 0) {
+            // SOCKET_ERROR returned
+#ifdef MINGW_WIN64
+            //details for windows error codes: https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recvfrom
+            wprintf(L"recvfrom failed with error %d\n", WSAGetLastError());
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in nf-winsock-recvfrom()="+std::to_string(WSAGetLastError()));
+            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+", WSAGetLastError()="+std::to_string(WSAGetLastError())+")").c_str());
+#else
+            // linux recvfrom has no further details
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom()");
+            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+")").c_str());
+#endif
+            close(fgcom_UDPServer_sockfd);
+            mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped forcefully").c_str());
+            break;
+        }
+        
         buffer[n] = '\0';
         clientPort = ntohs(cliaddr.sin_port);
         clientHost = inet_ntoa(cliaddr.sin_addr);
