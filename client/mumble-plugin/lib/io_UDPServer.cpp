@@ -84,7 +84,7 @@ std::map<int, fgcom_client> fgcom_local_client;
 std::map<std::pair<std::string,uint16_t>, int> fgcom_udp_portMap; // host,port2iid
 bool fgcom_com_ptt_compatmode = false;
 std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort, std::string clientHost) {
-    pluginDbg("[UDP-server] received message (clientPort="+std::to_string(clientPort)+"): "+std::string(buffer));
+    pluginDbg("[UDP-server] received message (client="+clientHost+":"+std::to_string(clientPort)+"): "+std::string(buffer));
     //std::cout << "DBG: Stored local userID=" << localMumId <<std::endl;
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
     
@@ -510,11 +510,23 @@ void fgcom_spawnUDPServer() {
     int  fgcom_UDPServer_sockfd; 
     char buffer[MAXLINE]; 
     struct sockaddr_in servaddr, cliaddr; 
+    
+#ifdef MINGW_WIN64
+    // init WinSock
+    WSADATA wsa;
+    int winsockInitRC = WSAStartup(MAKEWORD(2,0),&wsa);
+    if (winsockInitRC < 0 ) {
+        pluginLog("[UDP-server] WinSock init  failed (code "+std::to_string(winsockInitRC)+")"); 
+        mumAPI.log(ownPluginID, std::string("UDP server failed: winsock init failure (code "+std::to_string(winsockInitRC)+")").c_str());
+        return;
+    }
+#endif
       
     // Creating socket file descriptor 
     if ( (fgcom_UDPServer_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        pluginLog("[UDP-server] socket creation failed"); 
-        exit(EXIT_FAILURE); 
+        pluginLog("[UDP-server] socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")"); 
+        mumAPI.log(ownPluginID, std::string("UDP server failed: socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")").c_str());
+        return;
     } 
       
     memset(&servaddr, 0, sizeof(servaddr)); 
@@ -562,9 +574,34 @@ void fgcom_spawnUDPServer() {
     uint16_t clientPort;
     udpServerRunning = true;
     while (!fgcom_udp_shutdowncmd) {
-        len = sizeof(cliaddr);  //len is value/result 
-        n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,  
-                    MSG_WAITALL, ( struct sockaddr *) &cliaddr, &len); 
+        len = sizeof(cliaddr);  //len is value/result
+#ifdef MINGW_WIN64
+        int recvfrom_flags = 0;  //MSG_WAITALL not supported with UDP on windows (gives error 10045 WSAEOPNOTSUPP)
+#else
+        int recvfrom_flags = MSG_WAITALL;
+#endif
+
+        // receive datagrams
+        n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
+                     recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
+        if (n < 0) {
+            // SOCKET_ERROR returned
+#ifdef MINGW_WIN64
+            //details for windows error codes: https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recvfrom
+            wprintf(L"recvfrom failed with error %d\n", WSAGetLastError());
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in nf-winsock-recvfrom()="+std::to_string(WSAGetLastError()));
+            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+", WSAGetLastError()="+std::to_string(WSAGetLastError())+")").c_str());
+#else
+            // linux recvfrom has no further details
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom()");
+            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+")").c_str());
+#endif
+            // abort further processing and stop the udp server
+            close(fgcom_UDPServer_sockfd);
+            mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped forcefully").c_str());
+            break;
+        }
+        
         buffer[n] = '\0';
         clientPort = ntohs(cliaddr.sin_port);
         clientHost = inet_ntoa(cliaddr.sin_addr);
@@ -623,6 +660,7 @@ void fgcom_spawnUDPServer() {
 
     udpServerRunning = false;
     pluginDbg("[UDP-server] thread finished.");
+    fgcom_udp_port_used = fgcom_cfg.udpServerPort;
     return;
 }
 

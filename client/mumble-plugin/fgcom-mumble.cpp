@@ -319,6 +319,7 @@ mumble_error_t fgcom_loadConfig() {
                     if (token_key == "specialChannel")    fgcom_cfg.specialChannel    = token_value;
                     if (token_key == "udpServerHost")     fgcom_cfg.udpServerHost     = token_value;
                     if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
+                    if (token_key == "logfile")           fgcom_cfg.logfile           = token_value;
                 }
             }
         } else {
@@ -530,7 +531,7 @@ mumble_error_t fgcom_initPlugin() {
 //////////////////////////////////////////////////////////////
 // All of the following function must be implemented in order for Mumble to load the plugin
 mumble_error_t mumble_init(uint32_t id) {
-    pLog() << "Registered PluginID: " << id << std::endl;
+    pluginLog("Registered PluginID: "+std::to_string(id));
 	ownPluginID = id;
     
     // perform initialization if not done already (or missing parts of it;
@@ -630,11 +631,19 @@ void mumble_registerAPIFunctions(void *api) {
 void mumble_setMumbleInfo(mumble_version_t mumbleVersion, mumble_version_t mumbleAPIVersion, mumble_version_t minimalExpectedAPIVersion) {
 	// this function will always be the first one to be called. Even before init()
 	// In here you can get info about the Mumble version this plugin is about to run in.
-	pLog() << "Plugin version: " << mumble_getVersion() << "; Mumble version: " << mumbleVersion << "; Mumble API-Version: " << mumbleAPIVersion << "; Minimal expected API-Version: "
-		<< minimalExpectedAPIVersion << std::endl;
+    mumble_version_t pluginVersion = mumble_getVersion();
+    std::string pluginVersion_str = std::to_string(pluginVersion.major)+"."+std::to_string(pluginVersion.minor)+"."+std::to_string(pluginVersion.patch);
+    std::string mumbleVersion_str = std::to_string(mumbleVersion.major)+"."+std::to_string(mumbleVersion.minor)+"."+std::to_string(mumbleVersion.patch);
+    std::string mumbleAPIVersion_str = std::to_string(mumbleAPIVersion.major)+"."+std::to_string(mumbleAPIVersion.minor)+"."+std::to_string(mumbleAPIVersion.patch);
+    std::string minimalExpectedAPIVersion_str = std::to_string(minimalExpectedAPIVersion.major)+"."+std::to_string(minimalExpectedAPIVersion.minor)+"."+std::to_string(minimalExpectedAPIVersion.patch);
+    pluginLog("Plugin version: "              + pluginVersion_str
+         + "; Mumble version: "               + mumbleVersion_str
+         + "; Mumble API-Version: "           + mumbleAPIVersion_str
+         + "; Minimal expected API-Version: " + minimalExpectedAPIVersion_str
+    );
 
 #ifdef DEBUG
-        pLog() << "NOTICE: this is a debug build." <<std::endl;
+        pluginLog("NOTICE: this is a debug build.");
 #endif
 
 }
@@ -675,7 +684,7 @@ uint32_t mumble_getFeatures() {
 }
 
 uint32_t mumble_deactivateFeatures(uint32_t features) {
-	pLog() << "Asked to deactivate feature set " << features << std::endl;
+	pluginLog("Asked to deactivate feature set " + std::to_string(features));
 
 	// All features that can't be deactivated should be returned
 	return features;
@@ -683,7 +692,7 @@ uint32_t mumble_deactivateFeatures(uint32_t features) {
 
 
 void mumble_onServerConnected(mumble_connection_t connection) {
-    pLog() << "Established server-connection with ID " << connection << std::endl;
+    pluginLog("Established server-connection with ID " + std::to_string(connection));
     
     // perform initialization if not done already (or missing parts of it;
     // particularly it will run the online part if the plugin was loaded when
@@ -694,7 +703,7 @@ void mumble_onServerConnected(mumble_connection_t connection) {
 }
 
 void mumble_onServerDisconnected(mumble_connection_t connection) {
-    pLog() << "Disconnected from server-connection with ID " << connection << std::endl;
+    pluginLog("Disconnected from server-connection with ID " + std::to_string(connection));
     
     fgcom_setPluginActive(false);
     activeConnection = -1;
@@ -704,7 +713,7 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 	// The client has finished synchronizing with the server. Thus we can now obtain a list of all users on this server
     // This is only called if the module was loaded during connecting time.
     // Sync status can be tested with isConnectionSynchronized()
-	pLog() << "Server has finished synchronizing (ServerConnection: " << connection << ")" << std::endl ;
+	pluginLog("Server has finished synchronizing (ServerConnection: " + std::to_string(connection) + ")");
 
 	size_t userCount;
 	mumble_userid_t *userIDs;
@@ -714,13 +723,13 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 		return;
 	}
 
-	pLog() << "There are " << userCount << " users on this server. Their names are:" << std::endl;
+	pluginLog("There are " + std::to_string(userCount) + " users on this server. Their names are:");
 
 	for(size_t i=0; i<userCount; i++) {
 		const char *userName;
 		mumAPI.getUserName(ownPluginID, connection, userIDs[i], &userName);
 		
-		pLog() << "\t" << userName << std::endl;
+		pluginLog("\t" + std::string(userName));
 
 		mumAPI.freeMemory(ownPluginID, userName);
 	}
@@ -737,7 +746,7 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t previousChannelID, mumble_channelid_t newChannelID) {
     // Called for each user entering the channel. When newly entering the channel ourself, this gets called for every user.
     
-	//std::ostream& stream = pLog() << "User with ID " << userID << " entered channel with ID " << newChannelID << ".";
+	//std::ostream& stream = pluginLog() << "User with ID " << userID << " entered channel with ID " << newChannelID << ".";
 
 	// negative ID means that there was no previous channel (e.g. because the user just connected)
 	//if (previousChannelID >= 0) {
@@ -767,11 +776,11 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 }
 
 void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t channelID) {
-	pLog() << "User with ID " << userID << " has left channel with ID " << channelID << ". (ServerConnection: " << connection << ")" << std::endl;
+	pluginLog("User with ID "+ std::to_string(userID) + " has left channel with ID " + std::to_string(channelID) + ". (ServerConnection: " + std::to_string(connection) + ")");
     
     //pluginDbg("userid="+std::to_string(userID)+"  mumid="+std::to_string(localMumId)+"  pluginActive="+std::to_string(fgcom_isPluginActive()));
     if (userID == localMumId && fgcom_isPluginActive()) {
-        pluginDbg("left special channel, deactivating plugin functions");
+        pluginLog("left special channel, deactivating plugin functions");
         fgcom_setPluginActive(false);
     }
     
@@ -780,7 +789,7 @@ void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t user
 
 // Note: Audio input is only possible with open mic. fgcom_hanldePTT() takes care of that.
 bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
-	//pLog() << "Audio input with " << channelCount << " channels and " << sampleCount << " samples per channel encountered. IsSpeech: "
+	//pluginLog() << "Audio input with " << channelCount << " channels and " << sampleCount << " samples per channel encountered. IsSpeech: "
 	//	<< isSpeech << std::endl;
     /*pluginDbg("  plugin active="+std::to_string(fgcom_isPluginActive()));
     if (fgcom_isPluginActive()) {
@@ -800,7 +809,7 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 }
 
 bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRate, bool isSpeech, mumble_userid_t userID) {
-	//std::ostream& stream = pLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
+	//std::ostream& stream = pluginLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
     // the PCM format is an float array. The cells are inidvidual apmplitudes.
     // With two channels, the first float at outputPCM[0] the left channel, outputPCM[1] right, [2] left etc.
     //  channelCount The amount of channels in the audio

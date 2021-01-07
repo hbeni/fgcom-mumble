@@ -53,7 +53,7 @@ enum FGCOM_NOTIFY_T {
  * log to mumble client chat window: mumAPI.log(ownPluginID, "Received API functions");
  * log to terminal/stdout:  pluginLog("Registered Mumble's API functions");
  */
-std::ostream& pLog();
+std::ostream& pLog(std::ostream& stream);
 
 template<typename T>
 void pluginLog(T log);
