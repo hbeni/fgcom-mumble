@@ -39,6 +39,7 @@ struct fgcom_config {
     std::string specialChannel;
     std::string udpServerHost;
     int         udpServerPort;
+    std::string logfile;
     
     fgcom_config()  {
         allowHearingNonPluginUsers = false;
@@ -46,6 +47,7 @@ struct fgcom_config {
         specialChannel    = "^fgcom-mumble.*";
         udpServerHost     = "127.0.0.1";
         udpServerPort     = 16661;
+        logfile           = "";
     };
 };
 extern struct fgcom_config fgcom_cfg;

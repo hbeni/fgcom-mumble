@@ -27,6 +27,7 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <stdlib.h> 
 #include <unistd.h> 
@@ -67,7 +68,7 @@
 // These are just some utility functions facilitating writing logs and the like
 // The actual implementation of the plugin is further down
 std::mutex fgcom_plog_mtx; // thread safety for logging
-std::ostream& pLog() {
+std::ostream& pLog(std::ostream& stream) {
     fgcom_plog_mtx.lock();
     // make milliseconds timestamp
     const auto now = std::chrono::system_clock::now();
@@ -75,23 +76,45 @@ std::ostream& pLog() {
     const auto nowMs = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
     std::stringstream nowStringStream;
     nowStringStream
-      << std::put_time(std::localtime(&nowAsTimeT), "%Y-%m-%d %T")
+      << std::put_time(std::localtime(&nowAsTimeT), "%Y-%m-%d %H:%M:%S")
       << '.' << std::setfill('0') << std::setw(3) << nowMs.count();
 
-    std::cout << "FGCom [" << nowStringStream.str() <<"]: ";
+    stream << "FGCom [" << nowStringStream.str() <<"]: ";
     fgcom_plog_mtx.unlock();
-    return std::cout;
+    return stream;
+}
+
+std::ofstream fgcom_logfile_outfh("", std::ios_base::out);
+bool fgcom_logfile_outfh_opentry = false;
+void fgcom_log_openFile() {
+    
+    // in case logfile writing was requested and the FH is not open, do it now and write
+    if (fgcom_cfg.logfile.length() > 0 && ! fgcom_logfile_outfh.is_open() && !fgcom_logfile_outfh_opentry) {
+        fgcom_plog_mtx.lock();
+        fgcom_logfile_outfh_opentry = true;
+        fgcom_logfile_outfh.open(fgcom_cfg.logfile);
+        fgcom_plog_mtx.unlock();
+
+        std::string ores(!fgcom_logfile_outfh.good()? "failed" : "success");
+        pLog(std::cout)           << "[LOG] Logfile opening: " << fgcom_cfg.logfile << "; result=" << ores << std::endl;
+        pLog(fgcom_logfile_outfh) << "[LOG] Logfile opening: " << fgcom_cfg.logfile << "; result=" << ores << std::endl;
+    }
+
 }
 
 template<typename T>
 void pluginLog(T log) {
-    pLog() << log << std::endl;
+    fgcom_log_openFile();
+    pLog(std::cout) << log << std::endl;
+    if (fgcom_logfile_outfh.good())  pLog(fgcom_logfile_outfh) << log << std::endl;
 }
 template<typename T>
 void pluginDbg(T log) {
     #ifdef DEBUG
     // only log if we build in debug mode
-    pLog() << "[DBG] " << log << std::endl;
+    fgcom_log_openFile();
+    pLog(std::cout) << "[DBG] " << log << std::endl;
+    if (fgcom_logfile_outfh.good())  pLog(fgcom_logfile_outfh) << "[DBG] " << log << std::endl;
     #endif
 }
 
