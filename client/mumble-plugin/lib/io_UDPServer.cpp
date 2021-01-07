@@ -623,6 +623,7 @@ void fgcom_spawnUDPServer() {
 
     udpServerRunning = false;
     pluginDbg("[UDP-server] thread finished.");
+    fgcom_udp_port_used = fgcom_cfg.udpServerPort;
     return;
 }
 
