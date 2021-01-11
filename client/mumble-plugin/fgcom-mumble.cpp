@@ -274,6 +274,7 @@ mumble_error_t fgcom_loadConfig() {
     pHomeDir = getenv("USERPROFILE");
     if (pHomeDir) {
         configFilePaths.push_back(std::string(pHomeDir) + dirSep + cfgName);
+	configFilePaths.push_back(std::string(pHomeDir) + dirSep + "Documents" + dirSep + cfgName);
     } else {
         pluginLog("[CFG] ERROR getting USERPROFILE from environment");
         // do not bail out: just use defaults. return EC_GENERIC_ERROR;
@@ -304,6 +305,7 @@ mumble_error_t fgcom_loadConfig() {
         pluginDbg("[CFG] looking for plugin ini file at '"+cfgFilePath+"'");
         if (cfgFileStream.good()) {
             pluginLog("[CFG]   reading plugin ini file '"+cfgFilePath+"'");
+            mumAPI.log(ownPluginID, std::string("reading ini file '"+cfgFilePath+"'").c_str());
             std::regex parse_key_value ("^([^;]\\w+?)\\s*=\\s*(.+?)(;.*)?\r?$");  // read ini style line, supporting spaces around the '=' and also linux/windows line endings
             std::string cfgLine;
             while (std::getline(cfgFileStream, cfgLine)) {
