@@ -60,7 +60,14 @@ Plugin configuration
 -----------------------
 Usually the default values are fine. Some features however can be configured differently, like disabling radio audio effects (white noise etc), changing the plugins UDP listen port or the name match of the special `fgcom-mumble` channel.
 
-You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization.
+You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
+
+- Linux:
+  - `<home>/.fgcom-mumble.ini`
+  - `<home>/fgcom-mumble.ini`
+- Windows:
+  - `<home>\fgcom-mumble.ini`
+  - `<home>\Documents\fgcom-mumble.ini`
 
 
 
