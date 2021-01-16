@@ -70,15 +70,19 @@ jobs:
     - if: matrix.language == 'cpp'
       name: Build C++ (Linux x64)
       run: |
-        make clean
-        make all
+        make clean all
 
     - if: matrix.language == 'cpp'
       name: Build C++ (Windows x64 mingw-crosscompile)
       # skip openssl build, it takes long and will trigger false-positives
       run: |
-        make clean
-        make SSLFLAGS= all-win
+        make SSLFLAGS= clean test-win64 plugin-win64
+
+    - if: matrix.language == 'cpp'
+      name: Build C++ (Windows x32 mingw-crosscompile)
+      # skip openssl build, it takes long and will trigger false-positives
+      run: |
+        make SSLFLAGS= clean plugin-win32
 
 
     - name: Perform CodeQL Analysis
