@@ -747,15 +747,7 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 
 void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t previousChannelID, mumble_channelid_t newChannelID) {
     // Called for each user entering the channel. When newly entering the channel ourself, this gets called for every user.
-    
-	//std::ostream& stream = pluginLog() << "User with ID " << userID << " entered channel with ID " << newChannelID << ".";
-
-	// negative ID means that there was no previous channel (e.g. because the user just connected)
-	//if (previousChannelID >= 0) {
-	//	stream << " He came from channel with ID " << previousChannelID << ".";
-	//}
-	//stream << " (ServerConnection: " << connection << ")" << std::endl;
-
+    pluginDbg("User with ID "+ std::to_string(userID) + " has joined channel with ID " + std::to_string(newChannelID) + ", coming from "+ std::to_string(previousChannelID) +". (ServerConnection: " + std::to_string(connection) + ")");
     
     if (userID == localMumId) {
         //stream << " OH! thats me! hello myself!";
@@ -778,7 +770,7 @@ void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t use
 }
 
 void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t channelID) {
-	pluginLog("User with ID "+ std::to_string(userID) + " has left channel with ID " + std::to_string(channelID) + ". (ServerConnection: " + std::to_string(connection) + ")");
+	pluginDbg("User with ID "+ std::to_string(userID) + " has left channel with ID " + std::to_string(channelID) + ". (ServerConnection: " + std::to_string(connection) + ")");
     
     //pluginDbg("userid="+std::to_string(userID)+"  mumid="+std::to_string(localMumId)+"  pluginActive="+std::to_string(fgcom_isPluginActive()));
     if (userID == localMumId && fgcom_isPluginActive()) {
