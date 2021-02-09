@@ -46,13 +46,7 @@
     <name>com1-frequency</name>
     <type>string</type>
     <format>COM1_FRQ=%s</format>
-    <node>/instrumentation/comm[0]/frequencies/selected-mhz-fmt</node>
-   </chunk>
-   <chunk>
-    <name>com1-frequency-real</name>
-    <type>string</type>
-    <format>COM1_FRQ=%s</format>
-    <node>/instrumentation/comm[0]/frequencies/selected-real-frequency-mhz</node>
+    <node>/instrumentation/comm[0]/frequencies/selected-mhz</node>
    </chunk>
    <chunk>
     <name>com1-channel-width-khz</name>
@@ -108,13 +102,7 @@
     <name>com2-frequency</name>
     <type>string</type>
     <format>COM2_FRQ=%s</format>
-    <node>/instrumentation/comm[1]/frequencies/selected-mhz-fmt</node>
-   </chunk>
-   <chunk>
-    <name>com2-frequency-real</name>
-    <type>string</type>
-    <format>COM2_FRQ=%s</format>
-    <node>/instrumentation/comm[1]/frequencies/selected-real-frequency-mhz</node>
+    <node>/instrumentation/comm[1]/frequencies/selected-mhz</node>
    </chunk>
    <chunk>
     <name>com2-channel-width-khz</name>
@@ -171,7 +159,7 @@
    
    <!-- FGCom 3.0 compatibility: /instrumentation/com[n]/ptt is never set from any aircraft except
         c182s. The old FGCom protocol seems outdated and transmit an old property.
-        To get compativility out-of-the-box, we transmit the FGCom PTT property here.
+        To get compatibility out-of-the-box, we transmit the FGCom PTT property here.
         The UDP server takes care to parse this properly into the new format.
         Note however, this overrides the individual COM-PTTs above. -->
    <chunk>

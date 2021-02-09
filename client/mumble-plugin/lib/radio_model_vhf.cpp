@@ -108,34 +108,25 @@ public:
         if (std::regex_match(frq, sm, std::regex("^\\d+(\\.?)$") )) {
             // we have some MHz frequency like "123". We ensure a frequency with decimals.
             if (sm[1].length() == 0) {
-                frq = frq+".00";
+                frq = frq+".000";
             } else {
-                frq = frq+"00";
+                frq = frq+"000";
             }
-    //         std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): added two decimals: " << frq << std::endl;
+//             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): added three decimals: " << frq << std::endl;
         } else if (std::regex_match(frq, std::regex("^\\d+\\.\\d$") )) {
-            // we have some MHz frequency like "123.3". We ensure a frequency with decimals.
+            // we have some MHz frequency like "123.3". We ensure a frequency with three decimals.
+            frq = frq+"00";
+//             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): added two decimal: " << frq << std::endl;
+        } else if (std::regex_match(frq, std::regex("^(\\d+)\\.(\\d)(\\d)$") )) {
+            // we have a 25kHz shortened channel name like "123.35". Valid endings are 0, 2, 5, 7
+            // just convert the decimals to three, and convert later
             frq = frq+"0";
-    //         std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): added one decimal: " << frq << std::endl;
+//             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): 25khz short name detected (added one decimal): " << frq << std::endl;
         }
 
-        if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d)(\\d)$") )) {
-            // we have a 25kHz shortened channel name like "123.35". Valid endings are 0, 2, 5, 7
-    //         std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): 25khz short name detected: " << frq << std::endl;
-            if (sm[3] == "2" || sm[3] == "7") {
-                // ._2 and ._7 endings are old shortened names for odd 25kHz-step freq's (.02 -> .0250)
-                return frq + "50";
-            } else if (sm[3] == "0" || sm[3] == "5") {
-                // ._0 and ._5 endings are old shortened names for whole 25kHz-step freq's (.05 -> .0500)
-                return frq + "00";
-            } else {
-    //             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): invalid ending: " << sm[3] << std::endl;
-                return frq; // invalid ending, just return the frq
-            }
-            
-        } else if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d)(\\d)(\\d)$") )) {
+        if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d)(\\d)(\\d)$") )) {
             // we have a proper 25kHz channel name (like "118.025") OR an 8.33 channel name (like "118.015")
-            
+
             std::string lastTwo = std::string(sm[3]) + std::string(sm[4]);
             // if the last two digits form a valid 8.33 spacing channel name, we need to convert them to the base frequency
             if (lastTwo == "05" || lastTwo == "10" ||
@@ -159,15 +150,15 @@ public:
     
                 if (lastTwo == "00" || lastTwo == "25" || lastTwo == "50" || lastTwo == "75") {
                     // just map trough the fixed old 25kHz representations
-    //                 std::cout << "  mapTrough=" << tgtfrq+"00" << std::endl;
-                    return tgtfrq+"00";
+//                     std::cout << "  mapTrough=" << tgtfrq+"00" << std::endl;
+                    return tgtfrq+"0";
                 } else {
                     // get the nearest multiple of the spacing
                     float spacing_MHz = .025 / 3;   // 8.33 kHz in MHz = 0.00833333
                     float tgtfrq_f = std::stof(tgtfrq);
                     int ch_833 = round(tgtfrq_f / spacing_MHz);    // get 8.33 channel number; eg round( 118.025 / 0.0083333)
                     float realFrq_f = ch_833 * spacing_MHz; // calculate 8real .33 channel numbers frequency
-    //                 printf("  calculated channel#=%i (=%.5f)\n", ch_833, realFrq_f);
+//                     printf("  calculated channel#=%i (=%.5f)\n", ch_833, realFrq_f);
                     
                     // convert back to string for return
                     char buffer [50];
@@ -176,13 +167,13 @@ public:
                 }
             
             } else {
-    //             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): 25khz straight channel name detected: " << frq << std::endl;
+//                 std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): 25khz straight channel name detected: " << frq << std::endl;
                 return frq + "0"; // 00, 25, 50, 75 are already straight 25kHz frequencies (.025 => .0250)
             }
             
         } else {
             // it was not parseable (unhandled format, note, we also don't need to handle real wave frequencies; the're used as-is)
-    //         std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): unhandled : " << frq << std::endl;
+//             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): unhandled : " << frq << std::endl;
             return frq;
         }
         
