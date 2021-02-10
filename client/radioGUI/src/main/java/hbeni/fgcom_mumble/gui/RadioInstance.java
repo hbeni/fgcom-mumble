@@ -64,6 +64,21 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jLabel_VolVal.setText(Float.toString(jSlider_volume.getValue())+"%");
     }
     
+    public void setInputElemetsEditable(boolean p) {
+        jSlider_squelch.setEnabled(p);
+        jSlider_txPWR.setEnabled(p);
+        jSlider_volume.setEnabled(p);
+        jToggleButton_ONOFF.setEnabled(p);
+        jTextField_frqSpare.setEnabled(p);
+        jButton_swapFRQ.setEnabled(p);
+        jButton_PTT.setEnabled(p);
+        jToggleButton_ONOFF.setEnabled(p);
+        jRadioButton_radioType25.setEnabled(p);
+        jRadioButton_radioType833.setEnabled(p);
+        
+        this.updateUI();
+    }
+    
     public void updateONOFFTooltip() {
         String genericTooltipText = "Switch on (pressed) or off (depressed)."+System.lineSeparator();
         if (jToggleButton_ONOFF.isSelected()) {

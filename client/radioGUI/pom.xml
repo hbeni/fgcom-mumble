@@ -17,6 +17,15 @@
             <artifactId>flatlaf</artifactId>
             <version>0.42</version>
         </dependency>
+        
+        <!-- you must install the dependency to your local repo; kindly use the provided jar in the projects lib tree -->
+        <!-- eg. `mvn install:install-file ...`; see the makefile for the command -->
+        <dependency>
+            <groupId>flightsim</groupId>
+            <artifactId>jsimconnect</artifactId>
+            <version>0.8.0</version>
+        </dependency>
+        
         <!-- https://mvnrepository.com/artifact/org.openstreetmap.jmapviewer/jmapviewer -->
         <!-- you must install the dependency to your local repo; kindly use the provided jar in the projects lib tree -->
         <!-- eg. `mvn install:install-file ...`; see the makefile for the command -->

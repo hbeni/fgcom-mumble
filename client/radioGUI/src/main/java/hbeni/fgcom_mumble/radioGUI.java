@@ -90,16 +90,28 @@ public class radioGUI {
             SendRes result = udpClient.send();
             if (result.res) {
                 mainWindow.setConnectionState(true);
-                mainWindow.setStatusText(result.msg);
             } else {
                 mainWindow.setConnectionState(false);
                 result.msg = (result.msg=="")? "not connected" : result.msg;
-                mainWindow.setStatusText(result.msg);
             }
+
+            if (state.statusmessage != "") result.msg = state.statusmessage + " / " + result.msg;
+            
+            if (state.isSimConnectSlave()) result.msg = "[SimConnect] "+result.msg;
+            
+            mainWindow.setStatusText(result.msg);
             
             Thread.sleep( (long)(1000 / Options.udpSendRateHz) ); // try 10 times per second
+
         }
 
+    }
+    
+    /**
+     * Get internal state
+     */
+    public static State getState() {
+        return state;
     }
     
     /**
@@ -119,5 +131,37 @@ public class radioGUI {
     }
     
     
+    /**
+     * Prepares internal and GUI state for slaving trough SimConnect
+     */
+    public static void enableSimConnect() {
+        // stop the udp sending
+        udpClient.setActive(false);
+        state.setSimConnectSlaving(true);
+        
+        // clear out internal state
+        for (Radio r : state.getRadios()) {
+            radioGUI.deregisterRadio(r);
+        }
+        
+        // Prepare state
+        state.getRadios().clear();
+        state.setCallsign("SimConnect");
+        state.setLocation(0, 0, 0f);
+        state.getRadios().add(new Radio("SimConnect-COM1"));
+        state.getRadios().add(new Radio("SimConnect-COM2"));
+        mainWindow.updateFromState();
+        
+        // update GUI
+        mainWindow.prepareSimConnect();
+        mainWindow.updateFromState();
+        
+        // Invoke the simConnect brigde
+        try {
+            SimConnectBridge fgcom_simconnectbridge = new SimConnectBridge();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
 }
