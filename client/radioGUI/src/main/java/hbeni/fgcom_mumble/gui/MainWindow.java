@@ -97,8 +97,9 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField_LAT = new javax.swing.JTextField();
         jTextField_LON = new javax.swing.JTextField();
         jTextField_HGT = new javax.swing.JTextField();
-        jLabel_Statusbar = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jScrollPane_Statusbar = new javax.swing.JScrollPane();
+        jLabel_Statusbar = new javax.swing.JTextField();
         MainMenu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem_AddIdentity = new javax.swing.JMenuItem();
@@ -174,6 +175,15 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("pick location");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jScrollPane_Statusbar.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
         jLabel_Statusbar.setEditable(false);
         jLabel_Statusbar.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
         jLabel_Statusbar.setText("connection status");
@@ -183,13 +193,7 @@ public class MainWindow extends javax.swing.JFrame {
                 jLabel_StatusbarActionPerformed(evt);
             }
         });
-
-        jButton1.setText("pick location");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jScrollPane_Statusbar.setViewportView(jLabel_Statusbar);
 
         jMenu1.setText("RadioGUI");
 
@@ -279,8 +283,8 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(jToggleButton_Connect)
                         .addGap(2, 2, 2)
                         .addComponent(jLabel_ConnectionStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel_Statusbar)))
+                        .addGap(3, 3, 3)
+                        .addComponent(jScrollPane_Statusbar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -300,14 +304,16 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jTextField_HGT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jToggleButton_Connect)
-                    .addComponent(jLabel_ConnectionStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel_Statusbar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jToggleButton_Connect)
+                        .addComponent(jLabel_ConnectionStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane_Statusbar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -413,6 +419,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem_options;
     private javax.swing.JMenuItem jMenuItem_quit;
     private javax.swing.JMenu jMenu_Help;
+    private javax.swing.JScrollPane jScrollPane_Statusbar;
     private javax.swing.JScrollPane jScrollPanel_RadioPanel;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
