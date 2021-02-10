@@ -19,11 +19,19 @@ package hbeni.fgcom_mumble.gui;
 import hbeni.fgcom_mumble.MapWindow;
 import hbeni.fgcom_mumble.Radio;
 import hbeni.fgcom_mumble.State;
+import hbeni.fgcom_mumble.radioGUI;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.util.Iterator;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.event.InternalFrameEvent;
 
 /**
  *
@@ -73,7 +81,21 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField_LAT.setText(Double.toString(state.getLatitutde()));
         jTextField_LON.setText(Double.toString(state.getLongitude()));
         jTextField_HGT.setText(Float.toString(state.getHeight()));
-                
+
+        radioContainer.updateUI();
+    }
+    
+    public void setInputElemetsEditable(boolean p) {
+        jTextField_callsign.setEnabled(p);
+        jTextField_LAT.setEnabled(p);
+        jTextField_LON.setEnabled(p);
+        jTextField_HGT.setEnabled(p);
+        jButton_pickLocation.setEnabled(p);
+        
+        for (int i=0; i < radioContainer.getComponentCount(); i++) {
+            RadioInstance ri = (RadioInstance)radioContainer.getComponent(i);
+            ri.setInputElemetsEditable(p);
+        }
     }
 
     /**
@@ -97,12 +119,13 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField_LAT = new javax.swing.JTextField();
         jTextField_LON = new javax.swing.JTextField();
         jTextField_HGT = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jButton_pickLocation = new javax.swing.JButton();
         jScrollPane_Statusbar = new javax.swing.JScrollPane();
         jLabel_Statusbar = new javax.swing.JTextField();
         MainMenu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem_AddIdentity = new javax.swing.JMenuItem();
+        jMenuItem_SimConnect = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem_options = new javax.swing.JMenuItem();
         jMenuItem_quit = new javax.swing.JMenuItem();
@@ -175,10 +198,10 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jButton1.setText("pick location");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButton_pickLocation.setText("pick location");
+        jButton_pickLocation.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButton_pickLocationActionPerformed(evt);
             }
         });
 
@@ -205,6 +228,14 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItem_AddIdentity);
+
+        jMenuItem_SimConnect.setText("Slave to SimConnect");
+        jMenuItem_SimConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_SimConnectActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem_SimConnect);
         jMenu1.add(jSeparator1);
 
         jMenuItem_options.setText("Options");
@@ -277,7 +308,7 @@ public class MainWindow extends javax.swing.JFrame {
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jTextField_HGT, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton1))
+                            .addComponent(jButton_pickLocation))
                         .addGap(0, 102, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jToggleButton_Connect)
@@ -294,7 +325,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jTextField_callsign, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(jButton_pickLocation))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -374,10 +405,52 @@ public class MainWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel_StatusbarActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButton_pickLocationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_pickLocationActionPerformed
         MapWindow locationSelector = new MapWindow(state, this);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButton_pickLocationActionPerformed
 
+    private void jMenuItem_SimConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_SimConnectActionPerformed
+        radioGUI.enableSimConnect();
+    }//GEN-LAST:event_jMenuItem_SimConnectActionPerformed
+
+    
+    /**
+     * Prepares GUI state for slaving trough SimConnect
+     */
+    public void prepareSimConnect() {
+        jToggleButton_Connect.setSelected(false); // disable sending
+        
+        // clean radio Instances from the JPane scrollview
+        for (int i=0; i < radioContainer.getComponentCount(); i++) {
+            RadioInstance ri = (RadioInstance) radioContainer.getComponent(i);
+            ri.setVisible(false);
+            ri.dispose();
+        }
+        
+        radioContainer.repaint();
+        jScrollPanel_RadioPanel.repaint();
+       
+        
+        /* Prepare exactly two fresh radios for updates by SimConnect */
+        state.getRadios().forEach(r -> {
+            RadioInstance ri = new RadioInstance(r);
+            ri.setClosable(false);
+            radioContainer.add(ri);
+        });
+        radioContainer.repaint();
+        
+        
+        // update main window
+        updateFromState();
+        
+        // lock input elements
+        setInputElemetsEditable(false);
+        radioGUI.mainWindow.jMenuItem_AddIdentity.setEnabled(false); // prevent adding radios
+        radioGUI.mainWindow.jMenuItem_SimConnect.setEnabled(false);  // prevent reestablishing
+        radioGUI.mainWindow.jToggleButton_Connect.setEnabled(false); // prevent "connect"
+        
+    }
+    
     /**
      * Get state of connection button (should we send?)
      */
@@ -405,7 +478,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar MainMenu;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton_pickLocation;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -416,6 +489,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem_AddIdentity;
     private javax.swing.JMenuItem jMenuItem_Help_About;
+    private javax.swing.JMenuItem jMenuItem_SimConnect;
     private javax.swing.JMenuItem jMenuItem_options;
     private javax.swing.JMenuItem jMenuItem_quit;
     private javax.swing.JMenu jMenu_Help;
