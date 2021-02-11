@@ -223,7 +223,7 @@
     </Container>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Callsing:"/>
+        <Property name="text" type="java.lang.String" value="Callsign:"/>
         <Property name="toolTipText" type="java.lang.String" value="How you are called on the radio"/>
       </Properties>
     </Component>
