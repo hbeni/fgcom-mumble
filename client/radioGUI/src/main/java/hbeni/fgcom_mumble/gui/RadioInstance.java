@@ -27,23 +27,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         radioBackend = r;
         initComponents();
         jTextField_frqActive.setForeground(Color.black); // make the font black
-        jTextField_frqActive.setText(r.getFrequency());
-        if (r.getFrequency() == "") {
-            jTextField_frqSpare.setText("<Enter Frequency>");
-        } else {
-            jTextField_frqSpare.setText(r.getFrequency());
-        }
-        jSlider_txPWR.setValue(Math.round(r.getPower()));
-        jSlider_volume.setValue(Math.round(r.getVolume()*100));
-        jSlider_squelch.setValue(Math.round(r.getSquelch()*100));
-        jToggleButton_ONOFF.setSelected(r.getPwrBtn());
-        if (r.getChannelWidth() == 8.33f) jRadioButton_radioType833.setSelected(true);
-        if (r.getChannelWidth() == 25.0f) jRadioButton_radioType25.setSelected(true);
-        updateLabels();
-        updateONOFFTooltip();
-        
-        
-        
+        updateFromState();
         
         // Add a listener to detect closing
         addInternalFrameListener(new InternalFrameAdapter() {
@@ -87,6 +71,23 @@ public class RadioInstance extends javax.swing.JInternalFrame {
             jToggleButton_ONOFF.setToolTipText(genericTooltipText+"(Radio is currently turned OFF)");
         }
        
+    }
+    
+    public void updateFromState() {
+        jTextField_frqActive.setText(radioBackend.getFrequency());
+        if (radioBackend.getFrequency() == "") {
+            jTextField_frqSpare.setText("<Enter Frequency>");
+        } else {
+            jTextField_frqSpare.setText(radioBackend.getFrequency());
+        }
+        jSlider_txPWR.setValue(Math.round(radioBackend.getPower()));
+        jSlider_volume.setValue(Math.round(radioBackend.getVolume()*100));
+        jSlider_squelch.setValue(Math.round(radioBackend.getSquelch()*100));
+        jToggleButton_ONOFF.setSelected(radioBackend.getPwrBtn());
+        if (radioBackend.getChannelWidth() == 8.33f) jRadioButton_radioType833.setSelected(true);
+        if (radioBackend.getChannelWidth() == 25.0f) jRadioButton_radioType25.setSelected(true);
+        updateLabels();
+        updateONOFFTooltip();
     }
 
     /**

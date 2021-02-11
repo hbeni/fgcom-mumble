@@ -153,10 +153,8 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
             state.getRadios().get(1).setPwrBtn(com1_state > 0);
             
             radioGUI.mainWindow.updateFromState();
-            radioGUI.mainWindow.repaint();
         }
 
     }
-
 
 }
