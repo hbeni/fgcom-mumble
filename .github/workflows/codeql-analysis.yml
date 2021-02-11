@@ -43,6 +43,12 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
 
     - if: matrix.language == 'java'
+      name: Checkout GIT submodules (java)
+      run: |
+        git submodule init
+        git submodule update client/radioGUI/lib/jsimconnect
+
+    - if: matrix.language == 'java'
       name: Setup Java
       uses: actions/setup-java@v1
       with:
