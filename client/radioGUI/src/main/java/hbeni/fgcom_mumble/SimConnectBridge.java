@@ -25,6 +25,8 @@ import flightsim.simconnect.recv.RecvOpen;
 import flightsim.simconnect.recv.RecvSimObjectDataByType;
 import flightsim.simconnect.recv.SimObjectDataTypeHandler;
 import static hbeni.fgcom_mumble.radioGUI.state;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDataTypeHandler {
@@ -105,9 +107,13 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
 
         // Now the sim is running, request information on the user aircraft
         try {
+            while (true) {
                 sender.requestDataOnSimObjectType(DATA_REQUEST_ID.REQUEST_1,
                                 DATA_DEFINE_ID.DEFINITION_1, 0, SimObjectType.USER);
+                Thread.sleep(100); // request data every 100ms
+            }
         } catch (IOException e1) {
+        } catch (InterruptedException ex) {
         }
     }
 
