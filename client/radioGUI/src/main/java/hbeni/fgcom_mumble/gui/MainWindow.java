@@ -131,7 +131,7 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPanel_RadioPanel.setMinimumSize(new java.awt.Dimension(24, 200));
         jScrollPanel_RadioPanel.setOpaque(false);
 
-        jLabel1.setText("Callsing:");
+        jLabel1.setText("Callsign:");
         jLabel1.setToolTipText("How you are called on the radio");
 
         jTextField_callsign.setText("XYZ");
