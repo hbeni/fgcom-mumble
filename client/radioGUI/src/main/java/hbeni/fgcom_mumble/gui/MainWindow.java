@@ -82,7 +82,12 @@ public class MainWindow extends javax.swing.JFrame {
         jTextField_LON.setText(Double.toString(state.getLongitude()));
         jTextField_HGT.setText(Float.toString(state.getHeight()));
 
-        radioContainer.updateUI();
+        // TODO: maybe we need to check the registered vs the displayed radios:
+        //       add missing ones to the pane, remove obsolete ones
+        for (int i=0; i < radioContainer.getComponentCount(); i++) {
+            RadioInstance comp = (RadioInstance)radioContainer.getComponent(i);
+            comp.updateFromState();
+        }
     }
     
     public void setInputElemetsEditable(boolean p) {
