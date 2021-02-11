@@ -140,8 +140,12 @@ public class radioGUI {
         state.setSimConnectSlaving(true);
         
         // clear out internal state
-        for (Radio r : state.getRadios()) {
-            radioGUI.deregisterRadio(r);
+        try {
+            for (Radio r : state.getRadios()) {
+                radioGUI.deregisterRadio(r);
+            }
+        } catch (Exception e) {
+            state.statusmessage = "INTERNAL ERROR - restart RadioGUI!";
         }
         
         // Prepare state
