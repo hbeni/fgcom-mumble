@@ -78,8 +78,11 @@ std::ostream& pLog(std::ostream& stream) {
     nowStringStream
       << std::put_time(std::localtime(&nowAsTimeT), "%Y-%m-%d %H:%M:%S")
       << '.' << std::setfill('0') << std::setw(3) << nowMs.count();
-
-    stream << "FGCom [" << nowStringStream.str() <<"]: ";
+#ifdef MINGW_WIN64
+    stream << "FGCom [" << nowStringStream.str() << "]: ";
+#else
+    stream << "FGCom [" << nowStringStream.str() << " @tid=" << gettid() << "]: ";
+#endif
     fgcom_plog_mtx.unlock();
     return stream;
 }
@@ -336,6 +339,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         }
         std::string iid_str = std::to_string(iid);
         
+        pluginDbg("fgcom_remotecfg_mtx.lock()");
         fgcom_remotecfg_mtx.lock();
         
         // check if user is already known to us; if not add him to the local clients store
@@ -507,6 +511,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             pluginDbg("[mum_pluginIO] dataID='"+dataID+"' not known. Ignoring.");
         }
         
+        pluginDbg("fgcom_remotecfg_mtx.unlock()");
         fgcom_remotecfg_mtx.unlock();
         
         pluginDbg("[mum_pluginIO] Parsing done.");
@@ -534,6 +539,7 @@ void fgcom_notifyThread() {
                 fgcom_client lcl = idty.second;
                 bool notifyUserData     = false;
                 bool notifyLocationData = false;
+                pluginDbg("fgcom_remotecfg_mtx.lock()");
                 fgcom_remotecfg_mtx.lock();
                 
                 if (fabs(lcl.lat - lastNotifiedState[iid].lat) >= 0.0005) { // about 40-50m
@@ -553,6 +559,7 @@ void fgcom_notifyThread() {
                     notifyUserData = true;
                 }
                 
+                pluginDbg("fgcom_remotecfg_mtx.unlock()");
                 fgcom_remotecfg_mtx.unlock();
                 
                 // We did not have a change for several seconds.

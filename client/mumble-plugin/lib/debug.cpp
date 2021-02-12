@@ -64,6 +64,7 @@ void debug_out_internal_state() {
         }
         
         state_str += "---------REMOTE STATE-----------\n";
+        pluginDbg("fgcom_remotecfg_mtx.lock()");
         fgcom_remotecfg_mtx.lock();
         for (const auto &p : fgcom_remote_clients) {
             for (const auto &idty : fgcom_remote_clients[p.first]) {
@@ -104,6 +105,7 @@ void debug_out_internal_state() {
                 }
             }
         }
+        pluginDbg("fgcom_remotecfg_mtx.unlock()");
         fgcom_remotecfg_mtx.unlock();
 
         state_str += "--------------------------------\n";

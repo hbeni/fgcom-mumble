@@ -71,8 +71,10 @@
 std::recursive_mutex fgcom_rdfInfo_mtx;
 std::map<std::string, fgcom_rdfInfo> fgcom_rdf_activeSignals;
 void fgcom_rdf_registerSignal(std::string rdfID, fgcom_rdfInfo rdfInfo) {
+    pluginDbg("fgcom_rdfInfo_mtx.lock()");
     fgcom_rdfInfo_mtx.lock();
     fgcom_rdf_activeSignals[rdfID] = rdfInfo;
+    pluginDbg("fgcom_rdfInfo_mtx.unlock()");
     fgcom_rdfInfo_mtx.unlock();
 }
 
@@ -83,6 +85,7 @@ void fgcom_rdf_registerSignal(std::string rdfID, fgcom_rdfInfo rdfInfo) {
  */
 std::string fgcom_rdf_generateMsg(std::string selectedHost, uint16_t selectedPort) {
     std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    pluginDbg("fgcom_rdfInfo_mtx.lock()");
     fgcom_rdfInfo_mtx.lock();
     
     std::vector<std::string> processed;
@@ -115,6 +118,7 @@ std::string fgcom_rdf_generateMsg(std::string selectedHost, uint16_t selectedPor
 
     // Finally return data
     //pluginDbg("[UDP] client fgcom_udp_generateMsg(): data buld finished, length="+std::to_string(clientMsg.length())+", content="+clientMsg);
+    pluginDbg("fgcom_rdfInfo_mtx.unlock()");
     fgcom_rdfInfo_mtx.unlock();
     return clientMsg;
 }

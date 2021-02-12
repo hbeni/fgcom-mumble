@@ -44,6 +44,7 @@
 void fgcom_gc_clean_lcl() {
     std::chrono::milliseconds lcl_timeout(FGCOM_GARBAGECOLLECT_TIMEOUT_LCL);
     
+    pluginDbg("fgcom_localcfg_mtx.lock()");
     fgcom_localcfg_mtx.lock();
 
     pluginDbg("[GC] LCL searching for stale local state..."); 
@@ -64,6 +65,7 @@ void fgcom_gc_clean_lcl() {
         pluginDbg("[GC] LCL  clean iid="+std::to_string(elem));
     }
     
+    pluginDbg("fgcom_localcfg_mtx.unlock()");
     fgcom_localcfg_mtx.unlock();
     
     // update client comment if we removed identities
@@ -78,6 +80,7 @@ void fgcom_gc_clean_lcl() {
 void fgcom_gc_clean_rmt() {
     std::chrono::milliseconds rmt_timeout(FGCOM_GARBAGECOLLECT_TIMEOUT_RMT);
     
+    pluginDbg("fgcom_remotecfg_mtx.lock()");
     fgcom_remotecfg_mtx.lock();
     
     pluginDbg("[GC] RMT searching for stale remote state...");
@@ -115,7 +118,7 @@ void fgcom_gc_clean_rmt() {
     }
     
     
-
+    pluginDbg("fgcom_remotecfg_mtx.unlock()");
     fgcom_remotecfg_mtx.unlock();
 }
 

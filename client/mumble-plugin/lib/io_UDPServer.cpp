@@ -106,6 +106,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     std::string segment;
     std::regex parse_key_value ("^(\\w+)=(.+)");
     std::regex parse_COM ("^(COM)(\\d+)_(.+)");
+    pluginDbg("fgcom_localcfg_mtx.lock()");
     fgcom_localcfg_mtx.lock();
     while(std::getline(streambuffer, segment, ',')) {
         pluginDbg("[UDP-server] Segment='"+segment+"'");
@@ -496,6 +497,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     
     
     // All done
+    pluginDbg("fgcom_localcfg_mtx.unlock()");
     fgcom_localcfg_mtx.unlock();
     pluginDbg("[UDP-server] packet fully processed");
     return parseResult;

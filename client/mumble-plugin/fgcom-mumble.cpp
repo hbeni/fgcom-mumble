@@ -222,6 +222,7 @@ void fgcom_updateClientComment() {
         newComment += (fgcom_isPluginActive())? "active" : "inactive";
 
         // Add Identity and frequency information
+        pluginDbg("fgcom_localcfg_mtx.lock()");
         fgcom_localcfg_mtx.lock();
         if (fgcom_local_client.size() > 0) {
             for (const auto &idty : fgcom_local_client) {
@@ -241,6 +242,7 @@ void fgcom_updateClientComment() {
         }   else {
             newComment += "<br/>&nbsp;&nbsp;<i>no callsigns registered</i>";
         }
+        pluginDbg("fgcom_localcfg_mtx.unlock()");
         fgcom_localcfg_mtx.unlock();
         
         // Finally request to set the new comment
@@ -413,10 +415,12 @@ mumble_error_t fgcom_initPlugin() {
             } else {
                 // update mumble session id to all known identities
                 localMumId = localUser;
+                pluginDbg("fgcom_remotecfg_mtx.lock()");
                 fgcom_remotecfg_mtx.lock();
                 for (const auto &idty : fgcom_local_client) {
                     fgcom_local_client[idty.first].mumid = localUser;
                 }
+                pluginDbg("fgcom_remotecfg_mtx.unlock()");
                 fgcom_remotecfg_mtx.unlock();
                 pluginLog("got local clientID="+std::to_string(localUser));
                 mumAPI.freeMemory(ownPluginID, &localUser);
@@ -839,6 +843,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         bool useRawData = false;
         
         // Fetch the remote clients data
+        pluginDbg("fgcom_remotecfg_mtx.lock()");
         fgcom_remotecfg_mtx.lock();
         auto search = fgcom_remote_clients.find(userID);
         if (search != fgcom_remote_clients.end()) {
@@ -979,6 +984,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                 bestSignalStrength = 0.0;
             }
         }
+        pluginDbg("fgcom_remotecfg_mtx.unlock()");
         fgcom_remotecfg_mtx.unlock();
         
         
