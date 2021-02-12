@@ -67,7 +67,7 @@
 
 // These are just some utility functions facilitating writing logs and the like
 // The actual implementation of the plugin is further down
-std::mutex fgcom_plog_mtx; // thread safety for logging
+std::recursive_mutex fgcom_plog_mtx; // thread safety for logging
 std::ostream& pLog(std::ostream& stream) {
     fgcom_plog_mtx.lock();
     // make milliseconds timestamp
@@ -315,7 +315,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
 
 }
 
-std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
+std::recursive_mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
 std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
 bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data) {
     // Handle the incoming data (if it belongs to us)

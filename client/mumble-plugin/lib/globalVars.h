@@ -80,7 +80,7 @@ struct fgcom_client {
 // Global mutex for read/write access.
 // This needs to be locked everytime one wants to read/write
 // to the data to fgcom_local_client or fgcom_remote_clients
-extern std::mutex fgcom_localcfg_mtx;
+extern std::recursive_mutex fgcom_localcfg_mtx;
 
 // Local plugin datastore
 // this is written from by the udp server and read by the plugin
@@ -89,7 +89,7 @@ extern std::map<int, struct fgcom_client> fgcom_local_client;   // local client 
 
 // Remote plugin state
 // this is written to from the plugins receive data function and read from other plugin functions
-extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
+extern std::recursive_mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
 extern std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
 
 // Global plugin state

@@ -79,7 +79,7 @@
  * @param buffer The char buffer to parse
  * @return map that indicates applied changes per identity
  */
-std::mutex fgcom_localcfg_mtx;
+std::recursive_mutex fgcom_localcfg_mtx;
 std::map<int, fgcom_client> fgcom_local_client;
 std::map<std::pair<std::string,uint16_t>, int> fgcom_udp_portMap; // host,port2iid
 bool fgcom_com_ptt_compatmode = false;

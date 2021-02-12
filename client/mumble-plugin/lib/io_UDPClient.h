@@ -31,7 +31,7 @@ struct fgcom_rdfInfo {
 
 
 // Global mutex for read/write access to fgcom_rdf_activeSignals
-extern std::mutex fgcom_rdfInfo_mtx;
+extern std::recursive_mutex fgcom_rdfInfo_mtx;
 
 /*
  * Register an RDF signal detection

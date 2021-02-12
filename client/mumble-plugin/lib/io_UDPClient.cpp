@@ -68,7 +68,7 @@
 /*
  * Register new signal data
  */
-std::mutex fgcom_rdfInfo_mtx;
+std::recursive_mutex fgcom_rdfInfo_mtx;
 std::map<std::string, fgcom_rdfInfo> fgcom_rdf_activeSignals;
 void fgcom_rdf_registerSignal(std::string rdfID, fgcom_rdfInfo rdfInfo) {
     fgcom_rdfInfo_mtx.lock();
