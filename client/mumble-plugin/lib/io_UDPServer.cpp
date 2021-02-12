@@ -99,6 +99,9 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     std::map<int, float> hgt_value;
     std::map<int, float> alt_value;
     std::map<int, std::pair<std::string, std::string>> parsed_frq_valAndToken; // last parsed frequency per radio-id (<value>,<token>)
+    
+    // marker for PTT change
+    bool needToHandlePTT = false;
 
     // convert to stringstream so we can easily tokenize
     // TODO: why not simply refactor to strtok()?
@@ -274,7 +277,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                             bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
                             fgcom_local_client[iid].radios[radio_id].ptt = parsedPTT;
                             if (fgcom_local_client[iid].radios[radio_id].ptt != oldValue ) parseResult[iid].radioData.insert(radio_id);
-                            fgcom_handlePTT();
+                            needToHandlePTT = true;
                         }
 
                     }
@@ -376,7 +379,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                             }
                         }
                     }
-                    fgcom_handlePTT();
+                    needToHandlePTT = true;
                 }
                 if (token_key == "OUTPUT_VOL") {
                     // Set all radio instances to the selected volume
@@ -497,6 +500,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     
     // All done
     fgcom_localcfg_mtx.unlock();
+    
+    /**
+     * Handle PTT Change
+     */
+    if (needToHandlePTT) fgcom_handlePTT();
+    
     pluginDbg("[UDP-server] packet fully processed");
     return parseResult;
 }
