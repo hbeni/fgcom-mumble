@@ -70,6 +70,7 @@ jobs:
     - if: matrix.language == 'cpp'
       name: Build C++ (Linux x64)
       run: |
+        g++ --version
         make clean
         make all
 
