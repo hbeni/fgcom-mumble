@@ -108,14 +108,14 @@ void pluginLog(T log) {
     pLog(std::cout) << log << std::endl;
     if (fgcom_logfile_outfh.good())  pLog(fgcom_logfile_outfh) << log << std::endl;
 }
-template<typename T>
-void pluginDbg(T log) {
-    #ifdef DEBUG
+
+void pluginDbg(std::string log) {
+#ifdef DEBUG
     // only log if we build in debug mode
     fgcom_log_openFile();
     pLog(std::cout) << "[DBG] " << log << std::endl;
     if (fgcom_logfile_outfh.good())  pLog(fgcom_logfile_outfh) << "[DBG] " << log << std::endl;
-    #endif
+#endif
 }
 
 
