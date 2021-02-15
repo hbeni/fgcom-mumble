@@ -3,7 +3,7 @@ CC=g++
 DEBUG=
 THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
-override CFLAGS+=-I. -I./lib $(DEBUG)
+override CFLAGS+=-O2 -I. -I./lib $(DEBUG)
 override CFLAGS_WIN+=-static-libgcc -static-libstdc++ $(CFLAGS) -I./lib/openssl/include/
 SSLFLAGS+=-lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-L./lib/openssl/ -static -lssl -lcrypto -DSSLFLAGS -lws2_32 -lcrypt32
@@ -19,14 +19,14 @@ VERSION:=$(VERSION_V).$(VERSION_M).$(VERSION_P)
 
 # Notice: Special calls
 #
-# `make DEBUG+="-DDEBUG"`                  enable debug code (add "-g3 -DDEBUG" for additional gdb symbols)
+# `make DEBUG+="-DDEBUG"`                  enable debug code (use `make DEBUG+="-g3 -DDEBUG -O0"` for additional gdb symbols)
 # `make CFLAGS+="-DNO_UPDATER" SSLFLAGS=`  skip auto-updater code
 #
 
 # FOR PRERELEASES: make always debug builds
-ifneq (,$(findstring 0,$(VERSION_V)))
-    DEBUG+=-g3 -DDEBUG
-endif
+#ifneq (,$(findstring 0,$(VERSION_V)))
+#    DEBUG+=-g3 -DDEBUG
+#endif
 
 # If SSLFLAGS was set to empty, empty the win version too
 ifeq ($(SSLFLAGS),)
@@ -42,9 +42,10 @@ all: plugin test clean
 # DEBUG MODE
 #   convinience invocation for debug build fpr GDB
 #   -g3:     gdb debugging symbols
+#   -O0:     no optimizations, so we get better dbg output (but slows don code significantly)
 #   -DDEBUG: makes debug code active (prints internal state to stdout every sec)
 all-debug:
-	make DEBUG+="-g3 -DDEBUG" all
+	make DEBUG+="-g3 -O0 -DDEBUG" all
 
 # make the plugin
 plugin: libs
