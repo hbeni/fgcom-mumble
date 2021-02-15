@@ -157,9 +157,7 @@ void fgcom_handlePTT() {
         bool radio_serviceable, radio_powered, radio_switchedOn, radio_ptt;
         bool radio_ptt_result = false; // if we should open or close the mic, default no
 
-        pluginDbg("fgcom_localcfg_mtx.lock()");
         fgcom_localcfg_mtx.lock();
-
         for (const auto &lcl_idty : fgcom_local_client) {
             int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
@@ -182,8 +180,6 @@ void fgcom_handlePTT() {
                 }
             }
         }
-
-        pluginDbg("fgcom_localcfg_mtx.unlock()");
         fgcom_localcfg_mtx.unlock();
         
         if (radio_ptt_result) pluginDbg("final PTT/radio openmic state: "+std::to_string(radio_ptt_result));
