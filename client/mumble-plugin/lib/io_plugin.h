@@ -59,8 +59,7 @@ template<typename T>
 void pluginLog(T log);
 
 // debug=true: only log if compiled in DEBUG mode
-template<typename T>
-void pluginDbg(T log);
+void pluginDbg(std::string log);
 
 
 /*
