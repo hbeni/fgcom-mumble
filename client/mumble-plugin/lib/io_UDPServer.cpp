@@ -619,6 +619,7 @@ void fgcom_spawnUDPServer() {
         // Print info to client, so we know what ports are in use
         if (firstdata.count(clientPort) == 0 && sizeof(buffer) > 4) {
             firstdata[clientPort] = true;
+            pluginLog("[UDP-server] server connection established from "+clientHost_str+":"+std::to_string(clientPort));
             mumAPI.log(ownPluginID, std::string("UDP server connection established from "+clientHost_str+":"+std::to_string(clientPort)).c_str());
         }
         
