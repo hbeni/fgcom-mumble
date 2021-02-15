@@ -350,7 +350,7 @@ public class MainWindow extends javax.swing.JFrame {
         try {
             state.setLatitude(Double.valueOf(jTextField_LAT.getText()));
         } catch( java.lang.NumberFormatException e) {
-            // just ignore input
+            jTextField_LAT.setText(Double.toString(state.getLatitutde()));
         }
     }//GEN-LAST:event_jTextField_LATKeyReleased
 
@@ -358,7 +358,7 @@ public class MainWindow extends javax.swing.JFrame {
         try {
             state.setLongitude(Double.valueOf(jTextField_LON.getText()));
         } catch( java.lang.NumberFormatException e) {
-            // just ignore input
+            jTextField_LON.setText(Double.toString(state.getLongitude()));
         }
     }//GEN-LAST:event_jTextField_LONKeyReleased
 
@@ -366,7 +366,7 @@ public class MainWindow extends javax.swing.JFrame {
         try {
             state.setHeight(Float.valueOf(jTextField_HGT.getText()));
         } catch( java.lang.NumberFormatException e) {
-            // just ignore input
+            jTextField_HGT.setText(Float.toString(state.getHeight()));
         }
     }//GEN-LAST:event_jTextField_HGTKeyReleased
 

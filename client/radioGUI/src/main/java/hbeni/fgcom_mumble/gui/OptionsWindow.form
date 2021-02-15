@@ -325,6 +325,9 @@
             <Property name="text" type="java.lang.String" value="err"/>
             <Property name="toolTipText" type="java.lang.String" value="Where Radio GUI sends its packets"/>
           </Properties>
+          <Events>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_udpPortKeyReleased"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>

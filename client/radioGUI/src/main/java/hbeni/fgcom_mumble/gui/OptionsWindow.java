@@ -180,6 +180,11 @@ public class OptionsWindow extends javax.swing.JFrame {
 
         jTextField_udpPort.setText("err");
         jTextField_udpPort.setToolTipText("Where Radio GUI sends its packets");
+        jTextField_udpPort.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField_udpPortKeyReleased(evt);
+            }
+        });
 
         jLabel3.setText("Plugin UDP send rate (Hz)");
         jLabel3.setToolTipText("If enabled, you will hear static and degraded signal quality based on signal reception");
@@ -376,6 +381,15 @@ public class OptionsWindow extends javax.swing.JFrame {
             jTextField_udpSendRateHz.setText(Float.toString(radioGUI.Options.udpSendRateHz));
         }
     }//GEN-LAST:event_jTextField_udpSendRateHzKeyReleased
+
+    private void jTextField_udpPortKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_udpPortKeyReleased
+        // sanitize input
+        try {
+            Integer.parseInt(jTextField_udpPort.getText());
+        } catch (NumberFormatException e) {
+            jTextField_udpPort.setText(Integer.toString(radioGUI.Options.udpPort));
+        }
+    }//GEN-LAST:event_jTextField_udpPortKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
