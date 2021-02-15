@@ -35,6 +35,7 @@ public class radioGUI {
     public static class Options {
         public static String  udpHost             = "localhost";
         public static int     udpPort             = 16661;
+        public static float   udpSendRateHz       = 10;
         public static int     debugSignalOverride = -5;
         public static boolean enableAudioEffecs   = true;
         public static boolean allowHearingNonPluginUsers = false;
@@ -96,7 +97,7 @@ public class radioGUI {
                 mainWindow.setStatusText(result.msg);
             }
             
-            Thread.sleep(100); // try 10 times per second
+            Thread.sleep( (long)(1000 / Options.udpSendRateHz) ); // try 10 times per second
         }
 
     }
