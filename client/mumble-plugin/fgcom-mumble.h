@@ -1,57 +1,40 @@
-/* 
- * This file is part of the FGCom-mumble distribution (https://github.com/hbeni/fgcom-mumble).
- * Copyright (c) 2020 Benedikt Hallinger
- * 
- * This program is free software: you can redistribute it and/or modify  
- * it under the terms of the GNU General Public License as published by  
- * the Free Software Foundation, version 3.
- *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License 
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************//**
+ * @file        fgcom-mumble.h
+ * @brief       Declares FgcomPlugin Class
+ * @date        02/17/2021 
+ * @authors     mill-j &
+ * @copyright   (C) 2021 under GNU GPL v3
+ **********************************************************************/
+ 
+#include "mumble/plugin/MumblePlugin.h"
+ 
+#include <iostream>
+#include <string>
 
-//
-// Define own plugin api
-//
-#ifndef FGCOM_MUMBLE_H
-#define FGCOM_MUMBLE_H
+class FgcomPlugin : public MumblePlugin {
+public:
+	FgcomPlugin() : MumblePlugin("Fgcom2", "mill-j",
+					   "A Mumble based radio simulation for flight simulators") {}
+	
+	virtual void onServerSynchronized(mumble_connection_t connection) noexcept override;
+	virtual void onServerDisconnected(mumble_connection_t connection) noexcept override;
+	virtual void onServerConnected(mumble_connection_t connection) noexcept override;
+	
+	virtual void onChannelExited(mumble_connection_t connection, mumble_userid_t userID, 
+		mumble_channelid_t channelID ) noexcept override;
+	
+	virtual void onChannelEntered (mumble_connection_t connection, 
+		mumble_userid_t userID, mumble_channelid_t  previousChannelID, 
+			mumble_channelid_t newChannelID)  noexcept override;
 
-// Plugin Version
-#define FGCOM_VERSION_MAJOR 0
-#define FGCOM_VERSION_MINOR 10
-#define FGCOM_VERSION_PATCH 0
-
-/*
- * Is the plugin currently active?
- * 
- * @return bool true if yes
- */
-bool fgcom_isPluginActive();
-
-/*
- * Handle PTT change of local user
- * 
- * This will check the local radio state and activate the mic if all is operable.
- * When no PTT or no radio is operable, mic is closed.
- */
-void fgcom_handlePTT();
-
-/*
- * See if the radio is operable
- * 
- * @param fgcom_radio the radio to check
- * @return bool true, wehn it is
- */
-bool fgcom_radio_isOperable(fgcom_radio r);
-
-/*
- * Update client comment
- */
-void fgcom_updateClientComment();
-
-#endif
+	
+	virtual void releaseResource(const void *ptr) noexcept override {
+		// We don't allocate any resources so we can have a no-op implementation
+		// We'll terminate though in case it is called as that is definitely a bug
+		std::cout<<"[Fgcom2] Releasing Resources"<<std::endl;
+		std::terminate();
+	}
+	
+	void pluginLog(std::string log);
+	void pluginDbg(std::string log);
+};
