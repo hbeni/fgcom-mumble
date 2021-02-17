@@ -210,7 +210,6 @@ void fgcom_updateClientComment() {
         const char *comment;
         if (mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment) == STATUS_OK) {
             std::string comment_str(comment);
-            mumAPI.freeMemory(ownPluginID, &comment);
             std::smatch sm;
             std::regex re("^([\\w\\W]*)<p name=\"FGCOM\">.*");  // cool trick: . does not match newline, but \w with negated \W matches really everything
             //pluginDbg("fgcom_updateClientComment(): got previous comment: '"+comment_str+"'");
@@ -221,7 +220,8 @@ void fgcom_updateClientComment() {
                 preservedComment = comment_str;
             }
         }
-        
+        mumAPI.freeMemory(ownPluginID, comment);
+
         // Add FGCom generic infos
         newComment += "<b>FGCom</b> (v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+"): ";
         newComment += (fgcom_isPluginActive())? "active" : "inactive";
@@ -424,7 +424,6 @@ mumble_error_t fgcom_initPlugin() {
                 }
                 fgcom_remotecfg_mtx.unlock();
                 pluginLog("got local clientID="+std::to_string(localUser));
-                mumAPI.freeMemory(ownPluginID, &localUser);
             }
             
             
@@ -483,7 +482,6 @@ mumble_error_t fgcom_initPlugin() {
                 pluginLog("Error fetching current active channel: rc="+std::to_string(glcres));
                 return EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
             }
-            mumAPI.freeMemory(ownPluginID, &localChannelID);
             
             if (!fgcom_isPluginActive()) fgcom_setPluginActive(fgcom_isPluginActive()); // print some nice message to start
             
