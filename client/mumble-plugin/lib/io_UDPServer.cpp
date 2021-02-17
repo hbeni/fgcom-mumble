@@ -516,8 +516,8 @@ bool fgcom_udp_shutdowncmd = false;
 bool udpServerRunning = false;
 void fgcom_spawnUDPServer() {
     pluginLog("[UDP-server] server starting");
-    int  fgcom_UDPServer_sockfd; 
-    char buffer[MAXLINE]; 
+    int  fgcom_UDPServer_sockfd;
+    char buffer[MAXLINE];
     struct sockaddr_in servaddr, cliaddr; 
     
 #ifdef MINGW_WIN64
@@ -616,23 +616,24 @@ void fgcom_spawnUDPServer() {
         clientHost = inet_ntoa(cliaddr.sin_addr);
         std::string clientHost_str = std::string(clientHost);
         
-        // Print info to client, so we know what ports are in use
-        if (firstdata.count(clientPort) == 0 && sizeof(buffer) > 4) {
-            firstdata[clientPort] = true;
-            pluginLog("[UDP-server] server connection established from "+clientHost_str+":"+std::to_string(clientPort));
-            mumAPI.log(ownPluginID, std::string("UDP server connection established from "+clientHost_str+":"+std::to_string(clientPort)).c_str());
-        }
-        
         // Allow the udp server to be shut down when receiving SHUTDOWN command
         if (strstr(buffer, "SHUTDOWN") && fgcom_udp_shutdowncmd) {
             pluginLog("[UDP-server] shutdown command recieved, server stopping now");
             fgcom_udp_shutdowncmd = false;
             close(fgcom_UDPServer_sockfd);
-            mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
+            //mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
+            // ^^ note: as long as the mumAPI is synchronuous/blocking, we cannot emit that message: it causes mumble's main thread to block/deadlock.
             break;
             
         } else {
             // let the incoming data be handled
+            
+            // Print info to client, so we know what ports are in use
+            if (firstdata.count(clientPort) == 0 && sizeof(buffer) > 4) {
+                firstdata[clientPort] = true;
+                pluginLog("[UDP-server] server connection established from "+clientHost_str+":"+std::to_string(clientPort));
+                mumAPI.log(ownPluginID, std::string("UDP server connection established from "+clientHost_str+":"+std::to_string(clientPort)).c_str());
+            }
             
             std::map<int, fgcom_udp_parseMsg_result> updates; // so we can send updates to remotes
             updates = fgcom_udp_parseMsg(buffer, clientPort, clientHost_str);
