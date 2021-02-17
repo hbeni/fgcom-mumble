@@ -258,13 +258,11 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     mumble_channelid_t localChannelID;
     if (mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID) != STATUS_OK) {
         pluginLog("[ERROR]: Can't obtain channel of local user");
-        mumAPI.freeMemory(ownPluginID, &localChannelID);
         return;
     }
 
     if (mumAPI.getUsersInChannel(ownPluginID, activeConnection, localChannelID, &userIDs, &userCount) != STATUS_OK) {
         pluginLog("[ERROR]: Can't obtain user list");
-        mumAPI.freeMemory(ownPluginID, &localChannelID);
         return;
     } else {
         pluginDbg("There are "+std::to_string(userCount)+" users on this channel.");
@@ -308,7 +306,6 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
 
         }
 
-        mumAPI.freeMemory(ownPluginID, &localChannelID);
         mumAPI.freeMemory(ownPluginID, userIDs);
         pluginDbg("  notification for dataID='"+dataID+"' done.");
     }
