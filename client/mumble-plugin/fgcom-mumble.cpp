@@ -109,6 +109,9 @@ void fgcom_setPluginActive(bool active) {
         
         // restore old transmission mode
         merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, fgcom_prevTransmissionMode);
+        
+        // disable PTT overwrite
+        merr = mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
     }
     
     fgcom_inSpecialChannel = active;
@@ -190,7 +193,6 @@ void fgcom_handlePTT() {
         //       plugin deactivation will already handle setting the old transmission mode,
         //       so the mic will be open according to that...
         pluginDbg("Handling PTT state: PLUGIN NOT ACTIVE");
-        mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
     }
 }
 
