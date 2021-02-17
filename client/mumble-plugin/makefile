@@ -11,9 +11,9 @@ SSLFLAGS_WIN+=-L./lib/openssl/ -static -lssl -lcrypto -DSSLFLAGS -lws2_32 -lcryp
 # get version
 GITCOMMIT:=$(shell git log -1 --pretty=format:"%h")
 GITDATE:=$(shell git log -1 --pretty=format:"%cd" --date=short)
-VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR fgcom-mumble.h |grep -E -o '[0-9]')
-VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR fgcom-mumble.h |grep -E -o '[0-9]')
-VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH fgcom-mumble.h |grep -E -o '[0-9]')
+VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR fgcom-mumble.h |grep -E -o '[0-9]+')
+VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR fgcom-mumble.h |grep -E -o '[0-9]+')
+VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH fgcom-mumble.h |grep -E -o '[0-9]+')
 VERSION:=$(VERSION_V).$(VERSION_M).$(VERSION_P)
 
 
