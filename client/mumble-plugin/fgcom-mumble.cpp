@@ -587,7 +587,7 @@ void mumble_shutdown() {
 }
 
 MumbleStringWrapper mumble_getName() {
-    static const char *name = "FGCom";
+    static const char *name = "FGCom-mumble";
 
     MumbleStringWrapper wrapper;
     wrapper.data = name;
@@ -671,11 +671,21 @@ MumbleStringWrapper mumble_getAuthor() {
 }
 
 MumbleStringWrapper mumble_getDescription() {
-    static const char *description = "FGCOM provides an (aircraft) radio simulation.\n\nhttps://github.com/hbeni/fgcom-mumble";
+    const mumble_version_t version = mumble_getVersion();
+    
+    char *description = (char *)malloc(sizeof(char)*128);
+    if (description != nullptr) {
+        int len = sprintf(description,
+            "FGCom-mumble %d.%d.%d provides an (aircraft) radio simulation.\n\nhttps://github.com/hbeni/fgcom-mumble",
+            FGCOM_VERSION_MAJOR, FGCOM_VERSION_MINOR, FGCOM_VERSION_PATCH);
+    } else {
+        throw std::system_error();
+    }
+
     MumbleStringWrapper wrapper;
     wrapper.data = description;
     wrapper.size = strlen(description);
-    wrapper.needsReleasing = false;  // It's a static String and therefore doesn't need releasing
+    wrapper.needsReleasing = true;
 
     return wrapper;
 }
