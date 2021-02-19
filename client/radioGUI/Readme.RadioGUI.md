@@ -18,6 +18,32 @@ After startup the GUI initializes with a default config (location, radio stack).
 You can run several instances of the application at once to have different clients connecting to the same mumble plugin.
 
 
+SimConnect support (MSFS2020)
+-----------------------------
+RadioGUI can connect to a SimConnect compatible simulator like MFSF2020.  
+For doing so, you must enable the connection in the simulator.
+
+- Find the SimConnect.xml in the Microsoft files, usually somewhere here:
+`C:\Users\[user name]\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache`
+
+- Add a new connection to that xml file:
+```xml
+<SimConnect.Comm>
+  <Descr>Global IP Port</Descr>
+  <Disabled>False</Disabled>
+  <Protocol>IPv4</Protocol>
+  <Scope>global</Scope>
+  <Address>127.0.0.1</Address> <!-- Set the IP of your machine -->
+  <MaxClients>64</MaxClients>
+  <Port>7421</Port> <!-- Can be another port if you like -->
+  <MaxRecvSize>4096</MaxRecvSize>
+  <DisableNagle>False</DisableNagle>
+</SimConnect.Comm> 
+```
+
+Then you can adjust the SimConnect options in RadioGUI's Options-dialog and finally activate it by choosing the respective option from RadioGUI's main menu.
+
+
 Compiling
 -----------------
 A release package can be built from the top-level makefile using `make release-radioGUI` (which invokes the make target `radioGUI` that invokes maven).
