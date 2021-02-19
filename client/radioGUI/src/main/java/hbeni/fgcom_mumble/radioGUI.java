@@ -37,6 +37,8 @@ public class radioGUI {
         public static int     udpPort             = 16661;
         public static float   udpSendRateHz       = 10;
         public static int     debugSignalOverride = -5;
+        public static String  simConnectHost      = "localhost";
+        public static int     simConnectPort      = 7421;
         public static boolean enableAudioEffecs   = true;
         public static boolean allowHearingNonPluginUsers = false;
     }
@@ -159,6 +161,7 @@ public class radioGUI {
         // update GUI
         mainWindow.prepareSimConnect();
         mainWindow.updateFromState();
+        
         
         // Invoke the simConnect brigde
         try {
