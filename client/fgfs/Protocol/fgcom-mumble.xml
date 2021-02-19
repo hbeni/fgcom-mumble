@@ -55,24 +55,12 @@
     <node>/instrumentation/comm[0]/frequencies/selected-channel-width-khz</node>
    </chunk>
    <chunk>
-    <name>com1-powered</name>
-    <type>string</type>
-    <format>COM1_VLT=%s</format> <!-- in volts -->
-    <node>/system/electrical/outputs/comm[0]</node>
-   </chunk>
-   <chunk>
     <name>com1-powerbutton</name>
     <type>string</type>
     <format>COM1_PBT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[0]/power-btn</node>
+    <node>/instrumentation/comm[0]/operable</node>
+    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) --->
    </chunk>
-   <chunk>
-    <name>com1-serviceable</name>
-    <type>string</type>
-    <format>COM1_SRV=%s</format> <!-- 0=failed, 1=operable -->
-    <node>/instrumentation/comm[0]/serviceable</node>
-   </chunk>
-   <chunk>
     <name>com1-ptt</name>
     <type>string</type>
     <format>COM1_PTT=%s</format> <!-- 0=inactive, 1=active -->
@@ -94,7 +82,7 @@
     <name>com1-squelch</name>
     <type>string</type>
     <format>COM1_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
-    <node>/instrumentation/comm[0]/squelch</node>
+    <node>/instrumentation/comm[0]/cutoff-signal-quality</node>
    </chunk>
    
    <!-- COM 2 -->
@@ -111,22 +99,11 @@
     <node>/instrumentation/comm[1]/frequencies/selected-channel-width-khz</node>
    </chunk>
    <chunk>
-    <name>com2-powered</name>
-    <type>string</type>
-    <format>COM2_VLT=%s</format> <!-- in volts -->
-    <node>/system/electrical/outputs/comm[1]</node>
-   </chunk>
-   <chunk>
     <name>com2-powerbutton</name>
     <type>string</type>
     <format>COM2_PBT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[1]/power-btn</node>
-   </chunk>
-   <chunk>
-    <name>com2-serviceable</name>
-    <type>string</type>
-    <format>COM2_SRV=%s</format> <!-- 0=failed, 1=operable -->
-    <node>/instrumentation/comm[1]/serviceable</node>
+    <node>/instrumentation/comm[1]/operable</node>
+    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) --->
    </chunk>
    <chunk>
     <name>com2-ptt</name>
@@ -150,7 +127,7 @@
     <name>com2-squelch</name>
     <type>string</type>
     <format>COM1_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
-    <node>/instrumentation/comm[1]/squelch</node>
+    <node>/instrumentation/comm[1]/cutoff-signal-quality</node>
    </chunk>
 
 
