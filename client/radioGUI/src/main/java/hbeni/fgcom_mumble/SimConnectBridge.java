@@ -46,13 +46,17 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
     public SimConnectBridge() throws IOException, ConfigurationNotFoundException {
         // Setup config
         Configuration simconnect_cfg = new Configuration();
-        simconnect_cfg.setAddress("localhost");
-        simconnect_cfg.setPort(Configuration.findSimConnectPort());
-        
+        simconnect_cfg.setAddress(radioGUI.Options.simConnectHost);
+        int foundPort = Configuration.findSimConnectPort();
+        if (foundPort < 0) {
+            // port could not be found in registry, use manually configured one
+            foundPort = radioGUI.Options.simConnectPort;
+        }
+        simconnect_cfg.setPort(foundPort);
+
         // build the bridge
         SimConnect sc;
         try {
-            if (Integer.parseInt(simconnect_cfg.get("Port")) < 0) throw new InvalidParameterException("SimConnect port not found");
             sc = new SimConnect("FGCom-mumble RadioGUI", simconnect_cfg);
         } catch (Exception e) {
             state.statusmessage = "ERROR connecting SimConnect: "+e.getLocalizedMessage();

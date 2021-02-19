@@ -453,7 +453,8 @@ public class MainWindow extends javax.swing.JFrame {
         radioGUI.mainWindow.jMenuItem_AddIdentity.setEnabled(false); // prevent adding radios
         radioGUI.mainWindow.jMenuItem_SimConnect.setEnabled(false);  // prevent reestablishing
         radioGUI.mainWindow.jToggleButton_Connect.setEnabled(false); // prevent "connect"
-        
+        optionsWindow.prepareSimConnect();
+    
     }
     
     /**
