@@ -95,6 +95,9 @@ Dies sollte daher der kleinste gemeinsame Nenner sein, d.h. die physikalische Fr
 Im Protokoll haben Fließkommazahlen außerdem immer den Punkt (`.`) als Dezimaltrenner; das Komma ist als Feldtrenner nicht erlaubt.
 
 
+### RadioGUI
+FGCom-mumble liefert eine plattformunabhängige Java-Applikation mit, die die meisten UDP-Protokollfelder implementiert. Dadurch eignet sich RadioGUI nicht nur zum testen, sondern auch für echte Aufgaben wie ATC ohne die Notwendigkeit eines weiteren Clients.
+
 ### Flightgear spezifisch
 - Kopiere die Flightgear Protokolldefinitionsdatei in deinen Flightgear Installationsordner unter `Protocol`.
 - Starte Flightgear mit aktiviertem fgcom-mumble Protokoll (füge "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" im Startprogramm als zusätzlichen Parameter hinzu)
