@@ -28,6 +28,15 @@
 
 
 /**
+ * The entry point for the plugin.
+ */
+MumblePlugin &MumblePlugin::getPlugin() noexcept {
+	static FgcomPlugin plugin;
+	return plugin;
+}
+
+
+/**
  * Fired when the server is synchronized after connection
  */
 void FgcomPlugin::onServerSynchronized(mumble_connection_t connection) noexcept {
@@ -79,6 +88,20 @@ void FgcomPlugin::onServerConnected(mumble_connection_t connection) noexcept {
  * Fired when the user exits channel
  */
 void FgcomPlugin::onChannelExited(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t channelID ) noexcept {
+	//See if connection is synchronized
+	if(m_api.isConnectionSynchronized(connection)) {
+		//See if local user connected
+		if(userID == m_api.getLocalUserID(connection)) {
+			pluginDbg("Local Connected");
+			//See if this the the special channel
+			if(m_api.getChannelName(connection,channelID) == specialChannel) {
+				///<@todo add a ping to server to free if no client conneced
+				pluginDbg("Stopping server");
+				udpServerRunning = false;
+				fgcom_readThread.join();
+			}
+		}
+	}
 	pluginDbg("User with ID "+ std::to_string(userID) + " has left channel with ID " + std::to_string(channelID) + ". (ServerConnection: " + std::to_string(connection) + ")");
 }
 
@@ -88,6 +111,20 @@ void FgcomPlugin::onChannelExited(mumble_connection_t connection, mumble_userid_
 void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_userid_t userID, 
 		mumble_channelid_t  previousChannelID, mumble_channelid_t newChannelID) noexcept {
 	
+	//See if connection is synchronized
+	if(m_api.isConnectionSynchronized(connection)) {
+		//See if local user connected
+		if(userID == m_api.getLocalUserID(connection)) {
+			pluginDbg("I Connected");
+			//See if this the the special channel
+			if(m_api.getChannelName(connection,newChannelID) == specialChannel) {
+				pluginDbg("Ok start server");
+				udpServerRunning = true;
+				fgcom_readThread = std::thread(&FgcomPlugin::fgcom_spawnUDPServer, this);
+	
+			}
+		}
+	}
 	pluginDbg("User with ID "+ std::to_string(userID) + " has joined channel with ID " + std::to_string(newChannelID) + ", coming from "+ std::to_string(previousChannelID) +". (ServerConnection: " + std::to_string(connection) + ")");
 }
 
@@ -104,13 +141,103 @@ void FgcomPlugin::pluginLog(std::string log) {
  * @todo Add timestamp, and maybe move elsewhere
  */
 void FgcomPlugin::pluginDbg(std::string log) {
-	std::cout<<"Fgcom2 [DGB]: "<<log<<std::endl;
+	std::cout<<"Fgcom2 [DBG]: "<<log<<std::endl;
 }
 
 /**
- * The entry point for the plugin.
+ * @brief Creates a udp server to retrieve data from flight sim or other 
+ * data source.
  */
-MumblePlugin &MumblePlugin::getPlugin() noexcept {
-	static FgcomPlugin plugin;
-	return plugin;
+void FgcomPlugin::fgcom_spawnUDPServer() {
+	
+	struct sockaddr_in localSocket, remoteSocket;
+	unsigned int recv_len,slen= sizeof(remoteSocket);
+	int s, i = -1;
+	char buf[BUFLEN];
+	
+	
+	//create a UDP socket
+	if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+		pluginLog("Create Socket Failed!");
+		return;
+	}
+	
+	// zero out the structure
+	memset((char *) &localSocket, 0, sizeof(localSocket));
+	
+	localSocket.sin_family = AF_INET;
+	localSocket.sin_port = htons(PORT);
+	localSocket.sin_addr.s_addr = htonl(INADDR_ANY); 
+	
+	//Allow us to reconnect with same port
+	int reuse = 1;
+    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse)) < 0)
+        pluginLog("setsockopt(SO_REUSEADDR) failed");
+
+	
+	///bind socket to port @todo add varible port on failure 
+	if( bind(s , (struct sockaddr*)&localSocket, sizeof(localSocket) ) == -1) {
+		pluginLog("Bind Socket To Port Failed!");
+		return;
+	}
+	
+	
+	std::string preData, curBuffer;
+	std::vector<std::string> splitBuffer, finalBuffer;
+	fgcom_keyvalue udpData;
+	unsigned int c = 0;
+	fgcom_radio radioBuffer;
+	fgcom_location locBuffer;
+	
+	while(udpServerRunning) {		
+		//receive data, this is a blocking call
+		recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &remoteSocket, &slen);
+		curBuffer = buf;
+		//If nothing changed lets just skip parsing
+		if(preData == curBuffer)
+			continue;
+
+		//std::cout<<"Received packet from "<<inet_ntoa(remoteSocket.sin_addr)<<":"<<ntohs(remoteSocket.sin_port)<<std::endl;
+		pluginDbg(curBuffer);
+		udpData.clear();
+		
+		///@todo Add check to make sure message was valid		
+		splitBuffer = udpData.splitStrings(curBuffer,",");
+		
+		//pluginDbg(splitBuffer[0]);
+		
+		for(c = 0; c < splitBuffer.size(); c++) {
+			///@todo Add check to make sure message was valid
+			finalBuffer = udpData.splitStrings(splitBuffer[c],"=");
+			//pluginDbg(finalBuffer[0]);
+			udpData.add(finalBuffer[0], finalBuffer[1]);
+			
+		}
+			
+		//Do something with data
+		
+		//Callsign
+		localUser.setCallsign(udpData.getValue("CALLSIGN"));
+		
+		//Location
+		locBuffer.set(udpData.getFloat("LON"), udpData.getFloat("LAT"),udpData.getFloat("HGT"));
+		localUser.setLocation(locBuffer);
+		
+		//Radios
+		int r = 1;
+		while(true) {
+			if(udpData.getValue("COM" + std::to_string(r) + "_PTT") != "Error!")
+				pluginDbg("Found Radio " + std::to_string(r));
+			else
+				break;
+			
+			r++;
+		}
+		
+
+		
+		preData = buf;
+	}
+	pluginDbg("Server loop done!");
+	return;
 }

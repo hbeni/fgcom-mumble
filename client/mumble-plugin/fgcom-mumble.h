@@ -1,8 +1,7 @@
 /*******************************************************************//**
  * @file        fgcom-mumble.h
  * @brief       Declares FgcomPlugin Class
- * @date        02/17/2021 
- * @authors     mill-j &
+ * @authors     Benedikt Hallinger & mill-j
  * @copyright   (C) 2021 under GNU GPL v3
  **********************************************************************/
  
@@ -10,8 +9,36 @@
  
 #include <iostream>
 #include <string>
+#include <thread>
+
+#ifdef MINGW_WIN64
+    #include <winsock2.h>
+    typedef int socklen_t;
+#else
+    #include <sys/socket.h> 
+    #include <arpa/inet.h> 
+    #include <netinet/in.h>
+#endif
+
+#include "src/fgcom_identity.cpp"
+#include "src/fgcom_location.cpp"
+#include "src/fgcom_radio.cpp"
+#include "src/fgcom_keyvalue.cpp"
+
+#define BUFLEN 1024	//Max length of buffer
+#define PORT 16661	//The port on which to listen for incoming data
 
 class FgcomPlugin : public MumblePlugin {
+private:
+	fgcom_identity localUser; 					///>Holds local user info
+	std::vector<fgcom_identity> remoteUsers;	///>Holds remote user info
+	std::string specialChannel = "fgcom-mumble";///>@todo Make changeable
+	
+	std::thread fgcom_readThread;				///>Udp server thread
+	void fgcom_spawnUDPServer();
+	bool udpServerRunning;						///>Used to shutdown thread
+	
+	
 public:
 	FgcomPlugin() : MumblePlugin("Fgcom2", "mill-j",
 					   "A Mumble based radio simulation for flight simulators") {}
