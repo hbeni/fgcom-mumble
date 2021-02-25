@@ -59,8 +59,9 @@
     <type>string</type>
     <format>COM1_PBT=%s</format> <!-- 0=inactive, 1=active -->
     <node>/instrumentation/comm[0]/operable</node>
-    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) --->
+    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
    </chunk>
+   <chunk>
     <name>com1-ptt</name>
     <type>string</type>
     <format>COM1_PTT=%s</format> <!-- 0=inactive, 1=active -->
@@ -103,7 +104,7 @@
     <type>string</type>
     <format>COM2_PBT=%s</format> <!-- 0=inactive, 1=active -->
     <node>/instrumentation/comm[1]/operable</node>
-    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) --->
+    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
    </chunk>
    <chunk>
     <name>com2-ptt</name>
