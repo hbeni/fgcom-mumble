@@ -209,9 +209,9 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 		for(c = 0; c < splitBuffer.size(); c++) {
 			///@todo Add check to make sure message was valid
 			finalBuffer = udpData.splitStrings(splitBuffer[c],"=");
-			//pluginDbg(finalBuffer[0]);
-			udpData.add(finalBuffer[0], finalBuffer[1]);
-			
+			pluginDbg(finalBuffer[0]);
+			if(finalBuffer.size() == 2)
+				udpData.add(finalBuffer[0], finalBuffer[1]);
 		}
 			
 		//Do something with data
@@ -225,16 +225,37 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 		
 		//Radios
 		int r = 1;
+		
 		while(true) {
-			if(udpData.getValue("COM" + std::to_string(r) + "_PTT") != "Error!")
+			if(udpData.getValue("COM" + std::to_string(r) + "_PTT") != "Error!") {
 				pluginDbg("Found Radio " + std::to_string(r));
+				fgcom_radio radio;
+				
+				if(udpData.getInt("COM" + std::to_string(r) + "_PBT") == 1)
+					radio.setPowered(true);
+				else
+					radio.setPowered(false);
+				
+				if(udpData.getInt("COM" + std::to_string(r) + "_PTT") == 1)
+					radio.setPTT(true);
+				else
+					radio.setPTT(false);
+				
+				radio.setFrequency(udpData.getFloat("COM" + std::to_string(r) + "_FRQ"));	
+				radio.setDialedFrequency(udpData.getValue("COM" + std::to_string(r) + "_FRQ"));
+				radio.setVolume(udpData.getFloat("COM" + std::to_string(r) + "_VOL"));	
+				radio.setWatts(udpData.getFloat("COM" + std::to_string(r) + "_PWR"));			
+				radio.setSquelch(udpData.getFloat("COM" + std::to_string(r) + "_SQC"));
+				radio.setChannelWidth(udpData.getFloat("COM" + std::to_string(r) + "_CWKHZ"));
+				
+				localUser.setRadio(radio, r);
+			}
 			else
 				break;
-			
 			r++;
 		}
 		
-
+		
 		
 		preData = buf;
 	}

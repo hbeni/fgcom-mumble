@@ -81,7 +81,17 @@ void fgcom_identity::setAll(int UID, std::vector<fgcom_radio> Radios,fgcom_locat
 	
 }
 
-void fgcom_identity::setRadio(fgcom_radio radio, int sel) {radios[sel] = radio;}
+void fgcom_identity::setRadio(fgcom_radio radio, int sel) {
+	
+	if(sel < radios.size())
+		radios[sel] = radio;
+	else if(sel == radios.size()) {
+		fgcom_radio radio;
+		radios.push_back(radio);
+		radios[sel] = radio;
+	}
+		
+}
 void fgcom_identity::setCallsign(std::string Callsign) {callsign = Callsign;}
 void fgcom_identity::setLocation(fgcom_location Location) {location = Location;}
 void fgcom_identity::setUid(int UID) {uid = UID;}

@@ -103,25 +103,56 @@ void fgcom_keyvalue::add(fgcom_keyvalue KeyValue)
 ///Returns The Selected Setting Value As An Integer.
 int fgcom_keyvalue::getInt(int Selection)
 {
-	return stoi(values[checkSelection(Selection)]);
+	int value;
+	try {
+		value = stoi(values[checkSelection(Selection)]);
+	}
+	catch (const std::invalid_argument& ia) {
+		value = -1;
+	}
+    
+    return value;
 }
 		
 ///Returns A Setting Value As An Integer, For A Key Matching The Input.
 int fgcom_keyvalue::getInt(std::string Key)
-{
-    return stoi(values[findSelection(Key)]);
+{	int value;
+	try {
+		value = stoi(values[findSelection(Key)]);
+	}
+	catch (const std::invalid_argument& ia) {
+		value = -1;
+	}
+    
+    return value;
 }
 
 ///Returns The Selected Setting Value As An float.
 float fgcom_keyvalue::getFloat(int Selection)
 {
-	return stof(values[checkSelection(Selection)]);
+	float value;
+	try {
+		value = stof(values[checkSelection(Selection)]);
+	}
+	catch (const std::invalid_argument& ia) {
+		value = -1.0000;
+	}
+    
+    return value;
 }
 		
 ///Returns a setting value as a float, for a key matching the input.
 float fgcom_keyvalue::getFloat(std::string Key)
 {
-    return stof(values[findSelection(Key)]);
+	float value;
+	try {
+		value = stof(values[findSelection(Key)]);
+	}
+	catch (const std::invalid_argument& ia) {
+		value = -1.0000;
+	}
+    
+    return value;
 }
 
 ///Returns The Selected Key As A String

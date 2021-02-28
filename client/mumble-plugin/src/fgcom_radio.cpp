@@ -56,6 +56,20 @@ public:
 	float getSquelch();
 	float getChannelWidth();
 	
+	void setClean();
+	void setDirty();
+	void setPowered(bool Powered);
+	void setServiceable(bool Serviceable);
+	void setPTT(bool PTT);
+	void setRDF(bool RDF);
+	void setFrequency(float Freq);
+	void setDialedFrequency(std::string Freq);
+	void setVolts(float Volts);
+	void setVolume(float Volume);
+	void setWatts(float Watts);
+	void setSquelch(float Squelch);
+	void setChannelWidth(float Width);
+	
 	void update(
 		bool Power, 
 		bool Serviceable, 
@@ -96,20 +110,80 @@ float fgcom_radio::getSquelch(){return squelch;}
 ///Returns radio channel width
 float fgcom_radio::getChannelWidth(){return channelWidth;}
 
+///Sets power button state
+void fgcom_radio::setPowered(bool Powered) {
+	power_btn = Powered;
+	setDirty();
+}
+
+///Sets serviceable state
+void fgcom_radio::setServiceable(bool Serviceable) {
+	serviceable = Serviceable;
+	setDirty();
+}
+
+///Sets PTT status
+void fgcom_radio::setPTT(bool PTT) {
+	ptt = PTT;
+	setDirty();
+}
+
+///Changes RDF status
+void fgcom_radio::setRDF(bool RDF) {
+	rdfEnabled = RDF;
+	setDirty();
+}
+
+///Sets dirty status. Use setClean() to set clean
+void fgcom_radio::setDirty() {dirty = true;}
+
+///Sets the radio's frequency as a float. @see setDialedFrequency()
+void fgcom_radio::setFrequency(float Freq) { 
+	frequency = Freq;
+	setDirty();
+}
+
+///Sets the radio's frequency as a string. @see setFrequency()
+void fgcom_radio::setDialedFrequency(std::string Freq) { 
+	dialedFRQ = Freq;
+	setDirty();
+}
+
+///Sets the radio's voltage
+void fgcom_radio::setVolts(float Volts) { 
+	volts = Volts;
+	setDirty();
+}
+
+///Sets the radio's volume
+void fgcom_radio::setVolume(float Volume) { 
+	volume = Volume;
+	setDirty();
+}
+
+///Sets the radio's wattage
+void fgcom_radio::setWatts(float Watts) { 
+	watts = Watts;
+	setDirty();
+}
+
+///Sets the radio's squelch
+void fgcom_radio::setSquelch(float Squelch) { 
+	squelch = Squelch;
+	setDirty();
+}
+
+///Sets the radio's channel with in hertz
+void fgcom_radio::setChannelWidth(float Width) { 
+	channelWidth = Width;
+	setDirty();
+}
+
+
+
 /**
  * Updates the internal state of the radio and sets dirty status if data
  * changes. @see isDirty()
- * @param Power 
- * @param Serviceable 
- * @param PTT 
- * @param RDF
- * @param DialedFreq
- * @param Volts
- * @param Volume
- * @param Watts
- * @param Squelch
- * @param ChannelWidth
- * 
  */
 
 void fgcom_radio::update(bool Power, bool Serviceable, bool PTT,  bool RDF,
