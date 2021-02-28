@@ -95,6 +95,13 @@ void FgcomPlugin::onChannelExited(mumble_connection_t connection, mumble_userid_
 			pluginDbg("Local Connected");
 			//See if this the the special channel
 			if(m_api.getChannelName(connection,channelID) == specialChannel) {
+				
+				//Restore Transmission Mode
+				mumble_error_t merr;
+				m_api.requestLocalUserTransmissionMode(fgcom_prevTransmissionMode);
+				m_api.requestMicrophoneActivationOvewrite(false);
+				m_api.log("Restored Transmission Mode");
+				
 				///<@todo add a ping to server to free if no client conneced
 				pluginDbg("Stopping server");
 				udpServerRunning = false;
@@ -118,6 +125,11 @@ void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_useri
 			pluginDbg("I Connected");
 			//See if this the the special channel
 			if(m_api.getChannelName(connection,newChannelID) == specialChannel) {
+				
+				fgcom_prevTransmissionMode = m_api.getLocalUserTransmissionMode();
+				m_api.requestLocalUserTransmissionMode(TM_PUSH_TO_TALK);
+				m_api.log("Enabled push-to-talk");
+				
 				pluginDbg("Ok start server");
 				udpServerRunning = true;
 				fgcom_readThread = std::thread(&FgcomPlugin::fgcom_spawnUDPServer, this);

@@ -34,10 +34,13 @@ private:
 	std::vector<fgcom_identity> remoteUsers;	///>Holds remote user info
 	std::string specialChannel = "fgcom-mumble";///>@todo Make changeable
 	
+	//Local UDP server functions
 	std::thread fgcom_readThread;				///>Udp server thread
 	void fgcom_spawnUDPServer();
 	bool udpServerRunning;						///>Used to shutdown thread
 	
+	//PTT and transmission functions ans vars
+	mumble_transmission_mode_t fgcom_prevTransmissionMode = TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
 	
 public:
 	FgcomPlugin() : MumblePlugin("Fgcom2", "mill-j",
