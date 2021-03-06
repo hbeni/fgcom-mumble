@@ -26,7 +26,7 @@
 #include "mumble/plugin/MumblePlugin.h"
 #include <iostream>
 
-#define NOTIFYPINGINTERVAL 10000
+#define NOTIFYPINGINTERVAL 8000
 
 /**
  * The entry point for the plugin.

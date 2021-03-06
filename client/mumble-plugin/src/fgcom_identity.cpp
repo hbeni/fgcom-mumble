@@ -153,7 +153,7 @@ std::vector<unsigned char> fgcom_identity::getUdpMsg(FGCOM_NOTIFY_T Mode, int Co
 			break;
 		}
 		default: {
-			msg =  "";
+			msg =  std::to_string(getUid());
 			break;
 		}
 	}
