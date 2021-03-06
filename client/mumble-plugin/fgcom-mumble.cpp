@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License 
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * Mumble API:
+ * Mumble API:B
  * Copyright 2019-2020 The Mumble Developers. All rights reserved.
  * Use of this source code is governed by a BSD-style license
  * that can be found in the LICENSE file at the root of the
@@ -26,6 +26,7 @@
 #include "mumble/plugin/MumblePlugin.h"
 #include <iostream>
 
+#define NOTIFYPINGINTERVAL 10000
 
 /**
  * The entry point for the plugin.
@@ -37,25 +38,17 @@ MumblePlugin &MumblePlugin::getPlugin() noexcept {
 
 
 /**
- * Fired when the server is synchronized after connection
+ * Fired when the server is synchronized after conBnection
  */
 void FgcomPlugin::onServerSynchronized(mumble_connection_t connection) noexcept {
 	try {
 		pluginLog("Server has finished synchronizing (ServerConnection: " + std::to_string(connection) + ")");
 		
-		//Get Users
-		MumbleArray users = m_api.getAllUsers(connection);
-		std::string msg;
-		for(int a = 0; a < users.size();a++) {
-			msg = m_api.getUserName(connection, users[a]).c_str();
-			pluginLog("Found User " + msg);
-		}
-		
 		//Get Channels
 		MumbleArray channels = 	m_api.getAllChannels(connection);
 		bool ChannelFound = false;
 		for(int a = 0; a < channels.size();a++) {
-			msg = m_api.getChannelName(connection, channels[a]).c_str();
+			std::string msg = m_api.getChannelName(connection, channels[a]).c_str();
 			pluginLog("Found Channel " + msg);
 			if(m_api.getChannelName(connection, channels[a]) == "fgcom-mumble")
 				ChannelFound = true;
@@ -65,6 +58,13 @@ void FgcomPlugin::onServerSynchronized(mumble_connection_t connection) noexcept 
 			pluginLog("Special Channel Found!");
 		else 
 			pluginLog("Special Channel Not Found!");
+			
+		//Set our ID
+		localUser.setUid(m_api.getLocalUserID(m_api.getActiveServerConnection()));
+		
+		pluginDbg("Ok start server");
+		udpServerRunning = true;
+		fgcom_readThread = std::thread(&FgcomPlugin::fgcom_spawnUDPServer, this);
 		
 	} catch (const MumbleAPIException &e) {
 		std::cerr << "onServerSynchronized: " << e.what() << " (ErrorCode " << e.errorCode() << ")" << std::endl;
@@ -76,6 +76,11 @@ void FgcomPlugin::onServerSynchronized(mumble_connection_t connection) noexcept 
  */
 void FgcomPlugin::onServerDisconnected(mumble_connection_t connection) noexcept {
 	pluginLog("Disconnected from server-connection with ID " + std::to_string(connection));
+	
+	///<@todo add a ping to server to free if no client conneced
+	pluginDbg("Stopping server");
+	udpServerRunning = false;
+	fgcom_readThread.join();
 }
 
 /**
@@ -91,21 +96,25 @@ void FgcomPlugin::onChannelExited(mumble_connection_t connection, mumble_userid_
 	//See if connection is synchronized
 	if(m_api.isConnectionSynchronized(connection)) {
 		//See if local user connected
-		if(userID == m_api.getLocalUserID(connection)) {
+		if(m_api.getChannelName(connection,channelID) == specialChannel) {
 			pluginDbg("Local Connected");
 			//See if this the the special channel
-			if(m_api.getChannelName(connection,channelID) == specialChannel) {
-				
+			if(userID == m_api.getLocalUserID(connection)) {
 				//Restore Transmission Mode
 				mumble_error_t merr;
 				m_api.requestLocalUserTransmissionMode(fgcom_prevTransmissionMode);
 				m_api.requestMicrophoneActivationOvewrite(false);
 				m_api.log("Restored Transmission Mode");
-				
-				///<@todo add a ping to server to free if no client conneced
-				pluginDbg("Stopping server");
-				udpServerRunning = false;
-				fgcom_readThread.join();
+			}
+			else {
+				///@todo Remove user from array
+				for(unsigned int a = 0; a < remoteUsers.size();a++) {
+					if(remoteUsers[a].getUid() == userID) {
+						pluginDbg("Removing User: " + std::to_string(userID));
+						remoteUsers.erase(remoteUsers.begin() + a);
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -120,22 +129,53 @@ void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_useri
 	
 	//See if connection is synchronized
 	if(m_api.isConnectionSynchronized(connection)) {
-		//See if local user connected
-		if(userID == m_api.getLocalUserID(connection)) {
-			pluginDbg("I Connected");
-			//See if this the the special channel
-			if(m_api.getChannelName(connection,newChannelID) == specialChannel) {
+		//See if this the the special channel
+		if(m_api.getChannelName(connection,newChannelID) == specialChannel) {
+			//See if local user connected
+			if(userID == m_api.getLocalUserID(connection)) {
+				pluginDbg("Local Connected");
+				//Send data to other plugins
+				MumbleArray channelUsers = m_api.getUsersInChannel(connection,newChannelID);
+				
+				for(int a = 0; a < channelUsers.size();a++) {
+					if(channelUsers[a] == m_api.getLocalUserID(connection)) {
+						pluginDbg("Skipping Local User");
+						continue;
+					}
+					std::string msg = m_api.getUserName(connection, channelUsers[a]).c_str();
+					fgcom_identity temp;
+					
+					temp.setUid(channelUsers[a]);
+					remoteUsers.push_back(temp);
+				}
+				
+				//If Callsign is set, send it to other users
+				if(localUser.getCallsign() != "")
+					m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_USR,0),localUser.getUdpId(NTFY_USR,0).c_str());
+				//If Location is set, send it to other users
+				if(localUser.getLocation().getLon() != 0.000)
+					m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_LOC,0),localUser.getUdpId(NTFY_LOC,0).c_str());
+				
+				//If Radios are initialized, send data to other users
+				for(int a = 0; a < localUser.radioCount(); a++) {
+					if(localUser.getRadio(a).getDialedFrequency() != "")
+						m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
+				}
+				
+				//And finally send a data request
+				m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_ASK,0),localUser.getUdpId(NTFY_ASK,0).c_str());
 				
 				fgcom_prevTransmissionMode = m_api.getLocalUserTransmissionMode();
 				m_api.requestLocalUserTransmissionMode(TM_PUSH_TO_TALK);
 				m_api.log("Enabled push-to-talk");
-				
-				pluginDbg("Ok start server");
-				udpServerRunning = true;
-				fgcom_readThread = std::thread(&FgcomPlugin::fgcom_spawnUDPServer, this);
-	
 			}
-		}
+			else {
+				//Add user to identitys
+				fgcom_identity temp;
+				temp.setUid(userID);
+				remoteUsers.push_back(temp);
+			}
+		}				
 	}
 	pluginDbg("User with ID "+ std::to_string(userID) + " has joined channel with ID " + std::to_string(newChannelID) + ", coming from "+ std::to_string(previousChannelID) +". (ServerConnection: " + std::to_string(connection) + ")");
 }
@@ -162,37 +202,39 @@ void FgcomPlugin::pluginDbg(std::string log) {
  */
 void FgcomPlugin::fgcom_spawnUDPServer() {
 	
-	struct sockaddr_in localSocket, remoteSocket;
-	unsigned int recv_len,slen= sizeof(remoteSocket);
-	int s, i = -1;
+	struct sockaddr_in servaddr, cliaddr;
+	unsigned int recv_len,slen= sizeof(cliaddr);
+	int fgcom_UDPServer_sockfd, i = -1;
 	char buf[BUFLEN];
 	
 	
 	//create a UDP socket
-	if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+	if ((fgcom_UDPServer_sockfd =socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
 		pluginLog("Create Socket Failed!");
 		return;
 	}
 	
 	// zero out the structure
-	memset((char *) &localSocket, 0, sizeof(localSocket));
+	memset((char *) &servaddr, 0, sizeof(servaddr));
 	
-	localSocket.sin_family = AF_INET;
-	localSocket.sin_port = htons(PORT);
-	localSocket.sin_addr.s_addr = htonl(INADDR_ANY); 
-	
-	//Allow us to reconnect with same port
-	int reuse = 1;
-    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse)) < 0)
-        pluginLog("setsockopt(SO_REUSEADDR) failed");
-
-	
-	///bind socket to port @todo add varible port on failure 
-	if( bind(s , (struct sockaddr*)&localSocket, sizeof(localSocket) ) == -1) {
-		pluginLog("Bind Socket To Port Failed!");
-		return;
-	}
-	
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
+ 
+	// Bind the socket with the server address
+    bool bind_ok = false;
+    int fgcom_udp_port_used;
+    for (fgcom_udp_port_used = PORT; fgcom_udp_port_used < PORT + 10; fgcom_udp_port_used++) {
+        servaddr.sin_port = htons(fgcom_udp_port_used); 
+        if ( bind(fgcom_UDPServer_sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) >= 0 ) { 
+            pluginLog("[UDP-server] udp socket bind succeeded");
+            bind_ok = true;
+            break;
+        }
+    }
+    if (!bind_ok) {
+        pluginLog("[UDP-server] udp socket bind to port failed");
+        exit(EXIT_FAILURE); 
+    }
 	
 	std::string preData, curBuffer;
 	std::vector<std::string> splitBuffer, finalBuffer;
@@ -200,16 +242,27 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 	unsigned int c = 0;
 	fgcom_radio radioBuffer;
 	fgcom_location locBuffer;
+	fgcom_identity prevState;
+
+	m_api.log(std::string("UDP server up and waiting for data at "+std::to_string(servaddr.sin_addr.s_addr)+":"+std::to_string(fgcom_udp_port_used)).c_str());
 	
-	while(udpServerRunning) {		
+	const std::chrono::milliseconds notifyPingInterval = std::chrono::milliseconds(NOTIFYPINGINTERVAL);
+	auto lastPing = std::chrono::system_clock::now();
+	
+	while(udpServerRunning) {
+		//Ping
+		if (std::chrono::system_clock::now() > lastPing + notifyPingInterval) {
+			m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_PNG,0),localUser.getUdpId(NTFY_PNG,0).c_str());
+			lastPing = std::chrono::system_clock::now();
+		}
 		//receive data, this is a blocking call
-		recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &remoteSocket, &slen);
+		recv_len = recvfrom(fgcom_UDPServer_sockfd, buf, BUFLEN, 0, (struct sockaddr *) &cliaddr, &slen);
 		curBuffer = buf;
 		//If nothing changed lets just skip parsing
 		if(preData == curBuffer)
 			continue;
 
-		//std::cout<<"Received packet from "<<inet_ntoa(remoteSocket.sin_addr)<<":"<<ntohs(remoteSocket.sin_port)<<std::endl;
+		//std::cout<<"Received packet from "<<inet_ntoa(cliaddr.sin_addr)<<":"<<ntohs(cliaddr.sin_port)<<std::endl;
 		pluginDbg(curBuffer);
 		udpData.clear();
 		
@@ -221,13 +274,10 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 		for(c = 0; c < splitBuffer.size(); c++) {
 			///@todo Add check to make sure message was valid
 			finalBuffer = udpData.splitStrings(splitBuffer[c],"=");
-			pluginDbg(finalBuffer[0]);
 			if(finalBuffer.size() == 2)
 				udpData.add(finalBuffer[0], finalBuffer[1]);
 		}
-			
-		//Do something with data
-		
+					
 		//Callsign
 		localUser.setCallsign(udpData.getValue("CALLSIGN"));
 		
@@ -260,17 +310,64 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 				radio.setSquelch(udpData.getFloat("COM" + std::to_string(r) + "_SQC"));
 				radio.setChannelWidth(udpData.getFloat("COM" + std::to_string(r) + "_CWKHZ"));
 				
-				localUser.setRadio(radio, r);
+				localUser.setRadio(radio, r - 1);
 			}
 			else
 				break;
 			r++;
 		}
 		
+	
+		//See if we need to send any data
+		if(localUser.getCallsign() != prevState.getCallsign()) {
+			m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_USR,0),localUser.getUdpId(NTFY_USR,0).c_str());
+		}
+		
+		//Check Location
+		if(!localUser.getLocation().isEqual(prevState.getLocation())) {
+			m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_LOC,0),localUser.getUdpId(NTFY_LOC,0).c_str());
+		}
 		
 		
+		//Check radio PTT
+		int a = 0;
+		for(a = 0; a < localUser.radioCount(); a++) {
+			if(localUser.getRadio(a).isPTT() != prevState.getRadio(a).isPTT()) {
+				if(localUser.getRadio(a).isPTT()) {
+					m_api.requestMicrophoneActivationOvewrite(true);					
+					m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
+
+				}
+				else {
+					m_api.requestMicrophoneActivationOvewrite(false);
+					m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
+
+				}
+			}
+		}
+		
+		prevState = localUser;
 		preData = buf;
 	}
 	pluginDbg("Server loop done!");
 	return;
+}
+
+bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t senderID, const uint8_t *data,
+                                std::size_t dataLength, const char *dataID) noexcept {
+	//convert data to string
+	std::string msg;
+	for(int a = 0; a < dataLength; a++)
+		msg.push_back(data[a]);
+	
+	pluginDbg("Receved "+msg+" From: " + std::to_string(senderID));
+	pluginDbg(dataID);			
+}
+
+std::vector<mumble_userid_t> FgcomPlugin::getUserIDs() {
+	std::vector<mumble_userid_t> IDs;
+	for(unsigned int a = 0; a < remoteUsers.size();a++) {
+		IDs.push_back(remoteUsers[a].getUid());
+	}
+	return IDs;
 }

@@ -26,6 +26,7 @@
 /**
  * @class fgcom_radio
  * @brief This represents the state of a radio
+ * @todo 8.33hz to 25hz converter
  */
 class fgcom_radio {
 private:
@@ -40,24 +41,21 @@ private:
 	float squelch = 0.1;       	 ///< squelch setting (cutoff signal below this quality)
 	bool  rdfEnabled = false;    ///< if radio can receive RDF information
 	float channelWidth = -1;  	 ///< channel width in kHz
-	bool dirty = false;     	 ///< True if a new value was set
 public:
 	bool isPowered();
 	bool isServiceable();
 	bool isPTT();
 	bool isRDF();
-	bool isDirty();
 	
 	float getFrequency();
 	std::string getDialedFrequency();
+	std::string getPTT();
 	float getVolts();
 	float getVolume();
 	float getWatts();
 	float getSquelch();
 	float getChannelWidth();
 	
-	void setClean();
-	void setDirty();
 	void setPowered(bool Powered);
 	void setServiceable(bool Serviceable);
 	void setPTT(bool PTT);
@@ -92,8 +90,14 @@ bool fgcom_radio::isServiceable(){return serviceable;}
 bool fgcom_radio::isPTT(){return ptt;}
 ///Returns whither the radio has RDF enabled
 bool fgcom_radio::isRDF(){return rdfEnabled;}
-///Returns whither the radio has any new updates.
-bool fgcom_radio::isDirty(){return dirty;}
+
+///Returns whither the radio's ptt is toggled as a string
+std::string fgcom_radio::getPTT() {
+	if(ptt) 
+		return "1";
+	return "0";
+}
+
 
 ///Returns the frequency that this radio is tuned to.
 float fgcom_radio::getFrequency(){return frequency;}
@@ -111,124 +115,46 @@ float fgcom_radio::getSquelch(){return squelch;}
 float fgcom_radio::getChannelWidth(){return channelWidth;}
 
 ///Sets power button state
-void fgcom_radio::setPowered(bool Powered) {
-	power_btn = Powered;
-	setDirty();
-}
-
+void fgcom_radio::setPowered(bool Powered) { power_btn = Powered;}
 ///Sets serviceable state
-void fgcom_radio::setServiceable(bool Serviceable) {
-	serviceable = Serviceable;
-	setDirty();
-}
-
+void fgcom_radio::setServiceable(bool Serviceable) {serviceable = Serviceable;}
 ///Sets PTT status
-void fgcom_radio::setPTT(bool PTT) {
-	ptt = PTT;
-	setDirty();
-}
-
+void fgcom_radio::setPTT(bool PTT) { ptt = PTT;}
 ///Changes RDF status
-void fgcom_radio::setRDF(bool RDF) {
-	rdfEnabled = RDF;
-	setDirty();
-}
-
-///Sets dirty status. Use setClean() to set clean
-void fgcom_radio::setDirty() {dirty = true;}
-
+void fgcom_radio::setRDF(bool RDF) { rdfEnabled = RDF;}
 ///Sets the radio's frequency as a float. @see setDialedFrequency()
-void fgcom_radio::setFrequency(float Freq) { 
-	frequency = Freq;
-	setDirty();
-}
-
+void fgcom_radio::setFrequency(float Freq) { frequency = Freq;}
 ///Sets the radio's frequency as a string. @see setFrequency()
-void fgcom_radio::setDialedFrequency(std::string Freq) { 
-	dialedFRQ = Freq;
-	setDirty();
-}
-
+void fgcom_radio::setDialedFrequency(std::string Freq) { dialedFRQ = Freq;}
 ///Sets the radio's voltage
-void fgcom_radio::setVolts(float Volts) { 
-	volts = Volts;
-	setDirty();
-}
-
+void fgcom_radio::setVolts(float Volts) {volts = Volts;}
 ///Sets the radio's volume
-void fgcom_radio::setVolume(float Volume) { 
-	volume = Volume;
-	setDirty();
-}
-
+void fgcom_radio::setVolume(float Volume) { volume = Volume;}
 ///Sets the radio's wattage
-void fgcom_radio::setWatts(float Watts) { 
-	watts = Watts;
-	setDirty();
-}
-
+void fgcom_radio::setWatts(float Watts) { watts = Watts;}
 ///Sets the radio's squelch
-void fgcom_radio::setSquelch(float Squelch) { 
-	squelch = Squelch;
-	setDirty();
-}
-
+void fgcom_radio::setSquelch(float Squelch) { squelch = Squelch;}
 ///Sets the radio's channel with in hertz
-void fgcom_radio::setChannelWidth(float Width) { 
-	channelWidth = Width;
-	setDirty();
-}
-
+void fgcom_radio::setChannelWidth(float Width) { channelWidth = Width;}
 
 
 /**
- * Updates the internal state of the radio and sets dirty status if data
- * changes. @see isDirty()
+ * Updates the internal state of the radio in one function
  */
 
 void fgcom_radio::update(bool Power, bool Serviceable, bool PTT,  bool RDF,
 	        std::string DialedFreq, float Volts, float Volume, float Watts,
 				float Squelch, float ChannelWidth) {
-	if(power_btn !=  Power ) {
-		power_btn = Power;
-		dirty = true;
-	}
-	if(serviceable !=  Serviceable ) {
-		serviceable = Serviceable;
-		dirty = true;
-	}
-	if(ptt !=  PTT ) {
-		ptt = PTT;
-		dirty = true;
-	}
-	if(rdfEnabled != RDF) {
-		rdfEnabled = RDF;
-		dirty = true;
-	}
-	if(dialedFRQ !=  DialedFreq) {
-		dialedFRQ = DialedFreq;
-		dirty = true;
-	}
-	if(volts !=  Volts) {
-		volts = Volts;
-		dirty = true;
-	}
-	if(volume !=  Volume) {
-		volume = Volume;
-		dirty = true;
-	}
-	if(watts != Watts) {
-		watts = Watts;
-		dirty = true;
-	}
-	if(squelch !=  Squelch) {
-		squelch = Squelch;
-		dirty = true;
-	}
-	if(channelWidth !=  ChannelWidth) {
-		channelWidth = ChannelWidth;
-		dirty = true;
-	}
+	power_btn = Power;
+	serviceable = Serviceable;
+	ptt = PTT;
+	rdfEnabled = RDF;
+	dialedFRQ = DialedFreq;
+	volts = Volts;
+	volume = Volume;
+	watts = Watts;
+	squelch = Squelch;
+	channelWidth = ChannelWidth;
 }
 
 #endif

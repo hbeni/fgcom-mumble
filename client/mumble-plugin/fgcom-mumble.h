@@ -41,6 +41,7 @@ private:
 	
 	//PTT and transmission functions ans vars
 	mumble_transmission_mode_t fgcom_prevTransmissionMode = TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
+	std::vector<mumble_userid_t> getUserIDs();
 	
 public:
 	FgcomPlugin() : MumblePlugin("Fgcom2", "mill-j",
@@ -56,7 +57,11 @@ public:
 	virtual void onChannelEntered (mumble_connection_t connection, 
 		mumble_userid_t userID, mumble_channelid_t  previousChannelID, 
 			mumble_channelid_t newChannelID)  noexcept override;
-
+	
+	virtual bool onReceiveData(mumble_connection_t connection, mumble_userid_t senderID, const uint8_t *data,
+                                   std::size_t dataLength, const char *dataID) noexcept override;
+	
+	
 	
 	virtual void releaseResource(const void *ptr) noexcept override {
 		// We don't allocate any resources so we can have a no-op implementation

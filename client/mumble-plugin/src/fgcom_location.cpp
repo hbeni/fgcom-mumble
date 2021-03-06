@@ -23,6 +23,8 @@
 #ifndef _FGCOM_LOCATION_
 #define _FGCOM_LOCATION_
 
+#include <string>
+
 /**
  * @class fgcom_location
  * @brief A class holding location data. Also provides range calculation 
@@ -38,8 +40,10 @@ public:
 	float getLon();
     float getLat();
     float getAlt();
+    std::string getUdpLoc();
 
 	bool isDirty();
+	bool isEqual(fgcom_location loc);
 	bool isInRange(fgcom_location loc);
 	
 	void setClean();
@@ -52,8 +56,25 @@ float fgcom_location::getLon(){return longitude;}
 float fgcom_location::getLat(){return latitude;}
 ///Returns stored altitude
 float fgcom_location::getAlt(){return altitude;}
+
+///Returns location as a string to send ia udp
+std::string fgcom_location::getUdpLoc() {
+	return "LAT="+std::to_string(latitude)+","+"LON="+std::to_string(longitude)+"," +"ALT="+std::to_string(altitude);
+	
+}
 ///Checks to see if location changed since it was set clean
 bool fgcom_location::isDirty() {return dirty;}
+
+///Returns true if both fgcom_locations are equal
+bool fgcom_location::isEqual(fgcom_location loc) {
+	if(longitude != loc.getLon() || 
+			latitude != loc.getLat() ||
+					altitude != loc.getAlt()) 
+		return false;
+	else
+		return true;
+	
+}
 
 /**
  * @brief Checks to see if supplied location is in range of stored location.
