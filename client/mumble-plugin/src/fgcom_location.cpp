@@ -27,7 +27,7 @@
 
 /**
  * @class fgcom_location
- * @brief A class holding location data. Also provides range calculation 
+ * @brief A class holding location data.
  * functions.
  */
 class fgcom_location {
@@ -35,19 +35,19 @@ private:
 	float longitude = 0.000;
 	float latitude = 0.000;
 	float altitude = 0.000;
-	bool dirty = false;
 public:
 	float getLon();
     float getLat();
     float getAlt();
     std::string getUdpLoc();
 
-	bool isDirty();
 	bool isEqual(fgcom_location loc);
 	bool isInRange(fgcom_location loc);
 	
-	void setClean();
 	void set(float lon,float lat,float alt);
+	void setLon(float);
+    void setLat(float);
+    void setAlt(float);
 };
 
 ///Returns stored longitude
@@ -62,8 +62,6 @@ std::string fgcom_location::getUdpLoc() {
 	return "LAT="+std::to_string(latitude)+","+"LON="+std::to_string(longitude)+"," +"ALT="+std::to_string(altitude);
 	
 }
-///Checks to see if location changed since it was set clean
-bool fgcom_location::isDirty() {return dirty;}
 
 ///Returns true if both fgcom_locations are equal
 bool fgcom_location::isEqual(fgcom_location loc) {
@@ -85,30 +83,19 @@ bool fgcom_location::isInRange(fgcom_location loc) {
 	return true;	
 }
 
-///Clears dirty status
-void fgcom_location::setClean() {dirty = false;}
-
 
 /**
  * @brief Sets or updates values if they do not match currently stored 
- * values. Also sets dirty status when updated.
- * @see isDirty()
- * @see setClean();
+ * values. 
  */
 
 void fgcom_location::set(float lon,float lat,float alt) {
-	if(lon != longitude) {
-		longitude = lon;
-		dirty = true;
-	}
-	if(lat != latitude) {
-		latitude = lat;
-		dirty = true;
-	}
-	if(alt != altitude) {
-		altitude = alt;
-		dirty = true;
-	}
+	longitude = lon;
+	latitude = lat;
+	altitude = alt;
 }
 
+void fgcom_location::setLat(float lat) {latitude = lat;}
+void fgcom_location::setLon(float lon) {longitude = lon;}
+void fgcom_location::setAlt(float alt) {altitude = alt;}
 #endif

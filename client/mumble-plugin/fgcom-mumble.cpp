@@ -136,7 +136,8 @@ void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_useri
 				pluginDbg("Local Connected");
 				//Send data to other plugins
 				MumbleArray channelUsers = m_api.getUsersInChannel(connection,newChannelID);
-				
+				//Reset users
+				remoteUsers.clear();
 				for(int a = 0; a < channelUsers.size();a++) {
 					if(channelUsers[a] == m_api.getLocalUserID(connection)) {
 						pluginDbg("Skipping Local User");
@@ -353,6 +354,9 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 	return;
 }
 
+/**
+ * @brief Fired when data is received from another mumble user via udp.
+ */
 bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t senderID, const uint8_t *data,
                                 std::size_t dataLength, const char *dataID) noexcept {
 	//convert data to string
@@ -361,7 +365,125 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 		msg.push_back(data[a]);
 	
 	pluginDbg("Receved "+msg+" From: " + std::to_string(senderID));
-	pluginDbg(dataID);			
+	pluginDbg(dataID);
+	
+	//Convert to std::string
+	std::string dID = dataID;
+	
+	//Lets split the dataID 
+	fgcom_keyvalue temp;
+	std::vector<std::string> splitBuffer = temp.splitStrings(dID,":");
+	unsigned int user = 0, a = 0;
+	
+	if(splitBuffer[0] == "FGCOM") {
+		
+		if(splitBuffer.size() > 1) {
+			
+			//Find User
+			for(a = 0; a < remoteUsers.size(); a++)
+				if(remoteUsers[a].getUid() == senderID)
+					user = a;
+			//Ping	
+			if(splitBuffer[1] == "PING") {
+				pluginDbg("A Ping From: " + std::to_string(senderID));
+				return true;
+			}
+			
+			//Callsign
+			if(splitBuffer[1] == "UPD_USR") {
+				pluginDbg("Callsign From: " + std::to_string(senderID));
+				remoteUsers[user].setCallsign(temp.splitStrings(msg,"=")[1]);
+				return true;
+			}
+			
+			//Location
+			if(splitBuffer[1] == "UPD_LOC") {
+				pluginDbg("Location From: " + std::to_string(senderID));
+				fgcom_location loc;
+				std::vector<std::string> buffer = temp.splitStrings(msg,",");
+				
+				if(buffer.size() >= 3) {
+					for(a = 0; a < buffer.size(); a++) {
+						std::vector<std::string> finalBuffer = temp.splitStrings(buffer[a],"=");
+						
+						if(finalBuffer.size() >= 2) {
+							if(finalBuffer[0] == "LAT")
+								loc.setLat(stof(finalBuffer[1]));
+							if(finalBuffer[0] == "LON")
+								loc.setLon(stof(finalBuffer[1]));
+							if(finalBuffer[0] == "ALT")
+								loc.setAlt(stof(finalBuffer[1]));
+						}
+					}
+					remoteUsers[user].setLocation(loc);
+				}
+				pluginDbg(remoteUsers[user].getLocation().getUdpLoc());
+				return true;
+			}
+			
+			//Radios
+			if(splitBuffer[1] == "UPD_COM") {
+				pluginDbg("COM from :" + std::to_string(senderID));
+				std::vector<std::string> buffer = temp.splitStrings(msg,",");
+				fgcom_radio radio;
+				
+				if(buffer.size() >= 4) {
+					for(a = 0; a < buffer.size(); a++) {
+						std::vector<std::string> finalBuffer = temp.splitStrings(buffer[a],"=");
+						
+						if(finalBuffer.size() >= 2) {
+							try {
+								if(finalBuffer[0] == "FRQ")
+									radio.setFrequency(stof(finalBuffer[1]));
+								if(finalBuffer[0] == "CHN")
+									radio.setDialedFrequency(finalBuffer[1]);
+							}
+							catch (const std::invalid_argument& ia) {
+								//Delete radio
+								remoteUsers[user].deleteRadio(stoi(splitBuffer[3]));
+								return true;
+							}
+							if(finalBuffer[0] == "PTT") {
+								if(finalBuffer[1] == "0")
+									radio.setPTT(false);
+								else
+									radio.setPTT(true);
+							}
+							if(finalBuffer[0] == "PWR")
+								radio.setWatts(stof(finalBuffer[1]));
+						}
+					}
+					if(remoteUsers[user].radioCount() >= stoi(splitBuffer[3]))
+						remoteUsers[user].addRadio(radio);
+					else
+						remoteUsers[user].setRadio(radio, stoi(splitBuffer[3]));
+				}
+			}
+			
+			//Data Request
+			if(splitBuffer[1] == "ICANHAZDATAPLZ") {
+				//Only send to senderID
+				std::vector<mumble_userid_t> userID;
+				userID.push_back(senderID);
+				
+				pluginDbg(std::to_string(senderID) + " Wants All Our Data");
+				//If Callsign is set, send it to other users
+				if(localUser.getCallsign() != "")
+					m_api.sendData(connection,userID,localUser.getUdpMsg(NTFY_USR,0),localUser.getUdpId(NTFY_USR,0).c_str());
+				//If Location is set, send it to other users
+				if(localUser.getLocation().getLon() != 0.000)
+					m_api.sendData(connection,userID,localUser.getUdpMsg(NTFY_LOC,0),localUser.getUdpId(NTFY_LOC,0).c_str());
+						
+				//If Radios are initialized, send data to other users
+				for(int a = 0; a < localUser.radioCount(); a++) {
+					if(localUser.getRadio(a).getDialedFrequency() != "")
+						m_api.sendData(connection,userID,localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
+				}
+				return true;
+			}
+		}
+	}
+	
 }
 
 std::vector<mumble_userid_t> FgcomPlugin::getUserIDs() {

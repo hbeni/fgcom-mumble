@@ -60,6 +60,8 @@ public:
 	
 
 	void addRadio(fgcom_radio radio);
+	void deleteRadio(int sel);
+	
 	
 	fgcom_radio getRadio(int sel);
 	fgcom_location getLocation();
@@ -88,6 +90,13 @@ void fgcom_identity::addRadio(fgcom_radio radio) {
 	radios.push_back(radio);
 }
 
+/**
+ * @brief Deletes the selected radio.
+ * @see setRadio() addRadio()
+ */
+void fgcom_identity::deleteRadio(int sel) {
+	radios.erase(radios.begin() + sel);
+}
 
 ///Returns the selected radio
 fgcom_radio fgcom_identity::getRadio(int sel) {
