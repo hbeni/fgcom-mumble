@@ -34,6 +34,7 @@ geotest
 frqtest
 fgcom*.jar
 FGCom*.jar
+*.catch2
 
 # Certs
 *.pem
@@ -43,6 +44,9 @@ FGCom*.jar
 
 # radio samples
 *.fgcs
+
+# misc
+*.csv
 
 # Archives
 *.zip
