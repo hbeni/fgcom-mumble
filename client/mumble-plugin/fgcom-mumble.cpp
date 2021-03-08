@@ -486,6 +486,8 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 	
 }
 
+
+
 std::vector<mumble_userid_t> FgcomPlugin::getUserIDs() {
 	std::vector<mumble_userid_t> IDs;
 	for(unsigned int a = 0; a < remoteUsers.size();a++) {

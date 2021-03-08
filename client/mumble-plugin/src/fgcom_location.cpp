@@ -42,7 +42,6 @@ public:
     std::string getUdpLoc();
 
 	bool isEqual(fgcom_location loc);
-	bool isInRange(fgcom_location loc);
 	
 	void set(float lon,float lat,float alt);
 	void setLon(float);
@@ -60,7 +59,6 @@ float fgcom_location::getAlt(){return altitude;}
 ///Returns location as a string to send ia udp
 std::string fgcom_location::getUdpLoc() {
 	return "LAT="+std::to_string(latitude)+","+"LON="+std::to_string(longitude)+"," +"ALT="+std::to_string(altitude);
-	
 }
 
 ///Returns true if both fgcom_locations are equal
@@ -71,18 +69,7 @@ bool fgcom_location::isEqual(fgcom_location loc) {
 		return false;
 	else
 		return true;
-	
 }
-
-/**
- * @brief Checks to see if supplied location is in range of stored location.
- * @todo Needs calculation code here. Still always returns true.
- */
-
-bool fgcom_location::isInRange(fgcom_location loc) {
-	return true;	
-}
-
 
 /**
  * @brief Sets or updates values if they do not match currently stored 
@@ -95,7 +82,10 @@ void fgcom_location::set(float lon,float lat,float alt) {
 	altitude = alt;
 }
 
+///Sets latitude
 void fgcom_location::setLat(float lat) {latitude = lat;}
+///Sets longitude
 void fgcom_location::setLon(float lon) {longitude = lon;}
+///Sets altitude
 void fgcom_location::setAlt(float alt) {altitude = alt;}
 #endif
