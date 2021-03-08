@@ -1,4 +1,4 @@
-.PHONY : all all-debug plugin libs test clean clean-all debug-on
+.PHONY : all all-debug plugin libs test tools clean clean-all debug-on
 CC=g++
 DEBUG=
 THREADS_UNIX=-pthread
@@ -16,6 +16,7 @@ VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR fgcom-mumble.h |grep -E -o '[0-9
 VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH fgcom-mumble.h |grep -E -o '[0-9]+')
 VERSION:=$(VERSION_V).$(VERSION_M).$(VERSION_P)
 
+lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
 
 # Notice: Special calls
 #
@@ -37,7 +38,7 @@ endif
 
 
 # Compile all that stuff
-all: plugin test clean
+all: plugin tools clean
 
 # DEBUG MODE
 #   convinience invocation for debug build fpr GDB
@@ -49,37 +50,44 @@ all-debug:
 
 # make the plugin
 plugin: libs
-	$(CC) -shared -fPIC -o fgcom-mumble.so lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -shared -fPIC -o fgcom-mumble.so $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX)
 
 # make all the libs
-libs:  lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
+libs:  $(lib_OBJS)
 
 %.o : %.cpp
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(THREADS_UNIX)
 
-# Compile tests and stuff
-test: libs
+# Compile testing tools
+tools: libs
 	$(CC) -o test/geotest lib/radio_model.o test/geotest.cpp $(CFLAGS)
 	$(CC) -o test/frqtest lib/radio_model.o test/frqtest.cpp $(CFLAGS)
 
+
+# catch2 unit tests linking against main
+test: libs test/catch2/tests-main.o test/catch2/tests-main.o test/catch2/radioModelTest.o
+	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o lib/radio_model.o test/catch2/radioModelTest.o $(CFLAGS) && test/catch2/radioModelTest.catch2
+# ^ add more
+
 # clean compile results
 clean:
-	rm -f *.o lib/*.o
+	rm -f *.o lib/*.o test/catch2/*.catch2
 
 # clean compile results and binarys
 clean-all: clean
 	rm -f test/geotest test/frqtest
 	rm -f fgcom-mumble.so
 	rm -f *.exe test/*.exe *.dll lib/*.dll
+	rm -f test/catch2/*.o
 
 
 
 # Build all win64 stuff
 #   apt-get install mingw-w64
-all-win: plugin-win64 test-win64 clean
+all-win: plugin-win64 tools-win64 clean
 
 # build win64 test tools
-test-win64:
+tools-win64:
 	x86_64-w64-mingw32-g++-posix -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 	x86_64-w64-mingw32-g++-posix -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
@@ -119,7 +127,7 @@ endif
 
 
 # Build release archives
-release: clean-all plugin plugin-win64 plugin-win32
+release: clean-all test plugin plugin-win64 plugin-win32
 	@echo GIT commit $(GITCOMMIT) from $(GITDATE), V$(VERSION)
 	head -n 1 ../../README.md > releaseReadme.md
 	@echo Version: $(VERSION) \($(GITCOMMIT) $(GITDATE)\) >> releaseReadme.md
