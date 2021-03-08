@@ -123,7 +123,7 @@ The Following fields are configuration options that change plugin behaviour.
 
 
 ### Testing UDP input
-Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661 -p 50001`
+Aside from using real clients (maybe use the supplied RadioGUI application), the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661 -p 50001`
 sets the callsign and frequency for COM1 for the default identity (make sure the `-p` source port stays the same for each identity).
 
 
