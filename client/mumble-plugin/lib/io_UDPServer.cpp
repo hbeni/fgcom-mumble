@@ -252,7 +252,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     }
                     if (radio_var == "VLT") {
                         float oldValue = fgcom_local_client[iid].radios[radio_id].volts;
-                        fgcom_local_client[iid].radios[radio_id].volts       = std::stof(token_value);
+                        if (token_value == "true" || token_value == "false") {
+                            // support literal strings in case aircraft sends just a boolean as string
+                            fgcom_local_client[iid].radios[radio_id].volts = (token_value == "true")? true : false;
+                        } else {
+                            fgcom_local_client[iid].radios[radio_id].volts       = std::stof(token_value);
+                        }
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].volts != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     if (radio_var == "PBT") {
