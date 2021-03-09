@@ -37,11 +37,6 @@ jobs:
         # a pull request then we can checkout the head.
         fetch-depth: 2
 
-    # If this run was triggered by a pull request event, then checkout
-    # the head of the pull request instead of the merge commit.
-    - run: git checkout HEAD^2
-      if: ${{ github.event_name == 'pull_request' }}
-
     - if: matrix.language == 'java'
       name: Checkout GIT submodules (java)
       run: |
@@ -76,15 +71,19 @@ jobs:
     - if: matrix.language == 'cpp'
       name: Build C++ (Linux x64)
       run: |
-        make clean
-        make all
+        make clean all
 
     - if: matrix.language == 'cpp'
       name: Build C++ (Windows x64 mingw-crosscompile)
       # skip openssl build, it takes long and will trigger false-positives
       run: |
-        make clean
-        make SSLFLAGS= all-win
+        make SSLFLAGS= clean test-win64 plugin-win64
+
+    - if: matrix.language == 'cpp'
+      name: Build C++ (Windows x32 mingw-crosscompile)
+      # skip openssl build, it takes long and will trigger false-positives
+      run: |
+        make SSLFLAGS= clean plugin-win32
 
 
     - name: Perform CodeQL Analysis

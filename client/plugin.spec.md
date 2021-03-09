@@ -103,8 +103,8 @@ The following fields are known from the old flightgear asterisk FGCom protocol a
 | `OUTPUT_VOL` | Float  | Output volume. Gets converted to a call to all available `COM`*n*`_VOL` instances. |
 
 #### `COM`*n*`_FRQ` handling for "channel names"
-The implementation internally operates on the basic common denominator, the carrier wave frequency. However, older flightgear aircraft may still send the selected "channel" (which is OK for 25kHz spacing, but not anymore for 8.33kHz steps).  
-Therefore the UDP interface tries to convert such "channel names" to the real wave frequency:
+The implementation internally operates on the basic common denominator, the carrier wave frequency. However, the selected radio model implementation may support "channel name" notion (like 8.33 vs. 25kHz VHF channels).  
+Therefore the internal radio model may convert such "channel names" to the real wave frequency (refer to the section _Radio wave models_ for supported ones):
 
 - if the supplied frequency is *numeric* and at least four digits precision, it is assumed a "real wave frequency" and used as-is.
 - if the supplied frequency is *non-numeric* (eg. `PHONE:`... etc) it is used as-is.
@@ -123,7 +123,7 @@ The Following fields are configuration options that change plugin behaviour.
 
 
 ### Testing UDP input
-Aside from using real clients, the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661 -p 50001`
+Aside from using real clients (maybe use the supplied RadioGUI application), the UDP input interface can be tested using the linux tool "`netcat`": `echo "CALLSIGN=TEST1,COM1_FRQ=123.45" | netcat -q0 -u localhost 16661 -p 50001`
 sets the callsign and frequency for COM1 for the default identity (make sure the `-p` source port stays the same for each identity).
 
 
@@ -240,7 +240,8 @@ The main purpose is pilots geographic radio net separation and not realistic ran
   Behind the horizon the signal will degrade a little, but otherwise the signal quality depends solely on distance and output power. No advanced characteristics (like time of day or sunspot cycle affecting the ionosphere) are taken into consideration yet.
 - **VHF** (30MHz to 300MHz): line-of-sight propagation, no reception behind the radio horizon.  
   Altitude of sender/receiver, output power and distance affects signal quality and range. It is currently modelled very simply, so that the tx-power of 10W approximates linearly to 50 nautical miles in flat coordinate distance (i got this number for the Bendix KX165A by googling).  
-Please note that currently no (to me) known flightgear aircraft sets the radios tx-power, so it defaults to 10W/50nM (like current FGCom does).
+Please note that currently no (to me) known flightgear aircraft sets the radios tx-power, so it defaults to 10W/50nM (like current FGCom does).  
+The VHF model supports the notion of "channels" which get converted to real wave frequencies automatically (see `COMn_FRQ` description above).
 - **UHF** (above 300MHz): Modelled like VHF but with reduced range per output watt. No advanced calculations for obstructions like trees/buildings are done yet.
 
 In the future we surely should refine this model to be way more realistic (see https://en.wikipedia.org/wiki/Radio_propagation); maybe take even the used antenna, the terrain (mountains etc) and maybe also the weather into account.  

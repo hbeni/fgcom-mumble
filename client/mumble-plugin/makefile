@@ -86,10 +86,14 @@ test-win64:
 # build win64 plugin-dll and openssl
 plugin-win64: openssl-win plugin-win64-only
 
+plugin-win32: openssl-win32 plugin-win32-only
+
 # just the windows plugin, no ssl in case we want to build repetively but want to avoid building openssl each time
 plugin-win64-only:
 	x86_64-w64-mingw32-g++-posix -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
-	
+
+plugin-win32-only:
+	i686-w64-mingw32-g++-posix -m32 -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble-x86_32.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 
 # OpenSSL (static build)
@@ -104,9 +108,18 @@ ifdef SSLFLAGS
 	cd lib/openssl/ && ./Configure mingw64 -static no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=x86_64-w64-mingw32- && make clean && make
 endif
 
+openssl-win32:
+ifdef SSLFLAGS
+	@echo "BUILD OpenSSL"
+	git submodule init
+	git submodule update
+	cd lib/openssl/ && git reset --hard
+	cd lib/openssl/ && ./Configure mingw -static no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=i686-w64-mingw32- && make clean && make
+endif
+
 
 # Build release archives
-release: clean-all plugin plugin-win64
+release: clean-all plugin plugin-win64 plugin-win32
 	@echo GIT commit $(GITCOMMIT) from $(GITDATE), V$(VERSION)
 	head -n 1 ../../README.md > releaseReadme.md
 	@echo Version: $(VERSION) \($(GITCOMMIT) $(GITDATE)\) >> releaseReadme.md
@@ -120,6 +133,7 @@ release: clean-all plugin plugin-win64
 	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-client-$(VERSION)/
 	cp fgcom-mumble.so  fgcom-mumble-client-$(VERSION)/plugin
 	cp fgcom-mumble.dll fgcom-mumble-client-$(VERSION)/plugin
+	cp fgcom-mumble-x86_32.dll fgcom-mumble-client-$(VERSION)/plugin
 	cp fgcom-mumble.ini fgcom-mumble-client-$(VERSION)/plugin
 	cp -r ../fgfs/ fgcom-mumble-client-$(VERSION)
 	zip -r fgcom-mumble-client-$(VERSION).zip fgcom-mumble-client-$(VERSION)
@@ -127,7 +141,7 @@ release: clean-all plugin plugin-win64
 	
 	# Just a binary package for the mumble updater
 	# Note: this ZIP may has a special format
-	zip fgcom-mumble-client-binOnly-$(VERSION).zip fgcom-mumble.so fgcom-mumble.dll
+	zip fgcom-mumble-client-binOnly-$(VERSION).zip fgcom-mumble.so fgcom-mumble.dll fgcom-mumble-x86_32.dll
 	
 	rm releaseReadme.md
 	@echo "\nPluginrelease $(VERSION) built successfully:"
