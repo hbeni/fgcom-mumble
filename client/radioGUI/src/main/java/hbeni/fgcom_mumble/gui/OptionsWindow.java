@@ -302,7 +302,7 @@ public class OptionsWindow extends javax.swing.JFrame {
         jTextField_simConnectHost.setText("err");
 
         jTextField_simConnectPort.setText("err");
-        jTextField_simConnectPort.setToolTipText("The port to be used if auto-guessing fails");
+        jTextField_simConnectPort.setToolTipText("<html>The port to be used if auto-guessing fails.<br/>\nTry the following:\n<table>\n<tr> <td>500</td><td>MSFS 2020</td> </tr>\n<tr> <td>7421</td><td>FSX?</td> </tr>\n</table>\n</html>");
         jTextField_simConnectPort.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField_simConnectPortKeyReleased(evt);

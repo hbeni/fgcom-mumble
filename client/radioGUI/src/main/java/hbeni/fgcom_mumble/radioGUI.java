@@ -38,7 +38,7 @@ public class radioGUI {
         public static float   udpSendRateHz       = 10;
         public static int     debugSignalOverride = -5;
         public static String  simConnectHost      = "localhost";
-        public static int     simConnectPort      = 7421;
+        public static int     simConnectPort      = 500; // 500=MSFS2020
         public static boolean enableAudioEffecs   = true;
         public static boolean allowHearingNonPluginUsers = false;
     }
