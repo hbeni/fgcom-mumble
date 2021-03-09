@@ -10,7 +10,6 @@
 package hbeni.fgcom_mumble;
 
 import java.io.IOException;
-import java.security.InvalidParameterException;
 
 import flightsim.simconnect.SimConnect;
 import flightsim.simconnect.SimConnectDataType;
@@ -25,8 +24,8 @@ import flightsim.simconnect.recv.RecvOpen;
 import flightsim.simconnect.recv.RecvSimObjectDataByType;
 import flightsim.simconnect.recv.SimObjectDataTypeHandler;
 import static hbeni.fgcom_mumble.radioGUI.state;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import static hbeni.fgcom_mumble.radioGUI.udpClient;
+import java.io.InvalidObjectException;
 
 
 public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDataTypeHandler {
@@ -55,12 +54,12 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         simconnect_cfg.setPort(foundPort);
 
         // build the bridge
-        SimConnect sc;
+        SimConnect sc = null;
         try {
             sc = new SimConnect("FGCom-mumble RadioGUI", simconnect_cfg);
         } catch (Exception e) {
-            state.statusmessage = "ERROR connecting SimConnect: "+e.getLocalizedMessage();
-            return;
+            state.statusmessage = "connecting, status: "+e.getLocalizedMessage(); //abort
+            throw e;
         }
 
         // Set up the data definition, but do not yet do anything with it
@@ -105,6 +104,9 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         state.statusmessage = "Connected to : " + e.getApplicationName() + " "
                         + e.getApplicationVersionMajor() + "."
                         + e.getApplicationVersionMinor();
+        
+        // enable UDP sending once we are connected
+        radioGUI.mainWindow.setConnectionActivation(true);
     }
 
     public void handleEvent(SimConnect sender, RecvEvent e) {

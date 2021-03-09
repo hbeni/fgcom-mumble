@@ -465,6 +465,13 @@ public class MainWindow extends javax.swing.JFrame {
     }
     
     /**
+     * Change state of connection button
+     */
+    public void setConnectionActivation(boolean p) {
+        this.jToggleButton_Connect.setSelected(p);
+    }
+    
+    /**
      * Update the connection state
      */
     public void setConnectionState(boolean state) {
