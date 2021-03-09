@@ -49,7 +49,6 @@ public class radioGUI {
     /* A client pushing the packets to the udp port */
     protected static UDPclient udpClient;
     
-    
     /* Window handles */
     public static MainWindow mainWindow;
     
@@ -84,9 +83,17 @@ public class radioGUI {
         mainWindow.setVisible(true);
         
         
-        /* start the udp sending */
+        /* start the main loop */
         udpClient = new UDPclient(state);
+        SimConnectBridge simconnect_client = null;
         while (mainWindow.isVisible()) {
+            
+            /* Boot simConnect if it was requested */
+            if (state.isSimConnectSlave() && simconnect_client == null) {
+                simconnect_client = invokeSimConnect();
+            }
+            
+            /* UDP sending */
             udpClient.setActive(mainWindow.getConnectionActivation());
             udpClient.prepare();
             SendRes result = udpClient.send();
@@ -134,12 +141,12 @@ public class radioGUI {
     
     
     /**
+     * Signify that simConnect should be activated
      * Prepares internal and GUI state for slaving trough SimConnect
      */
     public static void enableSimConnect() {
         // stop the udp sending
         udpClient.setActive(false);
-        state.setSimConnectSlaving(true);
         
         // clear out internal state
         try {
@@ -162,13 +169,28 @@ public class radioGUI {
         mainWindow.prepareSimConnect();
         mainWindow.updateFromState();
         
-        
+        // signify to main loop that the bridge should be active
+        state.setSimConnectSlaving(true);
+    }
+    
+    /**
+     * Establish SimConnect bridge
+     * 
+     * @return established bridge
+     */
+    public static SimConnectBridge invokeSimConnect() {
+
         // Invoke the simConnect brigde
+        SimConnectBridge fgcom_simconnectbridge = null;
         try {
-            SimConnectBridge fgcom_simconnectbridge = new SimConnectBridge();
+            fgcom_simconnectbridge = new SimConnectBridge();
+        } catch (java.net.ConnectException e) {
+            // connection failure. will be handled in the main loop already.
+            // we just return null here.
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return fgcom_simconnectbridge;
     }
     
 }
