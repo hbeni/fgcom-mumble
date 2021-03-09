@@ -56,6 +56,7 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         // build the bridge
         SimConnect sc = null;
         try {
+            System.out.println("SimConnect: connecting to: "+simconnect_cfg.toString());
             sc = new SimConnect("FGCom-mumble RadioGUI", simconnect_cfg);
         } catch (Exception e) {
             state.statusmessage = "connecting, status: "+e.getLocalizedMessage(); //abort
@@ -97,11 +98,11 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
     }
 
     public void handleOpen(SimConnect sender, RecvOpen e) {
-        System.out.println("Connected to : " + e.getApplicationName() + " "
+        System.out.println("Connected to: " + e.getApplicationName() + " "
                         + e.getApplicationVersionMajor() + "."
                         + e.getApplicationVersionMinor());
 
-        state.statusmessage = "Connected to : " + e.getApplicationName() + " "
+        state.statusmessage = "Connected to: " + e.getApplicationName() + " "
                         + e.getApplicationVersionMajor() + "."
                         + e.getApplicationVersionMinor();
         
@@ -110,7 +111,8 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
     }
 
     public void handleEvent(SimConnect sender, RecvEvent e) {
-
+        System.out.println("SimConnect handleEvent(): "+sender.toString()+" -> "+e.toString());
+        
         // Now the sim is running, request information on the user aircraft
         try {
             while (true) {
@@ -124,7 +126,9 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
     }
 
     public void handleSimObjectType(SimConnect sender, RecvSimObjectDataByType e) {
+        System.out.println("SimConnect handleSimObjectType()");
         if (e.getRequestID() == DATA_REQUEST_ID.REQUEST_1.ordinal()) {
+            System.out.println("SimConnect handleSimObjectType(): recognizing eventID=DATA_REQUEST_ID.REQUEST_1");
             //
             // notice that we cannot cast directly a RecvSimObjectDataByType 
             // to a structure. this is forbidden by java language
