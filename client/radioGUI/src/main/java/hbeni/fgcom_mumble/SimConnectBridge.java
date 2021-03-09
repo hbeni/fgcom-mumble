@@ -108,6 +108,15 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         
         // enable UDP sending once we are connected
         radioGUI.mainWindow.setConnectionActivation(true);
+        
+        // Now the sim is connected, request information on the user aircraft
+        try {
+            sender.requestDataOnSimObjectType(DATA_REQUEST_ID.REQUEST_1,
+                DATA_DEFINE_ID.DEFINITION_1, 0, SimObjectType.USER);
+            System.out.println("SimConnect handleOpen(): data requested");
+        } catch (IOException e1) {
+            System.out.println("SimConnect handleOpen(): exception: "+e1.toString());
+        }
     }
 
     public void handleEvent(SimConnect sender, RecvEvent e) {
@@ -115,13 +124,11 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         
         // Now the sim is running, request information on the user aircraft
         try {
-            while (true) {
-                sender.requestDataOnSimObjectType(DATA_REQUEST_ID.REQUEST_1,
-                                DATA_DEFINE_ID.DEFINITION_1, 0, SimObjectType.USER);
-                Thread.sleep(100); // request data every 100ms
-            }
+            sender.requestDataOnSimObjectType(DATA_REQUEST_ID.REQUEST_1,
+                DATA_DEFINE_ID.DEFINITION_1, 0, SimObjectType.USER);
+            System.out.println("SimConnect handleEvent(): data requested");
         } catch (IOException e1) {
-        } catch (InterruptedException ex) {
+            System.out.println("SimConnect handleEvent(): exception: "+e1.toString());
         }
     }
 
@@ -170,6 +177,16 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
             
             radioGUI.mainWindow.updateFromState();
         }
+        
+        // Request another batch of data
+        try {
+            sender.requestDataOnSimObjectType(DATA_REQUEST_ID.REQUEST_1,
+                DATA_DEFINE_ID.DEFINITION_1, 0, SimObjectType.USER);
+            System.out.println("SimConnect handleSimObjectType(): data requested");
+        } catch (IOException e1) {
+            System.out.println("SimConnect handleSimObjectType(): exception: "+e1.toString());
+        }
+        
 
     }
 
