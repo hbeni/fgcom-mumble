@@ -24,14 +24,14 @@
 #include "src/fgcom_location.cpp"
 #include "src/fgcom_radio.cpp"
 #include "src/fgcom_keyvalue.cpp"
+#include "src/fgcom_stateManager.cpp"
 
 #define BUFLEN 1024	//Max length of buffer
 #define PORT 16661	//The port on which to listen for incoming data
 
 class FgcomPlugin : public MumblePlugin {
 private:
-	fgcom_identity localUser; 					///>Holds local user info
-	std::vector<fgcom_identity> remoteUsers;	///>Holds remote user info
+	fgcom_stateManager manageState;				///>Manages remote and local users
 	std::string specialChannel = "fgcom-mumble";///>@todo Make changeable
 	
 	//Local UDP server functions
@@ -41,8 +41,6 @@ private:
 	
 	//PTT and transmission functions ans vars
 	mumble_transmission_mode_t fgcom_prevTransmissionMode = TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
-	std::vector<mumble_userid_t> getUserIDs();
-	
 public:
 	FgcomPlugin() : MumblePlugin("Fgcom2", "mill-j",
 					   "A Mumble based radio simulation for flight simulators") {}
@@ -61,12 +59,10 @@ public:
 	virtual bool onReceiveData(mumble_connection_t connection, mumble_userid_t senderID, const uint8_t *data,
                                    std::size_t dataLength, const char *dataID) noexcept override;
 	
-	
-	
 	virtual void releaseResource(const void *ptr) noexcept override {
 		// We don't allocate any resources so we can have a no-op implementation
 		// We'll terminate though in case it is called as that is definitely a bug
-		std::cout<<"[Fgcom2] Releasing Resources"<<std::endl;
+		pluginLog("Releasing Resources");
 		std::terminate();
 	}
 	

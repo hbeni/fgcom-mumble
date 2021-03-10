@@ -28,41 +28,26 @@
 
 #define NOTIFYPINGINTERVAL 8000
 
-/**
- * The entry point for the plugin.
- */
+///The entry point for the plugin.
 MumblePlugin &MumblePlugin::getPlugin() noexcept {
 	static FgcomPlugin plugin;
 	return plugin;
 }
 
-
 /**
- * Fired when the server is synchronized after conBnection
+ * @brief Fired when the server is synchronized after connection.
+ * Currently we set the local users UID and start the UDP server for 
+ * data input from Flight Sim or RadioGui in a seperate thread. 
+ * @see onServerDisconnected() For server/thread stopping code
  */
 void FgcomPlugin::onServerSynchronized(mumble_connection_t connection) noexcept {
 	try {
 		pluginLog("Server has finished synchronizing (ServerConnection: " + std::to_string(connection) + ")");
-		
-		//Get Channels
-		MumbleArray channels = 	m_api.getAllChannels(connection);
-		bool ChannelFound = false;
-		for(int a = 0; a < channels.size();a++) {
-			std::string msg = m_api.getChannelName(connection, channels[a]).c_str();
-			pluginLog("Found Channel " + msg);
-			if(m_api.getChannelName(connection, channels[a]) == "fgcom-mumble")
-				ChannelFound = true;
-		}
-		
-		if(ChannelFound)
-			pluginLog("Special Channel Found!");
-		else 
-			pluginLog("Special Channel Not Found!");
 			
-		//Set our ID
-		localUser.setUid(m_api.getLocalUserID(m_api.getActiveServerConnection()));
+		//Set our UID
+		manageState.setLocalUid(m_api.getLocalUserID(m_api.getActiveServerConnection()));
 		
-		pluginDbg("Ok start server");
+		pluginDbg("Start UDP server:");
 		udpServerRunning = true;
 		fgcom_readThread = std::thread(&FgcomPlugin::fgcom_spawnUDPServer, this);
 		
@@ -72,25 +57,28 @@ void FgcomPlugin::onServerSynchronized(mumble_connection_t connection) noexcept 
 }
 
 /**
- * Fired when the server is disconnected
+ * @brief Fired when the server is disconnected. We stop the UDP server 
+ * and stop the thread.
+ * @see onServerSynchronized() For server and thread startup code.
+ * @todo add a ping to server to free if no client connected. Currently 
+ * only exits if the flight sim/RadioGUI is connected and sending data.
  */
 void FgcomPlugin::onServerDisconnected(mumble_connection_t connection) noexcept {
 	pluginLog("Disconnected from server-connection with ID " + std::to_string(connection));
 	
-	///<@todo add a ping to server to free if no client conneced
-	pluginDbg("Stopping server");
+	pluginDbg("Stopping UDP server");
 	udpServerRunning = false;
 	fgcom_readThread.join();
 }
 
-/**
- * Fired when the server is disconnected
- */
+///Fired when the server is disconnected. We don't do anything in here yet.
 void FgcomPlugin::onServerConnected(mumble_connection_t connection) noexcept {
 	pluginLog("Established server-connection with ID " + std::to_string(connection));
 }
 /**
- * Fired when the user exits channel
+ * @brief Fired when any user exits channel. 
+ * If we exit the special channel, the transmission mode gets restored.
+ * If other users exit, they get removed from the fgcom_stateManager instance.
  */
 void FgcomPlugin::onChannelExited(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t channelID ) noexcept {
 	//See if connection is synchronized
@@ -101,20 +89,12 @@ void FgcomPlugin::onChannelExited(mumble_connection_t connection, mumble_userid_
 			//See if this the the special channel
 			if(userID == m_api.getLocalUserID(connection)) {
 				//Restore Transmission Mode
-				mumble_error_t merr;
 				m_api.requestLocalUserTransmissionMode(fgcom_prevTransmissionMode);
 				m_api.requestMicrophoneActivationOvewrite(false);
 				m_api.log("Restored Transmission Mode");
 			}
 			else {
-				///@todo Remove user from array
-				for(unsigned int a = 0; a < remoteUsers.size();a++) {
-					if(remoteUsers[a].getUid() == userID) {
-						pluginDbg("Removing User: " + std::to_string(userID));
-						remoteUsers.erase(remoteUsers.begin() + a);
-						break;
-					}
-				}
+				manageState.deleteRemoteUser(userID);
 			}
 		}
 	}
@@ -122,11 +102,15 @@ void FgcomPlugin::onChannelExited(mumble_connection_t connection, mumble_userid_
 }
 
 /**
- * Fired when the user enters channel
+ * @brief Fired when the user enters channel. If local user connects 
+ * to special channel, all other users in special channel get added to
+ * fgcom_stateManager instance and we send the data we have, as well as
+ * request data from all other users. If another user connects to the
+ * special channel, they get added to the fgcom_stateManager instance.
+ * @see onChannelExited();
  */
 void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_userid_t userID, 
 		mumble_channelid_t  previousChannelID, mumble_channelid_t newChannelID) noexcept {
-	
 	//See if connection is synchronized
 	if(m_api.isConnectionSynchronized(connection)) {
 		//See if this the the special channel
@@ -134,37 +118,39 @@ void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_useri
 			//See if local user connected
 			if(userID == m_api.getLocalUserID(connection)) {
 				pluginDbg("Local Connected");
-				//Send data to other plugins
+				//Get users
 				MumbleArray channelUsers = m_api.getUsersInChannel(connection,newChannelID);
-				//Reset users
-				remoteUsers.clear();
+				//Clear users
+				manageState.clearRemoteUsers();
 				for(int a = 0; a < channelUsers.size();a++) {
 					if(channelUsers[a] == m_api.getLocalUserID(connection)) {
 						pluginDbg("Skipping Local User");
 						continue;
 					}
-					std::string msg = m_api.getUserName(connection, channelUsers[a]).c_str();
+					//Create new fgcom_identity And Set UID
 					fgcom_identity temp;
-					
 					temp.setUid(channelUsers[a]);
-					remoteUsers.push_back(temp);
+					
+					//And add to fgcom_stateManager instance
+					manageState.setRemoteUser(temp);
 				}
 				
+				fgcom_identity localUser = manageState.getLocalUser();
 				//If Callsign is set, send it to other users
 				if(localUser.getCallsign() != "")
-					m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_USR,0),localUser.getUdpId(NTFY_USR,0).c_str());
+					m_api.sendData(connection,manageState.getUserIDs(),localUser.getUdpMsg(NTFY_USR,0),localUser.getUdpId(NTFY_USR,0).c_str());
 				//If Location is set, send it to other users
 				if(localUser.getLocation().getLon() != 0.000)
-					m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_LOC,0),localUser.getUdpId(NTFY_LOC,0).c_str());
+					m_api.sendData(connection,manageState.getUserIDs(),localUser.getUdpMsg(NTFY_LOC,0),localUser.getUdpId(NTFY_LOC,0).c_str());
 				
 				//If Radios are initialized, send data to other users
 				for(int a = 0; a < localUser.radioCount(); a++) {
 					if(localUser.getRadio(a).getDialedFrequency() != "")
-						m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
+						m_api.sendData(connection,manageState.getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
 				}
 				
 				//And finally send a data request
-				m_api.sendData(connection,getUserIDs(),localUser.getUdpMsg(NTFY_ASK,0),localUser.getUdpId(NTFY_ASK,0).c_str());
+				m_api.sendData(connection,manageState.getUserIDs(),localUser.getUdpMsg(NTFY_ASK,0),localUser.getUdpId(NTFY_ASK,0).c_str());
 				
 				fgcom_prevTransmissionMode = m_api.getLocalUserTransmissionMode();
 				m_api.requestLocalUserTransmissionMode(TM_PUSH_TO_TALK);
@@ -174,7 +160,7 @@ void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_useri
 				//Add user to identitys
 				fgcom_identity temp;
 				temp.setUid(userID);
-				remoteUsers.push_back(temp);
+				manageState.setRemoteUser(temp);
 			}
 		}				
 	}
@@ -182,7 +168,7 @@ void FgcomPlugin::onChannelEntered (mumble_connection_t connection, mumble_useri
 }
 
 /**
- * Prints log entry to logfile or stdout
+ * @brief Prints log entry to logfile or stdout
  * @todo Add timestamp, logfile, and maybe move elsewhere
  */
 void FgcomPlugin::pluginLog(std::string log) {
@@ -190,7 +176,7 @@ void FgcomPlugin::pluginLog(std::string log) {
 }
 
 /**
- * Prints debug entry to stdout
+ *  @brief Prints debug entry to stdout
  * @todo Add timestamp, and maybe move elsewhere
  */
 void FgcomPlugin::pluginDbg(std::string log) {
@@ -200,9 +186,9 @@ void FgcomPlugin::pluginDbg(std::string log) {
 /**
  * @brief Creates a udp server to retrieve data from flight sim or other 
  * data source.
+ * @todo Better document this function.
  */
 void FgcomPlugin::fgcom_spawnUDPServer() {
-	
 	struct sockaddr_in servaddr, cliaddr;
 	unsigned int recv_len,slen= sizeof(cliaddr);
 	int fgcom_UDPServer_sockfd, i = -1;
@@ -251,9 +237,12 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 	auto lastPing = std::chrono::system_clock::now();
 	
 	while(udpServerRunning) {
-		//Ping
+		//Get local user
+		fgcom_identity localUser = manageState.getLocalUser();
+		
+		//Ping other users
 		if (std::chrono::system_clock::now() > lastPing + notifyPingInterval) {
-			m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_PNG,0),localUser.getUdpId(NTFY_PNG,0).c_str());
+			m_api.sendData(m_api.getActiveServerConnection(),manageState.getUserIDs(),localUser.getUdpMsg(NTFY_PNG,0),localUser.getUdpId(NTFY_PNG,0).c_str());
 			lastPing = std::chrono::system_clock::now();
 		}
 		//receive data, this is a blocking call
@@ -278,7 +267,7 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 			if(finalBuffer.size() == 2)
 				udpData.add(finalBuffer[0], finalBuffer[1]);
 		}
-					
+		
 		//Callsign
 		localUser.setCallsign(udpData.getValue("CALLSIGN"));
 		
@@ -317,18 +306,16 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 				break;
 			r++;
 		}
-		
 	
 		//See if we need to send any data
 		if(localUser.getCallsign() != prevState.getCallsign()) {
-			m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_USR,0),localUser.getUdpId(NTFY_USR,0).c_str());
+			m_api.sendData(m_api.getActiveServerConnection(),manageState.getUserIDs(),localUser.getUdpMsg(NTFY_USR,0),localUser.getUdpId(NTFY_USR,0).c_str());
 		}
 		
 		//Check Location
 		if(!localUser.getLocation().isEqual(prevState.getLocation())) {
-			m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_LOC,0),localUser.getUdpId(NTFY_LOC,0).c_str());
+			m_api.sendData(m_api.getActiveServerConnection(),manageState.getUserIDs(),localUser.getUdpMsg(NTFY_LOC,0),localUser.getUdpId(NTFY_LOC,0).c_str());
 		}
-		
 		
 		//Check radio PTT
 		int a = 0;
@@ -336,18 +323,22 @@ void FgcomPlugin::fgcom_spawnUDPServer() {
 			if(localUser.getRadio(a).isPTT() != prevState.getRadio(a).isPTT()) {
 				if(localUser.getRadio(a).isPTT()) {
 					m_api.requestMicrophoneActivationOvewrite(true);					
-					m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
+					m_api.sendData(m_api.getActiveServerConnection(),manageState.getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
 
 				}
 				else {
 					m_api.requestMicrophoneActivationOvewrite(false);
-					m_api.sendData(m_api.getActiveServerConnection(),getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
+					m_api.sendData(m_api.getActiveServerConnection(),manageState.getUserIDs(),localUser.getUdpMsg(NTFY_COM,a),localUser.getUdpId(NTFY_COM,a).c_str());
 
 				}
 			}
 		}
 		
 		prevState = localUser;
+		
+		//Update fgcom_stateManager instance
+		manageState.setLocalUser(localUser);
+		
 		preData = buf;
 	}
 	pluginDbg("Server loop done!");
@@ -379,10 +370,9 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 		
 		if(splitBuffer.size() > 1) {
 			
-			//Find User
-			for(a = 0; a < remoteUsers.size(); a++)
-				if(remoteUsers[a].getUid() == senderID)
-					user = a;
+			//Get User
+			fgcom_identity remoteUser = manageState.getRemoteUser(senderID);
+			
 			//Ping	
 			if(splitBuffer[1] == "PING") {
 				pluginDbg("A Ping From: " + std::to_string(senderID));
@@ -392,7 +382,7 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 			//Callsign
 			if(splitBuffer[1] == "UPD_USR") {
 				pluginDbg("Callsign From: " + std::to_string(senderID));
-				remoteUsers[user].setCallsign(temp.splitStrings(msg,"=")[1]);
+				remoteUser.setCallsign(temp.splitStrings(msg,"=")[1]);
 				return true;
 			}
 			
@@ -415,9 +405,10 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 								loc.setAlt(stof(finalBuffer[1]));
 						}
 					}
-					remoteUsers[user].setLocation(loc);
+					remoteUser.setLocation(loc);
 				}
-				pluginDbg(remoteUsers[user].getLocation().getUdpLoc());
+				
+				manageState.setRemoteUser(remoteUser);
 				return true;
 			}
 			
@@ -440,7 +431,8 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 							}
 							catch (const std::invalid_argument& ia) {
 								//Delete radio
-								remoteUsers[user].deleteRadio(stoi(splitBuffer[3]));
+								remoteUser.deleteRadio(stoi(splitBuffer[3]));
+								manageState.setRemoteUser(remoteUser);
 								return true;
 							}
 							if(finalBuffer[0] == "PTT") {
@@ -453,10 +445,11 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 								radio.setWatts(stof(finalBuffer[1]));
 						}
 					}
-					if(remoteUsers[user].radioCount() >= stoi(splitBuffer[3]))
-						remoteUsers[user].addRadio(radio);
+					if(remoteUser.radioCount() >= stoi(splitBuffer[3]))
+						remoteUser.addRadio(radio);
 					else
-						remoteUsers[user].setRadio(radio, stoi(splitBuffer[3]));
+						remoteUser.setRadio(radio, stoi(splitBuffer[3]));
+					manageState.setRemoteUser(remoteUser);
 				}
 			}
 			
@@ -465,6 +458,8 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 				//Only send to senderID
 				std::vector<mumble_userid_t> userID;
 				userID.push_back(senderID);
+				
+				fgcom_identity localUser = manageState.getLocalUser();
 				
 				pluginDbg(std::to_string(senderID) + " Wants All Our Data");
 				//If Callsign is set, send it to other users
@@ -483,15 +478,5 @@ bool FgcomPlugin::onReceiveData(mumble_connection_t connection, mumble_userid_t 
 			}
 		}
 	}
-	
 }
 
-
-
-std::vector<mumble_userid_t> FgcomPlugin::getUserIDs() {
-	std::vector<mumble_userid_t> IDs;
-	for(unsigned int a = 0; a < remoteUsers.size();a++) {
-		IDs.push_back(remoteUsers[a].getUid());
-	}
-	return IDs;
-}
