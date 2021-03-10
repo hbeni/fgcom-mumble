@@ -144,34 +144,39 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
             double lat        = e.getDataFloat64();
             double lon        = e.getDataFloat64();
             double alt        = e.getDataFloat64();
-            double com1_frq   = e.getDataFloat64();
-            double com2_frq   = e.getDataFloat64();
+            String com1_frqhx = Integer.toHexString((int) e.getDataFloat64());
+            String com2_frqhx = Integer.toHexString((int) e.getDataFloat64());
             int    com1_ptt   = e.getDataInt32();
             int    com2_ptt   = e.getDataInt32();
             int    com1_state = e.getDataInt32();
             int    com2_state = e.getDataInt32();
-
+            
             String msg = "ObjectID=" + e.getObjectID()
                     + " callsign='" + callsign
                     + " position='" + " lat="+lat + ", lon="+lon + ", alt="+alt
-                    + " com1_frq='" + com1_frq
-                    + " com2_frq='" + com2_frq
+                    + " com1_frq='" + com1_frqhx
+                    + " com2_frq='" + com2_frqhx
                     + " com1_ptt='" + com1_ptt
                     + " com2_ptt='" + com2_ptt
                     + " com1_state='" + com1_state
                     + " com2_state='" + com2_state;
             state.statusmessage = "received: "+msg;
             System.out.println(msg);
+            
+            // Process raw data
+            // FRQ comes as integer representing hex string, but with missing leading "1";
+            String com1_frq = "1" + com1_frqhx.substring(0, 2) + "." + com1_frqhx.substring(2);
+            String com2_frq = "1" + com2_frqhx.substring(0, 2) + "." + com2_frqhx.substring(2);
 
             // Map received data to internal state
             state.callsign  = callsign;
             state.latitude  = lat;
             state.longitude = lon;
             state.height    = (float) alt;
-            state.getRadios().get(0).setFrequency(Double.toString(com1_frq));
+            state.getRadios().get(0).setFrequency(com1_frq);
             state.getRadios().get(0).setPTT(com1_ptt > 0);
             state.getRadios().get(0).setPwrBtn(com1_state > 0);
-            state.getRadios().get(1).setFrequency(Double.toString(com2_frq));
+            state.getRadios().get(1).setFrequency(com2_frq);
             state.getRadios().get(1).setPTT(com2_ptt > 0);
             state.getRadios().get(1).setPwrBtn(com1_state > 0);
             
