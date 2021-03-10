@@ -9,6 +9,7 @@
  */
 package hbeni.fgcom_mumble;
 
+import flightsim.simconnect.NotificationPriority;
 import java.io.IOException;
 
 import flightsim.simconnect.SimConnect;
@@ -32,6 +33,16 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
 
     static enum EVENT_ID {
         EVENT_SIM_START,
+        EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_START,
+        EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_STOP,
+    };
+    
+    enum GROUP_ID {
+            GROUP0;
+
+            public boolean isEvent(RecvEvent re) {
+                    return ordinal() == re.getEventID();
+            }
     };
 
     static enum DATA_DEFINE_ID {
@@ -41,6 +52,10 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
     static enum DATA_REQUEST_ID {
         REQUEST_1,
     };
+    
+    // store the selected coms
+    protected boolean com_tx_selected[] = {false, false};
+   
 
     public SimConnectBridge() throws IOException, ConfigurationNotFoundException {
         // Setup config
@@ -89,6 +104,13 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         
         // Request an event when the simulation starts
         sc.subscribeToSystemEvent(EVENT_ID.EVENT_SIM_START, "SimStart");
+  
+        // Request event on PTT change
+        sc.mapClientEventToSimEvent(EVENT_ID.EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_START, "MP_VOICE_CAPTURE_START");
+        sc.addClientEventToNotificationGroup(GROUP_ID.GROUP0, EVENT_ID.EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_START);
+        sc.mapClientEventToSimEvent(EVENT_ID.EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_START, "MP_VOICE_CAPTURE_STOP");
+        sc.addClientEventToNotificationGroup(GROUP_ID.GROUP0, EVENT_ID.EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_STOP);
+        sc.setNotificationGroupPriority(GROUP_ID.GROUP0, NotificationPriority.HIGHEST);
 
         // dispatcher
         DispatcherTask dt = new DispatcherTask(sc);
@@ -123,6 +145,18 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
 
     public void handleEvent(SimConnect sender, RecvEvent e) {
         System.out.println("SimConnect handleEvent(): "+sender.toString()+" -> "+e.toString());
+        
+        // Handle PTT
+        if (e.getEventID() == EVENT_ID.EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_START.ordinal()) {
+            if (com_tx_selected[0]) state.getRadios().get(0).setPTT(true);
+            if (com_tx_selected[1]) state.getRadios().get(1).setPTT(true);
+        }
+        if (e.getEventID() == EVENT_ID.EVENT_KEY_MULTIPLAYER_VOICE_CAPTURE_STOP.ordinal()) {
+            for (int i = 0; i < state.getRadios().size(); i++) {
+                state.getRadios().get(i).setPTT(false);
+            }
+        }
+        
         
         // Now the sim is running, request information on the user aircraft
         /* NOT sure if needed here...
@@ -171,6 +205,8 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
             // FRQ comes as integer representing hex string, but with missing leading "1";
             String com1_frq = "1" + com1_frqhx.substring(0, 2) + "." + com1_frqhx.substring(2);
             String com2_frq = "1" + com2_frqhx.substring(0, 2) + "." + com2_frqhx.substring(2);
+            com_tx_selected[0] = com1_ptt > 0;
+            com_tx_selected[1] = com2_ptt > 0;
 
             // Map received data to internal state
             state.callsign  = callsign;
@@ -178,10 +214,8 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
             state.longitude = lon;
             state.height    = (float) alt;
             state.getRadios().get(0).setFrequency(com1_frq);
-            state.getRadios().get(0).setPTT(com1_ptt > 0);
             state.getRadios().get(0).setPwrBtn(com1_state == 0);
             state.getRadios().get(1).setFrequency(com2_frq);
-            state.getRadios().get(1).setPTT(com2_ptt > 0);
             state.getRadios().get(1).setPwrBtn(com1_state == 0);
             
             radioGUI.mainWindow.updateFromState();
