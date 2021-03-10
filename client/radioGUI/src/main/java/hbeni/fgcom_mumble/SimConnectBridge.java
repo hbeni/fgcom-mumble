@@ -84,7 +84,9 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
                         "Enum", SimConnectDataType.INT32);
         sc.addToDataDefinition(DATA_DEFINE_ID.DEFINITION_1, "COM STATUS:2",
                         "Enum", SimConnectDataType.INT32);
-
+        // TODO: add volume?
+        
+        
         // Request an event when the simulation starts
         sc.subscribeToSystemEvent(EVENT_ID.EVENT_SIM_START, "SimStart");
 
@@ -151,15 +153,15 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
             int    com1_state = e.getDataInt32();
             int    com2_state = e.getDataInt32();
             
-            String msg = "ObjectID=" + e.getObjectID()
-                    + " callsign='" + callsign
-                    + " position='" + " lat="+lat + ", lon="+lon + ", alt="+alt
-                    + " com1_frq='" + com1_frqhx
-                    + " com2_frq='" + com2_frqhx
-                    + " com1_ptt='" + com1_ptt
-                    + " com2_ptt='" + com2_ptt
-                    + " com1_state='" + com1_state
-                    + " com2_state='" + com2_state;
+            String msg = "ObjectID='" + e.getObjectID() + "'"
+                    + " callsign='" + callsign + "'"
+                    + " position='" + " lat='"+lat + "', lon='"+lon + "', alt='"+alt + "'"
+                    + " com1_frq='" + com1_frqhx + "'"
+                    + " com2_frq='" + com2_frqhx + "'"
+                    + " com1_ptt='" + com1_ptt + "'"
+                    + " com2_ptt='" + com2_ptt + "'"
+                    + " com1_state='" + com1_state + "'"
+                    + " com2_state='" + com2_state + "'";
             state.statusmessage = "received: "+msg;
             System.out.println(msg);
             
