@@ -125,6 +125,7 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         System.out.println("SimConnect handleEvent(): "+sender.toString()+" -> "+e.toString());
         
         // Now the sim is running, request information on the user aircraft
+        /* NOT sure if needed here...
         try {
             sender.requestDataOnSimObjectType(DATA_REQUEST_ID.REQUEST_1,
                 DATA_DEFINE_ID.DEFINITION_1, 0, SimObjectType.USER);
@@ -132,6 +133,7 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
         } catch (IOException e1) {
             System.out.println("SimConnect handleEvent(): exception: "+e1.toString());
         }
+        */
     }
 
     public void handleSimObjectType(SimConnect sender, RecvSimObjectDataByType e) {
