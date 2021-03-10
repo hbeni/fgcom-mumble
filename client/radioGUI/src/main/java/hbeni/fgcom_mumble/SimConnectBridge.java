@@ -177,10 +177,10 @@ public class SimConnectBridge implements EventHandler, OpenHandler, SimObjectDat
             state.height    = (float) alt;
             state.getRadios().get(0).setFrequency(com1_frq);
             state.getRadios().get(0).setPTT(com1_ptt > 0);
-            state.getRadios().get(0).setPwrBtn(com1_state > 0);
+            state.getRadios().get(0).setPwrBtn(com1_state == 0);
             state.getRadios().get(1).setFrequency(com2_frq);
             state.getRadios().get(1).setPTT(com2_ptt > 0);
-            state.getRadios().get(1).setPwrBtn(com1_state > 0);
+            state.getRadios().get(1).setPwrBtn(com1_state == 0);
             
             radioGUI.mainWindow.updateFromState();
         }
