@@ -58,7 +58,7 @@ public class radioGUI {
      * @param args 
      */
     public static void main(String[] args) throws InterruptedException {
-       
+        
         /* Initialize the cool flatlaf Look&Feel */
         FlatDarkLaf.install();
         try {
