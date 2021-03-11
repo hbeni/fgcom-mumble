@@ -65,13 +65,13 @@ jobs:
     - if: matrix.language == 'cpp'
       name: Build C++ (Linux x64)
       run: |
-        make clean all
+        make clean test all
 
     - if: matrix.language == 'cpp'
       name: Build C++ (Windows x64 mingw-crosscompile)
       # skip openssl build, it takes long and will trigger false-positives
       run: |
-        make SSLFLAGS= clean test-win64 plugin-win64
+        make SSLFLAGS= clean tools-win64 plugin-win64
 
     - if: matrix.language == 'cpp'
       name: Build C++ (Windows x32 mingw-crosscompile)
