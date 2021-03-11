@@ -197,6 +197,10 @@ TEST_CASE( "GEO Model", "Range test" ) {
         // very far out
         struct fgcom_radiowave_signal sigStrength_3 = radio_model->getSignal(lat1-20, lon1, h1, lat2, lon2+20, h2, 5);
         REQUIRE(sigStrength_3.quality == 1.0);
+        
+        // landline w/o power should work
+        struct fgcom_radiowave_signal sigStrength_4 = radio_model->getSignal(lat1, lon1, h1, lat2, lon2, h2, 0);
+        REQUIRE(sigStrength_4.quality == 1.0);
     }
 
     SECTION( "VHF range below radio horizon" ) {
