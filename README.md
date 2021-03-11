@@ -205,3 +205,4 @@ Other interesting compile targets:
   - `make plugin` will build just the the plugin for linux
   - `make plugin-win64` will build it for windows
   - `make release` builds zip release files containing linux/windows binaries
+  - `make test` builds and runs catch2-unittests

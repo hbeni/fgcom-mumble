@@ -214,3 +214,4 @@ Weitere interessante make buildtargets:
   - `make plugin` baut lediglich das Plugin für Linux
   - `make plugin-win64` baut das Plugin für Windows
   - `make release` baut ein Releasepaket (je ein `tar.gz` und `zip`, dass die Linux/Windows Binärdateien enthält)
+  - `make test` baut und startet die catch2-unittests
