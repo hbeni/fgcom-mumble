@@ -55,7 +55,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jToggleButton_ONOFF.setEnabled(p);
         jTextField_frqSpare.setEnabled(p);
         jButton_swapFRQ.setEnabled(p);
-        jButton_PTT.setEnabled(p);
+        //jButton_PTT.setEnabled(p);
         jToggleButton_ONOFF.setEnabled(p);
         jRadioButton_radioType25.setEnabled(p);
         jRadioButton_radioType833.setEnabled(p);
