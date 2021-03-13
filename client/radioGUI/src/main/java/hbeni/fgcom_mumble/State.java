@@ -17,6 +17,8 @@ public class State {
    protected double longitude;
    protected float  height;    // ft AGL
    protected Vector<Radio> radios;
+   protected boolean isSimConnectSlave;
+   protected String statusmessage = ""; // additional status message prefix
    
    public State() {
        radios = new Vector<>();
@@ -64,4 +66,15 @@ public class State {
    public List<Radio> getRadios() {
        return radios;
    }
+   
+   /**
+    * SimConnect slave status
+    */
+   public boolean isSimConnectSlave() {
+       return isSimConnectSlave;
+   }
+   public void setSimConnectSlaving(boolean b) {
+       isSimConnectSlave = b;
+   }
+   
 }

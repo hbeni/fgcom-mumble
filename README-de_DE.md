@@ -98,6 +98,11 @@ Im Protokoll haben Fließkommazahlen außerdem immer den Punkt (`.`) als Dezimal
 ### RadioGUI
 FGCom-mumble liefert eine plattformunabhängige Java-Applikation mit, die die meisten UDP-Protokollfelder implementiert. Dadurch eignet sich RadioGUI nicht nur zum testen, sondern auch für echte Aufgaben wie ATC ohne die Notwendigkeit eines weiteren Clients.
 
+#### SimConnect (MSFS-2020) support
+RadioGUI kann als Brücke zu SimConnect-Kompatiblen Simulatoren fungieren (z.B. MSF-S2020, P3d, FSX, etc).
+Weitere Details stehen im Readme des RadioGUI.
+
+
 ### Flightgear spezifisch
 - Kopiere die Flightgear Protokolldefinitionsdatei in deinen Flightgear Installationsordner unter `Protocol`.
 - Starte Flightgear mit aktiviertem fgcom-mumble Protokoll (füge "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" im Startprogramm als zusätzlichen Parameter hinzu)
