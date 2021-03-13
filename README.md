@@ -91,6 +91,10 @@ Also note that callsigns and frequencies are not allowed to contain the comma sy
 FGCom-mumble releases ship with a cross-plattform java application that implements most of the UDP protocol and thus can be used not only for testing purposes, but also real operations without the need for another client.  
 Core features are supported by any radioGUI version but use the latest to be sure to get all features (if in doubt, read the release notes).
 
+#### SimConnect (MSFS-2020) support
+RadioGUI can act as a SimConnect bridge to support MSFS2020 and other SimConnect compatible simulators (P3d, FSX, etc).
+For details on how this can be done, look at RadioGUI's readme.
+
 
 ### Flightgear specific
 - copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.

@@ -46,6 +46,12 @@ radioGUI:
 		-DartifactId=jmapviewer \
 		-Dversion=2.14 \
 		-Dpackaging=jar
+	cd client/radioGUI/lib/jsimconnect && mvn clean package
+	mvn install:install-file -Dfile=client/radioGUI/lib/jsimconnect/target/jsimconnect-0.8.0.jar \
+		-DgroupId=flightsim \
+		-DartifactId=jsimconnect \
+		-Dversion=0.8.0 \
+		-Dpackaging=jar
 	cd client/radioGUI/ && mvn clean package
 
 # relay everything else to the mumble-plugin makefile

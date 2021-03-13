@@ -37,6 +37,8 @@ public class radioGUI {
         public static int     udpPort             = 16661;
         public static float   udpSendRateHz       = 10;
         public static int     debugSignalOverride = -5;
+        public static String  simConnectHost      = "localhost";
+        public static int     simConnectPort      = 500; // 500=MSFS2020
         public static boolean enableAudioEffecs   = true;
         public static boolean allowHearingNonPluginUsers = false;
     }
@@ -47,7 +49,6 @@ public class radioGUI {
     /* A client pushing the packets to the udp port */
     protected static UDPclient udpClient;
     
-    
     /* Window handles */
     public static MainWindow mainWindow;
     
@@ -57,7 +58,7 @@ public class radioGUI {
      * @param args 
      */
     public static void main(String[] args) throws InterruptedException {
-       
+        
         /* Initialize the cool flatlaf Look&Feel */
         FlatDarkLaf.install();
         try {
@@ -82,24 +83,44 @@ public class radioGUI {
         mainWindow.setVisible(true);
         
         
-        /* start the udp sending */
+        /* start the main loop */
         udpClient = new UDPclient(state);
+        SimConnectBridge simconnect_client = null;
         while (mainWindow.isVisible()) {
+            
+            /* Boot simConnect if it was requested */
+            if (state.isSimConnectSlave() && simconnect_client == null) {
+                simconnect_client = invokeSimConnect();
+            }
+            
+            /* UDP sending */
             udpClient.setActive(mainWindow.getConnectionActivation());
             udpClient.prepare();
             SendRes result = udpClient.send();
             if (result.res) {
                 mainWindow.setConnectionState(true);
-                mainWindow.setStatusText(result.msg);
             } else {
                 mainWindow.setConnectionState(false);
                 result.msg = (result.msg=="")? "not connected" : result.msg;
-                mainWindow.setStatusText(result.msg);
             }
+
+            if (state.statusmessage != "") result.msg = state.statusmessage + " / " + result.msg;
+            
+            if (state.isSimConnectSlave()) result.msg = "[SimConnect] "+result.msg;
+            
+            mainWindow.setStatusText(result.msg);
             
             Thread.sleep( (long)(1000 / Options.udpSendRateHz) ); // try 10 times per second
+
         }
 
+    }
+    
+    /**
+     * Get internal state
+     */
+    public static State getState() {
+        return state;
     }
     
     /**
@@ -119,5 +140,57 @@ public class radioGUI {
     }
     
     
+    /**
+     * Signify that simConnect should be activated
+     * Prepares internal and GUI state for slaving trough SimConnect
+     */
+    public static void enableSimConnect() {
+        // stop the udp sending
+        udpClient.setActive(false);
+        
+        // clear out internal state
+        try {
+            for (Radio r : state.getRadios()) {
+                radioGUI.deregisterRadio(r);
+            }
+        } catch (Exception e) {
+            state.statusmessage = "INTERNAL ERROR - restart RadioGUI!";
+        }
+        
+        // Prepare state
+        state.getRadios().clear();
+        state.setCallsign("SimConnect");
+        state.setLocation(0, 0, 0f);
+        state.getRadios().add(new Radio("SimConnect-COM1"));
+        state.getRadios().add(new Radio("SimConnect-COM2"));
+        mainWindow.updateFromState();
+        
+        // update GUI
+        mainWindow.prepareSimConnect();
+        mainWindow.updateFromState();
+        
+        // signify to main loop that the bridge should be active
+        state.setSimConnectSlaving(true);
+    }
+    
+    /**
+     * Establish SimConnect bridge
+     * 
+     * @return established bridge
+     */
+    public static SimConnectBridge invokeSimConnect() {
+
+        // Invoke the simConnect brigde
+        SimConnectBridge fgcom_simconnectbridge = null;
+        try {
+            fgcom_simconnectbridge = new SimConnectBridge();
+        } catch (java.net.ConnectException e) {
+            // connection failure. will be handled in the main loop already.
+            // we just return null here.
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fgcom_simconnectbridge;
+    }
     
 }
