@@ -10,6 +10,28 @@ var main = func( addon ) {
     var myAddonId  = addon.id;
     var mySettingsRootPath = "/addons/by-id/" ~ myAddonId;
     var protocolInitialized = 0;
+    
+    # init props with defaults
+    var enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
+    enabledNode.setAttribute("userarchive", "y");
+    if (enabledNode.getValue() == nil) {
+      enabledNode.setBoolValue("1");
+    }
+    var refreshNode = props.globals.getNode(mySettingsRootPath ~ "/refresh-rate", 1);
+    refreshNode.setAttribute("userarchive", "y");
+    if (refreshNode.getValue() == nil) {
+      refreshNode.setIntValue("10");
+    }
+    var hostNode = props.globals.getNode(mySettingsRootPath ~ "/host", 1);
+    hostNode.setAttribute("userarchive", "y");
+    if (hostNode.getValue() == nil) {
+      hostNode.setValue("localhost");
+    }
+    var portNode = props.globals.getNode(mySettingsRootPath ~ "/port", 1);
+    portNode.setAttribute("userarchive", "y");
+    if (portNode.getValue() == nil) {
+      portNode.setIntValue("16661");
+    }
 
     var initProtocol = func() {
       if (protocolInitialized == 0) {
