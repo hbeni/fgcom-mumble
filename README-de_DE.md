@@ -104,9 +104,12 @@ Weitere Details stehen im Readme des RadioGUI.
 
 
 ### Flightgear spezifisch
-- Kopiere die Flightgear Protokolldefinitionsdatei in deinen Flightgear Installationsordner unter `Protocol`.
-- Starte Flightgear mit aktiviertem fgcom-mumble Protokoll (füge "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" im Startprogramm als zusätzlichen Parameter hinzu)
-- Nachdem Flightgear gestartet wurde, kannst du die Funkgeräte wie gewohnt benutzen (Standard ist *Leertaste* für Sprechen auf COM1 und *Umschalt-Leetaste* für COM2).
+- Füge den ordner `fgfs` aus dem entpackten client-release als Addon im Launcher hinzu.
+- Aktiviere das [FGFS-addon](client/fgfs/Readme.md) in deinem Launcher.
+- FlightGear sendet dann automatisch die notwendigen Daten an mumble (mit Standardparametern; diese können über das *Mehrspieler*-Menü geändert werden).
+
+Die FGFS-Protokolldefinition unterstützt alte 25kHz- genauso wie neuere 8.3kHz Funkgeräte.
+Nachdem Flightgear gestartet wurde, kannst du die Funkgeräte wie gewohnt benutzen (Standard ist *Leertaste* für Sprechen auf COM1 und *Umschalt-Leetaste* für COM2).
 
 
 ### ATC-Pie specific
