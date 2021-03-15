@@ -32,6 +32,16 @@ var main = func( addon ) {
     if (portNode.getValue() == nil) {
       portNode.setIntValue("16661");
     }
+    
+    # Init GUI menu entry
+    var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
+    var menudata = {
+		label   : "FGCom-mumble",
+		name    : "fgcom-mumble",
+		binding : { command : "dialog-show", "dialog-name" : "fgcom-mumble-settings" }
+	};
+	props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
+	fgcommand("gui-redraw");
 
     var initProtocol = func() {
       if (protocolInitialized == 0) {

@@ -5,18 +5,6 @@
     <format-version type="int">1</format-version>
   </meta>
 
-  <menubar-items>
-    <menu>
-      <label>Add-on</label>
-      <enabled type="bool">true</enabled>
+  <!--  GUI menu adjusted in addon-main.nas -->
 
-      <item>
-        <label>FGCom-mumble</label>
-        <binding>
-          <command>dialog-show</command>
-          <dialog-name>fgcom-mumble-settings</dialog-name>
-        </binding>
-      </item>
-    </menu>
-  </menubar-items>
 </PropertyList>

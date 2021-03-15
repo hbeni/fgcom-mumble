@@ -100,7 +100,8 @@ For details on how this can be done, look at RadioGUI's readme.
 Just add and activate the [FGFS-addon](client/fgfs/Readme.md) in your launcher.
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
-After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).
+After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).  
+The addon can be configured via a new entry in the *Multiplayer* menu.
 
 ### ATC-Pie specific
 Since ATC-Pie v1.7.1 FGCom-mumble is supported out of the box.
