@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PropertyList>
+  <meta>
+    <file-type type="string">FlightGear add-on menu bar items</file-type>
+    <format-version type="int">1</format-version>
+  </meta>
+
+  <!--  GUI menu adjusted in addon-main.nas -->
+
+</PropertyList>

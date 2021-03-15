@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+
+<PropertyList>
+    <name>fgcom-mumble-settings</name>
+    <layout>vbox</layout>
+    <width>600</width>
+    <group>
+        <layout>hbox</layout>
+
+        <button>
+            <legend> </legend>
+            <pref-width>16</pref-width>
+            <pref-height>16</pref-height>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+
+        <empty><stretch>1</stretch></empty>
+
+        <text>
+            <label>FGCom-mumble settings</label>
+        </text>
+
+        <empty><stretch>1</stretch></empty>
+
+        <button>
+            <legend> </legend>
+            <key>Esc</key>
+            <pref-width>16</pref-width>
+            <pref-height>16</pref-height>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+
+    </group>
+
+    <hrule/>
+
+    <checkbox>
+        <halign>left</halign>
+        <label>Enable sending data</label>
+        <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/enabled</property>
+    </checkbox>
+
+    <group>
+        <layout>hbox</layout>
+
+        <text>
+            <halign>left</halign>
+            <label>Refresh rate (Hz):</label>
+        </text>
+
+        <input>
+            <name>refresh-rate</name>
+            <height>25</height>
+            <halign>left</halign>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate</property>
+        </input>
+    </group>
+
+    <group>
+        <layout>hbox</layout>
+
+        <text>
+            <label>Host</label>
+            <halign>left</halign>
+        </text>
+
+        <input>
+            <height>25</height>
+            <halign>left</halign>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/host</property>
+        </input>
+    </group>
+    
+    <group>
+        <layout>hbox</layout>
+
+        <text>
+            <label>Port</label>
+            <halign>left</halign>
+        </text>
+
+        <input>
+            <height>25</height>
+            <halign>left</halign>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/port</property>
+        </input>
+    </group>
+    
+    <hrule/>
+
+    <group>
+        <layout>hbox</layout>
+        <empty><stretch>1</stretch></empty>
+        <button>
+            <legend>OK</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>dialog-apply</command>
+            </binding>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+
+        <button>
+            <legend>Cancel</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+        <empty><stretch>1</stretch></empty>
+    </group>
+</PropertyList>
