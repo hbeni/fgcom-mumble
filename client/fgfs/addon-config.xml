@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PropertyList>
+    <addons>
+        <by-id>
+            <org.hallinger.flightgear.FGCom-mumble>
+                <enabled type="bool">true</enabled>
+                <refresh-rate archive="y" type="double">10</refresh-rate>
+                <host archive="y">localhost</host>
+                <port archive="y" type="int">16661</port>
+            </org.hallinger.flightgear.FGCom-mumble>
+        </by-id>
+    </addons>
+</PropertyList>

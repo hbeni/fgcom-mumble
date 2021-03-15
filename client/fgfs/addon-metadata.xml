@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<PropertyList>
+    <meta>
+        <file-type type="string">FlightGear add-on metadata</file-type>
+        <format-version type="int">1</format-version>
+    </meta>
+
+    <addon>
+        <identifier type="string">org.hallinger.flightgear.FGCom-mumble</identifier>
+        <name type="string">FGCom-mumble</name>
+        <version type="string">0.11.0</version>
+
+        <authors>
+            <author>
+                <name type="string">Benedikt Hallinger</name>
+                <email type="string">beni@hallinger.org</email>
+                <url type="string">https://wiki.flightgear.org/FGCom-mumble</url>
+            </author>
+        </authors>
+
+        <maintainers>
+            <maintainer>
+                <name type="string">Benedikt Hallinger</name>
+                <email type="string">beni@hallinger.org</email>
+                <url type="string"></url>
+            </maintainer>
+        </maintainers>
+
+        <short-description type="string">addon to send data to mumbles FGCom-mumble plugin</short-description>
+        <long-description type="string">Let FlightGear send it's data to the FGCom-mumble plugin data port</long-description>
+
+        <localized>
+            <de>
+                <short-description type="string">sendet Daten an das FGCom-mumble plugin in Mumble</short-description>
+                <long-description type="string">Lässt FlightGear die notwendigen Daten an das FGCom-mumble plugin senden</long-description>
+            </de>
+        </localized>
+
+        <license>
+            <designation type="string">GNU GPL version 3 or later</designation>
+            <!--<file type="string">LICENSE</file>-->
+            <url type="string">https://www.gnu.org/licenses/gpl-3.0</url>
+        </license>
+
+        <min-FG-version type="string">2018.3.0</min-FG-version>
+        <max-FG-version type="string">none</max-FG-version>
+
+        <urls>
+            <download type="string">https://github.com/hbeni/fgcom-mumble/releases</download>
+            <support type="string">https://github.com/hbeni/fgcom-mumble/issues</support>
+            <code-repository type="string">https://github.com/hbeni/fgcom-mumble/</code-repository>
+        </urls>
+
+        <tags>
+            <tag type="string">mumble</tag>
+            <tag type="string">atc</tag>
+        </tags>
+
+    </addon>
+</PropertyList>
