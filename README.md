@@ -97,12 +97,10 @@ For details on how this can be done, look at RadioGUI's readme.
 
 
 ### Flightgear specific
-- copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
-- start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
-- start using your radio stack (standard FGCom PTT is space for COM1 and shift-space for COM2)
+Just add and activate the [FGFS-addon](client/fgfs/Readme.md) in your launcher.
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
-
+After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).
 
 ### ATC-Pie specific
 Since ATC-Pie v1.7.1 FGCom-mumble is supported out of the box.
