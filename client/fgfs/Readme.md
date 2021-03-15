@@ -26,5 +26,5 @@ After starting flightgear, you can use your radio stack like with FGCom (default
 
 Configuration
 ----------------------------
-If you wish to adjust the parameters, you can access them via the *Add-on* menu. This is usually not needed except you are running several mumble instances or mumble not on the same computer as FlightGear.  
+If you wish to adjust the parameters, you can access them via the new *Multiplayer* menu entry. This is usually not needed except you are running several mumble instances or mumble not on the same computer as FlightGear.  
 Changes to the parameters will reinitialize the addon automatically, making them effective.
