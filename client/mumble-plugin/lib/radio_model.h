@@ -41,6 +41,7 @@ struct fgcom_radio {
 	bool  ptt;           // true if PTT is pushed
 	float volume;        // volume, 0.0->1.0
 	float pwr;           // tx power in watts
+	bool  operable;      // false if switched off, not powered or broken
 	float squelch;       // squelch setting (cutoff signal below this quality)
 	bool  rdfEnabled;    // if radio can receive RDF information
 	float channelWidth;  // channel width in kHz
@@ -54,6 +55,7 @@ struct fgcom_radio {
         ptt         = false;
         volume      = 1.0;
         pwr         = 10;
+        operable    = true;
         squelch     = 0.1;
         rdfEnabled  = false;
         channelWidth = -1;   // let the selected radio model decide on defaults
