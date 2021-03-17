@@ -123,31 +123,6 @@ bool fgcom_isPluginActive() {
 }
 
 /*
- * See if the radio is operable
- * 
- * @param fgcom_radio the radio to check
- * @return bool true, wehn it is
- */
-bool fgcom_radio_isOperable(fgcom_radio r) {
-    //pluginDbg("fgcom_radio_operable() called");
-    //pluginDbg("fgcom_radio_operable()    r.frequency="+r.frequency);
-    //pluginDbg("fgcom_radio_operable()    r.power_btn="+std::to_string(r.power_btn));
-    //pluginDbg("fgcom_radio_operable()    r.volts="+std::to_string(r.volts));
-    //pluginDbg("fgcom_radio_operable()    r.serviceable="+std::to_string(r.serviceable));
-    
-    // A radio on the special "<del>" frequency is never operable.
-    if (r.frequency == "<del>") return false;
-
-    bool radio_serviceable = r.serviceable;
-    bool radio_switchedOn  = r.power_btn;
-    bool radio_powered     = (r.volts >= 1.0)? true:false; // some aircraft report boolean here, so treat 1.0 as powered
-    
-    bool operable = (radio_serviceable && radio_switchedOn && radio_powered);
-    //pluginDbg("fgcom_radio_operable() result: operable="+std::to_string(operable));
-    return operable;
-}
-
-/*
  * Handle PTT change of local user
  * 
  * This will check the local radio state and activate the mic if all is operable.
@@ -170,7 +145,7 @@ void fgcom_handlePTT() {
                     
                     if (radio_ptt) {
                         //if (radio_serviceable && radio_switchedOn && radio_powered) {
-                        if ( fgcom_radio_isOperable(lcl.radios[i])) {
+                        if ( lcl.radios[i].operable) {
                             pluginDbg("  COM"+std::to_string(i+1)+" PTT active and radio is operable -> open mic");
                             radio_ptt_result = true;
                             break; // we only have one output stream, so further search makes no sense
@@ -882,7 +857,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                             for (int lri=0; lri<lcl.radios.size(); lri++) {
                                 pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
                                 pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
-                                pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(fgcom_radio_isOperable(lcl.radios[lri]))+"'");
+                                pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(lcl.radios[lri].operable)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       RDF='"+std::to_string(lcl.radios[lri].rdfEnabled)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");                                
@@ -903,8 +878,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 
                                 /* detect landline/intercom */
                                 if (lcl.radios[lri].frequency.substr(0, 5) == "PHONE"
-                                    && lcl.radios[lri].frequency == rmt.radios[ri].frequency 
-                                    && fgcom_radio_isOperable(lcl.radios[lri])) {
+                                    && lcl.radios[lri].frequency == rmt.radios[ri].frequency && lcl.radios[lri].operable) {
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  PHONE mode detected");
                                     // Best quality, full-duplex mode
                                     matchedLocalRadio = lcl.radios[lri];
@@ -916,7 +890,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 /* normal radio operation */
                                 // (prefixed special frequencies never should be recieved!)
                                 } else if (signalMatchFilter > 0.0 
-                                    && fgcom_radio_isOperable(lcl.radios[lri])
+                                    && lcl.radios[lri].operable
                                     && !lcl.radios[lri].ptt   // halfduplex!
                                     && rmt_frq_p.prefix.length() == 0) {
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");

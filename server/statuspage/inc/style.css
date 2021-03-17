@@ -150,6 +150,15 @@ tr:nth-child(odd){background-color: #f2f2f2}
     color:#C3C3C3;
 }
 
+/* radio frequency which is receiving */
+.radio_ok {
+}
+
+/* radio frequency which is unable to receive (not operable) */
+.radio_err {
+    color:#C3C3C3;
+}
+
 /* Section blocks and map container */
 .section, #mapid {
     border: 1px solid black;

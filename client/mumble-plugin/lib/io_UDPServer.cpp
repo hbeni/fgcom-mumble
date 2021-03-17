@@ -322,6 +322,21 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].channelWidth != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     
+                    
+                    /*
+                     * Calculate current operable state of the radio
+                     */
+                    pluginDbg("[UDP-server] recalculate operable state of radio "+radio_type+radio_nr);
+                    bool oldOperableValue = fgcom_local_client[iid].radios[radio_id].operable;
+                    if (fgcom_local_client[iid].radios[radio_id].frequency == "<del>") {
+                        fgcom_local_client[iid].radios[radio_id].operable = false; // deleted radios are never operable!
+                    } else {
+                        bool radio_serviceable = fgcom_local_client[iid].radios[radio_id].serviceable;
+                        bool radio_switchedOn  = fgcom_local_client[iid].radios[radio_id].power_btn;
+                        bool radio_powered     = (fgcom_local_client[iid].radios[radio_id].volts >= 1.0)? true:false; // some aircraft report boolean here, so treat 1.0 as powered
+                        fgcom_local_client[iid].radios[radio_id].operable = (radio_serviceable && radio_switchedOn && radio_powered);
+                    }
+                    if (fgcom_local_client[iid].radios[radio_id].operable != oldOperableValue ) parseResult[iid].radioData.insert(radio_id);
                 }
                 
                 

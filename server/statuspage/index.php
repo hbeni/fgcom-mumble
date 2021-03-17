@@ -91,7 +91,7 @@ if ($ini_config['ui']['gnuplot_source'] && is_readable($ini_config['ui']['gnuplo
 * Expected format is a JSON structure containing:
 *  "meta": metadata table {"highscore_num":12, "highscore_date":1599719381}
 *  "clients": table holds elements representing one user record each:
-*     [{"type":"client", "callsign":"Calls-1", "frequencies":["123.456"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...]
+*     [{"type":"client", "callsign":"Calls-1", "radios":[{"frequency":123.45, "operable":1}], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...]
 */
 $allClients = array();
 $allBots    = array();
@@ -124,7 +124,7 @@ $db_data = sanitize($db_data);
 * outputs JSON data in the above specified format:
 *  "meta": metadata table {"highscore_num":12, "highscore_date":1599719381}
 *  "clients": table holds elements representing one user record each:
-*     [{"type":"client", "callsign":"Calls-1", "frequencies":["123.456"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...]
+*     [{"type":"client", "callsign":"Calls-1", "radios":[r1, r2...], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...]
 */
 if (array_key_exists('raw', $_GET) && $ini_config['ui']['allow_raw_mode']) {
     echo json_encode($db_data);
@@ -144,13 +144,19 @@ foreach ($db_data["clients"] as $u) {
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
     $utpl->assignVar('id',$id);
     $utpl->assignVar('callsign',$u['callsign']);
-    $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('alt', round(m2ft($u['alt']),0) );
     $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
     $utpl->assignVar('updated',time()-$u['updated']);
     $utpl->assignVar('stale', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
+    
+    $frq_str = "";
+    foreach ($u['radios'] as $radio) {
+        $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
+        $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+    }
+    $utpl->assignVar('fequency',$frq_str);
     
     if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_users_body .= $utpl->generate();
@@ -177,13 +183,19 @@ foreach ($db_data["clients"] as $u) {
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/user_entry.tpl');
     $utpl->assignVar('id',$id);
     $utpl->assignVar('callsign',$u['callsign']);
-    $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('lat', round($u['lat'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('lon', round($u['lon'],5) ); // 5 decimals is abput 100m accurate
     $utpl->assignVar('alt', round(m2ft($u['alt']),0) );
     $utpl->assignVar('range', round(getVHFRadioHorizon($u['alt']),0));
     $utpl->assignVar('updated',time()-$u['updated']);
     $utpl->assignVar('stale', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '' : 'class="stale"' );
+    
+    $frq_str = "";
+    foreach ($u['radios'] as $radio) {
+        $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
+        $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+    }
+    $utpl->assignVar('fequency',$frq_str);
     
     if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_bots_body .= $utpl->generate();
@@ -208,7 +220,6 @@ foreach ($db_data["clients"] as $u) {
     $utpl = new HTMLTemplate(dirname(__FILE__).'/inc/map_client.tpl');
     $utpl->assignVar('id',$id++);
     $utpl->assignVar('callsign',$u['callsign']);
-    $utpl->assignVar('fequency',implode($u['frequencies'],"<br/>"));
     $utpl->assignVar('range', getVHFRadioHorizon($u['alt'])*1000);
     $utpl->assignVar('lat', $u['lat'] );
     $utpl->assignVar('lon', $u['lon'] );
@@ -218,6 +229,12 @@ foreach ($db_data["clients"] as $u) {
     $utpl->assignVar('icon', 'userIcon');
     if ($u['type'] == 'playback-bot') $utpl->assignVar('icon', 'radioIcon');
     
+    $frq_str = "";
+    foreach ($u['radios'] as $radio) {
+        $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
+        $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+    }
+    $utpl->assignVar('fequency',$frq_str);
     
     if ($u['alt'] >= 0 && time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_clients_body .= $utpl->generate();
