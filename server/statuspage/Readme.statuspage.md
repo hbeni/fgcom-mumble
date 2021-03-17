@@ -60,5 +60,6 @@ There is just a single table containing metadata and a table with the informatio
 
 The format is a JSON structure: `{"clients":[<clients_data-1>, <clients_data-n>],"meta":{<metadata_struct>}}`
 
-- "clients": array holds elements representing one user record each: `{"type":"client", "callsign":"Calls-1", "frequencies":["123.456","120.00"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}`
+- "clients": array holds elements representing one user record each: `{"type":"client", "callsign":"Calls-1", "radios":[<radio1>, <radio-n>"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}`
+- "radio" holds the state of a radio: `{"frequency":"123.45000", "dialedFRQ":"123.45", "operable":1, ...}`
 - "meta": metadata table `{"highscore_num":12,"highscore_date":1599719381}`
