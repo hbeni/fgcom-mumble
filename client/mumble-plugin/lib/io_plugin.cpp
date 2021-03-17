@@ -215,7 +215,8 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                         //+ "SRV="+std::to_string(lcl.radios[selector].serviceable)+","
                         + "PTT="+std::to_string(lcl.radios[selector].ptt)+","
                         //+ "VOL="+std::to_string(lcl.radios[selector].volume)+","
-                        + "PWR="+std::to_string(lcl.radios[selector].pwr);
+                        + "PWR="+std::to_string(lcl.radios[selector].pwr)+","
+                        + "OPR="+std::to_string(lcl.radios[selector].operable);
                     // ^^ Save bandwith: We do not need all state on the other clients currently. Once we do, we can just uncomment this and the code to handle it is already implemented :)
                     // Ah yeah, and we must uncomment the change-detection down at fgcom_udp_parseMsg(), otherwise the changes get not detected
             }
@@ -481,6 +482,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         if (token_key == "VLT") fgcom_remote_clients[clientID][iid].radios[radio_id].volts       = std::stof(token_value);
                         if (token_key == "PBT") fgcom_remote_clients[clientID][iid].radios[radio_id].power_btn   = (token_value == "1")? true : false;
                         if (token_key == "SRV") fgcom_remote_clients[clientID][iid].radios[radio_id].serviceable = (token_value == "1")? true : false;
+                        if (token_key == "OPR") fgcom_remote_clients[clientID][iid].radios[radio_id].operable    = (token_value == "1")? true : false;
                         if (token_key == "PTT") {
                             bool v = (token_value == "1")? true : false;
                             fgcom_remote_clients[clientID][iid].radios[radio_id].ptt = v;

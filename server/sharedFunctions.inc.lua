@@ -70,7 +70,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.3.0",
+    libversion = "1.4.0",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -320,7 +320,12 @@ fgcom = {
                                     fgcom_clients[sid][iid].radios[radioID] = {
                                         frequency = "",
                                         dialedFRQ = "",
-                                        ptt = 0
+                                        ptt = 0,
+                                        power = 10,
+                                        pbt   = 1,
+                                        vlt   = 12,
+                                        srv   = 1,
+                                        operable = 1,
                                         -- todo: more needed?
                                     }
                                 end
@@ -329,6 +334,7 @@ fgcom = {
                                 if "CHN" == field[1] then fgcom_clients[sid][iid].radios[radioID].dialedFRQ = field[2] end
                                 if "PTT" == field[1] then fgcom_clients[sid][iid].radios[radioID].ptt = field[2] end
                                 if "PWR" == field[1] then fgcom_clients[sid][iid].radios[radioID].power = field[2] end
+                                if "OPR" == field[1] then fgcom_clients[sid][iid].radios[radioID].operable = field[2] end
                             end
                         else
                             fgcom.dbg("parsing field failed! "..#field.." tokens seen")
@@ -360,6 +366,8 @@ fgcom = {
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.." frequency='"..radio.frequency.."'")
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.." dialedFRQ='"..radio.dialedFRQ.."'")
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       ptt='"..radio.ptt.."'")
+                                fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       pwr='"..radio.power.."'")
+                                fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       opr='"..radio.operable.."'")
                             end
                         else
                             fgcom.dbg("sid="..uid.."; idty="..iid.."\t"..k..":\t"..tostring(v))
