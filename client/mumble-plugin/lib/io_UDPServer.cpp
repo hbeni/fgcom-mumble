@@ -258,17 +258,29 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         } else {
                             fgcom_local_client[iid].radios[radio_id].volts       = std::stof(token_value);
                         }
-                        // do not send right now: if (fgcom_local_client[iid].radios[radio_id].volts != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                        if (fgcom_local_client[iid].radios[radio_id].volts != oldValue ) {
+                            // send radio update in case of OPR change
+                            pluginDbg("[UDP-server] recalculate operable state of radio "+radio_type+radio_nr+" (VLT changed)");
+                            if (fgcom_radio_updateOperable(fgcom_local_client[iid].radios[radio_id])) parseResult[iid].radioData.insert(radio_id);
+                        }
                     }
                     if (radio_var == "PBT") {
                         bool oldValue = fgcom_local_client[iid].radios[radio_id].power_btn;
                         fgcom_local_client[iid].radios[radio_id].power_btn   = (token_value == "1" || token_value == "true")? true : false;
-                        // do not send right now: if (fgcom_local_client[iid].radios[radio_id].power_btn != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                        if (fgcom_local_client[iid].radios[radio_id].power_btn != oldValue ) {
+                            // send radio update in case of OPR change
+                            pluginDbg("[UDP-server] recalculate operable state of radio "+radio_type+radio_nr+" (PBT changed)");
+                            if (fgcom_radio_updateOperable(fgcom_local_client[iid].radios[radio_id])) parseResult[iid].radioData.insert(radio_id);
+                        }
                     }
                     if (radio_var == "SRV") {
                         bool oldValue = fgcom_local_client[iid].radios[radio_id].serviceable;
                         fgcom_local_client[iid].radios[radio_id].serviceable = (token_value == "1" || token_value == "true")? true : false;
-                        // do not send right now: if (fgcom_local_client[iid].radios[radio_id].serviceable != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                        if (fgcom_local_client[iid].radios[radio_id].serviceable != oldValue ) {
+                            // send radio update in case of OPR change
+                            pluginDbg("[UDP-server] recalculate operable state of radio "+radio_type+radio_nr+" (SRV changed)");
+                            if (fgcom_radio_updateOperable(fgcom_local_client[iid].radios[radio_id])) parseResult[iid].radioData.insert(radio_id);
+                        }
                     }
                     if (radio_var == "PTT") {
                         // depends if we are previously have been in old compat mode (a single PTT property)
@@ -322,21 +334,6 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].channelWidth != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     
-                    
-                    /*
-                     * Calculate current operable state of the radio
-                     */
-                    pluginDbg("[UDP-server] recalculate operable state of radio "+radio_type+radio_nr);
-                    bool oldOperableValue = fgcom_local_client[iid].radios[radio_id].operable;
-                    if (fgcom_local_client[iid].radios[radio_id].frequency == "<del>") {
-                        fgcom_local_client[iid].radios[radio_id].operable = false; // deleted radios are never operable!
-                    } else {
-                        bool radio_serviceable = fgcom_local_client[iid].radios[radio_id].serviceable;
-                        bool radio_switchedOn  = fgcom_local_client[iid].radios[radio_id].power_btn;
-                        bool radio_powered     = (fgcom_local_client[iid].radios[radio_id].volts >= 1.0)? true:false; // some aircraft report boolean here, so treat 1.0 as powered
-                        fgcom_local_client[iid].radios[radio_id].operable = (radio_serviceable && radio_switchedOn && radio_powered);
-                    }
-                    if (fgcom_local_client[iid].radios[radio_id].operable != oldOperableValue ) parseResult[iid].radioData.insert(radio_id);
                 }
                 
                 

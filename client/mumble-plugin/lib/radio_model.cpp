@@ -33,6 +33,25 @@
 #include "radio_model_uhf.cpp"
 
 
+/*
+* First some utitliy functions
+*/
+
+// Calculate and store current operable state of a radio
+bool fgcom_radio_updateOperable(fgcom_radio &r){
+    bool oldOperableValue = r.operable;
+    if (r.frequency == "<del>") {
+        r.operable = false; // deleted radios are never operable!
+    } else {
+        bool serviceable = r.serviceable;
+        bool switchedOn  = r.power_btn;
+        bool powered     = (r.volts >= 1.0)? true:false; // some aircraft report boolean here, so treat 1.0 as powered
+        r.operable = (serviceable && switchedOn && powered);
+    }
+    
+    return (r.operable != oldOperableValue);
+}
+
 
 /****************************************************/
 /*          Implement base class                    */
