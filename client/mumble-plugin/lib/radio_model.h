@@ -86,6 +86,13 @@ struct fgcom_radiowave_freqConvRes {
 };
 
 
+/*
+* Calculate and store current operable state of a radio
+* 
+* returns wether the given radio was updated or not
+*/
+bool fgcom_radio_updateOperable(fgcom_radio &r);
+
 
 /*
  * FGCom Radiowave model abstract base class definition.
