@@ -99,6 +99,19 @@ TEST_CASE( "Radio Model", "25/8.33kHz frq parsing check" ) {
 
     };
     
+    SECTION( "two decimals (25kHz channel names)" ) {
+        std::vector<testSetEntry> checkThis = {
+            {"123.10", "123.1000"},
+            {"123.12", "123.1250"},
+            {"123.15", "123.1500"},
+            {"123.17", "123.1750"},
+        };
+        for(const testSetEntry& entry: checkThis) {
+            std::unique_ptr<FGCom_radiowaveModel> frq_model = FGCom_radiowaveModel::selectModel(entry.given);
+            REQUIRE(frq_model->conv_chan2freq(entry.given) == entry.expected);
+        }
+    }
+    
     SECTION( "three decimals" ) {
         for(const testSetEntry& entry: checkThis) {
             std::unique_ptr<FGCom_radiowaveModel> frq_model = FGCom_radiowaveModel::selectModel(entry.given);
