@@ -116,12 +116,14 @@ public:
         } else if (std::regex_match(frq, std::regex("^\\d+\\.\\d$") )) {
             // we have some MHz frequency like "123.3". We ensure a frequency with three decimals.
             frq = frq+"00";
-//             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): added two decimal: " << frq << std::endl;
-        } else if (std::regex_match(frq, std::regex("^(\\d+)\\.(\\d)(\\d)$") )) {
+            //std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): added two decimal: " << frq << std::endl;
+        } else if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d)(\\d)$") )) {
             // we have a 25kHz shortened channel name like "123.35". Valid endings are 0, 2, 5, 7
-            // just convert the decimals to three, and convert later
-            frq = frq+"0";
-//             std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): 25khz short name detected (added one decimal): " << frq << std::endl;
+            // just convert the decimals to three, and convert later.
+            // if the last digit is 2 or 7, we need to convert to a "hidden 5" (25kHz channel name, x.12 -> x.125)
+            std::string ext = (sm[3] == "2" || sm[3] == "7")? "5": "0";
+            frq = frq + ext;
+    //        std::cout << "FGCom_radiowaveModel_VHF::conv_chan2freq(): 25khz short name detected (added one decimal="+ext+"): " << frq << std::endl;
         }
 
         if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d)(\\d)(\\d)$") )) {
