@@ -1,6 +1,6 @@
 # Plot the statstics file from the stats bot to PNG format
 #
-# invoke using: `gnuplot -e "file = 'usage.stats'" stats2png.gnuplot > usage.png`
+# invoke using: `gnuplot -e "filename = 'usage.stats'" stats2png.gnuplot > usage.png`
 
 set terminal png
 set autoscale
