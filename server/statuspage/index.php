@@ -53,13 +53,30 @@ $ini_config = sanitize($ini_config);
 * This mode will show the gnuplot processed result of the status bot stats file.
 * The needed file is generated from the status bot when invoking it with the --stats parameter.
 * You need to enable this feature in the config file.
+*
+* The displayed timeframe defaults to the last week, but may be altered using the following GET-parameters.
+* Timestamps are in YYYYmmdd[HHMM] format.
+*  - last:      ammount of hours to display from now into the past
+*  - from:      fixing the selected timeframe start to this timestamp ('last' will be ignored obviously)
+*  - to:        fixing the selected timeframe end to this timestamp
+*
+* Examples:
+*   ?usage                             displays the rolling last week
+*   ?usage&last=24                     displays the rolling last day
+*   ?usage&from=20210101&to=20210131   displays Jan 2021
 */
 if (array_key_exists('usage', $_GET)) {
     if (!$ini_config['ui']['gnuplot_source']) die("ERROR: Feature not enabled in config. Enable 'gnuplot_source' option.");
     if (!is_readable($ini_config['ui']['gnuplot_source'])) die("ERROR:".$ini_config['ui']['gnuplot_source']." not readbale or existing!");
     $statfile_p = escapeshellcmd($ini_config['ui']['gnuplot_source']);
 
-    $handle = popen("gnuplot -e 'filename=\"".$statfile_p."\"' stats2png.gnuplot", 'r');
+    // parse timing parameters
+    $time_one_week_in_seconds = 7*24*60*60; // one week in seconds
+    $time_delta = (preg_match('/^\d+$/', $_GET['last']))? $_GET['last']*60*60 +900 : $time_one_week_in_seconds;
+    $time_to    = (preg_match('/^\d+$/', $_GET['to']))?   $_GET['to']         : gmdate("YmdHis", time());
+    $time_from  = (preg_match('/^\d+$/', $_GET['from']))? $_GET['from']       : gmdate("YmdHis", time()-$time_delta);
+
+    $handle = popen("gnuplot -e 'filename=\"".$statfile_p."\"; timeselect_from = \"".$time_from."\"; timeselect_to = \"".$time_to."\"' stats2png.gnuplot", 'r');
     $firstBytes = fread($handle, 1024);
     if (!preg_match('/^.PNG/', $firstBytes)) die("ERROR generating image invoking gnuplot: ".$firstBytes);
 
