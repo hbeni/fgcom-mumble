@@ -105,13 +105,14 @@ void fgcom_setPluginActive(bool active) {
         if (fgcom_inSpecialChannel) {
             pluginLog("plugin handling deactivated");
             mumAPI.log(ownPluginID, "plugin handling deactivated");
+	
+            // restore old transmission mode
+            merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, fgcom_prevTransmissionMode);
+        
+            // disable PTT overwrite
+            merr = mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
         }
         
-        // restore old transmission mode
-        merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, fgcom_prevTransmissionMode);
-        
-        // disable PTT overwrite
-        merr = mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
     }
     
     fgcom_inSpecialChannel = active;
