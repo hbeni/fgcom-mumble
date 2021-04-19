@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.6.0"
+fgcom.botversion  = "1.6.1"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -149,7 +149,7 @@ local isClientTalkingToUs = function(user)
                 local record_tgtChn = ""
                 _, _, record_tgtFrq = radio.frequency:find("^RECORD_(.+)")
                 _, _, record_tgtChn = radio.dialedFRQ:find("^RECORD_(.+)")
-                if record_tgtFrq and radio.ptt then
+                if record_tgtFrq and radio.ptt == "1" then
                     -- remote is on Recording-TGT frequency AND his ptt is active
                     remote.record_mode = "NORMAL"
                     remote.record_tgt_frq = record_tgtFrq
@@ -159,7 +159,7 @@ local isClientTalkingToUs = function(user)
                 end
                 
                 -- FGCom ECHOTEST Frequency recording request
-                if (radio.frequency:find("^910$") or radio.frequency:find("^910.0+$")) and radio.ptt then
+                if (radio.frequency:find("^910$") or radio.frequency:find("^910.0+$")) and radio.ptt == "1" then
                     -- remote is on echotest-frequency AND his ptt is active
                     remote.record_mode = "ECHOTEST"
                     remote.record_tgt_frq = "910.00"
