@@ -152,7 +152,7 @@ local generateOutData = function()
             for radio_id,radio in pairs(user.radios) do
                 fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."', dialedFRQ='"..radio.dialedFRQ.."', operable="..radio.operable)
                 if radio.frequency ~= "<del>" then
-                    table.insert(userData.radios, radio)
+                    table.insert(userData.radios, radio_id, radio)
                 end
             end
             userData.lat = user.lat
