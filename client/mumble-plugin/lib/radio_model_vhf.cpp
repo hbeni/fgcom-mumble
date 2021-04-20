@@ -102,7 +102,7 @@ public:
     * @return frequency string of corresponding real wave frequency, like "118.0250"
     */
     std::string conv_chan2freq(std::string frq) {
-        std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+        setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
         
         std::smatch sm;
         if (std::regex_match(frq, sm, std::regex("^\\d+(\\.?)$") )) {
@@ -189,7 +189,7 @@ public:
     * @return std::string the channel name
     */
     std::string conv_freq2chan(std::string frq) {
-        std::setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
+        setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
         
         std::smatch sm;
         if (std::regex_match(frq, sm, std::regex("^(\\d+)\\.(\\d\\d\\d\\d+)$") )) {
