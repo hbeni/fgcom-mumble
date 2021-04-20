@@ -138,7 +138,7 @@ bool fgcom_isConnectedToServer() {
 }
 
 void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t tgtUser) {
-    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     std::string dataID("");  // FGCOM<something>
     std::string message(""); // the message as sting data (yeah, i'm lazy but it parses so easily and is human readable and therefore easy to debug)
     
@@ -317,7 +317,7 @@ std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
 std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
 bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data) {
     // Handle the incoming data (if it belongs to us)
-    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     
     if (dataID.substr(0,5) == "FGCOM") {
         // Data is for our plugin

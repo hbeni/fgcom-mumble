@@ -82,7 +82,7 @@ void fgcom_rdf_registerSignal(std::string rdfID, fgcom_rdfInfo rdfInfo) {
  * For that we inspect all recorded RDF info of this iteration.
  */
 std::string fgcom_rdf_generateMsg(std::string selectedHost, uint16_t selectedPort) {
-    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     fgcom_rdfInfo_mtx.lock();
     
     std::vector<std::string> processed;

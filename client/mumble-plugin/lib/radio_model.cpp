@@ -90,7 +90,7 @@ std::unique_ptr<FGCom_radiowaveModel> FGCom_radiowaveModel::selectModel(std::str
  * Extract numeric frequency from string and clean string from leading zeroes/spaces
  */
 fgcom_radiowave_freqConvRes FGCom_radiowaveModel::splitFreqString(std::string frq) {
-    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     // construct default return value: use as-is
     struct fgcom_radiowave_freqConvRes res;
     res.frequency = frq;
@@ -224,7 +224,7 @@ float FGCom_radiowaveModel::getChannelAlignment(float frq1_real, float frq2_real
     if (width_kHz < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: width_kHz not defined!";
     if (core_kHz  < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: core_kHz not defined!";
     
-    std::setlocale(LC_NUMERIC,"C"); // decial points always ".", not ","
+    setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     float filter = 0.0; // no match in case of errors
     
     // TODO: currently a naive linear function, maybe adjust to curve:
