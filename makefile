@@ -52,7 +52,7 @@ radioGUI:
 		-DartifactId=jsimconnect \
 		-Dversion=0.8.0 \
 		-Dpackaging=jar
-	cd client/radioGUI/ && mvn clean package
+	cd client/radioGUI/ && mvn clean animal-sniffer:check package
 
 # relay everything else to the mumble-plugin makefile
 .DEFAULT:
