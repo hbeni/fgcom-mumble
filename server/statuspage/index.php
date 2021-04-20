@@ -243,8 +243,8 @@ foreach ($db_data["clients"] as $u) {
     $utpl->assignVar('alt', round(m2ft($u['alt']),0) );
     $utpl->assignVar('color',   (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? '#ff9900' : '#B0AAA1' );
     $utpl->assignVar('opacity', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? 0.35 : 0.15);
-    $utpl->assignVar('icon', 'userIcon');
-    if ($u['type'] == 'playback-bot') $utpl->assignVar('icon', 'radioIcon');
+    $utpl->assignVar('icon', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? 'userIcon' : 'userIcon_stale' );
+    if ($u['type'] == 'playback-bot') $utpl->assignVar('icon', (time()-$u['updated'] <= $ini_config['ui']['mark_stale_entries'])? 'radioIcon' : 'radioIcon_stale');
     
     $frq_str = "";
     foreach ($u['radios'] as $radio) {
