@@ -53,10 +53,25 @@
             popupAnchor:  [0, -10]
         }
     });
-    // define common markers
+    var userIcon_stale = L.Icon.extend({
+        options: {
+            iconUrl:      'inc/user_stale.png',
+            iconSize:     [12, 16],
+            iconAnchor:   [6, 8],
+            popupAnchor:  [0, -10]
+        }
+    });
     var radioIcon = L.Icon.extend({
         options: {
             iconUrl:      'inc/radio.png',
+            iconSize:     [20, 18],
+            iconAnchor:   [10, 9],
+            popupAnchor:  [0, -8]
+        }
+    });
+    var radioIcon_stale = L.Icon.extend({
+        options: {
+            iconUrl:      'inc/radio_stale.png',
             iconSize:     [20, 18],
             iconAnchor:   [10, 9],
             popupAnchor:  [0, -8]
