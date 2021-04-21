@@ -1,5 +1,7 @@
 .PHONY : all all-debug plugin libs test tools clean clean-all debug-on
 CC=g++
+CC_WIN=x86_64-w64-mingw32-g++-posix
+CC_WIN32=i686-w64-mingw32-g++-posix
 DEBUG=
 THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
@@ -76,7 +78,7 @@ clean:
 # clean compile results and binarys
 clean-all: clean
 	rm -f test/geotest test/frqtest
-	rm -f fgcom-mumble.so
+	rm -f fgcom-mumble*.so
 	rm -f *.exe test/*.exe *.dll lib/*.dll
 	rm -f test/catch2/*.o
 
@@ -88,8 +90,8 @@ all-win: plugin-win64 tools-win64 clean
 
 # build win64 test tools
 tools-win64:
-	x86_64-w64-mingw32-g++-posix -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
-	x86_64-w64-mingw32-g++-posix -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	$(CC_WIN) -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	$(CC_WIN) -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
 # build win64 plugin-dll and openssl
 plugin-win64: openssl-win plugin-win64-only
@@ -98,10 +100,10 @@ plugin-win32: openssl-win32 plugin-win32-only
 
 # just the windows plugin, no ssl in case we want to build repetively but want to avoid building openssl each time
 plugin-win64-only:
-	x86_64-w64-mingw32-g++-posix -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC_WIN) -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 plugin-win32-only:
-	i686-w64-mingw32-g++-posix -m32 -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble-x86_32.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC_WIN32) -m32 -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble-x86_32.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 
 # OpenSSL (static build)
@@ -139,7 +141,7 @@ release: clean-all test plugin plugin-win64 plugin-win32
 	rm -f fgcom-mumble-*.zip
 	cp releaseReadme.md fgcom-mumble-client-$(VERSION)/README.md
 	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-client-$(VERSION)/
-	cp fgcom-mumble.so  fgcom-mumble-client-$(VERSION)/plugin
+	cp fgcom-mumble*.so  fgcom-mumble-client-$(VERSION)/plugin
 	cp fgcom-mumble.dll fgcom-mumble-client-$(VERSION)/plugin
 	cp fgcom-mumble-x86_32.dll fgcom-mumble-client-$(VERSION)/plugin
 	cp fgcom-mumble.ini fgcom-mumble-client-$(VERSION)/plugin
