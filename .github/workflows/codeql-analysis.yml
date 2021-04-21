@@ -89,19 +89,20 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
 
-    - if: matrix.language == 'cpp'
-      name: 'Upload Artifact (plugin)'
-      uses: actions/upload-artifact@v2
-      with:
-        name: FGCom-mumble_plugin-${{github.sha}}
-        path: |
-          client/mumble-plugin/fgcom-mumble*.so
-          client/mumble-plugin/fgcom-mumble*.dll
-
-    - if: matrix.language == 'java'
-      name: 'Upload Artifact (radioGUI)'
-      uses: actions/upload-artifact@v2
-      with:
-        name: FGCom-mumble_radioGUI-${{github.sha}}
-        path: client/radioGUI/target/FGCom-mumble-radioGUI-*-jar-with-dependencies.jar
+# We have nighlies now :)
+#    - if: matrix.language == 'cpp'
+#      name: 'Upload Artifact (plugin)'
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: FGCom-mumble_plugin-${{github.sha}}
+#        path: |
+#          client/mumble-plugin/fgcom-mumble*.so
+#          client/mumble-plugin/fgcom-mumble*.dll
+#
+#    - if: matrix.language == 'java'
+#      name: 'Upload Artifact (radioGUI)'
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: FGCom-mumble_radioGUI-${{github.sha}}
+#        path: client/radioGUI/target/FGCom-mumble-radioGUI-*-jar-with-dependencies.jar
 
