@@ -133,6 +133,33 @@
 
 
    <!-- TODO: add more radios here. The plugin ignores not present radios automatically. -->
+   
+   
+   <!-- ADF radio / RDF -->
+   <chunk>
+    <name>adf-operable</name>
+    <type>string</type>
+    <format>COM3_PBT=%s</format> <!-- 0=inactive, 1=active -->
+    <node>/instrumentation/adf/operable</node>
+    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
+   </chunk>
+   <chunk>
+    <name>adf-volume</name>
+    <type>string</type>
+    <format>COM3_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
+    <node>/instrumentation/adf/fgcom-mumble/volume</node>
+   </chunk>
+   <chunk>
+    <name>adf-frequency</name>
+    <type>string</type>
+    <format>COM3_FRQ=%s</format>
+    <node>/instrumentation/adf/fgcom-mumble/selected-mhz</node>
+   </chunk>
+   <chunk>
+    <name>adf-enableRDF</name>
+    <type>string</type>
+    <format>COM3_RDF=1</format>
+   </chunk>
 
    
    <!-- FGCom 3.0 compatibility: /instrumentation/com[n]/ptt is never set from any aircraft except
@@ -186,9 +213,40 @@
     <format>CALLSIGN=%s</format>
     <node>/sim/multiplay/callsign</node>
    </chunk>
-   
 
   </output>
+
+
+  <input>
+    <line_separator>newline</line_separator>
+    <var_separator>,</var_separator>
+    <!-- RDF info format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98" -->
+    <chunk>
+        <name>RDF data: Callsign</name>
+        <type>string</type>
+        <node>/instrumentation/adf[0]/fgcom-mumble/input/callsign</node>
+    </chunk>
+    <chunk>
+        <name>RDF data: Frequency</name>
+        <type>string</type>
+        <node>/instrumentation/adf[0]/fgcom-mumble/input/frequency</node>
+    </chunk>
+    <chunk>
+        <name>RDF data: Direction</name>
+        <type>string</type>
+        <node>/instrumentation/adf[0]/fgcom-mumble/input/direction</node>
+    </chunk>
+    <chunk>
+        <name>RDF data: vertical angle</name>
+        <type>string</type>
+        <node>/instrumentation/adf[0]/fgcom-mumble/input/angle</node>
+    </chunk>
+    <chunk>
+        <name>RDF data: Quality</name>
+        <type>string</type>
+        <node>/instrumentation/adf[0]/fgcom-mumble/input/quality</node>
+    </chunk>
+  </input>
 
  </generic>
 </PropertyList>
