@@ -334,6 +334,10 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         fgcom_local_client[iid].radios[radio_id].channelWidth = std::stof(token_value);
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].channelWidth != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
+                    if (radio_var == "PUBLISH") {
+                        fgcom_local_client[iid].radios[radio_id].publish = (token_value == "1" || token_value == "true")? true : false;
+                        // must never be sended - it's a local config property
+                    }
                     
                 }
                 

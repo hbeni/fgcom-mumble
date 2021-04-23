@@ -45,6 +45,7 @@ struct fgcom_radio {
 	float squelch;       // squelch setting (cutoff signal below this quality)
 	bool  rdfEnabled;    // if radio can receive RDF information
 	float channelWidth;  // channel width in kHz
+	bool  publish;       // if set to false, radio will not be broadcast to other plugins (implies receive-only)
 	
 	fgcom_radio()  {
         frequency   = "";
@@ -59,6 +60,7 @@ struct fgcom_radio {
         squelch     = 0.1;
         rdfEnabled  = false;
         channelWidth = -1;   // let the selected radio model decide on defaults
+        publish     = true;
     };
 };
 

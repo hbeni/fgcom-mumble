@@ -206,19 +206,24 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                     notifyRemotes(iid, NTFY_COM, ri, tgtUser);
                 }
             } else {
-                pluginDbg("notifyRemotes():    send state of COM"+std::to_string(selector+1) );
-                dataID  = "FGCOM:UPD_COM:"+std::to_string(iid)+":"+std::to_string(selector);
-                message = "FRQ="+lcl.radios[selector].frequency+","
-                        + "CHN="+lcl.radios[selector].dialedFRQ+","
-                        //+ "VLT="+std::to_string(lcl.radios[selector].volts)+","
-                        //+ "PBT="+std::to_string(lcl.radios[selector].power_btn)+","
-                        //+ "SRV="+std::to_string(lcl.radios[selector].serviceable)+","
-                        + "PTT="+std::to_string(lcl.radios[selector].ptt)+","
-                        //+ "VOL="+std::to_string(lcl.radios[selector].volume)+","
-                        + "PWR="+std::to_string(lcl.radios[selector].pwr)+","
-                        + "OPR="+std::to_string(lcl.radios[selector].operable);
-                    // ^^ Save bandwith: We do not need all state on the other clients currently. Once we do, we can just uncomment this and the code to handle it is already implemented :)
-                    // Ah yeah, and we must uncomment the change-detection down at fgcom_udp_parseMsg(), otherwise the changes get not detected
+                if (lcl.radios[selector].publish) {
+                    pluginDbg("notifyRemotes():    send state of COM"+std::to_string(selector+1) );
+                    dataID  = "FGCOM:UPD_COM:"+std::to_string(iid)+":"+std::to_string(selector);
+                    message = "FRQ="+lcl.radios[selector].frequency+","
+                            + "CHN="+lcl.radios[selector].dialedFRQ+","
+                            //+ "VLT="+std::to_string(lcl.radios[selector].volts)+","
+                            //+ "PBT="+std::to_string(lcl.radios[selector].power_btn)+","
+                            //+ "SRV="+std::to_string(lcl.radios[selector].serviceable)+","
+                            + "PTT="+std::to_string(lcl.radios[selector].ptt)+","
+                            //+ "VOL="+std::to_string(lcl.radios[selector].volume)+","
+                            + "PWR="+std::to_string(lcl.radios[selector].pwr)+","
+                            + "OPR="+std::to_string(lcl.radios[selector].operable);
+                        // ^^ Save bandwith: We do not need all state on the other clients currently. Once we do, we can just uncomment this and the code to handle it is already implemented :)
+                        // Ah yeah, and we must uncomment the change-detection down at fgcom_udp_parseMsg(), otherwise the changes get not detected
+                } else {
+                    // do not send data for local-only radios
+                    return;
+                }
             }
             
             break;

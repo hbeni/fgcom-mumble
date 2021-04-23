@@ -60,6 +60,7 @@ void debug_out_internal_state() {
                     state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(lcl.radios[i].squelch)+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":  chan_width='"+std::to_string(lcl.radios[i].channelWidth)+"'\n";
                     state_str += "  Radio "+std::to_string(i)+": RDF_enabled='"+std::to_string(lcl.radios[i].rdfEnabled)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":     publish='"+std::to_string(lcl.radios[i].publish)+"'\n";
                 }
             }
         }
