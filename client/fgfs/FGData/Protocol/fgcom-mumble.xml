@@ -137,6 +137,18 @@
    
    <!-- ADF radio / RDF -->
    <chunk>
+    <!-- UDP RDF client port overwrite: This is needed, because FGFS currently
+         cannot assign the sending client port, but chooses a random one -->
+    <name>fgcom-udp-client-port</name>
+    <type>string</type>
+    <format>UDP_TGT_PORT=19991</format>
+   </chunk>
+   <chunk>
+    <name>adf-local-only</name>
+    <type>string</type>
+    <format>COM3_PUBLISH=0</format>
+   </chunk>
+   <chunk>
     <name>adf-operable</name>
     <type>string</type>
     <format>COM3_PBT=%s</format> <!-- 0=inactive, 1=active -->
