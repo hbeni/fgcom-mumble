@@ -191,14 +191,17 @@ var main = func( addon ) {
     var reinit_portChange = setlistener(mySettingsRootPath ~ "/port", reinitProtocol, 0, 0);
     
     var recalcADFVolume = func() {
-        var adf_vol = getprop("/instrumentation/adf[0]/volume-norm") or 0;
-        if (getprop("/instrumentation/adf[0]/mode") == "ant") {
+        # Reception depends on ident-audible and the volume knob
+        # ident-audible is supposed to be set from the audio panel
+        var adf_vol   = getprop("/instrumentation/adf[0]/volume-norm") or 0;
+        var adf_ident = getprop("/instrumentation/adf[0]/ident-audible") or 0;
+        if (adf_ident) {
             setprop("/instrumentation/adf[0]/fgcom-mumble/volume", adf_vol);
         } else {
             setprop("/instrumentation/adf[0]/fgcom-mumble/volume", 0);
         }
     }
-    var rdfModeChange = setlistener("/instrumentation/adf[0]/mode", recalcADFVolume, 1, 0);
+    var rdfModeChange = setlistener("/instrumentation/adf[0]/ident-audible", recalcADFVolume, 1, 0);
     var rdfVolChange  = setlistener("/instrumentation/adf[0]/volume-norm", recalcADFVolume, 0, 0);
     
     var recalcADFFrequency = setlistener("/instrumentation/adf[0]/frequencies/selected-khz", func(p) {
