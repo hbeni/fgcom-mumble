@@ -118,6 +118,7 @@ The Following fields are configuration options that change plugin behaviour.
 | Field            | Format | Description                             | Default    |
 |------------------|--------|-----------------------------------------|------------|
 | `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (details below: "*UDP client interface / RDF data*")   | `0`|
+| `COM`*n*`_PUBLISH`| Bool  | Set to `0` to prevent this radio from being published anymore. Use this at the first the radio field!  | `1`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
 | `AUDIO_HEAR_ALL` | Bool   | `1` will enable hearing of non-plugin users. | `0` |
 
