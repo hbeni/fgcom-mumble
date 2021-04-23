@@ -170,7 +170,7 @@ void fgcom_spawnUDPClient() {
             fgcom_client lcl = lcl_idty.second;
             
             // fetch+configure host+port for that identities current port config
-            if (lcl.clientHost == "" || lcl.clientPort <=0) {
+            if (lcl.clientHost == "" || lcl.clientTgtPort <=0) {
                 pluginDbg("[UDP-client] client sending skipped: no valid port config for identity="+std::to_string(iid));
                 continue;
             }
@@ -179,7 +179,7 @@ void fgcom_spawnUDPClient() {
             remoteServAddr.sin_family = AF_INET;
 
             //bzero(&(remoteServAddr.sin_zero), 8);     /* zero the rest of the struct */
-            remoteServAddr.sin_port = htons(lcl.clientPort);
+            remoteServAddr.sin_port = htons(lcl.clientTgtPort);
 #ifdef MINGW_WIN64
             remoteServAddr.sin_addr.s_addr = inet_addr(lcl.clientHost.c_str());
 #else
@@ -191,12 +191,12 @@ void fgcom_spawnUDPClient() {
 #endif
 
 
-            // Report if the identities port changed
-            if (fgcom_cliudp_portCfg[iid] == 0 || fgcom_cliudp_portCfg[iid] != lcl.clientPort) {
-                pluginLog("[UDP-client] client for '"+lcl.callsign+"' (iid="+std::to_string(iid)+") port="+std::to_string(fgcom_cliudp_portCfg[iid])+" switching to port "+std::to_string(lcl.clientPort));
-                mumAPI.log(ownPluginID, std::string("UDP sending for '"+lcl.callsign+"' to client "+lcl.clientHost+":"+std::to_string(lcl.clientPort)+" enabled").c_str());
+            // Report if the identities target port changed
+            if (fgcom_cliudp_portCfg[iid] == 0 || fgcom_cliudp_portCfg[iid] != lcl.clientTgtPort) {
+                pluginLog("[UDP-client] client for '"+lcl.callsign+"' (iid="+std::to_string(iid)+") port="+std::to_string(fgcom_cliudp_portCfg[iid])+" switching to port "+std::to_string(lcl.clientTgtPort));
+                mumAPI.log(ownPluginID, std::string("UDP sending for '"+lcl.callsign+"' to client "+lcl.clientHost+":"+std::to_string(lcl.clientTgtPort)+" enabled").c_str());
                 fgcom_cliudp_HostCfg[iid] = lcl.clientHost;
-                fgcom_cliudp_portCfg[iid] = lcl.clientPort;
+                fgcom_cliudp_portCfg[iid] = lcl.clientTgtPort;
             }
         
             // generate data.
@@ -213,7 +213,7 @@ void fgcom_spawnUDPClient() {
                         + "\n"
                         + udpdata;
     
-                pluginDbg("[UDP-client] client sending msg for iid="+std::to_string(iid)+" to client="+lcl.clientHost+":"+std::to_string(lcl.clientPort)+": '"+udpdata+"'");
+                pluginDbg("[UDP-client] client sending msg for iid="+std::to_string(iid)+" to client="+lcl.clientHost+":"+std::to_string(lcl.clientTgtPort)+": '"+udpdata+"'");
                 rc = sendto (fgcom_UDPClient_sockfd, udpdata.c_str(), strlen(udpdata.c_str()) + 1, 0,
                     (struct sockaddr *) &remoteServAddr,
                     sizeof (remoteServAddr));
@@ -227,7 +227,7 @@ void fgcom_spawnUDPClient() {
                 
             } else {
                 // no data generated: do not send anything.
-                pluginDbg("[UDP-client] client sending skipped: no data to send for iid="+std::to_string(iid)+" to client="+lcl.clientHost+":"+std::to_string(lcl.clientPort)+".");
+                pluginDbg("[UDP-client] client sending skipped: no data to send for iid="+std::to_string(iid)+" to client="+lcl.clientHost+":"+std::to_string(lcl.clientTgtPort)+".");
             }
         }
         

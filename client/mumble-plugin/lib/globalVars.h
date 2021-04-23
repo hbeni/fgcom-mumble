@@ -56,7 +56,8 @@ extern struct fgcom_config fgcom_cfg;
 // This represents a clients metadata
 struct fgcom_client {
     mumble_userid_t mumid;  // mumble client ID
-    uint16_t clientPort;    // client port of the identity, we may send packets to this port
+    uint16_t clientPort;    // client port of the identity, for identification
+    uint16_t clientTgtPort; // client port of the identity, we may send packets to this port
     std::string clientHost; // client host of the identity
     std::chrono::system_clock::time_point lastUpdate;       // when we received the last data
     std::chrono::system_clock::time_point lastNotification; // when we sent the last answer for incoming NTF_ASK packets

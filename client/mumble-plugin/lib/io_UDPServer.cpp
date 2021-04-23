@@ -180,7 +180,8 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     fgcom_local_client[iid]       = fgcom_client();
                     fgcom_local_client[iid].mumid = localMumId; // copy default id
                     fgcom_local_client[iid].clientHost = clientHost; // ensure valid and current clientHost
-                    fgcom_local_client[iid].clientPort = clientPort; // ensure valid and current clientPort
+                    fgcom_local_client[iid].clientPort = clientPort; // ensure valid and current clientPort for portmapper
+                    fgcom_local_client[iid].clientTgtPort = clientPort; // ensure valid starting clientTgtPort for udp client
                     pluginDbg("[UDP-server] new identity registered: iid="+std::to_string(iid)+"; clientHostPort="+clientHost+":"+std::to_string(clientPort));
                 } else {
                     // Update that we have received some data
@@ -319,9 +320,9 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // do not send this: its only ever local state!  parseResult[iid].radioData.insert(radio_id);
 
                         // start new UDP client thread if requested
-                        //pluginDbg("[UDP-server] UDP-client start thread check: registeredClientPort="+std::to_string(fgcom_local_client[iid].clientPort)+"; udpClientRunning="+std::to_string(udpClientRunning));
-                        if (fgcom_local_client[iid].clientPort > 0 && !udpClientRunning) {
-                            pluginDbg("[UDP-server] UDP-client requested: "+std::to_string(fgcom_local_client[iid].clientPort));
+                        //pluginDbg("[UDP-server] UDP-client start thread check: registeredClientTgtPort="+std::to_string(fgcom_local_client[iid].clientTgtPort)+"; udpClientRunning="+std::to_string(udpClientRunning));
+                        if (fgcom_local_client[iid].clientTgtPort > 0 && !udpClientRunning) {
+                            pluginDbg("[UDP-server] UDP-client requested: "+std::to_string(fgcom_local_client[iid].clientTgtPort));
                             std::thread udpClientThread(fgcom_spawnUDPClient);
                             udpClientThread.detach();
                             //std::cout << "FGCOM: udp client started; id=" << udpClientThread_id << std::endl;
@@ -411,14 +412,11 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                  * Plugin Configuration
                  */
                 if (token_key == "UDP_TGT_PORT") {
-                    // UDP client Port change request: we need to adjust portmapper and local port
-                    fgcom_udp_portMap.erase(clientHostPort); 
-                    clientPort = std::stoi(token_value);
-                    std::pair<std::string,uint16_t> new_clientHostPort(clientHost, clientPort);
-                    fgcom_local_client[iid].clientPort = clientPort;
-                    fgcom_udp_portMap[new_clientHostPort] = iid; // add info to portmapper, so it reports the right iid
-                    if (udpClientRunning) {
-                        pluginDbg("[UDP-server] client port info change: iid="+std::to_string(iid)+"; port="+std::to_string(fgcom_local_client[iid].clientPort));
+                    // UDP client target Port change request
+                    uint16_t oldValue = fgcom_local_client[iid].clientTgtPort;
+                    fgcom_local_client[iid].clientTgtPort = std::stoi(token_value);
+                    if (udpClientRunning && oldValue != fgcom_local_client[iid].clientTgtPort) {
+                        pluginDbg("[UDP-server] client port info change: iid="+std::to_string(iid)+"; port="+std::to_string(fgcom_local_client[iid].clientTgtPort));
                         // running thread will handle the change to fgcom_local_client[iid].clientPort
                     }
                 }

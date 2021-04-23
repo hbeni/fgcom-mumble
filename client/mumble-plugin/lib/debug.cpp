@@ -37,6 +37,7 @@ void debug_out_internal_state() {
             
             state_str += lcl_prefix + "location: LAT="+std::to_string(lcl.lat)+" LON="+std::to_string(lcl.lon)+" ALT="+std::to_string(lcl.alt)+"\n";
             state_str += lcl_prefix + "clientHostPort="+lcl.clientHost+":"+std::to_string(lcl.clientPort)+"\n";
+            state_str += lcl_prefix + "clientTgtPort="+lcl.clientHost+":"+std::to_string(lcl.clientTgtPort)+"\n";
             
             std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(lcl.lastUpdate);
             std::string lastUpdate_str(30, '\0');
@@ -44,7 +45,7 @@ void debug_out_internal_state() {
             std::string lastUpdate_str_f(lastUpdate_str.c_str());
             state_str += lcl_prefix + "lastUpdate="+lastUpdate_str_f+"\n";
             
-            state_str += lcl_prefix + std::to_string(lcl.radios.size()) + "radios registered\n";
+            state_str += lcl_prefix + std::to_string(lcl.radios.size()) + " radios registered\n";
             if (lcl.radios.size() > 0) {
                 for (int i=0; i<lcl.radios.size(); i++) {
                     state_str += "  Radio "+std::to_string(i)+":   frequency='"+lcl.radios[i].frequency+"'\n";
@@ -86,6 +87,7 @@ void debug_out_internal_state() {
                 std::string lastNotify_str_f(lastNotify_str.c_str());
                 state_str += rmt_prefix + "lastNotify="+lastNotify_str_f+"\n";
             
+                state_str += lcl_prefix + std::to_string(rmt.radios.size()) + " radios registered\n";
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
                         state_str += "  Radio "+std::to_string(i)+":   frequency='"+rmt.radios[i].frequency+"'\n";
