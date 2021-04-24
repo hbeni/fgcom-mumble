@@ -204,7 +204,7 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 
 Compiling the plugin
 ======================
-The FGCom-mumble client plugin needs to be in binary form. If you want to use the latest code from github, you can compile yurself.  
+The FGCom-mumble client plugin needs to be in binary form. If you want to use the latest code from github, you can compile yourself. The makefile is tailored to be used mainly on linux, but can be used in windows and macOS too.  
 
 - Prerequisites:
   - `git`, `make`, `g++`, `mingw32` (for windows build)
@@ -225,3 +225,21 @@ Other interesting compile targets:
   - `make plugin-win64` will build it for windows
   - `make release` builds zip release files containing linux/windows binaries
   - `make test` builds and runs catch2-unittests
+
+
+Windows native build
+--------------------
+The makefile works well on Windows with cygwin64 with mingw32.  
+You just need to use `x86_64-w64-mingw32-g++` instead of `x86_64-w64-mingw32-g++-posix`:
+
+- 64bit: `make CC_WIN=x86_64-w64-mingw32-g++ plugin-win64`
+- 32bit: `make CC_WIN32=i686-w64-mingw32-g++ plugin-win32`
+
+
+MacOS native build
+------------------
+You need to explicitely use the _g++-10_ compiler, as the default _g++_ is linked to _clang_. Also you need to adjust the path to the openssl distribution:
+
+`make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
+
+After compilation, rename the plugin binary to `fgcom-mumble-macOS.so` to stay compatible with the official releases.
