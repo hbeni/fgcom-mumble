@@ -38,6 +38,7 @@ jobs:
       run: |
         make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
         mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.so
+        xattr -dr com.apple.quarantine fgcom-mumble-macOS.so
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
@@ -133,6 +134,7 @@ jobs:
       run: |
         make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
         mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.so
+        xattr -dr com.apple.quarantine fgcom-mumble-macOS.so
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
