@@ -219,7 +219,7 @@ Falls du andere Piloten nicht hören kannst, oder nicht senden kannst, prüfe di
 Das Plugin selbst Kompilieren
 =============================
 Das FGCom-mumble plugin muss in Maschinensprache vorliegen, um von Mumble geladen werden zu können.
-Um den aktuellsten Quellcode zu benutzen, kannst du das Plugin selbst übersetzen.  
+Um den aktuellsten Quellcode zu benutzen, kannst du das Plugin selbst übersetzen. Das makefile ist primär für Linux, funktioniert aber auch für Windows und macOS.  
 
 - Vorraussetzungen:
   - `git`, `make`, `g++`, `mingw32` (für Windows-Erzeugung unter Linux)
@@ -239,3 +239,21 @@ Weitere interessante make buildtargets:
   - `make plugin-win64` baut das Plugin für Windows
   - `make release` baut ein Releasepaket (je ein `tar.gz` und `zip`, dass die Linux/Windows Binärdateien enthält)
   - `make test` baut und startet die catch2-unittests
+
+
+Windows nativer build
+---------------------
+Das makefile funktioniert auch utner Windows mit cygwin64 und mingw32.  
+Du musst lediglich einen anderen Compiler setzen:
+
+- 64bit: `make CC_WIN=x86_64-w64-mingw32-g++ plugin-win64`
+- 32bit: `make CC_WIN32=i686-w64-mingw32-g++ plugin-win32`
+
+
+MacOS nativer build
+-------------------
+Du musst den Compiler _g++-10_ explizit setzen, da das Standard _g++_-Kommando ein alias auf _clang_ ist. Darüberhinaus musst du den OpenSSL-Pfad anpassen:
+
+`make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
+
+Nach dem bauen benennst du die Plugindate am besten in `fgcom-mumble-macOS.so` um, um kompatibel mit den offiziellen Releases zu bleiben.
