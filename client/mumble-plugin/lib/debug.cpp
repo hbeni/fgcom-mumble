@@ -88,7 +88,7 @@ void debug_out_internal_state() {
                 std::string lastNotify_str_f(lastNotify_str.c_str());
                 state_str += rmt_prefix + "lastNotify="+lastNotify_str_f+"\n";
             
-                state_str += lcl_prefix + std::to_string(rmt.radios.size()) + " radios registered\n";
+                state_str += rmt_prefix + std::to_string(rmt.radios.size()) + " radios registered\n";
                 if (rmt.radios.size() > 0) {
                     for (int i=0; i<rmt.radios.size(); i++) {
                         state_str += "  Radio "+std::to_string(i)+":   frequency='"+rmt.radios[i].frequency+"'\n";
