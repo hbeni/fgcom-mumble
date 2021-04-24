@@ -49,10 +49,12 @@ Setup requirements
 
 Installation
 -----------------------
-The release ZIP contains all binary plugins for all supported operating systems in the `plugin` folder:
+The release ZIP contains all binary plugins for all supported operating systems in the `plugin` folder:  
   - `fgcom-mumble.so` for Linux (64 bit)
   - `fgcom-mumble.dll` for Windows (64 bit)
   - `fgcom-mumble-x86_32.dll` for Windows (32 bit)
+  - `fgcom-mumble-macOS.so` for MacOs;  
+    :warning: The file lacks certification, so you need to put it out of quarantine manually: `xattr -dr com.apple.quarantine fgcom-mumble-macOS.so`. Otherwise you get an ugly warning.
 
 Several installation procedures exist:
 
