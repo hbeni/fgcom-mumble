@@ -37,13 +37,13 @@ jobs:
     - name: Build Plugin
       run: |
         make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
-        mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.so
+        mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.bundle
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
       with:
         name: macPlugin
-        path: fgcom-mumble-macOS.so
+        path: fgcom-mumble-macOS.bundle
         retention-days: 1
 
 
@@ -92,13 +92,13 @@ jobs:
     - name: Add macPlugin to release files
       run: |
         mkdir dist
-        mv *.zip fgcom-mumble-macOS.so dist/
+        mv *.zip fgcom-mumble-macOS.bundle dist/
         cd dist/
-        zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.so
+        zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.bundle
         mkdir fgcom-mumble-client-${PLUGIN_VERSION}/
         mkdir fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        cp fgcom-mumble-macOS.so fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        zip -u fgcom-mumble-client-${PLUGIN_VERSION}.zip fgcom-mumble-client-${PLUGIN_VERSION}/plugin/fgcom-mumble-macOS.so
+        cp fgcom-mumble-macOS.bundle fgcom-mumble-client-${PLUGIN_VERSION}/plugin
+        zip -u fgcom-mumble-client-${PLUGIN_VERSION}.zip fgcom-mumble-client-${PLUGIN_VERSION}/plugin/fgcom-mumble-macOS.bundle
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
@@ -132,13 +132,13 @@ jobs:
     - name: Build Plugin
       run: |
         make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
-        mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.so
+        mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.bundle
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
       with:
         name: macPlugin-debug
-        path: fgcom-mumble-macOS.so
+        path: fgcom-mumble-macOS.bundle
         retention-days: 1
 
 
@@ -187,13 +187,13 @@ jobs:
     - name: Add macPlugin to release files
       run: |
         mkdir dist
-        mv *.zip fgcom-mumble-macOS.so dist/
+        mv *.zip fgcom-mumble-macOS.bundle dist/
         cd dist/
-        zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.so
+        zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.bundle
         mkdir fgcom-mumble-client-${PLUGIN_VERSION}/
         mkdir fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        cp fgcom-mumble-macOS.so fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        zip -u fgcom-mumble-client-${PLUGIN_VERSION}.zip fgcom-mumble-client-${PLUGIN_VERSION}/plugin/fgcom-mumble-macOS.so
+        cp fgcom-mumble-macOS.bundle fgcom-mumble-client-${PLUGIN_VERSION}/plugin
+        zip -u fgcom-mumble-client-${PLUGIN_VERSION}.zip fgcom-mumble-client-${PLUGIN_VERSION}/plugin/fgcom-mumble-macOS.bundle
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
