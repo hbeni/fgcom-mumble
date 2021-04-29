@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.5.0"
+fgcom.botversion = "1.5.1"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -268,8 +268,9 @@ playbackTimer_func = function(t)
             fgcom.dbg("Looped timer: update voice buffer from file")
     
             -- Read/update FGCS data file
-            lastHeader, voiceBuffer = readFGCSSampleFile(sample)
-            if not lastHeader then
+            local lastHeader_tmp
+            lastHeader_tmp, voiceBuffer = readFGCSSampleFile(sample)
+            if not lastHeader_tmp then
                 -- file could not be loaded - most probably it got deleted.
                 -- shut down the bot.
                 fgcom.log("'"..sample.."' not readable or no FGCS file, probably deleted from filesystem.")
@@ -280,6 +281,7 @@ playbackTimer_func = function(t)
             else
                 -- File was successfully reloaded from disk
                 fgcom.dbg("update from file successful")
+                lastHeader = lastHeader_tmp
         
                 -- check if the file is still valid
                 local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
