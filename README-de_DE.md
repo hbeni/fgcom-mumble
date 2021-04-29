@@ -203,6 +203,7 @@ Fehlerbehebung
 Falls du andere Piloten nicht hören kannst, oder nicht senden kannst, prüfe die folgenden Punkte:
 
 - Stelle sicher, dass mumle an sich gut funktioniert (d.h. du kannst ohne Plugin gut senden und hören)
+- Um zu senden, musst du PTT des Funkgerätes aktivieren, es reicht nicht, mumbles eingebautes PTT-kürzel zu benutzen!
 - Versuche, deine Einstelllungen mit dem FGCOM-Echo bot zu prüfen Frequenz `910.00` anwählen und übertragen; dies benötigt allerdings den Recorder-Bot am Server)
 - Stelle sicher, dass du nicht versehentlich überträgst, wenn du andere hören möchtest (Funkgeräte sind Halbduplex, d.h. nur einer kann gleichzeitig senden -> Prüfe dein mumble-Symbol, um zu sehen, dass du aktuell nicht übeträgst)
 - Prüfe nochmal die angewählte Frequenz und Lautstärkeeinstellung des Funkgerätes

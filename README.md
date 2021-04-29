@@ -189,6 +189,7 @@ Troubleshooting
 When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
 
 - Make sure, your mumble is operational otherwise (so you can talk with others)
+- To send, you need to activate the PTT of the radio, pressing mumbles PTT-key is not enough.
 - Try to check against the FGCOM-Echo bot (tune 910.00 and transmit something; but needs the bot manager alive on the server)
 - Check that you are not transmitting when you expect incoming messages (Radios are halfduplex -> look at your mumble symbol)
 - Recheck the tuned frequencies and volume of radio and, if present, audio panel
