@@ -53,8 +53,7 @@ The release ZIP contains all binary plugins for all supported operating systems 
   - `fgcom-mumble.so` for Linux (64 bit)
   - `fgcom-mumble.dll` for Windows (64 bit)
   - `fgcom-mumble-x86_32.dll` for Windows (32 bit)
-  - `fgcom-mumble-macOS.so` for MacOs;  
-    :warning: The file lacks certification, so you need to put it out of quarantine manually: `xattr -dr com.apple.quarantine fgcom-mumble-macOS.so`. Otherwise you get an ugly warning.
+  - `fgcom-mumble-macOS.bundle` for MacOs
 
 Several installation procedures exist:
 
@@ -244,4 +243,4 @@ You need to explicitely use the _g++-10_ compiler, as the default _g++_ is linke
 
 `make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
 
-After compilation, rename the plugin binary to `fgcom-mumble-macOS.so` to stay compatible with the official releases.
+After compilation, rename the plugin binary to `fgcom-mumble-macOS.bundle` to stay compatible with the official releases.
