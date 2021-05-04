@@ -183,7 +183,14 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                     std::string verStr = std::to_string(fgcom_release_latest.version.major)
                                         + "." + std::to_string(fgcom_release_latest.version.minor)
                                         + "." + std::to_string(fgcom_release_latest.version.patch);
-                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-client-binOnly-"+verStr+".zip";
+                    //fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-client-binOnly-"+verStr+".zip";
+                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-"+verStr+".zip";
+                    // ^^ NOTICE: In the future the mumble plugin updater may need a specially prepared binary zip release file.
+                    //            Currently this is not the case, and the updater traverses the ZIP he's given to find a matching
+                    //            Shared library object for the operating system.
+                    //            Thus, we just download the normal release zip for now. This makes our release process easier and
+                    //            helps the end user to download the correct asset.
+                    //      /!\   See here, if that's still the case: https://github.com/mumble-voip/mumble/blob/master/src/mumble/PluginInstaller.cpp#L81-L127
 
                 } else {
                     // something went wrong.

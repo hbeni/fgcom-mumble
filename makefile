@@ -8,10 +8,26 @@ release: release-server release-radioGUI
 	@echo "GITVER: $(GITVER)  PLUGINVER:$(PLUGINVER)"
 	@echo "-------------------------------------------------"
 	$(MAKE) -C client/mumble-plugin/ release
-	mv client/mumble-plugin/*.zip .
+	cp client/mumble-plugin/*.zip .
+	
+	# unzip and build new release tree
+	unzip fgcom-mumble-client-$(PLUGINVER).zip
+	rm fgcom-mumble-client-$(PLUGINVER).zip
+	mv fgcom-mumble-client-$(PLUGINVER) fgcom-mumble-$(PLUGINVER)
+	
+	# combine radio gui into release
+	mkdir fgcom-mumble-$(PLUGINVER)/radioGUI
+	cp client/radioGUI/target/FGCom-mumble-radioGUI-*-jar-with-dependencies.jar fgcom-mumble-$(PLUGINVER)/radioGUI/FGCom-mumble-radioGUI.jar
+	cp client/radioGUI/Readme* fgcom-mumble-$(PLUGINVER)/radioGUI/
+	
+	# repackage release
+	zip -r fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-$(PLUGINVER)/
+	rm -rf fgcom-mumble-$(PLUGINVER)/
+	
+	# print some summary
 	@echo "\nRelease $(PLUGINVER) built successfully:"
-	@ls -alh *client*$(PLUGINVER)* *server*$(PLUGINVER)* *radioGUI*$(PLUGINVER)*
-	@md5sum *client*$(PLUGINVER)* *server*$(PLUGINVER)* *radioGUI*$(PLUGINVER)*
+	@ls -alh *$(PLUGINVER)*.zip
+	@md5sum *$(PLUGINVER)*.zip
 
 release-server:
 	# Build server components release

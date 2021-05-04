@@ -11,7 +11,7 @@ Instead of using this addon, you can also invoke the protocol manually:
 
 Installation
 ------------
-After unzipping the FGCom-mumble release package, you just need to add the `fgfs` folder to your launchers *Add-ons* module list.  
+After unzipping the FGCom-mumble release package, you just need to add the `fgfs-addon` folder to your launchers *Add-ons* module list.  
 The addon is activated automatically, so flightgear will try to connect to mumble with the default parameters.
 
 

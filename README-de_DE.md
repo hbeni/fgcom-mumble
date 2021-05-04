@@ -54,7 +54,7 @@ Vorraussetzungen
 
 Installation
 -----------------------
-Das ZIP Releasepaket enthält die plugins für alle unterstützten Betriebssysteme im `plugin`-Ordner:  
+Das ZIP Releasepaket enthält die plugins für alle unterstützten Betriebssysteme im `mumble-plugin`-Ordner:  
   - `fgcom-mumble.so` for Linux (64 bit)
   - `fgcom-mumble.dll` for Windows (64 bit)
   - `fgcom-mumble-x86_32.dll` for Windows (32 bit)
@@ -120,8 +120,8 @@ Weitere Details stehen im Readme des RadioGUI.
 
 
 ### Flightgear spezifisch
-- Füge den ordner `fgfs` aus dem entpackten client-release als Addon im Launcher hinzu.
-- Aktiviere das [FGFS-addon](client/fgfs/Readme.md) in deinem Launcher.
+- Füge den ordner `fgfs-addon` aus dem entpackten client-release als Addon im Launcher hinzu.
+- Aktiviere das [FGFS-addon](client/fgfs-addon/Readme.md) in deinem Launcher.
 - FlightGear sendet dann automatisch die notwendigen Daten an mumble (mit Standardparametern; diese können über das *Mehrspieler*-Menü geändert werden).
 
 Die FGFS-Protokolldefinition unterstützt alte 25kHz- genauso wie neuere 8.3kHz Funkgeräte.
