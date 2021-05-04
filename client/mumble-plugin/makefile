@@ -145,7 +145,6 @@ release: clean-all test plugin plugin-win64 plugin-win32
 	cp fgcom-mumble.dll fgcom-mumble-client-$(VERSION)/mumble-plugin
 	cp fgcom-mumble-x86_32.dll fgcom-mumble-client-$(VERSION)/mumble-plugin
 	cp fgcom-mumble.ini fgcom-mumble-client-$(VERSION)/mumble-plugin
-	cp -r ../fgfs-addon/ fgcom-mumble-client-$(VERSION)
 	zip -r fgcom-mumble-client-$(VERSION).zip fgcom-mumble-client-$(VERSION)
 	rm -rf fgcom-mumble-client-$(VERSION)
 	
