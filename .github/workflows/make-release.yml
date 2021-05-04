@@ -95,10 +95,10 @@ jobs:
         mv *.zip fgcom-mumble-macOS.bundle dist/
         cd dist/
         zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.bundle
-        mkdir fgcom-mumble-client-${PLUGIN_VERSION}/
-        mkdir fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        cp fgcom-mumble-macOS.bundle fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        zip -u fgcom-mumble-client-${PLUGIN_VERSION}.zip fgcom-mumble-client-${PLUGIN_VERSION}/plugin/fgcom-mumble-macOS.bundle
+        mkdir fgcom-mumble-${PLUGIN_VERSION}/
+        mkdir fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
+        cp fgcom-mumble-macOS.bundle fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
+        zip -u fgcom-mumble-${PLUGIN_VERSION}.zip fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin/fgcom-mumble-macOS.bundle
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
@@ -190,10 +190,10 @@ jobs:
         mv *.zip fgcom-mumble-macOS.bundle dist/
         cd dist/
         zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.bundle
-        mkdir fgcom-mumble-client-${PLUGIN_VERSION}/
-        mkdir fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        cp fgcom-mumble-macOS.bundle fgcom-mumble-client-${PLUGIN_VERSION}/plugin
-        zip -u fgcom-mumble-client-${PLUGIN_VERSION}.zip fgcom-mumble-client-${PLUGIN_VERSION}/plugin/fgcom-mumble-macOS.bundle
+        mkdir fgcom-mumble-${PLUGIN_VERSION}/
+        mkdir fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
+        cp fgcom-mumble-macOS.bundle fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
+        zip -u fgcom-mumble-${PLUGIN_VERSION}.zip fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin/fgcom-mumble-macOS.bundle
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2

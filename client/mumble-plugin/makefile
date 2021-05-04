@@ -137,15 +137,15 @@ release: clean-all test plugin plugin-win64 plugin-win32
 	
 	# Linux + Windows combined
 	mkdir fgcom-mumble-client-$(VERSION)
-	mkdir fgcom-mumble-client-$(VERSION)/plugin
+	mkdir fgcom-mumble-client-$(VERSION)/mumble-plugin
 	rm -f fgcom-mumble-*.zip
 	cp releaseReadme.md fgcom-mumble-client-$(VERSION)/README.md
 	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-client-$(VERSION)/
-	cp fgcom-mumble*.so  fgcom-mumble-client-$(VERSION)/plugin
-	cp fgcom-mumble.dll fgcom-mumble-client-$(VERSION)/plugin
-	cp fgcom-mumble-x86_32.dll fgcom-mumble-client-$(VERSION)/plugin
-	cp fgcom-mumble.ini fgcom-mumble-client-$(VERSION)/plugin
-	cp -r ../fgfs/ fgcom-mumble-client-$(VERSION)
+	cp fgcom-mumble*.so  fgcom-mumble-client-$(VERSION)/mumble-plugin
+	cp fgcom-mumble.dll fgcom-mumble-client-$(VERSION)/mumble-plugin
+	cp fgcom-mumble-x86_32.dll fgcom-mumble-client-$(VERSION)/mumble-plugin
+	cp fgcom-mumble.ini fgcom-mumble-client-$(VERSION)/mumble-plugin
+	cp -r ../fgfs-addon/ fgcom-mumble-client-$(VERSION)
 	zip -r fgcom-mumble-client-$(VERSION).zip fgcom-mumble-client-$(VERSION)
 	rm -rf fgcom-mumble-client-$(VERSION)
 	

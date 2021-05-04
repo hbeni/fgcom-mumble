@@ -49,7 +49,7 @@ Setup requirements
 
 Installation
 -----------------------
-The release ZIP contains all binary plugins for all supported operating systems in the `plugin` folder:  
+The release ZIP contains all binary plugins for all supported operating systems in the `mumble-plugin` folder:  
   - `fgcom-mumble.so` for Linux (64 bit)
   - `fgcom-mumble.dll` for Windows (64 bit)
   - `fgcom-mumble-x86_32.dll` for Windows (32 bit)
@@ -112,7 +112,7 @@ For details on how this can be done, look at RadioGUI's readme.
 
 
 ### Flightgear specific
-Just add and activate the [FGFS-addon](client/fgfs/Readme.md) in your launcher.
+Just add and activate the [FGFS-addon](client/fgfs-addon/Readme.md) in your launcher.
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
 After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).  
