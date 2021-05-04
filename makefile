@@ -11,10 +11,10 @@ release: build package
 	@echo "FGFSADDONVER: $(FGFSADDONVER)"
 	@echo "-------------------------------------------------"
 
-build: release-server release-radioGUI
-	$(MAKE) -C client/mumble-plugin/ release
+build: release-plugin release-server release-radioGUI release-fgcom-addon
 
 package:
+	# Generate combined release zip files
 	cp client/mumble-plugin/*.zip .
 	
 	# unzip and build new release tree
@@ -41,8 +41,15 @@ package:
 	
 	# print some summary
 	@echo "\nRelease $(PLUGINVER) built successfully:"
-	@ls -alh *$(PLUGINVER)*.zip
-	@md5sum *$(PLUGINVER)*.zip
+	@ls -alh fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-client-*$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
+	@md5sum fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-client-*$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
+	@echo "PLUGINVER:    $(PLUGINVER)"
+	@echo "RADIOGUIVER:  $(RADIOGUIVER)"
+	@echo "FGFSADDONVER: $(FGFSADDONVER)"
+
+release-plugin:
+	# Delegate build plugin release
+	$(MAKE) -C client/mumble-plugin/ release
 
 release-server:
 	# Build server components release
@@ -85,6 +92,15 @@ radioGUI:
 		-Dversion=0.8.0 \
 		-Dpackaging=jar
 	cd client/radioGUI/ && mvn clean animal-sniffer:check package
+
+release-fgcom-addon:
+	# package FlightGear-Addon
+	cp -r client/fgfs-addon/ fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+	head -n 1 client/fgfs-addon/Readme.md > fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
+	@echo Version: $(FGFSADDONVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
+	tail +2 client/fgfs-addon/Readme.md >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
+	zip -r fgcom-mumble-fgfs-addon-$(FGFSADDONVER).zip fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+	rm -rf fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
 
 # relay everything else to the mumble-plugin makefile
 .DEFAULT:
