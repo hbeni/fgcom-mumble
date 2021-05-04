@@ -17,7 +17,8 @@ release-server:
 	# Build server components release
 	mkdir fgcom-mumble-server-$(PLUGINVER)
 	mkdir fgcom-mumble-server-$(PLUGINVER)/recordings
-	cp LICENSE server/recordings/readme.md server/recordings/fgcom.rec.testsample.fgcs fgcom-mumble-server-$(PLUGINVER)/recordings
+	cp LICENSE fgcom-mumble-server-$(PLUGINVER)
+	cp server/recordings/readme.md server/recordings/fgcom.rec.testsample.fgcs fgcom-mumble-server-$(PLUGINVER)/recordings
 	head -n 1 server/Readme.server.md > fgcom-mumble-server-$(PLUGINVER)/README.md
 	@echo Version: $(PLUGINVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-server-$(PLUGINVER)/README.md
 	tail +2 server/Readme.server.md >> fgcom-mumble-server-$(PLUGINVER)/README.md
