@@ -3,11 +3,15 @@ GITDATE     := $(shell make -C client/mumble-plugin/ showVer |grep GITDATE |cut 
 PLUGINVER   := $(shell make -C client/mumble-plugin/ showVer |grep VER |cut -d: -f2)
 RADIOGUIVER := $(shell grep "VERSION of the Application" client/radioGUI/pom.xml | sed 's/\s*<\/\?version>//g' | sed 's/\s*<!.*$\//')
 
-release: release-server release-radioGUI
+release: build package
 	@echo "This is just a convinience make to build packages"
 	@echo "GITVER: $(GITVER)  PLUGINVER:$(PLUGINVER)"
 	@echo "-------------------------------------------------"
+
+build: release-server release-radioGUI
 	$(MAKE) -C client/mumble-plugin/ release
+
+package:
 	cp client/mumble-plugin/*.zip .
 	
 	# unzip and build new release tree
