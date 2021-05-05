@@ -55,6 +55,7 @@ void debug_out_internal_state() {
                     state_str += "  Radio "+std::to_string(i)+": serviceable='"+std::to_string(lcl.radios[i].serviceable)+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":    operable='"+std::to_string(lcl.radios[i].operable)+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":         ptt='"+std::to_string(lcl.radios[i].ptt)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":     ptt_req='"+std::to_string(lcl.radios[i].ptt_req)+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":      volume='"+std::to_string(lcl.radios[i].volume)+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":         pwr='"+std::to_string(lcl.radios[i].pwr)+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(lcl.radios[i].squelch)+"'\n";

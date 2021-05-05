@@ -143,17 +143,17 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     std::string message(""); // the message as sting data (yeah, i'm lazy but it parses so easily and is human readable and therefore easy to debug)
     
     // check if we are connected and synchronized
-    pluginDbg("notifyRemotes("+std::to_string(iid)+","+std::to_string(what)+","+std::to_string(selector)+","+std::to_string(tgtUser)+") called");
+    pluginDbg("[mum_pluginIO] notifyRemotes("+std::to_string(iid)+","+std::to_string(what)+","+std::to_string(selector)+","+std::to_string(tgtUser)+") called");
     if (!fgcom_isConnectedToServer()) {
-        pluginDbg("notifyRemotes(): not connected, so not notifying.");
+        pluginDbg("[mum_pluginIO] notifyRemotes(): not connected, so not notifying.");
         return;
     } else {
-        pluginDbg("notifyRemotes(): we are connected, so notifications will be sent.");
+        pluginDbg("[mum_pluginIO] notifyRemotes(): we are connected, so notifications will be sent.");
     }
     
     // If all identities are selected, invoke notifyRemotes() for each of them
     if (iid == NTFY_ALL) {
-        pluginDbg("notifyRemotes(): identities: all selected, resolving...");
+        pluginDbg("[mum_pluginIO] notifyRemotes(): identities: all selected, resolving...");
         for (const auto &idty : fgcom_local_client) {
             notifyRemotes(idty.first, what, selector, tgtUser);
         }
@@ -161,7 +161,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     } else {
         // skip notification attempts if we don't have any local state yet
         if (fgcom_local_client.size() == 0 ) {
-            pluginDbg("notifyRemotes(): no local state yet, skipping notifications.");
+            pluginDbg("[mum_pluginIO] notifyRemotes(): no local state yet, skipping notifications.");
             return;
         }
     }
@@ -170,9 +170,9 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     fgcom_client lcl;
     if (fgcom_local_client.count(iid) > 0) {
         lcl = fgcom_local_client[iid];
-        pluginDbg("notifyRemotes(): successfully resolved identity='"+std::to_string(iid)+"' (callsign="+lcl.callsign+")");
+        pluginDbg("[mum_pluginIO] notifyRemotes(): successfully resolved identity='"+std::to_string(iid)+"' (callsign="+lcl.callsign+")");
     } else {
-        pluginLog("notifyRemotes(): ERROR resolving identity='"+std::to_string(iid)+"'!");
+        pluginLog("[mum_pluginIO] notifyRemotes(): ERROR resolving identity='"+std::to_string(iid)+"'!");
         return;
     }
     
@@ -182,7 +182,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     switch (what) {
         case NTFY_ALL:
             // notify all info
-            pluginDbg("notifyRemotes(): selected: all");
+            pluginDbg("[mum_pluginIO] notifyRemotes(): selected: all");
             notifyRemotes(iid, NTFY_USR, NTFY_ALL, tgtUser);  // userdata
             notifyRemotes(iid, NTFY_LOC, NTFY_ALL, tgtUser);  // location
             notifyRemotes(iid, NTFY_COM, NTFY_ALL, tgtUser);  // radios
@@ -190,7 +190,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             
         case NTFY_LOC:
             // Notify on location
-            pluginDbg("notifyRemotes(): selected: location");
+            pluginDbg("[mum_pluginIO] notifyRemotes(): selected: location");
             dataID  = "FGCOM:UPD_LOC:"+std::to_string(iid);
             message = "LAT="+std::to_string(lcl.lat)+","
                      +"LON="+std::to_string(lcl.lon)+","
@@ -199,15 +199,15 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             
         case NTFY_COM:
             // notify on radio state
-            pluginDbg("notifyRemotes(): selected radio");            
+            pluginDbg("[mum_pluginIO] notifyRemotes(): selected radio");            
             if (selector == NTFY_ALL) {
-                pluginDbg("notifyRemotes():    all radios selected");
+                pluginDbg("[mum_pluginIO] notifyRemotes():    all radios selected");
                 for (int ri=0; ri < lcl.radios.size(); ri++) {  
                     notifyRemotes(iid, NTFY_COM, ri, tgtUser);
                 }
             } else {
                 if (lcl.radios[selector].publish) {
-                    pluginDbg("notifyRemotes():    send state of COM"+std::to_string(selector+1) );
+                    pluginDbg("[mum_pluginIO] notifyRemotes():    send state of COM"+std::to_string(selector+1) );
                     dataID  = "FGCOM:UPD_COM:"+std::to_string(iid)+":"+std::to_string(selector);
                     message = "FRQ="+lcl.radios[selector].frequency+","
                             + "CHN="+lcl.radios[selector].dialedFRQ+","
@@ -236,7 +236,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             
         case NTFY_USR:
             // userstate
-            pluginDbg("notifyRemotes(): selected: userdata");
+            pluginDbg("[mum_pluginIO] notifyRemotes(): selected: userdata");
             dataID  = "FGCOM:UPD_USR:"+std::to_string(iid);
             message = "CALLSIGN="+lcl.callsign;
             break;
@@ -252,7 +252,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             break;
             
         default: 
-            pluginDbg("notifyRemotes("+std::to_string(iid)+","+std::to_string(what)+","+std::to_string(selector)+","+std::to_string(tgtUser)+"): 'what' unknown");
+            pluginDbg("[mum_pluginIO] notifyRemotes("+std::to_string(iid)+","+std::to_string(what)+","+std::to_string(selector)+","+std::to_string(tgtUser)+"): 'what' unknown");
             return;
     }
     
@@ -263,12 +263,12 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
 	mumble_userid_t *userIDs;
     mumble_channelid_t localChannelID;
     if (mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID) != STATUS_OK) {
-        pluginLog("[ERROR]: Can't obtain channel of local user");
+        pluginLog("[mum_pluginIO] [ERROR]: Can't obtain channel of local user");
         return;
     }
 
     if (mumAPI.getUsersInChannel(ownPluginID, activeConnection, localChannelID, &userIDs, &userCount) != STATUS_OK) {
-        pluginLog("[ERROR]: Can't obtain user list");
+        pluginLog("[mum_pluginIO] [ERROR]: Can't obtain user list");
         return;
     } else {
         pluginDbg("There are "+std::to_string(userCount)+" users on this channel.");
@@ -313,7 +313,8 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
         }
 
         mumAPI.freeMemory(ownPluginID, userIDs);
-        pluginDbg("  notification for dataID='"+dataID+"' done.");
+        pluginDbg("[mum_pluginIO] message was: '"+message+"'");
+        pluginDbg("[mum_pluginIO] notification for dataID='"+dataID+"' done.");
     }
 
 }
@@ -397,7 +398,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         // Userdata and Location data update are treated the same
         } else if (dataID == "FGCOM:UPD_USR:"+iid_str
                 || dataID == "FGCOM:UPD_LOC:"+iid_str) {
-            pluginDbg("USR/LOC UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
+            pluginDbg("[mum_pluginIO] USR/LOC UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             
             // update properties
             std::stringstream streambuffer(data);
@@ -419,7 +420,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         int curlength = token_value.length();
                         if (curlength > MAX_PLUGINIO_FIELDLENGTH) {
                             token_value = token_value.substr(0, MAX_PLUGINIO_FIELDLENGTH); 
-                            pluginLog("[UDP-server] WARNING: supplied token "+token_key+" length="+std::to_string(curlength)+" is greater than allowed "+std::to_string(MAX_PLUGINIO_FIELDLENGTH)+": Field truncated!");
+                            pluginLog("[mum_pluginIO] WARNING: supplied token "+token_key+" length="+std::to_string(curlength)+" is greater than allowed "+std::to_string(MAX_PLUGINIO_FIELDLENGTH)+": Field truncated!");
                         }
                         
                         // Location data
@@ -443,7 +444,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         
         } else if (dataID.substr(0, 15+iid_str.length()) == "FGCOM:UPD_COM:"+iid_str+":") {
             // Radio data update. Here the radio in question was given in the dataid.
-            pluginDbg("COM UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
+            pluginDbg("[mum_pluginIO] COM UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
             int radio_id = std::stoi(dataID.substr(15+iid_str.length())); // when segfault: indicates problem with the implemented udp protocol
             
             // if the selected radio does't exist, create it now
@@ -473,7 +474,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                         int curlength = token_value.length();
                         if (curlength > MAX_PLUGINIO_FIELDLENGTH) {
                             token_value = token_value.substr(0, MAX_PLUGINIO_FIELDLENGTH); 
-                            pluginLog("[UDP-server] WARNING: supplied token "+token_key+" length="+std::to_string(curlength)+" is greater than allowed "+std::to_string(MAX_PLUGINIO_FIELDLENGTH)+": Field truncated!");
+                            pluginLog("[mum_pluginIO] WARNING: supplied token "+token_key+" length="+std::to_string(curlength)+" is greater than allowed "+std::to_string(MAX_PLUGINIO_FIELDLENGTH)+": Field truncated!");
                         }
                         
                         if (token_key == "FRQ") {
