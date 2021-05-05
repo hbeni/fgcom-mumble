@@ -2,13 +2,13 @@ FGCom-mumble - a flightsim radio simulation framework based on mumble
 =====================================================================
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
-This project aims to provide a modular, mumble based radio simulation for flight simulators. The project startet mainly as a successor for the asterisk based FGCom implementation.
+This project aims to provide a mumble-based modular radio simulation for flight simulators. The project started mainly as a successor for the asterisk-based FGCom implementation.
 
 ([-> deutsche Version](README-de_DE.md)) | [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5)
 
 ### The main goals are:
 - Provide communication with geographic and channel separation
-- Provide a realistic radio simulation
+- Provide a realistic radio simulation (incl. propagation)
 - Ease of use for the end user / pilot
 - Arbitary frequency support
 - ATIS recording and playback
@@ -18,7 +18,7 @@ This project aims to provide a modular, mumble based radio simulation for flight
 - Ease of server side installation and operation
 - Standalone nature (no dependency on flightgear)
 - Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
-- Modularity, so individual component implementations can be switched and its easy to add features
+- Modularity, so individual components can be easily updated and extended with new features
 - Good and complete documentation
 
 Documentation
@@ -165,22 +165,22 @@ Note: Chances are good that your ATC client does set this up for you and provide
 
 
 ### Test frequencies
-Test frequencies are provided by a specialized server side bot. Look for the bot in mumbles channel list to see if the server supports Test frequencies.
+Test frequencies are provided by a specialized server side bot. Look for the bot in mumbles channel list to see if the server supports test frequencies:
 
   - 910.000 MHz: echo test frequency. Your voice will be echoed back after you release PTT, to allow you to check that your microphone, speakers/headset and that your connection to the FGCom server works and to let you know how you are heared from others. Test recordings are limited to 10 seconds by default.
   - NOT-IMPLEMENTED-YET: 911.000 MHz: The frequency continuously plays a test sample, allowing you to check that your connection to the FGCom server works.
 
 
 ### Obsolete legacy FGCom frequencies
-The following traditional FGCom frequencies are not special anymore; these are now implemented trough "default" comms (they were special before because of asterisk implementation details).
+The following traditional FGCom frequencies are not special anymore; these are now implemented trough "default" comms (they were special before because of asterisk implementation details):
 
 - 121.000 MHz, 121.500 MHz: "guard" frequencies reserved for emergency communications;
 - 123.450 MHz, 123.500 MHz, 122.750 MHz: general chat frequencies (they are obsolete anyway since 8.33 channels where introduced 20.12.2019! -> new is 122.540, 122.555, 130.430 MHz);
 - 700.000 MHz: radio station frequency. Depending on the FGCom server in use, a recorded radio message will be played;
-- 723.340 MHz: French Air Patrol communication frequency;
+- 723.340 MHz: French Air Patrol communication frequency.
 
 
-###  Special FGCom-mumble frequencies
+### Special FGCom-mumble frequencies
 - `<del>`: Providing this frequency will deregister the radio. A Radio on this frequency is never operable and thus never sends or receives transmissions.
 
 
@@ -200,7 +200,7 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 - Check mumbles client comment if the callsign and radio frequencies are registered
 - Look at the plugins debug messages (start mumble from terminal; you need to make a debug build for that)
 - Look at the murmur server log for possible dropped plugin messages (look for the string `Dropping plugin message`), they may cause out of sync state. Reasons can be:
-  - the setting *`pluginmessagelimit`* in `murmur.ini`  may be too restrictive.
+  - the setting *`pluginmessagelimit`* in `murmur.ini` may be too restrictive.
   - a bug in the plugin-io code: The plugin is expected to work well with default settings, so dropped messages may indicate a plugin bug; especially if they appear rapidly over a longer time.
 
 
