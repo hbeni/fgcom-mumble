@@ -124,14 +124,17 @@ bool fgcom_isPluginActive() {
 }
 
 /*
- * Handle PTT change of local user
- * 
+ * Handle UDP protocol PTT-Request change of local user
+ *
  * This will check the local radio state and activate the mic if all is operable.
  * When no PTT or no radio is operable, mic is closed.
+ *
+ * Note: Opening the mic this way will trigger mumble_onUserTalkingStateChanged() which will
+ * calculate the to-be-synced PTT state to remotes.
  */
 void fgcom_handlePTT() {
     if (fgcom_isPluginActive()) {
-        pluginDbg("Handling PTT state");
+        pluginDbg("Handling PTT protocol request state");
         // see which radio was used and if its operational.
         bool radio_serviceable, radio_powered, radio_switchedOn, radio_ptt;
         bool radio_ptt_result = false; // if we should open or close the mic, default no
@@ -142,19 +145,19 @@ void fgcom_handlePTT() {
             fgcom_client lcl = lcl_idty.second;
             if (lcl.radios.size() > 0) {
                 for (int i=0; i<lcl.radios.size(); i++) {
-                    radio_ptt = lcl.radios[i].ptt;
+                    radio_ptt = lcl.radios[i].ptt_req;
                     
                     if (radio_ptt) {
                         //if (radio_serviceable && radio_switchedOn && radio_powered) {
                         if ( lcl.radios[i].operable) {
-                            pluginDbg("  COM"+std::to_string(i+1)+" PTT active and radio is operable -> open mic");
+                            pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active and radio is operable -> open mic");
                             radio_ptt_result = true;
                             break; // we only have one output stream, so further search makes no sense
                         } else {
-                            pluginLog("  COM"+std::to_string(i+1)+" PTT active but radio not operable!");
+                            pluginLog("  COM"+std::to_string(i+1)+" PTT_REQ active but radio not operable!");
                         }
                     } else {
-                        pluginDbg("  COM"+std::to_string(i+1)+" PTT off");
+                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ off");
                     }
                 }
             }
@@ -168,7 +171,7 @@ void fgcom_handlePTT() {
         // Todo: do we need to reset something or so? i think no:
         //       plugin deactivation will already handle setting the old transmission mode,
         //       so the mic will be open according to that...
-        pluginDbg("Handling PTT state: PLUGIN NOT ACTIVE");
+        pluginDbg("Handling PTT protocol request state: PLUGIN NOT ACTIVE");
     }
 }
 
@@ -297,17 +300,37 @@ mumble_error_t fgcom_loadConfig() {
                     std::string token_value = sm[2];
                     pluginDbg("[CFG] Parsing token: "+token_key+"="+token_value);
 
-                    if (token_key == "radioAudioEffects") fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
-                    if (token_key == "allowHearingNonPluginUsers") fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
+                    if (token_key == "radioAudioEffects") fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off" || token_value == "no")? false : true;
+                    if (token_key == "allowHearingNonPluginUsers") fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
                     if (token_key == "specialChannel")    fgcom_cfg.specialChannel    = token_value;
                     if (token_key == "udpServerHost")     fgcom_cfg.udpServerHost     = token_value;
                     if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
                     if (token_key == "logfile")           fgcom_cfg.logfile           = token_value;
+                    
+                    std::smatch sm_m;
+                    std::regex re_mblmap ("^mapMumblePTT(\\d+)$");
+                    if (std::regex_search(token_key, sm_m, re_mblmap)) {
+                        int radio_id = std::stoi(sm_m[1]);
+                        radio_id--; // convert to array index
+                        fgcom_cfg.mapMumblePTT[radio_id] = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
+                    }
                 }
             }
         } else {
             pluginLog("[CFG]   not using '"+cfgFilePath+"' (not existing or invalid format)");
         }
+    }
+    
+    // Debug print final parsed config
+    pluginDbg("[CFG] final parsed config:");
+    pluginDbg("[CFG]   allowHearingNonPluginUsers="+std::to_string(fgcom_cfg.allowHearingNonPluginUsers));
+    pluginDbg("[CFG]            radioAudioEffects="+std::to_string(fgcom_cfg.radioAudioEffects));
+    pluginDbg("[CFG]               specialChannel="+fgcom_cfg.specialChannel);
+    pluginDbg("[CFG]                udpServerHost="+fgcom_cfg.udpServerHost);
+    pluginDbg("[CFG]                udpServerPort="+std::to_string(fgcom_cfg.udpServerPort));
+    pluginDbg("[CFG]                      logfile="+fgcom_cfg.logfile);
+    for (const auto& cv : fgcom_cfg.mapMumblePTT) {
+        pluginDbg("[CFG]              mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
     }
     
     return STATUS_OK;
@@ -769,6 +792,69 @@ void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t user
     
 }
 
+// Called when any user changes his/her talking state.
+// Handles the calculation of the PTT state that is sent to remotes.
+void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_userid_t userID, mumble_talking_state_t talkingState) {
+    pluginDbg("User with ID "+ std::to_string(userID) + " changed talking state: " + std::to_string(talkingState) + ". (ServerConnection: " + std::to_string(connection) + ")");
+    
+    if (userID == localMumId && fgcom_isPluginActive() ){
+        // Current user is speaking. Either this activated trough the PTT button, or manually pushed mumble-ptt/voiceActivation
+        bool mumble_talk_detected = talkingState == TALKING || talkingState == WHISPERING || talkingState == SHOUTING;
+        
+        // look if there is some PTT_REQ set.
+        // If we have a PTT requested from the udp protocol, we are not activating the
+        // radios configured to respond to mumbles talk state change.
+        bool udp_protocol_ptt_detected = false;
+        for (const auto &lcl_idty : fgcom_local_client) {
+            int iid          = lcl_idty.first;
+            fgcom_client lcl = lcl_idty.second;
+            if (lcl.radios.size() > 0) {
+                for (int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                    if (lcl.radios[radio_id].ptt_req) udp_protocol_ptt_detected = true;
+                }
+            }
+        }
+        
+        // update identities radios depending on config options
+        fgcom_localcfg_mtx.lock();
+        pluginDbg("  checking identities/radios for local users PTT...");
+        for (const auto &lcl_idty : fgcom_local_client) {
+            int iid          = lcl_idty.first;
+            fgcom_client lcl = lcl_idty.second;
+            if (lcl.radios.size() > 0) {
+                for (int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                    bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
+                    auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
+                    bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
+                    pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
+                    pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
+                    pluginDbg("     radio_mapmumbleptt="+std::to_string(radio_mapmumbleptt));
+                    for (const auto& cv : fgcom_cfg.mapMumblePTT) {
+                        pluginDbg("    mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
+                    }
+                    
+                    bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
+                    bool newValue = false;
+                    pluginDbg("                old_ptt="+std::to_string(oldValue));
+                    pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
+                    if ( radio_ptt_req || !udp_protocol_ptt_detected && radio_mapmumbleptt ) {
+                        // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
+                        newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
+                    }
+                    pluginDbg("                new_ptt="+std::to_string(lcl.radios[radio_id].ptt));
+                    
+                    // broadcast changed PTT state to clients
+                    fgcom_local_client[iid].radios[radio_id].ptt = newValue;
+                    if (oldValue != newValue) {
+                        pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
+                        notifyRemotes(iid, NTFY_COM, radio_id);
+                    }
+                }
+            }
+        }
+        fgcom_localcfg_mtx.unlock();
+    }
+}
 
 // Note: Audio input is only possible with open mic. fgcom_hanldePTT() takes care of that.
 bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {

@@ -121,6 +121,7 @@ The Following fields are configuration options that change plugin behaviour.
 | `COM`*n*`_PUBLISH`| Bool  | Set to `0` to prevent this radio from being published anymore. Use this at the first the radio field!  | `1`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
 | `AUDIO_HEAR_ALL` | Bool   | `1` will enable hearing of non-plugin users. | `0` |
+| `COM`*n*`_MAPMUMBLEPTT` | Bool   | `1` switches PTT handling to mumbles own talking state and activates _this_ radios PTT when mumble activates talking.| COM1=`1`, others=`0` |
 
 
 ### Testing UDP input

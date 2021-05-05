@@ -40,6 +40,7 @@ struct fgcom_config {
     std::string udpServerHost;
     int         udpServerPort;
     std::string logfile;
+    std::map<int, bool> mapMumblePTT;  // which radios to activate when mumble-internal talk activation is used
     
     fgcom_config()  {
         allowHearingNonPluginUsers = false;
@@ -48,6 +49,7 @@ struct fgcom_config {
         udpServerHost     = "127.0.0.1";
         udpServerPort     = 16661;
         logfile           = "";
+        mapMumblePTT      = {{0,true}};
     };
 };
 extern struct fgcom_config fgcom_cfg;
