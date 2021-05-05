@@ -38,7 +38,8 @@ struct fgcom_radio {
 	bool  power_btn;     // true if switched on
 	float volts;         // how much electric power it has (>0 = on)
 	bool  serviceable;   // false if broken
-	bool  ptt;           // true if PTT is pushed
+	bool  ptt;           // true if PTT is actually pushed (synced to remotes and used to determine reception)
+	bool  ptt_req;       // true if PTT is requested from client/udp
 	float volume;        // volume, 0.0->1.0
 	float pwr;           // tx power in watts
 	bool  operable;      // false if switched off, not powered or broken
@@ -54,6 +55,7 @@ struct fgcom_radio {
         volts       = 12;
         serviceable = true;
         ptt         = false;
+        ptt_req     = false;
         volume      = 1.0;
         pwr         = 10;
         operable    = true;

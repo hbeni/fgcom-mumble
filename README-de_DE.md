@@ -110,6 +110,8 @@ Bitte beachte, dass "Frequenzen" alles mögliche sein können. Dies bedeutet, da
 Dies sollte daher der kleinste gemeinsame Nenner sein, d.h. die physikalische Frequenz der Trägerwelle (vor allem mit 8.33kHz Kanälen, bei denen die im Gerät angewählte Frequenz nicht immer der physikalischen entspricht).
 Im Protokoll haben Fließkommazahlen außerdem immer den Punkt (`.`) als Dezimaltrenner; das Komma ist als Feldtrenner nicht erlaubt.
 
+Obwohl wir davon ausgehen, dass die verbundenen Simulatoren Informationen für das PTT der Funkgeräte übermitteln, kannst du über die Konfigurationsdatei Zuordnungen für mumble's interne Sendeaktivierung definieren. Auf diese Weise kannst du beispielsweise mit mumbles eigenem PTT-Tastenkürzel das Senden deiner Funkgeräte aktivieren. Standardmäßig ist bereits das erste Funkgerät entsprechend konfiguriert, d.h. mumbles internes PTT aktiviert gleichzeitig das PTT des ersten Funkgerätes.
+
 
 ### RadioGUI
 FGCom-mumble liefert eine plattformunabhängige Java-Applikation mit, die die meisten UDP-Protokollfelder implementiert. Dadurch eignet sich RadioGUI nicht nur zum testen, sondern auch für echte Aufgaben wie ATC ohne die Notwendigkeit eines weiteren Clients.

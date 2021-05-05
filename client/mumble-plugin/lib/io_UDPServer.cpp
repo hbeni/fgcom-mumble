@@ -292,9 +292,9 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         if (parsedPTT && fgcom_com_ptt_compatmode) fgcom_com_ptt_compatmode = false; 
                         
                         if (!fgcom_com_ptt_compatmode) {
-                            bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
-                            fgcom_local_client[iid].radios[radio_id].ptt = parsedPTT;
-                            if (fgcom_local_client[iid].radios[radio_id].ptt != oldValue ) parseResult[iid].radioData.insert(radio_id);
+                            bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt_req;
+                            fgcom_local_client[iid].radios[radio_id].ptt_req = parsedPTT;
+                            //if (fgcom_local_client[iid].radios[radio_id].ptt_req != oldValue ) parseResult[iid].radioData.insert(radio_id);
                             needToHandlePTT = true;
                         }
 
@@ -336,6 +336,10 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     }
                     if (radio_var == "PUBLISH") {
                         fgcom_local_client[iid].radios[radio_id].publish = (token_value == "1" || token_value == "true")? true : false;
+                        // must never be sended - it's a local config property
+                    }
+                    if (radio_var == "MAPMUMBLEPTT") {
+                        fgcom_cfg.mapMumblePTT[radio_id] = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
                         // must never be sended - it's a local config property
                     }
                     
@@ -385,18 +389,18 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     if (ptt_id > 0) fgcom_com_ptt_compatmode = true;
                     
                     if (fgcom_com_ptt_compatmode) {
-                        pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
+                        //pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
                         for (int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
-                            pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
+                            //pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
                             if (i == ptt_id - 1) {
-                                if (fgcom_local_client[iid].radios[i].ptt != 1){
-                                    parseResult[iid].radioData.insert(i);
-                                    fgcom_local_client[iid].radios[i].ptt = 1;
+                                if (fgcom_local_client[iid].radios[i].ptt_req != 1){
+                                    //parseResult[iid].radioData.insert(i);
+                                    fgcom_local_client[iid].radios[i].ptt_req = 1;
                                 }
                             } else {
-                                if (fgcom_local_client[iid].radios[i].ptt == 1){
-                                    parseResult[iid].radioData.insert(i);
-                                    fgcom_local_client[iid].radios[i].ptt = 0;
+                                if (fgcom_local_client[iid].radios[i].ptt_req == 1){
+                                    //parseResult[iid].radioData.insert(i);
+                                    fgcom_local_client[iid].radios[i].ptt_req = 0;
                                 }
                             }
                         }
@@ -673,7 +677,7 @@ void fgcom_spawnUDPServer() {
                 for (std::set<int>::iterator it=ures.radioData.begin(); it!=ures.radioData.end(); ++it) {
                     // iterate trough changed radio instances
                     //std::cout << "ITERATOR: " << ' ' << *it;
-                    pluginDbg("FGCom: [UDP-server] radioData for iid='"+std::to_string(iid)+"', radio_id="+std::to_string(*it)+" has changed, notifying other clients");
+                    pluginDbg("[UDP-server] radioData for iid='"+std::to_string(iid)+"', radio_id="+std::to_string(*it)+" has changed, notifying other clients");
                     notifyRemotes(iid, NTFY_COM, *it);
                     fgcom_updateClientComment();
                 }

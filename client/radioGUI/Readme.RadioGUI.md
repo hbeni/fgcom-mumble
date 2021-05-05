@@ -41,7 +41,8 @@ For doing so, you must enable the connection in the simulator.
 </SimConnect.Comm> 
 ```
 
-Then you can adjust the SimConnect options in RadioGUI's Options-dialog and finally activate it by choosing the respective option from RadioGUI's main menu.
+Then you can adjust the SimConnect options in RadioGUI's Options-dialog and finally activate it by choosing the respective option from RadioGUI's main menu.  
+Per default, the FGCom-mumble plugin does map mumbles talk activation to COM1-PTT, so you can use mumbles PTT binding to activate COM1 transmissions transparently.
 
 
 Compiling
