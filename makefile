@@ -5,11 +5,6 @@ RADIOGUIVER := $(shell grep "VERSION of the Application" client/radioGUI/pom.xml
 FGFSADDONVER:= $(shell grep -i '<version.*>.*</version>' client/fgfs-addon/addon-metadata.xml |sed 's/\s*<.*>\(.*\)<.*>\s*/\1/g')
 
 release: build package
-	@echo "GITVER:       $(GITVER) $(GITDATE))"
-	@echo "PLUGINVER:    $(PLUGINVER)"
-	@echo "RADIOGUIVER:  $(RADIOGUIVER)"
-	@echo "FGFSADDONVER: $(FGFSADDONVER)"
-	@echo "-------------------------------------------------"
 
 build: release-plugin release-server release-radioGUI release-fgcom-addon
 
@@ -43,6 +38,7 @@ package:
 	@echo "\nRelease $(PLUGINVER) built successfully:"
 	@ls -alh fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-client-*$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
 	@md5sum fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-client-*$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
+	@echo "GITVER:       $(GITVER) $(GITDATE)"
 	@echo "PLUGINVER:    $(PLUGINVER)"
 	@echo "RADIOGUIVER:  $(RADIOGUIVER)"
 	@echo "FGFSADDONVER: $(FGFSADDONVER)"
