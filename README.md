@@ -27,8 +27,10 @@ The documentation is split up into relevant parts:
 
 - Readme.md (*this file*): General overview and client documentation ([deutsche Version](README-de_DE.md))
 - [Readme.architecture.md](Readme.architecture.md) Details about the components that make up the system
-- [plugin.spec.md](plugin.spec.md) Technical details on plugin design and its input/output data formats
-- [radioGUI/Readme.RadioGUI.md](radioGUI/Readme.RadioGUI.md) Documentation for the Radio GUI client
+- [client/plugin.spec.md](client/plugin.spec.md) Technical details on plugin design and its input/output data formats
+- [client/radioGUI/Readme.RadioGUI.md](client/radioGUI/Readme.RadioGUI.md) Documentation for the Radio GUI client
+- [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
+- [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
 
 ### Bugs/Feature requests/coding help
 The project lives on github: https://github.com/hbeni/fgcom-mumble
