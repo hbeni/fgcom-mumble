@@ -30,6 +30,18 @@ package:
 	@echo Version: $(FGFSADDONVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
 	tail +2 client/fgfs-addon/Readme.md >> fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
 	
+	# Adjust markdown links in readmes
+	sed -i 's?](../?](?'     fgcom-mumble-$(PLUGINVER)/plugin.spec.md
+	sed -i 's?](client/?](?' fgcom-mumble-$(PLUGINVER)/Readme.architecture.md
+	sed -i 's?\[server/Readme.server.md\](server/Readme.server.md)?Readme.server.md (not included)?' fgcom-mumble-$(PLUGINVER)/README.md
+	sed -i 's?\[server/statuspage/Readme.statuspage.md\](server/statuspage/Readme.statuspage.md)?Readme.statuspage.md (not included)?' fgcom-mumble-$(PLUGINVER)/README.md
+	sed -i 's?\[server/Readme.server-de_DE.md\](server/Readme.server-de_DE.md)?Readme.server.md (nicht enthalten)?' fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	sed -i 's?\[server/statuspage/Readme.statuspage.md\](server/statuspage/Readme.statuspage.md)?Readme.statuspage.md (nicht enthalten)?' fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	sed -i 's?](client/?](?' fgcom-mumble-$(PLUGINVER)/README.md fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	sed -i 's?](server/?](?' fgcom-mumble-$(PLUGINVER)/README.md fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	sed -i 's?\[client/?[?' fgcom-mumble-$(PLUGINVER)/README.md fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	sed -i 's?\[server/?[?' fgcom-mumble-$(PLUGINVER)/README.md fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	
 	# repackage release
 	zip -r fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-$(PLUGINVER)/
 	rm -rf fgcom-mumble-$(PLUGINVER)/
