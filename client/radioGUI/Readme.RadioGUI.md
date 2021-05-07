@@ -20,7 +20,7 @@ You can run several instances of the application at once to have different clien
 
 SimConnect support (MSFS2020)
 -----------------------------
-RadioGUI can connect to a SimConnect compatible simulator like MFSF2020.
+RadioGUI can connect to a SimConnect compatible simulator like MFSF2020.  
 For doing so, you must enable the connection in the simulator.
 
 - Find the SimConnect.xml in the Microsoft files, usually somewhere here:
