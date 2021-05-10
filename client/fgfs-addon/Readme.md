@@ -1,6 +1,6 @@
 FGCom-mumble FGFS Addon
 =================================
-This Addon is a convinient addon package to let FlightGear know about the FGCom-mumble protocol. It adds menu item and a dialog where you can conviniently adjust the parameters without the need to restart flightgear.
+This set of files is a convenient FlightGear addon package to let FlightGear know about the FGCom-mumble protocol. It adds menu item and a dialog where you can conviniently adjust the parameters without the need to restart flightgear.
 
 Instead of using this addon, you can also invoke the protocol manually:
 
@@ -11,13 +11,13 @@ Instead of using this addon, you can also invoke the protocol manually:
 
 Installation
 ------------
-After unzipping the FGCom-mumble release package, you just need to add the `fgfs` folder to your launchers *Add-ons* module list.  
+After unzipping the FGCom-mumble release package, you just need to add the `fgfs-addon` folder to your launcher's *Add-ons* module list.  
 The addon is activated automatically, so flightgear will try to connect to mumble with the default parameters.
 
 
 Running the Addon
 -----------------
-When added to your launcher, the addon is automatically active.
+When added to your launcher, the addon is automatically activated.
 No further steps are needed.
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
