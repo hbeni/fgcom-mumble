@@ -127,7 +127,7 @@
    <chunk>
     <name>com2-squelch</name>
     <type>string</type>
-    <format>COM1_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
+    <format>COM2_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
     <node>/instrumentation/comm[1]/cutoff-signal-quality</node>
    </chunk>
 
