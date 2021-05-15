@@ -120,7 +120,7 @@ The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
 After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).  
 The addon can be configured via a new entry in the *Multiplayer* menu.
 
-Your ADF will recognize transmissions in the kHz range and may playback the received analog audio signal when the _ANT_ mode is selected. In _ADF_ mode the indicated bearing is recognized and visible on the instrumend.
+Your ADF will recognize transmissions in the kHz range. With enabled _ADF_-mode the indicated bearing is recognized and visible on the instrument. The plane's audio system may also playback the received analog audio signal. This is usually switched at your plane's audio panel.
 
 ### ATC-Pie specific
 Since ATC-Pie v1.7.1 FGCom-mumble is supported out of the box.
