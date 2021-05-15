@@ -1010,6 +1010,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                         rdfInfo.txRadio    = rmt.radios[ri];
                                         rdfInfo.rxIdentity = lcl;
                                         rdfInfo.rxRadio    = lcl.radios[lri];
+                                        rdfInfo.rxRadioId  = lri+1;  // Radios indices start at 0, names start at 1.
                                         rdfInfo.signal     = signal;
                                         fgcom_rdf_registerSignal(rdfID, rdfInfo);
                                     }

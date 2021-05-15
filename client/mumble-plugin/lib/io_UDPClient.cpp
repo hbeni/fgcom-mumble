@@ -101,6 +101,7 @@ std::string fgcom_rdf_generateMsg(std::string selectedHost, uint16_t selectedPor
             clientMsg += ",DIR="+std::to_string(rdfInfo.signal.direction);
             clientMsg += ",VRT="+std::to_string(rdfInfo.signal.verticalAngle);
             clientMsg += ",QLY="+std::to_string(rdfInfo.signal.quality);
+            clientMsg += ",ID_RX="+std::to_string(rdfInfo.rxRadioId);
             clientMsg += "\n";
             processed.push_back(rdfID);
         }
