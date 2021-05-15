@@ -170,10 +170,12 @@ foreach ($db_data["clients"] as $u) {
     
     $frq_str = "";
     foreach ($u['radios'] as $radio) {
-        $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
-        $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+        if ($radio['frequency'] != "") {
+            $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
+            $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+        }
     }
-    $utpl->assignVar('fequency',$frq_str);
+    $utpl->assignVar('frequency',$frq_str);
     
     if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_users_body .= $utpl->generate();
@@ -209,10 +211,12 @@ foreach ($db_data["clients"] as $u) {
     
     $frq_str = "";
     foreach ($u['radios'] as $radio) {
-        $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
-        $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+        if ($radio['frequency'] != "") {
+            $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
+            $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+        }
     }
-    $utpl->assignVar('fequency',$frq_str);
+    $utpl->assignVar('frequency',$frq_str);
     
     if (time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_bots_body .= $utpl->generate();
@@ -248,10 +252,12 @@ foreach ($db_data["clients"] as $u) {
     
     $frq_str = "";
     foreach ($u['radios'] as $radio) {
-        $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
-        $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+        if ($radio['frequency'] != "") {
+            $radio_class_name = ($radio['operable'])?"radio_ok":"radio_err";
+            $frq_str .= '<span class="'.$radio_class_name.'">'.$radio['dialedFRQ'].'</span><br/>';
+        }
     }
-    $utpl->assignVar('fequency',$frq_str);
+    $utpl->assignVar('frequency',$frq_str);
     
     if ($u['alt'] >= 0 && time()-$u['updated'] <= $ini_config['ui']['hide_stale_entries']) {
         $tpl_clients_body .= $utpl->generate();
