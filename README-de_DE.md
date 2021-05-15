@@ -129,7 +129,7 @@ Weitere Details stehen im Readme des RadioGUI.
 Die FGFS-Protokolldefinition unterstützt alte 25kHz- genauso wie neuere 8.3kHz Funkgeräte.
 Nachdem Flightgear gestartet wurde, kannst du die Funkgeräte wie gewohnt benutzen (Standard ist *Leertaste* für Sprechen auf COM1 und *Umschalt-Leetaste* für COM2).
 
-Der ADF empfängt Übertragungen im kHz-Band und kann im Modus _ANT_ empfangene anaolge Signale wiedergeben. Bei aktiviertem _ADF_-Modus wird die Empfangsrichtung auf der Instrumentennadel angezeigt.
+Der ADF-Empfänger misst Übertragungen im kHz-Band und zeigt im _ADF_-Modus die Empfangsrichtung auf der Instrumentennadel des ADF-Instrumentes an. Empfangene anaolge Signale können zudem wiedergegeben werden. Dies wird üblicherwiese im Audiopanel des Flugzeugs aktiviert.
 
 ### ATC-Pie specific
 ATC-Pie hat seit v1.7.1 eingebaute Unterstützung für FGCom-mumble.
