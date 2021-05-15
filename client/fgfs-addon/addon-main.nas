@@ -4,6 +4,7 @@
 # based on the KML addon by Slawek Mikula
 #
 # @author Benedikt Hallinger, 2021
+# @author Colin Geniet, 2021
 
 
 #
