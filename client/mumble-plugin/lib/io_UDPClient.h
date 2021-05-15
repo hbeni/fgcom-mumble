@@ -18,11 +18,12 @@ void fgcom_stopUDPClient();
 // This represents an RDF signal recording
 struct fgcom_rdfInfo {
     // Transmitter info
-    fgcom_radio txRadio;     // transmitting identity
-    fgcom_client txIdentity; // transmitting callsign
+    fgcom_radio txRadio;     // transmitting radio instance
+    fgcom_client txIdentity; // transmitting identity
     
     // Receiver info
     fgcom_radio rxRadio;     // receiving radio instance
+    int rxRadioId;           // receiving radio id (e.g. 1 for COM1)
     fgcom_client rxIdentity; // receiving identity
     
     // Signal info

@@ -208,8 +208,9 @@ The reported frequency is the effective real wave frequency in MHz.
 | `DIR`      | Float  | Direction to the signal source (`0.0` clockwise to `359.99`; `0.0`=due WGS84 north)|
 | `VRT`      | Float  | Vertical angle to the signal source (`-90.0` to `+90.0`; `0.0`=straight)|
 | `QLY`      | Float  | Signal quality (`0.00` to `1.0`)                 |
+| `ID_RX`    | Int    | Receiving radio number (e.g. 1 for COM1)         |
 
-The `DIR` and `VRT` angles are in decimal degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98`: The Airplane transmitting is thus directly south and above of you.  
+The `DIR` and `VRT` angles are in decimal degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1`: The Airplane transmitting is thus directly south and above of you.  
 The values are true bearings relative to your position, and `DIR=0.0` is due north relative to the WSG84 grid.
 
 #### Checking UDP client output
