@@ -4,67 +4,159 @@
 # based on the KML addon by Slawek Mikula
 #
 # @author Benedikt Hallinger, 2021
-
+# @author Colin Geniet, 2021
 
 
 #
-# Function to overwrite ADF needle for RDF data
+# FGCom-mumble ADF logic
 #
-var rdfResetCheck_interval = 1;
-var rdfResetCheck = maketimer(rdfResetCheck_interval, func() {
-    #print("FGCom-mumble: rdfResetCheck()");
+var ADF = {
+    # Minimum RDF signal quality to activate ADF.
+    rdf_quality_threshold: 0.2,
+    # Update period for RDF, seconds
+    rdf_update_period: 1,
 
-    # Read current ADF instrument settings
-    var adf_node = props.globals.getNode("/instrumentation/adf[0]");
-    
-    var lastRDFBearing = adf_node.getNode("fgcom-mumble/direction-deg");
-    
-    # Read most recent input data
-    # Format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98"
-    var fgcom_rdf_input_node      = adf_node.getNode("fgcom-mumble/input/");
-    var fgcom_rdf_input_callsign  = fgcom_rdf_input_node.getNode("callsign");
-    var fgcom_rdf_input_direction = fgcom_rdf_input_node.getNode("direction");
-    var fgcom_rdf_input_quality   = fgcom_rdf_input_node.getNode("quality");
-    
-    
-    # Process the input, if it is valid
-    if (fgcom_rdf_input_direction.getValue() != "") {
-        # There is new data: handle it
-        #print("FGCom-mumble: rdfResetCheck() New data received");
-        var fgcom_rdf_direction_field = split("=", fgcom_rdf_input_direction.getValue());
-        var fgcom_rdf_quality_field   = split("=", fgcom_rdf_input_quality.getValue());
+    # Parameter: root: the ADF property root (normally /instrumentation/adf[i]).
+    new: func(root) {
+        var a = { parents: [ADF], root: root, };
+        a.init();
+        return a;
+    },
 
-        if (
-            adf_node.getNode("operable").getBoolValue()
-            and adf_node.getNode("mode").getValue() == "adf"
-            and fgcom_rdf_quality_field[1] >= 0.2
-        ) {
-            # Signal valid, let ADF needle respond
-            lastRDFBearing.setDoubleValue(fgcom_rdf_direction_field[1]);
-            interpolate(adf_node.getPath()~"/indicated-bearing-deg", fgcom_rdf_direction_field[1], rdfResetCheck_interval);
+    # Lookup and initialize ADF/RDF properties
+    init: func {
+        me.operable = me.root.getNode("operable", 1);
+        me.vol = me.root.getNode("volume-norm", 1);
+        me.mode = me.root.getNode("mode", 1);
+        me.ident_aud = me.root.getNode("ident-audible", 1);
+        me.freq_khz = me.root.getNode("frequencies/selected-khz", 1);
+        me.indicated_bearing = me.root.getNode("indicated-bearing-deg", 1);
+
+        me.fgcom_root = me.root.getNode("fgcom-mumble", 1);
+        me.fgcom_vol = me.fgcom_root.getNode("volume", 1);
+        me.fgcom_freq_mhz = me.fgcom_root.getNode("selected-mhz", 1);
+        me.fgcom_rdf_bearing = me.fgcom_root.initNode("direction-deg", "");
+        me.fgcom_rdf_quality = me.fgcom_root.initNode("quality", "");
+
+        # All listeners in an array, so that it's easy to delete all of them in the destructor.
+        me.listeners = [
+            # Update FGCom-mumble volume
+            setlistener(me.vol, func { me.recalcVolume(); }, 1, 0),
+            setlistener(me.ident_aud, func { me.recalcVolume(); }, 0, 0),
+            # Update FGCom-mumble frequency
+            setlistener(me.freq_khz, func { me.recalcFrequency(); }, 1, 0),
+        ];
+
+        me.has_rdf_signal = 0;
+
+        me.rdf_timer = maketimer(me.rdf_update_period, me, me.rdf_loop);
+        me.rdf_timer.start();
+    },
+
+    recalcVolume: func {
+        # Reception depends on ident-audible and the volume knob
+        # ident-audible is supposed to be set from the audio panel
+        if (!me.ident_aud.getBoolValue()) {
+            me.fgcom_vol.setValue(0);
         } else {
-            # Do nothing: next loop check will go into "signal lost" code, because FGCom-mumble did not provide new data
+            me.fgcom_vol.setValue(me.vol.getValue() or 0);
+        }
+    },
+
+    recalcFrequency: func {
+        var freq = me.freq_khz.getValue();
+        var freq_num = num(freq);
+        if (freq_num == nil) {
+            # Frequency can not be converted to a number.
+            # Do not attempt KHz -> MHz conversion
+            me.fgcom_freq_mhz.setValue(freq);
+        } else {
+            me.fgcom_freq_mhz.setValue(freq_num / 1000.0);
+        }
+    },
+
+    # Receive RDF data from plugin output.
+    #
+    # This function is designed to be called often (for each packet).
+    # It simply memorises the data, which is read by the RDF logic runs at a lower rate.
+    set_rdf_data: func(direction, quality) {
+        me.fgcom_rdf_bearing.setValue(direction);
+        me.fgcom_rdf_quality.setValue(quality);
+    },
+
+    clear_rdf_data: func {
+        me.fgcom_rdf_bearing.setValue("");
+        me.fgcom_rdf_quality.setValue("");
+    },
+
+    rdf_loop: func {
+        if (me.operable.getBoolValue()) {
+            var direction = me.fgcom_rdf_bearing.getValue();
+            var quality = me.fgcom_rdf_quality.getValue();
+            if (direction != "" and quality != "" and quality > me.rdf_quality_threshold and me.mode.getValue() == "adf") {
+                # Has signal, and is in the correct mode: animate the needle
+                me.has_rdf_signal = 1;
+                interpolate(me.indicated_bearing, direction, 1);
+            } else {
+                if (me.has_rdf_signal) {
+                    # signal lost, reset needle
+                    me.has_rdf_signal = 0;
+                    interpolate(me.indicated_bearing, 90, 1);
+                }
+            }
         }
 
-    } else {
-        # Signal lost!
-        if (lastRDFBearing.getValue() > -1) {
-            # We still got an old value, so reset now.
-            # Successive checks will not do anything until we get new signal data.
-            # The C++ ADF will update the ADF needle periodically if signals are received.
-            #print("FGCom-mumble: rdfResetCheck() signal lost");
-            lastRDFBearing.setDoubleValue(-1.0);
-            interpolate(adf_node.getPath()~"/indicated-bearing-deg", 90, rdfResetCheck_interval);
-        }
-    }
+        # Clear input fields to denote we have fully processed this dataset.
+        # If no update from FGCom-mumble occurs, the input remains empty, so we can detect lost signals
+        me.clear_rdf_data();
+    },
+};
 
 
-    # Clear input fields to denote we have fully processed this dataset.
-    # If no update from FGCom-mumble occurs, the input remains empty, so we can detect lost signals
-    foreach(var p; fgcom_rdf_input_node.getChildren()) {
-        p.setValue("");
+# ADF radios objects, indexed by their index in protocol fgcom-mumble.xml (X for COMX).
+var ADF_radios = {
+    "4": ADF.new(props.globals.getNode("instrumentation/adf[0]")),
+    "5": ADF.new(props.globals.getNode("instrumentation/adf[1]")),
+};
+
+
+#
+# Function to read RDF data sent by the plugin.
+#
+# All RDF data is sent through the same properties.
+# This function simply parses it, and redistributes it to the correct ADF.
+
+# Input properties
+var fgcom_rdf_input_node      = props.globals.getNode("instrumentation/adf[0]/fgcom-mumble/input/", 1);
+var fgcom_rdf_input_radio     = fgcom_rdf_input_node.initNode("radio", "");
+var fgcom_rdf_input_callsign  = fgcom_rdf_input_node.initNode("callsign", "");
+var fgcom_rdf_input_direction = fgcom_rdf_input_node.initNode("direction", "");
+var fgcom_rdf_input_quality   = fgcom_rdf_input_node.initNode("quality", "");
+
+var rdf_data_callback = func {
+    var radio = fgcom_rdf_input_radio.getValue();
+    var direction = fgcom_rdf_input_direction.getValue();
+    var quality = fgcom_rdf_input_quality.getValue();
+
+    if (radio == "" or direction == "" or quality == "") return; # No data
+
+    # Read input data
+    # Format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1"
+    var radio     = split("=", radio)[1];
+    var direction = split("=", direction)[1];
+    var quality   = split("=", quality)[1];
+
+    # Send to corresponding ADF
+    if (contains(ADF_radios, radio)) {
+        # Found corresponding ADF radio, send the signal to it.
+        ADF_radios[radio].set_rdf_data(direction, quality);
     }
-});
+}
+
+# The radio field is the last field in the protocol.
+# So when it gets updated, it means a full RDF signal info has just been received.
+var rdf_data_listener = setlistener(fgcom_rdf_input_radio, rdf_data_callback);
+
 
 
 var main = func( addon ) {
@@ -94,15 +186,7 @@ var main = func( addon ) {
     if (portNode.getValue() == nil) {
       portNode.setIntValue("16661");
     }
-    
-    var lastRDFBearing = props.globals.getNode("/instrumentation/adf[0]/fgcom-mumble/direction-deg", 1);
-    lastRDFBearing.setDoubleValue(-1.0);
-    var adfVolume = props.globals.getNode("/instrumentation/adf[0]/fgcom-mumble/volume", 1);
-    adfVolume.setDoubleValue(1.0);
-    var adfFrq = props.globals.getNode("/instrumentation/adf[0]/fgcom-mumble/selected-mhz", 1);
-    adfFrq.setValue("0");
-    
-    
+
     # Init GUI menu entry
     var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
     var menudata = {
@@ -139,7 +223,6 @@ var main = func( addon ) {
           foreach(var p; props.globals.getNode("/instrumentation/adf[0]/fgcom-mumble/input/").getChildren()) {
             p.setValue("");
           }
-          rdfResetCheck.start();
           protocolInitialized = 1;
         }
       }
@@ -153,7 +236,6 @@ var main = func( addon ) {
                   "name" : "fgcom-mumble"
               })
             );
-            rdfResetCheck.stop();
             protocolInitialized = 0;
         }
     }
@@ -189,32 +271,4 @@ var main = func( addon ) {
     var reinit_hzChange   = setlistener(mySettingsRootPath ~ "/refresh-rate", reinitProtocol, 0, 0);
     var reinit_hostChange = setlistener(mySettingsRootPath ~ "/host", reinitProtocol, 0, 0);
     var reinit_portChange = setlistener(mySettingsRootPath ~ "/port", reinitProtocol, 0, 0);
-    
-    var recalcADFVolume = func() {
-        # Reception depends on ident-audible and the volume knob
-        # ident-audible is supposed to be set from the audio panel
-        var adf_vol   = getprop("/instrumentation/adf[0]/volume-norm") or 0;
-        var adf_ident = getprop("/instrumentation/adf[0]/ident-audible") or 0;
-        if (adf_ident) {
-            setprop("/instrumentation/adf[0]/fgcom-mumble/volume", adf_vol);
-        } else {
-            setprop("/instrumentation/adf[0]/fgcom-mumble/volume", 0);
-        }
-    }
-    var rdfModeChange = setlistener("/instrumentation/adf[0]/ident-audible", recalcADFVolume, 1, 0);
-    var rdfVolChange  = setlistener("/instrumentation/adf[0]/volume-norm", recalcADFVolume, 0, 0);
-    
-    var recalcADFFrequency = setlistener("/instrumentation/adf[0]/frequencies/selected-khz", func(p) {
-        # Recalculate kHz frequency into MHz for fgcom-mumble
-        var ori_frq      = p.getValue()~"";  # enforce string
-        var calc_frq = 0;
-        if (size(ori_frq) <= 3) {
-            calc_frq = "0."~ori_frq;
-        } else {
-            var mhz = left(ori_frq, size(ori_frq)-3);
-            var khz = right(ori_frq, 3);
-            calc_frq = mhz~"."~khz;
-        }
-        setprop("/instrumentation/adf[0]/fgcom-mumble/selected-mhz", calc_frq);
-    }, 1, 0);
 }
