@@ -278,7 +278,7 @@
   <input>
     <line_separator>newline</line_separator>
     <var_separator>,</var_separator>
-    <!-- RDF info format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98" -->
+    <!-- RDF info format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1" -->
     <chunk>
         <name>RDF data: Callsign</name>
         <type>string</type>
@@ -303,6 +303,11 @@
         <name>RDF data: Quality</name>
         <type>string</type>
         <node>/instrumentation/adf[0]/fgcom-mumble/input/quality</node>
+    </chunk>
+    <chunk>
+        <name>RDF data: Radio index</name>
+        <type>string</type>
+        <node>/instrumentation/adf[0]/fgcom-mumble/input/radio</node>
     </chunk>
   </input>
 

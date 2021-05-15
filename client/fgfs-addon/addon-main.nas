@@ -20,8 +20,9 @@ var rdfResetCheck = maketimer(rdfResetCheck_interval, func() {
     var lastRDFBearing = adf_node.getNode("fgcom-mumble/direction-deg");
     
     # Read most recent input data
-    # Format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98"
+    # Format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1"
     var fgcom_rdf_input_node      = adf_node.getNode("fgcom-mumble/input/");
+    var fgcom_rdf_input_radio     = fgcom_rdf_input_node.getNode("radio");
     var fgcom_rdf_input_callsign  = fgcom_rdf_input_node.getNode("callsign");
     var fgcom_rdf_input_direction = fgcom_rdf_input_node.getNode("direction");
     var fgcom_rdf_input_quality   = fgcom_rdf_input_node.getNode("quality");
