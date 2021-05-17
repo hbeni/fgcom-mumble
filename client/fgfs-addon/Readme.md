@@ -2,13 +2,6 @@ FGCom-mumble FGFS Addon
 =================================
 This set of files is a convenient FlightGear addon package to let FlightGear know about the FGCom-mumble protocol. It adds menu item and a dialog where you can conviniently adjust the parameters without the need to restart flightgear.
 
-Instead of using this addon, you can also invoke the protocol manually:
-
-- copy the `fgcom-mumble.xml` fightgear protocol file to your flightgears `Protocol` folder.
-- start flightgear with enabled fgcom-mumble protocol (add "`--generic=socket,out,10,127.0.0.1,16661,udp,fgcom-mumble`" to your launcher)
-
-
-
 Installation
 ------------
 After unzipping the FGCom-mumble release package, you just need to add the `fgfs-addon` folder to your launcher's *Add-ons* module list.  
@@ -22,6 +15,8 @@ No further steps are needed.
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
 After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).
+
+If your plane has more than two COM radios, you can use the _Combar_ dialog from the configuration dialog to access the PTTs of the radios, or define custom keybinds to set `/instrumentation/com[n]/ptt`.
 
 
 Configuration

@@ -165,6 +165,8 @@ var main = func( addon ) {
     var mySettingsRootPath = "/addons/by-id/" ~ myAddonId;
     var protocolInitialized = 0;
     
+    print("Addon FGCom-mumble loading...");
+    
     # init props with defaults
     var enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
     enabledNode.setAttribute("userarchive", "y");
@@ -196,6 +198,10 @@ var main = func( addon ) {
 	};
 	props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
 	fgcommand("gui-redraw");
+
+    # Load the FGCom-mumble combar
+    print("Addon FGCom-mumble loading combar...");
+    io.load_nasal(root~"/gui/combar.nas", "FGComMumble");
 
     var initProtocol = func() {
       if (protocolInitialized == 0) {
