@@ -178,6 +178,7 @@
 
 
    <!-- TODO: add more radios here. The plugin ignores not present radios automatically. -->
+   <!--       Remember that you should also adjust the variable num_radios in combar.nas -->
    
    
    <!-- ADF radio / RDF -->
@@ -250,7 +251,7 @@
    </chunk>
    
    <!-- FGCom 3.0 compatibility: /instrumentation/com[n]/ptt is never set from any aircraft except
-        c182s. The old FGCom protocol seems outdated and transmit an old property.
+        c182s or the combar-gui. The old FGCom protocol seems outdated and transmit an old property.
         To get compatibility out-of-the-box, we transmit the FGCom PTT property here.
         The UDP server takes care to parse this properly into the new format.
         Note however, this overrides the individual COM-PTTs above. -->

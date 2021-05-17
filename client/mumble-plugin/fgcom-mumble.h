@@ -23,7 +23,7 @@
 
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
-#define FGCOM_VERSION_MINOR 13
+#define FGCOM_VERSION_MINOR 14
 #define FGCOM_VERSION_PATCH 0
 
 /*

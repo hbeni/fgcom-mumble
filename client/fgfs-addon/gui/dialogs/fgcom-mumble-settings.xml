@@ -91,6 +91,25 @@
     </group>
     
     <hrule/>
+    
+    <group>
+        <layout>hbox</layout>
+
+        <button>
+            <legend>Open COMBar</legend>
+            <pref-width>180</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>nasal</command>
+                <script>FGComMumble.combar.show();</script>
+            </binding>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+    </group>
+    
+    <hrule/>
 
     <group>
         <layout>hbox</layout>

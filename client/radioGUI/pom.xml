@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fgcom-mumble</groupId>
     <artifactId>FGCom-mumble-radioGUI</artifactId>
-    <version>0.12.0</version>  <!-- VERSION of the Application -->
+    <version>0.14.0</version>  <!-- VERSION of the Application -->
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

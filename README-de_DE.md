@@ -127,7 +127,7 @@ Weitere Details stehen im Readme des RadioGUI.
 - FlightGear sendet dann automatisch die notwendigen Daten an mumble (mit Standardparametern; diese können über das *Mehrspieler*-Menü geändert werden).
 
 Die FGFS-Protokolldefinition unterstützt alte 25kHz- genauso wie neuere 8.3kHz Funkgeräte.
-Nachdem Flightgear gestartet wurde, kannst du die Funkgeräte wie gewohnt benutzen (Standard ist *Leertaste* für Sprechen auf COM1 und *Umschalt-Leetaste* für COM2).
+Nachdem Flightgear gestartet wurde, kannst du die Funkgeräte wie gewohnt benutzen (Standard ist *Leertaste* für Sprechen auf COM1 und *Umschalt-Leetaste* für COM2). Weitere Geräte können über eigene Tastenkürzel oder die _Combar_ angesprochen werden.
 
 Der ADF-Empfänger misst Übertragungen im kHz-Band und zeigt im _ADF_-Modus die Empfangsrichtung auf der Instrumentennadel des ADF-Instrumentes an. Empfangene anaolge Signale können zudem wiedergegeben werden. Dies wird üblicherwiese im Audiopanel des Flugzeugs aktiviert.
 
