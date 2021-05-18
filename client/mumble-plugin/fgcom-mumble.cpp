@@ -214,8 +214,12 @@ void fgcom_updateClientComment() {
                 std::string frqs;
                 if (lcl.radios.size() > 0) {
                     for (int i=0; i<lcl.radios.size(); i++) {
-                        if (i >= 1) frqs += ", ";
-                        frqs += lcl.radios[i].dialedFRQ;
+                        if (lcl.radios[i].frequency != "") {
+                            if (i >= 1) frqs += ", ";
+                            if (!lcl.radios[i].operable) frqs += "<i><font color=\"grey\">";
+                            frqs += lcl.radios[i].dialedFRQ;
+                            if (!lcl.radios[i].operable) frqs += "</font></i>";
+                        }
                     }
                 } else {
                     frqs = "-";
