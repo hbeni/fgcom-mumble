@@ -179,6 +179,7 @@
 
    <!-- TODO: add more radios here. The plugin ignores not present radios automatically. -->
    <!--       Remember that you should also adjust the variable num_radios in combar.nas -->
+   <!--       Also remember to push the ADF belows index up and adjust in addon-main.nas -->
    
    
    <!-- ADF radio / RDF -->
@@ -193,7 +194,8 @@
    <chunk>
     <name>adf1-local-only</name>
     <type>string</type>
-    <format>COM4_PUBLISH=0</format>
+    <format>COM4_PUBLISH=%s</format>
+    <node>/instrumentation/adf[0]/fgcom-mumble/publish</node>
    </chunk>
    <chunk>
     <name>adf1-operable</name>
@@ -217,13 +219,15 @@
    <chunk>
     <name>adf1-enableRDF</name>
     <type>string</type>
-    <format>COM4_RDF=1</format>
+    <format>COM4_RDF=%s</format>
+    <node>/instrumentation/adf[0]/fgcom-mumble/rdf-enabled</node>
    </chunk>
 
    <chunk>
     <name>adf2-local-only</name>
     <type>string</type>
-    <format>COM5_PUBLISH=0</format>
+    <format>COM5_PUBLISH=%s</format>
+    <node>/instrumentation/adf[1]/fgcom-mumble/publish</node>
    </chunk>
    <chunk>
     <name>adf2-operable</name>
@@ -247,7 +251,8 @@
    <chunk>
     <name>adf2-enableRDF</name>
     <type>string</type>
-    <format>COM5_RDF=1</format>
+    <format>COM5_RDF=%s</format>
+    <node>/instrumentation/adf[1]/fgcom-mumble/rdf-enabled</node>
    </chunk>
    
    <!-- FGCom 3.0 compatibility: /instrumentation/com[n]/ptt is never set from any aircraft except
