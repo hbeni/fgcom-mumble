@@ -71,7 +71,7 @@ var ADF = {
         # Reception depends on ident-audible and the volume knob
         # ident-audible is supposed to be set from the audio panel.
         # If its empty/nil, we set the value to empty string, so fgcom-mumble can ignore it.
-        if (me.ident_aud != nil and me.ident_aud.getValue() != nil and me.ident_aud.getValue() != "") {
+        if (me.ident_aud.getValue() != nil and me.ident_aud.getValue() != "") {
             if (!me.ident_aud.getBoolValue()) {
                 me.fgcom_vol.setValue(0);
             } else {
