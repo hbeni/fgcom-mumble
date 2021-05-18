@@ -25,14 +25,28 @@ var ADF = {
 
     # Lookup and initialize ADF/RDF properties
     init: func {
-        me.operable = me.root.getNode("operable", 1);
+        me.fgcom_root = me.root.getNode("fgcom-mumble", 1);
+
         me.vol = me.root.getNode("volume-norm", 1);
         me.mode = me.root.getNode("mode", 1);
         me.ident_aud = me.root.getNode("ident-audible", 1);
         me.freq_khz = me.root.getNode("frequencies/selected-khz", 1);
         me.indicated_bearing = me.root.getNode("indicated-bearing-deg", 1);
+        me.fgcom_rdf_enabled = me.fgcom_root.initNode("rdf-enabled", "1");
+        me.fgcom_publish = me.fgcom_root.initNode("publish", "0");
 
-        me.fgcom_root = me.root.getNode("fgcom-mumble", 1);
+        # Safeguard: By default, FGFS seems to add two ADFs, even if they are not defined within the craft.
+        #            We therefore make a check here for the operational property (which is expected to be
+        #            set from C++ space), and if it's nil we know that the ADF was not defined. In this case
+        #            we clear the set default frequency so its inop and also not considered by fgcom-mumble.
+        me.operable = me.root.getNode("operable");
+        if (me.operable == nil) {
+            me.operable = me.root.getNode("operable", 1);
+            me.freq_khz.clearValue();
+            me.fgcom_rdf_enabled.clearValue();
+            me.fgcom_publish.clearValue();
+        }
+
         me.fgcom_vol = me.fgcom_root.getNode("volume", 1);
         me.fgcom_freq_mhz = me.fgcom_root.getNode("selected-mhz", 1);
         me.fgcom_rdf_bearing = me.fgcom_root.initNode("direction-deg", "");
@@ -55,11 +69,16 @@ var ADF = {
 
     recalcVolume: func {
         # Reception depends on ident-audible and the volume knob
-        # ident-audible is supposed to be set from the audio panel
-        if (!me.ident_aud.getBoolValue()) {
-            me.fgcom_vol.setValue(0);
+        # ident-audible is supposed to be set from the audio panel.
+        # If its empty/nil, we set the value to empty string, so fgcom-mumble can ignore it.
+        if (me.ident_aud != nil and me.ident_aud.getValue() != nil and me.ident_aud.getValue() != "") {
+            if (!me.ident_aud.getBoolValue()) {
+                me.fgcom_vol.setValue(0);
+            } else {
+                me.fgcom_vol.setValue(me.vol.getValue() or 0);
+            }
         } else {
-            me.fgcom_vol.setValue(me.vol.getValue() or 0);
+            me.fgcom_vol.setValue("");
         }
     },
 
@@ -69,7 +88,8 @@ var ADF = {
         if (freq_num == nil) {
             # Frequency can not be converted to a number.
             # Do not attempt KHz -> MHz conversion
-            me.fgcom_freq_mhz.setValue(freq);
+            if (freq != nil)
+                me.fgcom_freq_mhz.setValue(freq);
         } else {
             me.fgcom_freq_mhz.setValue(freq_num / 1000.0);
         }
