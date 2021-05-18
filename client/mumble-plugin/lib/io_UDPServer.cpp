@@ -36,7 +36,7 @@
 #include <sys/types.h> 
 #include <math.h>
 
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     #include <winsock2.h>
     //#include <windows.h>
     //#include <ws2tcpip.h>
@@ -543,7 +543,7 @@ void fgcom_spawnUDPServer() {
     char buffer[MAXLINE];
     struct sockaddr_in servaddr, cliaddr; 
     
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     // init WinSock
     WSADATA wsa;
     int winsockInitRC = WSAStartup(MAKEWORD(2,0),&wsa);
@@ -607,7 +607,7 @@ void fgcom_spawnUDPServer() {
     udpServerRunning = true;
     while (!fgcom_udp_shutdowncmd) {
         len = sizeof(cliaddr);  //len is value/result
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
         int recvfrom_flags = 0;  //MSG_WAITALL not supported with UDP on windows (gives error 10045 WSAEOPNOTSUPP)
 #else
         int recvfrom_flags = MSG_WAITALL;
@@ -618,7 +618,7 @@ void fgcom_spawnUDPServer() {
                      recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
         if (n < 0) {
             // SOCKET_ERROR returned
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
             //details for windows error codes: https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recvfrom
             wprintf(L"recvfrom failed with error %d\n", WSAGetLastError());
             pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in nf-winsock-recvfrom()="+std::to_string(WSAGetLastError()));
@@ -713,13 +713,13 @@ void fgcom_shutdownUDPServer() {
 	// and stores it as sin_addr
 	// see: https://beej.us/guide/bgnet/html/
     if (fgcom_cfg.udpServerHost == "*") {
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
         server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 #else
         inet_pton(AF_INET, "127.0.0.1", &server_address.sin_addr);
 #endif
     } else {
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
         server_address.sin_addr.s_addr = inet_addr(fgcom_cfg.udpServerHost.c_str());
 #else
         inet_pton(AF_INET, fgcom_cfg.udpServerHost.c_str(), &server_address.sin_addr);

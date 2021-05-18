@@ -52,8 +52,8 @@ package:
 	@echo "PLUGINVER:    $(PLUGINVER)"
 	@echo "RADIOGUIVER:  $(RADIOGUIVER)"
 	@echo "FGFSADDONVER: $(FGFSADDONVER)"
-	@ls -alh fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-client-*$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
-	@md5sum fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-client-*$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
+	@ls -alh fgcom-mumble-$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
+	@md5sum fgcom-mumble-$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
 
 release-plugin:
 	# Delegate build plugin release

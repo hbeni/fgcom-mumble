@@ -60,6 +60,16 @@ using namespace httplib;
 //using json = nlohmann::json;
 
 
+// Naming components of the download asset:
+//   name + version + postfix + extension
+//   fgcom-mumble-0.14.0-win32.zip
+std::string fgcom_asset_name("fgcom-mumble-");
+std::string fgcom_bin_extension(".zip");
+#ifdef MINGW_WIN32
+std::string fgcom_bin_postfix("-win32");
+#else
+std::string fgcom_bin_postfix("");
+#endif
 
 
 /* Version struct */
@@ -184,7 +194,7 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                                         + "." + std::to_string(fgcom_release_latest.version.minor)
                                         + "." + std::to_string(fgcom_release_latest.version.patch);
                     //fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-client-binOnly-"+verStr+".zip";
-                    fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-"+verStr+".zip";
+                    fgcom_release_latest.downUrl = dlurlbase+"/"+fgcom_asset_name+verStr+fgcom_bin_postfix+fgcom_bin_extension;
                     // ^^ NOTICE: In the future the mumble plugin updater may need a specially prepared binary zip release file.
                     //            Currently this is not the case, and the updater traverses the ZIP he's given to find a matching
                     //            Shared library object for the operating system.
