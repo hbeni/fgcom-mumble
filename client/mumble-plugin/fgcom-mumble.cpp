@@ -257,7 +257,7 @@ mumble_error_t fgcom_loadConfig() {
 
     // Try to get config file from home dir
     char* pHomeDir;
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     std::string dirSep = "\\";
     pHomeDir = getenv("USERPROFILE");
     if (pHomeDir) {

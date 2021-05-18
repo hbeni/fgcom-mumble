@@ -40,7 +40,7 @@
 #include <chrono>
 #include <iomanip>
 
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     #include <winsock2.h>
     //#include <windows.h>
     //#include <ws2tcpip.h>

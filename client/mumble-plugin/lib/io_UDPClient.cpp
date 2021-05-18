@@ -30,7 +30,7 @@
 #include <regex>
 #include <sys/types.h> 
 
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     #include <winsock2.h>
     //#include <windows.h>
     //#include <ws2tcpip.h>
@@ -181,7 +181,7 @@ void fgcom_spawnUDPClient() {
 
             //bzero(&(remoteServAddr.sin_zero), 8);     /* zero the rest of the struct */
             remoteServAddr.sin_port = htons(lcl.clientTgtPort);
-#ifdef MINGW_WIN64
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
             remoteServAddr.sin_addr.s_addr = inet_addr(lcl.clientHost.c_str());
 #else
             int pton_rc = inet_pton(AF_INET, lcl.clientHost.c_str(), &remoteServAddr.sin_addr);

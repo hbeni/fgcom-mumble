@@ -103,7 +103,7 @@ plugin-win64-only:
 	$(CC_WIN) -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 plugin-win32-only:
-	$(CC_WIN32) -m32 -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble-x86_32.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC_WIN32) -m32 -fPIC --shared -DMINGW_WIN32 -o fgcom-mumble-x86_32.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 
 # OpenSSL (static build)
@@ -135,7 +135,7 @@ release: clean-all test plugin plugin-win64 plugin-win32
 	@echo Version: $(VERSION) \($(GITCOMMIT) $(GITDATE)\) >> releaseReadme.md
 	tail +2 ../../README.md >> releaseReadme.md
 	
-	# Linux + Windows combined
+	# Linux + Windows64 combined
 	mkdir fgcom-mumble-client-$(VERSION)
 	mkdir fgcom-mumble-client-$(VERSION)/mumble-plugin
 	rm -f fgcom-mumble-*.zip
@@ -143,15 +143,26 @@ release: clean-all test plugin plugin-win64 plugin-win32
 	cp ../../LICENSE ../../README-de_DE.md ../../Readme.architecture.md ../plugin.spec.md fgcom-mumble-client-$(VERSION)/
 	cp fgcom-mumble*.so  fgcom-mumble-client-$(VERSION)/mumble-plugin
 	cp fgcom-mumble.dll fgcom-mumble-client-$(VERSION)/mumble-plugin
-	cp fgcom-mumble-x86_32.dll fgcom-mumble-client-$(VERSION)/mumble-plugin
 	cp fgcom-mumble.ini fgcom-mumble-client-$(VERSION)/mumble-plugin
 	zip -r fgcom-mumble-client-$(VERSION).zip fgcom-mumble-client-$(VERSION)
-	rm -rf fgcom-mumble-client-$(VERSION)
+	
+	# Make a package containing the win32 binary
+	# INFO: needed because the current mumble updater can't handle more than one DLL in the ZIP.
+	#       See https://github.com/mumble-voip/mumble/issues/4946 for details.
+	#       Once this is fixed, we can include the dll into the normal zip again, for making this happen,
+	#       adjust the lines here and revise the updater to always fetch the normal zip (see naming components there).
+	cp -r fgcom-mumble-client-$(VERSION) fgcom-mumble-$(VERSION)-win32
+	rm fgcom-mumble-$(VERSION)-win32/mumble-plugin/*
+	cp fgcom-mumble-x86_32.dll fgcom-mumble-$(VERSION)-win32/mumble-plugin
+	zip -r fgcom-mumble-$(VERSION)-win32.zip fgcom-mumble-$(VERSION)-win32
+	rm -rf fgcom-mumble-$(VERSION)-win32
 	
 	# Just a binary package for the mumble updater
 	# Note: this ZIP may has a special format
 	zip fgcom-mumble-client-binOnly-$(VERSION).zip fgcom-mumble.so fgcom-mumble.dll fgcom-mumble-x86_32.dll
 	
+	# cleanup
+	rm -rf fgcom-mumble-client-$(VERSION)
 	rm releaseReadme.md
 	@echo "\nPluginrelease $(VERSION) built successfully:"
 	@ls -alh *$(VERSION)*
