@@ -46,7 +46,7 @@
     <name>com1-frequency</name>
     <type>string</type>
     <format>COM1_FRQ=%s</format>
-    <node>/instrumentation/comm[0]/frequencies/selected-mhz</node>
+    <node>/instrumentation/comm[0]/fgcom-mumble/selected-mhz</node>
    </chunk>
    <chunk>
     <name>com1-channel-width-khz</name>
@@ -65,13 +65,13 @@
     <name>com1-ptt</name>
     <type>string</type>
     <format>COM1_PTT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[0]/ptt</node>
+    <node>/instrumentation/comm[0]/fgcom-mumble/ptt</node>
    </chunk>
    <chunk>
     <name>com1-vol</name>
     <type>string</type>
     <format>COM1_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/comm[0]/volume</node>
+    <node>/instrumentation/comm[0]/fgcom-mumble/volume</node>
    </chunk>
    <chunk>
     <name>com1-txpwr</name>
@@ -85,13 +85,13 @@
     <format>COM1_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
     <node>/instrumentation/comm[0]/cutoff-signal-quality</node>
    </chunk>
-   
+
    <!-- COM 2 -->
    <chunk>
     <name>com2-frequency</name>
     <type>string</type>
     <format>COM2_FRQ=%s</format>
-    <node>/instrumentation/comm[1]/frequencies/selected-mhz</node>
+    <node>/instrumentation/comm[1]/fgcom-mumble/selected-mhz</node>
    </chunk>
    <chunk>
     <name>com2-channel-width-khz</name>
@@ -110,13 +110,13 @@
     <name>com2-ptt</name>
     <type>string</type>
     <format>COM2_PTT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[1]/ptt</node>
+    <node>/instrumentation/comm[1]/fgcom-mumble/ptt</node>
    </chunk>
    <chunk>
     <name>com2-vol</name>
     <type>string</type>
     <format>COM2_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/comm[1]/volume</node>
+    <node>/instrumentation/comm[1]/fgcom-mumble/volume</node>
    </chunk>
    <chunk>
     <name>com2-txpwr</name>
@@ -130,13 +130,13 @@
     <format>COM2_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
     <node>/instrumentation/comm[1]/cutoff-signal-quality</node>
    </chunk>
-   
+
    <!-- COM 3 -->
    <chunk>
     <name>com3-frequency</name>
     <type>string</type>
     <format>COM3_FRQ=%s</format>
-    <node>/instrumentation/comm[2]/frequencies/selected-mhz</node>
+    <node>/instrumentation/comm[2]/fgcom-mumble/selected-mhz</node>
    </chunk>
    <chunk>
     <name>com3-channel-width-khz</name>
@@ -155,13 +155,13 @@
     <name>com3-ptt</name>
     <type>string</type>
     <format>COM3_PTT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[2]/ptt</node>
+    <node>/instrumentation/comm[2]/fgcom-mumble/ptt</node>
    </chunk>
    <chunk>
     <name>com3-vol</name>
     <type>string</type>
     <format>COM3_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/comm[2]/volume</node>
+    <node>/instrumentation/comm[2]/fgcom-mumble/volume</node>
    </chunk>
    <chunk>
     <name>com3-txpwr</name>
@@ -176,12 +176,11 @@
     <node>/instrumentation/comm[2]/cutoff-signal-quality</node>
    </chunk>
 
-
    <!-- TODO: add more radios here. The plugin ignores not present radios automatically. -->
    <!--       Remember that you should also adjust the variable num_radios in combar.nas -->
    <!--       Also remember to push the ADF belows index up and adjust in addon-main.nas -->
-   
-   
+
+
    <!-- ADF radio / RDF -->
    <chunk>
     <!-- UDP RDF client port overwrite: This is needed, because FGFS currently
@@ -254,7 +253,7 @@
     <format>COM5_RDF=%s</format>
     <node>/instrumentation/adf[1]/fgcom-mumble/rdf-enabled</node>
    </chunk>
-   
+
    <!-- FGCom 3.0 compatibility: /instrumentation/com[n]/ptt is never set from any aircraft except
         c182s or the combar-gui. The old FGCom protocol seems outdated and transmit an old property.
         To get compatibility out-of-the-box, we transmit the FGCom PTT property here.
@@ -267,8 +266,6 @@
     <node>/controls/radios/comm-ptt</node>
    </chunk>
 
-   
-   
    <!--  #####################  -->
    <!--  #  POSITIONAL DATA  #  -->
    <!--  #####################  -->
@@ -294,8 +291,6 @@
     <node>/position/altitude-agl-ft</node>
    </chunk>
 
-  
-   
    <!--  #########################  -->
    <!--  #  IDENTIFICATION DATA  #  -->
    <!--  #########################  -->

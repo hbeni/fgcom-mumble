@@ -7,6 +7,56 @@
 # @author Colin Geniet, 2021
 
 
+var GenericRadio = {
+    # Parameter: root: the radio property root (e.g. /instrumentation/comm[i]), as a property node.
+    new: func(root) {
+        var r = { parents: [GenericRadio], root: root, };
+        r.init();
+        return r;
+    },
+
+    init: func {
+        # Radio frequencies are initialized by C++ code even for aircrafts which do not use the radio.
+        # To avoid transmitting the frequency for an unused radio (which would make it functional
+        # in the fgcom-mumble plugin), test if the 'operable' property exist.
+        # It is created by the C++ instrument code, if the radio is used.
+        me.operable = me.root.getNode("operable");
+        me.is_used = (me.operable != nil);
+
+        # Property subtree for fgcom-mumble properties.
+        me.fgcom_root        = me.root.getNode("fgcom-mumble", 1);
+        me.fgcom_freq_mhz    = me.fgcom_root.getNode("selected-mhz", 1);
+        me.fgcom_vol         = me.fgcom_root.getNode("volume", 1);
+
+        # Hash containing all listeners, in case we need to delete them later.
+        me.listeners = {};
+    },
+};
+
+var COM = {
+    new: func(root) {
+        var r = { parents: [COM, GenericRadio.new(root)], };
+        r.init();
+        return r;
+    },
+
+    init: func {
+        me.vol       = me.root.getNode("volume", 1);
+        me.freq_mhz  = me.root.getNode("frequencies/selected-mhz", 1);
+        me.ptt       = me.root.getNode("ptt", 1);
+        me.fgcom_ptt = me.fgcom_root.getNode("ptt", 1);
+
+        # Only initialize properties if the radio is used.
+        if (me.is_used) {
+            # Volume/frequency/ptt are transmitted as is if the radio is used, so simply alias the properties.
+            me.fgcom_vol.alias(me.vol);
+            me.fgcom_freq_mhz.alias(me.freq_mhz);
+            me.fgcom_ptt.alias(me.ptt);
+        }
+    },
+};
+
+
 #
 # FGCom-mumble ADF logic
 #
@@ -16,80 +66,69 @@ var ADF = {
     # Update period for RDF, seconds
     rdf_update_period: 1,
 
-    # Parameter: root: the ADF property root (normally /instrumentation/adf[i]).
     new: func(root) {
-        var a = { parents: [ADF], root: root, };
-        a.init();
-        return a;
+        var r = { parents: [ADF, GenericRadio.new(root)], };
+        r.init();
+        return r;
     },
 
-    # Lookup and initialize ADF/RDF properties
     init: func {
-        me.fgcom_root = me.root.getNode("fgcom-mumble", 1);
-
-        me.vol = me.root.getNode("volume-norm", 1);
-        me.mode = me.root.getNode("mode", 1);
-        me.ident_aud = me.root.getNode("ident-audible", 1);
-        me.freq_khz = me.root.getNode("frequencies/selected-khz", 1);
+        # FG ADF properties
+        me.vol               = me.root.getNode("volume-norm", 1);
+        me.ident_aud         = me.root.getNode("ident-audible", 1);
+        me.mode              = me.root.getNode("mode", 1);
+        me.freq_khz          = me.root.getNode("frequencies/selected-khz", 1);
         me.indicated_bearing = me.root.getNode("indicated-bearing-deg", 1);
-        me.fgcom_rdf_enabled = me.fgcom_root.initNode("rdf-enabled", "1");
-        me.fgcom_publish = me.fgcom_root.initNode("publish", "0");
+        # Properties for plugin RDF signals
+        # Input
+        me.fgcom_rdf_bearing = me.fgcom_root.getNode("direction-deg", 1);
+        me.fgcom_rdf_quality = me.fgcom_root.getNode("quality", 1);
+        # Output
+        me.fgcom_rdf_enabled = me.fgcom_root.getNode("rdf-enabled", 1);
+        me.fgcom_publish     = me.fgcom_root.getNode("publish", 1);
 
-        # Safeguard: By default, FGFS seems to add two ADFs, even if they are not defined within the craft.
-        #            We therefore make a check here for the operational property (which is expected to be
-        #            set from C++ space), and if it's nil we know that the ADF was not defined. In this case
-        #            we clear the set default frequency so its inop and also not considered by fgcom-mumble.
-        me.operable = me.root.getNode("operable");
-        if (me.operable == nil) {
-            me.operable = me.root.getNode("operable", 1);
-            me.freq_khz.clearValue();
-            me.fgcom_rdf_enabled.clearValue();
-            me.fgcom_publish.clearValue();
+        # Only initialize properties / listeners / timers if the radio is used.
+        if (me.is_used) {
+            me.fgcom_rdf_enabled.setValue(1);
+            me.fgcom_publish.setValue(0);
+
+            # Volume update
+            me.listeners.vol =        setlistener(me.vol, func { me.recalcVolume(); }, 1, 0);
+            me.listeners.indent_aud = setlistener(me.ident_aud, func { me.recalcVolume(); }, 0, 0);
+            # Frequency update
+            me.listeners.freq =       setlistener(me.freq_khz, func { me.recalcFrequency(); }, 1, 0);
+
+            # RDF update loop
+            if (me.fgcom_rdf_enabled.getBoolValue()) {
+                me.has_rdf_signal = 0;
+                me.rdf_timer = maketimer(me.rdf_update_period, me, me.rdf_loop);
+                me.rdf_timer.start();
+            }
         }
-
-        me.fgcom_vol = me.fgcom_root.getNode("volume", 1);
-        me.fgcom_freq_mhz = me.fgcom_root.getNode("selected-mhz", 1);
-        me.fgcom_rdf_bearing = me.fgcom_root.initNode("direction-deg", "");
-        me.fgcom_rdf_quality = me.fgcom_root.initNode("quality", "");
-
-        # All listeners in an array, so that it's easy to delete all of them in the destructor.
-        me.listeners = [
-            # Update FGCom-mumble volume
-            setlistener(me.vol, func { me.recalcVolume(); }, 1, 0),
-            setlistener(me.ident_aud, func { me.recalcVolume(); }, 0, 0),
-            # Update FGCom-mumble frequency
-            setlistener(me.freq_khz, func { me.recalcFrequency(); }, 1, 0),
-        ];
-
-        me.has_rdf_signal = 0;
-
-        me.rdf_timer = maketimer(me.rdf_update_period, me, me.rdf_loop);
-        me.rdf_timer.start();
     },
 
     recalcVolume: func {
         # Reception depends on ident-audible and the volume knob
         # ident-audible is supposed to be set from the audio panel.
-        # If its empty/nil, we set the value to empty string, so fgcom-mumble can ignore it.
-        if (me.ident_aud.getValue() != nil and me.ident_aud.getValue() != "") {
-            if (!me.ident_aud.getBoolValue()) {
-                me.fgcom_vol.setValue(0);
-            } else {
-                me.fgcom_vol.setValue(me.vol.getValue() or 0);
-            }
+        if (me.ident_aud.getBoolValue()) {
+            me.fgcom_vol.setValue(me.vol.getValue() or 0);
         } else {
-            me.fgcom_vol.setValue("");
+            me.fgcom_vol.setValue(0);
         }
     },
 
     recalcFrequency: func {
         var freq = me.freq_khz.getValue();
+        if (freq == nil) {
+            me.fgcom_freq_mhz.clearValue();
+            return
+        }
+
         var freq_num = num(freq);
         if (freq_num == nil) {
             # Frequency can not be converted to a number.
             # Do not attempt KHz -> MHz conversion
-            if (freq != nil)
-                me.fgcom_freq_mhz.setValue(freq);
+            me.fgcom_freq_mhz.setValue(freq);
         } else {
             me.fgcom_freq_mhz.setValue(freq_num / 1000.0);
         }
@@ -105,15 +144,15 @@ var ADF = {
     },
 
     clear_rdf_data: func {
-        me.fgcom_rdf_bearing.setValue("");
-        me.fgcom_rdf_quality.setValue("");
+        me.fgcom_rdf_bearing.clearValue();
+        me.fgcom_rdf_quality.clearValue()
     },
 
     rdf_loop: func {
         if (me.operable.getBoolValue()) {
             var direction = me.fgcom_rdf_bearing.getValue();
             var quality = me.fgcom_rdf_quality.getValue();
-            if (direction != "" and quality != "" and quality > me.rdf_quality_threshold and me.mode.getValue() == "adf") {
+            if (direction != nil and quality != nil and quality > me.rdf_quality_threshold and me.mode.getValue() == "adf") {
                 # Has signal, and is in the correct mode: animate the needle
                 me.has_rdf_signal = 1;
                 interpolate(me.indicated_bearing, direction, 1);
@@ -133,10 +172,16 @@ var ADF = {
 };
 
 
-# ADF radios objects, indexed by their index in protocol fgcom-mumble.xml (X for COMX).
+# Radios objects, indexed by their index in protocol fgcom-mumble.xml (X for COMX).
+var COM_radios = {
+    "1": COM.new(props.globals.getNode("instrumentation/comm[0]", 1)),
+    "2": COM.new(props.globals.getNode("instrumentation/comm[1]", 1)),
+    "3": COM.new(props.globals.getNode("instrumentation/comm[2]", 1)),
+};
+
 var ADF_radios = {
-    "4": ADF.new(props.globals.getNode("instrumentation/adf[0]")),
-    "5": ADF.new(props.globals.getNode("instrumentation/adf[1]")),
+    "4": ADF.new(props.globals.getNode("instrumentation/adf[0]", 1)),
+    "5": ADF.new(props.globals.getNode("instrumentation/adf[1]", 1)),
 };
 
 
@@ -167,7 +212,7 @@ var rdf_data_callback = func {
     var quality   = split("=", quality)[1];
 
     # Send to corresponding ADF
-    if (contains(ADF_radios, radio)) {
+    if (contains(ADF_radios, radio) and ADF_radios[radio].is_used) {
         # Found corresponding ADF radio, send the signal to it.
         ADF_radios[radio].set_rdf_data(direction, quality);
     }
