@@ -36,7 +36,7 @@ var combar = {
 
     # Generate buttons for this much COM radios;
     # /!\ must be the same as the defined/transmitted radios in the protocol file!
-    num_radios: 3,
+    num_radios: FGComMumble_radios.n_COM,
 
     comPTTButton_size: [65,25],
     dialogOpened: 0,
@@ -66,8 +66,8 @@ var combar = {
         # Generate PTT buttons for the configured radios
         for (var i=0; i<me.num_radios; i=i+1) {
             var radio_p   = "/instrumentation/comm["~i~"]";
-            var radio_frq = getprop(radio_p~"/frequencies/selected-mhz");
-            if (radio_frq == nil or radio_frq == "") {
+            var radio_used = getprop(radio_p~"/fgcom-mumble/is-used");
+            if (!radio_used) {
                 print("Addon FGCom-mumble: combar skipping "~radio_p);
                 continue;
             }
