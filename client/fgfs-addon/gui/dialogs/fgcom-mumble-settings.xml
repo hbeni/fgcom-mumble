@@ -19,7 +19,10 @@
         <empty><stretch>1</stretch></empty>
 
         <text>
-            <label>FGCom-mumble settings</label>
+            <stretch>1</stretch>
+            <label>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</label>
+            <format>FGCom-mumble (%s) settings</format>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/version</property>
         </text>
 
         <empty><stretch>1</stretch></empty>
