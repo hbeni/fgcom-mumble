@@ -263,7 +263,7 @@ var start_rdf = func {
     if (rdf_data_listener != nil) return;
     rdf_data_listener = setlistener(fgcom_rdf_input_radio, func {
         # call() to set the local namespace.
-        call(rdf_data_callback, [], nil, FGComMumble);
+        call(rdf_data_callback, [], nil, FGComMumble_radios);
     });
 }
 

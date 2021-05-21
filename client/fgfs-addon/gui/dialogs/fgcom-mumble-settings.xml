@@ -101,7 +101,7 @@
             <pref-height>30</pref-height>
             <binding>
                 <command>nasal</command>
-                <script>FGComMumble.combar.show();</script>
+                <script>FGComMumble_combar.combar.show();</script>
             </binding>
             <binding>
                 <command>dialog-close</command>
