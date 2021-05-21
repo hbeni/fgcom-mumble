@@ -48,13 +48,13 @@ var main = func( addon ) {
 
     # Start radios logic
     print("Addon FGCom-mumble loading radios...");
-    io.load_nasal(root~"/radios.nas", "FGComMumble");
-    FGComMumble.create_radios();
-    FGComMumble.start_rdf();
+    io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
+    FGComMumble_radios.create_radios();
+    FGComMumble_radios.start_rdf();
 
     # Load the FGCom-mumble combar
     print("Addon FGCom-mumble loading combar...");
-    io.load_nasal(root~"/gui/combar.nas", "FGComMumble");
+    io.load_nasal(root~"/gui/combar.nas", "FGComMumble_combar");
 
     var initProtocol = func() {
       if (protocolInitialized == 0) {
