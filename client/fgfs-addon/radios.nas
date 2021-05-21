@@ -25,6 +25,7 @@ var GenericRadio = {
         # It is created by the C++ instrument code, if the radio is used.
         me.operable = me.root.getNode("operable");
         me.is_used = (me.operable != nil);
+        print("Addon FGCom-mumble   radio "~(me.is_used?"using  ":"skipped")~": "~me.root.getPath());
 
         # Property subtree for fgcom-mumble properties.
         me.fgcom_root        = me.root.getNode("fgcom-mumble", 1);
