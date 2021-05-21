@@ -30,6 +30,7 @@ var GenericRadio = {
         me.fgcom_root        = me.root.getNode("fgcom-mumble", 1);
         me.fgcom_freq_mhz    = me.fgcom_root.getNode("selected-mhz", 1);
         me.fgcom_vol         = me.fgcom_root.getNode("volume", 1);
+        me.fgcom_root.setValue("is-used", me.is_used);
 
         # Hash containing all listeners / timers / aliases, for the destructor.
         me.listeners = {};
