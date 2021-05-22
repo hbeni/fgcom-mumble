@@ -77,6 +77,7 @@ var COM = {
             me.fgcom_vol.alias(me.vol);
             me.fgcom_freq_mhz.alias(me.freq_mhz);
             me.fgcom_ptt.alias(me.ptt);
+
             # Aliased properties are memorized for the destructor.
             me.aliases.fgcom_vol = me.fgcom_vol;
             me.aliases.fgcom_freq_mhz = me.fgcom_vol;
@@ -108,10 +109,12 @@ var ADF = {
         me.mode              = me.root.getNode("mode", 1);
         me.freq_khz          = me.root.getNode("frequencies/selected-khz", 1);
         me.indicated_bearing = me.root.getNode("indicated-bearing-deg", 1);
+
         # Properties for plugin RDF signals
         # Input
         me.fgcom_rdf_bearing = me.fgcom_root.getNode("direction-deg", 1);
         me.fgcom_rdf_quality = me.fgcom_root.getNode("quality", 1);
+
         # Output
         me.fgcom_rdf_enabled = me.fgcom_root.getNode("rdf-enabled", 1);
         me.fgcom_publish     = me.fgcom_root.getNode("publish", 1);
@@ -238,9 +241,9 @@ var fgcom_rdf_input_direction = nil;
 var fgcom_rdf_input_quality   = nil;
 
 var rdf_data_callback = func {
-    var radio = fgcom_rdf_input_radio.getValue();
+    var radio     = fgcom_rdf_input_radio.getValue();
     var direction = fgcom_rdf_input_direction.getValue();
-    var quality = fgcom_rdf_input_quality.getValue();
+    var quality   = fgcom_rdf_input_quality.getValue();
 
     if (radio == "" or direction == "" or quality == "") return; # No data
 
