@@ -49,8 +49,9 @@ var main = func( addon ) {
     # Start radios logic
     print("Addon FGCom-mumble loading radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
+    var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
     FGComMumble_radios.create_radios();
-    FGComMumble_radios.start_rdf();
+    FGComMumble_radios.start_rdf(rdfinputNode);
 
     # Load the FGCom-mumble combar
     print("Addon FGCom-mumble loading combar...");
@@ -79,7 +80,7 @@ var main = func( addon ) {
             "name":"fgcom-mumble"
           }));
           
-          foreach(var p; props.globals.getNode("/instrumentation/adf[0]/fgcom-mumble/input/").getChildren()) {
+          foreach(var p; rdfinputNode.getChildren()) {
             p.setValue("");
           }
           protocolInitialized = 1;

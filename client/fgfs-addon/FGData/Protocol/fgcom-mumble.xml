@@ -312,32 +312,32 @@
     <chunk>
         <name>RDF data: Callsign</name>
         <type>string</type>
-        <node>/instrumentation/adf[0]/fgcom-mumble/input/callsign</node>
+        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/callsign</node>
     </chunk>
     <chunk>
         <name>RDF data: Frequency</name>
         <type>string</type>
-        <node>/instrumentation/adf[0]/fgcom-mumble/input/frequency</node>
+        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/frequency</node>
     </chunk>
     <chunk>
         <name>RDF data: Direction</name>
         <type>string</type>
-        <node>/instrumentation/adf[0]/fgcom-mumble/input/direction</node>
+        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/direction</node>
     </chunk>
     <chunk>
         <name>RDF data: vertical angle</name>
         <type>string</type>
-        <node>/instrumentation/adf[0]/fgcom-mumble/input/angle</node>
+        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/angle</node>
     </chunk>
     <chunk>
         <name>RDF data: Quality</name>
         <type>string</type>
-        <node>/instrumentation/adf[0]/fgcom-mumble/input/quality</node>
+        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/quality</node>
     </chunk>
     <chunk>
         <name>RDF data: Radio index</name>
         <type>string</type>
-        <node>/instrumentation/adf[0]/fgcom-mumble/input/radio</node>
+        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/radio</node>
     </chunk>
   </input>
 
