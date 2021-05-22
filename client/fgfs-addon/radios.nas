@@ -230,12 +230,12 @@ var destroy_radios = func {
 # All RDF data is sent through the same properties.
 # This function simply parses it, and redistributes it to the correct ADF.
 
-# Input properties
-var fgcom_rdf_input_node      = props.globals.getNode("instrumentation/adf[0]/fgcom-mumble/input/", 1);
-var fgcom_rdf_input_radio     = fgcom_rdf_input_node.initNode("radio", "");
-var fgcom_rdf_input_callsign  = fgcom_rdf_input_node.initNode("callsign", "");
-var fgcom_rdf_input_direction = fgcom_rdf_input_node.initNode("direction", "");
-var fgcom_rdf_input_quality   = fgcom_rdf_input_node.initNode("quality", "");
+# Input properties (initialized in start_rdf)
+var fgcom_rdf_input_node      = nil;
+var fgcom_rdf_input_radio     = nil;
+var fgcom_rdf_input_callsign  = nil;
+var fgcom_rdf_input_direction = nil;
+var fgcom_rdf_input_quality   = nil;
 
 var rdf_data_callback = func {
     var radio = fgcom_rdf_input_radio.getValue();
@@ -263,8 +263,16 @@ var rdf_data_callback = func {
 
 var rdf_data_listener = nil;
 
-var start_rdf = func {
+var start_rdf = func(rdfInputNode) {
     if (rdf_data_listener != nil) return;
+
+    # Init RDF input nodes
+    print("Addon FGCom-mumble start RDF input handling using "~rdfInputNode.getPath());
+    fgcom_rdf_input_radio     = rdfInputNode.initNode("radio", "");
+    fgcom_rdf_input_callsign  = rdfInputNode.initNode("callsign", "");
+    fgcom_rdf_input_direction = rdfInputNode.initNode("direction", "");
+    fgcom_rdf_input_quality   = rdfInputNode.initNode("quality", "");
+    
     rdf_data_listener = setlistener(fgcom_rdf_input_radio, func {
         # call() to set the local namespace.
         call(rdf_data_callback, [], nil, FGComMumble_radios);
