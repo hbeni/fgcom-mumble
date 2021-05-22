@@ -5,6 +5,15 @@
 # @author Colin Geniet, 2021
 
 
+# Number of radios, and their offset in protocol file fgcom-mumble.xml.
+# This needs to be changed according to the protocol file.
+var n_COM      = 3;
+var COM_offset = 1;
+var n_ADF      = 2;
+var ADF_offset = 4;
+
+
+
 # FGCom-mumble nasal radios objects task is to make some minor checks and changes
 # to the properties transmitted to the FGCom-mumble plugin.
 # Notably, they make sure that no value is transmitted for unused radios.
@@ -25,7 +34,7 @@ var GenericRadio = {
         # It is created by the C++ instrument code, if the radio is used.
         me.operable = me.root.getNode("operable");
         me.is_used = (me.operable != nil);
-        print("Addon FGCom-mumble   radio "~(me.is_used?"using  ":"skipped")~": "~me.root.getPath());
+        print("Addon FGCom-mumble   radio "~(me.is_used?"using:   ":"skipped: ")~me.root.getPath());
 
         # Property subtree for fgcom-mumble properties.
         me.fgcom_root        = me.root.getNode("fgcom-mumble", 1);
@@ -195,12 +204,6 @@ var ADF = {
 # Radios objects, indexed by their index in protocol fgcom-mumble.xml (X for COMX).
 var COM_radios = {};
 var ADF_radios = {};
-
-# Number of radios, and their offset in protocol file fgcom-mumble.xml.
-var n_COM = 3;
-var COM_offset = 1;
-var n_ADF = 2;
-var ADF_offset = 4;
 
 var create_radios = func {
     for (var i=0; i<n_COM; i+=1) {
