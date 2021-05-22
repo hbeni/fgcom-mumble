@@ -176,9 +176,9 @@
     <node>/instrumentation/comm[2]/cutoff-signal-quality</node>
    </chunk>
 
-   <!-- TODO: add more radios here. The plugin ignores not present radios automatically. -->
-   <!--       Remember that you should also adjust the variable num_radios in combar.nas -->
-   <!--       Also remember to push the ADF belows index up and adjust in addon-main.nas -->
+   <!-- INFO: add more radios here. The plugin ignores not present radios automatically. -->
+   <!--       Remember that you need to adjust the variables n_COM and COM_offset (and the ADF ones) -->
+   <!--       in radios.nas, and also don't forget to push the following ADF indexes up. -->
 
 
    <!-- ADF radio / RDF -->
