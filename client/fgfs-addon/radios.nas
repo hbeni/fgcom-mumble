@@ -5,15 +5,6 @@
 # @author Colin Geniet, 2021
 
 
-# Number of radios, and their offset in protocol file fgcom-mumble.xml.
-# This needs to be changed according to the protocol file.
-var n_COM      = 3;
-var COM_offset = 1;
-var n_ADF      = 2;
-var ADF_offset = 4;
-
-
-
 # FGCom-mumble nasal radios objects task is to make some minor checks and changes
 # to the properties transmitted to the FGCom-mumble plugin.
 # Notably, they make sure that no value is transmitted for unused radios.
@@ -26,6 +17,15 @@ var GenericRadio = {
         r.init();
         return r;
     },
+
+    # initialized by addon-main.nas after load to specify where the output should go
+    outputRootNode: nil,
+    setOutputRoot: func(p) {
+        GenericRadio.outputRootNode = p;
+    },
+
+    fgcomPacketStr: nil, # node for udp output
+    fields2props: {},    # map packet field names to properties
 
     init: func {
         # Radio frequencies are initialized by C++ code even for aircrafts which do not use the radio.
@@ -46,6 +46,30 @@ var GenericRadio = {
         me.listeners = {};
         me.timers = {};
         me.aliases = {};
+
+        # Update the udp string once a prop changes;
+        # for this register a new distinct output subnode
+        if (me.is_used) {
+            me.fgcomPacketStr = me.outputRootNode.addChild("COM", 1);
+            print("Addon FGCom-mumble     registered output node as "~me.fgcomPacketStr.getPath());
+            me.fields2props = {
+                # Map the fgcom-mumble protocol fields to properties
+                FRQ:     me.fgcom_root.getPath() ~ "/selected-mhz",
+                CWKHZ:   me.root.getPath()       ~ "/frequencies/selected-channel-width-khz",
+                PBT:     me.root.getPath()       ~ "/operable",
+                PTT:     me.fgcom_root.getPath() ~ "/ptt",
+                VOL:     me.fgcom_root.getPath() ~ "/volume",
+                PWR:     me.root.getPath()       ~ "/tx-power",
+                SQC:     me.root.getPath()       ~ "/cutoff-signal-quality",
+                RDF:     me.fgcom_root.getPath() ~ "/rdf-enabled",
+                PUBLISH: me.fgcom_root.getPath() ~ "/publish",
+            };
+            foreach (var f; keys(me.fields2props)) {
+                print("Addon FGCom-mumble     add listener for " ~ f ~ " ("~me.fields2props[f]~")");
+                me.listeners["upd_udp_field:"~f] = setlistener(me.fields2props[f], func { me.updatePacketString(); }, 0, 0);
+            }
+            me.updatePacketString();
+        }
     },
 
     del: func {
@@ -55,6 +79,22 @@ var GenericRadio = {
         me.listeners = {};
         me.timers = {};
         me.aliases = {};
+        fgcomPacketStr.setValue("");
+    },
+
+    updatePacketString: func {
+        # Generates the FGCom-mumble udp packet string for this radio
+        if (me.fgcomPacketStr == nil) return;
+
+        # stringify the props, fields are only added if the prop exists
+        var fields = [];
+        foreach (var f; keys(me.fields2props)) {
+            var propval = getprop(me.fields2props[f]);
+            #print("Addon FGCom-mumble     generate udp packet field: "~f~ " ("~(propval != nil? propval:"<nil>")~")");
+            if (propval != nil) append(fields, "COM" ~ me.fgcomPacketStr.getIndex() ~ "_" ~ f ~ "=" ~ propval);
+        }
+
+        me.fgcomPacketStr.setValue(string.join(",", fields));
     },
 };
 
@@ -98,6 +138,7 @@ var ADF = {
 
     new: func(root) {
         var r = { parents: [ADF, GenericRadio.new(root)], };
+        r.udp_prefix = "ADF" ~ (root.getIndex() + 1);
         r.init();
         return r;
     },
@@ -209,15 +250,25 @@ var COM_radios = {};
 var ADF_radios = {};
 
 var create_radios = func {
-    for (var i=0; i<n_COM; i+=1) {
-        if (contains(COM_radios, i+COM_offset)) continue;
-        COM_radios[i+COM_offset] = COM.new(props.globals.getNode("instrumentation/comm["~i~"]", 1));
+    var i = 1;
+    # Walk all com entries and create instances
+    foreach (r; props.globals.getNode("/instrumentation/").getChildren("comm") ) {
+        COM_radios[i] = COM.new(r);
+        i = i + 1;
     }
-    for (var i=0; i<n_ADF; i+=1) {
-        if (contains(ADF_radios, i+ADF_offset)) continue;
-        ADF_radios[i+ADF_offset] = ADF.new(props.globals.getNode("instrumentation/adf["~i~"]", 1));
+
+    # Walk all ADF entries and create isntances
+    foreach (r; props.globals.getNode("/instrumentation/").getChildren("adf") ) {
+        ADF_radios[i] = ADF.new(r);
+        i = i + 1;
     }
 }
+
+var update_radios = func {
+    foreach (var i; keys(COM_radios)) COM_radios[i].updatePacketString();
+    foreach (var i; keys(ADF_radios)) ADF_radios[i].updatePacketString();
+}
+
 
 var destroy_radios = func {
     foreach (var i; keys(COM_radios)) COM_radios[i].del();

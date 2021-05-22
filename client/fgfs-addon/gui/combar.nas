@@ -34,10 +34,6 @@ canvas.gui.widgets.SpringButton.setDown = func(down = 1)
 
 var combar = {
 
-    # Generate buttons for this much COM radios;
-    # /!\ must be the same as the defined/transmitted radios in the protocol file!
-    num_radios: FGComMumble_radios.n_COM,
-
     comPTTButton_size: [65,25],
     dialogOpened: 0,
     show: func() {
@@ -64,22 +60,21 @@ var combar = {
 
 
         # Generate PTT buttons for the configured radios
-        for (var i=0; i<me.num_radios; i=i+1) {
-            var radio_p   = "/instrumentation/comm["~i~"]";
-            var radio_used = getprop(radio_p~"/fgcom-mumble/is-used");
-            if (!radio_used) {
-                print("Addon FGCom-mumble: combar skipping "~radio_p);
+        var r_num = 1;
+        foreach (var ridx; keys(FGComMumble_radios.COM_radios)) {
+            var r = FGComMumble_radios.COM_radios[ridx];
+            if (!r.is_used) {
+                print("Addon FGCom-mumble: combar skipping "~r.root.getPath());
                 continue;
             }
 
-            var comid = i+1;
-            print("Addon FGCom-mumble: combar adding "~radio_p~" (COM"~comid~")");
+            print("Addon FGCom-mumble: combar adding "~r.root.getPath()~" (COM"~r.fgcomPacketStr.getIndex()~")");
 
-            var newSizeWidth = math.round((i+1)*me.comPTTButton_size[0] + me.comPTTButton_size[0]/4);
+            var newSizeWidth = math.round((r_num)*me.comPTTButton_size[0] + me.comPTTButton_size[0]/4);
             dlgWindow.setSize([newSizeWidth, me.comPTTButton_size[1]+4]);
 
             var button = canvas.gui.widgets.SpringButton.new(root, canvas.style, {})
-                    .setText("COM" ~ comid)
+                    .setText("COM" ~ r.fgcomPacketStr.getIndex())
                     .setFixedSize(me.comPTTButton_size[0], me.comPTTButton_size[1]);
             var init_button = func(b,rp,ci) {
                 b.ptt_prop = rp~"/ptt";
@@ -102,9 +97,11 @@ var combar = {
                 });
                 update_button_timer.start();
             };
-            init_button(button, radio_p, comid);
+            init_button(button, r.root.getPath(), r.fgcomPacketStr.getIndex());
 
             myLayout.addItem(button);
+            
+            r_num = r_num + 1;
         }
 
         me.dialogOpened = 1;
