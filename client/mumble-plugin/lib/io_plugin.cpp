@@ -158,24 +158,30 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             notifyRemotes(idty.first, what, selector, tgtUser);
         }
         return;
-    } else {
+    }
+
+    // For reading local state, resolve the local identity.
+    // (note this is not neccessary for NTFY_ASK packets - they should be sent always)
+    fgcom_client lcl; // resolved local identity
+    if (what != NTFY_ASK) {
         // skip notification attempts if we don't have any local state yet
         if (fgcom_local_client.size() == 0 ) {
             pluginDbg("[mum_pluginIO] notifyRemotes(): no local state yet, skipping notifications.");
             return;
         }
-    }
 
-    // resolve selected identity
-    fgcom_client lcl;
-    if (fgcom_local_client.count(iid) > 0) {
-        lcl = fgcom_local_client[iid];
-        pluginDbg("[mum_pluginIO] notifyRemotes(): successfully resolved identity='"+std::to_string(iid)+"' (callsign="+lcl.callsign+")");
-    } else {
-        pluginLog("[mum_pluginIO] notifyRemotes(): ERROR resolving identity='"+std::to_string(iid)+"'!");
-        return;
+        // resolve selected identity.
+        // if this fails, bail out, because we can't sent the packet type then
+        if (fgcom_local_client.count(iid) > 0) {
+            lcl = fgcom_local_client[iid];
+            pluginDbg("[mum_pluginIO] notifyRemotes(): successfully resolved identity='"+std::to_string(iid)+"' (callsign="+lcl.callsign+")");
+        } else {
+            pluginLog("[mum_pluginIO] notifyRemotes(): ERROR resolving identity='"+std::to_string(iid)+"'!");
+            return;
+        }
     }
     
+
     // @param what:  0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping
     // @param selector: ignored, when 'what'=NTFY_COM: id of radio (0=COM1,1=COM2,...); -1 sends all radios
     // TODO: to help with rate throtteling, the summarizing selectors should generate a single message. Currently they just invoke the single message invocations. Alternatively: We may also make a new fast running thread that looks at a "urgent" notification queue and summarizes messages there?
