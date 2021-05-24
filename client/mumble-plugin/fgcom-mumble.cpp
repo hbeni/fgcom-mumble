@@ -800,11 +800,10 @@ void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t user
 // Handles the calculation of the PTT state that is sent to remotes.
 void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_userid_t userID, mumble_talking_state_t talkingState) {
     pluginDbg("User with ID "+ std::to_string(userID) + " changed talking state: " + std::to_string(talkingState) + ". (ServerConnection: " + std::to_string(connection) + ")");
-    
-    if (userID == localMumId && fgcom_isPluginActive() ){
-        // Current user is speaking. Either this activated trough the PTT button, or manually pushed mumble-ptt/voiceActivation
-        bool mumble_talk_detected = talkingState == TALKING || talkingState == WHISPERING || talkingState == SHOUTING;
-        
+    bool mumble_talk_detected = talkingState == TALKING || talkingState == WHISPERING || talkingState == SHOUTING;
+
+    // Current user is speaking. Either this activated trough the PTT button, or manually pushed mumble-ptt/voiceActivation
+    if (userID == localMumId && fgcom_isPluginActive() && mumble_talk_detected) {
         // look if there is some PTT_REQ set.
         // If we have a PTT requested from the udp protocol, we are not activating the
         // radios configured to respond to mumbles talk state change.
@@ -857,6 +856,32 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
             }
         }
         fgcom_localcfg_mtx.unlock();
+    }
+
+
+    // some remote client is speaking.
+    if (userID != localMumId && fgcom_isPluginActive() && mumble_talk_detected) {
+        // check if we know this client, but don't have user data yet;
+        // if so: request data update (workaround for https://github.com/hbeni/fgcom-mumble/issues/119)
+        fgcom_client tmp_default = fgcom_client();
+        
+        fgcom_remotecfg_mtx.lock();
+        auto search = fgcom_remote_clients.find(userID);
+        if (search != fgcom_remote_clients.end()) {
+            for (const auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
+                int rmt_iid      = idty.first;
+                fgcom_client rmt = idty.second;
+                
+                bool isCallsignInitialized = rmt.callsign != tmp_default.callsign;
+                bool isLocationInitialized = rmt.alt != tmp_default.alt || rmt.lat != tmp_default.lat || rmt.lon != tmp_default.lon;
+                if ( !isCallsignInitialized || !isLocationInitialized ) {
+                    // ATTENTION: Seeing this in the log indicates that there is a problem with the userdata synchronization process!
+                    pluginLog("WARNING: known remote plugin user speaking, but no user data received so far: requesting it now");
+                    notifyRemotes(0, NTFY_ASK); // request all other state
+                }
+            }
+        }
+        fgcom_remotecfg_mtx.unlock();
     }
 }
 
