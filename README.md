@@ -223,7 +223,7 @@ Other interesting compile targets:
 
   - `make` is an alias for `make all`
   - `make all` builds for linux: the libs, the plugins and the test tools in test directory
-  - `make all-debug` will build that too but add
+  - `make debug` will build that too but add
  debug code that will print lots of stuff to the terminal window when running the plugin
   - `make plugin` will build just the the plugin for linux
   - `make plugin-win64` will build it for windows
