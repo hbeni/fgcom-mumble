@@ -1,4 +1,4 @@
-.PHONY : all all-debug plugin libs test tools clean clean-all debug-on
+.PHONY : all debug all-debug plugin-debug plugin libs test tools clean clean-all debug-on
 CC=g++
 CC_WIN=x86_64-w64-mingw32-g++-posix
 CC_WIN32=i686-w64-mingw32-g++-posix
@@ -47,8 +47,13 @@ all: plugin tools clean
 #   -g3:     gdb debugging symbols
 #   -O0:     no optimizations, so we get better dbg output (but slows don code significantly)
 #   -DDEBUG: makes debug code active (prints internal state to stdout every sec)
+debug: all-debug
 all-debug:
 	make DEBUG+="-g3 -Og -DDEBUG" all
+
+# build just the linux plugn in debug mode
+plugin-debug:
+	make DEBUG+="-g3 -Og -DDEBUG" plugin
 
 # make the plugin
 plugin: libs
