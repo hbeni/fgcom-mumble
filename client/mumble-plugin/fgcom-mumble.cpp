@@ -164,7 +164,7 @@ void fgcom_handlePTT() {
         }
         fgcom_localcfg_mtx.unlock();
         
-        if (radio_ptt_result) pluginDbg("final PTT/radio openmic state: "+std::to_string(radio_ptt_result));
+        pluginDbg("final PTT/radio openmic state: "+std::to_string(radio_ptt_result));
         mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, radio_ptt_result);
         
     } else {
@@ -803,7 +803,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
     bool mumble_talk_detected = talkingState == TALKING || talkingState == WHISPERING || talkingState == SHOUTING;
 
     // Current user is speaking. Either this activated trough the PTT button, or manually pushed mumble-ptt/voiceActivation
-    if (userID == localMumId && fgcom_isPluginActive() && mumble_talk_detected) {
+    if (userID == localMumId && fgcom_isPluginActive()) {
         // look if there is some PTT_REQ set.
         // If we have a PTT requested from the udp protocol, we are not activating the
         // radios configured to respond to mumbles talk state change.
