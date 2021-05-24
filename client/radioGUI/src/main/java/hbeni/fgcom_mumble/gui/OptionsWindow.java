@@ -447,7 +447,13 @@ public class OptionsWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField_udpPortKeyReleased
 
     private void jSlider_qlysettingStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider_qlysettingStateChanged
-        // TODO add your handling code here:
+        String tgt;
+        if (jSlider_qlysetting.getValue() >= 0.0) {
+            tgt =  Integer.toString(jSlider_qlysetting.getValue())+"%";
+        } else {
+            tgt = new String("off");
+        }
+        jLabel_qlyvalue.setText(tgt);
     }//GEN-LAST:event_jSlider_qlysettingStateChanged
 
     private void jTextField_simConnectPortKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_simConnectPortKeyReleased
