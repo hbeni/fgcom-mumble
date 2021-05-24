@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.5.1"
+fgcom.botversion = "1.6.0"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -56,6 +56,9 @@ local nodel  = false
 local lat    = ""
 local lon    = ""
 local hgt    = ""
+local frq    = ""
+local callsign = ""
+local ttl    = 120
 local pingT  = 10  -- ping time spacing in seconds
 
 if arg[1] then
@@ -68,12 +71,17 @@ if arg[1] then
         print("    --channel= channel to join              (default="..fgcom.channel..")")
         print("    --cert=    path to PEM encoded cert     (default="..cert..")")
         print("    --key=     path to the certs key        (default="..key..")")
-        print("    --sample=  Path to the FGCS sample file (default="..sample..")")
+        print("    --sample=  Path to the FGCS sample file")
+        print("               If the sample file is an OGG, --lat, --lon, --hgt,")
+        print("               --frq and --callsign overrides are mandatory.")
         print("    --nodel    Don't delete outdated samples")
-        print("    --lat      Latitude override        (default: use FGCS header)")
-        print("    --lon      Longitude override       (default: use FGCS header)")
-        print("    --hgt      Height override          (default: use FGCS header)")
-        print("    --debug    print debug messages             (default=no)")
+        print("    --lat      Latitude override            (default: use FGCS header)")
+        print("    --lon      Longitude override           (default: use FGCS header)")
+        print("    --hgt      Height override              (default: use FGCS header)")
+        print("    --frq      Frequency override           (default: use FGCS header)")
+        print("    --callsign Callsign override            (default: use FGCS header)")
+        print("    --ttl      Time to live (seconds) for OGG playback (default="..ttl..")")
+        print("    --debug    print debug messages         (default=no)")
         print("    --version  print version and exit")
         os.exit(0)
     end
@@ -90,6 +98,9 @@ if arg[1] then
         if k=="lat"    then lat=v end
         if k=="lon"    then lon=v end
         if k=="hgt"    then hgt=v end
+        if k=="frq"    then frq=v end
+        if k=="ttl"    then ttl=v end
+        if k=="callsign" then callsign=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
     end
@@ -99,7 +110,29 @@ end
 -- parameter checks
 if sample == "" then print("parameter --sample is mandatory!") os.exit(1) end
 local sampleType = "FGCS"
--- TODO: check for supported filetypes based on postfix .fgcs
+ -- TODO: check for supported filetypes based on postfix .fgcs
+
+if sample:match(".+[.]ogg") then
+    local t = {}  t["--frq"]=frq  t["--callsign"]=callsign t["--lat"]=lat t["--lon"]=lon  t["--hgt"]=hgt t["--ttl"]=ttl
+    for k, v in pairs(t) do
+        if v == "" then print("with OGG files, parameter "..k.." is mandatory!") os.exit(1) end
+    end
+
+    -- prepare a faked FGCS header
+    sampleType = "OGG"
+    lastHeader = {}
+    lastHeader.callsign     = callsign
+    lastHeader.lat          = lat
+    lastHeader.lon          = lon
+    lastHeader.height       = hgt
+    lastHeader.frequency    = frq
+    lastHeader.dialedFRQ    = frq
+    lastHeader.txpower      = 10
+    lastHeader.playbacktype = "looped"
+    lastHeader.timetolive   = ttl
+    lastHeader.timestamp    = os.time()
+    lastHeader.voicecodec   = sampleType
+end
 
 
 -----------------------------
@@ -149,26 +182,32 @@ end
 -- read the file the first time and see if it parses.
 -- usually we want the file deleted after validity expired, but for that we need
 -- to make sure its a FGCS file... otherwise its another rm tool... ;)
-lastHeader, voiceBuffer = readFGCSSampleFile(sample)
-if not lastHeader then  fgcom.log("ERROR: '"..sample.."' not readable or no FGCS file") os.exit(1) end
+if sampleType == "FGCS" then
+    lastHeader, voiceBuffer = readFGCSSampleFile(sample)
+    if not lastHeader then  fgcom.log("ERROR: '"..sample.."' not readable or no FGCS file") os.exit(1) end
 
--- AFTER THIS CODE we can be confident it was a valid FGCS file!
---   lastHeader is initialized with the header data
---   voiceBuffer is initialized with the read samples
-fgcom.log(sample..": successfully loaded.")
+    -- AFTER THIS CODE we can be confident it was a valid FGCS file!
+    --   lastHeader is initialized with the header data
+    --   voiceBuffer is initialized with the read samples
+    fgcom.log(sample..": successfully loaded.")
 
-local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
-local persistent = false
-if lastHeader.timetolive == "0" then
-    fgcom.log(sample..": This is a persistent sample.")
-    timeLeft   = 1337   -- just some arbitary dummy value in the future
-    persistent = true   -- loops forever!
-end
-if not persistent and timeLeft < 0 then
-    fgcom.log(sample..": sample is invalid, since "..timeLeft.."s. Aborting.")
-    os.exit(0)
+    local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
+    local persistent = false
+    if lastHeader.timetolive == "0" then
+        fgcom.log(sample..": This is a persistent sample.")
+        timeLeft   = 1337   -- just some arbitary dummy value in the future
+        persistent = true   -- loops forever!
+    end
+    if not persistent and timeLeft < 0 then
+        fgcom.log(sample..": sample is invalid, since "..timeLeft.."s. Aborting.")
+        os.exit(0)
+    else
+        fgcom.log(sample..": sample is valid, remaining time: "..timeLeft.."s")
+    end
+else if sampleType == "OGG" then
+    fgcom.log("Sample format: OGG")
 else
-    fgcom.log(sample..": sample is valid, remaining time: "..timeLeft.."s")
+    fgcom.log("ERROR: '"..sample.."' not readable or no FGCS or no OGG file") os.exit(1) end
 end
 
 
@@ -216,13 +255,13 @@ end
 
 
 --[[
-  Playback loop: we use a mumble timer for this. The timer loops in
+  Playback loop (FGCS): we use a mumble timer for this. The timer loops in
   the playback-rate and looks if there are samples buffered. If so,
   he fetches them and plays them, one packet per timer tick.
 ]]
-local playbackTimer = mumble.timer()
-playbackTimer_func = function(t)
-    fgcom.dbg("playback timer: tick")
+local playbackTimer_fgcs = mumble.timer()
+playbackTimer_fgcs_func = function(t)
+    fgcom.dbg("playback timer (fgcs): tick")
     
     -- So, a new timer tick started.
     -- See if we have still samples in the voice buffer. If not, reload it from file, if it was a looped one.
@@ -319,6 +358,38 @@ playbackTimer_func = function(t)
     end
 end
 
+--[[
+  Playback loop (ogg): we use a mumble timer for this.
+  The timer loops every half second or so and checks if the ogg was finished.
+  If it is not playing, it checks wether it should terminate or play another round.
+]]
+local playbackTimer_ogg = mumble.timer()
+playbackTimer_ogg_func = function(t)
+    fgcom.dbg("playback timer (ogg): tick")
+    local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
+    local persistent = false
+    if lastHeader.timetolive == "0" then
+        fgcom.dbg(sample..": This is a persistent sample.")
+        timeLeft   = 1337   -- just some arbitary dummy value in the future
+        persistent = true   -- loops forever!
+    end
+    
+    if not persistent and timeLeft < 0 then
+        fgcom.log(sample..": OGG file outdated since "..timeLeft.." seconds")
+        shutdownBot()
+        t.stop() -- Stop the timer
+    else
+        fgcom.dbg(sample..": OGG file still valid for "..timeLeft.."s")
+        if not client:isPlaying() then
+            fgcom.dbg(sample..": starting sample")
+            client:play(sample)
+        else
+            -- client is still playing, let him finish the current sample
+            fgcom.dbg("OGG still playing")
+        end
+    end
+end
+
 
 notifyUserdata = function(tgts)
     local msg = "CALLSIGN="..lastHeader.callsign
@@ -374,9 +445,15 @@ client:hook("OnServerSync", function(client, event)
                      .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..lastHeader.lat.."</tt></td></tr><tr><td>Lon:</td><td><tt>"..lastHeader.lon.."</tt></td></tr><tr><td>Height:</td><td><tt>"..lastHeader.height.."</tt></td></tr></table></td></tr>"
                      .."</table>")
         
-    -- start the playback timer.
-    -- this will process the voice buffer.
-    playbackTimer:start(playbackTimer_func, 0.0, lastHeader.samplespeed)
+    if sampleType == "FGCS" then
+        -- start the playback timer.
+        -- this will process the voice buffer.
+        playbackTimer_fgcs:start(playbackTimer_fgcs_func, 0.0, lastHeader.samplespeed)
+    end
+    if sampleType == "OGG" then
+        -- start the OGG playback timer loop
+        playbackTimer_ogg:start(playbackTimer_ogg_func, 0.0, 0.5)
+    end
            
     
     -- A timer that will send PING packets from time to time
