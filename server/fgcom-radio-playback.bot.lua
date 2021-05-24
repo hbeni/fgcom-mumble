@@ -60,6 +60,7 @@ local frq    = ""
 local callsign = ""
 local ttl    = 120
 local pingT  = 10  -- ping time spacing in seconds
+local updateComment_t = 60 --time in seconds to update the comment
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
@@ -419,6 +420,30 @@ local msg = "FRQ="..lastHeader.frequency
     client:sendPluginData("FGCOM:UPD_COM:0:0", msg, tgts)
 end
 
+-- Adjust comment
+local updateCommentTimer = mumble.timer()
+updateComment = function()
+    fgcom.dbg("updating comment...")
+    local ttl = fgcom.data.getFGCSremainingValidity(lastHeader)
+    local ttl_str
+    if ttl <= 0 then
+        ttl_str = "endless"
+    else
+        local hours   = math.floor((ttl%86400)/3600)
+        local minutes = math.floor((ttl%3600)/60)
+        local seconds = math.floor(ttl%60)
+        ttl_str = string.format("%02d:%02d:xx", hours, minutes, seconds)
+    end
+    client:setComment("<b><i><u>FGCom:</u></i></b><table>"
+                      .."<tr><th>Callsign:</th><td><tt>"..lastHeader.callsign.."</tt></td></tr>"
+                     .."<tr><th>Channel:</th><td><tt>"..lastHeader.dialedFRQ.."</tt></td></tr>"
+                     .."<tr><th>Frequency:</th><td><tt>"..lastHeader.frequency.."</tt></td></tr>"
+                     .."<tr><th>Power:</th><td><tt>"..lastHeader.txpower.."W</tt></td></tr>"
+                     .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..lastHeader.lat.."</tt></td></tr><tr><td>Lon:</td><td><tt>"..lastHeader.lon.."</tt></td></tr><tr><td>Height:</td><td><tt>"..lastHeader.height.."</tt></td></tr></table></td></tr>"
+                     .."<tr><th>Valid for:</th><td><tt>"..ttl_str.."</tt></td></tr>"
+                     .."</table>")
+end
+
 client:hook("OnServerSync", function(client, event)
     if (event.welcome_text == nil) then event.welcome_text = "-" end
     fgcom.log("Sync done; server greeted with: "..event.welcome_text)
@@ -438,14 +463,8 @@ client:hook("OnServerSync", function(client, event)
     -- Setup a radio to broadcast from
     notifyRadio(playback_targets)
            
-    -- Adjust comment
-    client:setComment("<b><i><u>FGCom:</u></i></b><table>"
-                      .."<tr><th>Callsign:</th><td><tt>"..lastHeader.callsign.."</tt></td></tr>"
-                     .."<tr><th>Channel:</th><td><tt>"..lastHeader.dialedFRQ.."</tt></td></tr>"
-                     .."<tr><th>Frequency:</th><td><tt>"..lastHeader.frequency.."</tt></td></tr>"
-                     .."<tr><th>Power:</th><td><tt>"..lastHeader.txpower.."</tt></td></tr>"
-                     .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..lastHeader.lat.."</tt></td></tr><tr><td>Lon:</td><td><tt>"..lastHeader.lon.."</tt></td></tr><tr><td>Height:</td><td><tt>"..lastHeader.height.."</tt></td></tr></table></td></tr>"
-                     .."</table>")
+    -- periodically update the comment
+    updateCommentTimer:start(updateComment, 0.0, updateComment_t)
         
     if sampleType == "FGCS" then
         -- start the playback timer.
