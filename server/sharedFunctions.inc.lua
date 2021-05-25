@@ -70,7 +70,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.4.0",
+    libversion = "1.5.0",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -105,7 +105,26 @@ fgcom = {
                 fgcom.log("Notice: unable to open /dev/random, falling back to time()")
                 math.randomseed(os.time())
             end
-        end
+        end,
+
+        -- generate random string
+        randStr = function(length, chars)
+            if not chars then chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-={}|[]`~' end
+
+            local randomString = ''
+            math.randomseed(os.time())
+
+            charTable = {}
+            for c in chars:gmatch"." do
+                table.insert(charTable, c)
+            end
+
+            for i = 1, length do
+                randomString = randomString .. charTable[math.random(1, #charTable)]
+            end
+
+            return randomString
+         end,
     },
     
     -- io provides some basic IO functions
@@ -392,6 +411,61 @@ fgcom = {
                 end
             end
         end
+    },
+
+    -- Bot chat admin authentication
+    -- Requires established and synced connection to the server
+    auth = {
+        authedUsers = {},  -- holds authenticated users from which we accept chat commands
+        authToken   = nil,  -- random string needed to add oneself to the authed users
+
+        -- Establish the admin Token for auth.
+        -- If user was given, inform the user about it and authenticate him
+        generateToken = function(user)
+            local chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            if not fgcom.auth.authToken then fgcom.auth.authToken = fgcom.rng.randStr(32, chars) end
+            fgcom.log(fgcom.callsign..": Admin authToken: "..fgcom.auth.authToken)
+            if user then
+                table.insert(fgcom.auth.authedUsers, user)
+                user:message("This is my admin authToken, in case you want to let others manage me"
+                             .." (<i>You</i> are already authenticated)."
+                             .."<td style=\"border:1px solid black;\"><tt>"..fgcom.auth.authToken.."</tt></td>")
+            end
+        end,
+
+        -- check if the user is authenticated
+        -- returns true/false if authenticated
+        isAuthenticated = function(user)
+            local isauthenticated = false
+            if user then
+                for key,value in ipairs(fgcom.auth.authedUsers) do
+                    if value == user then isauthenticated = true break end
+                end
+            end
+            return isauthenticated
+        end,
+
+        -- handle authentication
+        -- registers user as authenticated if the optionally supplied token matches
+        -- returns true/false if authenticated
+        handleAuthentication = function(user, token)
+            if token then
+                if not fgcom.auth.isAuthenticated(user) then
+                    fgcom.dbg("auth token given, trying it")
+                    if token and fgcom.auth.authToken and token == fgcom.auth.authToken then
+                        table.insert(fgcom.auth.authedUsers, user)
+                        fgcom.log("successfully authenticated user "..user:getName().." (session="..user:getSession()..")")
+                        user:message("successfully authenticated")
+                    else
+                        fgcom.dbg("auth token failed for "..user:getName().." (session="..user:getSession()..")")
+                    end
+                else
+                    fgcom.dbg("auth token given, but user is already authenticated: "..user:getName().." (session="..user:getSession()..")")
+                    user:message("already authenticated")
+                end
+            end
+            return fgcom.auth.isAuthenticated(user)
+        end,
     }
 }
     
