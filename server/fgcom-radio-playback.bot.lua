@@ -385,6 +385,7 @@ playbackTimer_ogg_func = function(t)
         fgcom.dbg(sample..": OGG file still valid for "..timeLeft.."s")
         if not client:isPlaying() then
             fgcom.dbg(sample..": starting sample")
+            local f=io.open(sample,"r") if f~=nil then  io.close(f) else print("error opening "..sample..": no such file") os.exit(1) end
             client:play(sample)
         else
             -- client is still playing, let him finish the current sample
