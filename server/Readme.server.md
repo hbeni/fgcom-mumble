@@ -131,8 +131,11 @@ The needed information is read fom the `fgcs`-fileheader or provided by commandl
 
 The bot is assumed to clean its own files when he is done with playback of `fgcs` files.
 
-The playback is currently limited to the sample file format output from the `radio-recorder` described above.
-**TODO:** also let OGG files play, for that use command line options to specify location etc. OGG files are supposed to be persistent and manually called, so do not delete them after playback!
+The playback supports it's own FGCS file format as well as OGG files. With OGG files you need to supply the location and callsign context (see `--help` of the bot).
+
+The playback bot features an admin interface trough chat commands. Be sure to talk privately to the bot. Tell him `/help` to let him print his capabilities.
+
+
 
 
 Client Bot certificates

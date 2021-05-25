@@ -44,6 +44,7 @@ fgcom.callsign    = "FGCOM-RADIO-"..math.random(1, 99999)
 
 local voiceBuffer = nil -- Queue voice buffer holding the cached samples
 local lastHeader  = nil -- holds last header data
+local overwriteHeader  = {}  -- holds overwrite data from the commands
 local playback_targets = nil -- holds updated list of all channel users
 
 -- Parse cmdline args
@@ -53,14 +54,9 @@ local cert   = "playbot.pem"
 local key    = "playbot.key"
 local sample = ""
 local nodel  = false
-local lat    = ""
-local lon    = ""
-local hgt    = ""
-local frq    = ""
-local callsign = ""
-local ttl    = 120
 local pingT  = 10  -- ping time spacing in seconds
 local updateComment_t = 60 --time in seconds to update the comment
+local owntoken = nil
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
@@ -81,8 +77,9 @@ if arg[1] then
         print("    --hgt      Height override              (default: use FGCS header)")
         print("    --frq      Frequency override           (default: use FGCS header)")
         print("    --callsign Callsign override            (default: use FGCS header)")
-        print("    --ttl      Time to live (seconds) for OGG playback (default="..ttl..")")
+        print("    --ttl      Time to live (seconds) for OGG playback (default: use FGCS header)")
         print("               0=persistent sample (played in an endless loop).")
+        print("    --owntoken= Inform the given sessionID about the generated token")
         print("    --debug    print debug messages         (default=no)")
         print("    --version  print version and exit")
         print("\nNotice that OGG sample implies --nodel.\n(files are never deleted from disk by the bot)")
@@ -98,12 +95,13 @@ if arg[1] then
         if k=="key"    then key=v end
         if k=="sample" then sample=v end
         if opt=="--nodel" then nodel=true end
-        if k=="lat"    then lat=v end
-        if k=="lon"    then lon=v end
-        if k=="hgt"    then hgt=v end
-        if k=="frq"    then frq=v end
-        if k=="ttl"    then ttl=v end
-        if k=="callsign" then callsign=v end
+        if k=="lat"    then overwriteHeader.lat=v end
+        if k=="lon"    then overwriteHeader.lon=v end
+        if k=="hgt"    then overwriteHeader.height=v end
+        if k=="frq"    then overwriteHeader.frequency=v overwriteHeader.dialedFRQ=v end
+        if k=="ttl"    then overwriteHeader.timetolive=v end
+        if k=="callsign" then overwriteHeader.callsign=v end
+        if k=="owntoken" then owntoken=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
     end
@@ -116,27 +114,32 @@ local sampleType = "FGCS"
  -- TODO: check for supported filetypes based on postfix .fgcs
 
 if sample:match(".+[.]ogg") then
-    local t = {}  t["--frq"]=frq  t["--callsign"]=callsign t["--lat"]=lat t["--lon"]=lon  t["--hgt"]=hgt t["--ttl"]=ttl
-    for k, v in pairs(t) do
-        if v == "" then print("with OGG files, parameter "..k.." is mandatory!") os.exit(1) end
+    local checkParamsMap = {}  --map params to values for mandatory-check
+        checkParamsMap["--frq"]      = overwriteHeader.frequency
+        checkParamsMap["--callsign"] = overwriteHeader.callsign
+        checkParamsMap["--lat"]      = overwriteHeader.lat
+        checkParamsMap["--lon"]      = overwriteHeader.lon
+        checkParamsMap["--hgt"]      = overwriteHeader.height
+        checkParamsMap["--ttl"]      = overwriteHeader.timetolive
+    for k, v in pairs(checkParamsMap) do
+        if not v or v == "" then print("with OGG files, parameter "..k.." is mandatory!") os.exit(1) end
     end
 
     -- prepare a faked FGCS header
     sampleType = "OGG"
     lastHeader = {}
-    lastHeader.callsign     = callsign
-    lastHeader.lat          = lat
-    lastHeader.lon          = lon
-    lastHeader.height       = hgt
-    lastHeader.frequency    = frq
-    lastHeader.dialedFRQ    = frq
+    lastHeader.callsign     = overwriteHeader.callsign
+    lastHeader.lat          = overwriteHeader.lat
+    lastHeader.lon          = overwriteHeader.lon
+    lastHeader.height       = overwriteHeader.height
+    lastHeader.frequency    = overwriteHeader.frequency
+    lastHeader.dialedFRQ    = overwriteHeader.frequency
     lastHeader.txpower      = 10
     lastHeader.playbacktype = "looped"
-    lastHeader.timetolive   = ttl
+    lastHeader.timetolive   = overwriteHeader.timetolive
     lastHeader.timestamp    = os.time()
     lastHeader.voicecodec   = sampleType
 end
-
 
 -----------------------------
 --[[ DEFINE SOME FUNCTIONS ]]
@@ -181,7 +184,6 @@ end
 --[[      BOT RUNTIME      ]]
 -----------------------------
 
-
 -- read the file the first time and see if it parses.
 -- usually we want the file deleted after validity expired, but for that we need
 -- to make sure its a FGCS file... otherwise its another rm tool... ;)
@@ -194,6 +196,12 @@ if sampleType == "FGCS" then
     --   voiceBuffer is initialized with the read samples
     fgcom.log(sample..": successfully loaded.")
 
+    -- apply overrides
+    for k,v in pairs(overwriteHeader) do
+        lastHeader[k] = v
+    end
+    if overwriteHeader.timetolive and overwriteHeader.timetolive == "0" then lastHeader.playbacktype = "looped" end
+    
     local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
     local persistent = false
     if lastHeader.timetolive == "0" then
@@ -323,6 +331,14 @@ playbackTimer_fgcs_func = function(t)
             else
                 -- File was successfully reloaded from disk
                 fgcom.dbg("update from file successful")
+
+                -- apply overrides
+                for k,v in pairs(overwriteHeader) do
+                    lastHeader_tmp[k] = v
+                end
+                if overwriteHeader.timetolive and overwriteHeader.timetolive == "0" then lastHeader_tmp.playbacktype = "looped" end
+
+                -- take new data
                 lastHeader = lastHeader_tmp
         
                 -- check if the file is still valid
@@ -396,24 +412,28 @@ end
 
 
 notifyUserdata = function(tgts)
+    if overwriteHeader.callsign then lastHeader.callsign = overwriteHeader.callsign end
     local msg = "CALLSIGN="..lastHeader.callsign
     fgcom.dbg("Bot sets userdata: "..msg)
     client:sendPluginData("FGCOM:UPD_USR:0", msg, tgts)
 end
 
 notifyLocation = function(tgts)
-    local latitude  = lastHeader.lat       if lat ~= "" then latitude  = lat end
-    local longitude = lastHeader.lon       if lon ~= "" then longitude = lon end
-    local height    = lastHeader.height    if hgt ~= "" then height    = hgt end
-    local msg = "LON="..longitude
-              ..",LAT="..latitude
-              ..",ALT="..height
+    if overwriteHeader.lat    then lastHeader.lat    = overwriteHeader.lat end
+    if overwriteHeader.lon    then lastHeader.lon    = overwriteHeader.lon end
+    if overwriteHeader.height then lastHeader.height = overwriteHeader.height end
+    local msg = "LON="..lastHeader.lon
+              ..",LAT="..lastHeader.lat
+              ..",ALT="..lastHeader.height
     fgcom.dbg("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC:0", msg, tgts)
 end
 
 notifyRadio = function(tgts)
-local msg = "FRQ="..lastHeader.frequency
+    if overwriteHeader.frequency then lastHeader.frequency = overwriteHeader.frequency end
+    if overwriteHeader.dialedFRQ then lastHeader.dialedFRQ = overwriteHeader.dialedFRQ end
+    if overwriteHeader.txpower   then lastHeader.txpower   = overwriteHeader.txpower end
+    local msg = "FRQ="..lastHeader.frequency
              ..",CHN="..lastHeader.dialedFRQ
              ..",PWR="..lastHeader.txpower
              ..",PTT=1"
@@ -456,6 +476,14 @@ client:hook("OnServerSync", function(client, event)
     
     -- update current users of channel
     updateAllChannelUsersforSend(client)
+
+    -- Establish authentication token
+    -- try to get the matching user for the sessionID in owntoken
+    local owntoken_user = nil
+    for key,value in ipairs(playback_targets) do
+        if value:getSession() == tonumber(owntoken) then owntoken_user = value break end
+    end
+    fgcom.auth.generateToken(owntoken_user)
 
     -- Setup the Bots location on earth
     notifyUserdata(playback_targets)
@@ -520,6 +548,105 @@ client:hook("OnUserChannel", function(client, event)
         notifyUserdata({event.user})
         notifyLocation({event.user})
         notifyRadio({event.user})
+    end
+end)
+
+
+-- Chat admin interface
+-- be sure to chat privately to the bot!
+client:hook("OnMessage", function(client, event)
+    -- ["actor"]    = mumble.user actor,
+    -- ["message"]  = String message,
+    -- ["users"]    = Table users,
+    -- ["channels"] = Table channels - set when its no direct message
+
+    if event.actor and not event.channels then  -- only process when it's a direct message to the bot
+        event.message = event.message:gsub("%b<>", "")  -- strip html tags
+        fgcom.dbg("message from actor: "..event.actor:getName().." (session="..event.actor:getSession()..")="..event.message)
+
+        -- parse command
+        local command = nil
+        local param   = nil
+        _, _, command = string.find(event.message, "^/(%w+)")
+        _, _, param   = string.find(event.message, "^/%w+ (.+)")
+        if command then
+            --print("DBG: parsed command: command="..command)
+            --if param then print("DBG:   param="..param) end
+
+            -- handle auth request
+            if command == "auth" then
+                if not param then event.actor:message("/auth needs a tokenstring as argument!") return end
+                fgcom.auth.handleAuthentication(event.actor, param)
+                return
+            end
+
+            if command == "help" then
+                event.actor:message(botname..", "..fgcom.getVersion().." commands:"
+                    .."<table>"
+                    .."<tr><th style=\"text-align:left\"><tt>/help</tt></th><td>Show this help.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/auth &lt;token&gt;</tt></th><td>Authenticate to be able to execute advanced commands.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/exit</tt></th><td>Terminate the bot.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/frq &lt;mhz&gt;</tt></th><td>Switch frequency to this real-wave-frequency (Mhz in <tt>x.xxxx</tt>).</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/move &lt;lat lon hgt&gt;</tt></th><td>Move to new coordinates. lat/lon are decimal degrees (<tt>x.xxx</tt>), hgt is meters above ground.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/rename &lt;callsign&gt;</tt></th><td>Rename to new callsign.</td></tr>"
+                    .."</table>"
+                )
+                return
+            end
+
+            -- secure the following authenticated commands:
+            if not fgcom.auth.handleAuthentication(event.actor) then
+                fgcom.dbg("ignoring command, user not authenticated: "..event.actor:getName())
+                return
+            end
+
+            if command == "frq" then
+                if not param then event.actor:message("/frq needs a frequency as argument!") return end
+                _, _, f = string.find(param, "([%d.]+)")
+                if not f then event.actor:message("/frq param mhz is not a decimal!") return end
+                overwriteHeader.frequency = f
+                overwriteHeader.dialedFRQ = f
+                updateAllChannelUsersforSend(client)
+                notifyRadio(playback_targets)
+                updateComment()
+                event.actor:message("now sending on: "..f.." Mhz")
+                return
+            end
+
+           if command == "move" then
+                if not param then event.actor:message("/move needs new x,y,z coordinates as argument!") return end
+                _, _, ly, lx, la = string.find(param, "([%d.]+) ([%d.]+) ([%d.]+)")
+                if not ly or not lx or not la then event.actor:message("/move params need to be proper decimals!") return end
+                overwriteHeader.lat    = ly
+                overwriteHeader.lon    = lx
+                overwriteHeader.height = la
+                updateAllChannelUsersforSend(client)
+                notifyLocation(playback_targets)
+                updateComment()
+                event.actor:message("moved to new position: lat="..ly..", lon="..lx..", hgt="..la)
+                return
+            end
+
+           if command == "rename" then
+                if not param then event.actor:message("/rename needs an argument!") return end
+                _, _, cs = string.find(param, "([-%w]+)")
+                if not cs then event.actor:message("/move param need to be ASCII chars!") return end
+                overwriteHeader.callsign = cs
+                updateAllChannelUsersforSend(client)
+                notifyUserdata(playback_targets)
+                updateComment()
+                event.actor:message("renamed to new callsign: "..cs)
+                return
+            end
+
+            if command == "exit" then
+                fgcom.dbg("exit command received")
+                event.actor:message("goodbye!")
+                shutdownBot()
+            end
+
+        end
+        
     end
 end)
 

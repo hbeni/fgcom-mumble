@@ -332,6 +332,58 @@ client:hook("OnPluginData", function(client, event)
 end)
 
 
+-- Chat admin interface
+-- be sure to chat privately to the bot!
+client:hook("OnMessage", function(client, event)
+    -- ["actor"]    = mumble.user actor,
+    -- ["message"]  = String message,
+    -- ["users"]    = Table users,
+    -- ["channels"] = Table channels - set when its no direct message
+
+    if event.actor and not event.channels then  -- only process when it's a direct message to the bot
+        event.message = event.message:gsub("%b<>", "")  -- strip html tags
+        fgcom.dbg("message from actor: "..event.actor:getName().." (session="..event.actor:getSession()..")="..event.message)
+
+        -- parse command
+        local command = nil
+        local param   = nil
+        _, _, command = string.find(event.message, "^/(%w+)")
+        _, _, param   = string.find(event.message, "^/%w+ (%w+)")
+        if command then
+            --print("DBG: parsed command: command="..command)
+            --if param then print("DBG:   param="..param) end
+
+            -- handle auth request
+            if command == "auth" then
+                if not param then event.actor:message("/auth needs a tokenstring as argument!") return end
+                fgcom.auth.handleAuthentication(event.actor, param)
+                return
+           end
+
+            if command == "help" then
+                event.actor:message(botname..", "..fgcom.getVersion().." commands:"
+                    .."<table>"
+                    .."<tr><th style=\"text-align:left\"><tt>/help</tt></th><td>show this help.</td></tr>"
+                    --.."<tr><th style=\"text-align:left\"><tt>/auth &lt;token&gt;</tt></th><td>Authenticate to be able to execute advanced commands.</td></tr>"
+                    --.."<tr><th style=\"text-align:left\"><tt>/exit</tt></th><td>Terminate the bot.</td></tr>"
+                    .."</table>"
+                    .."<br>I do not obey to chat commands so far."
+                )
+                return
+            end
+
+            -- secure the following authenticated commands:
+            if not fgcom.auth.handleAuthentication(event.actor) then
+                fgcom.dbg("ignoring command, user not authenticated: "..event.actor:getName())
+                return
+            end
+
+            -- no commands so far
+
+        end
+        
+    end
+end)
 
 
 mumble.loop()

@@ -124,6 +124,7 @@ Your ADF will recognize transmissions in the kHz range. With enabled _ADF_-mode 
 
 ### ATC-Pie specific
 Since ATC-Pie v1.7.1 FGCom-mumble is supported out of the box.
+Be sure to activate the fgcom-mumble option however, as the standard fgcom support does only work with COM1.
 
 
 ### OpenRadar specific
@@ -139,9 +140,12 @@ A common thing is that pilots may want to easily test if their setup works. This
 
 Please note there is no global-chat frequency. If you want to globally chat, switch to normal mumble channels or use the landline feature (tune a `PHONE` frequency, see below).
 
-### ATIS Recording
-ATIS Recording is provided by a specialized server side bot. Look for the bot in mumbles channel list to see if the server supports ATIS recordings.
+### ATIS
 
+ATIS Recording and -playback is provided by a set specialized server side bots. Look for the recorder bot in mumbles channel list to see if the server supports ATIS recordings.
+
+Recording
+---------
 To record an ATIS sample, you need to:
 
 - Setup your Callsign to the target one. The replay-bot will use that callsign to identify itself
@@ -154,6 +158,11 @@ Regular recordings have a serverside limit of 120 seconds by default.
 
 Note: Chances are good that your ATC client does all this for you and you just need to push some "Record ATIS" button.  
 The RadioGUI has a tuning template for that. It may be a good idea to start a separate instance of the RadioGUI for recording in order to be able to leave the original client data untouched.
+
+Playback
+---------
+If a `botmanager` is running at the server, the recorderbot will notify it to start a matching replay-bot. the recording user is by default authenticated to the playback bot and can thus manage it using chat commands (try saying `help` to him to get started).
+
 
 ### Landlines/Intercom
 Landlines/Intercom connections are a feature meant to be used by ATC instances. They are not subject to radio limits like range or signal quality. They operate worldwide.

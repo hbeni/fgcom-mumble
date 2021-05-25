@@ -224,16 +224,25 @@ while true; do
         fi
         date "+[%Y-%m-%d %H:%M:%S] notification received: '$line'"
         
+        # Parse the info
+        # fifo data is expected to be pipe-delimited data:
+        #  field 1: sample name
+        #  field 2: optional ID of the recording mumble session
+        samplefile=$(echo $line|cut -d"|" -f1)
+        ownersession=$(echo $line|cut -d"|" -f2 -s)
+        
         if [[ $run_playbackbot -gt "0" ]]; then
             # See if there is already a playback bot instance with that sample
-            botPID=$(pgrep -f -- "--sample=$line")
+            botPID=$(pgrep -f -- "--sample=$samplefile")
             if [[ -n "$botPID" ]]; then
                 echo "Spawn bot ignored (found already running instance): $playbackbot_cmd"
                 continue
             fi
             
             #spawn bot
-            playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts --sample=$line"
+            owner_opt=""
+            if [[ -n $ownersession ]]; then owner_opt="--owntoken=$ownersession"; fi
+            playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts $owner_opt --sample=$samplefile"
             echo "Spawn bot: $playbackbot_cmd"
             if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
                 $playbackbot_cmd > $playbackbot_log &

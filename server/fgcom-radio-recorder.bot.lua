@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.6.1"
+fgcom.botversion  = "1.7"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -198,10 +198,12 @@ end
 
 -- Function to invole a playback bot
 -- @param s path to the sample file to play
-callPlaybackBot = function(s)
+-- @param user optional user to make owner of the payback bot to be calles
+callPlaybackBot = function(s, user)
     if fnotify:len() > 0 then
         fgcom.dbg("notify via file '"..fnotify.."': "..s)
         local fifo = io.open(fnotify, "ab")
+        if user then s = s.."|"..user:getSession() end
         fifo:write(s.."\n")  -- write recorded sample file to fifo.
         fifo:close()
         return
@@ -214,6 +216,7 @@ callPlaybackBot = function(s)
                 .." --port="..port
                 .." --cert="..cert
                 .." --key="..key
+                --todo .." --owntoken="..user.getSession()
                 --.." --nodel"
         fgcom.dbg("spawning new playback bot: "..cmd)
         local handle = io.popen(cmd)  -- BUG pending: this is currently blocking the bot and killing him after a short while. use --fifo instead.
@@ -403,7 +406,11 @@ client:hook("OnUserStopSpeaking", function(client, user)
                 
                 -- spawn a bot that replays the sample.
                 -- he is responsible fo killing himself and also to delete the sample file if it is not valid anymore.
-                callPlaybackBot(record_filename_final)
+                if remote.record_mode == "NORMAL" then
+                    callPlaybackBot(record_filename_final, user)
+                else
+                    callPlaybackBot(record_filename_final)
+                end
             else
                 fgcom.dbg(remote.callsign..": no active recording detected")
             end
@@ -413,5 +420,58 @@ client:hook("OnUserStopSpeaking", function(client, user)
     end       
 end)
 
+
+-- Chat admin interface
+-- be sure to chat privately to the bot!
+client:hook("OnMessage", function(client, event)
+    -- ["actor"]    = mumble.user actor,
+    -- ["message"]  = String message,
+    -- ["users"]    = Table users,
+    -- ["channels"] = Table channels - set when its no direct message
+
+    if event.actor and not event.channels then  -- only process when it's a direct message to the bot
+        event.message = event.message:gsub("%b<>", "")  -- strip html tags
+        fgcom.dbg("message from actor: "..event.actor:getName().." (session="..event.actor:getSession()..")="..event.message)
+
+        -- parse command
+        local command = nil
+        local param   = nil
+        _, _, command = string.find(event.message, "^/(%w+)")
+        _, _, param   = string.find(event.message, "^/%w+ (%w+)")
+        if command then
+            --print("DBG: parsed command: command="..command)
+            --if param then print("DBG:   param="..param) end
+
+            -- handle auth request
+            if command == "auth" then
+                if not param then event.actor:message("/auth needs a tokenstring as argument!") return end
+                fgcom.auth.handleAuthentication(event.actor, param)
+                return
+           end
+
+            if command == "help" then
+                event.actor:message(botname..", "..fgcom.getVersion().." commands:"
+                    .."<table>"
+                    .."<tr><th style=\"text-align:left\"><tt>/help</tt></th><td>show this help.</td></tr>"
+                    --.."<tr><th style=\"text-align:left\"><tt>/auth &lt;token&gt;</tt></th><td>Authenticate to be able to execute advanced commands.</td></tr>"
+                    --.."<tr><th style=\"text-align:left\"><tt>/exit</tt></th><td>Terminate the bot.</td></tr>"
+                    .."</table>"
+                    .."<br>I do not obey to chat commands so far."
+                )
+                return
+            end
+
+            -- secure the following authenticated commands:
+            if not fgcom.auth.handleAuthentication(event.actor) then
+                fgcom.dbg("ignoring command, user not authenticated: "..event.actor:getName())
+                return
+            end
+
+            -- no commands so far
+
+        end
+        
+    end
+end)
 
 mumble.loop()

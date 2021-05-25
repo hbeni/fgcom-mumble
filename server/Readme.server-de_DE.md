@@ -111,7 +111,9 @@ Die zum Abspielen benötigten Informationen werden entweder aus dem `fgcs`-Datei
 
 Der Bot entfernt die FGCS-Datei nach dem Abspielen, wenn sie nicht mehr gültig ist.
 
-Aktuell kann der Bot nur FGCS-Daten abspielen. In der Zukunft könnte er auch OGG-Daten abspielen, diese würden dann wahrscheinlich als "persistent" angenommen werden (um z.B. vordefinierte Radioprogramme abzuspielen).
+Der Bot unterstützt das Abspielen sowohl von FGCS-Daten, als auch OGG Mediendateien. Bei OGG müsses dem Bot weitere Details wie Frequenz, Lokation und Callsign übergeben werden (siehe `--help` Option des Bots).
+
+Der Bot kann über Chatkommandos administrativ gesteuert werden. Hierzu muss man ihn einfach anschreiben (achte darauf, ihn direkt anzuschreiben und nicht den globalen chat zu nutzen). Schreib ihm `/help` um ihn seine Kommandos mitteilen zu lassen.
 
 
 Bot Zertifikate

@@ -132,7 +132,7 @@ Nachdem Flightgear gestartet wurde, kannst du die Funkgeräte wie gewohnt benutz
 Der ADF-Empfänger misst Übertragungen im kHz-Band und zeigt im _ADF_-Modus die Empfangsrichtung auf der Instrumentennadel des ADF-Instrumentes an. Empfangene anaolge Signale können zudem wiedergegeben werden. Dies wird üblicherwiese im Audiopanel des Flugzeugs aktiviert.
 
 ### ATC-Pie specific
-ATC-Pie hat seit v1.7.1 eingebaute Unterstützung für FGCom-mumble.
+ATC-Pie hat seit v1.7.1 eingebaute Unterstützung für FGCom-mumble. Stelle sicher, dass du die fgcom-mumble Option aktivierst, denn fgcom alleine unterstützt nur COM1.
 
 
 ### OpenRadar spezifisch
@@ -150,9 +150,12 @@ Dafür wurde ein spezieller mumble-Bot bereitgestellt.
 
 Bitte beachte, dass es keine global empfangbare Sprechfrequenz gibt. Dies kann allerdings über einen Festnetzkanal simuliert werden (stelle die Frequenz `PHONE:<irgendwas>` ein siehe unten).
 
-### ATIS Aufzeichnung
-ATIS Aufzeichnung wird über einen speziellen serverseitigen Mumble-Bot implementiert. Schau vor einem Versuch nach, ob der `recorder`-Bot eingewählt ist.
+### ATIS
 
+ATIS Aufzeichnung und -Wiedergabe wird über je einen speziellen serverseitigen Mumble-Bot implementiert. Schau vor einem Versuch nach, ob der `recorder`-Bot eingewählt ist.
+
+Aufzeichnung
+------------
 Um eine ATIS-Aufzeichnung aufzunehmen, musst du:
 
 - Dein Rufzeichen auf das ATIS-Zielrufzeichen stellen (der Wiedergabe-Bot wird dieses Rufzeichen verwenden)
@@ -165,6 +168,10 @@ Normale Aufnahmen haben standardmäßig ein Serverseitigs Limit von 120 Sekunden
 
 Bitte beachte: Es ist wahrscheinlich, dass dein ATC-Programm dies alles für dich bereits erleidgt und du nur einen "ATIS-Aufnahme"-Knopf zu drücken brauchst.  
 Die FGCom-mumble RadioGUI hat eine Vorlage hierfür. Es könnte eine gute Idee sein, für die Aufnahme eine separate Instanz der RadioGUI zu starten, damit die Orgiginaldaten der ersten Verbindung unberührt bleiben.
+
+Wiedergabe
+------------
+Läuft auf dem Server ein `botmanager`, wird der Recorderbot dafür sorgen, dass der manager einen `playback`-bot startet. Der Aufzeichnende User ist standardmäßig mit ihm authentifiziert und kann ihn über Chatkommandos steuern (sag zum Start `/help` zu ihm).
 
 
 ### Festnetz / Intercom
