@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JInternalFrameFormInfo">
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="radioTypeGroup">
     </Component>
@@ -69,19 +69,20 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
-                              <Component id="jComboBox_Templates" pref="0" max="32767" attributes="0"/>
+                              <Component id="jComboBox_Templates" pref="208" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="jToggleButton_ONOFF" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jRadioButton_radioType833" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jRadioButton_radioTypeDefault" min="-2" max="-2" attributes="0"/>
                                   <Component id="jRadioButton_radioType25" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="jButton_PTT" pref="156" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="jButton_PTT" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -135,6 +136,7 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jButton_PTT" min="-2" pref="70" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
@@ -142,27 +144,25 @@
                               <Component id="jLabel_PWRVal" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jSlider_txPWR" min="-2" pref="31" max="-2" attributes="0"/>
+                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jRadioButton_radioTypeDefault" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jRadioButton_radioType833" min="-2" max="-2" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="jSlider_squelch" min="-2" pref="32" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel_squelch" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <Component id="jRadioButton_radioType25" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                  </Group>
-                  <Component id="jButton_PTT" min="-2" pref="70" max="-2" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jRadioButton_radioType833" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jRadioButton_radioType25" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="13" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -340,7 +340,20 @@
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
         <Property name="text" type="java.lang.String" value="Type"/>
+        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Channel width of the radio:&lt;br&gt; - For VHF you can choose between 8.33 and 25khz radios.&lt;br&gt; - Default will let the FGCom-mumble plugin&apos;s default apply (8.33 for VHF)&lt;/html&gt;"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="jRadioButton_radioTypeDefault">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="radioTypeGroup"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="default"/>
+        <Property name="toolTipText" type="java.lang.String" value="Let the plugin decide itself on the proper channel spacing"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jRadioButton_radioTypeDefaultActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

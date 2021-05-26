@@ -5,6 +5,8 @@
  */
 package hbeni.fgcom_mumble;
 
+import jdk.nashorn.internal.runtime.JSType;
+
 /*
 * Simple model of a single radio
 */
@@ -24,7 +26,7 @@ public class Radio {
         setSquelch(0.1f);
         setPTT(false);
         setPwrBtn(true);
-        setChannelWidth(8.33f);
+        setChannelWidth(-1);
     }
     public Radio(String frq) {
         this();
@@ -33,6 +35,18 @@ public class Radio {
 
     public synchronized void setFrequency(String f) {
         frq = f;
+        
+        // set default channel width depending on band, if not set yet
+        try {
+            double frq_numeric = Float.parseFloat(frq);
+            if (frq_numeric > 30.0 && frq_numeric <= 300) {
+                if (this.getChannelWidth() == -1) this.setChannelWidth(8.33f);    // VHF default: 8.33
+            } else {
+                this.setChannelWidth(-1);  // let default apply
+            }
+        } catch (NumberFormatException nfe) {
+            // let default apply
+        }
     }
     public synchronized void setVolume(float v) {
         volume = v;
