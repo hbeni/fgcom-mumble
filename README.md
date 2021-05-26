@@ -142,7 +142,7 @@ Please note there is no global-chat frequency. If you want to globally chat, swi
 
 ### ATIS
 
-ATIS Recording and -playback is provided by a set specialized server side bots. Look for the recorder bot in mumbles channel list to see if the server supports ATIS recordings.
+ATIS Recording and -playback is provided by a set of specialized server side bots. Look for the recorder bot in mumbles channel list to see if the server supports ATIS recordings.
 
 Recording
 ---------
@@ -161,7 +161,7 @@ The RadioGUI has a tuning template for that. It may be a good idea to start a se
 
 Playback
 ---------
-If a `botmanager` is running at the server, the recorderbot will notify it to start a matching replay-bot. the recording user is by default authenticated to the playback bot and can thus manage it using chat commands (try saying `help` to him to get started).
+If a `botmanager` is running at the server, the recorderbot will notify it to start a matching replay-bot. the recording user is by default authenticated to the playback bot and can thus manage it using chat commands (try saying `/help` to him to get started).
 
 
 ### Landlines/Intercom

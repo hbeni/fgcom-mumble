@@ -152,7 +152,7 @@ Bitte beachte, dass es keine global empfangbare Sprechfrequenz gibt. Dies kann a
 
 ### ATIS
 
-ATIS Aufzeichnung und -Wiedergabe wird über je einen speziellen serverseitigen Mumble-Bot implementiert. Schau vor einem Versuch nach, ob der `recorder`-Bot eingewählt ist.
+ATIS-Aufzeichnung und -Wiedergabe wird über je einen speziellen serverseitigen Mumble-Bot implementiert. Schau vor einem Versuch nach, ob der `recorder`-Bot eingewählt ist.
 
 Aufzeichnung
 ------------
@@ -167,11 +167,11 @@ Um eine ATIS-Aufzeichnung aufzunehmen, musst du:
 Normale Aufnahmen haben standardmäßig ein Serverseitigs Limit von 120 Sekunden.
 
 Bitte beachte: Es ist wahrscheinlich, dass dein ATC-Programm dies alles für dich bereits erleidgt und du nur einen "ATIS-Aufnahme"-Knopf zu drücken brauchst.  
-Die FGCom-mumble RadioGUI hat eine Vorlage hierfür. Es könnte eine gute Idee sein, für die Aufnahme eine separate Instanz der RadioGUI zu starten, damit die Orgiginaldaten der ersten Verbindung unberührt bleiben.
+Die FGCom-mumble RadioGUI hat eine Frequenzvorlage hierfür. Es könnte eine gute Idee sein, für die Aufnahme eine separate Instanz der RadioGUI zu starten, damit die Orgiginaldaten der ersten Verbindung unberührt bleiben.
 
 Wiedergabe
 ------------
-Läuft auf dem Server ein `botmanager`, wird der Recorderbot dafür sorgen, dass der manager einen `playback`-bot startet. Der Aufzeichnende User ist standardmäßig mit ihm authentifiziert und kann ihn über Chatkommandos steuern (sag zum Start `/help` zu ihm).
+Läuft auf dem Server ein `botmanager`, wird der Recorderbot dafür sorgen, dass der manager einen passenden `playback`-bot startet. Der Aufzeichnende User ist standardmäßig mit ihm authentifiziert und kann ihn über Chatkommandos steuern (sag zum Start `/help` zu ihm).
 
 
 ### Festnetz / Intercom
