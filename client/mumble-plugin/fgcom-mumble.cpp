@@ -962,6 +962,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                     pluginDbg("mumble_onAudioSourceFetched():    frequency='"+rmt.radios[ri].frequency+"'");
                     pluginDbg("mumble_onAudioSourceFetched():    ptt='"+std::to_string(rmt.radios[ri].ptt)+"'");
                     pluginDbg("mumble_onAudioSourceFetched():    txpwr='"+std::to_string(rmt.radios[ri].pwr)+"'");
+                    std::unique_ptr<FGCom_radiowaveModel> radio_model_rmt(FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency));
+                    pluginDbg("mumble_onAudioSourceFetched():    type='"+radio_model_rmt->getType()+"'");
+                    fgcom_radiowave_freqConvRes rmt_frq_p = FGCom_radiowaveModel::splitFreqString(rmt.radios[ri].frequency);
                     if (rmt.radios[ri].ptt) {
                         pluginDbg("mumble_onAudioSourceFetched():     PTT detected");
                         // The remote radio does transmit currently.
@@ -977,18 +980,17 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 pluginDbg("mumble_onAudioSourceFetched():       RDF='"+std::to_string(lcl.radios[lri].rdfEnabled)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");
+                                std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency));
+                                pluginDbg("mumble_onAudioSourceFetched():       type='"+radio_model_lcl->getType()+"'");
                                 
                                 // skip check for "empty radios"
                                 if (lcl.radios[lri].frequency == "") continue;
                                 
                                 // calculate frequency match
                                 float signalMatchFilter;
-                                fgcom_radiowave_freqConvRes rmt_frq_p = FGCom_radiowaveModel::splitFreqString(rmt.radios[ri].frequency);
-                                std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency));
-                                std::unique_ptr<FGCom_radiowaveModel> radio_model_rmt(FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency));
                                 if (radio_model_lcl->isCompatible(radio_model_rmt.get())) {
                                     signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri], rmt.radios[ri]);
-                                    
+                                    pluginDbg("mumble_onAudioSourceFetched():       radio models compatible: signalMatchFilter="+std::to_string(signalMatchFilter));
                                 } else {
                                     pluginDbg("mumble_onAudioSourceFetched():       radio models not compatible: lcl_type="+radio_model_lcl->getType()+"; rmt_type="+radio_model_rmt->getType());
                                     continue;
@@ -1061,7 +1063,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     
                                 /* no match means, we had no operable mode for this radio pair */
                                 } else {
-                                    pluginDbg("mumble_onAudioSourceFetched():     nomatch");
+                                    pluginDbg("mumble_onAudioSourceFetched():     => nomatch");
                                 }
                                 
                                 if (bestSignalStrength == 1.0) break; // no point in searching more
