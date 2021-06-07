@@ -128,7 +128,7 @@ bool fgcom_isConnectedToServer() {
     //pluginDbg("fgcom_isConnectedToServer(): checking connection");
     bool synchronized;
     int resCode = mumAPI.isConnectionSynchronized(ownPluginID, activeConnection, &synchronized);
-    if (STATUS_OK != resCode) {
+    if (MUMBLE_STATUS_OK != resCode) {
    //     pluginDbg("fgcom_isConnectedToServer(): internal error executing isConnectionSynchronized(): rc="+std::to_string(resCode));
         return false;
     } else {
@@ -268,12 +268,12 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     size_t userCount;
 	mumble_userid_t *userIDs;
     mumble_channelid_t localChannelID;
-    if (mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID) != STATUS_OK) {
+    if (mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID) != MUMBLE_STATUS_OK) {
         pluginLog("[mum_pluginIO] [ERROR]: Can't obtain channel of local user");
         return;
     }
 
-    if (mumAPI.getUsersInChannel(ownPluginID, activeConnection, localChannelID, &userIDs, &userCount) != STATUS_OK) {
+    if (mumAPI.getUsersInChannel(ownPluginID, activeConnection, localChannelID, &userIDs, &userCount) != MUMBLE_STATUS_OK) {
         pluginLog("[mum_pluginIO] [ERROR]: Can't obtain user list");
         return;
     } else {
@@ -285,7 +285,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                 if (tgtUser != lcl.mumid) {
                     pluginDbg("  sending message to targeted user: "+std::to_string(tgtUser));
                     int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, 1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
-                    if (send_res != STATUS_OK) {
+                    if (send_res != MUMBLE_STATUS_OK) {
                         pluginDbg("  message sent ERROR: "+std::to_string(send_res));
                     } else {
                         pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");
@@ -309,7 +309,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                 }
             
                 int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
-                if (send_res != STATUS_OK) {
+                if (send_res != MUMBLE_STATUS_OK) {
                     pluginDbg("  message sent ERROR: "+std::to_string(send_res));
                 } else {
                     pluginDbg("  message sent to "+std::to_string(userCount-1)+" clients");

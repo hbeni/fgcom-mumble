@@ -85,7 +85,7 @@ std::ostream& operator<<(std::ostream& stream, const mumble_version_t version) {
  * 
  * @param bool active if the plugin handling stuff should be active
  */
-mumble_transmission_mode_t fgcom_prevTransmissionMode = TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
+mumble_transmission_mode_t fgcom_prevTransmissionMode = MUMBLE_TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
 void fgcom_setPluginActive(bool active) {
     mumble_error_t merr;
     if (!fgcom_isConnectedToServer()) return; // not connected: do nothing.
@@ -96,8 +96,8 @@ void fgcom_setPluginActive(bool active) {
         
         // switch to push-to-talk
         merr = mumAPI.getLocalUserTransmissionMode(ownPluginID, &fgcom_prevTransmissionMode);
-        if (merr == STATUS_OK) {
-            merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, TM_PUSH_TO_TALK);
+        if (merr == MUMBLE_STATUS_OK) {
+            merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, MUMBLE_TM_PUSH_TO_TALK);
             mumAPI.log(ownPluginID, "enabled push-to-talk");
         }
         
@@ -187,7 +187,7 @@ void fgcom_updateClientComment() {
         // fetch the present comment and read the part we don't want to manage
         std::string preservedComment;
         const char *comment;
-        if (mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment) == STATUS_OK) {
+        if (mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment) == MUMBLE_STATUS_OK) {
             std::string comment_str(comment);
             std::smatch sm;
             std::regex re("^([\\w\\W]*)<p name=\"FGCOM\">.*");  // cool trick: . does not match newline, but \w with negated \W matches really everything
@@ -235,7 +235,7 @@ void fgcom_updateClientComment() {
         // (this will broadcast the comment to other clients)
         if (prevComment != newComment) {
             std::string cmt = preservedComment + "<p name=\"FGCOM\">" + newComment;
-            if (mumAPI.requestSetLocalUserComment(ownPluginID, activeConnection, cmt.c_str()) != STATUS_OK) {
+            if (mumAPI.requestSetLocalUserComment(ownPluginID, activeConnection, cmt.c_str()) != MUMBLE_STATUS_OK) {
                 pluginLog("Failed at setting the local user's comment");
             } else {
                 prevComment = newComment;
@@ -249,7 +249,7 @@ void fgcom_updateClientComment() {
  * Load config file
  * This will parse the ini file and overwrite internal compile time defaults.
  * 
- * @return STATUS_OK on success, otherwise EC_GENERIC_ERROR 
+ * @return MUMBLE_STATUS_OK on success, otherwise MUMBLE_EC_GENERIC_ERROR 
  */
 mumble_error_t fgcom_loadConfig() {
     std::vector<std::string> configFilePaths;
@@ -265,7 +265,7 @@ mumble_error_t fgcom_loadConfig() {
 	configFilePaths.push_back(std::string(pHomeDir) + dirSep + "Documents" + dirSep + cfgName);
     } else {
         pluginLog("[CFG] ERROR getting USERPROFILE from environment");
-        // do not bail out: just use defaults. return EC_GENERIC_ERROR;
+        // do not bail out: just use defaults. return MUMBLE_EC_GENERIC_ERROR;
     }
 #else
     std::string dirSep = "/";
@@ -275,7 +275,7 @@ mumble_error_t fgcom_loadConfig() {
         configFilePaths.push_back(std::string(pHomeDir) + dirSep + cfgName);
     } else {
         pluginLog("[CFG] ERROR getting HOME from environment");
-        // do not bail out: just use defaults.  return EC_GENERIC_ERROR;
+        // do not bail out: just use defaults.  return MUMBLE_EC_GENERIC_ERROR;
     }
 #endif
 
@@ -337,7 +337,7 @@ mumble_error_t fgcom_loadConfig() {
         pluginDbg("[CFG]              mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
     }
     
-    return STATUS_OK;
+    return MUMBLE_STATUS_OK;
 }
 
 
@@ -370,7 +370,7 @@ mumble_error_t fgcom_initPlugin() {
      */
     if (! fgcom_configDone) {
         mumble_error_t configureResult = fgcom_loadConfig();
-        if (configureResult != STATUS_OK) return configureResult;
+        if (configureResult != MUMBLE_STATUS_OK) return configureResult;
         fgcom_configDone = true;
     }
     
@@ -415,9 +415,9 @@ mumble_error_t fgcom_initPlugin() {
             
             // fetch local user id from server, but only if we are already connected
             mumble_userid_t localUser;
-            if (mumAPI.getLocalUserID(ownPluginID, activeConnection, &localUser) != STATUS_OK) {
+            if (mumAPI.getLocalUserID(ownPluginID, activeConnection, &localUser) != MUMBLE_STATUS_OK) {
                 pluginLog("Failed to retrieve local user ID");
-                return EC_USER_NOT_FOUND; // abort online init - something horribly went wrong.
+                return MUMBLE_EC_USER_NOT_FOUND; // abort online init - something horribly went wrong.
             } else {
                 // update mumble session id to all known identities
                 localMumId = localUser;
@@ -433,9 +433,9 @@ mumble_error_t fgcom_initPlugin() {
             // fetch all channels from server in order to get the special fgcom-mumble channel ID
             size_t channelCount;
             mumble_channelid_t *channels;
-            if (mumAPI.getAllChannels(ownPluginID, activeConnection, &channels, &channelCount) != STATUS_OK) {
+            if (mumAPI.getAllChannels(ownPluginID, activeConnection, &channels, &channelCount) != MUMBLE_STATUS_OK) {
                 pluginLog("Failed to retrieve all channel IDs");
-                return EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
+                return MUMBLE_EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
             } else {
                 pluginLog("Server has "+std::to_string(channelCount)+" channels, looking for special ones");
                 pluginDbg("  fgcom.specialChannel='"+fgcom_cfg.specialChannel+"'");
@@ -443,7 +443,7 @@ mumble_error_t fgcom_initPlugin() {
                     pluginDbg("  resolving channel name for id="+std::to_string(channels[ci]));
                     const char *channelName;
                     mumble_error_t cfres = mumAPI.getChannelName(ownPluginID, activeConnection, channels[ci], &channelName);
-                    if (cfres == STATUS_OK) {
+                    if (cfres == MUMBLE_STATUS_OK) {
                         pluginDbg("  channelID="+std::to_string(channels[ci])+" '"+channelName+"'");
                         std::string channelName_str(channelName);
                         if (std::regex_match(channelName_str, std::regex(fgcom_cfg.specialChannel, std::regex_constants::icase) )) {
@@ -453,7 +453,7 @@ mumble_error_t fgcom_initPlugin() {
                         mumAPI.freeMemory(ownPluginID, channelName);
                     } else {
                         pluginDbg("Error fetching channel names: rc="+std::to_string(cfres));
-                        return EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
+                        return MUMBLE_EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
                     }
                 }
                 
@@ -471,7 +471,7 @@ mumble_error_t fgcom_initPlugin() {
             pluginDbg("Check if we are already in the special channel and thus need to activate");
             mumble_channelid_t localChannelID;
             mumble_error_t glcres = mumAPI.getChannelOfUser(ownPluginID, activeConnection, localMumId, &localChannelID);
-            if (glcres == STATUS_OK) {
+            if (glcres == MUMBLE_STATUS_OK) {
                 if (std::find(fgcom_specialChannelID.begin(), fgcom_specialChannelID.end(), localChannelID) != fgcom_specialChannelID.end()) {
                     // Activate the plugin, and initialize synch (send state+ask for remote state)
                     pluginDbg("Already in special channel at init time: activating plugin.");
@@ -483,7 +483,7 @@ mumble_error_t fgcom_initPlugin() {
                 }
             } else {
                 pluginLog("Error fetching current active channel: rc="+std::to_string(glcres));
-                return EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
+                return MUMBLE_EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
             }
             
             if (!fgcom_isPluginActive()) fgcom_setPluginActive(fgcom_isPluginActive()); // print some nice message to start
@@ -507,12 +507,12 @@ mumble_error_t fgcom_initPlugin() {
         
     } else {
         pluginLog("fgcom_initPlugin(): not connected, so no online init possible (will try later)");
-        return STATUS_OK; // OK - we will try later
+        return MUMBLE_STATUS_OK; // OK - we will try later
     }
     
     
     // Plugin init complete
-    return STATUS_OK;
+    return MUMBLE_STATUS_OK;
 }
 
 
@@ -545,14 +545,14 @@ mumble_error_t mumble_init(uint32_t id) {
     // perform initialization if not done already (or missing parts of it;
     // this is called when loading the plugin which may be done offline)
     mumble_error_t init_rc = fgcom_initPlugin();
-    if (STATUS_OK != init_rc) return init_rc;
+    if (MUMBLE_STATUS_OK != init_rc) return init_rc;
 	pluginLog("Initialized plugin");
 
 
-	// STATUS_OK is a macro set to the appropriate status flag (ErrorCode)
+	// MUMBLE_STATUS_OK is a macro set to the appropriate status flag (ErrorCode)
 	// If you need to return any other status have a look at the ErrorCode enum
 	// inside PluginComponents_v_1_0_x.h and use one of its values
-	return STATUS_OK;
+	return MUMBLE_STATUS_OK;
 }
 
 void mumble_shutdown() {
@@ -696,9 +696,9 @@ MumbleStringWrapper mumble_getDescription() {
 uint32_t mumble_getFeatures() {
 	// Tells Mumble whether this plugin delivers some known common functionality. See the PluginFeature enum in
 	// PluginComponents_v_1_0_x.h for what is available.
-	// If you want your plugin to deliver positional data, you'll want to return FEATURE_POSITIONAL
-	//return FEATURE_NONE;
-    return FEATURE_AUDIO;
+	// If you want your plugin to deliver positional data, you'll want to return MUMBLE_FEATURE_POSITIONAL
+	//return MUMBLE_FEATURE_NONE;
+    return MUMBLE_FEATURE_AUDIO;
 }
 
 uint32_t mumble_deactivateFeatures(uint32_t features) {
@@ -736,7 +736,7 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 	size_t userCount;
 	mumble_userid_t *userIDs;
 
-	if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != STATUS_OK) {
+	if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != MUMBLE_STATUS_OK) {
 		pluginLog("[ERROR]: Can't obtain user list");
 		return;
 	}
@@ -800,7 +800,7 @@ void mumble_onChannelExited(mumble_connection_t connection, mumble_userid_t user
 // Handles the calculation of the PTT state that is sent to remotes.
 void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_userid_t userID, mumble_talking_state_t talkingState) {
     pluginDbg("User with ID "+ std::to_string(userID) + " changed talking state: " + std::to_string(talkingState) + ". (ServerConnection: " + std::to_string(connection) + ")");
-    bool mumble_talk_detected = talkingState == TALKING || talkingState == WHISPERING || talkingState == SHOUTING;
+    bool mumble_talk_detected = talkingState == MUMBLE_TS_TALKING || talkingState == MUMBLE_TS_WHISPERING || talkingState == MUMBLE_TS_SHOUTING;
 
     // Current user is speaking. Either this activated trough the PTT button, or manually pushed mumble-ptt/voiceActivation
     if (userID == localMumId && fgcom_isPluginActive()) {
