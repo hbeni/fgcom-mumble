@@ -104,6 +104,7 @@ radioGUI:
 release-fgcom-addon:
 	# package FlightGear-Addon
 	cp -r client/fgfs-addon/ fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+	cp LICENSE fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
 	head -n 1 client/fgfs-addon/Readme.md > fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
 	@echo Version: $(FGFSADDONVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
 	tail +2 client/fgfs-addon/Readme.md >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
