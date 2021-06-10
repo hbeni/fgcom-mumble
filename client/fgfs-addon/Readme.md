@@ -23,3 +23,30 @@ Configuration
 ----------------------------
 If you wish to adjust the parameters, you can access them via the new *Multiplayer* menu entry. This is usually not needed except you are running several mumble instances or mumble not on the same computer as FlightGear.  
 Changes to the parameters will reinitialize the addon automatically, making them effective.
+
+
+Compatible aircraft
+----------------------
+Basicly every aircraft utilizing the standard radio implementation properties should work without modification.
+
+When initializing, the addon will inspect the defined radios and enable them for FGCom-Mumble. Currently this is: COM1, COM2, COM3, ADF1 and ADF2.  
+Only radios providing the property `operable` are considered (which is set by the standard C++ radio implementation).
+
+The addon uses the following standard properties:
+
+- COM radios:
+  - `/instrumentation/comm[n]/operable`
+  - `/instrumentation/comm[n]/volume`
+  - `/instrumentation/comm[n]/frequencies/selected-mhz`
+  - `/instrumentation/comm[n]/ptt`
+  - `/instrumentation/comm[n]/cutoff-signal-quality`
+  - `/instrumentation/comm[n]/frequencies/selected-channel-width-khz`
+  - `/instrumentation/comm[n]/tx-power` (nonstandard and optional; introduced by FGCom-mumble)
+
+- ADF radios (local only, they can't transmit):
+  - `/instrumentation/adf[n]/operable`
+  - `/instrumentation/adf[n]/volume-norm`
+  - `/instrumentation/adf[n]/frequencies/selected-khz`
+  - `/instrumentation/adf[n]/indicated-bearing-deg` (read/write)
+  - `/instrumentation/adf[n]/ident-audible`
+  - `/instrumentation/adf[n]/mode`
