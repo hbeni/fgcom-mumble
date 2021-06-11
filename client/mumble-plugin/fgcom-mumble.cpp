@@ -538,7 +538,7 @@ mumble_error_t fgcom_initPlugin() {
 //////////////////// OBLIGATORY FUNCTIONS ////////////////////
 //////////////////////////////////////////////////////////////
 // All of the following function must be implemented in order for Mumble to load the plugin
-mumble_error_t mumble_init(uint32_t id) {
+mumble_error_t mumble_init(mumble_plugin_id_t id) {
     pluginLog("Registered PluginID: "+std::to_string(id));
 	ownPluginID = id;
     
