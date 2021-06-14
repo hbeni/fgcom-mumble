@@ -75,15 +75,6 @@ jobs:
       run: |
         sudo apt-get install libssl-dev mingw-w64 mingw-w64-common build-essential
 
-    - name: Build release
-      run: |
-        make release
-
-    - name: Get release version
-      run: |
-        echo "PLUGIN_VERSION=$(make showVer |grep VERSION: |cut -d':' -f2)" >> $GITHUB_ENV
-        echo "PLUGIN_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
     - name: Download mac plugin from job_1
       uses: actions/download-artifact@v2
       with:
@@ -91,20 +82,27 @@ jobs:
 
     - name: Add macPlugin to release files
       run: |
-        mkdir dist
-        mv *.zip fgcom-mumble-macOS.bundle dist/
-        cd dist/
-        zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.bundle
-        mkdir fgcom-mumble-${PLUGIN_VERSION}/
-        mkdir fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
-        cp fgcom-mumble-macOS.bundle fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
-        zip -u fgcom-mumble-${PLUGIN_VERSION}.zip fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin/fgcom-mumble-macOS.bundle
+        cp fgcom-mumble-macOS.bundle client/mumble-plugin/
+
+    - name: Build release
+      run: |
+        make clean plugin
+        make clean plugin-win64
+        make clean plugin-win32
+        make clean release
+
+    - name: Get release version
+      run: |
+        echo "PLUGIN_VERSION=$(make showVer |grep PLUGIN: |cut -d':' -f2)" >> $GITHUB_ENV
+        echo "PLUGIN_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
         name: fgcom-mumble-${{env.PLUGIN_VERSION}}_${{env.PLUGIN_SHASHORT}}
-        path: dist/*.zip
+        path: |
+          *.zip
+          *.mumble_plugin
         retention-days: 7
 
 
@@ -170,15 +168,6 @@ jobs:
       run: |
         sudo apt-get install libssl-dev mingw-w64 mingw-w64-common build-essential
 
-    - name: Build release
-      run: |
-        make DEBUG+="-g3 -Og -DDEBUG" release
-
-    - name: Get release version
-      run: |
-        echo "PLUGIN_VERSION=$(make showVer |grep VERSION: |cut -d':' -f2)" >> $GITHUB_ENV
-        echo "PLUGIN_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
     - name: Download mac plugin from job_1
       uses: actions/download-artifact@v2
       with:
@@ -186,18 +175,25 @@ jobs:
 
     - name: Add macPlugin to release files
       run: |
-        mkdir dist
-        mv *.zip fgcom-mumble-macOS.bundle dist/
-        cd dist/
-        zip -u fgcom-mumble-client-binOnly-${PLUGIN_VERSION}.zip fgcom-mumble-macOS.bundle
-        mkdir fgcom-mumble-${PLUGIN_VERSION}/
-        mkdir fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
-        cp fgcom-mumble-macOS.bundle fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin
-        zip -u fgcom-mumble-${PLUGIN_VERSION}.zip fgcom-mumble-${PLUGIN_VERSION}/mumble-plugin/fgcom-mumble-macOS.bundle
+        cp fgcom-mumble-macOS.bundle client/mumble-plugin/
+
+    - name: Build release
+      run: |
+        make DEBUG+="-g3 -Og -DDEBUG" clean plugin
+        make DEBUG+="-g3 -Og -DDEBUG" clean plugin-win64
+        make DEBUG+="-g3 -Og -DDEBUG" clean plugin-win32
+        make DEBUG+="-g3 -Og -DDEBUG" clean release
+
+    - name: Get release version
+      run: |
+        echo "PLUGIN_VERSION=$(make showVer |grep PLUGIN: |cut -d':' -f2)" >> $GITHUB_ENV
+        echo "PLUGIN_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
         name: fgcom-mumble-${{env.PLUGIN_VERSION}}_${{env.PLUGIN_SHASHORT}}-debug
-        path: dist/*.zip
+        path: |
+          *.zip
+          *.mumble_plugin
         retention-days: 7

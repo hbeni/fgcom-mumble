@@ -62,15 +62,10 @@ using namespace httplib;
 
 // Naming components of the download asset:
 //   name + version + postfix + extension
-//   fgcom-mumble-0.14.0-win32.zip
+//   fgcom-mumble-0.14.0.mumble_plugin
 std::string fgcom_asset_name("fgcom-mumble-");
-std::string fgcom_bin_extension(".zip");
-#ifdef MINGW_WIN32
-std::string fgcom_bin_postfix("-win32");
-#else
 std::string fgcom_bin_postfix("");
-#endif
-
+std::string fgcom_bin_extension(".mumble_plugin");
 
 /* Version struct */
 struct fgcom_version {
