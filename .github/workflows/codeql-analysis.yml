@@ -66,12 +66,17 @@ jobs:
     - if: matrix.language == 'java' 
       name: Build Java
       run: |
-        make radioGUI
+        make build-radioGUI
+
+    - if: matrix.language == 'cpp'
+      name: Build C++ Tests (Linux x64)
+      run: |
+        make clean test
 
     - if: matrix.language == 'cpp'
       name: Build C++ (Linux x64)
       run: |
-        make clean test all
+        make clean tools plugin
 
     - if: matrix.language == 'cpp'
       name: Build C++ (Windows x64 mingw-crosscompile)
