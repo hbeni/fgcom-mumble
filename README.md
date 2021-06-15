@@ -224,20 +224,18 @@ The FGCom-mumble client plugin needs to be in binary form. If you want to use th
   - OpenSSL: Linux builds dynamically against the installed `libssl-dev`. MingW/Windows links statically against a build from the git submodule `lib/openssl` by invoking `make openssl-win`.
 
 - Building:
-  - Go to the folder `client/mumble-plugin/`
-  - on linux type `make`
-  - or `make all-win64` to cross-compile to windows
+  - Download the source tree: `git clone https://github.com/hbeni/fgcom-mumble.git`
+  - Go into the source project folder: `cd fgcom-mumble`
+  - on linux type `make plugin` to build the binary mumble plugin library
+  - or `make plugin-win64` to cross-compile to windows
 
 Other interesting compile targets:
 
-  - `make` is an alias for `make all`
-  - `make all` builds for linux: the libs, the plugins and the test tools in test directory
-  - `make debug` will build that too but add
- debug code that will print lots of stuff to the terminal window when running the plugin
-  - `make plugin` will build just the the plugin for linux
-  - `make plugin-win64` will build it for windows
-  - `make release` builds zip release files containing linux/windows binaries
+  - `make` is an alias for `make release`
+  - `make release` creates release ZIP files
+  - `make debug` will build the plugin and add debug code that will print lots of stuff to the terminal window when running the plugin
   - `make test` builds and runs catch2-unittests
+  - `make tools` builds some utilitys and test tools
 
 
 Windows native build

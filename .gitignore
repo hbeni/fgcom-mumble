@@ -51,6 +51,7 @@ FGCom*.jar
 # Archives
 *.zip
 *.tar.gz
+*.mumble_plugin
 
 # runtime config
 server/statuspage/config.ini
