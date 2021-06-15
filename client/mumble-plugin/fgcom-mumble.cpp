@@ -654,6 +654,11 @@ void mumble_setMumbleInfo(mumble_version_t mumbleVersion, mumble_version_t mumbl
         pluginLog("NOTICE: this is a debug build.");
 #endif
 
+    // Show licensing information in the log.
+    // (notice to further developers: this MUST be retained)
+    pluginLog("FGCom-mumble is free software and licensed under the GPLv3.");
+    pluginLog("For license details refer to: https://github.com/hbeni/fgcom-mumble");
+
 }
 
 mumble_version_t mumble_getVersion() {
