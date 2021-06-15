@@ -237,24 +237,23 @@ Um den aktuellsten Quellcode zu benutzen, kannst du das Plugin selbst übersetze
   - OpenSSL: Linux baut dynamisch gegen das installierte `libssl-dev`. MingW/Windows linkt statisch gegen einen Bau des git submodules `lib/openssl` durch den Auruf von `make openssl-win`.
 
 - Bauen:
-  - Geh in das Verzeichnis `client/mumble-plugin/`
-  - Unter Linux, tippe `make`
-  - oder `make all-win64`, um eine Kreuzkompilierung für Windows auszuführen
+  - Lade den aktuellen source herunter: `git clone https://github.com/hbeni/fgcom-mumble.git`
+  - Geh in das Projektverzeichnis: `cd fgcom-mumble`
+  - Unter Linux, tippe `make plugin`
+  - oder `make plugin-win64`, um eine Kreuzkompilierung für Windows auszuführen
 
 Weitere interessante make buildtargets:
 
-  - `make` ist ein Alias für `make all`
-  - `make all` baut alles verfügbare für Linux: die Bibliotheken, das Plugin, sowie einige Testwerkzeuge im Testverzeichnis
-  - `make all-debug` macht das gleiche, fügt aber Debuginformationen hinzu. Solche Versionen schreiben ganz viele Informationen auf die Kommandozeile.
-  - `make plugin` baut lediglich das Plugin für Linux
-  - `make plugin-win64` baut das Plugin für Windows
-  - `make release` baut ein Releasepaket (je ein `tar.gz` und `zip`, dass die Linux/Windows Binärdateien enthält)
+  - `make` ist ein Alias für `make release`
+  - `make release` baut einen Satz Release-ZIP Dateien
+  - `make debug` macht baut das Plugin, fügt aber Debuginformationen hinzu. Solche Versionen schreiben ganz viele Informationen auf die Kommandozeile.
   - `make test` baut und startet die catch2-unittests
+  - `make tools` baut ein paar Testtools und Werkzeuge
 
 
 Windows nativer build
 ---------------------
-Das makefile funktioniert auch utner Windows mit cygwin64 und mingw32.  
+Das makefile funktioniert auch unter Windows mit cygwin64 und mingw32.  
 Du musst lediglich einen anderen Compiler setzen:
 
 - 64bit: `make CC_WIN=x86_64-w64-mingw32-g++ plugin-win64`

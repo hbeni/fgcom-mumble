@@ -1,37 +1,40 @@
-GITVER      := $(shell make -C client/mumble-plugin/ showVer |grep GITCOMMIT |cut -d: -f2)
-GITDATE     := $(shell make -C client/mumble-plugin/ showVer |grep GITDATE |cut -d: -f2)
-PLUGINVER   := $(shell make -C client/mumble-plugin/ showVer |grep VER |cut -d: -f2)
+GITVER:=$(shell git log -1 --pretty=format:"%h")
+GITDATE:=$(shell git log -1 --pretty=format:"%cd" --date=short)
+PLUGIN_VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR client/mumble-plugin/fgcom-mumble.h |grep -E -o '[0-9]+')
+PLUGIN_VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR client/mumble-plugin/fgcom-mumble.h |grep -E -o '[0-9]+')
+PLUGIN_VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH client/mumble-plugin/fgcom-mumble.h |grep -E -o '[0-9]+')
+PLUGINVER:=$(PLUGIN_VERSION_V).$(PLUGIN_VERSION_M).$(PLUGIN_VERSION_P)
 RADIOGUIVER := $(shell grep "VERSION of the Application" client/radioGUI/pom.xml | sed 's/\s*<\/\?version>//g' | sed 's/\s*<!.*$\//')
 FGFSADDONVER:= $(shell grep -i '<version.*>.*</version>' client/fgfs-addon/addon-metadata.xml |sed 's/\s*<.*>\(.*\)<.*>\s*/\1/g')
 
-release: build package
+# make a final release distribution file set
+release:
+	$(MAKE) build
+	$(MAKE) bundle
+	$(MAKE) package
 
-build: release-plugin release-server release-radioGUI release-fgcom-addon
+# build the binary stuff
+build: build-plugin build-server build-radioGUI build-fgcom-addon
 
+# bundle component's zip packages
+bundle: bundle-plugin bundle-server bundle-radioGUI bundle-fgcom-addon
+
+# package up everything already built into a single release client zip
 package:
 	# Generate combined release zip files
-	cp client/mumble-plugin/*.zip .
+	rm -rf fgcom-mumble-$(PLUGINVER)/
+	mkdir fgcom-mumble-$(PLUGINVER)/
 	
-	# unzip and build new release tree
-	unzip fgcom-mumble-client-$(PLUGINVER).zip
-	rm fgcom-mumble-client-$(PLUGINVER).zip
-	mv fgcom-mumble-client-$(PLUGINVER) fgcom-mumble-$(PLUGINVER)
-	
-	# combine radio gui into release
-	mkdir fgcom-mumble-$(PLUGINVER)/radioGUI
-	cp client/radioGUI/target/FGCom-mumble-radioGUI-*-jar-with-dependencies.jar fgcom-mumble-$(PLUGINVER)/radioGUI/FGCom-mumble-radioGUI.jar
-	head -n 1 client/radioGUI/Readme.RadioGUI.md > fgcom-mumble-$(PLUGINVER)/radioGUI/Readme.RadioGUI.md
-	@echo Version: $(RADIOGUIVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(PLUGINVER)/radioGUI/Readme.RadioGUI.md
-	tail +2 client/radioGUI/Readme.RadioGUI.md >> fgcom-mumble-$(PLUGINVER)/radioGUI/Readme.RadioGUI.md
-	
-	# combine FlightGear-Addon into release
-	cp -r client/fgfs-addon/ fgcom-mumble-$(PLUGINVER)
-	head -n 1 client/fgfs-addon/Readme.md > fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
-	@echo Version: $(FGFSADDONVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
-	tail +2 client/fgfs-addon/Readme.md >> fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
+	# Add docs
+	cp LICENSE Readme.architecture.md fgcom-mumble-$(PLUGINVER)/
+	head -n 1 README.md > fgcom-mumble-$(PLUGINVER)/README.md
+	@echo Version: $(PLUGINVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(PLUGINVER)/README.md
+	tail +2 README.md >> fgcom-mumble-$(PLUGINVER)/README.md
+	head -n 1 README-de_DE.md > fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	@echo Version: $(PLUGINVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(PLUGINVER)/README-de_DE.md
+	tail +2 README-de_DE.md >> fgcom-mumble-$(PLUGINVER)/README-de_DE.md
 	
 	# Adjust markdown links in readmes
-	sed -i 's?](../?](?'     fgcom-mumble-$(PLUGINVER)/plugin.spec.md
 	sed -i 's?](client/?](?' fgcom-mumble-$(PLUGINVER)/Readme.architecture.md
 	sed -i 's?\[server/Readme.server.md\](server/Readme.server.md)?Readme.server.md (not included)?' fgcom-mumble-$(PLUGINVER)/README.md
 	sed -i 's?\[server/statuspage/Readme.statuspage.md\](server/statuspage/Readme.statuspage.md)?Readme.statuspage.md (not included)?' fgcom-mumble-$(PLUGINVER)/README.md
@@ -42,7 +45,28 @@ package:
 	sed -i 's?\[client/?[?' fgcom-mumble-$(PLUGINVER)/README.md fgcom-mumble-$(PLUGINVER)/README-de_DE.md
 	sed -i 's?\[server/?[?' fgcom-mumble-$(PLUGINVER)/README.md fgcom-mumble-$(PLUGINVER)/README-de_DE.md
 	
-	# repackage release
+	# Add mumble plugin bundle
+	mkdir fgcom-mumble-$(PLUGINVER)/mumble-plugin
+	cp fgcom-mumble-$(PLUGINVER).mumble_plugin fgcom-mumble-$(PLUGINVER)/mumble-plugin/
+	cp client/mumble-plugin/fgcom-mumble.ini fgcom-mumble-$(PLUGINVER)/mumble-plugin/
+	cp client/plugin.spec.md fgcom-mumble-$(PLUGINVER)/mumble-plugin/
+	sed -i 's?](../?](?' fgcom-mumble-$(PLUGINVER)/mumble-plugin/plugin.spec.md
+	
+	# Add radioGUI
+	mkdir fgcom-mumble-$(PLUGINVER)/radioGUI
+	cp client/radioGUI/target/FGCom-mumble-radioGUI-*-jar-with-dependencies.jar fgcom-mumble-$(PLUGINVER)/radioGUI/FGCom-mumble-radioGUI.jar
+	head -n 1 client/radioGUI/Readme.RadioGUI.md > fgcom-mumble-$(PLUGINVER)/radioGUI/Readme.RadioGUI.md
+	@echo Version: $(RADIOGUIVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(PLUGINVER)/radioGUI/Readme.RadioGUI.md
+	tail +2 client/radioGUI/Readme.RadioGUI.md >> fgcom-mumble-$(PLUGINVER)/radioGUI/Readme.RadioGUI.md
+	
+	# Add FlightGear-Addon
+	cp -r client/fgfs-addon/ fgcom-mumble-$(PLUGINVER)
+	head -n 1 client/fgfs-addon/Readme.md > fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
+	@echo Version: $(FGFSADDONVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
+	tail +2 client/fgfs-addon/Readme.md >> fgcom-mumble-$(PLUGINVER)/fgfs-addon/Readme.md
+	
+	
+	# package release
 	zip -r fgcom-mumble-$(PLUGINVER).zip fgcom-mumble-$(PLUGINVER)/
 	rm -rf fgcom-mumble-$(PLUGINVER)/
 	
@@ -52,14 +76,56 @@ package:
 	@echo "PLUGINVER:    $(PLUGINVER)"
 	@echo "RADIOGUIVER:  $(RADIOGUIVER)"
 	@echo "FGFSADDONVER: $(FGFSADDONVER)"
-	@ls -alh fgcom-mumble-$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
-	@md5sum fgcom-mumble-$(PLUGINVER)*.zip fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
+	@ls -alh fgcom-mumble-$(PLUGINVER)*.zip fgcom-mumble-$(PLUGINVER).mumble_plugin fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
+	@md5sum  fgcom-mumble-$(PLUGINVER)*.zip fgcom-mumble-$(PLUGINVER).mumble_plugin fgcom-mumble-server-*$(PLUGINVER)*.zip fgcom-mumble-radioGUI-*$(RADIOGUIVER)*.zip fgcom-mumble-fgfs-addon-*$(FGFSADDONVER)*.zip
 
-release-plugin:
-	# Delegate build plugin release
-	$(MAKE) -C client/mumble-plugin/ release
 
-release-server:
+bundle-plugin:
+	# Build mumble_plugin bundle from available binary builds
+	# Format is described here: https://github.com/mumble-voip/mumble/blob/master/docs/dev/plugins/Bundling.md
+	rm -rf fgcom-mumble-plugin-bundle
+	mkdir fgcom-mumble-plugin-bundle
+	
+	# generate manifest header
+	@echo '<?xml version="1.0" encoding="UTF-8"?>' > fgcom-mumble-plugin-bundle/manifest.xml
+	@echo '<bundle version="1.0.0">' >> fgcom-mumble-plugin-bundle/manifest.xml
+	@echo '  <name>FGCom-Mumble</name>' >> fgcom-mumble-plugin-bundle/manifest.xml
+	@echo "  <version>$(PLUGINVER)</version>" >> fgcom-mumble-plugin-bundle/manifest.xml
+	
+	# add binary plugin assets and deploy them
+	@echo '  <assets>' >> fgcom-mumble-plugin-bundle/manifest.xml
+ifneq (,$(wildcard client/mumble-plugin/fgcom-mumble.so))
+	cp client/mumble-plugin/fgcom-mumble.so fgcom-mumble-plugin-bundle/
+	@echo '    <plugin os="linux" arch="x64">fgcom-mumble.so</plugin>' >> fgcom-mumble-plugin-bundle/manifest.xml
+endif
+ifneq (,$(wildcard client/mumble-plugin/fgcom-mumble.dll))
+	cp client/mumble-plugin/fgcom-mumble.dll fgcom-mumble-plugin-bundle/
+	@echo '    <plugin os="windows" arch="x64">fgcom-mumble.dll</plugin>' >> fgcom-mumble-plugin-bundle/manifest.xml
+endif
+ifneq (,$(wildcard client/mumble-plugin/fgcom-mumble-x86_32.dll))
+	cp client/mumble-plugin/fgcom-mumble-x86_32.dll fgcom-mumble-plugin-bundle/
+	@echo '    <plugin os="windows" arch="x86">fgcom-mumble-x86_32.dll</plugin>' >> fgcom-mumble-plugin-bundle/manifest.xml
+endif
+ifneq (,$(wildcard client/mumble-plugin/fgcom-mumble-macOS.bundle))
+	cp client/mumble-plugin/fgcom-mumble-macOS.bundle fgcom-mumble-plugin-bundle/
+	@echo '    <plugin os="macos" arch="x64">fgcom-mumble-macOS.bundle</plugin>' >> fgcom-mumble-plugin-bundle/manifest.xml
+endif
+	@echo '  </assets>' >> fgcom-mumble-plugin-bundle/manifest.xml
+	
+	# generate manifest footer
+	@echo '</bundle>' >> fgcom-mumble-plugin-bundle/manifest.xml
+	
+	# bundle up everything
+	zip --junk-paths fgcom-mumble-$(PLUGINVER).mumble_plugin fgcom-mumble-plugin-bundle/*
+	
+	# cleanup
+	rm -rf fgcom-mumble-plugin-bundle
+	@echo "\nPluginbundle $(PLUGINVER) built successfully:"
+	@ls -alh fgcom-mumble-$(PLUGINVER).mumble_plugin
+	@md5sum fgcom-mumble-$(PLUGINVER).mumble_plugin
+
+
+bundle-server:
 	# Build server components release
 	mkdir fgcom-mumble-server-$(PLUGINVER)
 	mkdir fgcom-mumble-server-$(PLUGINVER)/recordings
@@ -76,7 +142,8 @@ release-server:
 	zip -r fgcom-mumble-server-$(PLUGINVER).zip fgcom-mumble-server-$(PLUGINVER)
 	rm -rf fgcom-mumble-server-$(PLUGINVER)
 
-release-radioGUI: radioGUI
+bundle-radioGUI:
+	# package radioGUI
 	mkdir fgcom-mumble-radioGUI-$(RADIOGUIVER)
 	cp LICENSE fgcom-mumble-radioGUI-$(RADIOGUIVER)
 	cp client/radioGUI/target/FGCom-mumble-radioGUI-*-jar-with-dependencies.jar fgcom-mumble-radioGUI-$(RADIOGUIVER)/FGCom-mumble-radioGUI.jar
@@ -86,7 +153,29 @@ release-radioGUI: radioGUI
 	zip -r fgcom-mumble-radioGUI-$(RADIOGUIVER).zip fgcom-mumble-radioGUI-$(RADIOGUIVER)
 	rm -rf fgcom-mumble-radioGUI-$(RADIOGUIVER)
 
-radioGUI:
+bundle-fgcom-addon:
+	# package FlightGear-Addon
+	cp -r client/fgfs-addon/ fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+	cp LICENSE fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+	head -n 1 client/fgfs-addon/Readme.md > fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
+	@echo Version: $(FGFSADDONVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
+	tail +2 client/fgfs-addon/Readme.md >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
+	zip -r fgcom-mumble-fgfs-addon-$(FGFSADDONVER).zip fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+	rm -rf fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+
+
+
+build-plugin:
+	# Plugin: delegate build
+	$(MAKE) -C client/mumble-plugin/ clean plugin
+	
+build-server:
+	# Server: nothing to build so far
+
+build-fgcom-addon:
+	# FGFS-Addon: nothing to build so far
+
+build-radioGUI:
 	# Build radio gui with maven
 	mvn install:install-file -Dfile=client/radioGUI/lib/jmapviewer-2.9/JMapViewer.jar \
 		-DgroupId=org.openstreetmap.jmapviewer \
@@ -101,17 +190,15 @@ radioGUI:
 		-Dpackaging=jar
 	cd client/radioGUI/ && mvn clean animal-sniffer:check package
 
-release-fgcom-addon:
-	# package FlightGear-Addon
-	cp -r client/fgfs-addon/ fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
-	cp LICENSE fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
-	head -n 1 client/fgfs-addon/Readme.md > fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
-	@echo Version: $(FGFSADDONVER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
-	tail +2 client/fgfs-addon/Readme.md >> fgcom-mumble-fgfs-addon-$(FGFSADDONVER)/Readme.md
-	zip -r fgcom-mumble-fgfs-addon-$(FGFSADDONVER).zip fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
-	rm -rf fgcom-mumble-fgfs-addon-$(FGFSADDONVER)
+
+showVer:
+	@echo "GITCOMMIT:$(GITVER)"
+	@echo "GITDATE:$(GITDATE)"
+	@echo "PLUGIN:$(PLUGINVER)"
+	@echo "RADIOGUI:$(RADIOGUIVER)"
+	@echo "FGFSADDON:$(FGFSADDONVER)"
 
 # relay everything else to the mumble-plugin makefile
 .DEFAULT:
-	@echo "target undefined, using mumble-client makefile instead"
+	@echo "target '$@' undefined, using mumble-client makefile instead"
 	$(MAKE) -C client/mumble-plugin/ $@
