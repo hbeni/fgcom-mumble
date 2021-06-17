@@ -142,7 +142,8 @@ void fgcom_getLatestReleaseFromGithub_Web() {
     
     std::string scheme("https://");
     std::string host("github.com");
-    std::string path("/hbeni/fgcom-mumble/releases");
+    std::string proj("hbeni/fgcom-mumble");
+    std::string path("/"+proj+"/releases");
     std::string rel("");
     std::string url(scheme + host + path + rel);
     
@@ -163,48 +164,80 @@ void fgcom_getLatestReleaseFromGithub_Web() {
             //std::cout << res->body << std::endl;
             
             // parse tag name from HTML body
-            std::regex regex (path+"/tag/([v\\.\\d]+?)\">");
+            std::regex regex_tag (path+"/tag/(.+?)\">");
             std::smatch sm;
-
-            if (std::regex_search(res->body, sm, regex)) {
+            if (std::regex_search(res->body, sm, regex_tag)) {
                 std::string tag_name = sm[1];
                 fgcom_release_latest.tag = tag_name;
-                std::regex regex ("^(?:v\\.?)?(\\d+)\\.(\\d+)\\.(\\d+)$");
-                std::smatch sm;
-                if (std::regex_search(tag_name, sm, regex)) {         // parse version number from tag name
-                    fgcom_release_latest.version.major = stoi(sm[1]);
-                    fgcom_release_latest.version.minor = stoi(sm[2]);
-                    fgcom_release_latest.version.patch = stoi(sm[3]);
-                    
-                    // get release url
-                    // https://github.com/hbeni/fgcom-mumble/releases/tag/v.0.3.0
-                    fgcom_release_latest.url = url + "/tag/" + tag_name;
-                    
-                    //construct download url base
-                    // https://github.com/hbeni/fgcom-mumble/releases/download/v.0.3.0/fgcom-mumble-linux-0.3.0.tar.gz
-                    std::string dlurlbase(scheme + host + path + "/download/" + tag_name); 
-                    
-                    // generate download url for target platform
-                    std::string verStr = std::to_string(fgcom_release_latest.version.major)
-                                        + "." + std::to_string(fgcom_release_latest.version.minor)
-                                        + "." + std::to_string(fgcom_release_latest.version.patch);
-                    //fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-client-binOnly-"+verStr+".zip";
-                    fgcom_release_latest.downUrl = dlurlbase+"/"+fgcom_asset_name+verStr+fgcom_bin_postfix+fgcom_bin_extension;
-                    // ^^ NOTICE: In the future the mumble plugin updater may need a specially prepared binary zip release file.
-                    //            Currently this is not the case, and the updater traverses the ZIP he's given to find a matching
-                    //            Shared library object for the operating system.
-                    //            Thus, we just download the normal release zip for now. This makes our release process easier and
-                    //            helps the end user to download the correct asset.
-                    //      /!\   See here, if that's still the case: https://github.com/mumble-voip/mumble/blob/master/src/mumble/PluginInstaller.cpp#L81-L127
+                
+                // use the tag name to fetch the plugin header file from the source tree of that release
+                //std::string header_url(scheme + host + "/" + proj + "/raw/" + tag_name + "/client/mumble-plugin/fgcom-mumble.h");
+                //https://raw.githubusercontent.com/hbeni/fgcom-mumble/v.0.14.0/client/mumble-plugin/fgcom-mumble.h
+                //https://github.com/hbeni/fgcom-mumble/blob/v.0.14.0/client/mumble-plugin/fgcom-mumble.h
+                std::string header_url(scheme + host + "/" + proj + "/blob/" + tag_name + "/client/mumble-plugin/fgcom-mumble.h");
+                pluginDbg("[UPDATER] fetching version information from: "+header_url);
+                if (auto res_hdr = cli.Get(header_url.c_str(), headers)) {
+                    pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res_hdr->status));
+                    if (res_hdr->status == 200) {
+                        // strip HTML from response (makes parsing easier)
+                        std::regex strip_html_p("<.*?>");
+                        std::string body_plain = std::regex_replace(res_hdr->body, strip_html_p, "");
+                        
+                        // parse version info name from HTML body
+                        std::regex regex_major ("#define FGCOM_VERSION_MAJOR (\\d+)");
+                        std::smatch sm_major;
+                        if (std::regex_search(body_plain, sm_major, regex_major)) {
+                            pluginDbg("[UPDATER] parsed version_major="+std::string(sm_major[1]));
+                            fgcom_release_latest.version.major = stoi(sm_major[1]);
+                        }
+                        std::regex regex_minor ("#define FGCOM_VERSION_MINOR (\\d+)");
+                        std::smatch sm_minor;
+                        if (std::regex_search(body_plain, sm_minor, regex_minor)) {
+                            pluginDbg("[UPDATER] parsed version_minor="+std::string(sm_minor[1]));
+                            fgcom_release_latest.version.minor = stoi(sm_minor[1]);
+                        }
+                        std::regex regex_patch ("#define FGCOM_VERSION_PATCH (\\d+)");
+                        std::smatch sm_patch;
+                        if (std::regex_search(body_plain, sm_patch, regex_patch)) {
+                            pluginDbg("[UPDATER] parsed version_patch="+std::string(sm_patch[1]));
+                            fgcom_release_latest.version.patch = stoi(sm_patch[1]);
+                        }
 
+                        // Check if version could be parsed successfully
+                        if (   fgcom_release_latest.version.major > -1
+                            && fgcom_release_latest.version.minor > -1
+                            && fgcom_release_latest.version.patch > -1
+                        ) {
+                            // get release url
+                            // https://github.com/hbeni/fgcom-mumble/releases/tag/v.0.3.0
+                            fgcom_release_latest.url = url + "/tag/" + tag_name;
+                            
+                            //construct download url base
+                            // https://github.com/hbeni/fgcom-mumble/releases/download/v.0.3.0/fgcom-mumble-linux-0.3.0.tar.gz
+                            std::string dlurlbase(scheme + host + path + "/download/" + tag_name); 
+                            
+                            // generate download url for target platform
+                            std::string verStr = std::to_string(fgcom_release_latest.version.major)
+                                                + "." + std::to_string(fgcom_release_latest.version.minor)
+                                                + "." + std::to_string(fgcom_release_latest.version.patch);
+                            //fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-client-binOnly-"+verStr+".zip";
+                            fgcom_release_latest.downUrl = dlurlbase+"/"+fgcom_asset_name+verStr+fgcom_bin_postfix+fgcom_bin_extension;
+
+                        } else {
+                            // something went wrong.
+                            pluginLog("[UPDATER] ERROR: Can't obtain the tags header version number from '"+header_url+"'");
+                        }
+                    } else {
+                        pluginLog("[UPDATER] fetch resultCode not compatible; resultCode="+std::to_string(res_hdr->status));
+                    }
                 } else {
                     // something went wrong.
-                    pluginLog("[UPDATER] ERROR: Can't obtain release version number from '"+tag_name+"'");
+                    pluginLog("[UPDATER] ERROR: Can't obtain tag name from '"+tag_name+"'");
                 }
             } else {
                 // something went wrong.
                 pluginLog("[UPDATER] ERROR: Can't obtain release info from '"+url+"'");
-            }            
+            }
             
             
             pluginDbg("[UPDATER] latest version: "+std::to_string(fgcom_release_latest.version.major)+"."+std::to_string(fgcom_release_latest.version.minor)+"."+std::to_string(fgcom_release_latest.version.patch));
@@ -212,7 +245,7 @@ void fgcom_getLatestReleaseFromGithub_Web() {
 
             
         } else {
-            pluginDbg("[UPDATER] fetch resultCode not compatible; resultCode="+std::to_string(res->status));
+            pluginLog("[UPDATER] fetch resultCode not compatible; resultCode="+std::to_string(res->status));
         }
         
     } else {
