@@ -131,4 +131,81 @@ var main = func( addon ) {
     var reinit_hzChange   = setlistener(mySettingsRootPath ~ "/refresh-rate", reinitProtocol, 0, 0);
     var reinit_hostChange = setlistener(mySettingsRootPath ~ "/host", reinitProtocol, 0, 0);
     var reinit_portChange = setlistener(mySettingsRootPath ~ "/port", reinitProtocol, 0, 0);
+    
+    
+    # Check for upates at init time
+    checkUpdate(mySettingsRootPath);
+}
+
+
+# compare two version vectors of semantic format [major, minor, patch]
+# returns -1 if a is newer, 0 if both are equal and 1 if b is newer
+var compareVersion = func(a, b) {
+    for (var i=0; i<=2; i=i+1) {
+        if (a[i] < b[i]) return 1;
+        if (a[i] > b[i]) return -1;
+    }
+    return 0;
+}
+
+var checkUpdate = func(rp) {
+    var curVer = getprop(rp ~ "/version");
+    print("Addon FGCom-mumble checking for updates (local version: "~curVer~")");
+    var curVer_v = split(".", curVer);
+
+    # Fetch latest release tag from github release list
+    var releaseInfo_url = "https://github.com/hbeni/fgcom-mumble/releases";
+    print("Addon FGCom-mumble    using releaseInfo_url: "~releaseInfo_url);
+
+    http.load(releaseInfo_url).done(func(r) {
+        # something like: <a href="/hbeni/fgcom-mumble/releases/tag/v.0.14.0">v.0.14.0</a>
+        var release_tag_idx = find("releases/tag/", r.response);
+        if (release_tag_idx > 0) {
+            # something like: 'releases/tag/v.0.14.0">v.0.14.0<
+            #                   we want this: ^^^
+            tag_name = split("/", split('"', substr(r.response, release_tag_idx, 32) )[0] )[2];
+        } else {
+            print("Addon FGCom-mumble   unable to get latest release tag");
+            canvas.MessageBox.warning(
+                "FGCom-mumble updater "~curVer,
+                "There was a serious problem getting the latest release info.\n\nPlease file a bug report:\n" ~
+                "https://github.com/hbeni/fgcom-mumble/issues",
+                cb = nil,
+                buttons = canvas.MessageBox.Ok
+            );
+            return;
+        }
+        
+        # Fetch the addon version from the found tags codebase
+        var params = props.Node.new( {
+            "url":        "https://raw.githubusercontent.com/hbeni/fgcom-mumble/" ~ tag_name ~ "/client/fgfs-addon/addon-metadata.xml",
+            "targetnode": rp ~ "/updater-httpserver-rsp-releaseinfo",
+            "complete":   rp ~ "/updater-httpserver-rsp-releaseinfo-complete",
+        } );
+        
+        # callback to process the data
+        setlistener(rp ~ "/updater-httpserver-rsp-releaseinfo-complete", func() {
+            var upstream_version = getprop(rp ~ "/updater-httpserver-rsp-releaseinfo/addon/version");
+            upstream_version_v = split(".", upstream_version);
+            var versionCompare = compareVersion(curVer_v, upstream_version_v);
+            if (versionCompare  > 0) {
+                print("Addon FGCom-mumble  release version "~upstream_version~ " is newer than the local version "~curVer);
+                
+                # Make a canvas window to show the info
+                canvas.MessageBox.information(
+                    "FGCom-mumble updater "~curVer,
+                    "There is a new addon release "~upstream_version~" waiting for you :)\n\n" ~
+                    "Please go to the download page:\nhttps://github.com/hbeni/fgcom-mumble/releases",
+                    cb = nil,
+                    buttons = canvas.MessageBox.Ok
+                );
+            } else {
+                print("Addon FGCom-mumble  local version "~curVer~ " is up-to-date (upstream release: "~upstream_version~")");
+            }
+        });
+        fgcommand("xmlhttprequest", params);
+        
+    });
+    
+    
 }

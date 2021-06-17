@@ -14,6 +14,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
+*.bundle
 *.dll
 
 # Fortran module files
@@ -47,6 +48,7 @@ FGCom*.jar
 
 # misc
 *.csv
+*.log
 
 # Archives
 *.zip
@@ -54,6 +56,7 @@ FGCom*.jar
 *.mumble_plugin
 
 # runtime config
+fgcom-mumble_LOCAL.ini
 server/statuspage/config.ini
 *.stats
 *.db
