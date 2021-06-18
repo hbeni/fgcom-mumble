@@ -262,8 +262,8 @@ Du musst lediglich einen anderen Compiler setzen:
 
 MacOS nativer build
 -------------------
-Du musst den Compiler _g++-10_ explizit setzen, da das Standard _g++_-Kommando ein alias auf _clang_ ist. Darüberhinaus musst du den OpenSSL-Pfad anpassen:
+Du musst den Compiler _g++-11_ explizit setzen, da das Standard _g++_-Kommando ein alias auf _clang_ ist. Darüberhinaus musst du den OpenSSL-Pfad anpassen:
 
-`make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
+`make -C client/mumble-plugin/ CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
 
 Nach dem bauen benennst du die Plugindate am besten in `fgcom-mumble-macOS.bundle` um, um kompatibel mit den offiziellen Releases zu bleiben.
