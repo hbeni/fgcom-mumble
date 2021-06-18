@@ -249,8 +249,8 @@ You just need to use `x86_64-w64-mingw32-g++` instead of `x86_64-w64-mingw32-g++
 
 MacOS native build
 ------------------
-You need to explicitely use the _g++-10_ compiler, as the default _g++_ is linked to _clang_. Also you need to adjust the path to the openssl distribution:
+You need to explicitely use the _g++-11_ compiler, as the default _g++_ is linked to _clang_. Also you need to adjust the path to the openssl distribution:
 
-`make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
+`make -C client/mumble-plugin/ CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
 
 After compilation, rename the plugin binary to `fgcom-mumble-macOS.bundle` to stay compatible with the official releases and avoid the quarantine warning issue.

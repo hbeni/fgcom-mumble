@@ -32,11 +32,11 @@ jobs:
 
     - name: Build and run CATCH2 tests
       run: |
-        make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" test
+        make -C client/mumble-plugin/ CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" test
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
+        make -C client/mumble-plugin/ CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
         mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.bundle
 
     - name: Upload plugin
@@ -125,11 +125,11 @@ jobs:
 
     - name: Build and run CATCH2 tests
       run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" test
+        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" test
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-10 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
+        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
         mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.bundle
 
     - name: Upload plugin
