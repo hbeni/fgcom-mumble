@@ -230,9 +230,13 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                     } else {
                         pluginLog("[UPDATER] fetch resultCode not compatible; resultCode="+std::to_string(res_hdr->status));
                     }
+                    
                 } else {
                     // something went wrong.
-                    pluginLog("[UPDATER] ERROR: Can't obtain tag name from '"+tag_name+"'");
+                    auto http_err = res_hdr.error();
+                    std::ostringstream http_err_stream;
+                    http_err_stream << http_err;
+                    pluginLog("[UPDATER] ERROR: Can't obtain tag name from '"+tag_name+"': "+http_err_stream.str());
                 }
             } else {
                 // something went wrong.
@@ -249,8 +253,10 @@ void fgcom_getLatestReleaseFromGithub_Web() {
         }
         
     } else {
-        auto err = res.error();
-        pluginLog("[UPDATER] ERROR fetching latest release info from web: "+std::to_string(err));
+        auto http_err = res.error();
+        std::ostringstream http_err_stream;
+        http_err_stream << http_err;
+        pluginLog("[UPDATER] ERROR fetching latest release info from web: "+http_err_stream.str());
     }
 }
 
@@ -326,8 +332,10 @@ void fgcom_getLatestReleaseFromGithub_JSON_API() {
         }
         
     } else {
-        auto err = res.error();
-        pluginLog("[UPDATER] ERROR fetching latest release info from web: "+std::to_string(err));
+        auto http_err = res.error();
+        std::ostringstream http_err_stream;
+        http_err_stream << http_err;
+        pluginLog("[UPDATER] ERROR fetching latest release info from web: "+http_err_stream.str());
     }
 }
 */
