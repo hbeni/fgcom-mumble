@@ -179,27 +179,26 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                 if (auto res_hdr = cli.Get(header_url.c_str(), headers)) {
                     pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res_hdr->status));
                     if (res_hdr->status == 200) {
-                        // strip HTML from response (makes parsing easier)
-                        std::regex strip_html_p("<.*?>");
-                        std::string body_plain = std::regex_replace(res_hdr->body, strip_html_p, "");
-                        
                         // parse version info name from HTML body
-                        std::regex regex_major ("#define FGCOM_VERSION_MAJOR (\\d+)");
+                        //   (i know this is somewhat ugly. But the github raw page does not work reliably when using the httplib,
+                        //    and stripping HTML with regex did already cost me three days debugging and testing.)
+                        pluginDbg("[UPDATER] parsing version strings");
+                        std::regex regex_major ("#(?:<.+>)?define(?:<.+>)? (?:<.+>)?FGCOM_VERSION_MAJOR(?:<.+>)? (?:<.+>)?(\\d+)(?:<.+>)?");
                         std::smatch sm_major;
-                        if (std::regex_search(body_plain, sm_major, regex_major)) {
-                            pluginDbg("[UPDATER] parsed version_major="+std::string(sm_major[1]));
+                        if (std::regex_search(res_hdr->body, sm_major, regex_major)) {
+                            pluginDbg("[UPDATER]   parsed version_major="+std::string(sm_major[1]));
                             fgcom_release_latest.version.major = stoi(sm_major[1]);
                         }
-                        std::regex regex_minor ("#define FGCOM_VERSION_MINOR (\\d+)");
+                        std::regex regex_minor ("#(?:<.+>)?define(?:<.+>)? (?:<.+>)?FGCOM_VERSION_MINOR(?:<.+>)? (?:<.+>)?(\\d+)(?:<.+>)?");
                         std::smatch sm_minor;
-                        if (std::regex_search(body_plain, sm_minor, regex_minor)) {
-                            pluginDbg("[UPDATER] parsed version_minor="+std::string(sm_minor[1]));
+                        if (std::regex_search(res_hdr->body, sm_minor, regex_minor)) {
+                            pluginDbg("[UPDATER]   parsed version_minor="+std::string(sm_minor[1]));
                             fgcom_release_latest.version.minor = stoi(sm_minor[1]);
                         }
-                        std::regex regex_patch ("#define FGCOM_VERSION_PATCH (\\d+)");
+                        std::regex regex_patch ("#(?:<.+>)?define(?:<.+>)? (?:<.+>)?FGCOM_VERSION_PATCH(?:<.+>)? (?:<.+>)?(\\d+)(?:<.+>)?");
                         std::smatch sm_patch;
-                        if (std::regex_search(body_plain, sm_patch, regex_patch)) {
-                            pluginDbg("[UPDATER] parsed version_patch="+std::string(sm_patch[1]));
+                        if (std::regex_search(res_hdr->body, sm_patch, regex_patch)) {
+                            pluginDbg("[UPDATER]   parsed version_patch="+std::string(sm_patch[1]));
                             fgcom_release_latest.version.patch = stoi(sm_patch[1]);
                         }
 
