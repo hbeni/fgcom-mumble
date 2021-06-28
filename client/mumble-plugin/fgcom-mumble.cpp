@@ -382,26 +382,30 @@ mumble_error_t fgcom_initPlugin() {
     if (! fgcom_offlineInitDone) {
         pluginLog("performing offline initialization");
         
-        #ifdef DEBUG
+#ifdef DEBUG
         // In Debug mode, start a detached thread that puts internal state to stdout every second
         std::thread debug_out_thread(debug_out_internal_state);
         debug_out_thread.detach();
-        #endif
+#endif
         
         // start the local udp server.
+#ifndef NO_UDPSERVER
         pluginDbg("starting local UDP server");
         std::thread udpServerThread(fgcom_spawnUDPServer);
         udpServerThread_id = udpServerThread.get_id();
         udpServerThread.detach();
         pluginDbg("udp server started");
+#endif
         
         // start the local GC thread
+#ifndef NO_GC
         pluginDbg("starting garbage collector");
         std::thread gcThread(fgcom_spawnGarbageCollector);
         gcThread_id = gcThread.get_id();
         gcThread.detach();
         pluginDbg("garbage collector started");
-        
+#endif
+
         fgcom_offlineInitDone = true;
     }
     
@@ -490,9 +494,10 @@ mumble_error_t fgcom_initPlugin() {
             
             
             // Start to periodically send notifications (if needed)
+#ifndef NO_NOTIFY
             std::thread notifyThread(fgcom_notifyThread);
             notifyThread.detach();
-            
+#endif
             
             // Update client comment
             fgcom_updateClientComment();

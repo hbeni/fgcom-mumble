@@ -16,7 +16,10 @@ lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib
 #
 # `make DEBUG+="-DDEBUG"`                  enable debug code (use `make DEBUG+="-g3 -DDEBUG -Og"` for additional gdb symbols)
 # `make CFLAGS+="-DNO_UPDATER" SSLFLAGS=`  skip auto-updater code
-#
+#  More CFLAGS: -DNO_UDPCLIENT             no RDF data sending thread
+#               -DNO_UDPSERVER             no UDP server thread
+#               -DNO_NOTIFY                no pluginIO notification thread
+#               -DNO_GC                    no garbage collector thread
 
 # FOR PRERELEASES: make always debug builds
 #ifneq (,$(findstring 0,$(VERSION_V)))
