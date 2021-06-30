@@ -59,6 +59,11 @@ body div.footer {
 .title span.stale { /* Udpate text stale*/
     color:red;
 }
+.title .userinfo {
+}
+.title .lastdbupdate {
+    font-size:10pt;
+}
 
 /* Message block */
 .message {
