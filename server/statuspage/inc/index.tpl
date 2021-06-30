@@ -29,8 +29,8 @@
         <div class="header">
             <div class="title">
                 <h1>FGCom-mumble: live status page</h1>
-                <span %updatestale%>Last DB update: %dbchanged% (UTC)</span>
-                <span>| Users: %usercount% | Broadcasts: %playbackcount%</span>
+                <span class="userinfo">Users: %usercount% | Broadcasts: %playbackcount%</span>
+                <span class="lastdbupdate" %updatestale%>| Last DB update: %dbchanged% (UTC)</span>
                 %refreshbox%
                 %donate%
             </div>
