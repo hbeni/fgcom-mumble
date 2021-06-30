@@ -1,6 +1,6 @@
 
 # Version ID for generated release bundles
-BUNDLE_VER:=0.14.1
+BUNDLE_VER:=0.15.0
 
 
 # The subpackages versions are sourced from there
