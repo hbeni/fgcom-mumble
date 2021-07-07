@@ -368,9 +368,12 @@ class HTMLTemplate {
 
     /**
     * Add some variable content
+    *
+    * @param string $variable Template variable name
+    * @param mixed  $content  Content to assign
     */
-    public function assignVar($variable, $tpl_index) {
-        $this->variables[$variable] = $tpl_index;
+    public function assignVar($variable, $content) {
+        $this->variables[$variable] = $content;
     }
      
     /**
