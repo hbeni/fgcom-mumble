@@ -364,6 +364,11 @@ class HTMLTemplate {
             exit(1);
         }
         $this->template_src = file_get_contents($tpl);
+
+        // init some default variables for all templates
+        $this->assignVar('cur_year', date('Y'));
+        $this->assignVar('cur_month', date('d'));
+        $this->assignVar('cur_day', date('m'));
     }
 
     /**
