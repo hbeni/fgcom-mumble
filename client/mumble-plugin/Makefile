@@ -8,7 +8,8 @@ THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
 override CFLAGS+=-O3 -I. -I./lib $(DEBUG)
 override CFLAGS_WIN+=-Wl,--subsystem,windows -static-libgcc -static-libstdc++ $(CFLAGS)
 SSLFLAGS+=-lssl -lcrypto -DSSLFLAGS
-SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -DSSLFLAGS -lws2_32 -lcrypt32
+SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32
+# Note on flags: -D_WIN32 is needed by httplib on Windows
 
 lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
 
