@@ -6,16 +6,16 @@ DEBUG=
 THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
 override CFLAGS+=-O3 -I. -I./lib $(DEBUG)
-override CFLAGS_WIN+=-Wl,--subsystem,windows -static-libgcc -static-libstdc++ $(CFLAGS) -I./lib/openssl/include/
+override CFLAGS_WIN+=-Wl,--subsystem,windows -static-libgcc -static-libstdc++ $(CFLAGS)
 SSLFLAGS+=-lssl -lcrypto -DSSLFLAGS
-SSLFLAGS_WIN+=-L./lib/openssl/ -static -lssl -lcrypto -DSSLFLAGS -lws2_32 -lcrypt32
+SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -DSSLFLAGS -lws2_32 -lcrypt32
 
 lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
 
 # Notice: Special calls
 #
 # `make DEBUG+="-DDEBUG"`                  enable debug code (use `make DEBUG+="-g3 -DDEBUG -Og"` for additional gdb symbols)
-# `make CFLAGS+="-DNO_UPDATER" SSLFLAGS=`  skip auto-updater code
+# `make CFLAGS+="-DNO_UPDATER" SSLFLAGS=`  skip auto-updater code, and do not link against OpenSSL
 #  More CFLAGS: -DNO_UDPCLIENT             no RDF data sending thread
 #               -DNO_UDPSERVER             no UDP server thread
 #               -DNO_NOTIFY                no pluginIO notification thread
@@ -28,10 +28,8 @@ lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib
 #endif
 
 # If SSLFLAGS was set to empty, empty the win version too
-ifeq ($(SSLFLAGS),)
+ifndef SSLFLAGS
     SSLFLAGS_WIN=
-    override CFLAGS+=-DNO_UPDATER
-    override CFLAGS_WIN+=-DNO_UPDATER
 endif
 
 
