@@ -20,6 +20,7 @@ lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib
 #               -DNO_UDPSERVER             no UDP server thread
 #               -DNO_NOTIFY                no pluginIO notification thread
 #               -DNO_GC                    no garbage collector thread
+#               -DNO_CFG                   no config file parsing
 
 # FOR PRERELEASES: make always debug builds
 #ifneq (,$(findstring 0,$(VERSION_V)))

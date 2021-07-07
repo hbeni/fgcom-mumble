@@ -252,6 +252,7 @@ void fgcom_updateClientComment() {
  * @return MUMBLE_STATUS_OK on success, otherwise MUMBLE_EC_GENERIC_ERROR 
  */
 mumble_error_t fgcom_loadConfig() {
+#ifndef NO_CFG
     std::vector<std::string> configFilePaths;
     std::string cfgName = "fgcom-mumble.ini";
 
@@ -336,7 +337,8 @@ mumble_error_t fgcom_loadConfig() {
     for (const auto& cv : fgcom_cfg.mapMumblePTT) {
         pluginDbg("[CFG]              mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
     }
-    
+
+#endif
     return MUMBLE_STATUS_OK;
 }
 
