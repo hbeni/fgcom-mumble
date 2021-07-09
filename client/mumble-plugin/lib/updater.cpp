@@ -140,7 +140,11 @@ void fgcom_getLatestReleaseFromGithub_Web() {
     return;
     */
     
+#ifdef SSLFLAGS
     std::string scheme("https://");
+#else
+    std::string scheme("http://");
+#endif
     std::string host("github.com");
     std::string proj("hbeni/fgcom-mumble");
     std::string path("/"+proj+"/releases");
