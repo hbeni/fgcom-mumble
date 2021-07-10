@@ -245,14 +245,15 @@ Windows native build
 The makefile works well on Windows with cygwin64 with mingw32.  
 You just need to use `x86_64-w64-mingw32-g++` instead of `x86_64-w64-mingw32-g++-posix`:
 
-- 64bit: `make CC_WIN=x86_64-w64-mingw32-g++ plugin-win64`
-- 32bit: `make CC_WIN32=i686-w64-mingw32-g++ plugin-win32`
+- 64bit: `make CC=x86_64-w64-mingw32-g++ plugin-win64`
+- 32bit: `make CC=i686-w64-mingw32-g++ plugin-win32`
 
 
 MacOS native build
 ------------------
-You need to explicitely use the _g++-11_ compiler, as the default _g++_ is linked to _clang_. Also you need to adjust the path to the openssl distribution:
+There is an makefile alias `make plugin-macOS` that will do the following:
 
+- You need to explicitely use the _g++-11_ compiler, as the default _g++_ is linked to _clang_. Also you need to adjust the path to the openssl distribution:  
 `make -C client/mumble-plugin/ outname=fgcom-mumble-macOS.bundle CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
 
-After compilation, rename the plugin binary to `fgcom-mumble-macOS.bundle` to stay compatible with the official releases.
+- After compilation, rename the plugin binary to `fgcom-mumble-macOS.bundle` to stay compatible with the official releases.
