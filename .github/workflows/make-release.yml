@@ -36,13 +36,13 @@ jobs:
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ outname=fgcom-mumble-macOS.bundle CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
+        make -C client/mumble-plugin/ plugin-macOS
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
       with:
         name: macPlugin
-        path: fgcom-mumble-macOS.bundle
+        path: client/mumble-plugin/fgcom-mumble-macOS.bundle
         retention-days: 1
 
 
@@ -128,13 +128,13 @@ jobs:
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" outname=fgcom-mumble-macOS.bundle CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
+        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" plugin-macOS
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
       with:
         name: macPlugin-debug
-        path: fgcom-mumble-macOS.bundle
+        path: client/mumble-plugin/fgcom-mumble-macOS.bundle
         retention-days: 1
 
 

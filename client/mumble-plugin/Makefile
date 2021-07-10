@@ -109,6 +109,11 @@ plugin-win32-only: outname=fgcom-mumble-x86_32.dll
 plugin-win32-only:
 	$(CC_WIN32) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
+# shortcut for building natively on macOS
+plugin-macOS: CC=g++-11
+plugin-macOS: outname=fgcom-mumble-macOS.bundle
+plugin-macOS:
+	make CC=$(CC) outname=$(outname) CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
 
 # OpenSSL (static build)
 # The sources are located under lib/openssl as git submodule, and supposed to point to the latest stable head
