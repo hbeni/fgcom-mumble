@@ -1,7 +1,5 @@
 .PHONY : all debug all-debug plugin-debug plugin libs test tools clean clean-all debug-on
 CC=g++
-CC_WIN=x86_64-w64-mingw32-g++-posix
-CC_WIN32=i686-w64-mingw32-g++-posix
 DEBUG=
 THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
@@ -91,9 +89,10 @@ clean-all: clean
 all-win: plugin-win64 tools-win64 clean
 
 # build win64 test tools
+tools-win64: CC=x86_64-w64-mingw32-g++-posix
 tools-win64:
-	$(CC_WIN) -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
-	$(CC_WIN) -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	$(CC) -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	$(CC) -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
 # build win64 plugin-dll and openssl
 plugin-win64: openssl-win plugin-win64-only
@@ -102,12 +101,14 @@ plugin-win32: openssl-win32 plugin-win32-only
 
 # just the windows plugin, no ssl in case we want to build repetively but want to avoid building openssl each time
 plugin-win64-only: outname=fgcom-mumble.dll
+plugin-win64-only: CC=x86_64-w64-mingw32-g++-posix
 plugin-win64-only:
-	$(CC_WIN) -fPIC --shared -DMINGW_WIN64 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC) -fPIC --shared -DMINGW_WIN64 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 plugin-win32-only: outname=fgcom-mumble-x86_32.dll
+plugin-win32-only: CC=i686-w64-mingw32-g++-posix
 plugin-win32-only:
-	$(CC_WIN32) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 # shortcut for building natively on macOS
 plugin-macOS: CC=g++-11

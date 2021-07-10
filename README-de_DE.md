@@ -258,8 +258,8 @@ Windows nativer build
 Das makefile funktioniert auch unter Windows mit cygwin64 und mingw32.  
 Du musst lediglich einen anderen Compiler setzen:
 
-- 64bit: `make CC_WIN=x86_64-w64-mingw32-g++ plugin-win64`
-- 32bit: `make CC_WIN32=i686-w64-mingw32-g++ plugin-win32`
+- 64bit: `make CC=x86_64-w64-mingw32-g++ plugin-win64`
+- 32bit: `make CC=i686-w64-mingw32-g++ plugin-win32`
 
 
 MacOS nativer build
