@@ -92,13 +92,13 @@ jobs:
 
     - name: Get release version
       run: |
-        echo "PLUGIN_VERSION=$(make showVer |grep PLUGIN: |cut -d':' -f2)" >> $GITHUB_ENV
-        echo "PLUGIN_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=$(make showVer |grep BUNDLE: |cut -d':' -f2)" >> $GITHUB_ENV
+        echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: fgcom-mumble-${{env.PLUGIN_VERSION}}_${{env.PLUGIN_SHASHORT}}
+        name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}
         path: |
           *.zip
           *.mumble_plugin
@@ -184,13 +184,13 @@ jobs:
 
     - name: Get release version
       run: |
-        echo "PLUGIN_VERSION=$(make showVer |grep PLUGIN: |cut -d':' -f2)" >> $GITHUB_ENV
-        echo "PLUGIN_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=$(make showVer |grep BUNDLE: |cut -d':' -f2)" >> $GITHUB_ENV
+        echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: fgcom-mumble-${{env.PLUGIN_VERSION}}_${{env.PLUGIN_SHASHORT}}-debug
+        name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}-debug
         path: |
           *.zip
           *.mumble_plugin
