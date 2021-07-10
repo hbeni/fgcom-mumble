@@ -45,7 +45,7 @@ debug: all-debug
 all-debug:
 	make DEBUG+="-g3 -Og -DDEBUG" all
 
-# build just the linux plugn in debug mode
+# build just the linux plugin in debug mode
 plugin-debug:
 	make DEBUG+="-g3 -Og -DDEBUG" plugin
 
