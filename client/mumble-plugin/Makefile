@@ -22,6 +22,7 @@ lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib
 #               -DNO_NOTIFY                no pluginIO notification thread
 #               -DNO_GC                    no garbage collector thread
 #               -DNO_CFG                   no config file parsing
+# `make ... outname=<name> ...`            change name of resulting binary lib
 
 # FOR PRERELEASES: make always debug builds
 #ifneq (,$(findstring 0,$(VERSION_V)))
@@ -51,8 +52,9 @@ plugin-debug:
 	make DEBUG+="-g3 -Og -DDEBUG" plugin
 
 # make the plugin
+plugin: outname=fgcom-mumble.so
 plugin: libs
-	$(CC) -shared -fPIC -o fgcom-mumble.so $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -shared -fPIC -o $(outname) $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX)
 
 # make all the libs
 libs:  $(lib_OBJS)
@@ -99,11 +101,13 @@ plugin-win64: openssl-win plugin-win64-only
 plugin-win32: openssl-win32 plugin-win32-only
 
 # just the windows plugin, no ssl in case we want to build repetively but want to avoid building openssl each time
+plugin-win64-only: outname=fgcom-mumble.dll
 plugin-win64-only:
-	$(CC_WIN) -fPIC --shared -DMINGW_WIN64 -o fgcom-mumble.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC_WIN) -fPIC --shared -DMINGW_WIN64 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
+plugin-win32-only: outname=fgcom-mumble-x86_32.dll
 plugin-win32-only:
-	$(CC_WIN32) -m32 -fPIC --shared -DMINGW_WIN32 -o fgcom-mumble-x86_32.dll lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC_WIN32) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 
 # OpenSSL (static build)

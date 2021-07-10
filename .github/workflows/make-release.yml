@@ -36,8 +36,7 @@ jobs:
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
-        mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.bundle
+        make -C client/mumble-plugin/ outname=fgcom-mumble-macOS.bundle CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
@@ -129,8 +128,7 @@ jobs:
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
-        mv client/mumble-plugin/fgcom-mumble.so fgcom-mumble-macOS.bundle
+        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" outname=fgcom-mumble-macOS.bundle CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
