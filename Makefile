@@ -1,6 +1,6 @@
 
 # Version ID for generated release bundles
-BUNDLE_VER:=0.15.0
+BUNDLE_VER:=0.14.2
 
 
 # The subpackages versions are sourced from there
@@ -204,9 +204,9 @@ build-radioGUI:
 
 
 showVer:
-	@echo "BUNDLE:$(BUNDLE_VER)"
 	@echo "GITCOMMIT:$(GITVER)"
 	@echo "GITDATE:$(GITDATE)"
+	@echo "BUNDLE:$(BUNDLE_VER)"
 	@echo "PLUGIN:$(PLUGIN_VER)"
 	@echo "SERVER:$(SERVER_VER)"
 	@echo "RADIOGUI:$(RADIOGUI_VER)"
