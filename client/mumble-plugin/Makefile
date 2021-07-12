@@ -126,6 +126,8 @@ ifdef SSLFLAGS
 	git submodule update
 	cd lib/openssl/ && git reset --hard
 	cd lib/openssl/ && ./Configure mingw64 -static no-pinshared no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=x86_64-w64-mingw32- && make clean && make -j4
+else
+	@echo "Skipping building OpenSSL"
 endif
 
 openssl-win32:
@@ -135,6 +137,8 @@ ifdef SSLFLAGS
 	git submodule update
 	cd lib/openssl/ && git reset --hard
 	cd lib/openssl/ && ./Configure mingw -static no-pinshared no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=i686-w64-mingw32- && make clean && make -j4
+else
+	@echo "Skipping building OpenSSL"
 endif
 
 
