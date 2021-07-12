@@ -130,11 +130,12 @@ void fgcom_getLatestReleaseFromGithub_Web() {
     
     /*
     fgcom_release_latest.version.major = std::stoi("0");
-    fgcom_release_latest.version.minor = std::stoi("4");
-    fgcom_release_latest.version.patch = std::stoi("0");
-    fgcom_release_latest.tag           = "v.0.4.0";
-    fgcom_release_latest.url           = "https://github.com/hbeni/fgcom-mumble/releases/tag/v.0.4.0";
-    fgcom_release_latest.downUrl       = "https://github.com/hbeni/fgcom-mumble/releases/download/v.0.3.0/";
+    fgcom_release_latest.version.minor = std::stoi("14");
+    fgcom_release_latest.version.patch = std::stoi("2");
+    fgcom_release_latest.tag           = "v.0.14.2";
+    fgcom_release_latest.url           = "https://github.com/hbeni/fgcom-mumble/releases/tag/"+fgcom_release_latest.tag;
+    fgcom_release_latest.downUrl       = "https://github.com/hbeni/fgcom-mumble/releases/download/"+fgcom_release_latest.tag
+                                       + "/fgcom-mumble-"+std::to_string(fgcom_release_latest.version.major)+"."+std::to_string(fgcom_release_latest.version.minor)+"."+std::to_string(fgcom_release_latest.version.patch)+".mumble_plugin";
     
     pluginLog("[TEST]: Updater TEST CODE IN EFFECT!");
     return;
