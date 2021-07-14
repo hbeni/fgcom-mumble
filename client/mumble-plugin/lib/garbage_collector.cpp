@@ -52,6 +52,12 @@ void fgcom_gc_clean_lcl() {
         int iid          = p.first;
         fgcom_client lcl = p.second;
 
+        std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(lcl.lastUpdate);
+        std::string lastUpdate_str(30, '\0');
+        std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%H:%M:%S", std::localtime(&lastUpdate_t));
+        std::string lastUpdate_str_f(lastUpdate_str.c_str());
+        pluginDbg("[GC] LCL  iid="+std::to_string(iid)+" lastUpdate="+lastUpdate_str_f);
+
         std::chrono::milliseconds since = std::chrono::duration_cast<std::chrono::milliseconds> (std::chrono::system_clock::now()-lcl.lastUpdate);
         if (since > lcl_timeout) {
             pluginDbg("[GC] LCL  iid="+std::to_string(iid)+" stale since="+std::to_string((float)since.count()/1000)+"s" );
