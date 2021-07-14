@@ -1092,13 +1092,14 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         } else {
             // we have no idea about the remote yet: 
             // (this may especially happen with sending clients without enabled plugin!)
-            pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state. muting stream.");
             if (fgcom_cfg.allowHearingNonPluginUsers) {
                 // let audio trough unaffected
                 useRawData = true;
+                pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state: stream untouched (allowHearingNonPluginUsers on).");
             } else {
                 // treat him as if hes not in range
                 bestSignalStrength = 0.0;
+                pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state: muting stream.");
             }
         }
         fgcom_remotecfg_mtx.unlock();
