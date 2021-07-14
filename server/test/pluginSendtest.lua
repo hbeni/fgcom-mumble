@@ -1,17 +1,17 @@
 mumble = require("mumble")  -- get the mumble API
 
-local host = "fgcom.hallinger.org"
+local host = "localhost"
 local port = 64738
 local cert = "bot.pem"
 local key  = "bot.key"
 
 print("connecting to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
 local client = assert(mumble.connect(host, port, cert, key))
-client:auth("test")
+client:auth("test-send")
 print("  connect and bind: OK")
 
 local timer = mumble.timer()
-client:hook("OnServerSync", function(user, event)
+client:hook("OnServerSync", function(client, event)
     print("Sync done; server greeted with: ", event.welcome_text)
            
     -- try to join fgcom-mumble channel
@@ -24,14 +24,18 @@ client:hook("OnServerSync", function(user, event)
 	    o=o+1
         print(o..": send plugin message to all users ")
         users = client:getUsers()
+        u_tbl = {}
         i = 0
         for s,u in pairs(users) do
             i=i+1
             print("  "..i.." ("..s.."): "..u:getName())
-            
-            client:sendPluginData("FGCOM:UPD_USR:0", "CALLSIGN=test-"..i, {u})
-            client:sendPluginData("FGCOM:UPD_COM:0:0", "FRQ=123,PTT=0"..i, users)
+            --not advisable: client:sendPluginData("FGCOM:UPD_USR:0", "CALLSIGN=test-"..i, u)
+            table.insert(u_tbl, u)
         end
+            
+        client:sendPluginData("FGCOM:UPD_USR:0", "CALLSIGN=test-"..i, u_tbl)
+        --not working: client:sendPluginData("FGCOM:UPD_COM:0:0", "FRQ=123,PTT=0"..i, unpack(users))
+        
     end, 1, 1)
     
     --segfault client:sendPluginData("FGCOM:UPD_LOC", "CALLSIGN=test", client:getUsers()) 
