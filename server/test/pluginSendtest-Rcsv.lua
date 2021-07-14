@@ -11,7 +11,7 @@ client:auth("test-rcv")
 print("  connect and bind: OK")
 
 
-client:hook("OnServerSync", function(event)
+client:hook("OnServerSync", function(client, event)
     print("Sync done; server greeted with: ", event.welcome_text)
            
     -- try to join fgcom-mumble channel
@@ -22,7 +22,7 @@ end)
     
     
 
-client:hook("OnPluginData", function(event)
+client:hook("OnPluginData", function(client, event)
     --["sender"] = mumble.user sender, -- Who sent this data packet
 	--["id"]     = Number id,          -- The data ID of this packet
 	--["data"]   = String data,        -- The data sent (can be binary data)
@@ -30,6 +30,8 @@ client:hook("OnPluginData", function(event)
 	--	[1] = mumble.user,
 	--},
     print("DATA INCOMING FROM="..event.sender:getSession())
+    print("  ID="..event.id)
+    print("  DATA="..event.data)
 
 end)
 
