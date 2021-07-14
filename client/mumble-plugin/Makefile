@@ -20,6 +20,7 @@ lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib
 #               -DNO_NOTIFY                no pluginIO notification thread
 #               -DNO_GC                    no garbage collector thread
 #               -DNO_CFG                   no config file parsing
+#               -DNO_COMMENT               no mumble GUI comment adjustments
 # `make ... outname=<name> ...`            change name of resulting binary lib
 
 # FOR PRERELEASES: make always debug builds
