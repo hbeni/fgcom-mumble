@@ -180,7 +180,7 @@ void fgcom_handlePTT() {
  */
 std::string prevComment;  // so we can detect changes
 void fgcom_updateClientComment() {
-    
+#ifndef NO_COMMENT
     if (fgcom_isConnectedToServer()) {
         std::string newComment;
         
@@ -242,6 +242,7 @@ void fgcom_updateClientComment() {
             }
         }
     }
+#endif
 }
 
 
