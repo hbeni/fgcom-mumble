@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Spawns fake pilots. Hordes of them!
+# Supposed to be called from the server directory
 
 spacing=0.25
 botsleep=30
@@ -9,6 +10,7 @@ channel="fgcom-mumble"
 startat=1
 numBots=1
 
+if [[ ! -d test ]]; then echo "Please call me from the server directory, thank you" && exit 1; fi
 if [[ -z "$1" ]]; then
 	echo "Usage $0 <startAtNr> <numberOfBots> <spacingInSeconds> <checkInterval> <host> <channel>"
 	exit 1
