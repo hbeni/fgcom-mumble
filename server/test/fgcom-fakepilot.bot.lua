@@ -335,6 +335,38 @@ client:hook("OnServerSync", function(client, event)
    
 end)
 
+client:hook("OnPluginData", function(client, event)
+    --["sender"] = mumble.user sender, -- Who sent this data packet
+	--["id"]     = Number id,          -- The data ID of this packet
+	--["data"]   = String data,        -- The data sent (can be binary data)
+	--["receivers"]				= {  -- A table of who is receiving this data
+	--	[1] = mumble.user,
+	--},
+	--print("OnPluginData(): DATA INCOMING FROM="..tostring(event.id)..", "..tostring(event.sender))
+
+    -- Answer data requests
+    if event.id:len() > 0 and event.id:find("FGCOM:ICANHAZDATAPLZ") then
+        print("OnPluginData(): client asks for data: "..tostring(event.sender))
+        
+        local msg = "CALLSIGN="..fgcom.callsign
+        client:sendPluginData("FGCOM:UPD_USR:0", msg, {event.sender})
+        --event.sender:sendPluginData("FGCOM:UPD_USR:0", msg)
+           
+        local msg = "LON="..lat
+                ..",LAT="..lon
+                ..",ALT="..alt
+        client:sendPluginData("FGCOM:UPD_LOC:0", msg, {event.sender})
+        --event.sender:sendPluginData("FGCOM:UPD_LOC:0", msg)
+           
+        local msg = "FRQ="..freq
+                ..",CHN="..freq
+                ..",PWR=10"
+                ..",PTT=0"
+        client:sendPluginData("FGCOM:UPD_COM:0", msg, {event.sender})
+        --event.sender:sendPluginData("FGCOM:UPD_COM:0", msg)
+    end
+
+end)
 
 
 mumble.loop()
