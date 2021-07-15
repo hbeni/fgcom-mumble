@@ -754,13 +754,13 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
 		return;
 	}
 
-	pluginLog("There are " + std::to_string(userCount) + " users on this server. Their names are:");
+	pluginDbg("There are " + std::to_string(userCount) + " users on this server. Their names are:");
 
 	for(size_t i=0; i<userCount; i++) {
 		const char *userName;
 		mumAPI.getUserName(ownPluginID, connection, userIDs[i], &userName);
 		
-		pluginLog("\t" + std::string(userName));
+		pluginDbg("\t" + std::string(userName));
 
 		mumAPI.freeMemory(ownPluginID, userName);
 	}
