@@ -156,7 +156,7 @@ public class MainWindow extends javax.swing.JFrame {
         jSeparator2.setMaximumSize(new java.awt.Dimension(3500, 1));
 
         jScrollPanel_RadioPanel.setAutoscrolls(true);
-        jScrollPanel_RadioPanel.setMinimumSize(new java.awt.Dimension(24, 200));
+        jScrollPanel_RadioPanel.setMinimumSize(new java.awt.Dimension(24, 405));
         jScrollPanel_RadioPanel.setOpaque(false);
 
         jLabel1.setText("Callsign:");
@@ -340,7 +340,7 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jTextField_HGT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPanel_RadioPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

@@ -170,7 +170,7 @@
                   <Component id="jTextField_HGT" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPanel_RadioPanel" min="-2" pref="412" max="-2" attributes="0"/>
+              <Component id="jScrollPanel_RadioPanel" max="32767" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
               <Component id="jSeparator2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -222,9 +222,12 @@
       <Properties>
         <Property name="autoscrolls" type="boolean" value="true"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-          <Dimension value="[24, 200]"/>
+          <Dimension value="[24, 405]"/>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
+        <Property name="viewportView" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+          <ComponentRef name="default"/>
+        </Property>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
