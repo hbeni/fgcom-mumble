@@ -242,13 +242,7 @@ local playback_targets = nil -- holds updated list of all channel users
 updateAllChannelUsersforSend = function(cl)
     --fgcom.dbg("udpate channelusers")
     local ch = cl:getChannel(fgcom.channel)
-    local users = ch:getUsers()
-    playback_targets = {}
-    --fgcom.dbg("ok: "..ch:getName())
-    for k,v in pairs(users) do
-        --fgcom.dbg("  k="..tostring(k).."v="..tostring(v))
-        table.insert(playback_targets, v)
-    end
+    playback_targets = ch:getUsers()
 end
 
 
