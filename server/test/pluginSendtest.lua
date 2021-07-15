@@ -1,6 +1,6 @@
 mumble = require("mumble")  -- get the mumble API
 
-local host = "localhost"
+local host = "fgcom.hallinger.org"
 local port = 64738
 local cert = "bot.pem"
 local key  = "bot.key"
@@ -16,7 +16,7 @@ client:hook("OnServerSync", function(client, event)
            
     -- try to join fgcom-mumble channel
     local ch = client:getChannel("fgcom-mumble")
-    event.user:move(ch)
+    --event.user:move(ch)
     print("joined channel fgcom-mumble")
     
     o=0
@@ -34,7 +34,7 @@ client:hook("OnServerSync", function(client, event)
         end
             
         client:sendPluginData("FGCOM:UPD_USR:0", "CALLSIGN=test-"..i, u_tbl)
-        --not working: client:sendPluginData("FGCOM:UPD_COM:0:0", "FRQ=123,PTT=0"..i, unpack(users))
+        client:sendPluginData("FGCOM:UPD_COM:0:0", "FRQ=123,PTT=0"..i, users)
         
     end, 1, 1)
     

@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.7.0"
+fgcom.botversion = "1.7.1"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -95,7 +95,7 @@ end
 fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
-fgcom.log("connect and bind", "OK")
+fgcom.log("connect and bind: OK")
 
 
 -- Store for last highscore
@@ -121,7 +121,8 @@ end
 --     "meta": {"highscore_clients":12, "highscore_date":1599719381}
 --   }
 local generateOutData = function()
-    local allUsers = client:getUsers()
+    local allUsers = {} -- sid=>mumbleUser table
+    for i, mc in ipairs(client:getUsers()) do  allUsers[mc:getSession()] = mc  end
     local data     = {clients={}, meta={}}  -- final return array
 
     -- generate list of current users
