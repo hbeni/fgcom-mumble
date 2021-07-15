@@ -208,7 +208,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             pluginDbg("[mum_pluginIO] notifyRemotes(): selected radio");            
             if (selector == NTFY_ALL) {
                 pluginDbg("[mum_pluginIO] notifyRemotes():    all radios selected");
-                for (int ri=0; ri < lcl.radios.size(); ri++) {  
+                for (long unsigned int ri=0; ri < lcl.radios.size(); ri++) {  
                     notifyRemotes(iid, NTFY_COM, ri, tgtUser);
                 }
             } else {
@@ -451,11 +451,11 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         } else if (dataID.substr(0, 15+iid_str.length()) == "FGCOM:UPD_COM:"+iid_str+":") {
             // Radio data update. Here the radio in question was given in the dataid.
             pluginDbg("[mum_pluginIO] COM UPDATE: Sender="+std::to_string(clientID)+" DataID="+dataID+" DATA="+data);
-            int radio_id = std::stoi(dataID.substr(15+iid_str.length())); // when segfault: indicates problem with the implemented udp protocol
+            long unsigned int radio_id = std::stoi(dataID.substr(15+iid_str.length())); // when segfault: indicates problem with the implemented udp protocol
             
             // if the selected radio does't exist, create it now
             if (fgcom_remote_clients[clientID][iid].radios.size() < radio_id+1) {
-                for (int cr = fgcom_remote_clients[clientID][iid].radios.size(); cr < radio_id+1; cr++) {
+                for (long unsigned int cr = fgcom_remote_clients[clientID][iid].radios.size(); cr < radio_id+1; cr++) {
                     fgcom_remote_clients[clientID][iid].radios.push_back(fgcom_radio()); // add new radio instance with default values
                 }
             }

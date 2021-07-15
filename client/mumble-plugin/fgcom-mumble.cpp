@@ -136,15 +136,14 @@ void fgcom_handlePTT() {
     if (fgcom_isPluginActive()) {
         pluginDbg("Handling PTT protocol request state");
         // see which radio was used and if its operational.
-        bool radio_serviceable, radio_powered, radio_switchedOn, radio_ptt;
-        bool radio_ptt_result = false; // if we should open or close the mic, default no
+        bool radio_ptt, radio_ptt_result = false; // if we should open or close the mic, default no
 
         fgcom_localcfg_mtx.lock();
         for (const auto &lcl_idty : fgcom_local_client) {
-            int iid          = lcl_idty.first;
+            //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
             if (lcl.radios.size() > 0) {
-                for (int i=0; i<lcl.radios.size(); i++) {
+                for (long unsigned int i=0; i<lcl.radios.size(); i++) {
                     radio_ptt = lcl.radios[i].ptt_req;
                     
                     if (radio_ptt) {
@@ -209,11 +208,11 @@ void fgcom_updateClientComment() {
         fgcom_localcfg_mtx.lock();
         if (fgcom_local_client.size() > 0) {
             for (const auto &idty : fgcom_local_client) {
-                int iid          = idty.first;
+                //int iid          = idty.first;
                 fgcom_client lcl = idty.second;
                 std::string frqs;
                 if (lcl.radios.size() > 0) {
-                    for (int i=0; i<lcl.radios.size(); i++) {
+                    for (long unsigned int i=0; i<lcl.radios.size(); i++) {
                         if (lcl.radios[i].frequency != "") {
                             if (i >= 1) frqs += ", ";
                             if (!lcl.radios[i].operable) frqs += "<i><font color=\"grey\">";
@@ -693,7 +692,9 @@ MumbleStringWrapper mumble_getDescription() {
     if (description != nullptr) {
         int len = sprintf(description,
             "FGCom-mumble %d.%d.%d provides an (aircraft) radio simulation.\n\nhttps://github.com/hbeni/fgcom-mumble",
-            FGCOM_VERSION_MAJOR, FGCOM_VERSION_MINOR, FGCOM_VERSION_PATCH);
+            version.major, version.minor, version.patch);
+        if (len < 0)
+            throw std::system_error();
     } else {
         throw std::system_error();
     }
@@ -822,10 +823,10 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         // radios configured to respond to mumbles talk state change.
         bool udp_protocol_ptt_detected = false;
         for (const auto &lcl_idty : fgcom_local_client) {
-            int iid          = lcl_idty.first;
+            //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
             if (lcl.radios.size() > 0) {
-                for (int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
                     if (lcl.radios[radio_id].ptt_req) udp_protocol_ptt_detected = true;
                 }
             }
@@ -838,7 +839,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
             int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
             if (lcl.radios.size() > 0) {
-                for (int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
                     bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
                     auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
                     bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
@@ -853,7 +854,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
                     bool newValue = false;
                     pluginDbg("                old_ptt="+std::to_string(oldValue));
                     pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
-                    if ( radio_ptt_req || !udp_protocol_ptt_detected && radio_mapmumbleptt ) {
+                    if ( radio_ptt_req || (!udp_protocol_ptt_detected && radio_mapmumbleptt) ) {
                         // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
                         newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
                     }
@@ -882,7 +883,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         auto search = fgcom_remote_clients.find(userID);
         if (search != fgcom_remote_clients.end()) {
             for (const auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
-                int rmt_iid      = idty.first;
+                //int rmt_iid      = idty.first;
                 fgcom_client rmt = idty.second;
                 
                 bool isCallsignInitialized = rmt.callsign != tmp_default.callsign;
@@ -961,7 +962,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         if (search != fgcom_remote_clients.end()) {
             // we found remote state.            
             for (const auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
-                int rmt_iid      = idty.first;
+                //int rmt_iid      = idty.first;
                 fgcom_client rmt = idty.second;
             
                 pluginDbg("mumble_onAudioSourceFetched():   sender callsign="+rmt.callsign);
@@ -970,7 +971,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                 // currently mumble has only one voice stream per client, so we assume it comes from the best matching radio.
                 // Note: If we are PTTing ourself currently, the radio cannot receive at the moment (half-duplex mode!)
                 pluginDbg("mumble_onAudioSourceFetched():   sender registered rmt-radios: "+std::to_string(rmt.radios.size()));
-                for (int ri=0; ri<rmt.radios.size(); ri++) {
+                for (long unsigned int ri=0; ri<rmt.radios.size(); ri++) {
                     pluginDbg("mumble_onAudioSourceFetched():   check remote radio #"+std::to_string(ri));
                     pluginDbg("mumble_onAudioSourceFetched():    frequency='"+rmt.radios[ri].frequency+"'");
                     pluginDbg("mumble_onAudioSourceFetched():    ptt='"+std::to_string(rmt.radios[ri].ptt)+"'");
@@ -986,7 +987,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                             int iid          = lcl_idty.first;
                             fgcom_client lcl = lcl_idty.second;
                             pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match (local iid="+std::to_string(iid)+")");
-                            for (int lri=0; lri<lcl.radios.size(); lri++) {
+                            for (long unsigned int lri=0; lri<lcl.radios.size(); lri++) {
                                 pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
                                 pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
                                 pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(lcl.radios[lri].operable)+"'");

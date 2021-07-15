@@ -132,7 +132,6 @@ void fgcom_spawnUDPClient() {
     const int datarate = 1000000 * (1/packetrate);  //datarate in seconds*microseconds
     int fgcom_UDPClient_sockfd, rc; 
     struct sockaddr_in cliAddr;
-    bool portEstablished = false;
 
     
     
