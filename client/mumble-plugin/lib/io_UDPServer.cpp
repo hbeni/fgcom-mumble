@@ -201,13 +201,13 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     std::string radio_var  = smc[3];
                     
                     // if the selected radio does't exist, create it now
-                    int radio_id = std::stoi(radio_nr.c_str());  // COM1 -> 1
+                    long unsigned int radio_id = std::stoi(radio_nr.c_str());  // COM1 -> 1
                     if (radio_id < 1){
                         pluginLog("[UDP-server] Token ignored: radio_id outOfBounds (COM starts at 'COM1'!) "+token_key+"="+token_value);
                         continue; // if radio index not valid (ie. "COM0"): skip the token
                     }
                     if (fgcom_local_client[iid].radios.size() < radio_id) {
-                        for (int cr = fgcom_local_client[iid].radios.size(); cr < radio_id; cr++) {
+                        for (long unsigned int cr = fgcom_local_client[iid].radios.size(); cr < radio_id; cr++) {
                             pluginLog("[UDP-server]   create new local radio instance: "+std::to_string(cr));
                             fgcom_local_client[iid].radios.push_back(fgcom_radio()); // add new radio instance with default values
                             parseResult[iid].radioData.insert(radio_id-1);
@@ -292,7 +292,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         if (parsedPTT && fgcom_com_ptt_compatmode) fgcom_com_ptt_compatmode = false; 
                         
                         if (!fgcom_com_ptt_compatmode) {
-                            bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt_req;
+                            //bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt_req;
                             fgcom_local_client[iid].radios[radio_id].ptt_req = parsedPTT;
                             //if (fgcom_local_client[iid].radios[radio_id].ptt_req != oldValue ) parseResult[iid].radioData.insert(radio_id);
                             needToHandlePTT = true;
@@ -300,7 +300,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
 
                     }
                     if (radio_var == "VOL") {
-                        float oldValue = fgcom_local_client[iid].radios[radio_id].volume;
+                        //float oldValue = fgcom_local_client[iid].radios[radio_id].volume;
                         fgcom_local_client[iid].radios[radio_id].volume      = std::stof(token_value);
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].volume != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
@@ -310,12 +310,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         if (fgcom_local_client[iid].radios[radio_id].pwr != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     if (radio_var == "SQC") {
-                        float oldValue = fgcom_local_client[iid].radios[radio_id].squelch;
+                        //float oldValue = fgcom_local_client[iid].radios[radio_id].squelch;
                         fgcom_local_client[iid].radios[radio_id].squelch = std::stof(token_value);
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].squelch != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
                     if (radio_var == "RDF") {
-                        bool oldValue = fgcom_local_client[iid].radios[radio_id].rdfEnabled;
+                        //bool oldValue = fgcom_local_client[iid].radios[radio_id].rdfEnabled;
                         fgcom_local_client[iid].radios[radio_id].rdfEnabled = (token_value == "1" || token_value == "true")? true : false;
                         // do not send this: its only ever local state!  parseResult[iid].radioData.insert(radio_id);
 
@@ -332,7 +332,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         }
                     }
                     if (radio_var == "CWKHZ") {
-                        float oldValue = fgcom_local_client[iid].radios[radio_id].channelWidth;
+                        //float oldValue = fgcom_local_client[iid].radios[radio_id].channelWidth;
                         fgcom_local_client[iid].radios[radio_id].channelWidth = std::stof(token_value);
                         // do not send right now: if (fgcom_local_client[iid].radios[radio_id].channelWidth != oldValue ) parseResult[iid].radioData.insert(radio_id);
                     }
@@ -352,12 +352,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                  * User client values.
                  */
                 if (token_key == "LON") {
-                    float oldValue = fgcom_local_client[iid].lon;
+                    //float oldValue = fgcom_local_client[iid].lon;
                     fgcom_local_client[iid].lon = std::stof(token_value);
                     parseResult[iid].locationData = true;
                 }
                 if (token_key == "LAT") {
-                    float oldValue = fgcom_local_client[iid].lat;
+                    //float oldValue = fgcom_local_client[iid].lat;
                     fgcom_local_client[iid].lat = std::stof(token_value);
                     parseResult[iid].locationData = true;
                 }
@@ -385,14 +385,14 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 }
                 if (token_key == "PTT") {
                     // PTT contains the ID of the used radio (0=none, 1=COM1, 2=COM2)
-                    int ptt_id = std::stoi(token_value);
+                    long unsigned int ptt_id = std::stoi(token_value);
                     
                     // handle compat mode switch: if we receive PTT in the old way, we switch it on
                     if (ptt_id > 0) fgcom_com_ptt_compatmode = true;
                     
                     if (fgcom_com_ptt_compatmode) {
                         //pluginDbg("DBG_PTT:  ptt_id="+std::to_string(ptt_id));
-                        for (int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
+                        for (long unsigned int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
                             //pluginDbg("DBG_PTT:    check i("+std::to_string(i)+")==ptt_id-1("+std::to_string(ptt_id-1)+")");
                             if (i == ptt_id - 1) {
                                 if (fgcom_local_client[iid].radios[i].ptt_req != 1){
@@ -412,7 +412,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                 if (token_key == "OUTPUT_VOL") {
                     // Set all radio instances to the selected volume
                     float comvol = std::stof(token_value);
-                    for (int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
+                    for (long unsigned int i = 0; i<fgcom_local_client[iid].radios.size(); i++) {
                         fgcom_local_client[iid].radios[i].volume = comvol;
                     }
                 }
@@ -571,13 +571,15 @@ void fgcom_spawnUDPServer() {
     if (fgcom_cfg.udpServerHost == "*") {
         servaddr.sin_addr.s_addr = INADDR_ANY;
     } else {
-        servaddr.sin_addr.s_addr = inet_addr(fgcom_cfg.udpServerHost.c_str());
-    }
-    if (servaddr.sin_addr.s_addr == -1) {
-        pluginLog("[UDP-server] socket server address invalid: "+fgcom_cfg.udpServerHost);
-        mumAPI.log(ownPluginID, std::string("UDP server failed: server address invalid: "+fgcom_cfg.udpServerHost).c_str());
-        return;
-//        exit(EXIT_FAILURE);
+        int a_s_addr = inet_addr(fgcom_cfg.udpServerHost.c_str());
+        if (a_s_addr != -1) {
+            servaddr.sin_addr.s_addr = a_s_addr;
+        } else {
+            pluginLog("[UDP-server] socket server address invalid: "+fgcom_cfg.udpServerHost);
+            mumAPI.log(ownPluginID, std::string("UDP server failed: server address invalid: "+fgcom_cfg.udpServerHost).c_str());
+            return;
+//            exit(EXIT_FAILURE);
+        }
     }
     
 
@@ -741,5 +743,9 @@ void fgcom_shutdownUDPServer() {
 	// send data
 	int len = sendto(sock, message.c_str(), strlen(message.c_str()), 0,
 	           (struct sockaddr*)&server_address, sizeof(server_address));
-
+    if (len == -1) {
+        pluginLog("[UDP-server] error sending UDP shutdown packet");
+        mumAPI.log(ownPluginID, std::string("error sending UDP shutdown packet").c_str());
+        return;
+    }
 }

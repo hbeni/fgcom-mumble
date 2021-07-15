@@ -60,7 +60,8 @@ public:
         signal.quality = 0.85; // Base signal quality; but we will degrade that using the model below
     
         // get distance to radio horizon (that is the both ranges combined)
-        double radiodist = this->getDistToHorizon(alt1) + this->getDistToHorizon(alt2);
+        // double radiodist = this->getDistToHorizon(alt1) + this->getDistToHorizon(alt2);
+        // note: not needed currently, as we use heightAboveHorizon() for the check below.
         
         // get surface distance
         double dist = this->getSurfaceDistance(lat1, lon1, lat2, lon2);
