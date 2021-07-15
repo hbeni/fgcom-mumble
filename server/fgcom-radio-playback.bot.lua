@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.6.0"
+fgcom.botversion = "1.6.1"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -235,13 +235,7 @@ fgcom.dbg("connect and bind: OK")
 updateAllChannelUsersforSend = function(cl)
     --fgcom.dbg("udpate channelusers")
     local ch = cl:getChannel(fgcom.channel)
-    local users = ch:getUsers()
-    playback_targets = {}
-    --fgcom.dbg("ok: "..ch:getName())
-    for k,v in pairs(users) do
-        --fgcom.dbg("  k="..tostring(k).."v="..tostring(v))
-        table.insert(playback_targets, v)
-    end
+    playback_targets = ch:getUsers()
 end
 
 -- function to disconnect the bot
