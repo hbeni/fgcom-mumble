@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.7.0"
+fgcom.botversion = "1.8.0"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -59,6 +59,7 @@ if arg[1] then
         print(botname..", "..fgcom.getVersion())
         print("usage: "..arg[0].." [opt=val ...]")
         print("  Options:")
+        print("    --name=    Change Bot's name                (default="..botname..")")
         print("    --host=    host to connect to               (default="..host..")")
         print("    --port=    port to connect to               (default="..port..")")
         print("    --channel= channel to join                  (default="..fgcom.channel..")")
@@ -76,6 +77,7 @@ if arg[1] then
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         --print("KEY='"..k.."'; VAL='"..v.."'")
+        if k=="name"      then botname=v end
         if k=="host"      then host=v end
         if k=="port"      then port=v end
         if k=="channel"   then fgcom.channel=v end
@@ -95,7 +97,7 @@ end
 fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
-fgcom.log("connect and bind", "OK")
+fgcom.log("connect and bind: OK")
 
 
 -- Store for last highscore
@@ -121,7 +123,8 @@ end
 --     "meta": {"highscore_clients":12, "highscore_date":1599719381}
 --   }
 local generateOutData = function()
-    local allUsers = client:getUsers()
+    local allUsers = {} -- sid=>mumbleUser table
+    for i, mc in ipairs(client:getUsers()) do  allUsers[mc:getSession()] = mc  end
     local data     = {clients={}, meta={}}  -- final return array
 
     -- generate list of current users
@@ -187,13 +190,7 @@ local playback_targets = nil -- holds updated list of all channel users
 updateAllChannelUsersforSend = function(cl)
     --fgcom.dbg("udpate channelusers")
     local ch = cl:getChannel(fgcom.channel)
-    local users = ch:getUsers()
-    playback_targets = {}
-    --fgcom.dbg("ok: "..ch:getName())
-    for k,v in pairs(users) do
-        --fgcom.dbg("  k="..tostring(k).."v="..tostring(v))
-        table.insert(playback_targets, v)
-    end
+    playback_targets = ch:getUsers()
 end
 
 
