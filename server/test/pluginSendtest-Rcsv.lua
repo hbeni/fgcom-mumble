@@ -2,7 +2,7 @@ mumble = require("mumble")  -- get the mumble API
 
 local host = "localhost"
 local port = 64738
-local channel = "test"
+local channel = "fgcom-mumble"
 local cert = "bot.pem"
 local key  = "bot.key"
 
