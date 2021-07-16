@@ -47,7 +47,7 @@ void debug_out_internal_state() {
             
             state_str += lcl_prefix + std::to_string(lcl.radios.size()) + " radios registered\n";
             if (lcl.radios.size() > 0) {
-                for (int i=0; i<lcl.radios.size(); i++) {
+                for (unsigned long int i=0; i<lcl.radios.size(); i++) {
                     state_str += "  Radio "+std::to_string(i)+":   frequency='"+lcl.radios[i].frequency+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+lcl.radios[i].dialedFRQ+"'\n";
                     state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(lcl.radios[i].power_btn)+"'\n";
@@ -91,7 +91,7 @@ void debug_out_internal_state() {
             
                 state_str += rmt_prefix + std::to_string(rmt.radios.size()) + " radios registered\n";
                 if (rmt.radios.size() > 0) {
-                    for (int i=0; i<rmt.radios.size(); i++) {
+                    for (unsigned long int i=0; i<rmt.radios.size(); i++) {
                         state_str += "  Radio "+std::to_string(i)+":   frequency='"+rmt.radios[i].frequency+"'\n";
                         state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+rmt.radios[i].dialedFRQ+"'\n";
                         //state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(rmt.radios[i].power_btn)+"'\n";
