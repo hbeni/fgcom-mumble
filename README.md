@@ -54,6 +54,9 @@ The release ZIP contains all binary plugins for all supported operating systems 
 Several installation procedures exist:
 
 ### GUI method (recommended)
+After installing Mumble, you can usually install the plugin by just double-clicking the  `.mumble_plugin`-bundle.
+
+Otherwise you can also use Mumbles integrated plugin installer:
 - Start Mumble.
 - In Mumbles *Configure/Settings/Plugins* dialog, hit *Install plugin*.
 - Select the `.mumble_plugin` plugin bundle. Mumble will install the plugin file and report success.
