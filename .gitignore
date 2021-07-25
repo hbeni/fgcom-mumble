@@ -49,6 +49,7 @@ FGCom*.jar
 # misc
 *.csv
 *.log
+dllResource.rc
 
 # Archives
 *.zip
