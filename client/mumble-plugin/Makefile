@@ -22,6 +22,7 @@ lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib
 #               -DNO_CFG                   no config file parsing
 #               -DNO_COMMENT               no mumble GUI comment adjustments
 # `make ... outname=<name> ...`            change name of resulting binary lib
+# `make ... mingwprefix=<...>`             Change mingw prefix; CC variable will be appended to this
 
 # FOR PRERELEASES: make always debug builds
 #ifneq (,$(findstring 0,$(VERSION_V)))
@@ -74,7 +75,7 @@ test: libs test/catch2/tests-main.o test/catch2/tests-main.o test/catch2/radioMo
 
 # clean compile results
 clean:
-	rm -f *.o lib/*.o test/catch2/*.catch2
+	rm -f *.o *.rc lib/*.o test/catch2/*.catch2
 
 # clean compile results and binarys
 clean-all: clean
@@ -102,14 +103,52 @@ plugin-win32: openssl-win32 plugin-win32-only
 
 # just the windows plugin, no ssl in case we want to build repetively but want to avoid building openssl each time
 plugin-win64-only: outname=fgcom-mumble.dll
-plugin-win64-only: CC=x86_64-w64-mingw32-g++-posix
-plugin-win64-only:
-	$(CC) -fPIC --shared -DMINGW_WIN64 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+plugin-win64-only: mingwprefix=x86_64-w64-mingw32-
+plugin-win64-only: CC=$(mingwprefix)g++-posix
+plugin-win64-only: plugin-win-dllresource
+	# Build plugin win64
+	$(CC) -fPIC --shared -DMINGW_WIN64 -o $(outname) dllResource.o lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 plugin-win32-only: outname=fgcom-mumble-x86_32.dll
-plugin-win32-only: CC=i686-w64-mingw32-g++-posix
-plugin-win32-only:
-	$(CC) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+plugin-win32-only: mingwprefix=i686-w64-mingw32-
+plugin-win32-only: CC=$(mingwprefix)g++-posix
+plugin-win32-only: plugin-win-dllresource
+	# Build plugin win32
+	$(CC) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) dllResource.o lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+
+GITVER:=$(shell git log -1 --pretty=format:"%h")
+GITDATE:=$(shell git log -1 --pretty=format:"%cd" --date=short)
+PLUGIN_VERSION_V:=$(shell grep -m1 FGCOM_VERSION_MAJOR fgcom-mumble.h |grep -E -o '[0-9]+')
+PLUGIN_VERSION_M:=$(shell grep -m1 FGCOM_VERSION_MINOR fgcom-mumble.h |grep -E -o '[0-9]+')
+PLUGIN_VERSION_P:=$(shell grep -m1 FGCOM_VERSION_PATCH fgcom-mumble.h |grep -E -o '[0-9]+')
+plugin-win-dllresource:
+	# Build DLL resource file
+	@echo "1 VERSIONINFO" > dllResource.rc
+	@echo "FILEVERSION     $(PLUGIN_VERSION_V),$(PLUGIN_VERSION_M),$(PLUGIN_VERSION_P),0" >> dllResource.rc
+	@echo "PRODUCTVERSION  $(PLUGIN_VERSION_V),$(PLUGIN_VERSION_M),$(PLUGIN_VERSION_P),0" >> dllResource.rc
+	@echo "BEGIN" >> dllResource.rc
+	@echo "  BLOCK \"StringFileInfo\"" >> dllResource.rc
+	@echo "  BEGIN" >> dllResource.rc
+	@echo "    BLOCK \"040904E4\"" >> dllResource.rc
+	@echo "    BEGIN" >> dllResource.rc
+	@echo "      VALUE \"CompanyName\", \"B. Hallinger (https://github.com/hbeni/fgcom-mumble)\"" >> dllResource.rc
+	@echo "      VALUE \"Comments\", \"Project page: https://github.com/hbeni/fgcom-mumble\"" >> dllResource.rc
+	@echo "      VALUE \"FileDescription\", \"FGCom-mumble plugin for Mumble\"" >> dllResource.rc
+	@echo "      VALUE \"FileVersion\", \"$(PLUGIN_VERSION_V).$(PLUGIN_VERSION_M).$(PLUGIN_VERSION_P)\"" >> dllResource.rc
+	@echo "      VALUE \"InternalName\", \"fgcom-mumble\"" >> dllResource.rc
+	@echo "      VALUE \"LegalCopyright\", \"(c) B. Hallinger, GPLv3 license\"" >> dllResource.rc
+	@echo "      VALUE \"OriginalFilename\", \"$(outname)\"" >> dllResource.rc
+	@echo "      VALUE \"ProductName\", \"FGCom-mumble\"" >> dllResource.rc
+	@echo "      VALUE \"ProductVersion\", \"$(PLUGIN_VERSION_V).$(PLUGIN_VERSION_M).$(PLUGIN_VERSION_P)\"" >> dllResource.rc
+	@echo "      VALUE \"LastChange\", \"$(GITDATE) ($(GITVER))\"" >> dllResource.rc
+	@echo "    END" >> dllResource.rc
+	@echo "  END" >> dllResource.rc
+	@echo "  BLOCK \"VarFileInfo\"" >> dllResource.rc
+	@echo "  BEGIN" >> dllResource.rc
+	@echo "    VALUE \"Translation\", 0x409, 1252" >> dllResource.rc
+	@echo "  END" >> dllResource.rc
+	@echo "END" >> dllResource.rc
+	$(mingwprefix)windres dllResource.rc dllResource.o
 
 # shortcut for building natively on macOS
 plugin-macOS: CC=g++-11
