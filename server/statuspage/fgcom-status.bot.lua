@@ -241,7 +241,8 @@ end
 local statsWriterTimer = mumble.timer()
 statsWriterTimer_func = function(t)
     -- get the current alive number of users
-    local allUsers = client:getUsers()
+    local allUsers = {} -- sid=>mumbleUser table
+    for i, mc in ipairs(client:getUsers()) do  allUsers[mc:getSession()] = mc  end
     local users_alive      = 0
     local broadcasts_alive = 0
     for sid, remote_client in pairs(fgcom_clients) do
