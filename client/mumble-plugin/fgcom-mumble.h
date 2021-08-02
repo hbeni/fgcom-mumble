@@ -24,7 +24,7 @@
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 0
 #define FGCOM_VERSION_MINOR 14
-#define FGCOM_VERSION_PATCH 2
+#define FGCOM_VERSION_PATCH 3
 
 /*
  * Is the plugin currently active?
