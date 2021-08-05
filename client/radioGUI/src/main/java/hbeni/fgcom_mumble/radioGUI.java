@@ -16,9 +16,13 @@
  */
 package hbeni.fgcom_mumble;
 
+import hbeni.fgcom_mumble.updater.Updater;
 import com.formdev.flatlaf.FlatDarkLaf;
 import hbeni.fgcom_mumble.UDPclient.SendRes;
 import hbeni.fgcom_mumble.gui.MainWindow;
+import hbeni.fgcom_mumble.updater.GitHubChecker;
+import java.security.InvalidParameterException;
+import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 
 /**
@@ -51,7 +55,7 @@ public class radioGUI {
     
     /* Window handles */
     public static MainWindow mainWindow;
-    
+      
     /**
      * Start the Application
      * 
@@ -67,6 +71,7 @@ public class radioGUI {
         } catch (UnsupportedLookAndFeelException ex) {
             // ignore: default theme will be used
         }
+        
 
         /* init internal data model (state) */
         state = new State();
@@ -81,6 +86,10 @@ public class radioGUI {
         /* Create and display the main form */
         mainWindow = new MainWindow(state);
         mainWindow.setVisible(true);
+        
+        
+        /* Check for updates */
+        checkForUpdates();
         
         
         /* start the main loop */
@@ -192,5 +201,29 @@ public class radioGUI {
         }
         return fgcom_simconnectbridge;
     }
-    
+
+    public static void checkForUpdates() {
+        try {
+            mainWindow.setStatusText("checking for updates...");
+            Updater updater = new GitHubChecker();
+            //System.out.println("DBG: localVersion="+updater.getLocalVersion());
+            //System.out.println("DBG: upstreamVersion="+updater.getUpstreamVersion());
+            //System.out.println("DBG: comparison: "+updater.getUpstreamVersion().compareTo(updater.getLocalVersion()));
+            
+            if ( updater.getUpstreamVersion().compareTo(updater.getLocalVersion()) > 0) {
+                System.out.println("INFO: update pending! (upstream="+updater.getUpstreamVersion()+", local="+updater.getLocalVersion()+")");
+                JOptionPane.showMessageDialog(mainWindow,
+                    "There is a new addon release "+updater.getUpstreamVersion()+" waiting for you :)\n\n" +
+                    "Please go to the download page:\nhttps://github.com/hbeni/fgcom-mumble/releases",
+                    "FGCom-mumble updater", JOptionPane.INFORMATION_MESSAGE
+                );
+            } else {
+                System.out.println("INFO: local version is current. (upstream="+updater.getUpstreamVersion()+", local="+updater.getLocalVersion()+")");
+            }
+        } catch (Exception e) {
+            // just discard any exceptions occurring. then we do not check for updates...
+            System.out.println("WARNING: unable to check for Udpates!");
+            e.printStackTrace();
+        }
+    }
 }

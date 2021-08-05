@@ -57,8 +57,7 @@ public class About_Help extends javax.swing.JFrame {
         setAlwaysOnTop(true);
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getStyle() | java.awt.Font.BOLD));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("project"); // NOI18N
-        jLabel1.setText(bundle.getString("version")); // NOI18N
+        jLabel1.setText(java.util.ResourceBundle.getBundle("project").getString("product")+" v"+java.util.ResourceBundle.getBundle("project").getString("version"));
 
         jLabel3.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
         jLabel3.setText("brought to you by Benedikt Hallinger");
@@ -116,8 +115,7 @@ public class About_Help extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jLabel3)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(34, 34, 34)

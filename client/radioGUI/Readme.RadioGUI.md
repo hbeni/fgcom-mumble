@@ -6,7 +6,11 @@ The FGCom-mumble Radio GUI is a small Java Application that acts as client to th
 
 Install / Setup
 ----------------
-In order to run the tool, you need a java runtime version >= 8.
+In order to run the tool, you need a java runtime version >= 8. You just need to run the JAR file, no need for installation.
+
+### Updating
+When RadioGUI is started, it checks for updates on GitHub. If a newer version is found, it informs about that with an infobox.  
+Just download the latest release from GitHub and use that version instead (you can copy over the existing Jar).
 
 
 Running and usage
