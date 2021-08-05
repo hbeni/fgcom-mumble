@@ -33,6 +33,7 @@ Die Doku ist in folgende Dateien aufgeteilt:
 - [Readme.architecture.md](Readme.architecture.md) (engl.) Details über die Komponenten des Systems
 - [client/plugin.spec.md](client/plugin.spec.md) (engl.) Technische Spezifikation des mumble Plugins und seiner Schnittstellen
 - [client/radioGUI/Readme.RadioGUI.md](client/radioGUI/Readme.RadioGUI.md) Doku der Radio GUI Anwendung
+- [client/fgfs-addon/Readme.md](client/fgfs-addon/Readme.md) Details über das Flightgear-Addon
 - [server/Readme.server-de_DE.md](server/Readme.server-de_DE.md) (deutsch) Details über die serverseitigen Koponenten und ihre Installation/Betrieb
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) (engl.) Technische Details über die Statuswebseite und deren Komponenten
 
@@ -80,6 +81,13 @@ Die Installation kann auch über eine Kommandozeile gestartet werden, indem man 
   - `fgcom-mumble-macOS.bundle` für MacOS
 - Von dort aus erkennt Mumble es automatisch und du kannst es über den "Plugins"-Dialog aktivieren.
 
+
+Aktualisieren (update Prozedur)
+-------------------------------
+Wenn Mumble startet, sucht es auf GitHub nach der aktuellsten Pluginversion. Alternativ kannst du auch bei den Mumble Plugin-Einstellungen manuell eine Prüfung durchführen.
+
+Falls eine aktuellere Version gefunden wird, fragt Mumble, ob du diese installieren möchtest. Bejast du, lädt Mumble die neue Version herunter und installiert sie automatisch über die Vorhandene.  
+Alternativ kannst du die neue Version auch manuell herunterladen und wie oben beschrieben installieren.
 
 
 Plugin konfigurieren

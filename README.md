@@ -29,6 +29,7 @@ The documentation is split up into relevant parts:
 - [Readme.architecture.md](Readme.architecture.md) Details about the components that make up the system
 - [client/plugin.spec.md](client/plugin.spec.md) Technical details on plugin design and its input/output data formats
 - [client/radioGUI/Readme.RadioGUI.md](client/radioGUI/Readme.RadioGUI.md) Documentation for the Radio GUI client
+- [client/fgfs-addon/Readme.md](client/fgfs-addon/Readme.md) Documentation for the Flightgear integration addon
 - [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
 
@@ -74,6 +75,14 @@ The installation can also be started by calling mumble from the commandline with
   - `fgcom-mumble-x86_32.dll` for Windows (32 bit)
   - `fgcom-mumble-macOS.bundle` for MacOs
 - Mumble will pick it up automatically and show it in the plugins dialog. Activate the plugin.
+
+
+Updating
+----------------------
+When Mumble starts, it will check the most recent version of the plugin against the github release page. Optionally you can check for updates from the plugin settings page.
+
+When a more recent version is found, Mumble will ask you if you want to upgrade. When you allow it, Mumble downloads and replaces the plugin library automatically for you.  
+You can also download and upgrade manually by the normal installation procedure described above.
 
 
 Plugin configuration

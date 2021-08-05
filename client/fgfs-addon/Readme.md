@@ -7,6 +7,11 @@ Installation
 After unzipping the FGCom-mumble release package, you just need to add the `fgfs-addon` folder to your launcher's *Add-ons* module list.  
 The addon is activated automatically, so flightgear will try to connect to mumble with the default parameters.
 
+### Updating
+When the addon is starting, it will check github for update releases. If it finds a more recent version, it will inform the user with a small text window, so the pilot knows that he needs to take action.
+
+Just go to the project website, download the latest addon release package and deploy like a fresh install, replacing the previous addon directory contents.
+
 
 Running the Addon
 -----------------
