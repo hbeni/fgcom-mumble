@@ -79,8 +79,8 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-      <ResourceString bundle="project.properties" key="version" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+    <Property name="title" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+      <Connection code="java.util.ResourceBundle.getBundle(&quot;project&quot;).getString(&quot;product&quot;)+&quot; v&quot;+java.util.ResourceBundle.getBundle(&quot;project&quot;).getString(&quot;version&quot;)" type="code"/>
     </Property>
     <Property name="bounds" type="java.awt.Rectangle" editor="org.netbeans.beaninfo.editors.RectangleEditor">
       <Rectangle value="[0, 0, 0, 0]"/>
@@ -313,7 +313,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Monospaced" size="10" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="connection status"/>
+            <Property name="text" type="java.lang.String" value="initializing..."/>
             <Property name="toolTipText" type="java.lang.String" value="Shows the UDP sending status and its content"/>
           </Properties>
           <Events>

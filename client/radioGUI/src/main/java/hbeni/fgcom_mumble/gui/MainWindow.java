@@ -139,8 +139,7 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("project"); // NOI18N
-        setTitle(bundle.getString("version")); // NOI18N
+        setTitle(java.util.ResourceBundle.getBundle("project").getString("product")+" v"+java.util.ResourceBundle.getBundle("project").getString("version"));
         setBounds(new java.awt.Rectangle(0, 0, 0, 0));
 
         jToggleButton_Connect.setText("Connect");
@@ -214,7 +213,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel_Statusbar.setEditable(false);
         jLabel_Statusbar.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
-        jLabel_Statusbar.setText("connection status");
+        jLabel_Statusbar.setText("initializing...");
         jLabel_Statusbar.setToolTipText("Shows the UDP sending status and its content");
         jLabel_Statusbar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
