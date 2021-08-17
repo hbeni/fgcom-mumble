@@ -65,10 +65,6 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
     public MainWindow mainWindow;
     
     
-    static {
-        System.setProperty("http.agent", "FGCom-mumble RadioGUI /" + System.getProperty("http.agent"));
-    }
-    
     /**
      * Open MapClick window
      * 
@@ -91,7 +87,6 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         // receive events and update
         map().addJMVListener(this);
         
-        
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -100,8 +95,12 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         JPanel panelBottom = new JPanel();
         JPanel helpPanel = new JPanel();
 
+        JPanel zoomTextPanel = new JPanel();
         mperpLabelName = new JLabel("Meters/Pixels: ");
-        mperpLabelValue = new JLabel(String.format("%s", map().getMeterPerPixel()));
+        mperpLabelValue = new JLabel();
+        updateZoomParameters();
+        zoomTextPanel.add(mperpLabelName);
+        zoomTextPanel.add(mperpLabelValue);
 
         if (lastZoom == -1) {
             lastZoom = map().getZoom();
@@ -126,8 +125,13 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         });
         tileSourceSelector.setSelectedIndex(lastTileSourceSelectorIDX);
         
+        // prepare the tile loaders
+        OsmTileLoader osm_loader = new OsmTileLoader(map());
+        osm_loader.headers.put("User-Agent", "FGCom-mumble RadioGUI / "+ System.getProperty("http.agent"));
+        osm_loader.headers.put("Referer", "https://github.com/hbeni/fgcom-mumble/blob/master/client/radioGUI/Readme.RadioGUI.md");
+        
         JComboBox<TileLoader> tileLoaderSelector;
-        tileLoaderSelector = new JComboBox<>(new TileLoader[] {new OsmTileLoader(map())});
+        tileLoaderSelector = new JComboBox<>(new TileLoader[] {osm_loader});
         tileLoaderSelector.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -136,6 +140,7 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         });
         map().setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
         panelTop.add(tileSourceSelector);
+        panelTop.add(zoomTextPanel);
         //panelTop.add(tileLoaderSelector);
         
         map().setTileGridVisible(true);
@@ -152,6 +157,8 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         JLabel helpLabel = new JLabel("Left mouse click selects position. \nUse right mouse button to move,\n "
                 + " and mouse wheel to zoom.");
         helpPanel.add(helpLabel);
+        JLabel attributionLabel = new JLabel("(C) "+map().getAttribution().toString());
+        helpPanel.add(attributionLabel);
         
         
         JFrame myself = this;
@@ -176,7 +183,6 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         
         // Add a marker at current position
         map().addMapMarker(new MapMarkerDot("Position", new Coordinate(state.getLatitutde(), state.getLongitude())));
-        
         
         setExtendedState(JFrame.NORMAL);
         setPreferredSize(new Dimension(1000, 800));
@@ -203,7 +209,7 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
     
     private void updateZoomParameters() {
         if (mperpLabelValue != null)
-            mperpLabelValue.setText(String.format("%s", map().getMeterPerPixel()));
+            mperpLabelValue.setText(String.format("%s", Math.round(map().getMeterPerPixel() *100.0)/100.0));
         if (zoomValue != null)
             zoomValue.setText(String.format("%s", map().getZoom()));
     }
