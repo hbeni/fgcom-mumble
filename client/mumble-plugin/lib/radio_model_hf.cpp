@@ -18,6 +18,7 @@
 #include <cmath>
 #include <regex>
 #include "radio_model.h"
+#include "audio.h"
 
 /**
  * A HF based radio model for the FGCom-mumble plugin
@@ -98,6 +99,9 @@ public:
 
     // Frequency match is done with a band method, ie. a match is there if the bands overlap
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
+        if (r1.ptt)       return 0.0; // Half-duplex!
+        if (!r1.operable) return 0.0; // stop if radio is inoperable
+
         // channel definition
         // TODO: Note, i completely made up those numbers. I have no idea of tuning HF radios.
         // TODO: I have read somewhere about 3kHz width: https://onlinelibrary.wiley.com/doi/abs/10.1002/0471208051.fre015
@@ -126,5 +130,14 @@ public:
             return filter;
         }
     }
+
     
+    /*
+     * Process audio samples
+     */
+    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+        // Audio processing is like VHF characteristics for now
+        std::unique_ptr<FGCom_radiowaveModel_VHF> vhf_radio = std::make_unique<FGCom_radiowaveModel_VHF>();
+        vhf_radio->processAudioSamples(lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+    }
 };

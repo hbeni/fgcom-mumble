@@ -18,6 +18,7 @@
 #include <cmath>
 #include <regex>
 #include "radio_model.h"
+#include "audio.h"
 
 /**
  * A VHF based radio model for the FGCom-mumble plugin
@@ -45,6 +46,49 @@ protected:
         return sq;
     }
     
+    /*
+     * Process audio samples
+     * 
+     * This is a somewhat generic implementation for invocation by the VHF, UHF and HF models,
+     * providing mono stream, hogh/lowpass filtering and noise addition
+     */
+    virtual void processAudioSamples_VHF(int highpass_cutoff, int lowpass_cutoff, float minimumNoiseVolume, float maximumNoiseVolume, fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+
+        /*
+        * Make the audio stream mono
+        */
+        fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
+
+
+        /*
+        * Apply audio filtering
+        */
+        fgcom_audio_filter(highpass_cutoff, lowpass_cutoff, outputPCM, sampleCount, channelCount, sampleRateHz);
+
+
+        /*
+        * Apply static noise
+        */
+        // Calculate volume levels:
+        // We want the noise to get louder at bad signal quality and the signal to get weaker.
+        // basicly the signal quality already tells us how the ratio is between signal and noise.
+        float signalVolume;
+        float noiseVolume;
+        signalVolume = signalQuality;
+        noiseVolume  = pow(0.9 - 0.9*signalQuality, 2) + minimumNoiseVolume;
+        if (noiseVolume > maximumNoiseVolume) noiseVolume = maximumNoiseVolume;
+
+        // Now tune down the signal according to calculated noise volume level, then add noise
+        fgcom_audio_applyVolume(signalVolume, outputPCM, sampleCount, channelCount);
+        fgcom_audio_addNoise(noiseVolume, outputPCM, sampleCount, channelCount);
+        // TODO: we may clip some random samples from the signal on low quality
+
+
+        /*
+        * Finally apply radio volume setting
+        */
+        fgcom_audio_applyVolume(lclRadio.volume, outputPCM, sampleCount, channelCount);
+    }
     
 public:
         
@@ -245,6 +289,9 @@ public:
 
     // Frequency match is done with a band method, ie. a match is there if the bands overlap
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
+        if (r1.ptt)       return 0.0; // Half-duplex!
+        if (!r1.operable) return 0.0; // stop if radio is inoperable
+        
         // channel definition
         float width_kHz = r1.channelWidth;
         if (width_kHz <= 0) width_kHz = 8.33;
@@ -272,4 +319,26 @@ public:
         }
     }
 
+
+    /*
+     * Process audio samples
+     */
+    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+        // HighPass filter cuts away lower frequency ranges and let higher ones pass
+        // Lower cutoff limit depends on signal quality: the less quality, the more to cut away
+        //   worst is 1000@30% signal; best is 300@1.0
+        int highpass_cutoff = (1-signalQuality) * 1000 + 300;
+        if (highpass_cutoff <  300) highpass_cutoff =  300; // lower ceiling
+        if (highpass_cutoff > 1000) highpass_cutoff = 1000; // upside ceiling
+
+        // LowPass filter cuts away higher frequency ranges and lets lower ones pass
+        //   worst is 2000@035; best is 4000@0.95
+        int lowpass_cutoff = signalQuality * 4000 + 500;
+        if (lowpass_cutoff < 2000) lowpass_cutoff = 2000; // lower ceiling
+        if (lowpass_cutoff > 4000) lowpass_cutoff = 4000; // upper ceiling
+        
+        float minimumNoiseVolume = 0.05;
+        float maximumNoiseVolume = 0.45;
+        processAudioSamples_VHF(highpass_cutoff, lowpass_cutoff, minimumNoiseVolume, maximumNoiseVolume, lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+    }
 };

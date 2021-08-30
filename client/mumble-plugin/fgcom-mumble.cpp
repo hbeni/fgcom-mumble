@@ -31,7 +31,6 @@
 #include "io_UDPServer.h"
 #include "io_UDPClient.h"
 #include "radio_model.h"
-#include "audio.h"
 #include "garbage_collector.h"
 
 #include <stdio.h>
@@ -947,7 +946,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         
         float bestSignalStrength = -1.0; // we want to get the connections signal strength.
         fgcom_radio matchedLocalRadio;
-        bool isLandline = false;
         bool useRawData = false;
         
         // Fetch the remote clients data
@@ -994,7 +992,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 // skip check for "empty radios"
                                 if (lcl.radios[lri].frequency == "") continue;
                                 
-                                // calculate frequency match
+                                // Calculate radio type compatibility and basic frequency match.
+                                // (this is expected to return signalMatchFilter==0 when the model is compatible,
+                                //  but no connection can be made based on tuned frequency; including half-duplex checks etc)
                                 float signalMatchFilter;
                                 if (radio_model_lcl->isCompatible(radio_model_rmt.get())) {
                                     signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri], rmt.radios[ri]);
@@ -1004,24 +1004,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     continue;
                                 }
                                 
-                                
-                                /* detect landline/intercom */
-                                if (lcl.radios[lri].frequency.substr(0, 5) == "PHONE"
-                                    && lcl.radios[lri].frequency == rmt.radios[ri].frequency && lcl.radios[lri].operable) {
-                                    pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  PHONE mode detected");
-                                    // Best quality, full-duplex mode
-                                    matchedLocalRadio = lcl.radios[lri];
-                                    bestSignalStrength = 1.0;
-                                    isLandline = true;
-                                    break; // no point in searching more
-                                
-                                
-                                /* normal radio operation */
-                                // (prefixed special frequencies never should be recieved!)
-                                } else if (signalMatchFilter > 0.0 
-                                    && lcl.radios[lri].operable
-                                    && !lcl.radios[lri].ptt   // halfduplex!
-                                    && rmt_frq_p.prefix.length() == 0) {
+                                // See if a signal can be received for this radio pair; and if yes, how good it is.
+                                // (only consider non-prefixed remote radio frequencies, as they are special)
+                                if (signalMatchFilter > 0.0 && rmt_frq_p.prefix.length() == 0) {
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
                                     // we are listening on that frequency!
                                     // determine signal strenght for this connection
@@ -1118,21 +1103,13 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // we should use the raw audio packets unaffected
             pluginDbg("mumble_onAudioSourceFetched():   connected (use raw data)");
             rv = false;
-            
-        } else if (isLandline) {
-            // we got a landline connection!
-            pluginDbg("mumble_onAudioSourceFetched():   connected (phone)");
-            fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
-            fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
-            
-        } else if (bestSignalStrength > 0.0) { 
+
+        } else if (bestSignalStrength > 0.0) {
             // we got a connection!
-            pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
-            fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_addNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
-            fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
+            std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(matchedLocalRadio.frequency));
+            pluginDbg("mumble_onAudioSourceFetched():   connected (lcl_type="+radio_model_lcl->getType()+"), bestSignalStrength="+std::to_string(bestSignalStrength));
+            if (fgcom_cfg.radioAudioEffects)
+                radio_model_lcl->processAudioSamples(matchedLocalRadio, bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
             
         } else {
             pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
