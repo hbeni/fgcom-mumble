@@ -46,23 +46,21 @@ void debug_out_internal_state() {
             state_str += lcl_prefix + "lastUpdate="+lastUpdate_str_f+"\n";
             
             state_str += lcl_prefix + std::to_string(lcl.radios.size()) + " radios registered\n";
-            if (!lcl.radios.empty()) {
-                for (unsigned long int i=0; i<lcl.radios.size(); i++) {
-                    state_str += "  Radio "+std::to_string(i)+":   frequency='"+lcl.radios[i].frequency+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+lcl.radios[i].dialedFRQ+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(lcl.radios[i].power_btn)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":       volts='"+std::to_string(lcl.radios[i].volts)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+": serviceable='"+std::to_string(lcl.radios[i].serviceable)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":    operable='"+std::to_string(lcl.radios[i].operable)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":         ptt='"+std::to_string(lcl.radios[i].ptt)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":     ptt_req='"+std::to_string(lcl.radios[i].ptt_req)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":      volume='"+std::to_string(lcl.radios[i].volume)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":         pwr='"+std::to_string(lcl.radios[i].pwr)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(lcl.radios[i].squelch)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":  chan_width='"+std::to_string(lcl.radios[i].channelWidth)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+": RDF_enabled='"+std::to_string(lcl.radios[i].rdfEnabled)+"'\n";
-                    state_str += "  Radio "+std::to_string(i)+":     publish='"+std::to_string(lcl.radios[i].publish)+"'\n";
-                }
+            for (unsigned long int i=0; i<lcl.radios.size(); i++) {
+                state_str += "  Radio "+std::to_string(i)+":   frequency='"+lcl.radios[i].frequency+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+lcl.radios[i].dialedFRQ+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(lcl.radios[i].power_btn)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":       volts='"+std::to_string(lcl.radios[i].volts)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+": serviceable='"+std::to_string(lcl.radios[i].serviceable)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":    operable='"+std::to_string(lcl.radios[i].operable)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":         ptt='"+std::to_string(lcl.radios[i].ptt)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":     ptt_req='"+std::to_string(lcl.radios[i].ptt_req)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":      volume='"+std::to_string(lcl.radios[i].volume)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":         pwr='"+std::to_string(lcl.radios[i].pwr)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(lcl.radios[i].squelch)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":  chan_width='"+std::to_string(lcl.radios[i].channelWidth)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+": RDF_enabled='"+std::to_string(lcl.radios[i].rdfEnabled)+"'\n";
+                state_str += "  Radio "+std::to_string(i)+":     publish='"+std::to_string(lcl.radios[i].publish)+"'\n";
             }
         }
         
@@ -90,22 +88,20 @@ void debug_out_internal_state() {
                 state_str += rmt_prefix + "lastNotify="+lastNotify_str_f+"\n";
             
                 state_str += rmt_prefix + std::to_string(rmt.radios.size()) + " radios registered\n";
-                if (!rmt.radios.empty()) {
-                    for (unsigned long int i=0; i<rmt.radios.size(); i++) {
-                        state_str += "  Radio "+std::to_string(i)+":   frequency='"+rmt.radios[i].frequency+"'\n";
-                        state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+rmt.radios[i].dialedFRQ+"'\n";
-                        //state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(rmt.radios[i].power_btn)+"'\n";
-                        //state_str += "  Radio "+std::to_string(i)+":       volts='"+std::to_string(rmt.radios[i].volts)+"'\n";
-                        //state_str += "  Radio "+std::to_string(i)+": serviceable='"+std::to_string(rmt.radios[i].serviceable)+"'\n";
-                        state_str += "  Radio "+std::to_string(i)+":    operable='"+std::to_string(rmt.radios[i].operable)+"'\n";
-                        state_str += "  Radio "+std::to_string(i)+":         ptt='"+std::to_string(rmt.radios[i].ptt)+"'\n";
-                        //state_str += "  Radio "+std::to_string(i)+":      volume='"+std::to_string(rmt.radios[i].volume)+"'\n";
-                        state_str += "  Radio "+std::to_string(i)+":         pwr='"+std::to_string(rmt.radios[i].pwr)+"'\n";
-                        state_str += "  Radio "+std::to_string(i)+":    operable='"+std::to_string(rmt.radios[i].operable)+"'\n";
-                        //state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(rmt.radios[i].squelch)+"'\n";
-                        //state_str += "  Radio "+std::to_string(i)+":  chan_width='"+std::to_string(rmt.radios[i].channelWidth)+"'\n";
-                        //state_str += "  Radio "+std::to_string(i)+": RDF_enabled='"+std::to_string(rmt.radios[i].rdfEnabled)+"'\n";
-                    }
+                for (unsigned long int i=0; i<rmt.radios.size(); i++) {
+                    state_str += "  Radio "+std::to_string(i)+":   frequency='"+rmt.radios[i].frequency+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":   dialedFRQ='"+rmt.radios[i].dialedFRQ+"'\n";
+                    //state_str += "  Radio "+std::to_string(i)+":   power_btn='"+std::to_string(rmt.radios[i].power_btn)+"'\n";
+                    //state_str += "  Radio "+std::to_string(i)+":       volts='"+std::to_string(rmt.radios[i].volts)+"'\n";
+                    //state_str += "  Radio "+std::to_string(i)+": serviceable='"+std::to_string(rmt.radios[i].serviceable)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":    operable='"+std::to_string(rmt.radios[i].operable)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":         ptt='"+std::to_string(rmt.radios[i].ptt)+"'\n";
+                    //state_str += "  Radio "+std::to_string(i)+":      volume='"+std::to_string(rmt.radios[i].volume)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":         pwr='"+std::to_string(rmt.radios[i].pwr)+"'\n";
+                    state_str += "  Radio "+std::to_string(i)+":    operable='"+std::to_string(rmt.radios[i].operable)+"'\n";
+                    //state_str += "  Radio "+std::to_string(i)+":     squelch='"+std::to_string(rmt.radios[i].squelch)+"'\n";
+                    //state_str += "  Radio "+std::to_string(i)+":  chan_width='"+std::to_string(rmt.radios[i].channelWidth)+"'\n";
+                    //state_str += "  Radio "+std::to_string(i)+": RDF_enabled='"+std::to_string(rmt.radios[i].rdfEnabled)+"'\n";
                 }
             }
         }

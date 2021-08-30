@@ -142,22 +142,20 @@ void fgcom_handlePTT() {
         for (const auto &lcl_idty : fgcom_local_client) {
             //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (!lcl.radios.empty()) {
-                for (long unsigned int i=0; i<lcl.radios.size(); i++) {
-                    radio_ptt = lcl.radios[i].ptt_req;
-                    
-                    if (radio_ptt) {
-                        //if (radio_serviceable && radio_switchedOn && radio_powered) {
-                        if ( lcl.radios[i].operable) {
-                            pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active and radio is operable -> open mic");
-                            radio_ptt_result = true;
-                            break; // we only have one output stream, so further search makes no sense
-                        } else {
-                            pluginLog("  COM"+std::to_string(i+1)+" PTT_REQ active but radio not operable!");
-                        }
+            for (long unsigned int i=0; i<lcl.radios.size(); i++) {
+                radio_ptt = lcl.radios[i].ptt_req;
+                
+                if (radio_ptt) {
+                    //if (radio_serviceable && radio_switchedOn && radio_powered) {
+                    if ( lcl.radios[i].operable) {
+                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active and radio is operable -> open mic");
+                        radio_ptt_result = true;
+                        break; // we only have one output stream, so further search makes no sense
                     } else {
-                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ off");
+                        pluginLog("  COM"+std::to_string(i+1)+" PTT_REQ active but radio not operable!");
                     }
+                } else {
+                    pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ off");
                 }
             }
         }
@@ -825,10 +823,8 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         for (const auto &lcl_idty : fgcom_local_client) {
             //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (!lcl.radios.empty()) {
-                for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
-                    if (lcl.radios[radio_id].ptt_req) udp_protocol_ptt_detected = true;
-                }
+            for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                if (lcl.radios[radio_id].ptt_req) udp_protocol_ptt_detected = true;
             }
         }
         
@@ -838,34 +834,32 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         for (const auto &lcl_idty : fgcom_local_client) {
             int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (!lcl.radios.empty()) {
-                for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
-                    bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
-                    auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
-                    bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
-                    pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
-                    pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
-                    pluginDbg("     radio_mapmumbleptt="+std::to_string(radio_mapmumbleptt));
-                    for (const auto& cv : fgcom_cfg.mapMumblePTT) {
-                        pluginDbg("    mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
-                    }
-                    
-                    bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
-                    bool newValue = false;
-                    pluginDbg("                old_ptt="+std::to_string(oldValue));
-                    pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
-                    if ( radio_ptt_req || (!udp_protocol_ptt_detected && radio_mapmumbleptt) ) {
-                        // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
-                        newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
-                    }
-                    pluginDbg("                new_ptt="+std::to_string(lcl.radios[radio_id].ptt));
-                    
-                    // broadcast changed PTT state to clients
-                    fgcom_local_client[iid].radios[radio_id].ptt = newValue;
-                    if (oldValue != newValue) {
-                        pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
-                        notifyRemotes(iid, NTFY_COM, radio_id);
-                    }
+            for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
+                auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
+                bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
+                pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
+                pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
+                pluginDbg("     radio_mapmumbleptt="+std::to_string(radio_mapmumbleptt));
+                for (const auto& cv : fgcom_cfg.mapMumblePTT) {
+                    pluginDbg("    mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
+                }
+                
+                bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
+                bool newValue = false;
+                pluginDbg("                old_ptt="+std::to_string(oldValue));
+                pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
+                if ( radio_ptt_req || (!udp_protocol_ptt_detected && radio_mapmumbleptt) ) {
+                    // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
+                    newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
+                }
+                pluginDbg("                new_ptt="+std::to_string(lcl.radios[radio_id].ptt));
+                
+                // broadcast changed PTT state to clients
+                fgcom_local_client[iid].radios[radio_id].ptt = newValue;
+                if (oldValue != newValue) {
+                    pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
+                    notifyRemotes(iid, NTFY_COM, radio_id);
                 }
             }
         }
