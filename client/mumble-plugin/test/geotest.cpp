@@ -92,9 +92,9 @@ int main (int argc, char **argv)
         // Radio frequency model range test
         std::unique_ptr<FGCom_radiowaveModel> radio_model = FGCom_radiowaveModel::selectModel(std::string(argv[7]));
         printf("  conducting radio range test for model '%s':\n", radio_model->getType().c_str());
-        for (int pwr=0; pwr<=30; true) {
+        for (int pwr=0; pwr<=30;) {
             struct fgcom_radiowave_signal sigStrengthAB = radio_model->getSignal(lat1, lon1, h1, lat2, lon2, h2, pwr);
-            struct fgcom_radiowave_signal sigStrengthBA = radio_model->getSignal(lat2, lon2, h2, lat1, lon1, h1, pwr);
+            //struct fgcom_radiowave_signal sigStrengthBA = radio_model->getSignal(lat2, lon2, h2, lat1, lon1, h1, pwr);
             printf("    signal posA->posB @%iw = %.0f%% \n", pwr, sigStrengthAB.quality*100);
             // its the same (it should at least) printf("  VHF signal posB->posA @%iw = %.0f% \n", pwr, sigStrengthBA.quality*100);
             if      (pwr <  5) { pwr++; }
