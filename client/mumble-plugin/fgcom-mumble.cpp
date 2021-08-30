@@ -142,7 +142,7 @@ void fgcom_handlePTT() {
         for (const auto &lcl_idty : fgcom_local_client) {
             //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (lcl.radios.size() > 0) {
+            if (!lcl.radios.empty()) {
                 for (long unsigned int i=0; i<lcl.radios.size(); i++) {
                     radio_ptt = lcl.radios[i].ptt_req;
                     
@@ -206,12 +206,12 @@ void fgcom_updateClientComment() {
 
         // Add Identity and frequency information
         fgcom_localcfg_mtx.lock();
-        if (fgcom_local_client.size() > 0) {
+        if (!fgcom_local_client.empty()) {
             for (const auto &idty : fgcom_local_client) {
                 //int iid          = idty.first;
                 fgcom_client lcl = idty.second;
                 std::string frqs;
-                if (lcl.radios.size() > 0) {
+                if (!lcl.radios.empty()) {
                     for (long unsigned int i=0; i<lcl.radios.size(); i++) {
                         if (lcl.radios[i].frequency != "") {
                             if (i >= 1) frqs += ", ";
@@ -463,7 +463,7 @@ mumble_error_t fgcom_initPlugin() {
                     }
                 }
                 
-                if (fgcom_specialChannelID.size() == 0) {
+                if (fgcom_specialChannelID.empty()) {
                     pluginLog("ERROR: FAILED TO RETRIEVE SPECIAL CHANNEL '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.");
                     mumAPI.log(ownPluginID, std::string("Failed to retrieve special channel '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.").c_str());
                 }
@@ -825,7 +825,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         for (const auto &lcl_idty : fgcom_local_client) {
             //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (lcl.radios.size() > 0) {
+            if (!lcl.radios.empty()) {
                 for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
                     if (lcl.radios[radio_id].ptt_req) udp_protocol_ptt_detected = true;
                 }
@@ -838,7 +838,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         for (const auto &lcl_idty : fgcom_local_client) {
             int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (lcl.radios.size() > 0) {
+            if (!lcl.radios.empty()) {
                 for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
                     bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
                     auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
