@@ -73,7 +73,7 @@ void fgcom_gc_clean_lcl() {
     fgcom_localcfg_mtx.unlock();
     
     // update client comment if we removed identities
-    if (staleIIDs.size() > 0) fgcom_updateClientComment();
+    if (!staleIIDs.empty()) fgcom_updateClientComment();
     
 }
 
@@ -109,7 +109,7 @@ void fgcom_gc_clean_rmt() {
         }
         
         // if the remote has no identities left: clear also the remote as such
-        if (fgcom_remote_clients.size() == 0) {
+        if (fgcom_remote_clients.empty()) {
             staleRemoteClients.push_back(clid);
         }
         
