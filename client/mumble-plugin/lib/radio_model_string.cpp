@@ -18,6 +18,7 @@
 #include <cmath>
 #include <regex>
 #include "radio_model.h"
+#include "audio.h"
 
 /**
  * A string based radio model for the FGCom-mumble plugin
@@ -52,7 +53,35 @@ public:
 
     // frequencies match if the string is case-sensitively the same
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
-        return (r1.frequency == r2.frequency)? 1.0 : 0.0 ;
+        if (!r1.operable) return 0.0; // stop if radio is inoperable
+
+        bool isLandline = r1.frequency.substr(0, 5) == "PHONE";
+
+        // If landline: full duplex
+        if (isLandline) return (r1.frequency == r2.frequency)? 1.0 : 0.0 ;
+
+        // if not: treat as half-duplex:
+        return (!r1.ptt && r1.frequency == r2.frequency)? 1.0 : 0.0 ;
     }
-    
+
+
+    /*
+     * Process audio samples
+     */
+    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+        /*
+         * Check for landline, otherwise use VHF characteristics (for example to simulate private handheld PMR radio channel names)
+         */
+        if (lclRadio.frequency.substr(0, 5) == "PHONE") {
+            // Telephone characteristics
+            fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
+            fgcom_audio_filter(300, 4000, outputPCM, sampleCount, channelCount, sampleRateHz);
+            fgcom_audio_applyVolume(lclRadio.volume, outputPCM, sampleCount, channelCount);
+
+        } else {
+            // VHF characteristics
+            std::unique_ptr<FGCom_radiowaveModel_VHF> vhf_radio = std::make_unique<FGCom_radiowaveModel_VHF>();
+            vhf_radio->processAudioSamples(lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+        }
+    }
 };

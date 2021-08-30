@@ -21,9 +21,9 @@
 /*
  * Add static noise to the signal
  * 
- * @param float signalQuality 0.0 to 1.0 for signal quality
+ * @param float noiseVolume 0.0 to 1.0 for normalized volume
  */
-void fgcom_audio_addNoise(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
+void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
 
 /*
@@ -42,7 +42,9 @@ void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t chann
 
 /*
  * Apply audio filter
+ * 
+ * If highpass_cutoff / lowpass_cutoff == 0, then the respective filter is skipped
  */
-void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
+void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
 
 #endif
