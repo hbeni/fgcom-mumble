@@ -15,16 +15,16 @@ Just download the latest release from GitHub and use that version instead (you c
 
 Running and usage
 -----------------
-The Applicatin comes as executable JAR-Archive. Just start that in the usual java way (e.g. `java -jar FGCom-mumble-radioGUI-*.jar`).
+The Application comes as executable JAR-Archive. Just start that in the usual java way (e.g. `java -jar FGCom-mumble-radioGUI-*.jar`).
 
 After startup the GUI initializes with a default config (location, radio stack). Adjust that as needed and then hit the "connect" button to actually send data to the mumble plugin.
 
-You can run several instances of the application at once to have different clients connecting to the same mumble plugin.
+You can run several instances of the application at once to have different clients connecting to the same mumble plugin. You can simulate different locations with their own radio stack this way.
 
 
 SimConnect support (MSFS2020)
 -----------------------------
-RadioGUI can connect to a SimConnect compatible simulator like MFSF2020.  
+RadioGUI can connect to a SimConnect compatible simulator like MSFS2020.  
 For doing so, you must enable the connection in the simulator.
 
 - Find the SimConnect.xml in the Microsoft files, usually somewhere here:
@@ -46,11 +46,11 @@ For doing so, you must enable the connection in the simulator.
 ```
 
 Then you can adjust the SimConnect options in RadioGUI's Options-dialog and finally activate it by choosing the respective option from RadioGUI's main menu.  
-Per default, the FGCom-mumble plugin does map mumbles talk activation to COM1-PTT, so you can use mumbles PTT binding to activate COM1 transmissions transparently.
+Per default, the FGCom-mumble plugin does map mumbles talk activation to COM1-PTT, so you can use mumbles native PTT binding to activate COM1 transmissions transparently.
 
 
 Compiling
 -----------------
-A release package can be built from the top-level makefile using `make release-radioGUI` (which invokes the make target `radioGUI` that invokes maven).
+A release package can be built from the top-level makefile using `make release-radioGUI` (which invokes the make target `build-radioGUI` that invokes maven).
 
 The client is written using netbeans, so you may just checkout the netbeans project file and build it with there. However, you should build once with `make radioGUI`, because it will set up the build environment.
