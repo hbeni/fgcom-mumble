@@ -165,7 +165,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
     fgcom_client lcl; // resolved local identity
     if (what != NTFY_ASK) {
         // skip notification attempts if we don't have any local state yet
-        if (fgcom_local_client.size() == 0 ) {
+        if (fgcom_local_client.empty()) {
             pluginDbg("[mum_pluginIO] notifyRemotes(): no local state yet, skipping notifications.");
             return;
         }

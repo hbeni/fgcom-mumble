@@ -27,10 +27,10 @@
 #include "radio_model.h"
 
 // include concrete implementations
-#include "radio_model_string.cpp"
-#include "radio_model_hf.cpp"
 #include "radio_model_vhf.cpp"
+#include "radio_model_hf.cpp"
 #include "radio_model_uhf.cpp"
+#include "radio_model_string.cpp"
 
 
 /*

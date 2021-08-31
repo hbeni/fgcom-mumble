@@ -18,6 +18,7 @@
 #include <cmath>
 #include <regex>
 #include "radio_model.h"
+#include "audio.h"
 
 /**
  * A UHF based radio model for the FGCom-mumble plugin.
@@ -55,6 +56,9 @@ public:
     
     // Frequency match is done with a band method, ie. a match is there if the bands overlap
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
+        if (r1.ptt)       return 0.0; // Half-duplex!
+        if (!r1.operable) return 0.0; // stop if radio is inoperable
+
         // channel definition
         // TODO: Note, i completely made up those numbers. I have no idea of tuning UHF radios.
         float width_kHz = r1.channelWidth;

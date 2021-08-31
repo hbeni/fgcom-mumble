@@ -31,7 +31,6 @@
 #include "io_UDPServer.h"
 #include "io_UDPClient.h"
 #include "radio_model.h"
-#include "audio.h"
 #include "garbage_collector.h"
 
 #include <stdio.h>
@@ -142,22 +141,20 @@ void fgcom_handlePTT() {
         for (const auto &lcl_idty : fgcom_local_client) {
             //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (lcl.radios.size() > 0) {
-                for (long unsigned int i=0; i<lcl.radios.size(); i++) {
-                    radio_ptt = lcl.radios[i].ptt_req;
-                    
-                    if (radio_ptt) {
-                        //if (radio_serviceable && radio_switchedOn && radio_powered) {
-                        if ( lcl.radios[i].operable) {
-                            pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active and radio is operable -> open mic");
-                            radio_ptt_result = true;
-                            break; // we only have one output stream, so further search makes no sense
-                        } else {
-                            pluginLog("  COM"+std::to_string(i+1)+" PTT_REQ active but radio not operable!");
-                        }
+            for (long unsigned int i=0; i<lcl.radios.size(); i++) {
+                radio_ptt = lcl.radios[i].ptt_req;
+                
+                if (radio_ptt) {
+                    //if (radio_serviceable && radio_switchedOn && radio_powered) {
+                    if ( lcl.radios[i].operable) {
+                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active and radio is operable -> open mic");
+                        radio_ptt_result = true;
+                        break; // we only have one output stream, so further search makes no sense
                     } else {
-                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ off");
+                        pluginLog("  COM"+std::to_string(i+1)+" PTT_REQ active but radio not operable!");
                     }
+                } else {
+                    pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ off");
                 }
             }
         }
@@ -206,12 +203,12 @@ void fgcom_updateClientComment() {
 
         // Add Identity and frequency information
         fgcom_localcfg_mtx.lock();
-        if (fgcom_local_client.size() > 0) {
+        if (!fgcom_local_client.empty()) {
             for (const auto &idty : fgcom_local_client) {
                 //int iid          = idty.first;
                 fgcom_client lcl = idty.second;
                 std::string frqs;
-                if (lcl.radios.size() > 0) {
+                if (!lcl.radios.empty()) {
                     for (long unsigned int i=0; i<lcl.radios.size(); i++) {
                         if (lcl.radios[i].frequency != "") {
                             if (i >= 1) frqs += ", ";
@@ -463,7 +460,7 @@ mumble_error_t fgcom_initPlugin() {
                     }
                 }
                 
-                if (fgcom_specialChannelID.size() == 0) {
+                if (fgcom_specialChannelID.empty()) {
                     pluginLog("ERROR: FAILED TO RETRIEVE SPECIAL CHANNEL '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.");
                     mumAPI.log(ownPluginID, std::string("Failed to retrieve special channel '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.").c_str());
                 }
@@ -825,10 +822,8 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         for (const auto &lcl_idty : fgcom_local_client) {
             //int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (lcl.radios.size() > 0) {
-                for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
-                    if (lcl.radios[radio_id].ptt_req) udp_protocol_ptt_detected = true;
-                }
+            for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                if (lcl.radios[radio_id].ptt_req) udp_protocol_ptt_detected = true;
             }
         }
         
@@ -838,34 +833,32 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         for (const auto &lcl_idty : fgcom_local_client) {
             int iid          = lcl_idty.first;
             fgcom_client lcl = lcl_idty.second;
-            if (lcl.radios.size() > 0) {
-                for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
-                    bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
-                    auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
-                    bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
-                    pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
-                    pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
-                    pluginDbg("     radio_mapmumbleptt="+std::to_string(radio_mapmumbleptt));
-                    for (const auto& cv : fgcom_cfg.mapMumblePTT) {
-                        pluginDbg("    mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
-                    }
-                    
-                    bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
-                    bool newValue = false;
-                    pluginDbg("                old_ptt="+std::to_string(oldValue));
-                    pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
-                    if ( radio_ptt_req || (!udp_protocol_ptt_detected && radio_mapmumbleptt) ) {
-                        // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
-                        newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
-                    }
-                    pluginDbg("                new_ptt="+std::to_string(lcl.radios[radio_id].ptt));
-                    
-                    // broadcast changed PTT state to clients
-                    fgcom_local_client[iid].radios[radio_id].ptt = newValue;
-                    if (oldValue != newValue) {
-                        pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
-                        notifyRemotes(iid, NTFY_COM, radio_id);
-                    }
+            for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
+                auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
+                bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
+                pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
+                pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
+                pluginDbg("     radio_mapmumbleptt="+std::to_string(radio_mapmumbleptt));
+                for (const auto& cv : fgcom_cfg.mapMumblePTT) {
+                    pluginDbg("    mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
+                }
+                
+                bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
+                bool newValue = false;
+                pluginDbg("                old_ptt="+std::to_string(oldValue));
+                pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
+                if ( radio_ptt_req || (!udp_protocol_ptt_detected && radio_mapmumbleptt) ) {
+                    // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
+                    newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
+                }
+                pluginDbg("                new_ptt="+std::to_string(lcl.radios[radio_id].ptt));
+                
+                // broadcast changed PTT state to clients
+                fgcom_local_client[iid].radios[radio_id].ptt = newValue;
+                if (oldValue != newValue) {
+                    pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
+                    notifyRemotes(iid, NTFY_COM, radio_id);
                 }
             }
         }
@@ -953,7 +946,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         
         float bestSignalStrength = -1.0; // we want to get the connections signal strength.
         fgcom_radio matchedLocalRadio;
-        bool isLandline = false;
         bool useRawData = false;
         
         // Fetch the remote clients data
@@ -1000,7 +992,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                 // skip check for "empty radios"
                                 if (lcl.radios[lri].frequency == "") continue;
                                 
-                                // calculate frequency match
+                                // Calculate radio type compatibility and basic frequency match.
+                                // (this is expected to return signalMatchFilter==0 when the model is compatible,
+                                //  but no connection can be made based on tuned frequency; including half-duplex checks etc)
                                 float signalMatchFilter;
                                 if (radio_model_lcl->isCompatible(radio_model_rmt.get())) {
                                     signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri], rmt.radios[ri]);
@@ -1010,24 +1004,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     continue;
                                 }
                                 
-                                
-                                /* detect landline/intercom */
-                                if (lcl.radios[lri].frequency.substr(0, 5) == "PHONE"
-                                    && lcl.radios[lri].frequency == rmt.radios[ri].frequency && lcl.radios[lri].operable) {
-                                    pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  PHONE mode detected");
-                                    // Best quality, full-duplex mode
-                                    matchedLocalRadio = lcl.radios[lri];
-                                    bestSignalStrength = 1.0;
-                                    isLandline = true;
-                                    break; // no point in searching more
-                                
-                                
-                                /* normal radio operation */
-                                // (prefixed special frequencies never should be recieved!)
-                                } else if (signalMatchFilter > 0.0 
-                                    && lcl.radios[lri].operable
-                                    && !lcl.radios[lri].ptt   // halfduplex!
-                                    && rmt_frq_p.prefix.length() == 0) {
+                                // See if a signal can be received for this radio pair; and if yes, how good it is.
+                                // (only consider non-prefixed remote radio frequencies, as they are special)
+                                if (signalMatchFilter > 0.0 && rmt_frq_p.prefix.length() == 0) {
                                     pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
                                     // we are listening on that frequency!
                                     // determine signal strenght for this connection
@@ -1124,21 +1103,13 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // we should use the raw audio packets unaffected
             pluginDbg("mumble_onAudioSourceFetched():   connected (use raw data)");
             rv = false;
-            
-        } else if (isLandline) {
-            // we got a landline connection!
-            pluginDbg("mumble_onAudioSourceFetched():   connected (phone)");
-            fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
-            fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
-            
-        } else if (bestSignalStrength > 0.0) { 
+
+        } else if (bestSignalStrength > 0.0) {
             // we got a connection!
-            pluginDbg("mumble_onAudioSourceFetched():   connected, bestSignalStrength="+std::to_string(bestSignalStrength));
-            fgcom_audio_makeMono(outputPCM, sampleCount, channelCount);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_filter(bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
-            if (fgcom_cfg.radioAudioEffects) fgcom_audio_addNoise(bestSignalStrength, outputPCM, sampleCount, channelCount);
-            fgcom_audio_applyVolume(matchedLocalRadio.volume, outputPCM, sampleCount, channelCount);
+            std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(matchedLocalRadio.frequency));
+            pluginDbg("mumble_onAudioSourceFetched():   connected (lcl_type="+radio_model_lcl->getType()+"), bestSignalStrength="+std::to_string(bestSignalStrength));
+            if (fgcom_cfg.radioAudioEffects)
+                radio_model_lcl->processAudioSamples(matchedLocalRadio, bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
             
         } else {
             pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
