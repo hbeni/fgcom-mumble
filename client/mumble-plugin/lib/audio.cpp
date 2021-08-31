@@ -36,25 +36,7 @@
 /**
  * Following functions are called from plugin code
  */
-void fgcom_audio_addNoise(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-
-    // Calculate volume levels:
-    // We want the noise to get louder at bad signal quality and the signal to get weaker.
-    // basicly the signal quality already tells us how the ratio is between signal and noise.
-    float signalVolume;
-    float noiseVolume;
-    float minimumNoiseVolume = 0.05;
-    float maximumNoiseVolume = 0.45;
-    signalVolume = signalQuality;
-    noiseVolume  = pow(0.9 - 0.9*signalQuality, 2) + minimumNoiseVolume;
-    if (noiseVolume > maximumNoiseVolume) noiseVolume = maximumNoiseVolume;
-    
-    // Now tune down the signal according to calculated volume level
-    fgcom_audio_applyVolume(signalVolume, outputPCM, sampleCount, channelCount);
-    
-    // TODO: we may clip some random samples from the signal on low quality
-    
-    // Apply noise to the signal
+void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
     PinkNoise fgcom_PinkSource;
     InitializePinkNoise(&fgcom_PinkSource, 12);     // Init new PinkNoise source with num of rows
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
@@ -94,7 +76,7 @@ void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t chann
 }
 
 
-void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
     
     // Ok, first some assupmtions to save runtime:
     //  - we are assuming a mono stream, ie. all channels contain the same float values already!
@@ -124,32 +106,26 @@ void fgcom_audio_filter(float signalQuality, float *outputPCM, uint32_t sampleCo
     const int fadeOverNumSamples = 1024; // fade changes in parameters over that much samples
     
     // HighPass filter cuts away lower frequency ranges and let higher ones pass
-    // Lower cutoff limit depends on signal quality: the less quality, the more to cut away
-    //   worst is 1000@30% signal; best is 300@1.0
-    int highpass_cutoff = (1-signalQuality) * 1000 + 300;
-    if (highpass_cutoff <  300) highpass_cutoff =  300; // lower ceiling
-    if (highpass_cutoff > 1000) highpass_cutoff = 1000; // upside ceiling
-    std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (fadeOverNumSamples));
-    Dsp::Params f_highpass_p;
-    f_highpass_p[0] = sampleRateHz; // sample rate
-    f_highpass_p[1] = highpass_cutoff; // cutoff frequency
-    f_highpass_p[2] = 2.0; // Q
-    f_highpass->setParams (f_highpass_p);
-    f_highpass->process (sampleCount, audioData);
-    
+    if (highpass_cutoff > 0 ) {
+        std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (fadeOverNumSamples));
+        Dsp::Params f_highpass_p;
+        f_highpass_p[0] = sampleRateHz; // sample rate
+        f_highpass_p[1] = highpass_cutoff; // cutoff frequency
+        f_highpass_p[2] = 2.0; // Q
+        f_highpass->setParams (f_highpass_p);
+        f_highpass->process (sampleCount, audioData);
+    }
+
     // LowPass filter cuts away higher frequency ranges and lets lower ones pass
-    //   worst is 2000@035; best is 4000@0.95
-    int lowpass_cutoff = signalQuality * 4000 + 500;
-    if (lowpass_cutoff < 2000) lowpass_cutoff = 2000; // lower ceiling
-    if (lowpass_cutoff > 4000) lowpass_cutoff = 4000; // upper ceiling
-    std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (fadeOverNumSamples));
-    Dsp::Params f_lowpass_p;
-    f_lowpass_p[0] = sampleRateHz; // sample rate
-    f_lowpass_p[1] = lowpass_cutoff; // cutoff frequency
-    f_lowpass_p[2] = 0.97; // Q
-    f_lowpass->setParams (f_lowpass_p);
-    f_lowpass->process (sampleCount, audioData);
-    
+    if (lowpass_cutoff > 0 ) {
+        std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (fadeOverNumSamples));
+        Dsp::Params f_lowpass_p;
+        f_lowpass_p[0] = sampleRateHz; // sample rate
+        f_lowpass_p[1] = lowpass_cutoff; // cutoff frequency
+        f_lowpass_p[2] = 0.97; // Q
+        f_lowpass->setParams (f_lowpass_p);
+        f_lowpass->process (sampleCount, audioData);
+    }
     
     /*
      * Apply filtered result to all channels (treats audio as mono!)

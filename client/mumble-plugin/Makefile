@@ -64,13 +64,13 @@ libs:  $(lib_OBJS)
 
 # Compile testing tools
 tools: libs
-	$(CC) -o test/geotest lib/radio_model.o test/geotest.cpp $(CFLAGS)
-	$(CC) -o test/frqtest lib/radio_model.o test/frqtest.cpp $(CFLAGS)
+	$(CC) -o test/geotest lib/radio_model.o lib/audio.o test/geotest.cpp $(CFLAGS)
+	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o test/frqtest.cpp $(CFLAGS)
 
 
 # catch2 unit tests linking against main
 test: libs test/catch2/tests-main.o test/catch2/tests-main.o test/catch2/radioModelTest.o
-	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o lib/radio_model.o test/catch2/radioModelTest.o $(CFLAGS) && test/catch2/radioModelTest.catch2
+	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o lib/radio_model.o lib/audio.o test/catch2/radioModelTest.o $(CFLAGS) && test/catch2/radioModelTest.catch2
 # ^ add more
 
 # clean compile results
@@ -93,8 +93,8 @@ all-win: plugin-win64 tools-win64 clean
 # build win64 test tools
 tools-win64: CC=x86_64-w64-mingw32-g++-posix
 tools-win64:
-	$(CC) -o test/geotest.exe lib/radio_model.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
-	$(CC) -o test/frqtest.exe lib/radio_model.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	$(CC) -o test/geotest.exe lib/radio_model.cpp lib/audio.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+	$(CC) -o test/frqtest.exe lib/radio_model.cpp lib/audio.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
 
 # build win64 plugin-dll and openssl
 plugin-win64: openssl-win plugin-win64-only

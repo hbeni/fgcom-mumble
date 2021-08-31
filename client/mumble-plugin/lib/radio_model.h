@@ -157,12 +157,23 @@ public:
     * See how good frequencies of two radios align.
     *
     * This method may call getChannelAlignment() for convinience.
+    * The method should also consider if the r1 radio is operable and also
+    * possible half-duplex modes.
     *
-    * @param  r1 first radio
-    * @param  r2 second radio
+    * @param  r1 first (local) radio
+    * @param  r2 second (remote) radio
     * @return float alignment factor: 0.0=outside band, 1.0=in core region
     */
     virtual float getFrqMatch(fgcom_radio r1, fgcom_radio r2) = 0;
+
+    
+    /*
+     * Apply audio processing to provided samples
+     *
+     * This method processes the samples based on the radio model in use
+     * and considers signal quality etc.
+     */
+    virtual void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) = 0;
 
 
     /********************************************************************/
