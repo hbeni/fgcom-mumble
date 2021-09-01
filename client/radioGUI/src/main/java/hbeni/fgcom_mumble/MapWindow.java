@@ -64,6 +64,15 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
     protected State state;
     public MainWindow mainWindow;
     
+    protected String userAgentString = 
+        java.util.ResourceBundle.getBundle("project").getString("product").replace(" ","_")
+        +"/"+java.util.ResourceBundle.getBundle("project").getString("version")
+        +" "
+        +"JMapViewer/2.14"
+        +" "
+        +"Java/"+System.getProperty("java.version")
+        +" "
+        +" (FGCom RadioGUI project: https://github.com/hbeni/fgcom-mumble/blob/master/client/radioGUI/Readme.RadioGUI.md)";
     
     /**
      * Open MapClick window
@@ -127,7 +136,9 @@ public class MapWindow extends JFrame implements JMapViewerEventListener {
         
         // prepare the tile loaders
         OsmTileLoader osm_loader = new OsmTileLoader(map());
-        osm_loader.headers.put("User-Agent", "FGCom-mumble RadioGUI / "+ System.getProperty("http.agent"));
+        //System.out.println(userAgentString);
+        System.setProperty("http.agent", userAgentString);
+        osm_loader.headers.put("User-Agent", userAgentString);
         osm_loader.headers.put("Referer", "https://github.com/hbeni/fgcom-mumble/blob/master/client/radioGUI/Readme.RadioGUI.md");
         
         JComboBox<TileLoader> tileLoaderSelector;
