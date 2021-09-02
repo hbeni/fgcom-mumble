@@ -18,7 +18,7 @@ var main = func( addon ) {
     var enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
     enabledNode.setAttribute("userarchive", "y");
     if (enabledNode.getValue() == nil) {
-      enabledNode.setBoolValue("1");
+      enabledNode.setBoolValue(1);
     }
     var refreshNode = props.globals.getNode(mySettingsRootPath ~ "/refresh-rate", 1);
     refreshNode.setAttribute("userarchive", "y");
@@ -34,6 +34,16 @@ var main = func( addon ) {
     portNode.setAttribute("userarchive", "y");
     if (portNode.getValue() == nil) {
       portNode.setIntValue("16661");
+    }
+    var audioEffectsEnableNode = props.globals.getNode(mySettingsRootPath ~ "/audio-effects-enabled", 1);
+    audioEffectsEnableNode.setAttribute("userarchive", "y");
+    if (audioEffectsEnableNode.getValue() == nil) {
+      audioEffectsEnableNode.setBoolValue(1);
+    }
+    var audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
+    audioHearAllNode.setAttribute("userarchive", "y");
+    if (audioHearAllNode.getValue() == nil) {
+      audioHearAllNode.setBoolValue(0);
     }
 
     # Init GUI menu entry
