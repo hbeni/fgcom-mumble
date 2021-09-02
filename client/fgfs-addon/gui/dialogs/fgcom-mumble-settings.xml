@@ -41,75 +41,134 @@
 
     <hrule/>
 
-    <checkbox>
+    <text>
         <halign>left</halign>
-        <label>Enable sending data</label>
-        <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/enabled</property>
-    </checkbox>
-
+        <label>Options for sending data to the FGCom-Mumble plugin:</label>
+    </text>
     <group>
         <layout>hbox</layout>
+        <halign>left</halign>
+        <group>
+            <layout>hbox</layout>
+            
+            <default-padding>10</default-padding>
+            <empty><width>6</width><stretch>1</stretch></empty>
+        </group>
+        
+        <group>
+            <layout>vbox</layout>
 
-        <text>
-            <halign>left</halign>
-            <label>Refresh rate (Hz):</label>
-        </text>
+            <checkbox>
+                <halign>left</halign>
+                <label>Enable sending data</label>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/enabled</property>
+            </checkbox>
 
-        <input>
-            <name>refresh-rate</name>
-            <height>25</height>
-            <halign>left</halign>
-            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate</property>
-        </input>
-    </group>
+            <group>
+                <layout>hbox</layout>
 
-    <group>
-        <layout>hbox</layout>
+                <text>
+                    <halign>left</halign>
+                    <label>Send rate (Hz):</label>
+                </text>
 
-        <text>
-            <label>Host</label>
-            <halign>left</halign>
-        </text>
+                <input>
+                    <name>refresh-rate</name>
+                    <height>25</height>
+                    <halign>left</halign>
+                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate</property>
+                </input>
+            </group>
 
-        <input>
-            <height>25</height>
-            <halign>left</halign>
-            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/host</property>
-        </input>
+            <group>
+                <layout>hbox</layout>
+
+                <text>
+                    <label>Host/Port:</label>
+                    <halign>left</halign>
+                </text>
+
+                <input>
+                    <height>25</height>
+                    <halign>left</halign>
+                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/host</property>
+                </input>
+                <input>
+                    <height>25</height>
+                    <halign>left</halign>
+                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/port</property>
+                </input>
+            </group>
+        
+            
+        </group>
     </group>
     
+    <hrule/>
+
+    <text>
+        <halign>left</halign>
+        <label>Options for plugin configuration:</label>
+    </text>
     <group>
         <layout>hbox</layout>
+        <halign>left</halign>
+        <group>
+            <layout>hbox</layout>
+            
+            <default-padding>10</default-padding>
+            <empty><width>6</width><stretch>1</stretch></empty>
+        </group>
+        
+        <group>
+            <layout>vbox</layout>
 
-        <text>
-            <label>Port</label>
-            <halign>left</halign>
-        </text>
+            <checkbox>
+                <halign>left</halign>
+                <label>Enable audio effects (static noise, ...)</label>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-effects-enabled</property>
+            </checkbox>
 
-        <input>
-            <height>25</height>
-            <halign>left</halign>
-            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/port</property>
-        </input>
+            <checkbox>
+                <halign>left</halign>
+                <label>Enable hearing non-plugin Mumble users</label>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-hear-all</property>
+            </checkbox>
+        </group>
     </group>
     
     <hrule/>
     
+    <text>
+        <halign>left</halign>
+        <label>Miscellaneous:</label>
+    </text>
     <group>
         <layout>hbox</layout>
+        <halign>left</halign>
+        <group>
+            <layout>hbox</layout>
+            
+            <default-padding>10</default-padding>
+            <empty><width>6</width><stretch>1</stretch></empty>
+        </group>
+        
+        <group>
+            <layout>hbox</layout>
 
-        <button>
-            <legend>Open COMBar</legend>
-            <pref-width>180</pref-width>
-            <pref-height>30</pref-height>
-            <binding>
-                <command>nasal</command>
-                <script>FGComMumble_combar.combar.show();</script>
-            </binding>
-            <binding>
-                <command>dialog-close</command>
-            </binding>
-        </button>
+            <button>
+                <legend>Open COMBar</legend>
+                <pref-width>180</pref-width>
+                <pref-height>30</pref-height>
+                <binding>
+                    <command>nasal</command>
+                    <script>FGComMumble_combar.combar.show();</script>
+                </binding>
+                <binding>
+                    <command>dialog-close</command>
+                </binding>
+            </button>
+        </group>
     </group>
     
     <hrule/>
@@ -126,6 +185,15 @@
             </binding>
             <binding>
                 <command>dialog-close</command>
+            </binding>
+        </button>
+
+        <button>
+            <legend>Apply</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>dialog-apply</command>
             </binding>
         </button>
 

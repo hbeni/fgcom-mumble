@@ -302,6 +302,24 @@
     <node>/sim/multiplay/callsign</node>
    </chunk>
 
+
+   <!--  #########################  -->
+   <!--  #         OPTIONS       #  -->
+   <!--  #########################  -->
+   <chunk>
+    <name>audio-effects-enabled</name>
+    <type>bool</type>
+    <format>AUDIO_FX_RADIO=%d</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-effects-enabled</node>
+   </chunk>
+   <chunk>
+    <name>audio-hear-all</name>
+    <type>bool</type>
+    <format>AUDIO_HEAR_ALL=%d</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-hear-all</node>
+   </chunk>
+
+
   </output>
 
 
