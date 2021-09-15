@@ -58,7 +58,7 @@ Shared data interface
 ---------------------
 The shared data interface is currently a simple file containing json records. The bot and the webpage must be pointed to the same file. The bot is the data povider, the webpage the consumer.
 
-The default path is `/tmp/fgcom-web.db` so the database lives in memory and usually won't survive a reboot. You probably want to change that in the statusbot and statuspage configs in order to get persistance, especially for the highscore.
+The default path is `/tmp/fgcom-web.db` so the database lives in memory and usually won't survive a reboot. You probably want to change that in the statusbot and statuspage configs in order to get persistence, especially for the highscore.
 
 
 ### Schema description
