@@ -154,7 +154,7 @@ plugin-win-dllresource:
 plugin-macOS: CC=g++-11
 plugin-macOS: outname=fgcom-mumble-macOS.bundle
 plugin-macOS:
-	make CC=$(CC) outname=$(outname) CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
+	make CC=$(CC) outname=$(outname) CFLAGS+="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
 
 # OpenSSL (static build)
 # The sources are located under lib/openssl as git submodule, and supposed to point to the latest stable head
