@@ -32,11 +32,11 @@ jobs:
 
     - name: Build and run CATCH2 tests
       run: |
-        make -C client/mumble-plugin/ CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" test
+        make -C client/mumble-plugin/ CC=g++-11 CFLAGS+="-I/usr/local/opt/openssl@1.1/include/ -L/usr/local/opt/openssl@1.1/lib/" test
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ plugin-macOS
+        make -C client/mumble-plugin/ CFLAGS+="-I/usr/local/opt/openssl@1.1/include/ -L/usr/local/opt/openssl@1.1/lib/" plugin-macOS
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
@@ -124,11 +124,11 @@ jobs:
 
     - name: Build and run CATCH2 tests
       run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" test
+        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++-11 CFLAGS+="-I/usr/local/opt/openssl@1.1/include/ -L/usr/local/opt/openssl@1.1/lib/" test
 
     - name: Build Plugin
       run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" plugin-macOS
+        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CFLAGS+="-I/usr/local/opt/openssl@1.1/include/ -L/usr/local/opt/openssl@1.1/lib/" plugin-macOS
 
     - name: Upload plugin
       uses: actions/upload-artifact@v2
