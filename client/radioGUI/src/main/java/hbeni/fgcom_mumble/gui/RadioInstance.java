@@ -64,7 +64,7 @@ public class RadioInstance extends javax.swing.JInternalFrame {
     }
     
     public void updateONOFFTooltip() {
-        String genericTooltipText = "Switch on (pressed) or off (depressed)."+System.lineSeparator();
+        String genericTooltipText = "Switch ON (depressed) or OFF (sticking out)."+System.lineSeparator();
         if (jToggleButton_ONOFF.isSelected()) {
             jToggleButton_ONOFF.setToolTipText(genericTooltipText+"(Radio is currently turned ON)");
         } else {
