@@ -158,18 +158,25 @@ void fgcom_getLatestReleaseFromGithub_Web() {
 #else
     httplib::Client cli(host.c_str());
 #endif
+    std::string user_agent("FGCom-mumble/"
+                +std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)
+                +" plugin-release-checker");
     httplib::Headers headers = {
-        { "User-Agent", "hbeni/fgcom-mumble:release-checker" }
+        { "User-Agent",      user_agent },
+        { "Accept",          "*/*"},
+        { "Accept-Encoding", "identity"},
+        { "Connection",      "Keep-Alive"}
     };
 
-    pluginLog("[UPDATER] fetching update information from: "+url);
+    pluginLog("[UPDATER] fetching update information from: '"+url+"'");
+    pluginDbg("[UPDATER] user_agent="+user_agent);
     if (auto res = cli.Get(path.c_str(), headers)) {
         pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res->status));
         if (res->status == 200) {
             //std::cout << res->body << std::endl;
             
             // parse tag name from HTML body
-            std::regex regex_tag (path+"/tag/(.+?)\">");
+            std::regex regex_tag (path+"/tag/([-_.0-9a-zA-Z]+?)[^-_.0-9a-zA-Z]");
             std::smatch sm;
             if (std::regex_search(res->body, sm, regex_tag)) {
                 std::string tag_name = sm[1];
@@ -180,7 +187,7 @@ void fgcom_getLatestReleaseFromGithub_Web() {
                 //https://raw.githubusercontent.com/hbeni/fgcom-mumble/v.0.14.0/client/mumble-plugin/fgcom-mumble.h
                 //https://github.com/hbeni/fgcom-mumble/blob/v.0.14.0/client/mumble-plugin/fgcom-mumble.h
                 std::string header_url(scheme + host + "/" + proj + "/blob/" + tag_name + "/client/mumble-plugin/fgcom-mumble.h");
-                pluginDbg("[UPDATER] fetching version information from: "+header_url);
+                pluginDbg("[UPDATER] fetching version information from: '"+header_url+"'");
                 if (auto res_hdr = cli.Get(header_url.c_str(), headers)) {
                     pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res_hdr->status));
                     if (res_hdr->status == 200) {
