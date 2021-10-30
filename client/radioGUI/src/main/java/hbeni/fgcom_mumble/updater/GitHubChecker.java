@@ -71,7 +71,7 @@ public class GitHubChecker extends Updater {
         while ((inputLine = br.readLine()) != null) {
             //System.out.println(inputLine);
             
-            Pattern pattern = Pattern.compile("<a href=\".+/releases/tag/(.+?)\">.+?</a>");
+            Pattern pattern = Pattern.compile("<a href=\".+/releases/tag/([-_.0-9a-zA-Z]+?)[^-_.0-9a-zA-Z]");
             Matcher matcher = pattern.matcher(inputLine);
             while (matcher.find()) {
                 //System.out.println("DBG: FOUND TAG: "+matcher.group(1));
