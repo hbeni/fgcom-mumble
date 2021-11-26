@@ -97,6 +97,7 @@ void fgcom_log_openFile() {
 
         std::string ores(!fgcom_logfile_outfh.good()? "failed" : "success");
         pLog(std::cout)           << "[LOG] Logfile opening: " << fgcom_cfg.logfile << "; result=" << ores << std::endl;
+        pLog(fgcom_logfile_outfh) << "[LOG] FGCom-mumble plugin version: "<<FGCOM_VERSION_MAJOR<<"."<<FGCOM_VERSION_MINOR<<"."<<FGCOM_VERSION_PATCH<<"."<<std::endl;
         pLog(fgcom_logfile_outfh) << "[LOG] Logfile opening: " << fgcom_cfg.logfile << "; result=" << ores << std::endl;
     }
 
