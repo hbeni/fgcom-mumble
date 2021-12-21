@@ -29,6 +29,14 @@ body div.footer {
     border-top: 1px solid black;
 }
 
+/* Flexible wrapping of elements for responsive design on smaller screens */
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+.flex > * {
+    flex: 1 1 250px;
+}
 
 /* Page title */
 .title {
