@@ -41,11 +41,12 @@
             
         <div class="body">
         
-        %map%
+            %map%
     
-        %users%
-        
-        %bots%
+            <div class="flex">
+                %users%
+                %bots%
+            </div>
         
         </div>
         
