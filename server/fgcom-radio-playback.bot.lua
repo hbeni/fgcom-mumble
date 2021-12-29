@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.6.1"
+fgcom.botversion = "1.6.2"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -115,12 +115,12 @@ local sampleType = "FGCS"
 
 if sample:match(".+[.]ogg") then
     local checkParamsMap = {}  --map params to values for mandatory-check
-        checkParamsMap["--frq"]      = overwriteHeader.frequency
-        checkParamsMap["--callsign"] = overwriteHeader.callsign
-        checkParamsMap["--lat"]      = overwriteHeader.lat
-        checkParamsMap["--lon"]      = overwriteHeader.lon
-        checkParamsMap["--hgt"]      = overwriteHeader.height
-        checkParamsMap["--ttl"]      = overwriteHeader.timetolive
+        checkParamsMap["--frq"]      = overwriteHeader.frequency  or ""
+        checkParamsMap["--callsign"] = overwriteHeader.callsign   or ""
+        checkParamsMap["--lat"]      = overwriteHeader.lat        or ""
+        checkParamsMap["--lon"]      = overwriteHeader.lon        or ""
+        checkParamsMap["--hgt"]      = overwriteHeader.height     or ""
+        checkParamsMap["--ttl"]      = overwriteHeader.timetolive or ""
     for k, v in pairs(checkParamsMap) do
         if not v or v == "" then print("with OGG files, parameter "..k.." is mandatory!") os.exit(1) end
     end
