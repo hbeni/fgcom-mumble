@@ -66,11 +66,21 @@ function Queue:size ()
     return size
 end
 
+-- math average implementation, in case lua runtime does not have one
+if not math.average then
+    math.average = function(arr)
+        local sum = 0
+        for _, x in ipairs(arr) do
+            sum = sum + x
+        end
+        return sum / #(arr)
+    end
+end
 
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.5.0",
+    libversion = "1.6.0",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
