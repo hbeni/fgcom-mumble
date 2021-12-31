@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.8.0"
+fgcom.botversion  = "1.8.1"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -306,56 +306,40 @@ client:hook("OnUserSpeak", function(client, event)
     if remote and matchedRadio and matchedRadio.frequency then
         fgcom.dbg("OnUserSpeak:  radio connected: "..matchedRadio.frequency)
         fgcom.dbg("remote="..tostring(remote))
-        if remote and not remote.record_filename and not remote.record_fh then
-            -- we had no filehandle so far, so we open a new file and write the header
-            remote.record_filename = getFGCSfileName(remote)..".part"
-            fgcom.dbg("OnUserSpeak:  FGCS file '"..remote.record_filename.."' not open, opening...")
-            if remote.record_filename then
-                fgcom.dbg("OnUserSpeak: prepare FGCS header for file '"..remote.record_filename.."'")
-                local ch = client:getChannel(fgcom.channel)
-                ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' started.")
-           
-                local header = {
-                    version      = "1.1 FGCS",
-                    callsign     = remote.callsign,
-                    lat          = remote.lat,
-                    lon          = remote.lon,
-                    height       = remote.alt,
-                    frequency    = remote.record_tgt_frq,
-                    dialedFRQ    = remote.record_tgtChn,
-                    txpower      = matchedRadio.power,
-                    playbacktype = "looped",
-                    timetolive   = ttl,
-                    timestamp    = os.time(),
-                    voicecodec   = event.codec,
-                    samplespeed  = 0.02          -- TODO: fixed for now; we should calulate this (otherwise speech might play too fast/slow), see: https://github.com/bkacjios/lua-mumble/issues/16
-                }
-            
-                -- define current recording limit
-                rlimit = limit -- basic limit from parameters
-                
-                -- Echotest handling: short lived, oneshot sample
-                if remote.record_mode == "ECHOTEST" then
-                    header.callsign     = "ECHO:"..remote.callsign
-                    header.playbacktype = "oneshot"
-                    header.timetolive   = 30
-                    rlimit = 10    -- secs max recording length
-                end
-            
-                remote.record_fh = io.open(remote.record_filename, "wb")
-                if remote.record_fh then
-                    local res = fgcom.io.writeFGCSHeader(remote.record_fh, header)
-                    fgcom.dbg("FGCS header write result '"..remote.record_filename.."': "..tostring(res))
-                    if not res then
-                        io.close(remote.record_fh)
-                        remote.record_fh       = nil
-                        remote.record_filename = ""
-                    end
-                    
-                    remote.record_timeout = os.time()+rlimit -- note when the recording will time out
-                end
-                
+        remote.matchedRadio = matchedRadio
+        remote.record_codec = event.codec
+        
+        -- record timings between voice packets to determine the sampling speed
+        local time  = mumble.getTime()
+        local delay = time - (remote.last_spoke or time)
+        remote.last_spoke = time
+        if delay > 0 then
+            if not remote.record_delay then
+                remote.record_delay = {delay}
+            else
+                remote.record_delay[#(remote.record_delay)+1] = delay
             end
+        end
+        
+        -- define current recording limit
+        local rlimit = limit -- basic limit from parameters
+        
+        -- Echotest handling: short lived, oneshot sample
+        if remote.record_mode == "ECHOTEST" then
+            rlimit = 10    -- secs max recording length
+        end
+           
+           
+        -- if we had no filehandle so far, so we open a new file to append the samples
+        if remote and not remote.record_filename and not remote.record_fh then
+            remote.record_filename = getFGCSfileName(remote)..".part"
+            remote.record_fh       = io.open(remote.record_filename, "wb")
+            if remote.record_fh then
+                remote.record_timeout = os.time()+rlimit -- note when the recording will time out
+            end
+
+            local ch = client:getChannel(fgcom.channel)
+            ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' started.")
         end
     
         if remote.record_filename and remote.record_fh then
@@ -385,18 +369,85 @@ client:hook("OnUserStopSpeaking", function(client, user)
         local rmt_client = fgcom_clients[user:getSession()]
         for iid,remote in pairs(rmt_client) do
             if remote.record_filename and remote.record_fh then
+                -- close file handle with the samples
                 fgcom.dbg("closing recording '"..remote.record_filename.."'")
                 remote.record_fh:flush()
                 io.close(remote.record_fh)
                 remote.record_fh = nil
                 
+                -- generate final target sample file name
                 local record_filename_final = remote.record_filename:gsub("%.part", "")
                 os.remove (record_filename_final) -- remove target file silently, if already there
-                --fgcom.dbg("RENAME: "..remote.record_filename.." -> "..record_filename_final)
-                ren_rc, ren_message = os.rename(remote.record_filename, record_filename_final)
-                remote.record_filename = nil
-                fgcom.log("recording ready: '"..record_filename_final.."'")
+           
+           
+                --
+                -- Prepare and write new header to target file
+                --
+                fgcom.dbg("preparing new FGCS header for '"..record_filename_final.."'")
 
+                -- calculate the packet speed
+                local calculated_packet_speed = 0.02   -- mumbles default setting
+                if #(remote.record_delay) > 0 then
+                    calculated_packet_speed       = math.average(remote.record_delay)
+                    calculated_packet_speed       = math.floor(calculated_packet_speed * 100 + 0.5) / 100   -- round to nearest tenth
+                end
+                fgcom.dbg("calculated packet per audio: "..calculated_packet_speed)
+                remote.record_delay           = nil    -- reset for next recording
+                remote.last_spoke             = nil    -- invlaidate the sampling speed detection timer
+           
+                -- prepare new header
+                remote.record_header = {
+                    version      = "1.1 FGCS",
+                    callsign     = remote.callsign,
+                    lat          = remote.lat,
+                    lon          = remote.lon,
+                    height       = remote.alt,
+                    frequency    = remote.record_tgt_frq,
+                    dialedFRQ    = remote.record_tgtChn,
+                    txpower      = remote.matchedRadio.power,
+                    playbacktype = "looped",
+                    timetolive   = ttl,
+                    timestamp    = os.time(),
+                    voicecodec   = remote.record_codec,
+                    samplespeed  = calculated_packet_speed
+                }
+                
+                -- Echotest handling: short lived, oneshot sample
+                if remote.record_mode == "ECHOTEST" then
+                    remote.record_header.callsign     = "ECHO:"..remote.callsign
+                    remote.record_header.playbacktype = "oneshot"
+                    remote.record_header.timetolive   = 30
+                end
+            
+                -- finally write the header to the start of the final file
+                local tgt_record_fh = io.open(record_filename_final, "wb")
+                if tgt_record_fh then
+                    local res = fgcom.io.writeFGCSHeader(tgt_record_fh, remote.record_header)
+                    fgcom.dbg("FGCS header write result '"..record_filename_final.."': "..tostring(res))
+                    if not res then
+                        io.close(tgt_record_fh)
+                        tgt_record_fh         = nil
+                        record_filename_final = ""
+                    end
+                end
+           
+           
+                -- append recorded samples to final file if header write was successful
+                if tgt_record_fh then
+                    local samples_file_fh = io.open(remote.record_filename, "rb")
+                    local samples         = samples_file_fh:read("*all")
+                    local res             = tgt_record_fh:write(samples)
+                    fgcom.dbg("FGCS samples write result '"..record_filename_final.."': "..tostring(res))
+                    io.close(samples_file_fh)
+                    io.close(tgt_record_fh)
+                end
+           
+                -- remove the temporary samples file
+                os.remove (remote.record_filename)
+                remote.record_filename = nil
+           
+                -- notify user
+                fgcom.log("recording ready: '"..record_filename_final.."'")
                 local ch = client:getChannel(fgcom.channel)
                 ch:message(user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' completed!")
                 
