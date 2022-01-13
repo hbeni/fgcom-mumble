@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.8.0"
+fgcom.botversion = "1.8.1"
 json = require("json")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -66,9 +66,10 @@ if arg[1] then
         print("    --cert=    path to PEM encoded cert         (default="..cert..")")
         print("    --key=     path to the certs key            (default="..key..")")
         print("    --db=      Path to the db                   (default="..db..")")
-        print("    --speed=   update interval in seconds       (default="..speed..")")
+        print("    --speed=   db update interval               (seconds, default="..speed..")")
         print("    --web=     Advertise url in comment         (default=no commercials!)")
         print("    --stats=   append usage stats to this file  (default=no)")
+        print("    --speedst= usage stats update interval      (seconds, default="..speedStats..")")
         print("    --debug    print debug messages             (default=no)")
         print("    --version  print version and exit")
         os.exit(0)
@@ -85,6 +86,7 @@ if arg[1] then
         if k=="key"       then key=v end
         if k=="db"        then db=v end
         if k=="speed"     then speed=v end
+        if k=="speedst"   then speedStats=v end
         if k=="web"       then weburl=v end
         if k=="stats"     then stats=v end
         if opt == "--debug" then fgcom.debugMode = true end
