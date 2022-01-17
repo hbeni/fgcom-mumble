@@ -22,9 +22,9 @@
 #define FGCOM_MUMBLE_H
 
 // Plugin Version
-#define FGCOM_VERSION_MAJOR 0
-#define FGCOM_VERSION_MINOR 15
-#define FGCOM_VERSION_PATCH 2
+#define FGCOM_VERSION_MAJOR 1
+#define FGCOM_VERSION_MINOR 0
+#define FGCOM_VERSION_PATCH 0
 
 /*
  * Is the plugin currently active?

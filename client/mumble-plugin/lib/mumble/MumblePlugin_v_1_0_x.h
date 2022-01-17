@@ -25,6 +25,17 @@
 #endif
 
 
+// Plugin functions version
+#define MUMBLE_PLUGIN_FUNCTIONS_MAJOR_MACRO 1
+#define MUMBLE_PLUGIN_FUNCTIONS_MINOR_MACRO 0
+#define MUMBLE_PLUGIN_FUNCTIONS_PATCH_MACRO 1
+
+const int32_t MUMBLE_PLUGIN_FUNCTIONS_MAJOR            = MUMBLE_PLUGIN_FUNCTIONS_MAJOR_MACRO;
+const int32_t MUMBLE_PLUGIN_FUNCTIONS_MINOR            = MUMBLE_PLUGIN_FUNCTIONS_MINOR_MACRO;
+const int32_t MUMBLE_PLUGIN_FUNCTIONS_PATCH            = MUMBLE_PLUGIN_FUNCTIONS_PATCH_MACRO;
+const mumble_version_t MUMBLE_PLUGIN_FUNCTIONS_VERSION = { MUMBLE_PLUGIN_FUNCTIONS_MAJOR, MUMBLE_PLUGIN_FUNCTIONS_MINOR,
+														   MUMBLE_PLUGIN_FUNCTIONS_PATCH };
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,7 +50,7 @@ extern "C" {
 /// @param id The ID for this plugin. This is the ID Mumble will reference this plugin with
 /// and by which this plugin can identify itself when communicating with Mumble.
 /// @returns The status of the initialization. If everything went fine, return STATUS_OK
-PLUGIN_EXPORT mumble_error_t PLUGIN_CALLING_CONVENTION mumble_init(mumble_plugin_id_t id);
+PLUGIN_EXPORT mumble_error_t PLUGIN_CALLING_CONVENTION mumble_init(uint32_t id);
 
 /// Gets called when unloading the plugin in order to allow it to clean up after itself.
 /// Note that it is still safe to call API functions from within this callback.

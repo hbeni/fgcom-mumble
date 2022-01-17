@@ -9,7 +9,7 @@
     <addon>
         <identifier type="string">org.hallinger.flightgear.FGCom-mumble</identifier>
         <name type="string">FGCom-mumble</name>
-        <version type="string">0.15.0</version>
+        <version type="string">1.0.0</version>
 
         <authors>
             <author>

@@ -1,7 +1,7 @@
 
 # Version ID for generated release bundles
 #   note: set this to the version of the most recent subcomponent
-BUNDLE_VER:=0.15.1
+BUNDLE_VER:=1.0.0
 
 
 # The subpackages versions are sourced from there
