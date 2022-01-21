@@ -128,13 +128,14 @@ For details on how this can be done, look at RadioGUI's readme.
 
 
 ### Flightgear specific
-Just add and activate the [FGFS-addon](client/fgfs-addon/Readme.md) in your launcher.
+Just add and activate the [FGFS-addon](client/fgfs-addon/Readme.md) in your launcher (you can use FGCom-Mumble and the old FGCom in parallel).
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
 After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2). Additional radios can be accessed by adding custom keybinds, or by using the _Combar_.  
 The addon can be configured via a new entry in the *Multiplayer* menu.
 
 Your ADF will recognize transmissions in the kHz range. With enabled _ADF_-mode the indicated bearing is recognized and visible on the instrument. The plane's audio system may also playback the received analog audio signal. This is usually switched at your plane's audio panel.
+
 
 ### ATC-Pie specific
 Since ATC-Pie v1.7.1 FGCom-mumble is supported out of the box.

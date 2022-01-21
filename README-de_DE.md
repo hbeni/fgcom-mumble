@@ -136,7 +136,7 @@ Weitere Details stehen im Readme des RadioGUI.
 
 ### Flightgear spezifisch
 - Füge den ordner `fgfs-addon` aus dem entpackten client-release als Addon im Launcher hinzu.
-- Aktiviere das [FGFS-addon](client/fgfs-addon/Readme.md) in deinem Launcher.
+- Aktiviere das [FGFS-addon](client/fgfs-addon/Readme.md) in deinem Launcher (FGCom-Mumble und das alte FGCom können parallel aktiviert werden).
 - FlightGear sendet dann automatisch die notwendigen Daten an mumble (mit Standardparametern; diese können über das *Mehrspieler*-Menü geändert werden).
 
 Die FGFS-Protokolldefinition unterstützt alte 25kHz- genauso wie neuere 8.3kHz Funkgeräte.
