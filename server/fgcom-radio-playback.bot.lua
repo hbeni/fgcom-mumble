@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.6.2"
+fgcom.botversion = "1.7.0"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -54,6 +54,7 @@ local cert   = "playbot.pem"
 local key    = "playbot.key"
 local sample = ""
 local nodel  = false
+local pause  = "0"
 local pingT  = 10  -- ping time spacing in seconds
 local updateComment_t = 60 --time in seconds to update the comment
 local owntoken = nil
@@ -63,25 +64,27 @@ if arg[1] then
         print(botname..", "..fgcom.getVersion())
         print("usage: "..arg[0].." [opt=val ...]")
         print("  Options:")
-        print("    --host=    host to connect to           (default="..host..")")
-        print("    --port=    port to connect to           (default="..port..")")
-        print("    --channel= channel to join              (default="..fgcom.channel..")")
-        print("    --cert=    path to PEM encoded cert     (default="..cert..")")
-        print("    --key=     path to the certs key        (default="..key..")")
-        print("    --sample=  Path to the FGCS or OGG sample file")
-        print("               If the sample file is an OGG, --lat, --lon, --hgt,")
-        print("               --frq, --callsign and --ttl overrides are mandatory.")
-        print("    --nodel    Don't delete outdated samples from disk")
-        print("    --lat      Latitude override            (default: use FGCS header)")
-        print("    --lon      Longitude override           (default: use FGCS header)")
-        print("    --hgt      Height override              (default: use FGCS header)")
-        print("    --frq      Frequency override           (default: use FGCS header)")
-        print("    --callsign Callsign override            (default: use FGCS header)")
-        print("    --ttl      Time to live (seconds) for OGG playback (default: use FGCS header)")
-        print("               0=persistent sample (played in an endless loop).")
+        print("    --host=     host to connect to           (default="..host..")")
+        print("    --port=     port to connect to           (default="..port..")")
+        print("    --channel=  channel to join              (default="..fgcom.channel..")")
+        print("    --cert=     path to PEM encoded cert     (default="..cert..")")
+        print("    --key=      path to the certs key        (default="..key..")")
+        print("    --sample=   Path to the FGCS or OGG sample file")
+        print("                If the sample file is an OGG, --lat, --lon, --hgt,")
+        print("                --frq, --callsign and --ttl overrides are mandatory.")
+        print("    --nodel     Don't delete outdated samples from disk")
+        print("    --pause=    When looped, add a pause between iterations (default="..pause..")")
+        print("                Either seconds, or '<min>,<max>' for randomisation")
+        print("    --lat=      Latitude override            (default: use FGCS header)")
+        print("    --lon=      Longitude override           (default: use FGCS header)")
+        print("    --hgt=      Height override              (default: use FGCS header)")
+        print("    --frq=      Frequency override           (default: use FGCS header)")
+        print("    --callsign= Callsign override            (default: use FGCS header)")
+        print("    --ttl=      Time to live (seconds) for OGG playback (default: use FGCS header)")
+        print("                0=persistent sample (played in an endless loop).")
         print("    --owntoken= Inform the given sessionID about the generated token")
-        print("    --debug    print debug messages         (default=no)")
-        print("    --version  print version and exit")
+        print("    --debug     print debug messages         (default=no)")
+        print("    --version   print version and exit")
         print("\nNotice that OGG sample implies --nodel.\n(files are never deleted from disk by the bot)")
         os.exit(0)
     end
@@ -95,6 +98,7 @@ if arg[1] then
         if k=="key"    then key=v end
         if k=="sample" then sample=v end
         if opt=="--nodel" then nodel=true end
+        if k=="pause"  then pause=v end
         if k=="lat"    then overwriteHeader.lat=v end
         if k=="lon"    then overwriteHeader.lon=v end
         if k=="hgt"    then overwriteHeader.height=v end
@@ -179,6 +183,27 @@ delSample = function(s)
         os.remove(s)
     end
 end
+
+-- Function to return a pause in seconds from the parameter
+getPause = function(p_opt)
+    local p = tonumber(p_opt)
+    local min,max = p_opt:match('([0-9]+),([0-9]+)')
+    min   = tonumber(min)  max = tonumber(max)
+
+    if min and max then
+        -- random mode
+        if min > max then print("Parameter --pause="..p_opt..": <min> must be less or equal <max>!") os.exit(1) end
+        p = math.random(min, max)
+    end
+    
+    if p==nil then
+        print("Parameter --pause="..p_opt..": invalid syntax") os.exit(1)
+    end
+
+    fgcom.dbg("Loop pause (from param="..p_opt.."): "..p.." seconds")
+    return p
+end
+getPause(pause)   -- silent invocation to check the param
 
 -----------------------------
 --[[      BOT RUNTIME      ]]
@@ -310,6 +335,20 @@ playbackTimer_fgcs_func = function(t)
             -- It was a looped timer: we reread the file to see if its still there,
             -- then check validity and if so, refill the voiceBuffer
             fgcom.dbg("Looped timer: update voice buffer from file")
+            
+            -- See if we need to add a pause
+            local sleep = getPause(pause)
+            if sleep > 0 then
+                --fgcom.dbg("Looped timer: pause for "..sleep.."s")
+                t:stop() -- Stop the loop timer
+                local pauseTimer = mumble.timer()
+                pauseTimer:start(
+                function()
+                    --fgcom.dbg("Looped timer: pause done, restarting playback timer")
+                    t:again()
+                    end
+                , sleep, 0)
+            end
     
             -- Read/update FGCS data file
             local lastHeader_tmp
@@ -394,6 +433,20 @@ playbackTimer_ogg_func = function(t)
     else
         fgcom.dbg(sample..": OGG file still valid for "..timeLeft.."s")
         if not client:isPlaying() then
+            -- See if we need to add a pause
+            local sleep = getPause(pause)
+            if sleep > 0 then
+                --fgcom.dbg("Looped timer: pause for "..sleep.."s")
+                t:stop() -- Stop the loop timer
+                local pauseTimer = mumble.timer()
+                pauseTimer:start(
+                function()
+                    --fgcom.dbg("Looped timer: pause done, restarting playback timer")
+                    t:again()
+                    end
+                , sleep, 0)
+            end
+            
             fgcom.dbg(sample..": starting sample")
             local f=io.open(sample,"r") if f~=nil then  io.close(f) else print("error opening "..sample..": no such file") os.exit(1) end
             client:play(sample)
