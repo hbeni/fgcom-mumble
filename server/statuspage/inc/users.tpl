@@ -4,7 +4,7 @@
         <thead>
             <tr>
                 <th>Callsign</th>
-                <th>Fequencys</th>
+                <th>Frequency</th>
                 <th>Lat/Lon</th>
                 <th>Height</th>
                 <th>Approx.<br>range</th>
