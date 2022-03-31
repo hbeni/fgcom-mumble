@@ -323,7 +323,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         //pluginDbg("[UDP-server] UDP-client start thread check: registeredClientTgtPort="+std::to_string(fgcom_local_client[iid].clientTgtPort)+"; udpClientRunning="+std::to_string(udpClientRunning));
                         if (fgcom_local_client[iid].clientTgtPort > 0 && !udpClientRunning) {
                             pluginDbg("[UDP-server] UDP-client requested: "+std::to_string(fgcom_local_client[iid].clientTgtPort));
-#ifdef NO_UDPCLIENT
+#ifndef NO_UDPCLIENT
                             std::thread udpClientThread(fgcom_spawnUDPClient);
                             udpClientThread.detach();
                             //std::cout << "FGCOM: udp client started; id=" << udpClientThread_id << std::endl;
