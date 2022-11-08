@@ -75,6 +75,9 @@ void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t chann
     }
 }
 
+const int fadeOverNumSamples = 480; // fade changes in parameters over that much samples
+std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (fadeOverNumSamples));
+std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (fadeOverNumSamples));
 
 void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
     
@@ -103,11 +106,8 @@ void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPC
     // Human speak frequencies range roughly from about 300Hz to 5000Hz.
     // Playing with audacitys filter courve effect allows for testing results.
     
-    const int fadeOverNumSamples = 1024; // fade changes in parameters over that much samples
-    
     // HighPass filter cuts away lower frequency ranges and let higher ones pass
     if (highpass_cutoff > 0 ) {
-        std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (fadeOverNumSamples));
         Dsp::Params f_highpass_p;
         f_highpass_p[0] = sampleRateHz; // sample rate
         f_highpass_p[1] = highpass_cutoff; // cutoff frequency
@@ -118,7 +118,6 @@ void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPC
 
     // LowPass filter cuts away higher frequency ranges and lets lower ones pass
     if (lowpass_cutoff > 0 ) {
-        std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (fadeOverNumSamples));
         Dsp::Params f_lowpass_p;
         f_lowpass_p[0] = sampleRateHz; // sample rate
         f_lowpass_p[1] = lowpass_cutoff; // cutoff frequency
