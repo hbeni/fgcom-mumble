@@ -24,7 +24,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@main
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
@@ -39,7 +39,7 @@ jobs:
         make -C client/mumble-plugin/ CFLAGS+="-I/usr/local/opt/openssl@1.1/include/ -L/usr/local/opt/openssl@1.1/lib/" plugin-macOS
 
     - name: Upload plugin
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@main
       with:
         name: macPlugin
         path: client/mumble-plugin/fgcom-mumble-macOS.bundle
@@ -53,7 +53,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@main
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
@@ -66,16 +66,17 @@ jobs:
         git submodule update client/radioGUI/lib/jsimconnect
 
     - name: Setup Java
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@main
       with:
         java-version: '11' # The JDK version to make available on the path.
+        distribution: adopt
 
     - name: Setup C++
       run: |
         sudo apt-get install libssl-dev mingw-w64 mingw-w64-common build-essential
 
     - name: Download mac plugin from job_1
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@main
       with:
         name: macPlugin
 
@@ -96,7 +97,7 @@ jobs:
         echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@main
       with:
         name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}
         path: |
@@ -116,7 +117,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@main
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
@@ -131,7 +132,7 @@ jobs:
         make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CFLAGS+="-I/usr/local/opt/openssl@1.1/include/ -L/usr/local/opt/openssl@1.1/lib/" plugin-macOS
 
     - name: Upload plugin
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@main
       with:
         name: macPlugin-debug
         path: client/mumble-plugin/fgcom-mumble-macOS.bundle
@@ -145,7 +146,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@main
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
@@ -158,16 +159,17 @@ jobs:
         git submodule update client/radioGUI/lib/jsimconnect
 
     - name: Setup Java
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@main
       with:
         java-version: '11' # The JDK version to make available on the path.
+        distribution: adopt
 
     - name: Setup C++
       run: |
         sudo apt-get install libssl-dev mingw-w64 mingw-w64-common build-essential
 
     - name: Download mac plugin from job_1
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@main
       with:
         name: macPlugin-debug
 
@@ -188,7 +190,7 @@ jobs:
         echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@main
       with:
         name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}-debug
         path: |
