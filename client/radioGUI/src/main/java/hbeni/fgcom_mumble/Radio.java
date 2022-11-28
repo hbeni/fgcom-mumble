@@ -5,8 +5,6 @@
  */
 package hbeni.fgcom_mumble;
 
-import jdk.nashorn.internal.runtime.JSType;
-
 /*
 * Simple model of a single radio
 */
