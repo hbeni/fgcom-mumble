@@ -91,6 +91,16 @@ var combar = {
                     print("Addon FGCom-mumble: releasing COM"~ci~" "~b.ptt_prop);
                     setprop(b.ptt_prop, 0);
                 });
+
+                var update_button_timer = maketimer(1, func() {
+                    var radio_operable = getprop(rp~"/operable");
+                    if (radio_operable) {
+                        b.setEnabled(1);
+                    } else {
+                        b.setEnabled(0);
+                    }
+                });
+                update_button_timer.start();
             };
             init_button(button, radio_p, comid);
 
