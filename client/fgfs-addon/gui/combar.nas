@@ -60,8 +60,7 @@ var combar = {
 
 
         # Generate PTT buttons for the configured radios
-        var r_num = 1;
-        foreach (var ridx; keys(FGComMumble_radios.COM_radios)) {
+        foreach (var ridx; sort(keys(FGComMumble_radios.COM_radios), func(a,b) {return a<b?-1:1;})) {
             var r = FGComMumble_radios.COM_radios[ridx];
             if (!r.is_used) {
                 print("Addon FGCom-mumble: combar skipping "~r.root.getPath());
@@ -70,7 +69,7 @@ var combar = {
 
             print("Addon FGCom-mumble: combar adding "~r.root.getPath()~" (COM"~r.fgcomPacketStr.getIndex()~")");
 
-            var newSizeWidth = math.round((r_num)*me.comPTTButton_size[0] + me.comPTTButton_size[0]/4);
+            var newSizeWidth = math.round((ridx)*me.comPTTButton_size[0] + me.comPTTButton_size[0]/4);
             dlgWindow.setSize([newSizeWidth, me.comPTTButton_size[1]+4]);
 
             var button = canvas.gui.widgets.SpringButton.new(root, canvas.style, {})
@@ -100,8 +99,6 @@ var combar = {
             init_button(button, r.root.getPath(), r.fgcomPacketStr.getIndex());
 
             myLayout.addItem(button);
-            
-            r_num = r_num + 1;
         }
 
         me.dialogOpened = 1;
