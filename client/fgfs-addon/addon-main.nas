@@ -12,6 +12,7 @@ var main = func( addon ) {
     var mySettingsRootPath = "/addons/by-id/" ~ myAddonId;
     var protocolInitialized = 0;
     var fgcom_timers = {};
+    var fgcom_listeners = {};
     
     print("Addon FGCom-mumble loading...");
     
@@ -58,7 +59,7 @@ var main = func( addon ) {
 	fgcommand("gui-redraw");
 
     # Start radios logic
-    print("Addon FGCom-mumble loading radios...");
+    print("Addon FGCom-mumble initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
     var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
     FGComMumble_radios.GenericRadio.setOutputRoot(props.globals.getNode(mySettingsRootPath ~ "/output", 1));
@@ -68,12 +69,14 @@ var main = func( addon ) {
     # Load the FGCom-mumble combar
     print("Addon FGCom-mumble loading combar...");
     io.load_nasal(root~"/gui/combar.nas", "FGComMumble_combar");
-    
+
+    # Build the final UDP output string transmitted by the protocol file out of the individual radios udp string
+    var out_prop = props.globals.getNode(mySettingsRootPath ~ "/output/udp",1);
     var update_udp_output = func() {
-      FGComMumble_radios.update_radios();
-      var out_prop = props.globals.getNode(mySettingsRootPath ~ "/output/udp",1);
+#      print("Addon FGCom-mumble   updating final UDP transmit field...");
       var str_v = [];
       foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
+#        print("Addon FGCom-mumble      processing "~r_out.getPath());
         append(str_v, r_out.getValue());
       }
       out_prop.setValue(string.join(",", str_v));
@@ -106,8 +109,15 @@ var main = func( addon ) {
             p.setValue("");
           }
           
-          fgcom_timers.udploop = maketimer(1/refresh, nil, update_udp_output);
-          fgcom_timers.udploop.start();
+          # Register a listener to each initialized radios output node
+          var r_out_l_idx = 0;
+          foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
+#            print("Addon FGCom-mumble    add listener for radio udp_output node (" ~ r_out.getPath() ~")");
+            fgcom_listeners["upd_com_out:"~r_out_l_idx] = setlistener(r_out.getPath(), func { update_udp_output(); }, 0, 0);
+            r_out_l_idx = r_out_l_idx + 1;
+          }
+          
+          update_udp_output();
           
           protocolInitialized = 1;
         }
@@ -123,8 +133,11 @@ var main = func( addon ) {
               })
             );
             
-            foreach (var t; keys(fgcom_timers.timers)) fgcom_timers.timers[t].stop();
-            fgcom_timers.timers = {};
+            foreach (var t; keys(fgcom_timers)) fgcom_timers[t].stop();
+            fgcom_timers = {};
+          
+            foreach (var l; keys(fgcom_listeners)) removelistener(fgcom_listeners[l]);
+            fgcom_listeners = {};
           
             protocolInitialized = 0;
         }
