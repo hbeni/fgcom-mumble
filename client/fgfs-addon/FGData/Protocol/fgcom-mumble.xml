@@ -103,6 +103,13 @@
    <!--  #         OPTIONS       #  -->
    <!--  #########################  -->
    <chunk>
+    <!-- UDP RDF client port overwrite: This is needed, because FGFS currently
+         cannot assign the sending client port, but chooses a random one -->
+    <name>fgcom-udp-client-port</name>
+    <type>string</type>
+    <format>UDP_TGT_PORT=19991</format>
+   </chunk>
+   <chunk>
     <name>audio-effects-enabled</name>
     <type>bool</type>
     <format>AUDIO_FX_RADIO=%d</format>

@@ -228,6 +228,7 @@ var ADF = {
     # This function is designed to be called often (for each packet).
     # It simply memorises the data, which is read by the RDF logic runs at a lower rate.
     set_rdf_data: func(direction, quality) {
+#        debug.dump(["DBG ADF set_rdf_data", [direction, quality]]);
         me.fgcom_rdf_bearing.setValue(direction);
         me.fgcom_rdf_quality.setValue(quality);
     },
@@ -241,6 +242,7 @@ var ADF = {
         if (me.operable.getBoolValue()) {
             var direction = me.fgcom_rdf_bearing.getValue();
             var quality = me.fgcom_rdf_quality.getValue();
+#            debug.dump(["DBG ADF loop", [direction, quality], me.mode.getValue()]);
             if (direction != nil and quality != nil and quality > me.rdf_quality_threshold and me.mode.getValue() == "adf") {
                 # Has signal, and is in the correct mode: animate the needle
                 me.has_rdf_signal = 1;
@@ -266,17 +268,17 @@ var COM_radios = {};
 var ADF_radios = {};
 
 var create_radios = func {
-    var i = 1;
     # Walk all com entries and create instances
+    var i = 1;
     foreach (r; props.globals.getNode("/instrumentation/").getChildren("comm") ) {
         COM_radios[i] = COM.new(r);
-        i = i + 1;
+        if (COM_radios[i].is_used) i = i + 1;
     }
 
     # Walk all ADF entries and create isntances
     foreach (r; props.globals.getNode("/instrumentation/").getChildren("adf") ) {
         ADF_radios[i] = ADF.new(r);
-        i = i + 1;
+        if (ADF_radios[i].is_used) i = i + 1;
     }
 }
 
