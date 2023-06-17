@@ -36,224 +36,20 @@
   <output>
    <line_separator>newline</line_separator>
    <var_separator>,</var_separator>
-
-   <!--  ###############  -->
-   <!--  #    RADIOS   #  -->
-   <!--  ###############  -->
-
-   <!-- COM 1 -->
+   
+   
+   <!--  #####################  -->
+   <!--  #  RADIO DATA  #  -->
+   <!--  #####################  -->
+   <!-- This is dynamically created from the nasal addon code -->
    <chunk>
-    <name>com1-frequency</name>
+    <name>radios_data</name>
     <type>string</type>
-    <format>COM1_FRQ=%s</format>
-    <node>/instrumentation/comm[0]/fgcom-mumble/selected-mhz</node>
+    <format>%s</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/udp</node>
    </chunk>
-   <chunk>
-    <name>com1-channel-width-khz</name>
-    <type>string</type>
-    <format>COM1_CWKHZ=%s</format>
-    <node>/instrumentation/comm[0]/frequencies/selected-channel-width-khz</node>
-   </chunk>
-   <chunk>
-    <name>com1-powerbutton</name>
-    <type>string</type>
-    <format>COM1_PBT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[0]/operable</node>
-    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
-   </chunk>
-   <chunk>
-    <name>com1-ptt</name>
-    <type>string</type>
-    <format>COM1_PTT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[0]/fgcom-mumble/ptt</node>
-   </chunk>
-   <chunk>
-    <name>com1-vol</name>
-    <type>string</type>
-    <format>COM1_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/comm[0]/fgcom-mumble/volume</node>
-   </chunk>
-   <chunk>
-    <name>com1-txpwr</name>
-    <type>string</type>
-    <format>COM1_PWR=%s</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
-    <node>/instrumentation/comm[0]/tx-power</node>
-   </chunk>
-   <chunk>
-    <name>com1-squelch</name>
-    <type>string</type>
-    <format>COM1_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
-    <node>/instrumentation/comm[0]/cutoff-signal-quality</node>
-   </chunk>
-
-   <!-- COM 2 -->
-   <chunk>
-    <name>com2-frequency</name>
-    <type>string</type>
-    <format>COM2_FRQ=%s</format>
-    <node>/instrumentation/comm[1]/fgcom-mumble/selected-mhz</node>
-   </chunk>
-   <chunk>
-    <name>com2-channel-width-khz</name>
-    <type>string</type>
-    <format>COM2_CWKHZ=%s</format>
-    <node>/instrumentation/comm[1]/frequencies/selected-channel-width-khz</node>
-   </chunk>
-   <chunk>
-    <name>com2-powerbutton</name>
-    <type>string</type>
-    <format>COM2_PBT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[1]/operable</node>
-    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
-   </chunk>
-   <chunk>
-    <name>com2-ptt</name>
-    <type>string</type>
-    <format>COM2_PTT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[1]/fgcom-mumble/ptt</node>
-   </chunk>
-   <chunk>
-    <name>com2-vol</name>
-    <type>string</type>
-    <format>COM2_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/comm[1]/fgcom-mumble/volume</node>
-   </chunk>
-   <chunk>
-    <name>com2-txpwr</name>
-    <type>string</type>
-    <format>COM2_PWR=%s</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
-    <node>/instrumentation/comm[1]/tx-power</node>
-   </chunk>
-   <chunk>
-    <name>com2-squelch</name>
-    <type>string</type>
-    <format>COM2_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
-    <node>/instrumentation/comm[1]/cutoff-signal-quality</node>
-   </chunk>
-
-   <!-- COM 3 -->
-   <chunk>
-    <name>com3-frequency</name>
-    <type>string</type>
-    <format>COM3_FRQ=%s</format>
-    <node>/instrumentation/comm[2]/fgcom-mumble/selected-mhz</node>
-   </chunk>
-   <chunk>
-    <name>com3-channel-width-khz</name>
-    <type>string</type>
-    <format>COM3_CWKHZ=%s</format>
-    <node>/instrumentation/comm[2]/frequencies/selected-channel-width-khz</node>
-   </chunk>
-   <chunk>
-    <name>com3-powerbutton</name>
-    <type>string</type>
-    <format>COM3_PBT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[2]/operable</node>
-    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
-   </chunk>
-   <chunk>
-    <name>com3-ptt</name>
-    <type>string</type>
-    <format>COM3_PTT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/comm[2]/fgcom-mumble/ptt</node>
-   </chunk>
-   <chunk>
-    <name>com3-vol</name>
-    <type>string</type>
-    <format>COM3_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/comm[2]/fgcom-mumble/volume</node>
-   </chunk>
-   <chunk>
-    <name>com3-txpwr</name>
-    <type>string</type>
-    <format>COM3_PWR=%s</format> <!-- in watts; Bendix KX165A typical 10w and yields a range of about 50nm@1500ft altitude?? -->
-    <node>/instrumentation/comm[2]/tx-power</node>
-   </chunk>
-   <chunk>
-    <name>com3-squelch</name>
-    <type>string</type>
-    <format>COM3_SQC=%s</format> <!-- 0.0=cutoff nothing, 1.0=cutoff any -->
-    <node>/instrumentation/comm[2]/cutoff-signal-quality</node>
-   </chunk>
-
-   <!-- INFO: add more radios here. The plugin ignores not present radios automatically. -->
-   <!--       Remember that you need to adjust the variables n_COM and COM_offset (and the ADF ones) -->
-   <!--       in radios.nas, and also don't forget to push the following ADF indexes up. -->
-
-
-   <!-- ADF radio / RDF -->
-   <chunk>
-    <!-- UDP RDF client port overwrite: This is needed, because FGFS currently
-         cannot assign the sending client port, but chooses a random one -->
-    <name>fgcom-udp-client-port</name>
-    <type>string</type>
-    <format>UDP_TGT_PORT=19991</format>
-   </chunk>
-
-   <chunk>
-    <name>adf1-local-only</name>
-    <type>string</type>
-    <format>COM4_PUBLISH=%s</format>
-    <node>/instrumentation/adf[0]/fgcom-mumble/publish</node>
-   </chunk>
-   <chunk>
-    <name>adf1-operable</name>
-    <type>string</type>
-    <format>COM4_PBT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/adf[0]/operable</node>
-    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
-   </chunk>
-   <chunk>
-    <name>adf1-volume</name>
-    <type>string</type>
-    <format>COM4_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/adf[0]/fgcom-mumble/volume</node>
-   </chunk>
-   <chunk>
-    <name>adf1-frequency</name>
-    <type>string</type>
-    <format>COM4_FRQ=%s</format>
-    <node>/instrumentation/adf[0]/fgcom-mumble/selected-mhz</node>
-   </chunk>
-   <chunk>
-    <name>adf1-enableRDF</name>
-    <type>string</type>
-    <format>COM4_RDF=%s</format>
-    <node>/instrumentation/adf[0]/fgcom-mumble/rdf-enabled</node>
-   </chunk>
-
-   <chunk>
-    <name>adf2-local-only</name>
-    <type>string</type>
-    <format>COM5_PUBLISH=%s</format>
-    <node>/instrumentation/adf[1]/fgcom-mumble/publish</node>
-   </chunk>
-   <chunk>
-    <name>adf2-operable</name>
-    <type>string</type>
-    <format>COM5_PBT=%s</format> <!-- 0=inactive, 1=active -->
-    <node>/instrumentation/adf[1]/operable</node>
-    <!-- ^^ we use the operable property because it honors all conditions (powered, serviceable, turned on) -->
-   </chunk>
-   <chunk>
-    <name>adf2-volume</name>
-    <type>string</type>
-    <format>COM5_VOL=%s</format> <!-- 0.0=mute, <=1.0 full -->
-    <node>/instrumentation/adf[1]/fgcom-mumble/volume</node>
-   </chunk>
-   <chunk>
-    <name>adf2-frequency</name>
-    <type>string</type>
-    <format>COM5_FRQ=%s</format>
-    <node>/instrumentation/adf[1]/fgcom-mumble/selected-mhz</node>
-   </chunk>
-   <chunk>
-    <name>adf2-enableRDF</name>
-    <type>string</type>
-    <format>COM5_RDF=%s</format>
-    <node>/instrumentation/adf[1]/fgcom-mumble/rdf-enabled</node>
-   </chunk>
-
+   
+   
    <!-- FGCom 3.0 compatibility: /instrumentation/com[n]/ptt is never set from any aircraft except
         c182s or the combar-gui. The old FGCom protocol seems outdated and transmit an old property.
         To get compatibility out-of-the-box, we transmit the FGCom PTT property here.
@@ -307,6 +103,13 @@
    <!--  #         OPTIONS       #  -->
    <!--  #########################  -->
    <chunk>
+    <!-- UDP RDF client port overwrite: This is needed, because FGFS currently
+         cannot assign the sending client port, but chooses a random one -->
+    <name>fgcom-udp-client-port</name>
+    <type>string</type>
+    <format>UDP_TGT_PORT=19991</format>
+   </chunk>
+   <chunk>
     <name>audio-effects-enabled</name>
     <type>bool</type>
     <format>AUDIO_FX_RADIO=%d</format>
@@ -318,8 +121,6 @@
     <format>AUDIO_HEAR_ALL=%d</format>
     <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-hear-all</node>
    </chunk>
-
-
   </output>
 
 

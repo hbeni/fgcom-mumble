@@ -5,15 +5,6 @@
 # @author Colin Geniet, 2021
 
 
-# Number of radios, and their offset in protocol file fgcom-mumble.xml.
-# This needs to be changed according to the protocol file.
-var n_COM      = 3;
-var COM_offset = 1;
-var n_ADF      = 2;
-var ADF_offset = 4;
-
-
-
 # FGCom-mumble nasal radios objects task is to make some minor checks and changes
 # to the properties transmitted to the FGCom-mumble plugin.
 # Notably, they make sure that no value is transmitted for unused radios.
@@ -26,6 +17,15 @@ var GenericRadio = {
         r.init();
         return r;
     },
+
+    # initialized by addon-main.nas after load to specify where the output should go
+    outputRootNode: nil,
+    setOutputRoot: func(p) {
+        GenericRadio.outputRootNode = p;
+    },
+
+    fgcomPacketStr: nil, # node for udp output
+    fields2props: {},    # map packet field names to properties
 
     init: func {
         # Radio frequencies are initialized by C++ code even for aircrafts which do not use the radio.
@@ -40,12 +40,47 @@ var GenericRadio = {
         me.fgcom_root        = me.root.getNode("fgcom-mumble", 1);
         me.fgcom_freq_mhz    = me.fgcom_root.getNode("selected-mhz", 1);
         me.fgcom_vol         = me.fgcom_root.getNode("volume", 1);
+        me.fgcom_pbt         = me.fgcom_root.getNode("operable", 1); me.fgcom_pbt.setBoolValue(1);
         me.fgcom_root.setValue("is-used", me.is_used);
 
         # Hash containing all listeners / timers / aliases, for the destructor.
         me.listeners = {};
         me.timers = {};
         me.aliases = {};
+
+
+        # "operable" is a tied property, so we need a polling mechanism updating it
+        me.timers.operable_poller = maketimer(1.0, me, 
+            func{
+#                print("Addon FGCom-mumble   polling operable: "~me.root.getPath()~"/operable");
+                me.fgcom_pbt.setBoolValue(getprop(me.root.getPath()~"/operable"));
+            }
+        );
+        me.timers.operable_poller.start();
+
+        # Update the udp string once a prop changes;
+        # for this register a new distinct output subnode
+        if (me.is_used) {
+            me.fgcomPacketStr = me.outputRootNode.addChild("COM", 1);
+            print("Addon FGCom-mumble     registered output node as "~me.fgcomPacketStr.getPath());
+            me.fields2props = {
+                # Map the fgcom-mumble protocol fields to properties
+                FRQ:     me.fgcom_root.getPath() ~ "/selected-mhz",
+                CWKHZ:   me.root.getPath()       ~ "/frequencies/selected-channel-width-khz",
+                PBT:     me.fgcom_root.getPath() ~ "/operable",
+                PTT:     me.root.getPath()       ~ "/ptt",
+                VOL:     me.fgcom_root.getPath() ~ "/volume",
+                PWR:     me.root.getPath()       ~ "/tx-power",
+                SQC:     me.root.getPath()       ~ "/cutoff-signal-quality",
+                RDF:     me.fgcom_root.getPath() ~ "/rdf-enabled",
+                PUBLISH: me.fgcom_root.getPath() ~ "/publish",
+            };
+            foreach (var f; keys(me.fields2props)) {
+#                print("Addon FGCom-mumble     add listener for " ~ f ~ " ("~me.fields2props[f]~")");
+                me.listeners["upd_udp_field:"~f] = setlistener(me.fields2props[f], func { me.updatePacketString(); }, 0, 0);
+            }
+            me.updatePacketString();
+        }
     },
 
     del: func {
@@ -55,6 +90,27 @@ var GenericRadio = {
         me.listeners = {};
         me.timers = {};
         me.aliases = {};
+        fgcomPacketStr.setValue("");
+    },
+
+    updatePacketString: func {
+        # Generates the FGCom-mumble udp packet string for this radio
+        if (me.fgcomPacketStr == nil) return;
+
+        # stringify the props, fields are only added if the prop exists
+        var fields = [];
+        foreach (var f; keys(me.fields2props)) {
+            var propval = getprop(me.fields2props[f]);
+            if (substr(sprintf("%s",propval), -3) == "999") {
+                # because of float type characteristics, sometimes values are returned like "127.549999999", and rounding fixes that
+                propval = sprintf("%.4f", propval);
+            }
+
+#            print("Addon FGCom-mumble     generate udp packet field: "~f~ " ("~(propval != nil? propval:"<nil>")~")");
+            if (propval != nil) append(fields, "COM" ~ me.fgcomPacketStr.getIndex() ~ "_" ~ f ~ "=" ~ propval);
+        }
+
+        me.fgcomPacketStr.setValue(string.join(",", fields));
     },
 };
 
@@ -68,21 +124,21 @@ var COM = {
     init: func {
         me.vol       = me.root.getNode("volume", 1);
         me.freq_mhz  = me.root.getNode("frequencies/selected-mhz", 1);
-        me.ptt       = me.root.getNode("ptt", 1);
-        me.fgcom_ptt = me.fgcom_root.getNode("ptt", 1);
 
         # Only initialize properties if the radio is used.
         if (me.is_used) {
-            # Volume/frequency/ptt are transmitted as is if the radio is used, so simply alias the properties.
-            me.fgcom_vol.alias(me.vol);
-            me.fgcom_freq_mhz.alias(me.freq_mhz);
-            me.fgcom_ptt.alias(me.ptt);
-
-            # Aliased properties are memorized for the destructor.
-            me.aliases.fgcom_vol = me.fgcom_vol;
-            me.aliases.fgcom_freq_mhz = me.fgcom_vol;
-            me.aliases.fgcom_ptt = me.fgcom_vol;
+            me.listeners.frq = setlistener(me.freq_mhz.getPath(), func { me.recalcFrequency(); }, 1, 0);
+            me.listeners.vol = setlistener(me.vol.getPath(), func { me.recalcVolume(); }, 1, 0);
         }
+    },
+
+    recalcVolume: func {
+        me.fgcom_vol.setValue(me.vol.getValue());
+    },
+
+    recalcFrequency: func {
+        var f = me.freq_mhz.getValue();
+        me.fgcom_freq_mhz.setValue(f);
     },
 };
 
@@ -98,6 +154,7 @@ var ADF = {
 
     new: func(root) {
         var r = { parents: [ADF, GenericRadio.new(root)], };
+        r.udp_prefix = "ADF" ~ (root.getIndex() + 1);
         r.init();
         return r;
     },
@@ -171,6 +228,7 @@ var ADF = {
     # This function is designed to be called often (for each packet).
     # It simply memorises the data, which is read by the RDF logic runs at a lower rate.
     set_rdf_data: func(direction, quality) {
+#        debug.dump(["DBG ADF set_rdf_data", [direction, quality]]);
         me.fgcom_rdf_bearing.setValue(direction);
         me.fgcom_rdf_quality.setValue(quality);
     },
@@ -184,6 +242,7 @@ var ADF = {
         if (me.operable.getBoolValue()) {
             var direction = me.fgcom_rdf_bearing.getValue();
             var quality = me.fgcom_rdf_quality.getValue();
+#            debug.dump(["DBG ADF loop", [direction, quality], me.mode.getValue()]);
             if (direction != nil and quality != nil and quality > me.rdf_quality_threshold and me.mode.getValue() == "adf") {
                 # Has signal, and is in the correct mode: animate the needle
                 me.has_rdf_signal = 1;
@@ -209,21 +268,38 @@ var COM_radios = {};
 var ADF_radios = {};
 
 var create_radios = func {
-    for (var i=0; i<n_COM; i+=1) {
-        if (contains(COM_radios, i+COM_offset)) continue;
-        COM_radios[i+COM_offset] = COM.new(props.globals.getNode("instrumentation/comm["~i~"]", 1));
+    # Walk all com entries and create instances
+    var i = 1;
+    foreach (r; props.globals.getNode("/instrumentation/").getChildren("comm") ) {
+        COM_radios[i] = COM.new(r);
+        if (COM_radios[i].is_used) i = i + 1;
     }
-    for (var i=0; i<n_ADF; i+=1) {
-        if (contains(ADF_radios, i+ADF_offset)) continue;
-        ADF_radios[i+ADF_offset] = ADF.new(props.globals.getNode("instrumentation/adf["~i~"]", 1));
+
+    # Walk all ADF entries and create isntances
+    foreach (r; props.globals.getNode("/instrumentation/").getChildren("adf") ) {
+        ADF_radios[i] = ADF.new(r);
+        if (ADF_radios[i].is_used) i = i + 1;
     }
 }
+
+var update_radios = func {
+    foreach (var i; keys(COM_radios)) COM_radios[i].updatePacketString();
+    foreach (var i; keys(ADF_radios)) ADF_radios[i].updatePacketString();
+}
+
 
 var destroy_radios = func {
     foreach (var i; keys(COM_radios)) COM_radios[i].del();
     foreach (var i; keys(ADF_radios)) ADF_radios[i].del();
     COM_radios = {};
     ADF_radios = {};
+}
+
+var get_radios = func {
+    var r = [];
+    foreach (var i; keys(COM_radios)) append(r, COM_radios[i]);
+    foreach (var i; keys(ADF_radios)) append(r, ADF_radios[i]);
+    return r;
 }
 
 
@@ -244,16 +320,20 @@ var rdf_data_callback = func {
     var radio     = fgcom_rdf_input_radio.getValue();
     var direction = fgcom_rdf_input_direction.getValue();
     var quality   = fgcom_rdf_input_quality.getValue();
+#    debug.dump(["DBG ADF rdf_data_callback", [radio, direction, quality]]);
 
     if (radio == "" or direction == "" or quality == "") return; # No data
 
     # Read input data
-    # Format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1"
+    # Format is this: "RDF:CS_TX=NDB:TEST,FRQ=0.342,DIR=11.567468,VRT=2.299456,QLY=0.999998,ID_RX=3"
+    # (ID_RX is the radio index in the mumble plugin)
     var radio     = num(split("=", radio)[1]);
     var direction = split("=", direction)[1];
     var quality   = split("=", quality)[1];
 
     # Send to corresponding ADF
+#    debug.dump(["DBG ADF rdf_data_callback", [radio, ADF_radios]]);
+#    debug.dump(["DBG ADF rdf_data_callback", [radio, ["used", ADF_radios[radio].is_used]]]);
     if (radio != nil and contains(ADF_radios, radio) and ADF_radios[radio].is_used) {
         # Found corresponding ADF radio, send the signal to it.
         ADF_radios[radio].set_rdf_data(direction, quality);
