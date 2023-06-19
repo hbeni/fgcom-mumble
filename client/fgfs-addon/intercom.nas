@@ -183,9 +183,13 @@ var IntercomSystem = {
     # returns nil if not connected,
     # otherwise sorted vector of pilot and copilot callsigns
     getPilotCopilotConnection: func() {
-        var r = nil;
-        if (me.root.getValue("dbg_conncection")) return split(",", me.root.getValue("dbg_conncection")); # DEBUG CODE: TODO REMOVE ME
-        return r;
+        var remote_callsign = sprintf("%s", getprop("/sim/remote/pilot-callsign"));
+        var local_callsign  = sprintf("%s", getprop("/sim/multiplay/callsign"));
+        if (local_callsign and remote_callsign) {
+            return sort([local_callsign,remote_callsign], func(a,b) cmp(a,b));
+        } else {
+            return nil;
+        }
     }
 };
 
