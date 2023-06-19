@@ -103,7 +103,7 @@ var IntercomDevice = {
         var fields = [];
         var comidx = me.fgcomPacketStr.getIndex();
         if (me.root.getValue("is-used") and me.isConnected) {
-            print("Addon FGCom-mumble      processing IC "~me.root.getPath());
+#            print("Addon FGCom-mumble      processing IC "~me.root.getPath());
             
             append(fields, "COM" ~ comidx ~ "_FRQ="~me.getFQChannelName());
             append(fields, "COM" ~ comidx ~ "_PTT="~me.root.getValue("ptt"));
@@ -111,7 +111,7 @@ var IntercomDevice = {
             append(fields, "COM" ~ comidx ~ "_PBT="~me.root.getValue("operable"));
             
         } else {
-            print("Addon FGCom-mumble      skipping IC "~me.root.getPath());
+#            print("Addon FGCom-mumble      skipping IC "~me.root.getPath());
         }
         
         me.fgcomPacketStr.setValue(string.join(",", fields));
@@ -139,8 +139,6 @@ var IntercomSystem = {
         # If so, establish the channel and COM device settings
         me.timers.copilotWatchdog = maketimer(1, me, me.copilotWatchdog);
         me.timers.copilotWatchdog.start();
-        
-        me.root.setValue("dbg_conncection", "");  # DEBUG CODE: TODO REMOVE ME
     },
     
     del: func {
