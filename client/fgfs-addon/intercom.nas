@@ -120,6 +120,8 @@ var IntercomDevice = {
 
 
 var IntercomSystem = {
+    copilotWatchdog_checkIntervall: 5,  # how often should we check for a new connection? (in secs)
+    
     # Parameter: root: the intercom system property root tree, as a property node.
     new: func(root) {
         var r = { parents: [IntercomSystem], root: root, };
@@ -137,7 +139,7 @@ var IntercomSystem = {
         
         # Add a watchdog that periodically checks if we are connected in the copilot module.
         # If so, establish the channel and COM device settings
-        me.timers.copilotWatchdog = maketimer(1, me, me.copilotWatchdog);
+        me.timers.copilotWatchdog = maketimer(me.copilotWatchdog_checkIntervall, me, me.copilotWatchdog);
         me.timers.copilotWatchdog.start();
     },
     
