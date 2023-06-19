@@ -77,15 +77,37 @@ var main = func( addon ) {
     io.load_nasal(root~"/gui/combar.nas", "FGComMumble_combar");
 
     # Build the final UDP output string transmitted by the protocol file out of the individual radios udp string
-    var out_prop = props.globals.getNode(mySettingsRootPath ~ "/output/udp",1);
+    # (note: the generic protocl handler can only process ~256 chars; to prevent truncation,
+    #        we need to multiplex into several chunks. The plugin currently supports MAXLINE=1024 chars)
+    var out_prop = [
+      props.globals.getNode(mySettingsRootPath ~ "/output/udp[0]",1),
+      props.globals.getNode(mySettingsRootPath ~ "/output/udp[1]",1),
+      props.globals.getNode(mySettingsRootPath ~ "/output/udp[2]",1),
+      props.globals.getNode(mySettingsRootPath ~ "/output/udp[3]",1)
+    ];
     var update_udp_output = func() {
 #      print("Addon FGCom-mumble   updating final UDP transmit field...");
+      var udpout_idx   = 0;
+      var udpout_chars = 0;
       var str_v = [];
       foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
 #        print("Addon FGCom-mumble      processing "~r_out.getPath());
-        append(str_v, r_out.getValue());
+        if (udpout_chars + size(r_out.getValue()) < 156) {
+          append(str_v, r_out.getValue());
+          udpout_chars = udpout_chars + size(r_out.getValue());
+        } else {
+          # Overflow: finish current prop and store into next prop. TODO: this is rather rough but works for now, but we could optimize space usage by splitting not entire COM udp stirngs, but at the individual field level
+          out_prop[udpout_idx].setValue(string.join(",", str_v));
+          str_v = [];
+          udpout_idx = udpout_idx + 1;
+          udpout_chars = 0;
+          append(str_v, r_out.getValue());
+        }
       }
-      out_prop.setValue(string.join(",", str_v));
+      out_prop[udpout_idx].setValue(string.join(",", str_v));
+      
+      # clean remaining unused fields in case there was old data
+      for (var i=udpout_idx+1; i < 4; i = i+1)  out_prop[i].setValue("");
     }
 
     var initProtocol = func() {
