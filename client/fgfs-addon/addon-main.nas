@@ -65,6 +65,12 @@ var main = func( addon ) {
     FGComMumble_radios.GenericRadio.setOutputRoot(props.globals.getNode(mySettingsRootPath ~ "/output", 1));
     FGComMumble_radios.create_radios();
     FGComMumble_radios.start_rdf(rdfinputNode);
+    
+    # Start intercom logic
+    print("Addon FGCom-mumble initializing intercom...");
+    var intercom_root = props.globals.getNode(mySettingsRootPath ~ "/intercom/",1);
+    io.load_nasal(root~"/intercom.nas", "FGComMumble_intercom");
+    FGComMumble_intercom.intercom_system = FGComMumble_intercom.IntercomSystem.new(intercom_root);
 
     # Load the FGCom-mumble combar
     print("Addon FGCom-mumble loading combar...");
