@@ -33,7 +33,7 @@ var IntercomDevice = {
     
     init: func() {
         print("Addon FGCom-mumble   created new intercom device subnode (" ~ me.root.getPath() ~ ")");
-        me.root.setValue("channel", "1");
+        me.root.setValue("channel", me.root.getIndex() + 1);
         me.root.setValue("volume",           1.0);
         me.root.setBoolValue("operable",     1);
         me.root.setBoolValue("ptt",          0);
