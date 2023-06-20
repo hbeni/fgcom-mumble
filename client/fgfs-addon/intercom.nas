@@ -21,11 +21,13 @@
 var IntercomDevice = {
     channel_prefix: "IC",
     fgcomPacketStr: nil,
+    is_used:        0,
     
     # Parameter: root: the intercom property root tree, as a property node.
     new: func(root) {
         var r = { parents: [IntercomDevice], root: root, };
         r.init();
+        r.name = "IC" ~ (root.getIndex() + 1);
         return r;
     },
     
@@ -72,14 +74,18 @@ var IntercomDevice = {
     isConnected: 0,
     connect: func(connection) {
         me.root.setBoolValue("is-used", 1);
+        me.is_used = 1;
         me.isConnected = 1;
         me.root.setValue("connected-callsigns", string.join("-", connection));
+        print("Addon FGCom-mumble     connected "~me.name~" to "~me.getFQChannelName());
     },
     
     # Remove connection for Intercom
     disconnect: func() {
+        print("Addon FGCom-mumble     disconnected "~me.name~" from "~me.getFQChannelName());
         me.root.setValue("connected-callsigns", "");
         me.root.setBoolValue("is-used", 0);
+        me.is_used = 0;
         me.isConnected = 0;
     },
     
@@ -171,6 +177,8 @@ var IntercomSystem = {
             print("Addon FGCom-mumble     copilot module watchdog detected new connection");
             me.connection_established = 1;
             me.devices[0].connect(connection);
+            
+            me.updateCombar();
         }
         
         if (!connection and me.connection_established) {
@@ -178,6 +186,8 @@ var IntercomSystem = {
             print("Addon FGCom-mumble     copilot module watchdog detected disconnect");
             me.connection_established = 0;
             me.devices[0].disconnect();
+            
+            me.updateCombar();
         }
     },
     
@@ -192,7 +202,15 @@ var IntercomSystem = {
         } else {
             return nil;
         }
-    }
+    },
+    
+    # If combar is currently open, close and reopen it, so the dialog updates the buttons
+    updateCombar: func() {
+        if (FGComMumble_combar.combar.dialogOpened) {
+            FGComMumble_combar.combar.dlgWindow.del();
+            FGComMumble_combar.combar.show();
+        }
+    },
 };
 
 
