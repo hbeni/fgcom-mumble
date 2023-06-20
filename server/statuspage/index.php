@@ -358,6 +358,7 @@ class HTMLTemplate {
     /**
     * Constructor
     */
+    function __construct($tpl) { $this->HTMLTemplate($tpl); }
     function HTMLTemplate($tpl) {
         if (!is_readable($tpl)) {
             print("Setup error: template file not readable: ".$tpl);
