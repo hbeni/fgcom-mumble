@@ -92,7 +92,7 @@ var IntercomDevice = {
                 ~ me.root.getValue("connected-callsigns") ~ ":"
                 ~ me.root.getValue("channel");
         } else {
-            return me.channel_prefix ~ ":NOT-CONNECTED";
+            return "<del>";  # deregister radio if unused
         }
     },
     
