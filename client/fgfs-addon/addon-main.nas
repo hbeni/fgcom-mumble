@@ -92,7 +92,7 @@ var main = func( addon ) {
       var str_v = [];
       foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
 #        print("Addon FGCom-mumble      processing "~r_out.getPath());
-        if (udpout_chars + size(r_out.getValue()) < 156) {
+        if (udpout_chars + size(r_out.getValue()) < 256) {
           append(str_v, r_out.getValue());
           udpout_chars = udpout_chars + size(r_out.getValue());
         } else {
