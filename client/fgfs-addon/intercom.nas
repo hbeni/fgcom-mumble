@@ -163,6 +163,7 @@ var IntercomSystem = {
     add_intercom_device: func() {
         var new_device = IntercomDevice.new(me.root.getChild("IC", size(me.devices), 1));
         append(me.devices, new_device);
+        return new_device;
     },
     
     # Loop function to check if we are connected to a pilot/copilot connection.
