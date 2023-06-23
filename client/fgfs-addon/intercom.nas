@@ -19,7 +19,7 @@
 # controlled by the plane by creating more IC devices and adjust channel names.
 
 var IntercomDevice = {
-    channel_prefix: "PHONE:IC",
+    channel_prefix: "IC",
     fgcomPacketStr: nil,
     is_used:        0,
     
