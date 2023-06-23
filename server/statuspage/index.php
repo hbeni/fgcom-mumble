@@ -72,9 +72,9 @@ if (array_key_exists('usage', $_GET)) {
 
     // parse timing parameters
     $time_one_week_in_seconds = 7*24*60*60; // one week in seconds
-    $time_delta = (preg_match('/^\d+$/', $_GET['last']))? $_GET['last']*60*60 +900 : $time_one_week_in_seconds;
-    $time_to    = (preg_match('/^\d+$/', $_GET['to']))?   $_GET['to']         : gmdate("YmdHis", time());
-    $time_from  = (preg_match('/^\d+$/', $_GET['from']))? $_GET['from']       : gmdate("YmdHis", time()-$time_delta);
+    $time_delta = (preg_match('/^\d+$/', isset($_GET['last'])))? $_GET['last']*60*60 +900 : $time_one_week_in_seconds;
+    $time_to    = (preg_match('/^\d+$/', isset($_GET['to'])))?   $_GET['to']         : gmdate("YmdHis", time());
+    $time_from  = (preg_match('/^\d+$/', isset($_GET['from'])))? $_GET['from']       : gmdate("YmdHis", time()-$time_delta);
 
     $handle = popen("gnuplot -e 'filename=\"".$statfile_p."\"; timeselect_from = \"".$time_from."\"; timeselect_to = \"".$time_to."\"' stats2png.gnuplot", 'r');
     $firstBytes = fread($handle, 1024);
