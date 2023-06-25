@@ -11,7 +11,7 @@
 # without transmitting on the radio, we establish an intercom channel. This is achieved
 # by creating a "virtual" radio node with a unique dynamic channel name ("frequency").
 #
-# The channel name is built from the copilot module: "IC:<plane1ID>-<plane2ID>:<channel>",
+# The channel name is built from the copilot module: "IC:<plane1ID>.<plane2ID>:<channel>",
 # where <planeID> are the alphabetically sorted pilot/copilot callsign
 # and <channel> something like "crew" or "pax", depending on the planes settings.
 #
@@ -76,7 +76,7 @@ var IntercomDevice = {
         me.root.setBoolValue("is-used", 1);
         me.is_used = 1;
         me.isConnected = 1;
-        me.root.setValue("connected-callsigns", string.join("-", connection));
+        me.root.setValue("connected-callsigns", string.join(".", connection));
         print("Addon FGCom-mumble     connected "~me.name~" to "~me.getFQChannelName());
     },
     
