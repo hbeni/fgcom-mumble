@@ -135,6 +135,31 @@ if (!is_array($db_data)) {
 }
 $db_data = sanitize($db_data);
 
+// Ensure basic database structure
+if (!array_key_exists('meta', $db_data)    || !is_array($db_data['meta'])) $db_data['meta'] = array('highscore_num'=>'', 'highscore_date'=>'', 'highscore_clients'=>0);
+if (!array_key_exists('clients', $db_data) || !is_array($db_data['clients'])) {
+    $db_data['clients'] = array();
+} else {
+    foreach ($db_data["clients"] as $uk => $u) {
+        if (!array_key_exists('type',     $db_data["clients"][$uk])) $db_data["clients"][$uk]['type']     = '';
+        if (!array_key_exists('callsign', $db_data["clients"][$uk])) $db_data["clients"][$uk]['callsign'] = '';
+        if (!array_key_exists('lat',      $db_data["clients"][$uk])) $db_data["clients"][$uk]['lat']      = 0;
+        if (!array_key_exists('lon',      $db_data["clients"][$uk])) $db_data["clients"][$uk]['lon']      = 0;
+        if (!array_key_exists('alt',      $db_data["clients"][$uk])) $db_data["clients"][$uk]['alt']      = 0;
+        if (!array_key_exists('updated',  $db_data["clients"][$uk])) $db_data["clients"][$uk]['updated']  = 0;
+        if (!array_key_exists('radios',   $db_data["clients"][$uk]) || !is_array($db_data["clients"][$uk]['radios'])) {
+            $db_data["clients"][$uk]['radios']  = array();
+        } else {
+            foreach ($u['radios'] as $ri => $r) {
+                if (!array_key_exists('frequency',  $db_data["clients"][$uk]['radios'][$ri])) $db_data["clients"][$uk]['radios'][$ri]['frequency']  = '';
+                if (!array_key_exists('dialedFRQ',  $db_data["clients"][$uk]['radios'][$ri])) $db_data["clients"][$uk]['radios'][$ri]['dialedFRQ']  = '';
+                if (!array_key_exists('operable',   $db_data["clients"][$uk]['radios'][$ri])) $db_data["clients"][$uk]['radios'][$ri]['operable']   = '';
+            }
+        }
+    }
+}
+
+
 
 /**
 * RAW mode (like for inclusion in other aplications)
