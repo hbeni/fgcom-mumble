@@ -538,6 +538,7 @@ void fgcom_notifyThread() {
     while (true) {
         if (fgcom_isPluginActive()) {
             // if plugin is active, check if we need to send notifications.
+            fgcom_localcfg_mtx.lock();
             
             // Note: we are just looking at location and userdata. Radio data is "urgent" and notified directly.
             // Difference with 3 decimals is about 100m: http://wiki.gis.com/wiki/index.php/Decimal_degrees
@@ -546,7 +547,6 @@ void fgcom_notifyThread() {
                 fgcom_client lcl = idty.second;
                 bool notifyUserData     = false;
                 bool notifyLocationData = false;
-                fgcom_remotecfg_mtx.lock();
                 
                 if (fabs(lcl.lat - lastNotifiedState[iid].lat) >= 0.0005) { // about 40-50m
                     lastNotifiedState[iid].lat = lcl.lat;
@@ -565,7 +565,6 @@ void fgcom_notifyThread() {
                     notifyUserData = true;
                 }
                 
-                fgcom_remotecfg_mtx.unlock();
                 
                 // We did not have a change for several seconds.
                 // We should send something so other clients know we are still alive!
@@ -589,6 +588,8 @@ void fgcom_notifyThread() {
                     notifyRemotes(iid, NTFY_USR);
                 }
             }
+            fgcom_localcfg_mtx.unlock();
+            
         }
         
         std::this_thread::sleep_for(std::chrono::milliseconds(NOTIFYINTERVAL));
