@@ -67,6 +67,7 @@ void fgcom_gc_clean_lcl() {
     
     for(const auto &elem : staleIIDs) {
         fgcom_local_client.erase(elem);
+        lastNotifiedState.erase(elem);
         pluginDbg("[GC] LCL  clean iid="+std::to_string(elem));
     }
     

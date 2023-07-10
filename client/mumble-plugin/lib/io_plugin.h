@@ -62,6 +62,9 @@ void pluginLog(T log);
 void pluginDbg(std::string log);
 
 
+// holds the last data we did sent out, so we can detect changes for notification (and how much)
+extern std::map<int, fgcom_client> lastNotifiedState;
+
 /*
  * Notify other clients on changes to local data.
  * This will construct a datastream message and push

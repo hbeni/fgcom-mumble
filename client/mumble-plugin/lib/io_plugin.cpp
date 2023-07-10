@@ -531,7 +531,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
 }
 
 
-std::map<int, fgcom_client> lastNotifiedState;  // holds the last data we did sent out, so we can detect changes (and how much)
+std::map<int, fgcom_client> lastNotifiedState;  // holds the last data we did sent out, so we can detect changes for notification (and how much)
 const std::chrono::milliseconds notifyPingInterval = std::chrono::milliseconds(NOTIFYPINGINTERVAL);
 auto lastPing = std::chrono::system_clock::now();
 void fgcom_notifyThread() {
