@@ -146,6 +146,9 @@ if (!array_key_exists('clients', $db_data) || !is_array($db_data['clients'])) {
         if (!array_key_exists('lat',      $db_data["clients"][$uk])) $db_data["clients"][$uk]['lat']      = 0;
         if (!array_key_exists('lon',      $db_data["clients"][$uk])) $db_data["clients"][$uk]['lon']      = 0;
         if (!array_key_exists('alt',      $db_data["clients"][$uk])) $db_data["clients"][$uk]['alt']      = 0;
+        if (!is_numeric($db_data["clients"][$uk]['lat'])) $db_data["clients"][$uk]['lat'] = 0;
+        if (!is_numeric($db_data["clients"][$uk]['lon'])) $db_data["clients"][$uk]['lon'] = 0;
+        if (!is_numeric($db_data["clients"][$uk]['alt'])) $db_data["clients"][$uk]['alt'] = 0;
         if (!array_key_exists('updated',  $db_data["clients"][$uk])) $db_data["clients"][$uk]['updated']  = 0;
         if (!array_key_exists('radios',   $db_data["clients"][$uk]) || !is_array($db_data["clients"][$uk]['radios'])) {
             $db_data["clients"][$uk]['radios']  = array();
