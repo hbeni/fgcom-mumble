@@ -63,7 +63,16 @@ void pluginDbg(std::string log);
 
 
 // holds the last data we did sent out, so we can detect changes for notification (and how much)
-extern std::map<int, fgcom_client> lastNotifiedState;
+struct fgcom_notificationState {
+    fgcom_client data;   // last data we notified
+    std::chrono::system_clock::time_point lastPing;  // when we last sent a ping packet
+    
+    fgcom_notificationState()  {
+        data = fgcom_client();
+        lastPing = std::chrono::system_clock::now();
+    };
+};
+extern std::map<int, fgcom_notificationState> lastNotifiedState;
 
 /*
  * Notify other clients on changes to local data.
