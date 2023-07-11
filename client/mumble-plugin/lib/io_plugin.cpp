@@ -531,9 +531,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
 }
 
 
-std::map<int, fgcom_client> lastNotifiedState;  // holds the last data we did sent out, so we can detect changes for notification (and how much)
+std::map<int, fgcom_notificationState> lastNotifiedState;  // holds the last data we did sent out, so we can detect changes for notification (and how much)
 const std::chrono::milliseconds notifyPingInterval = std::chrono::milliseconds(NOTIFYPINGINTERVAL);
-auto lastPing = std::chrono::system_clock::now();
 void fgcom_notifyThread() {
     while (true) {
         if (fgcom_isPluginActive()) {
@@ -548,43 +547,43 @@ void fgcom_notifyThread() {
                 bool notifyUserData     = false;
                 bool notifyLocationData = false;
                 
-                if (fabs(lcl.lat - lastNotifiedState[iid].lat) >= 0.0005) { // about 40-50m
-                    lastNotifiedState[iid].lat = lcl.lat;
+                if (fabs(lcl.lat - lastNotifiedState[iid].data.lat) >= 0.0005) { // about 40-50m
+                    lastNotifiedState[iid].data.lat = lcl.lat;
                     notifyLocationData = true;
                 }
-                if (fabs(lcl.lon - lastNotifiedState[iid].lon) >= 0.0005) { // about 40-50m
-                    lastNotifiedState[iid].lon = lcl.lon;
+                if (fabs(lcl.lon - lastNotifiedState[iid].data.lon) >= 0.0005) { // about 40-50m
+                    lastNotifiedState[iid].data.lon = lcl.lon;
                     notifyLocationData = true;
                 }
-                if (fabs(lcl.alt - lastNotifiedState[iid].alt) >= 5) {  // 5 meters
-                    lastNotifiedState[iid].alt = lcl.alt;
+                if (fabs(lcl.alt - lastNotifiedState[iid].data.alt) >= 5) {  // 5 meters
+                    lastNotifiedState[iid].data.alt = lcl.alt;
                     notifyLocationData = true;
                 }
-                if (lcl.callsign != lastNotifiedState[iid].callsign) {
-                    lastNotifiedState[iid].callsign = lcl.callsign;
+                if (lcl.callsign != lastNotifiedState[iid].data.callsign) {
+                    lastNotifiedState[iid].data.callsign = lcl.callsign;
                     notifyUserData = true;
                 }
                 
                 
                 // We did not have a change for several seconds.
                 // We should send something so other clients know we are still alive!
-                if (!notifyUserData && std::chrono::system_clock::now() > lastPing + notifyPingInterval) {
-                    pluginDbg("[mum_pluginIO] fgcom_notifyThread() Ping is due.");
-                    lastPing = std::chrono::system_clock::now();
+                if (!notifyUserData && !notifyLocationData && std::chrono::system_clock::now() > lastNotifiedState[iid].lastPing + notifyPingInterval) {
+                    pluginDbg("[mum_pluginIO] fgcom_notifyThread() Ping is due (IID="+std::to_string(iid)+").");
+                    lastNotifiedState[iid].lastPing = std::chrono::system_clock::now();
                     notifyRemotes(iid, NTFY_PNG);
                 }
                 
                 // Location has changed significantly: notify!
                 if (notifyLocationData) {
                     pluginDbg("[mum_pluginIO] fgcom_notifyThread() locationdata was changed.");
-                    lastPing = std::chrono::system_clock::now();
+                    lastNotifiedState[iid].lastPing = std::chrono::system_clock::now();
                     notifyRemotes(iid, NTFY_LOC);
                 }
                 
                 // userdata has changed: notify!
                 if (notifyUserData) {
                     pluginDbg("[mum_pluginIO] fgcom_notifyThread() userdata was changed.");
-                    lastPing = std::chrono::system_clock::now();
+                    lastNotifiedState[iid].lastPing = std::chrono::system_clock::now();
                     notifyRemotes(iid, NTFY_USR);
                 }
             }
