@@ -80,7 +80,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.6.0",
+    libversion = "1.7.0",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -95,10 +95,10 @@ fgcom = {
     -- Log / debug log
     debugMode = false,
     dbg = function(s)
-        if fgcom.debugMode then print(s) end
+        if fgcom.debugMode then print(os.date("%Y-%m-%d %X [DBG] ")..s) end
     end,
     log = function(s)
-        print(s)
+        print(os.date("%Y-%m-%d %X [LOG] ")..s)
     end,
     
     
