@@ -37,8 +37,8 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.8.1"
-json = require("json")
+fgcom.botversion = "1.8.2"
+json = require("dkjson")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
 
@@ -109,7 +109,7 @@ local hsdb_fh = io.open(db, "rb")
 if hsdb_fh then
     fgcom.log("loading past highscore from db "..db)
     local hsdb_fhdbcontent = hsdb_fh:read("*all")
-    local json_parse_res = json.parse(hsdb_fhdbcontent, pos, end_delim)
+    local json_parse_res = json.decode(hsdb_fhdbcontent)
     hsdb_fhdbcontent = nil
     io.close(hsdb_fh)
     highscore.num  = json_parse_res.meta.highscore_clients
@@ -130,7 +130,6 @@ local generateOutData = function()
     local data     = {clients={}, meta={}}  -- final return array
 
     -- generate list of current users
-    fgcom.dbg("generateOutData(): number of known users: "..#fgcom_clients)
     local users_alive = 0
     for sid, remote_client in pairs(fgcom_clients) do
         for iid,user in pairs(remote_client) do
@@ -152,10 +151,11 @@ local generateOutData = function()
             end
             
             userData.callsign = user.callsign
+            fgcom.dbg("  callsign="..userData.callsign.." (type="..userData.type..")")
             
             userData.radios = {}
             for radio_id,radio in pairs(user.radios) do
-                fgcom.dbg("  check frequency: radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."', dialedFRQ='"..radio.dialedFRQ.."', operable="..radio.operable)
+                fgcom.dbg("  radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."', dialedFRQ='"..radio.dialedFRQ.."', operable="..radio.operable)
                 if radio.frequency ~= "<del>" then
                     table.insert(userData.radios, radio_id, radio)
                 end
@@ -164,6 +164,8 @@ local generateOutData = function()
             userData.lon = user.lon
             userData.alt = user.alt
             userData.updated = fgcom_clients[sid][iid].lastUpdate
+            fgcom.dbg("  updated="..userData.updated)
+            fgcom.dbg("  lat="..userData.lat.."; lon="..userData.lon.."; alt="..userData.alt)
             
             table.insert(data.clients, userData)
         end
@@ -180,7 +182,7 @@ local generateOutData = function()
     
     
     -- generate JSON structure
-    dataJsonString = json.stringify(data)
+    dataJsonString = json.encode(data)
     fgcom.dbg("JSON RESULT: "..dataJsonString)
     return dataJsonString
 end
