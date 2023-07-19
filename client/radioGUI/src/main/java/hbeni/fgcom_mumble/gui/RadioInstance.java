@@ -75,10 +75,12 @@ public class RadioInstance extends javax.swing.JInternalFrame {
     
     public void updateFromState() {
         jTextField_frqActive.setText(radioBackend.getFrequency());
-        if (radioBackend.getFrequency() == "") {
+        if (radioBackend.getFrequency().equals("")) {
             jTextField_frqSpare.setText("<Enter Frequency>");
         } else {
-            jTextField_frqSpare.setText(radioBackend.getFrequency());
+            if (jTextField_frqSpare.getText().equals("FRQ_spare")) { 
+                jTextField_frqSpare.setText(radioBackend.getFrequency());
+            }
         }
         jSlider_txPWR.setValue(Math.round(radioBackend.getPower()));
         jSlider_volume.setValue(Math.round(radioBackend.getVolume()*100));
@@ -133,11 +135,6 @@ public class RadioInstance extends javax.swing.JInternalFrame {
         jTextField_frqActive.setToolTipText("The radio is currently tuned to this frequency");
 
         jTextField_frqSpare.setText("FRQ_spare");
-        jTextField_frqSpare.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField_frqSpareActionPerformed(evt);
-            }
-        });
 
         jButton_swapFRQ.setText("<->");
         jButton_swapFRQ.setToolTipText("Swap Frequencies: Make the standby one active");
@@ -348,10 +345,6 @@ public class RadioInstance extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField_frqSpareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField_frqSpareActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField_frqSpareActionPerformed
 
     private void jButton_swapFRQActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_swapFRQActionPerformed
         String swp = jTextField_frqSpare.getText();
