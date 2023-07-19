@@ -75,6 +75,7 @@ public class UDPclient {
      */
     public String prepare() {
         String msg = new String();
+        // if (socket != null) msg += "[ownPort=" + socket.getLocalPort() + "]";
         msg += "CALLSIGN=" + state.getCallsign();
         msg += ",LAT=" + state.getLatitutde();
         msg += ",LON=" + state.getLongitude();
@@ -92,6 +93,9 @@ public class UDPclient {
             
             String pbtn = (r.getPwrBtn())? "1" : "0";
             msg += ",COM"+i+"_PBT="+pbtn;
+            
+            String rdf = (r.getRDF())? "1" : "0";
+            msg += ",COM"+i+"_RDF="+rdf;
             
             // TODO: implement VLT, SRV
             //msg += ",COM"+i+"_VLT="+r.getVolts();

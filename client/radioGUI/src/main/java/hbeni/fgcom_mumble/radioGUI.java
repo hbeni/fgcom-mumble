@@ -21,7 +21,6 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import hbeni.fgcom_mumble.UDPclient.SendRes;
 import hbeni.fgcom_mumble.gui.MainWindow;
 import hbeni.fgcom_mumble.updater.GitHubChecker;
-import java.security.InvalidParameterException;
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -130,6 +129,13 @@ public class radioGUI {
      */
     public static State getState() {
         return state;
+    }
+    
+    /**
+     * Get internal UDP client instance
+     */
+    public static UDPclient getUDPClient() {
+        return udpClient;
     }
     
     /**

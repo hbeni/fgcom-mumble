@@ -182,9 +182,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="FRQ_spare"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField_frqSpareActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButton_swapFRQ">
       <Properties>

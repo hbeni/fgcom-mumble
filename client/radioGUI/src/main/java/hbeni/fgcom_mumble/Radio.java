@@ -5,6 +5,9 @@
  */
 package hbeni.fgcom_mumble;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /*
 * Simple model of a single radio
 */
@@ -16,6 +19,16 @@ public class Radio {
     protected boolean ptt;     // tx-pwr in Watts
     protected boolean pwrbtn;
     protected float   channelWidth;
+    
+    protected boolean  rdf;
+    protected boolean  rdf_parsed;
+    protected String   rdf_cs_tx;
+    protected float    rdf_frq;
+    protected float    rdf_dir;
+    protected float    rdf_vrt;
+    protected float    rdf_qly;
+    protected int      rdf_id_rx;
+    Pattern pattern_udp_fields = Pattern.compile("^(?:RDF:)?(\\w+)=(.+)"); // key=value
 
     public Radio() {
         setFrequency("");
@@ -25,6 +38,9 @@ public class Radio {
         setPTT(false);
         setPwrBtn(true);
         setChannelWidth(-1);
+        setRDF(false);
+        
+        parseRDF(null);
     }
     public Radio(String frq) {
         this();
@@ -61,6 +77,15 @@ public class Radio {
     public synchronized void setChannelWidth(float kHz) {
         channelWidth = kHz;
     }
+    public synchronized void setRDF(boolean p) {
+        rdf = p;
+        
+        // reset parsed marker and fields
+        if (rdf_parsed && !p) {
+            rdf_parsed = false;
+            parseRDF(null);
+        }  
+    }
 
     public synchronized String getFrequency() {
         return frq;
@@ -80,6 +105,12 @@ public class Radio {
     public float getChannelWidth() {
         return channelWidth;
     }
+    public boolean getRDF() {
+        return rdf;
+    }
+    public boolean getRDFParsed() {
+        return rdf_parsed;
+    }
     
     /**
      * Set if the PTT is currently pushed
@@ -90,5 +121,84 @@ public class Radio {
     }
     public synchronized boolean getPTT() {
         return ptt;
+    }
+    
+    /**
+    * Parses RDF strig data
+    */
+    public void parseRDF(String data) {
+        if (!rdf || data == null) {
+            rdf_cs_tx = "";
+            rdf_frq = 0.0f;
+            rdf_dir = 0.0f;
+            rdf_vrt = 0.0f;
+            rdf_qly = 0.0f;
+            rdf_id_rx = -1;
+            return;
+        }
+        
+//        System.out.println("Radio: got RDF data: "+data);
+        
+        String fields[] = data.split(",");
+//        System.out.println("  fields: "+fields.length);
+        for (int i=0; i<fields.length; i++) {
+            Matcher match = pattern_udp_fields.matcher(fields[i]);
+            try {
+                if (match.find()) {
+//                    System.out.println("Radio: parsed field="+match.group(1)+"; value="+match.group(2));
+                    switch (match.group(1)) {
+                        case "FRQ":
+                            rdf_frq = Float.parseFloat(match.group(2));
+                            break;
+                        case "DIR":
+                            rdf_dir = Float.parseFloat(match.group(2));
+                            break;
+                        case "VRT":
+                            rdf_vrt = Float.parseFloat(match.group(2));
+                            break;
+                        case "QLY":
+                            rdf_qly = Float.parseFloat(match.group(2));
+                            break;
+                        case "CS_TX":
+                            rdf_cs_tx = match.group(2);
+                            break;
+                        case "ID_RX":
+                            rdf_id_rx = Integer.parseInt(match.group(2));
+                            break;
+                    }
+                }
+                
+            } catch(Exception ex) {
+//                System.out.println("RDF data parse error: "+ex.getMessage());
+            }
+
+            
+        }
+            
+        rdf_parsed = true; // remember that we once got valid data
+    }
+
+    public int getRDF_ID_RX() {
+        return rdf_id_rx;
+    }
+
+    public float getRDF_DIR() {
+        return rdf_dir;
+    }
+
+    public float getRDF_VRT() {
+        return rdf_vrt;
+    }
+
+    public float getRDF_FRQ() {
+        return rdf_frq;
+    }
+
+    public float getRDF_QLY() {
+        return rdf_qly;
+    }
+    
+    public String getRDF_CS_TX() {
+        return rdf_cs_tx;
     }
 }
