@@ -21,17 +21,10 @@ import hbeni.fgcom_mumble.Radio;
 import hbeni.fgcom_mumble.State;
 import hbeni.fgcom_mumble.radioGUI;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.WindowEvent;
 import java.net.URL;
-import java.util.Iterator;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.event.InternalFrameEvent;
 
 /**
  *
@@ -41,6 +34,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private final About_Help helpWindow;
     private final OptionsWindow optionsWindow;
+    private final RDFWindow rdfWindow;
     private final LicenseWindow licenseWindow;
     
     protected State state;
@@ -53,6 +47,7 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow(State st) {
         helpWindow    = new About_Help();
         optionsWindow = new OptionsWindow();
+        rdfWindow     = new RDFWindow(st);
         licenseWindow = new LicenseWindow();
         state         = st;
         
@@ -130,6 +125,7 @@ public class MainWindow extends javax.swing.JFrame {
         MainMenu = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem_AddIdentity = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem_SimConnect = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem_options = new javax.swing.JMenuItem();
@@ -232,6 +228,14 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         jMenu1.add(jMenuItem_AddIdentity);
+
+        jMenuItem2.setText("Open RDF window");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem_rdfWindowActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
 
         jMenuItem_SimConnect.setText("Slave to SimConnect");
         jMenuItem_SimConnect.addActionListener(new java.awt.event.ActionListener() {
@@ -417,6 +421,10 @@ public class MainWindow extends javax.swing.JFrame {
         radioGUI.enableSimConnect();
     }//GEN-LAST:event_jMenuItem_SimConnectActionPerformed
 
+    private void jMenuItem_rdfWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_rdfWindowActionPerformed
+        rdfWindow.setVisible(true);
+    }//GEN-LAST:event_jMenuItem_rdfWindowActionPerformed
+
     
     /**
      * Prepares GUI state for slaving trough SimConnect
@@ -499,6 +507,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextField jLabel_Statusbar;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem_AddIdentity;
     private javax.swing.JMenuItem jMenuItem_Help_About;
     private javax.swing.JMenuItem jMenuItem_SimConnect;
