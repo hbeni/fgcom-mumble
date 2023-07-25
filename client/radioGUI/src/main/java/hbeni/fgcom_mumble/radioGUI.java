@@ -152,6 +152,8 @@ public class radioGUI {
         
         // finally remove the radio from the internal state
         state.radios.remove(r);
+        
+        radioGUI.mainWindow.updateFromState();
     }
     
     

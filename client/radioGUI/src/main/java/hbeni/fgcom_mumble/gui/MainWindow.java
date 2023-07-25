@@ -83,6 +83,8 @@ public class MainWindow extends javax.swing.JFrame {
             RadioInstance comp = (RadioInstance)radioContainer.getComponent(i);
             comp.updateFromState();
         }
+        
+        rdfWindow.updateFromState();
     }
     
     public void setInputElemetsEditable(boolean p) {
@@ -379,6 +381,7 @@ public class MainWindow extends javax.swing.JFrame {
         Radio r = new Radio();
         state.getRadios().add(r);
         radioContainer.add(new RadioInstance(r));
+        rdfWindow.updateFromState();
     }//GEN-LAST:event_jMenuItem_AddIdentityActionPerformed
 
     private void jTextField_callsignKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_callsignKeyReleased
@@ -422,6 +425,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem_SimConnectActionPerformed
 
     private void jMenuItem_rdfWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_rdfWindowActionPerformed
+        rdfWindow.updateFromState();
         rdfWindow.setVisible(true);
     }//GEN-LAST:event_jMenuItem_rdfWindowActionPerformed
 
