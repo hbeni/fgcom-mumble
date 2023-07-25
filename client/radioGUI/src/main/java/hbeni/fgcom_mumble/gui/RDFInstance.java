@@ -152,6 +152,7 @@ public class RDFInstance extends javax.swing.JInternalFrame {
         jLabel16 = new javax.swing.JLabel();
 
         jCheckBox_EnableRDF.setText("RDF enabled");
+        jCheckBox_EnableRDF.setToolTipText("<html>Enables Radio direction finding for this Radio.<br> RadioGUI will send this to the plugin, and the plugin will answer with RDF<br> packages (containing the informatin which is dispayed here) to RadioGUI.</html>");
         jCheckBox_EnableRDF.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox_EnableRDFActionPerformed(evt);
@@ -159,43 +160,58 @@ public class RDFInstance extends javax.swing.JInternalFrame {
         });
 
         jLabel1.setText("CS_TX");
+        jLabel1.setToolTipText("Callsign of the sender");
 
         jLabel2.setText("FRQ");
+        jLabel2.setToolTipText("Frequency of the source signal");
 
         jLabel3.setText("DIR");
+        jLabel3.setToolTipText("<html>Direction to the signal.<br>0=north, 90=east, etc</html>");
 
         jLabel4.setText("VRT");
+        jLabel4.setToolTipText("<html>Vertical direction to the signal.<br>0=straight, negative is downwards and positive upwards</html>");
 
         jLabel5.setText("QLY");
+        jLabel5.setToolTipText("<html>Quality of the signal.<br>1.0=100%</html>");
 
         jLabel6.setText("ID_RX");
+        jLabel6.setToolTipText("Internal Radio-ID from the RDF packet to select the matching radio");
 
         jTextField_ID_RX.setEditable(false);
         jTextField_ID_RX.setText("-");
+        jTextField_ID_RX.setToolTipText("Internal Radio-ID from the RDF packet to select the matching radio");
 
         jTextField_CS_TX.setEditable(false);
         jTextField_CS_TX.setText("-");
+        jTextField_CS_TX.setToolTipText("Callsign of the sender");
 
         jTextField_DIR.setEditable(false);
         jTextField_DIR.setText("-1");
+        jTextField_DIR.setToolTipText("<html>Direction to the signal.<br>0=north, 90=east, etc</html>");
 
         jTextField_VRT.setEditable(false);
         jTextField_VRT.setText("-1");
+        jTextField_VRT.setToolTipText("<html>Vertical direction to the signal.<br>0=straight, negative is downwards and positive upwards</html>");
 
         jTextField_FRQ.setEditable(false);
         jTextField_FRQ.setText("-1");
+        jTextField_FRQ.setToolTipText("Frequency of the source signal");
 
         jTextField_QLY.setEditable(false);
         jTextField_QLY.setText("-1");
+        jTextField_QLY.setToolTipText("<html>Quality of the signal.<br>1.0=100%</html>");
 
         jLabel7.setText("Radio FRQ");
+        jLabel7.setToolTipText("Shows the tuned frequency of the Radio");
 
         jTextField_RadioFRQ.setEditable(false);
         jTextField_RadioFRQ.setText("-");
+        jTextField_RadioFRQ.setToolTipText("Shows the tuned frequency of the Radio");
 
         jPanel_Compass.setBackground(new java.awt.Color(0, 0, 0));
         jPanel_Compass.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED, new java.awt.Color(204, 204, 204), new java.awt.Color(153, 153, 153), new java.awt.Color(51, 51, 51), new java.awt.Color(102, 102, 102)));
         jPanel_Compass.setForeground(new java.awt.Color(204, 204, 0));
+        jPanel_Compass.setToolTipText("Direction to the signal");
         jPanel_Compass.setPreferredSize(new java.awt.Dimension(80, 80));
 
         jLabel8.setForeground(new java.awt.Color(255, 255, 255));
@@ -274,6 +290,7 @@ public class RDFInstance extends javax.swing.JInternalFrame {
         jPanel_Clino.setBackground(new java.awt.Color(0, 0, 0));
         jPanel_Clino.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED, new java.awt.Color(204, 204, 204), new java.awt.Color(153, 153, 153), new java.awt.Color(51, 51, 51), new java.awt.Color(102, 102, 102)));
         jPanel_Clino.setForeground(new java.awt.Color(0, 51, 204));
+        jPanel_Clino.setToolTipText("Vertical angle to the signal");
         jPanel_Clino.setPreferredSize(new java.awt.Dimension(80, 80));
 
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));

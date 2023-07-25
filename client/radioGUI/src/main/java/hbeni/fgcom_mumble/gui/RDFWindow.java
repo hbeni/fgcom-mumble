@@ -98,6 +98,7 @@ public class RDFWindow extends javax.swing.JFrame {
         jLabel2.setText("Port");
 
         jLabel_Port.setText("-");
+        jLabel_Port.setToolTipText("Listening port number of the UDP server. We will listen on the client-udp connections local sending port.");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
