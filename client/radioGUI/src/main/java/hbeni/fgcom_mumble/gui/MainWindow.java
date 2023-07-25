@@ -132,7 +132,7 @@ public class MainWindow extends javax.swing.JFrame {
         jMenuItem_quit = new javax.swing.JMenuItem();
         jMenu_Help = new javax.swing.JMenu();
         jMenuItem_Help_About = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem_License = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("project").getString("product")+" v"+java.util.ResourceBundle.getBundle("project").getString("version"));
@@ -275,13 +275,13 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jMenu_Help.add(jMenuItem_Help_About);
 
-        jMenuItem1.setText("License");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem_License.setText("License");
+        jMenuItem_License.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                jMenuItem_LicenseActionPerformed(evt);
             }
         });
-        jMenu_Help.add(jMenuItem1);
+        jMenu_Help.add(jMenuItem_License);
 
         MainMenu.add(jMenu_Help);
 
@@ -371,9 +371,9 @@ public class MainWindow extends javax.swing.JFrame {
         helpWindow.setVisible(true);
     }//GEN-LAST:event_jMenuItem_Help_AboutActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void jMenuItem_LicenseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_LicenseActionPerformed
         licenseWindow.setVisible(true);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_jMenuItem_LicenseActionPerformed
 
     private void jMenuItem_AddIdentityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem_AddIdentityActionPerformed
         Radio r = new Radio();
@@ -506,10 +506,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_ConnectionStatus;
     private javax.swing.JTextField jLabel_Statusbar;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem_AddIdentity;
     private javax.swing.JMenuItem jMenuItem_Help_About;
+    private javax.swing.JMenuItem jMenuItem_License;
     private javax.swing.JMenuItem jMenuItem_SimConnect;
     private javax.swing.JMenuItem jMenuItem_options;
     private javax.swing.JMenuItem jMenuItem_quit;
