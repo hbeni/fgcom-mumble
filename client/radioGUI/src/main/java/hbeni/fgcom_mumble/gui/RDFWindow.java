@@ -4,6 +4,7 @@
  */
 package hbeni.fgcom_mumble.gui;
 
+import hbeni.fgcom_mumble.Radio;
 import hbeni.fgcom_mumble.State;
 import hbeni.fgcom_mumble.UDPserver;
 import java.awt.Color;
@@ -41,11 +42,6 @@ public class RDFWindow extends javax.swing.JFrame {
         
         // Update basic state
         updateFromState();
-        
-        // add radios that are already existing in the state (ie defaults)
-        state.getRadios().forEach(r -> {
-            radioContainer.add(new RDFInstance(r));
-        });
         
         jScrollPanel_RadioPanel.setViewportView(radioContainer);
         jScrollPanel_RadioPanel.repaint();
@@ -182,10 +178,31 @@ public class RDFWindow extends javax.swing.JFrame {
     /*
     * Update panel from radio state
     */
-    public void updateFromState() {
+    public synchronized void updateFromState() {
 
-        // TODO: maybe we need to check the registered vs the displayed radios:
-        //       add missing ones to the pane, remove obsolete ones
+        int instanceDifference = state.getRadios().size() - radioContainer.getComponentCount();
+        
+        // add radios that are already existing in the state, but not here
+        for (int i = radioContainer.getComponentCount();
+             radioContainer.getComponentCount() < state.getRadios().size() && instanceDifference > 0;
+             i++) {
+            Radio r = state.getRadios().get(i);
+            radioContainer.add(new RDFInstance(r));
+        }
+        
+        // remove radios that were deleted
+        for (int i=0; i < radioContainer.getComponentCount();i++) {
+            RDFInstance comp = (RDFInstance)radioContainer.getComponent(i);
+            Radio r = comp.radioBackend;
+            if (r.getFrequency().equals("<del>")) radioContainer.remove(comp);
+        }
+        
+        if (instanceDifference != 0) {
+            jScrollPanel_RadioPanel.setViewportView(radioContainer);
+            jScrollPanel_RadioPanel.repaint();
+        }
+        
+        // Update each instance
         for (int i=0; i < radioContainer.getComponentCount(); i++) {
             RDFInstance comp = (RDFInstance)radioContainer.getComponent(i);
             comp.updateFromState();
