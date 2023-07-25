@@ -146,6 +146,7 @@
         <Component class="javax.swing.JLabel" name="jLabel_Port">
           <Properties>
             <Property name="text" type="java.lang.String" value="-"/>
+            <Property name="toolTipText" type="java.lang.String" value="Listening port number of the UDP server. We will listen on the client-udp connections local sending port."/>
           </Properties>
         </Component>
       </SubComponents>
