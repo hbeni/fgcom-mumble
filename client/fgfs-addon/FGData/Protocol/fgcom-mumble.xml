@@ -43,10 +43,28 @@
    <!--  #####################  -->
    <!-- This is dynamically created from the nasal addon code -->
    <chunk>
-    <name>radios_data</name>
+    <name>radios_data1</name>
     <type>string</type>
     <format>%s</format>
-    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/udp</node>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/udp[0]</node>
+   </chunk>
+   <chunk>
+    <name>radios_data2</name>
+    <type>string</type>
+    <format>%s</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/udp[1]</node>
+   </chunk>
+   <chunk>
+    <name>radios_data3</name>
+    <type>string</type>
+    <format>%s</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/udp[2]</node>
+   </chunk>
+   <chunk>
+    <name>radios_data4</name>
+    <type>string</type>
+    <format>%s</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/udp[3]</node>
    </chunk>
    
    

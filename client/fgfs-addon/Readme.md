@@ -34,6 +34,8 @@ Compatible aircraft
 ----------------------
 Basicly every aircraft utilizing the standard radio implementation properties should work without modification.
 
+
+### COM / ADF Radios
 When initializing, the addon will inspect the defined radios and enable them for FGCom-Mumble. Currently this is: COM1, COM2, COM3, ADF1 and ADF2.  
 Only radios providing the property `operable` are considered (which is set by the standard C++ radio implementation).
 
@@ -55,3 +57,24 @@ The addon uses the following standard properties:
   - `/instrumentation/adf[n]/indicated-bearing-deg` (read/write)
   - `/instrumentation/adf[n]/ident-audible`
   - `/instrumentation/adf[n]/mode`
+
+### Intercom
+FlightGear has a copilot feature that allows you to ride alongside another pilot. Usually planes have some kind of intercom system.  
+Since version 1.2.0 the FGFS-addon will periodically check if such a pilot/copilot connection has been made and provide intercom functionality, so you can talk to each other.
+
+The intercom works like the other radios but in full-duplex mode. Currently, you can access the PTT button of the intercom using the combar.
+
+
+#### Plane API
+Plane developers can access the intercom device below `/addons/by-id/org.hallinger.flightgear.FGCom-mumble/intercom/IC[n]`, where each device gets a subnode with properties you can link to the planes audio panel (or nasal magic):
+
+| Propery    | Description                                                                                                                                    |
+|------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+| `channel`  | The Channel name. Change this to make the Intercom switch to another channel. This could be useful to simulate intercom isolation, for example.|
+| `operable` | Set to `0` to disable the intercom (switch on/off).                            |                                                                                             
+| `volume`   | `0.0` to `1.0`, to adjust the intercoms volume.                                |                                                                                                                                                 
+| `ptt`      | `1` makes the intercom transmit.                                               |
+| others     | The other properties are internal and should not be directly set by your code. |
+
+You can also register additional Intercom devices by calling `var myNewDevice = FGComMumble_intercom.intercom_system.add_intercom_device();`. This will provide a fresh subnode you can handle. The resulting UDP packages will be gathered automatically, but things like channel name and PTT you need to handle yourself.  
+For the intercom to be connected you need to call `myNewDevice.connect(["A","B"])` on the device (where `["A","B"]` is the combined callsigns to establish the default channel name (you can also use `connect(["someCustomChannelname"])` instead). You can also alter the channel name afterwards via the property described above).

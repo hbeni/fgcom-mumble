@@ -40,17 +40,17 @@ var combar = {
         if (me.dialogOpened == 1) return; # allow just one dialog instance
         
         print("Addon FGCom-mumble: combar initializing");
-        dlgWindow = canvas.Window.new([975, 25], "dialog")
+        me.dlgWindow = canvas.Window.new([975, 25], "dialog")
                         .setTitle("FGCom-mumble COMBar");
 
-        dlgWindow.del = func() {
+        me.dlgWindow.del = func() {
             print("Addon FGCom-mumble: combar closed");
             combar.dialogOpened = 0;
 
             call(canvas.Window.del, [], me);
         };
 
-        dlgCanvas = dlgWindow.createCanvas().set("background", canvas.style.getColor("bg_color"));
+        dlgCanvas = me.dlgWindow.createCanvas().set("background", canvas.style.getColor("bg_color"));
         dlgCanvas.setColorBackground(0.5, 0.5, 0.5, 0.0);
 
         var root = dlgCanvas.createGroup();
@@ -60,29 +60,38 @@ var combar = {
 
 
         # Generate PTT buttons for the configured radios
+        var button_nr = 0;
+        var radios = [];
         foreach (var ridx; sort(keys(FGComMumble_radios.COM_radios), func(a,b) {return a<b?-1:1;})) {
-            var r = FGComMumble_radios.COM_radios[ridx];
+            append(radios, FGComMumble_radios.COM_radios[ridx]);
+        }
+        foreach (var ridx; FGComMumble_intercom.intercom_system.devices) {
+            append(radios, ridx);
+        }
+        
+        foreach (var r; radios) {
             if (!r.is_used) {
                 print("Addon FGCom-mumble: combar skipping "~r.root.getPath());
                 continue;
             }
 
-            print("Addon FGCom-mumble: combar adding "~r.root.getPath()~" (COM"~r.fgcomPacketStr.getIndex()~")");
+            print("Addon FGCom-mumble: combar adding "~r.root.getPath()~" ("~r.name~")");
 
-            var newSizeWidth = math.round((ridx)*me.comPTTButton_size[0] + me.comPTTButton_size[0]/4);
-            dlgWindow.setSize([newSizeWidth, me.comPTTButton_size[1]+4]);
+            button_nr = button_nr + 1;
+            var newSizeWidth = math.round((button_nr)*me.comPTTButton_size[0] + me.comPTTButton_size[0]/4);
+            me.dlgWindow.setSize([newSizeWidth, me.comPTTButton_size[1]+4]);
 
             var button = canvas.gui.widgets.SpringButton.new(root, canvas.style, {})
-                    .setText("COM" ~ r.fgcomPacketStr.getIndex())
+                    .setText(r.name)
                     .setFixedSize(me.comPTTButton_size[0], me.comPTTButton_size[1]);
             var init_button = func(b,rp,ci) {
                 b.ptt_prop = rp~"/ptt";
                 b.listen("mouse_down", func(e) {
-                    print("Addon FGCom-mumble: pushing COM"~ci~" "~b.ptt_prop);
+                    print("Addon FGCom-mumble: pushing "~ci~" "~b.ptt_prop);
                     setprop(b.ptt_prop, 1);
                 });
                 b.listen("mouse_up", func(e) {
-                    print("Addon FGCom-mumble: releasing COM"~ci~" "~b.ptt_prop);
+                    print("Addon FGCom-mumble: releasing "~ci~" "~b.ptt_prop);
                     setprop(b.ptt_prop, 0);
                 });
 
@@ -96,7 +105,7 @@ var combar = {
                 });
                 update_button_timer.start();
             };
-            init_button(button, r.root.getPath(), r.fgcomPacketStr.getIndex());
+            init_button(button, r.root.getPath(), r.name);
 
             myLayout.addItem(button);
         }
