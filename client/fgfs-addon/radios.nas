@@ -15,6 +15,7 @@ var GenericRadio = {
     new: func(root) {
         var r = { parents: [GenericRadio], root: root, };
         r.init();
+        r.name = "XXX" ~ (root.getIndex() + 1);
         return r;
     },
 
@@ -117,6 +118,7 @@ var GenericRadio = {
 var COM = {
     new: func(root) {
         var r = { parents: [COM, GenericRadio.new(root)], };
+        r.name = "COM" ~ (root.getIndex() + 1);
         r.init();
         return r;
     },
@@ -154,7 +156,7 @@ var ADF = {
 
     new: func(root) {
         var r = { parents: [ADF, GenericRadio.new(root)], };
-        r.udp_prefix = "ADF" ~ (root.getIndex() + 1);
+        r.name = "ADF" ~ (root.getIndex() + 1);
         r.init();
         return r;
     },
