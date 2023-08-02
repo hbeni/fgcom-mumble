@@ -1,4 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PropertyList>
     <!-- init by addon-main.nas -->
+    
+    
+    <!-- Additoinal keybinds -->
+    <!-- SPACE+ALT:  Transmit on COM3 -->
+    <!-- SPACE+CTRL: Transmit on Intercom -->
+    <input>
+        <keyboard>
+            <key n="32">
+                <mod-alt>
+                    <binding>
+                        <command>nasal</command>
+                        <script>
+                        <![CDATA[
+                            var com_p = "/instrumentation/comm[2]";
+                            if (getprop(com_p~"/fgcom-mumble/is-used")) {
+                                setprop(com_p~"/ptt", 1);
+                            }
+                        ]]>
+                        </script>
+                    </binding>
+                    
+                    <mod-up>
+                        <binding>
+                            <command>nasal</command>
+                            <script>
+                            <![CDATA[
+                                var com_p = "/instrumentation/comm[2]";
+                                if (getprop(com_p~"/is-used") and getprop(com_p~"/ptt")) {
+                                    setprop(com_p~"/ptt", 0);
+                                }
+                            ]]>
+                            </script>
+                        </binding>
+                    </mod-up>
+                </mod-alt>
+                <mod-ctrl>
+                    <binding>
+                        <command>nasal</command>
+                        <script>
+                        <![CDATA[
+                            var com_p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/intercom/IC[0]";
+                            if (getprop(com_p~"/is-used")) {
+                                setprop(com_p~"/ptt", 1);
+                            }
+                        ]]>
+                        </script>
+                    </binding>
+                    
+                    <mod-up>
+                        <binding>
+                            <command>nasal</command>
+                            <script>
+                            <![CDATA[
+                                var com_p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/intercom/IC[0]";
+                                if (getprop(com_p~"/is-used") and getprop(com_p~"/ptt")) {
+                                    setprop(com_p~"/ptt", 0);
+                                }
+                            ]]>
+                            </script>
+                        </binding>
+                    </mod-up>
+                </mod-ctrl>
+            </key>
+        </keyboard>
+    </input>
 </PropertyList>

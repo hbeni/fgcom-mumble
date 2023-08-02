@@ -19,9 +19,10 @@ When added to your launcher, the addon is automatically activated.
 No further steps are needed.
 
 The FGFS protocol file will handle old 25kHz as well as newer 8.3kHz radios.
-After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).
+After starting flightgear, you can use your radio stack like with FGCom (default is *space* to talk on COM1 and *shift+space* for COM2).  
+*alt+space* will transmit on COM3, and *ctrl+space* on the intercom.
 
-If your plane has more than two COM radios, you can use the _Combar_ dialog from the configuration dialog to access the PTTs of the radios, or define custom keybinds to set `/instrumentation/com[n]/ptt`.
+If your plane has more than two COM radios, you can use the _Combar_ dialog from the configuration dialog to access the PTTs of the radios, or define custom keybinds to set `/instrumentation/comm[n]/ptt`.
 
 
 Configuration
