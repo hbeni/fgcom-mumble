@@ -56,9 +56,10 @@ public:
         if (!r1.operable) return 0.0; // stop if radio is inoperable
 
         bool isLandline = r1.frequency.substr(0, 5) == "PHONE";
+        bool isIntercom = r1.frequency.substr(0, 3) == "IC:";
 
-        // If landline: full duplex
-        if (isLandline) return (r1.frequency == r2.frequency)? 1.0 : 0.0 ;
+        // If landline or intercom: full duplex
+        if (isLandline || isIntercom) return (r1.frequency == r2.frequency)? 1.0 : 0.0 ;
 
         // if not: treat as half-duplex:
         return (!r1.ptt && r1.frequency == r2.frequency)? 1.0 : 0.0 ;
