@@ -198,7 +198,7 @@ var IntercomSystem = {
     getPilotCopilotConnection: func() {
         var remote_callsign = sprintf("%s", getprop("/sim/remote/pilot-callsign"));
         var local_callsign  = sprintf("%s", getprop("/sim/multiplay/callsign"));
-        if (local_callsign and remote_callsign) {
+        if (local_callsign and remote_callsign and remote_callsign != "" and remote_callsign != "nil") {
             return sort([local_callsign,remote_callsign], func(a,b) cmp(a,b));
         } else {
             return nil;
