@@ -225,15 +225,16 @@ Fehlerbehebung
 Falls du andere Piloten nicht hören kannst, oder nicht senden kannst, prüfe die folgenden Punkte:
 
 - Stelle sicher, dass mumle an sich gut funktioniert (d.h. du kannst ohne Plugin gut senden und hören)
+- Prüfe den Kommentar deines Mumbleclients, ob das Callsign und die Funkgeräte registriert wurden.
+- Prüfe, ob du auf der Statuswebseite angezeigt wirst (das zeigt die Daten, die andere sehen)
 - Um zu senden, musst du PTT des Funkgerätes aktivieren, es reicht nicht, mumbles eingebautes PTT-kürzel zu benutzen!
 - Versuche, deine Einstelllungen mit dem FGCOM-Echo bot zu prüfen Frequenz `910.00` anwählen und übertragen; dies benötigt allerdings den Recorder-Bot am Server)
 - Stelle sicher, dass du nicht versehentlich überträgst, wenn du andere hören möchtest (Funkgeräte sind Halbduplex, d.h. nur einer kann gleichzeitig senden -> Prüfe dein mumble-Symbol, um zu sehen, dass du aktuell nicht übeträgst)
 - Prüfe nochmal die angewählte Frequenz und Lautstärkeeinstellung des Funkgerätes
 - Stelle sicher, dass das Funkgerät Betriebsbereit ist (ist es angeschaltet? hat es Strom? Ist es defekt?)
 - Stelle sicher, dass du wirklich in Reichweite bist (niedrige Flughöhe begrenzt die Reichweite drastisch!)
-- Versuche, den `fgcom-mumble`-Channel zu verlassen und neu zu betreten.
+- Versuche, den `fgcom-mumble`-Channel zu verlassen und neu zu betreten; alternativ kannst du mumble nochmal neu starten.
 - Stelle sicher, dass die Clientsoftware (ATC, Flugsimulator) wirklich daten an den UDP-Port des Plugins übermittelt. Prüfe auch den Port des Plugins nochmal nach (die Portnummer wird vom Plugin in den Mumble-Chat berichtet).
-- Prüfe den Kommentar deines Mumbleclients, ob das Callsign und die Funkgeräte registriert wurden.
 - Prüfe die Plugin-Debugnachrichten (Starte dafür mumble über eine Kommandozeile; du brauchst außerdem eine spezielle Pluginversion mit aktiver Debug-Konfiguration)
 - Prüfe das murmur server Fehlerlog nach Nachrichten zu abgewiesenen Pluginnachrichten (`Dropping plugin message`), diese können zum Verlust der Synchronizität führen. Ursachen können sein:
   -  Die Einstellung *`pluginmessagelimit`* in der `murmur.ini` ist möglicherweise zu restriktiv.
