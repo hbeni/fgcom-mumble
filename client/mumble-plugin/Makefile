@@ -5,7 +5,7 @@ THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
 override CFLAGS+=-Wall -O3 -I. -I./lib $(DEBUG)
 override CFLAGS_WIN+=-Wl,--subsystem,windows -static-libgcc -static-libstdc++ $(CFLAGS)
-SSLFLAGS+=-lssl -lcrypto -DSSLFLAGS
+SSLFLAGS+=-I./lib/openssl/include/ -L./lib/openssl/ -lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32
 # Note on flags: -D_WIN32 is needed by httplib on Windows
 
@@ -153,32 +153,30 @@ plugin-win-dllresource:
 # shortcut for building natively on macOS
 plugin-macOS: CC=g++-11
 plugin-macOS: outname=fgcom-mumble-macOS.bundle
-plugin-macOS:
-	make CC=$(CC) outname=$(outname) CFLAGS+="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin
+plugin-macOS: openssl-macOS
+	make CC=$(CC) outname=$(outname) plugin
 
-# OpenSSL (static build)
+# OpenSSL
 # The sources are located under lib/openssl as git submodule, and supposed to point to the latest stable head
 # Info on configure options: https://wiki.openssl.org/index.php/Compilation_and_Installation
-openssl-win:
+openssl-win: openSSLBuildOpts=mingw64 -static
+openssl-win: openSSLCrossCompileOpts=--cross-compile-prefix=x86_64-w64-mingw32-
+openssl-win: openssl
+
+openssl-win32: openSSLBuildOpts=mingw -static
+openssl-win32: openSSLCrossCompileOpts=--cross-compile-prefix=i686-w64-mingw32-
+openssl-win32: openssl
+
+openssl-macOS: openSSLBuildOpts=
+openssl-macOS: openssl
+
+openssl:
 ifdef SSLFLAGS
 	@echo "BUILD OpenSSL"
 	git submodule init
 	git submodule update
 	cd lib/openssl/ && git reset --hard
-	cd lib/openssl/ && ./Configure mingw64 -static no-pinshared no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=x86_64-w64-mingw32- && make clean && make -j4
+	cd lib/openssl/ && ./Configure $(openSSLBuildOpts) no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 $(openSSLCrossCompileOpts) && make clean && make -j4
 else
 	@echo "Skipping building OpenSSL"
 endif
-
-openssl-win32:
-ifdef SSLFLAGS
-	@echo "BUILD OpenSSL"
-	git submodule init
-	git submodule update
-	cd lib/openssl/ && git reset --hard
-	cd lib/openssl/ && ./Configure mingw -static no-pinshared no-weak-ssl-ciphers no-ssl2 no-ssl3 no-idea no-dtls1 --cross-compile-prefix=i686-w64-mingw32- && make clean && make -j4
-else
-	@echo "Skipping building OpenSSL"
-endif
-
-
