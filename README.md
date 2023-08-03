@@ -215,15 +215,16 @@ Troubleshooting
 When you cannot hear other pilots or are unable to transmit on the radios, you can check the following:
 
 - Make sure, your mumble is operational otherwise (so you can talk with others)
+- Check mumbles client comment if the callsign and radio frequencies are registered
+- Check the status webpage if it shows your entry (shows the data others receive from you)
 - To send, you need to activate the PTT of the radio (pressing mumbles native PTT-key is just mapped to COM1 by default).
 - Try to check against the FGCOM-Echo bot (tune 910.00 and transmit something; but needs the bot manager alive on the server)
 - Check that you are not transmitting when you expect incoming messages (Radios are halfduplex -> look at your mumble symbol)
 - Recheck the tuned frequencies and volume of radio and, if present, audio panel
 - Make sure the radio is operable (powered, switched on, serviceable)
 - Check that you really are in range (low altitude severely limits your available range!)
-- Try to leave and rejoin the channel, so the plugin reinitializes
+- Try to leave and rejoin the channel, so the plugin reinitializes; or restart mumble.
 - Check that your software (ATC, flightsim) actually sends data to the plugin udp port. Recheck the port the plugin listens to (the plugin tells you at startup in the mumble chat window)
-- Check mumbles client comment if the callsign and radio frequencies are registered
 - Look at the plugins debug messages (start mumble from terminal; you need to make a debug build for that)
 - Look at the murmur server log for possible dropped plugin messages (look for the string `Dropping plugin message`), they may cause out of sync state. Reasons can be:
   - the setting *`pluginmessagelimit`* in `murmur.ini` may be too restrictive.
