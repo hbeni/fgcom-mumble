@@ -188,7 +188,8 @@ Läuft auf dem Server ein `botmanager`, wird der Recorderbot dafür sorgen, dass
 
 
 ### Festnetz / Intercom
-Festnetz und Intercoms ist ein Feature, das vor allem für ATC-Clients gedacht ist. Solche Verbindungen unterliegen keiner Reichweitenbeschränkung, operieren in Vollduplex und haben immer perfekte Signalqualität.
+Festnetz und Intercoms ist ein Feature, das vor allem für ATC-Clients gedacht ist. Solche Verbindungen unterliegen keiner Reichweitenbeschränkung, operieren in Vollduplex und haben immer perfekte Signalqualität.  
+Festnetznamen beginnen mit `PHONE` und Intercom mit `IC:`. Sie unterscheiden sich nur im Toneffekt.
 
 Um auf einer Festnetzleitung zu sprechen musst du:
 

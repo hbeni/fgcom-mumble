@@ -180,7 +180,8 @@ If a `botmanager` is running at the server, the recorderbot will notify it to st
 
 
 ### Landlines/Intercom
-Landlines/Intercom connections are a feature meant to be used by ATC instances. They are not subject to radio limits like range or signal quality. They operate worldwide.
+Landlines/Intercom connections are a feature meant to be used by ATC instances. They are not subject to radio limits like range or signal quality. They operate worldwide and in full duplex.  
+Landline channel names starts with `PHONE` and intercom with `IC:`. The difference between the two is audio characteristics.
 
 To talk on an intercom/landline connection:
 
