@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.7.0"
+fgcom.botversion = "1.8.0"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -79,6 +79,7 @@ if arg[1] then
         print("    --lon=      Longitude override           (default: use FGCS header)")
         print("    --hgt=      Height override              (default: use FGCS header)")
         print("    --frq=      Frequency override           (default: use FGCS header)")
+        print("    --pwr=      Power in Watts override      (default: use FGCS header)")
         print("    --callsign= Callsign override            (default: use FGCS header)")
         print("    --ttl=      Time to live (seconds) for OGG playback (default: use FGCS header)")
         print("                0=persistent sample (played in an endless loop).")
@@ -103,6 +104,7 @@ if arg[1] then
         if k=="lon"    then overwriteHeader.lon=v end
         if k=="hgt"    then overwriteHeader.height=v end
         if k=="frq"    then overwriteHeader.frequency=v overwriteHeader.dialedFRQ=v end
+        if k=="pwr"    then overwriteHeader.txpower=v end
         if k=="ttl"    then overwriteHeader.timetolive=v end
         if k=="callsign" then overwriteHeader.callsign=v end
         if k=="owntoken" then owntoken=v end
@@ -143,6 +145,9 @@ if sample:match(".+[.]ogg") then
     lastHeader.timetolive   = overwriteHeader.timetolive
     lastHeader.timestamp    = os.time()
     lastHeader.voicecodec   = sampleType
+    if overwriteHeader.txpower then
+        lastHeader.txpower  = overwriteHeader.txpower
+    end
 end
 
 -----------------------------
