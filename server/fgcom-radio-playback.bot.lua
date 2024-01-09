@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.8.0"
+fgcom.botversion = "1.8.1"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -680,7 +680,7 @@ client:hook("OnMessage", function(client, event)
 
            if command == "move" then
                 if not param then event.actor:message("/move needs new x,y,z coordinates as argument!") return end
-                _, _, ly, lx, la = string.find(param, "([%d.]+) ([%d.]+) ([%d.]+)")
+                _, _, ly, lx, la = string.find(param, "([-%d.]+) ([-%d.]+) ([%d.]+)")
                 if not ly or not lx or not la then event.actor:message("/move params need to be proper decimals!") return end
                 overwriteHeader.lat    = ly
                 overwriteHeader.lon    = lx
