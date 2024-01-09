@@ -639,6 +639,7 @@ client:hook("OnMessage", function(client, event)
                     .."<tr><th style=\"text-align:left\"><tt>/auth &lt;token&gt;</tt></th><td>Authenticate to be able to execute advanced commands.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/exit</tt></th><td>Terminate the bot.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/frq &lt;mhz&gt;</tt></th><td>Switch frequency to this real-wave-frequency (Mhz in <tt>x.xxxx</tt>).</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/pwr &lt;watts&gt;</tt></th><td>Change output watts.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/move &lt;lat lon hgt&gt;</tt></th><td>Move to new coordinates. lat/lon are decimal degrees (<tt>x.xxx</tt>), hgt is meters above ground.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/rename &lt;callsign&gt;</tt></th><td>Rename to new callsign.</td></tr>"
                     .."</table>"
@@ -662,6 +663,18 @@ client:hook("OnMessage", function(client, event)
                 notifyRadio(playback_targets)
                 updateComment()
                 event.actor:message("now sending on: "..f.." Mhz")
+                return
+            end
+
+            if command == "pwr" then
+                if not param then event.actor:message("/pwr needs a number as argument!") return end
+                _, _, f = string.find(param, "([%d.]+)")
+                if not f then event.actor:message("/pwr param is not a decimal!") return end
+                overwriteHeader.txpower = f
+                updateAllChannelUsersforSend(client)
+                notifyRadio(playback_targets)
+                updateComment()
+                event.actor:message("now sending with: "..f.." Watts")
                 return
             end
 
