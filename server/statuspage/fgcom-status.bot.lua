@@ -176,6 +176,7 @@ local generateOutData = function()
     
     
     -- generate metadata
+    fgcom.dbg("generateOutData(): generating highscore data...")
     if highscore.num < users_alive then
         highscore.num  = users_alive
         highscore.date = os.time()
@@ -185,6 +186,7 @@ local generateOutData = function()
     
     
     -- generate JSON structure
+    fgcom.dbg("generateOutData(): generating db content...")
     dataJsonString = json.encode(data)
     fgcom.dbg("JSON RESULT: "..dataJsonString)
     return dataJsonString
@@ -223,6 +225,7 @@ dbUpdateTimer_func = function(t)
         fgcom.dbg("opened db '"..tmpdb.."'")
         -- tmpdb is open, write out the data
         local data = generateOutData()
+        fgcom.dbg("db data generating completed")
         local writeRes = tmpdb_fh:write(data)
         if not writeRes then
             fgcom.log("unable to write into db: "..tmpdb)
@@ -235,9 +238,12 @@ dbUpdateTimer_func = function(t)
             io.close(tmpdb_fh)
             
             os.remove(db)
-            ren_rc, ren_message = os.rename(tmpdb, db)
-            -- TODO: handle errors
-            fgcom.dbg("published db '"..db.."'")
+            local ren_rc, ren_message = os.rename(tmpdb, db)
+            if not ren_rc then
+                fgcom.log("error publishing db: "..db)
+            else
+                fgcom.dbg("published db '"..db.."'")
+            end
         end
         
         -- clean up stale entries
