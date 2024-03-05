@@ -14,7 +14,7 @@
         
         <!-- tablesort from https://github.com/tristen/tablesort -->
         <script src='inc/tablesort.min.js'></script>
-        <script src='inc/tablesort.number.js'></script> <!-- modified version to understand units postfix)
+        <script src='inc/tablesort.number.js'></script> <!-- modified version to understand units postfix) -->
         
         <!-- include leaflet map -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
