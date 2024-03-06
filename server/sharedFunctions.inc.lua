@@ -80,7 +80,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.7.0",
+    libversion = "1.8.0",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -308,7 +308,9 @@ fgcom = {
                     end
           
                     -- check if we already know this clients identity with given iid; if not, add template
-                    if not fgcom_clients[sid][iid] then
+                    if fgcom_clients[sid][iid] then
+                        if fgcom.hooks.parsePluginData_updateKnownClient ~= nil then fgcom.hooks.parsePluginData_updateKnownClient(sid, iid) end
+                    else
                         fgcom_clients[sid][iid] = {
                             callsign="",
                             lat="",
@@ -317,6 +319,7 @@ fgcom = {
                             radios={},
                             lastUpdate=0
                         }
+                        if fgcom.hooks.parsePluginData_newClient ~= nil then fgcom.hooks.parsePluginData_newClient(sid, iid) end
                     end
           
                     -- record that we had an data update
@@ -369,6 +372,8 @@ fgcom = {
                             fgcom.dbg("parsing field failed! "..#field.." tokens seen")
                         end
                     end
+                    
+                    if fgcom.hooks.parsePluginData_afterParseIID ~= nil then fgcom.hooks.parsePluginData_afterParseIID(sid, iid) end
           
                 elseif packtype == "PING" then
                     -- update the contained identites lastUpdate timestamps
@@ -378,11 +383,16 @@ fgcom = {
                         if fgcom_clients[sid][iid] then 
                             fgcom_clients[sid][iid].lastUpdate = os.time()
                         end
+                        
+                        if fgcom.hooks.parsePluginData_afterParseIID ~= nil then fgcom.hooks.parsePluginData_afterParseIID(sid, iid) end
                     end
           
                 elseif packtype == "ICANHAZDATAPLZ" then
                     -- ignore for now
                 end
+                
+                fgcom.dbg("Packet fully processed.")
+                if fgcom.hooks.parsePluginData_processedPacket ~= nil then fgcom.hooks.parsePluginData_processedPacket(sender, packtype, dataID_t) end
             end
             
             fgcom.dbg("Parsing done. New remote state:")
@@ -398,6 +408,9 @@ fgcom = {
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       pwr='"..radio.power.."'")
                                 fgcom.dbg("sid="..uid.."; idty="..iid.."    radio #"..radio_id.."       opr='"..radio.operable.."'")
                             end
+                        elseif k == "lastUpdate" then
+                            local last_updated_since = os.time() - v
+                            fgcom.dbg("sid="..uid.."; idty="..iid.."\t"..k..":\t"..tostring(v).." ("..last_updated_since.."s ago)")
                         else
                             fgcom.dbg("sid="..uid.."; idty="..iid.."\t"..k..":\t"..tostring(v))
                         end
@@ -416,7 +429,10 @@ fgcom = {
                     local stale_since = os.time() - idty.lastUpdate
                     if stale_since > fgcom.data.cleanupTimeout then
                         fgcom.dbg("cleanup remote data: sid="..uid.."; idty="..iid.."  stale_since="..stale_since)
-                        fgcom_clients[uid][iid] = nil;
+                        local process = true
+                        if fgcom.hooks.cleanupPluginData_entry ~= nil then process=fgcom.hooks.cleanupPluginData_entry(uid, iid) end
+                        
+                        if process then fgcom_clients[uid][iid] = nil end
                     end
                 end
             end
@@ -476,6 +492,27 @@ fgcom = {
             end
             return fgcom.auth.isAuthenticated(user)
         end,
+    },
+    
+    -- Various hooks, bots can implement to have event based adjustment options.
+    -- If they are not defined, they will not be called.
+    hooks = {
+        -- parsePluginData_afterParseIID(sid, iid)
+        --   called when parsePluginData() received data for a given iid
+        
+        -- fgcom.hooks.parsePluginData_newClient(sid, iid)
+        --   called when parsePluginData() detected that the client was not seen before.
+        --   is called before any datas is parsed/added.
+        
+        -- fgcom.hooks.parsePluginData_updateKnownClient(sid, iid)
+        --   called when parsePluginData() detected that the client was known.
+        --   is called before any datas is parsed/updated.
+        
+        -- fgcom.hooks.parsePluginData_processedPacket(mumble_user, packtype, dataID_t)
+        --   called after processing the packet, passing raw data
+        
+        -- fgcom.hooks.cleanupPluginData_entry(sid, iid)
+        --   called when cleaning up an entry. return false to prevent the entry to be cleaned out.
     }
 }
     
