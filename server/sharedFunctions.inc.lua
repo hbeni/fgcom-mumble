@@ -80,7 +80,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.7.0",
+    libversion = "1.8.0",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -369,6 +369,8 @@ fgcom = {
                             fgcom.dbg("parsing field failed! "..#field.." tokens seen")
                         end
                     end
+                    
+                    if fgcom.hooks.parsePluginData_afterParseIID ~= nil then fgcom.hooks.parsePluginData_afterParseIID(sid, iid) end
           
                 elseif packtype == "PING" then
                     -- update the contained identites lastUpdate timestamps
@@ -378,6 +380,8 @@ fgcom = {
                         if fgcom_clients[sid][iid] then 
                             fgcom_clients[sid][iid].lastUpdate = os.time()
                         end
+                        
+                        if fgcom.hooks.parsePluginData_afterParseIID ~= nil then fgcom.hooks.parsePluginData_afterParseIID(sid, iid) end
                     end
           
                 elseif packtype == "ICANHAZDATAPLZ" then
@@ -476,6 +480,13 @@ fgcom = {
             end
             return fgcom.auth.isAuthenticated(user)
         end,
+    },
+    
+    -- Various hooks, bots can implement to have event based adjustment options.
+    -- If they are not defined, they will not be called.
+    hooks = {
+        -- parsePluginData_afterParseIID(sid, iid)
+        --   called when parsePluginData() received data for a given iid
     }
 }
     
