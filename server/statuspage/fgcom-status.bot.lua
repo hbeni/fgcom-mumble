@@ -129,45 +129,75 @@ local generateOutData = function()
     for i, mc in ipairs(client:getUsers()) do  allUsers[mc:getSession()] = mc  end
     local data     = {clients={}, meta={}}  -- final return array
 
+    -- Record already processed entries (Issue #177)
+    -- TODO: probably I''m just to dumb to properly use lua in the first place. So consider this a workaround.
+    --       If you ever see this comment and think otherwise, let me know so I can remove this embarrassing bit of comment and/or code. :)
+    local already_processed_clients = {}
+    
     -- generate list of current users
     local users_alive = 0
     for sid, remote_client in pairs(fgcom_clients) do
         for iid,user in pairs(remote_client) do
-            fgcom.dbg("generateOutData(): processing user: "..sid.." with idty="..iid)
-            local userData = {}   -- the return structure for generating the message
-            local mumbleUser = allUsers[sid]
-            if not mumbleUser then
-                fgcom.dbg("User sid="..sid.." not connected anymore!")
-                -- push out old data for a while
-                userData.updated = fgcom_clients[sid][iid].lastUpdate
-                userData.type    = fgcom_clients[sid][iid].type
-            else 
-                fgcom_clients[sid][iid].type = "client"
-                if mumbleUser:getName():find("FGCOM%-.*") then fgcom_clients[sid][iid].type = "playback-bot" end
-                if mumbleUser:getName():find("FGCOM%-BOTPILOT.*") then fgcom_clients[sid][iid].type = "client" end
-                userData.type = fgcom_clients[sid][iid].type
+            fgcom.dbg("generateOutData(): evaluating user: "..sid.." with idty="..iid)
+            
+            -- Skip, if already processed (Issue #177).
+            -- I really have no Idea, why table entries are sometimes iterated more than once.
+            local already_processed_clients_key = string.format("%s:%s", sid, iid)
+            if already_processed_clients[already_processed_clients_key] ~= nil then
+                fgcom.dbg("skipping entry '"..already_processed_clients_key.."'); already processed")
                 
-                if userData.type == "client" then  users_alive = users_alive + 1  end
-            end
-            
-            userData.callsign = user.callsign
-            fgcom.dbg("  callsign="..userData.callsign.." (type="..userData.type..")")
-            
-            userData.radios = {}
-            for radio_id,radio in pairs(user.radios) do
-                fgcom.dbg("  radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."', dialedFRQ='"..radio.dialedFRQ.."', operable="..radio.operable)
-                if radio.frequency ~= "<del>" then
-                    table.insert(userData.radios, radio_id, radio)
+            else
+                fgcom.dbg("processing entry '"..already_processed_clients_key.."'")
+                already_processed_clients[already_processed_clients_key] = true
+                
+                
+                -- prepare the return structure for generating the message
+                local userData = {
+                    callsign="",
+                    type="invalid",
+                    radios = {},
+                    lat="",
+                    lon="",
+                    alt="",
+                    updated=0
+                }
+                
+                -- populate users metadata
+                local mumbleUser = allUsers[sid]
+                local last_updated_since = os.time() - fgcom_clients[sid][iid].lastUpdate
+                if not mumbleUser then
+                    fgcom.dbg("User sid="..sid.." not connected anymore!")
+                    -- push out old data for a while;
+                    -- fgcom.data.cleanupPluginData() (called from dbUpdateTimer) will clean up for us.
+                    -- once that happened, we will not see the entry here anymore.
+                else
+                    if userData.type == "client" then  users_alive = users_alive + 1  end
                 end
+                userData.updated = fgcom_clients[sid][iid].lastUpdate
+                fgcom.dbg("  updated="..userData.updated.. " ("..last_updated_since.."s ago)")
+                
+                -- populate users callsign
+                userData.type     = fgcom_clients[sid][iid].type
+                userData.callsign = user.callsign
+                fgcom.dbg("  callsign="..userData.callsign.." (type="..userData.type..")")
+                
+                -- populate users radios
+                for radio_id,radio in pairs(user.radios) do
+                    fgcom.dbg("  radio #"..radio_id..", ptt='"..radio.ptt.."', frq='"..radio.frequency.."', dialedFRQ='"..radio.dialedFRQ.."', operable="..radio.operable)
+                    if radio.frequency ~= "<del>" then
+                        table.insert(userData.radios, radio_id, radio)
+                    end
+                end
+                
+                -- populate users location
+                userData.lat = user.lat
+                userData.lon = user.lon
+                userData.alt = user.alt
+                fgcom.dbg("  lat="..userData.lat.."; lon="..userData.lon.."; alt="..userData.alt)
+                
+                -- finally push the prepared data into the client result
+                table.insert(data.clients, userData)
             end
-            userData.lat = user.lat
-            userData.lon = user.lon
-            userData.alt = user.alt
-            userData.updated = fgcom_clients[sid][iid].lastUpdate
-            fgcom.dbg("  updated="..userData.updated)
-            fgcom.dbg("  lat="..userData.lat.."; lon="..userData.lon.."; alt="..userData.alt)
-            
-            table.insert(data.clients, userData)
         end
     end
     
@@ -394,4 +424,44 @@ client:hook("OnMessage", function(client, event)
 end)
 
 
+-- Implement fgcom hooks
+fgcom.hooks.parsePluginData_updateKnownClient = function(sid, iid)
+    -- called when parsePluginData() detected that the client was known.
+    fgcom.dbg("fgcom.hooks.parsePluginData_updateKnownClient("..sid..","..iid..") called")
+end
+
+fgcom.hooks.parsePluginData_newClient = function(sid, iid)
+    -- called when parsePluginData() detected that the client was not seen before.
+    fgcom.dbg("fgcom.hooks.parsePluginData_newClient("..sid..","..iid..") called")
+end
+
+--fgcom.hooks.parsePluginData_afterParseIID = function(sid, iid)
+--    -- called when parsePluginData() received data for a given iid
+--    fgcom.dbg("fgcom.hooks.parsePluginData_afterParseIID("..sid..","..iid..") called")
+--end
+
+fgcom.hooks.parsePluginData_processedPacket = function(mumble_user, packtype, dataID_t)
+    -- called after processing the packet, passing raw data
+    fgcom.dbg("fgcom.hooks.parsePluginData_processedPacket("..packtype..") called")
+    if packtype == "UPD_USR" then
+        local iid = dataID_t[3]          -- identity selector
+        local sid = mumble_user:getSession()  -- mumble session id
+        
+        -- Update type of client based on client name;
+        -- We know, that bot clients use FGCOM- as prefix for their mumble username.
+        local newType = "client" -- assume client as default
+        if mumble_user:getName():find("FGCOM%-.*")         then newType = "playback-bot" end
+        if mumble_user:getName():find("FGCOM%-BOTPILOT.*") then newType = "client" end
+        
+        if fgcom_clients[sid][iid].type ~= newType then
+            fgcom.dbg("  update type to '"..newType.."'")
+            fgcom_clients[sid][iid].type = newType
+        end
+    end
+end
+
+
+
+
+-- Finally start the bot
 mumble.loop()
