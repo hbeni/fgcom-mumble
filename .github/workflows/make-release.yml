@@ -21,7 +21,7 @@ jobs:
   ################################
   build_macPlugin:
     name: Build macOS plugin binary
-    runs-on: macos-latest
+    runs-on: macos-11
 
     steps:
     - name: Checkout repository
@@ -114,7 +114,7 @@ jobs:
   ###############################
   build_macPlugin-debug:
     name: Build macOS plugin binary (debug version)
-    runs-on: macos-latest
+    runs-on: macos-11
 
     steps:
     - name: Checkout repository
