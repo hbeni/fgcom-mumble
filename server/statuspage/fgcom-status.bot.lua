@@ -207,6 +207,7 @@ local generateOutData = function()
     if highscore.num < users_alive then
         highscore.num  = users_alive
         highscore.date = os.time()
+        fgcom.log("new highscore: "..highscore.num.." clients at "..os.date('%Y-%m-%d %H:%M:%S', highscore.date).." ("..highscore.date..")")
     end
     data.meta.highscore_clients = highscore.num
     data.meta.highscore_date    = highscore.date
