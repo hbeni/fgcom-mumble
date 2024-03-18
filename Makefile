@@ -151,7 +151,7 @@ bundle-server:
 	mv fgcom-mumble-server-$(SERVER_VER)/statuspage/Readme.statuspage.md fgcom-mumble-server-$(SERVER_VER)
 	cp server/Readme.server-de_DE.md fgcom-mumble-server-$(SERVER_VER)/
 	cp server/fgcom-botmanager.sh server/*.bot.lua fgcom-mumble-server-$(SERVER_VER)
-	sed '/^\s\+gitver/s/""/"$(GITVER) $(GITDATE)"/' server/sharedFunctions.inc.lua > fgcom-mumble-server-$(SERVER_VER)/sharedFunctions.inc.lua
+	sed '/^\s\+gitver/s/""/"$(GITVER) $(GITDATE)"/' server/fgcom-sharedFunctions.inc.lua > fgcom-mumble-server-$(SERVER_VER)/fgcom-sharedFunctions.inc.lua
 	zip -r fgcom-mumble-server-$(SERVER_VER).zip fgcom-mumble-server-$(SERVER_VER)
 	rm -rf fgcom-mumble-server-$(SERVER_VER)
 

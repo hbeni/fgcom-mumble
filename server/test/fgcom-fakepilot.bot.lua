@@ -32,7 +32,7 @@ The bot is depending on lua-mumble from  bkacjios (https://github.com/bkacjios/l
 Installation of this plugin is described in the projects readme: https://github.com/bkacjios/lua-mumble/blob/master/README.md
 
 ]]
-dofile("sharedFunctions.inc.lua")  -- include shared functions
+dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()

@@ -36,7 +36,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 
-dofile("sharedFunctions.inc.lua")  -- include shared functions
+dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
 fgcom.botversion = "1.9.0"
 json = require("dkjson")
 local botname     = "FGCOM-Status"

@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 
-dofile("sharedFunctions.inc.lua")  -- include shared functions
+dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
 fgcom.botversion  = "1.8.1"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"

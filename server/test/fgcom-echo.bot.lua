@@ -32,7 +32,7 @@ TODO: concurrency not implemented. Currently the bot can only respond to one tes
 ]]
 local botname = "FGOM-Echotest"
 
-dofile("sharedFunctions.inc.lua")  -- include shared functions
+dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
 fgcom.callsign = "FGOM-ECHO"
 local voiceBuffer = Queue:new()
 
