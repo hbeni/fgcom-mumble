@@ -99,7 +99,8 @@ if arg[1] then
 end
 
 -- Connect to server, so we get the API
-fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
+fgcom.log(botname..": "..fgcom.getVersion())
+fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(fgcom.callsign)
 fgcom.log("connect and bind: OK")
