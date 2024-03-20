@@ -434,6 +434,7 @@ end
 fgcom.hooks.parsePluginData_newClient = function(sid, iid)
     -- called when parsePluginData() detected that the client was not seen before.
     fgcom.dbg("fgcom.hooks.parsePluginData_newClient("..sid..","..iid..") called")
+    fgcom_clients[sid][iid].type = "new/unknown" -- assure type field is set. Will get updated after fully parsing the packet
 end
 
 --fgcom.hooks.parsePluginData_afterParseIID = function(sid, iid)
