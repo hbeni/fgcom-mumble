@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.8.2"
+fgcom.botversion = "1.9.0"
 json = require("dkjson")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -52,6 +52,7 @@ local speed = 5  -- update interval in seconds
 local weburl = ""
 local stats = ""
 local speedStats = 60 -- write interval for statistic entries in seconds
+local stalepurge = 60 -- clean out stale entries after this seconds
 
 
 if arg[1] then
@@ -59,7 +60,7 @@ if arg[1] then
         print(botname..", "..fgcom.getVersion())
         print("usage: "..arg[0].." [opt=val ...]")
         print("  Options:")
-        print("    --name=    Change Bot's name                (default="..botname..")")
+        print("    --name=    Change Bot's name                (default="..fgcom.callsign..")")
         print("    --host=    host to connect to               (default="..host..")")
         print("    --port=    port to connect to               (default="..port..")")
         print("    --channel= channel to join                  (default="..fgcom.channel..")")
@@ -70,6 +71,7 @@ if arg[1] then
         print("    --web=     Advertise url in comment         (default=no commercials!)")
         print("    --stats=   append usage stats to this file  (default=no)")
         print("    --speedst= usage stats update interval      (seconds, default="..speedStats..")")
+        print("    --purge=   stale entries retention time     (seconds, default="..stalepurge..")")
         print("    --debug    print debug messages             (default=no)")
         print("    --version  print version and exit")
         os.exit(0)
@@ -78,7 +80,7 @@ if arg[1] then
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         --print("KEY='"..k.."'; VAL='"..v.."'")
-        if k=="name"      then botname=v end
+        if k=="name"      then fgcom.callsign=v end
         if k=="host"      then host=v end
         if k=="port"      then port=v end
         if k=="channel"   then fgcom.channel=v end
@@ -89,6 +91,7 @@ if arg[1] then
         if k=="speedst"   then speedStats=v end
         if k=="web"       then weburl=v end
         if k=="stats"     then stats=v end
+        if k=="purge"     then stalepurge=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
     end
@@ -98,7 +101,7 @@ end
 -- Connect to server, so we get the API
 fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = assert(mumble.connect(host, port, cert, key))
-client:auth(botname)
+client:auth(fgcom.callsign)
 fgcom.log("connect and bind: OK")
 
 
@@ -187,6 +190,15 @@ local generateOutData = function()
     return dataJsonString
 end
 
+-- function to disconnect the bot
+shutdownBot = function()
+    fgcom.log("shutdownBot(): requested")
+
+    -- finally disconnect from the server
+    client:disconnect()
+    fgcom.log("shutdownBot(): disconnected")
+    os.exit(0)
+end
 
 -- function to get all channel users
 -- this updates the global playback_target table
@@ -231,14 +243,13 @@ dbUpdateTimer_func = function(t)
         -- clean up stale entries
         fgcom.data.cleanupTimeout = 60  -- enhance timeout, so we can display them longer
         fgcom.data.cleanupPluginData()
-        
+
     else
         fgcom.log("ERROR: unable to open db: "..tmpdb)
         -- lets try again in the next iteration.... os.exit(1)
     end
 
 end
-
 
 -- Timed loop to write usage statistics file
 -- The data is intendet to be compatible to gnuplot: "<YYYYMMDDhhmmss> <clientcount> <playbacks>" for each line
@@ -298,6 +309,9 @@ client:hook("OnServerSync", function(client, event)
     event.user:move(ch)
     fgcom.log("joined channel "..fgcom.channel)
            
+    -- Establish authentication token
+    fgcom.auth.generateToken(nil)
+
     -- Adjust comment
     if weburl:len() > 0 then
         fgcom.log("Advetising web url: "..weburl)
@@ -315,8 +329,9 @@ client:hook("OnServerSync", function(client, event)
     -- start statistics collection
     if stats:len() > 0 then
         fgcom.log("Writing statistics to: "..stats)
-        statsWriterTimer:start(statsWriterTimer_func, 60, speedStats)
+        statsWriterTimer:start(statsWriterTimer_func, speedStats, speedStats)
     end
+    
 end)
 
 
@@ -355,6 +370,8 @@ client:hook("OnMessage", function(client, event)
             --print("DBG: parsed command: command="..command)
             --if param then print("DBG:   param="..param) end
 
+            local paramTimeSafeGuard = 5 -- do not allow update intervals below this
+
             -- handle auth request
             if command == "auth" then
                 if not param then event.actor:message("/auth needs a tokenstring as argument!") return end
@@ -366,10 +383,13 @@ client:hook("OnMessage", function(client, event)
                 event.actor:message(botname..", "..fgcom.getVersion().." commands:"
                     .."<table>"
                     .."<tr><th style=\"text-align:left\"><tt>/help</tt></th><td>show this help.</td></tr>"
-                    --.."<tr><th style=\"text-align:left\"><tt>/auth &lt;token&gt;</tt></th><td>Authenticate to be able to execute advanced commands.</td></tr>"
-                    --.."<tr><th style=\"text-align:left\"><tt>/exit</tt></th><td>Terminate the bot.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/auth &lt;token&gt;</tt></th><td>Authenticate to be able to execute advanced commands.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/exit</tt></th><td>Terminate the bot.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/info</tt></th><td>Show some configuration values.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/speed &lt;secs&gt;</tt></th><td>Change db update interval.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/purge &lt;secs&gt;</tt></th><td>Retention time for stale entries (Note, the purge is bound to the --speed interval)</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/speedst &lt;secs&gt;</tt></th><td>Change usage statistics update interval.</td></tr>"
                     .."</table>"
-                    .."<br>I do not obey to chat commands so far."
                 )
                 return
             end
@@ -380,7 +400,76 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-            -- no commands so far
+            if command == "exit" then
+                fgcom.dbg("exit command received")
+                event.actor:message("goodbye!")
+                shutdownBot()
+            end
+
+            if command == "info" then
+                local stats_txt = "<i>off</i>";
+                if stats:len() then stats_txt = stats end
+                event.actor:message("Info:"
+                    .."<table>"
+                    .."<tr><th style=\"text-align:left\"><tt>Version</tt></th><td>"..fgcom.getVersion().."</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>--db</tt></th><td>"..db.."</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>--speed</tt></th><td>"..speed.."</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>--purge</tt></th><td>"..stalepurge.." (Note, the purge is bound to the --speed interval)</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>--stats</tt></th><td>"..stats_txt.."</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>--speedst</tt></th><td>"..speedStats.."</td></tr>"
+                    .."</table>"
+                )
+                return
+            end
+
+            if command == "speed" then
+                if not param then event.actor:message("/speed needs a number as argument!") return end
+                _, _, f = string.find(param, "([%d]+)")
+                if not f then event.actor:message("/speed param is not an integer!") return end
+                f = tonumber(f)
+                if f < paramTimeSafeGuard then event.actor:message("/speed must be >= "..paramTimeSafeGuard.."!") return end
+                local m = "DB update interval is now: "..f.." Seconds (was "..speed..")"
+                fgcom.log(m)
+                event.actor:message(m)
+                speed = f
+                dbUpdateTimer:stop()
+                dbUpdateTimer:start(dbUpdateTimer_func, 0.0, speed)
+                return
+            end
+
+            if command == "purge" then
+                if not param then event.actor:message("/purge needs a number as argument!") return end
+                _, _, f = string.find(param, "([%d]+)")
+                if not f then event.actor:message("/purge param is not an integer!") return end
+                f = tonumber(f)
+                if f < paramTimeSafeGuard then event.actor:message("/purge must be >= "..paramTimeSafeGuard.."!") return end
+                if f < speed then event.actor:message("/purge must be bigger than --speed ("..speed..")!") return end
+                local m = "Stale entries retention time is now: "..f.." Seconds (was "..purge..")"
+                fgcom.log(m)
+                event.actor:message(m)
+                purge = f
+                return
+            end
+
+            if command == "speedst" then
+                if stats:len() > 0 then
+                    -- currently only to be turned on at startup for safety reasons (filesystem access!)
+                    if not param then event.actor:message("/speedst needs a number as argument!") return end
+                    _, _, f = string.find(param, "([%d]+)")
+                    if not f then event.actor:message("/speedst param is not an integer!") return end
+                    f = tonumber(f)
+                    if f < paramTimeSafeGuard then event.actor:message("/speedst must be >= "..paramTimeSafeGuard.."!") return end
+                    local m = "Usage statistics update interval is now: "..f.." Seconds (was "..speedStats..")"
+                    fgcom.log(m)
+                    event.actor:message(m)
+                    speedStats = f
+                    statsWriterTimer:stop()
+                    statsWriterTimer:start(statsWriterTimer_func, 0.0, speedStats)
+                else
+                    event.actor:message("Usage statistics collection is disabled, not changing update interval")
+                end
+                return
+            end
 
         end
         
@@ -388,4 +477,5 @@ client:hook("OnMessage", function(client, event)
 end)
 
 
+-- Finally start the bot
 mumble.loop()
