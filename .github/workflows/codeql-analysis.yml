@@ -94,3 +94,59 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
+
+
+  #
+  # Syntax checking
+  #
+  analyze-php:
+    name: Analyze (php)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@main
+      with:
+        # We must fetch at least the immediate parents so that if this is
+        # a pull request then we can checkout the head.
+        fetch-depth: 2
+
+    - name: Check PHP syntax errors
+      uses: overtrue/phplint@main
+      with:
+        path: server/statuspage/
+        options: --exclude=vendor
+
+  analyze-lua:
+    name: Analyze (lua)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@main
+      with:
+        # We must fetch at least the immediate parents so that if this is
+        # a pull request then we can checkout the head.
+        fetch-depth: 2
+
+    - name: Setup programs
+      run: |
+        sudo apt-get -y install lua-check
+
+    #- name: Check LUA syntax errors
+    #  run: |
+    #    find . -name '*.lua' -print  > luacheck.list
+    #    while read file; do echo "LuaLintCheck: $file"; luac -p "$file"; done <luacheck.list
+
+    # invoke luacheck, but make the run-action return only with errors, not with warnings (i.e. RC>1)
+    - name: Check LUA syntax errors
+      continue-on-error: true
+      run: |
+        luacheck . && lrc=$? || lrc=$?
+        echo "LUACHECK_RC=$lrc" >> $GITHUB_ENV
+    - name: Evaluate luacheck return code
+      run: |
+        r=0
+        if [[ "${{env.LUACHECK_RC}}" -gt 1 ]]; then r=1; fi
+        echo "LUACHECK returned ${{env.LUACHECK_RC}}, translated to step_rc=$r"
+        exit $r
