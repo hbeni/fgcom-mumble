@@ -243,7 +243,6 @@ updateAllChannelUsersforSend = function(cl)
     playback_targets = ch:getUsers()
 end
 
-
 -- Timed loop to update the database
 local dbUpdateTimer = mumble.timer()
 dbUpdateTimer_func = function(t)
@@ -281,6 +280,9 @@ dbUpdateTimer_func = function(t)
         -- clean up stale entries
         fgcom.data.cleanupTimeout = 60  -- enhance timeout, so we can display them longer
         fgcom.data.cleanupPluginData()
+        
+        -- check for missing data and ask for it if neccesary
+        local missing_data = fgcom.data.checkMissingPluginData(client);
 
     else
         fgcom.log("ERROR: unable to open db: "..tmpdb)
