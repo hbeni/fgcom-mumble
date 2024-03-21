@@ -317,7 +317,8 @@ fgcom = {
                             lon="",
                             alt="",
                             radios={},
-                            lastUpdate=0
+                            lastUpdate=0,
+                            missingDataSince=0  -- 0: need to check; >0: missing-timestamp; -1: verified ok
                         }
                         if fgcom.hooks.parsePluginData_newClient ~= nil then fgcom.hooks.parsePluginData_newClient(sid, iid) end
                     end
@@ -436,6 +437,67 @@ fgcom = {
                     end
                 end
             end
+        end,
+        
+        -- Check if data is missing for an extended period of time, and ask for more.
+        -- You can "just check" without asking if supplying nil as client param.
+        -- @param mumble.client instance. If nil, no sending for the ask package is performed.
+        -- @param int (optional) timeout in secs, after which to ask for data.
+        -- @return array with missing data: ({ {sid=n, iid=n, missing_data={list, of, missing, data, field, names}}, {...} })
+        checkMissingPluginData = function(client, askForMissingDataAfter)
+            askForMissingDataAfter = askForMissingDataAfter or 30
+            local missing_data_return = {}
+            
+            local allUsers = {} -- sid=>mumbleUser table
+            if client then
+                for i, mc in ipairs(client:getUsers()) do  allUsers[mc:getSession()] = mc  end
+            end
+            
+            for sid,remote_client in pairs(fgcom_clients) do
+                for iid,idty in pairs(remote_client) do
+                    fgcom.dbg("checking for missing fgcom.clients data: sid="..sid.."; idty="..iid.."...")
+                    if idty.missingDataSince == -1 then
+                        -- no further checks needed (-1)
+                        fgcom.dbg("  all data already complete")
+                    else
+                        -- see if data is missing
+                        local missing_data = {}
+                        if idty.callsign == "" then table.insert(missing_data, "callsign") end
+                        if idty.lat      == "" then table.insert(missing_data, "lat") end
+                        if idty.lon      == "" then table.insert(missing_data, "lon") end
+                        if idty.alt      == "" then table.insert(missing_data, "alt") end
+                        
+                        if #missing_data == 0 then
+                            -- all needed data there, mark identity as finally checked
+                            fgcom.dbg("  all data is now complete, no further checks needed")
+                            idty.missingDataSince = -1
+                        else
+                            -- we really still miss data. See if we already need to ask.
+                            if idty.missingDataSince == 0 then
+                                -- first check, store timestamp for later checks
+                                fgcom.dbg("  missing data ("..table.concat(missing_data, ", ").."), marking for further checks")
+                                idty.missingDataSince = os.time()
+                            else
+                                -- consecutive checks, see if timeout exceeded
+                                local missing_since = os.time() - idty.missingDataSince
+                                fgcom.dbg("  missing data ("..table.concat(missing_data, ", ").."), since "..missing_since.."s")
+                                if client and askForMissingDataAfter > 0 and missing_since > askForMissingDataAfter then
+                                    fgcom.dbg("  data missing for too long; asking sid="..sid.." for data")
+                                    client:sendPluginData("FGCOM:ICANHAZDATAPLZ", "orly!", {allUsers[sid]})
+                                    for iid,idty in pairs(remote_client) do
+                                        idty.missingDataSince = 0 -- mark for checking again
+                                    end
+                                end
+                            end
+                            
+                            -- add data to return structure
+                            table.insert(missing_data_return, {sid=sid, iid=iid, missing=missing_data})
+                        end
+                        
+                    end
+                end
+            end
+            return missing_data_return
         end
     },
 
