@@ -47,6 +47,7 @@ local voiceBuffer = Queue:new() -- Queue voice buffer holding the cached samples
 local lastHeader  = nil -- holds last header data
 local playback_targets = nil -- holds updated list of all channel users
 local ptt = false -- signals if the bot is currently transmitting
+local freq = "none" -- active frequency
 
 local sleep = 30              -- time beween checks if to transmit
 local chance_transmit = 0.25  -- chance that he will transmit
@@ -189,6 +190,16 @@ updateAllChannelUsersforSend = function(cl)
     end
 end
 
+-- pick a random frequency
+pickRandomFrequency = function()
+    local f  = testfrequencies[math.random(1,#testfrequencies)]
+    local ce = tonumber(math.random(0, 100)/100)
+    if ce < chance_echotest then
+        f = "910.00"
+    end
+    return f
+end
+
 
 --[[
   Playback loop: we use a mumble timer for this. The timer loops in
@@ -196,7 +207,6 @@ end
   he fetches them and plays them, one packet per timer tick.
 ]]
 local playbackTimer = mumble.timer()
-local freq = testfrequencies[1]
 playbackTimer_func = function(t)
     --fgcom.dbg("playback timer: tick; ptt=",ptt)
     
@@ -204,21 +214,13 @@ playbackTimer_func = function(t)
     if ptt then
         -- PTT is active: setup voice buffer and radio (if not done already)
         if voiceBuffer:size() <= 0 then
-            fgcom.log(fgcom.callsign.." Starting new transmission...")
+            local freq_desc = "Normal"
+            if freq == "910.00" then freq_desc = "Echotest" end
+            fgcom.log(fgcom.callsign.." Starting new transmission... @"..freq.." ("..freq_desc..")")
             
             -- fill temporary buffer
             lastHeader, voiceBuffer = readFGCSSampleFile(sample)
             if not lastHeader then  fgcom.log("ERROR: '"..sample.."' not readable or no FGCS file") os.exit(1) else fgcom.dbg(sample..": successfully refreshed ("..voiceBuffer:size().." samples)") end
-            
-            -- choose a random frequency
-            freq = testfrequencies[math.random(1,#testfrequencies)]
-            local ce = tonumber(math.random(0, 100)/100)
-            if ce < chance_echotest then
-                freq = "910.00"
-                fgcom.log("  (Echotest transmission @"..freq..")")
-            else
-                fgcom.log("  (Normal transmission @"..freq..")")
-            end
             
             -- Broadcast radio
             updateAllChannelUsersforSend(client)
@@ -254,7 +256,10 @@ playbackTimer_func = function(t)
                 fgcom.dbg(fgcom.callsign.."  no samples left, playback complete")
                 
                 ptt = false;
-            
+                
+                freq = pickRandomFrequency() -- pick a new frequency for the next transmission
+                fgcom.log("picked new frequency: "..freq)
+                
                 -- broadcast radio
                 updateAllChannelUsersforSend(client)
                 if #playback_targets > 0 then
@@ -322,6 +327,18 @@ client:hook("OnServerSync", function(client, event)
         end
             
     end, 0.00, locs)
+    
+    -- initiate radio stack
+    freq = pickRandomFrequency()
+    fgcom.log("picked new frequency: "..freq)
+    if #playback_targets > 0 then
+        local msg = "FRQ="..freq
+                ..",CHN="..freq
+                ..",PWR=10"
+                ..",PTT=0"
+        fgcom.dbg("  Bot sets radio: "..msg)
+        client:sendPluginData("FGCOM:UPD_COM:0:0", msg, playback_targets)
+    end
     
     -- let the pilot check every n seconds if he wants to do a transmission
     checkTimer:start(function(t)
