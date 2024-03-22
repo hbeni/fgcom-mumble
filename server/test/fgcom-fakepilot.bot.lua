@@ -368,8 +368,8 @@ client:hook("OnPluginData", function(client, event)
                 ..",CHN="..freq
                 ..",PWR=10"
                 ..",PTT=0"
-        client:sendPluginData("FGCOM:UPD_COM:0", msg, {event.sender})
-        --event.sender:sendPluginData("FGCOM:UPD_COM:0", msg)
+        client:sendPluginData("FGCOM:UPD_COM:0:0", msg, {event.sender})
+        --event.sender:sendPluginData("FGCOM:UPD_COM:0:0", msg)
     end
 
 end)
