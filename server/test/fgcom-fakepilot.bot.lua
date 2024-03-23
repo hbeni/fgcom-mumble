@@ -1,7 +1,7 @@
---[[ 
+--[[
 This file is part of the FGCom-mumble distribution (https://github.com/hbeni/fgcom-mumble).
 Copyright (c) 2020 Benedikt Hallinger
- 
+
 This program is free software: you can redistribute it and/or modify  
 it under the terms of the GNU General Public License as published by  
 the Free Software Foundation, version 3.
@@ -66,6 +66,9 @@ local port   = 64738
 local cert   = "bot.pem"
 local key    = "bot.key"
 local sample = "recordings/fgcom.rec.testsample.fgcs"
+local s_lat  = "random"
+local s_lon  = "random"
+local s_alt  = "random"
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
@@ -83,6 +86,9 @@ if arg[1] then
         print("    --sleep=   Time interval between checks (default="..sleep..")")
         print("    --chancet= Chance for transmission      (default="..chance_transmit..")")
         print("    --chancee= Chance that transmit is echotest   (default="..chance_echotest..")")
+        print("    --lat=     start latitude (decimal)     (default="..s_lat..")")
+        print("    --lon=     start longitude (decimal)    (default="..s_lon..")")
+        print("    --alt=     start altitude (decimal)     (default="..s_alt..")")
         print("    --debug    print debug messages         (default=no)")
         print("    --version  print version and exit")
         os.exit(0)
@@ -101,6 +107,9 @@ if arg[1] then
         if k=="sleep"   then sleep=tonumber(v) end
         if k=="chancet" then chance_transmit=tonumber(v) end
         if k=="chancee" then chance_echotest=tonumber(v) end
+        if k=="lat"     then s_lat=v end
+        if k=="lon"     then s_lon=v end
+        if k=="alt"     then s_alt=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
     end
@@ -109,6 +118,9 @@ end
 
 -- parameter checks
 --if sample == "" then print("parameter --sample is mandatory!") os.exit(1) end
+if s_lat ~= "random" and tonumber(s_lat) == nil then print("parameter --lat must be a number or 'random'!") os.exit(1) end
+if s_lon ~= "random" and tonumber(s_lon) == nil then print("parameter --lon must be a number or 'random'!") os.exit(1) end
+if s_alt ~= "random" and tonumber(s_alt) == nil then print("parameter --alt must be a number or 'random'!") os.exit(1) end
 
 fgcom.callsign = "FGCOM-BOTPILOT-"
 if botid == "" then
@@ -116,7 +128,6 @@ if botid == "" then
 else
     fgcom.callsign = fgcom.callsign..botid
 end
-
 
 -----------------------------
 --[[ DEFINE SOME FUNCTIONS ]]
@@ -166,6 +177,17 @@ if not lastHeader then  fgcom.log("ERROR: '"..sample.."' not readable or no FGCS
 --   voiceBuffer is initialized with the read samples
 fgcom.log(sample..": successfully loaded.")
 
+-- Initialize starting position and move vector
+local lat   = math.random( -80,  80) + math.random(-100000, 100000)/100000
+local lon   = math.random(-150, 150) + math.random(-100000, 100000)/100000
+local alt   = math.random(15, 8000)
+local latmv = math.random(-100, 100)/100000
+local lonmv = math.random(-100, 100)/100000
+if s_lat ~= "random" then lat = s_lat end
+if s_lon ~= "random" then lon = s_lon end
+if s_alt ~= "random" then alt = s_alt end
+fgcom.log("initalized location to: lat="..lat..", lon="..lon..", alt="..alt)
+fgcom.log("move vector: latmv="..latmv..", lonmv="..lonmv)
 
 
 -- Connect to server, so we get the API
@@ -216,7 +238,7 @@ playbackTimer_func = function(t)
         if voiceBuffer:size() <= 0 then
             local freq_desc = "Normal"
             if freq == "910.00" then freq_desc = "Echotest" end
-            fgcom.log(fgcom.callsign.." Starting new transmission... @"..freq.." ("..freq_desc..")")
+            fgcom.log("Starting new transmission... @"..freq.." ("..freq_desc..")")
             
             -- fill temporary buffer
             lastHeader, voiceBuffer = readFGCSSampleFile(sample)
@@ -253,7 +275,7 @@ playbackTimer_func = function(t)
             fgcom.dbg("  transmit ok")
             if endofStream then
                 -- no samples left? Just loop around to trigger all the checks
-                fgcom.dbg(fgcom.callsign.."  no samples left, playback complete")
+                fgcom.dbg("  no samples left, playback complete")
                 
                 ptt = false;
                 
@@ -272,7 +294,7 @@ playbackTimer_func = function(t)
                 end
                 
                 t:stop() -- Stop the timer
-                fgcom.log(fgcom.callsign.." Transmission complete.")
+                fgcom.log("Transmission complete.")
             end
         end
         
@@ -288,14 +310,8 @@ playbackTimer_func = function(t)
     io.flush()
 end
 
-
-local locUpd     = mumble.timer()
-local checkTimer = mumble.timer()
-local lat   = math.random(-150, 150)/100 + math.random(-100000, 100000)/100000
-local lon   = math.random(-150, 150)/100 + math.random(-100000, 100000)/100000
-local alt   = math.random(15, 8000)
-local latmv = math.random(-100, 100)/100000
-local lonmv = math.random(-100, 100)/100000
+local locationUpdateTimer    = mumble.timer()
+local transmissionCheckTimer = mumble.timer()
 client:hook("OnServerSync", function(client, event)
     fgcom.log("Sync done; server greeted with: ", event.welcome_text)
     
@@ -308,9 +324,9 @@ client:hook("OnServerSync", function(client, event)
     local msg = "CALLSIGN="..fgcom.callsign
     client:sendPluginData("FGCOM:UPD_USR:0", msg, playback_targets)
            
-    -- update location       
-    locUpd:start(function(t)
-        --fgcom.dbg("locUpd: tick")
+    -- update location
+    locationUpdateTimer:start(function(t)
+        --fgcom.dbg("locationUpdateTimer: tick")
         -- update current users of channel
         updateAllChannelUsersforSend(client)
         if #playback_targets > 0 then
@@ -318,9 +334,16 @@ client:hook("OnServerSync", function(client, event)
             lat = lat + latmv
             lon = lon + lonmv
             alt = alt + math.random(-50, 50)
+
+            -- wrap around / limit
+            if lat <  -80 and latmv < 0 then latmv = latmv * -1 end
+            if lat >   80 and latmv > 0 then latmv = latmv * -1 end
+            if lon < -180 then lon = lon + 360 end
+            if lon >  180 then lon = lon - 360 end
             if alt < 100 then alt = math.abs(alt) end
-            local msg = "LON="..lat
-                    ..",LAT="..lon
+
+            local msg = "LON="..lon
+                    ..",LAT="..lat
                     ..",ALT="..alt
             --fgcom.dbg("Bot sets location: "..msg)
             client:sendPluginData("FGCOM:UPD_LOC:0", msg, playback_targets)
@@ -341,8 +364,8 @@ client:hook("OnServerSync", function(client, event)
     end
     
     -- let the pilot check every n seconds if he wants to do a transmission
-    checkTimer:start(function(t)
-        --fgcom.dbg("checkTimer: tick")
+    transmissionCheckTimer:start(function(t)
+        --fgcom.dbg("transmissionCheckTimer: tick")
         local ct = math.random(0, 100)/100
         if chance_transmit  < ct then
             -- triggerTransmit, if not already transmitting
