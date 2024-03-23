@@ -37,8 +37,8 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 
-dofile("sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.8.1"
+dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
+fgcom.botversion  = "1.8.2"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -125,7 +125,8 @@ end
 
 
 -- Connect to server, so we get the API
-fgcom.log(botname..": connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
+fgcom.log(botname..": "..fgcom.getVersion())
+fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = assert(mumble.connect(host, port, cert, key))
 client:auth(botname)
 fgcom.log("connect and bind: OK")
@@ -285,6 +286,9 @@ client:hook("OnPluginData", function(client, event)
 
     -- clean up stale entries
     fgcom.data.cleanupPluginData()
+    
+    -- check for missing data and ask for it if neccesary
+    local missing_data = fgcom.data.checkMissingPluginData(client);
 
 end)
 
