@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.9.0"
+fgcom.botversion = "1.9.1"
 json = require("dkjson")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -116,9 +116,17 @@ if hsdb_fh then
     local json_parse_res = json.decode(hsdb_fhdbcontent)
     hsdb_fhdbcontent = nil
     io.close(hsdb_fh)
-    highscore.num  = json_parse_res.meta.highscore_clients
-    highscore.date = json_parse_res.meta.highscore_date
-    fgcom.log("  highscore: "..highscore.num.." clients at "..os.date('%Y-%m-%d %H:%M:%S', highscore.date).." ("..highscore.date..")")
+    if json_parse_res == nil
+       or json_parse_res.meta == nil
+       or json_parse_res.meta.highscore_clients == nil
+       or json_parse_res.meta.highscore_date == nil
+    then
+        fgcom.log("  db is empty, initializing fresh highscore data")
+    else
+        highscore.num  = json_parse_res.meta.highscore_clients
+        highscore.date = json_parse_res.meta.highscore_date
+        fgcom.log("  highscore: "..highscore.num.." clients at "..os.date('%Y-%m-%d %H:%M:%S', highscore.date).." ("..highscore.date..")")
+    end
 end
 
 
