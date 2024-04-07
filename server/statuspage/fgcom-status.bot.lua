@@ -111,7 +111,7 @@ fgcom.log("connect and bind: OK")
 local highscore = {num=0, date=0}
 local hsdb_fh = io.open(db, "rb")
 if hsdb_fh then
-    fgcom.log("loading past highscore from db "..db)
+    fgcom.log("loading past highscore from DB '"..db.."'")
     local hsdb_fhdbcontent = hsdb_fh:read("*all")
     local json_parse_res = json.decode(hsdb_fhdbcontent)
     hsdb_fhdbcontent = nil
@@ -121,12 +121,14 @@ if hsdb_fh then
        or json_parse_res.meta.highscore_clients == nil
        or json_parse_res.meta.highscore_date == nil
     then
-        fgcom.log("  db is empty, initializing fresh highscore data")
+        fgcom.log("  DB is empty or invalid, initializing fresh highscore data")
     else
         highscore.num  = json_parse_res.meta.highscore_clients
         highscore.date = json_parse_res.meta.highscore_date
         fgcom.log("  highscore: "..highscore.num.." clients at "..os.date('%Y-%m-%d %H:%M:%S', highscore.date).." ("..highscore.date..")")
     end
+else
+    fgcom.log("DB '"..db.."' not existing/readable, initializing fresh db")
 end
 
 
