@@ -185,7 +185,7 @@ local generateOutData = function()
                     -- fgcom.data.cleanupPluginData() (called from dbUpdateTimer) will clean up for us.
                     -- once that happened, we will not see the entry here anymore.
                 else
-                    if userData.type == "client" then  users_alive = users_alive + 1  end
+                    if fgcom_clients[sid][iid].type == "client" then  users_alive = users_alive + 1  end
                 end
                 userData.updated = fgcom_clients[sid][iid].lastUpdate
                 fgcom.dbg("  updated="..userData.updated.. " ("..last_updated_since.."s ago)")
