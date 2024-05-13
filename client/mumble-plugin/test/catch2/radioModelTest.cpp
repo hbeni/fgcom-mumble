@@ -18,7 +18,8 @@
 /*
  * Catch2 Unit tests for the radio model
  */
-#include "test/catch2/catch.hpp"
+#include "test/catch2/catch_amalgamated.hpp"
+using namespace Catch;
 
 #include "lib/radio_model.h"
 

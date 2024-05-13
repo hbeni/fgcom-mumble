@@ -75,7 +75,7 @@ test: libs test/catch2/tests-main.o test/catch2/tests-main.o test/catch2/radioMo
 
 # clean compile results
 clean:
-	rm -f *.o *.rc lib/*.o test/catch2/*.catch2
+	rm -f *.o *.rc lib/*.o test/catch2/*.catch2 test/catch2/*.o
 
 # clean compile results and binarys
 clean-all: clean
