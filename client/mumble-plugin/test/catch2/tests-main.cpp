@@ -20,4 +20,5 @@
  * Specific test files will be linked against this
  */
 #define CATCH_CONFIG_MAIN
-#include "test/catch2/catch.hpp"
+#include "test/catch2/catch_amalgamated.cpp"
+using namespace Catch;
