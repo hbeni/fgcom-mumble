@@ -151,10 +151,10 @@ plugin-win-dllresource:
 	$(mingwprefix)windres dllResource.rc dllResource.o
 
 # shortcut for building natively on macOS
-plugin-macOS: CC=g++-11
+plugin-macOS: CC=g++-13
 plugin-macOS: outname=fgcom-mumble-macOS.bundle
 plugin-macOS: openssl-macOS
-	make CC=$(CC) outname=$(outname) plugin
+	make CC=$(CC) outname=$(outname) CFLAGS+=-ld_classic plugin
 
 # OpenSSL
 # The sources are located under lib/openssl as git submodule, and supposed to point to the latest stable head
