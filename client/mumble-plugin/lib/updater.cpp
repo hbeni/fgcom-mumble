@@ -122,7 +122,7 @@ fgcom_release fgcom_release_latest;
  * This fills in the fgcom_release_latest struct.
  */
 int fgcom_githubQueryPerformed = 0;  // to limit update API requests
-void fgcom_getLatestReleaseFromGithub_Web() {
+void fgcom_getLatestReleaseFrom_Github_Web() {
     
     if (fgcom_release_latest.version.major > -1) return; // do not retrieve twice if retrieved successfully
     if (fgcom_githubQueryPerformed++ > 1) return; // limit github API requests to 1 per session
@@ -168,7 +168,7 @@ void fgcom_getLatestReleaseFromGithub_Web() {
         { "Connection",      "Keep-Alive"}
     };
 
-    pluginLog("[UPDATER] fetching update information from: '"+url+"'");
+    pluginLog("[UPDATER] fetching update information from: '"+url+"' (Github_Web)");
     pluginDbg("[UPDATER] user_agent="+user_agent);
     if (auto res = cli.Get(path.c_str(), headers)) {
         pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res->status));
@@ -277,7 +277,7 @@ void fgcom_getLatestReleaseFromGithub_Web() {
 * Check via Githubs REST API service, which results in a JSON document
 */
 /*  CODE ALREADY TESTED, but disabled due to github API rate limits
-void fgcom_getLatestReleaseFromGithub_JSON_API() {
+void fgcom_getLatestReleaseFrom_Github_JSON_API() {
     
     if (fgcom_release_latest.version.major > -1) return; // do not retrieve twice if retrieved successfully
     if (fgcom_githubQueryPerformed++ > 1) return; // limit github API requests to 1 per session
@@ -295,7 +295,7 @@ void fgcom_getLatestReleaseFromGithub_JSON_API() {
         { "accept", "application/vnd.github.v3+json" }
     };
 
-    pluginLog("[UPDATER] fetching update information from: "+url);
+    pluginLog("[UPDATER] fetching update information from: "+url+" (Github_JSON_API));
     if (auto res = cli.Get(path.c_str(), headers)) {
         pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res->status));
         if (res->status == 200) {
@@ -352,6 +352,60 @@ void fgcom_getLatestReleaseFromGithub_JSON_API() {
 */
 
 
+/**
+ * Fetch latest version from plain Web using a custom structure
+ */
+void fgcom_getLatestReleaseFrom_WebVersionChecker() {
+    pluginLog("[UPDATER] fetching update information from: '"+fgcom_cfg.updaterURL+"' (WebVersionChecker)");
+    if (fgcom_release_latest.version.major > -1) return; // do not retrieve twice if retrieved successfully
+    
+    // parse the url into its parts
+    std::regex parse_url ("^(https?)://([.a-zA-Z0-9]+)/([a-zA-Z0-9/?_-]+)$");
+    std::smatch parse_url_matches;
+    if (std::regex_search(fgcom_cfg.updaterURL, parse_url_matches, parse_url)) {
+        std::string scheme(parse_url_matches[1]);
+        std::string host(parse_url_matches[2]);
+        std::string path(parse_url_matches[3]);
+        std::string rel("");
+        std::string url(scheme + host + path + rel);
+        httplib::Client cli((host).c_str());
+        
+        std::string user_agent("FGCom-mumble/"
+                +std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)
+                +" plugin-release-checker");
+        httplib::Headers headers = {
+            { "User-Agent",      user_agent },
+            { "Accept",          "*/*"},
+            { "Connection",      "Keep-Alive"}
+        };
+        if (auto res = cli.Get(path.c_str(), headers)) {
+            pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res->status));
+            if (res->status == 200) {
+                std::cout << res->body << std::endl;
+                
+                // TODO: Parse the result. JSON?
+                fgcom_release_latest.version.major = std::stoi("2");
+                fgcom_release_latest.version.minor = std::stoi("3");
+                fgcom_release_latest.version.patch = std::stoi("4");
+                fgcom_release_latest.tag           = "v.2.3.4";
+                fgcom_release_latest.url           = "https://github.com/hbeni/fgcom-mumble/releases/tag/"+fgcom_release_latest.tag;
+                fgcom_release_latest.downUrl       = "https://github.com/hbeni/fgcom-mumble/releases/download/"+fgcom_release_latest.tag
+                                                + "/fgcom-mumble-"+std::to_string(fgcom_release_latest.version.major)+"."+std::to_string(fgcom_release_latest.version.minor)+"."+std::to_string(fgcom_release_latest.version.patch)+".mumble_plugin";
+            } else {
+                pluginLog("[UPDATER] fetch resultCode not compatible; resultCode="+std::to_string(res->status));
+            }
+            
+        } else {
+            auto http_err = res.error();
+            std::ostringstream http_err_stream;
+            http_err_stream << http_err;
+            pluginLog("[UPDATER] ERROR fetching latest release info from web: "+http_err_stream.str());
+        }
+    } else {
+        pluginLog("[UPDATER] ERROR fetching latest release info from web: unsupported characters in URL");
+    }
+}
+
 
 
 /*************************************
@@ -363,9 +417,13 @@ void fgcom_getLatestReleaseFromGithub_JSON_API() {
  * Check for new releases
  */
 bool mumble_hasUpdate() {
-    
+
     // fetch latest info; this will populate the struct fgcom_release_latest
-    fgcom_getLatestReleaseFromGithub_Web();
+    if (fgcom_cfg.updaterURL != "") {
+        fgcom_getLatestReleaseFrom_WebVersionChecker();
+    } else {
+        fgcom_getLatestReleaseFrom_Github_Web();
+    }
     
     // check for errors
     if (fgcom_release_latest.version.major <= -1

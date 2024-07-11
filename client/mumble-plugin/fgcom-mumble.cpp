@@ -308,6 +308,7 @@ mumble_error_t fgcom_loadConfig() {
                     if (token_key == "udpServerHost")     fgcom_cfg.udpServerHost     = token_value;
                     if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
                     if (token_key == "logfile")           fgcom_cfg.logfile           = token_value;
+                    if (token_key == "updaterURL")        fgcom_cfg.updaterURL        = token_value;
                     
                     std::smatch sm_m;
                     std::regex re_mblmap ("^mapMumblePTT(\\d+)$");
@@ -331,6 +332,7 @@ mumble_error_t fgcom_loadConfig() {
     pluginDbg("[CFG]                udpServerHost="+fgcom_cfg.udpServerHost);
     pluginDbg("[CFG]                udpServerPort="+std::to_string(fgcom_cfg.udpServerPort));
     pluginDbg("[CFG]                      logfile="+fgcom_cfg.logfile);
+    pluginDbg("[CFG]                   updaterURL="+fgcom_cfg.updaterURL);
     for (const auto& cv : fgcom_cfg.mapMumblePTT) {
         pluginDbg("[CFG]              mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
     }
