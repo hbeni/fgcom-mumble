@@ -39,9 +39,10 @@ int main(int argc, char *argv[])
         std::cout << argc << " args given :)" <<std::endl;
         for (int i = 0; i<argc; i++) std::cout << "argv[" << i << "] = '" << argv[i] << "'" <<std::endl;
         
-    } else if (argc == 2 && strcmp(argv[1], "WebVersionChecker")==0) {
+    } else if (argc >= 2 && strcmp(argv[1], "WebVersionChecker")==0) {
         // Test the basic WebVersionChecker
         fgcom_cfg.updaterURL = "http://fgcom.hallinger.org/version.php";
+        if (argc == 3) fgcom_cfg.updaterURL = argv[2];
         fgcom_getLatestReleaseFrom_WebVersionChecker();
     
     } else if (argc == 2 && strcmp(argv[1], "mumble_hasUpdate")==0) {
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
     
     } else {
         std::cout << "ERROR: Specify test to run" <<std::endl;
-        std::cout << "  ./test/updater-test WebVersionChecker" <<std::endl;
+        std::cout << "  ./test/updater-test WebVersionChecker [url]" <<std::endl;
         std::cout << "  ./test/updater-test mumble_hasUpdate" <<std::endl;
     }
     
