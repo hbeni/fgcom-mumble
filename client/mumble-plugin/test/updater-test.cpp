@@ -24,7 +24,7 @@ struct fgcom_config fgcom_cfg;
 
 
 // build with:
-// mumble-plugin$ g++ -fPIC -o test/updater-test test/updater-test.cpp  -Wall -O3 -I. -I./lib
+// mumble-plugin$ g++ -fPIC -o test/updater-test test/updater-test.cpp -DDEBUG -Wall -O3 -I. -I./lib
 
 
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
         
     } else if (argc == 2 && strcmp(argv[1], "WebVersionChecker")==0) {
         // Test the basic WebVersionChecker
-        fgcom_cfg.updaterURL = "http://fgcom.hallinger.org/?getLatestVersion";
+        fgcom_cfg.updaterURL = "http://fgcom.hallinger.org/version.php";
         fgcom_getLatestReleaseFrom_WebVersionChecker();
 
     
@@ -52,4 +52,10 @@ int main(int argc, char *argv[])
     
     
     std::cout << "DONE" <<std::endl;
+    std::string verStr = std::to_string(fgcom_release_latest.version.major)
+                         + "." + std::to_string(fgcom_release_latest.version.minor)
+                         + "." + std::to_string(fgcom_release_latest.version.patch);
+    std::cout << "fgcom_release_latest.version=" << verStr <<std::endl;
+    std::cout << "fgcom_release_latest.downUrl=" << fgcom_release_latest.downUrl <<std::endl;
+    
 }
