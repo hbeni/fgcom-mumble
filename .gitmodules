@@ -1,6 +1,6 @@
 [submodule "client/mumble-plugin/lib/openssl"]
 	path = client/mumble-plugin/lib/openssl
-	url = git://git.openssl.org/openssl.git
+	url = https://github.com/openssl/openssl
 	branch = OpenSSL_1_1_1-stable
 [submodule "client/radioGUI/lib/jsimconnect"]
 	path = client/radioGUI/lib/jsimconnect
