@@ -467,6 +467,13 @@ void fgcom_getLatestReleaseFrom_WebVersionChecker() {
  */
 bool mumble_hasUpdate() {
 
+#ifndef SSLFLAGS
+    // if no SSL support was compiled, and nothing specifically configured in the ini file, set default non-ssl location
+    if (fgcom_cfg.updaterURL == "") {
+        fgcom_cfg.updaterURL = "http://fgcom.hallinger.org/version.php";
+    }
+#endif
+
     // fetch latest info; this will populate the struct fgcom_release_latest
     if (fgcom_cfg.updaterURL != "") {
         fgcom_getLatestReleaseFrom_WebVersionChecker();
