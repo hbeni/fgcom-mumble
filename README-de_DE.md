@@ -98,6 +98,7 @@ Normalerweise sind die Standardeinstellungen des Plugins ausreichend. Falls doch
 Dies kannst du tun, indem du die [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) Beispieldatei in dein Benutzer-Heimatverzeichniss kopierst und dann entsprechend anpasst. Die Datei wird dann beim Initialisieren des Plugins einmalig von folgenden Orten geladen (in dieser Reihenfolge):
 
 - Linux:
+  - `/etc/mumble/fgcom-mumble.ini`
   - `<home>/.fgcom-mumble.ini`
   - `<home>/fgcom-mumble.ini`
 - Windows:

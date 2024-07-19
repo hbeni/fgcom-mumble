@@ -268,6 +268,7 @@ mumble_error_t fgcom_loadConfig() {
 #else
     std::string dirSep = "/";
     pHomeDir = getenv("HOME");
+    configFilePaths.push_back(dirSep + "etc" + dirSep + "mumble" + dirSep + cfgName); // support system wide base config
     if (pHomeDir) {
         configFilePaths.push_back(std::string(pHomeDir) + dirSep + "."+cfgName); // support "hidden dotfiles" in linux
         configFilePaths.push_back(std::string(pHomeDir) + dirSep + cfgName);
