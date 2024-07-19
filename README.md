@@ -93,6 +93,7 @@ Usually the default values are fine. Some features however can be configured dif
 You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
 
 - Linux:
+  - `/etc/mumble/fgcom-mumble.ini`
   - `<home>/.fgcom-mumble.ini`
   - `<home>/fgcom-mumble.ini`
 - Windows:
