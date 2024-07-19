@@ -79,7 +79,8 @@ The installation can also be started by calling mumble from the commandline with
 
 Updating
 ----------------------
-When Mumble starts, it will check the most recent version of the plugin against the github release page. Optionally you can check for updates from the plugin settings page.
+When Mumble starts, it will check the most recent version of the plugin against the github release page.
+This can be disabled in mumbles settings.
 
 When a more recent version is found, Mumble will ask you if you want to upgrade. When you allow it, Mumble downloads and replaces the plugin library automatically for you.  
 You can also download and upgrade manually by the normal installation procedure described above.
