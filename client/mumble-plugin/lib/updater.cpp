@@ -467,6 +467,12 @@ void fgcom_getLatestReleaseFrom_WebVersionChecker() {
  */
 bool mumble_hasUpdate() {
 
+    // Updater can be disabled by setting url to "disabled" in the ini
+    if (std::regex_search(fgcom_cfg.updaterURL, std::regex("^disabled|off$", std::regex_constants::icase))) {
+        pluginLog("[UPDATER] skipping: update check is disabled (ini request).");
+        return false;
+    }
+
 #ifndef SSLFLAGS
     // if no SSL support was compiled, and nothing specifically configured in the ini file, set default non-ssl location
     if (fgcom_cfg.updaterURL == "") {
@@ -484,7 +490,7 @@ bool mumble_hasUpdate() {
     // check for errors
     if (fgcom_release_latest.version.major <= -1
     || fgcom_release_latest.downUrl == ""   ) {
-        pluginLog("ERROR fetching release info: i have no idea if there is an update!");
+        pluginLog("[UPDATER] ERROR fetching release info: i have no idea if there is an update!");
         return false;
 
     } else {
@@ -492,7 +498,7 @@ bool mumble_hasUpdate() {
         std::string verStr = std::to_string(fgcom_release_latest.version.major)
                          + "." + std::to_string(fgcom_release_latest.version.minor)
                          + "." + std::to_string(fgcom_release_latest.version.patch);
-        pluginDbg("Version check: latest='"+verStr+"'; newer="+std::to_string(updatePending));
+        pluginDbg("[UPDATER] Version check: latest='"+verStr+"'; newer="+std::to_string(updatePending));
         
         if (updatePending) {    
             pluginLog("[UPDATER] Update to "+verStr+" pending!");

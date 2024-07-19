@@ -84,7 +84,8 @@ Die Installation kann auch über eine Kommandozeile gestartet werden, indem man 
 
 Aktualisieren (update Prozedur)
 -------------------------------
-Wenn Mumble startet, sucht es auf GitHub nach der aktuellsten Pluginversion. Alternativ kannst du auch bei den Mumble Plugin-Einstellungen manuell eine Prüfung durchführen.
+Wenn Mumble startet, sucht es auf GitHub nach der aktuellsten Pluginversion.
+Das plugin auto-update kann in den mumble Einstellungen deaktiviert sein.
 
 Falls eine aktuellere Version gefunden wird, fragt Mumble, ob du diese installieren möchtest. Bejast du, lädt Mumble die neue Version herunter und installiert sie automatisch über die Vorhandene.  
 Alternativ kannst du die neue Version auch manuell herunterladen und wie oben beschrieben installieren.
