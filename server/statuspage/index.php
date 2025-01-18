@@ -98,12 +98,12 @@ if (array_key_exists('usage', $_GET)) {
 * Add donation link
 */
 $donate_link = "";
-if ($ini_config['donate']['paypalme']) {
+if (isset($ini_config['donate']['paypalme']) && $ini_config['donate']['paypalme']) {
     $tpl_donation = new HTMLTemplate(dirname(__FILE__).'/inc/donate_paypalme.tpl');
     $tpl_donation->assignVar('name', $ini_config['donate']['paypalme']);
     $donate_link .= $tpl_donation->generate();
 }
-if ($ini_config['donate']['bitcoin']) {
+if (isset($ini_config['donate']['bitcoin']) && $ini_config['donate']['bitcoin']) {
     $tpl_donation = new HTMLTemplate(dirname(__FILE__).'/inc/donate_bitcoin.tpl');
     $tpl_donation->assignVar('address', $ini_config['donate']['bitcoin']);
     $donate_link .= $tpl_donation->generate();
