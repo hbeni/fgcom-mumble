@@ -121,10 +121,11 @@ body div.footer {
     outline: none;
 }
 
-#donate_paypalme {  /* donation link */
+#donate_box {  /* donation link */
     position:absolute;
     top:0;
     right:0;
+    text-align:right;
 }
 
 #highscore {  /* highscore box */

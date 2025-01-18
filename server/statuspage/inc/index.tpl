@@ -32,7 +32,7 @@
                 <span class="userinfo">Users: %usercount% | Broadcasts: %playbackcount% | </span>
                 <span class="lastdbupdate %updatestale_class%">Last DB update: %dbchanged% (UTC)%updatestale_text%</span>
                 %refreshbox%
-                %donate%
+                <div id="donate_box">%donate%</div>
             </div>
             
             
