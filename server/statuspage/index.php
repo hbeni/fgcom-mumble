@@ -93,6 +93,24 @@ if (array_key_exists('usage', $_GET)) {
     exit;
 }
 
+
+/**
+* Add donation link
+*/
+$donate_link = "";
+if ($ini_config['donate']['paypalme']) {
+    $tpl_donation = new HTMLTemplate(dirname(__FILE__).'/inc/donate_paypalme.tpl');
+    $tpl_donation->assignVar('name', $ini_config['donate']['paypalme']);
+    $donate_link .= $tpl_donation->generate();
+}
+if ($ini_config['donate']['bitcoin']) {
+    $tpl_donation = new HTMLTemplate(dirname(__FILE__).'/inc/donate_bitcoin.tpl');
+    $tpl_donation->assignVar('address', $ini_config['donate']['bitcoin']);
+    $donate_link .= $tpl_donation->generate();
+}
+$tpl_index->assignVar('donate', $donate_link);
+
+
 /**
 * Add link to usage statistics graph
 */
@@ -309,16 +327,6 @@ $tpl_index->assignVar('map', $tpl_map->generate());
 */
 $tpl_refreshbox = new HTMLTemplate(dirname(__FILE__).'/inc/refreshbox.tpl');
 $tpl_index->assignVar('refreshbox', $tpl_refreshbox->generate());
-
-
-/**
-* Add donation link
-*/
-if ($ini_config['donate']['paypalme']) {
-    $tpl_donation = new HTMLTemplate(dirname(__FILE__).'/inc/donate_paypalme.tpl');
-    $tpl_donation->assignVar('name', $ini_config['donate']['paypalme']);
-    $tpl_index->assignVar('donate', $tpl_donation->generate());
-}
 
 
 /**
