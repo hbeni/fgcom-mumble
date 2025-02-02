@@ -37,8 +37,8 @@ Basicly every aircraft utilizing the standard radio implementation properties sh
 
 
 ### COM / ADF Radios
-When initializing, the addon will inspect the defined radios and enable them for FGCom-Mumble. Currently this is: COM1, COM2, COM3, ADF1 and ADF2.  
-Only radios providing the property `operable` are considered (which is set by the standard C++ radio implementation).
+When initializing, the addon will inspect the defined radios and enable them for FGCom-Mumble. Currently this are the `comm` and `adf` subnodes in `/instrumentation/`.  
+Only radios providing the property `operable` are considered (which is set by the standard C++ radio implementation). If no such radios are found, a dialog will open when loading, explaining the situation and providing a manual workaround.
 
 The addon uses the following standard properties:
 

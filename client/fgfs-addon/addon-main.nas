@@ -70,6 +70,13 @@ var main = func( addon ) {
     FGComMumble_radios.GenericRadio.setGlobalSettings(configNodes);
     FGComMumble_radios.create_radios();
     FGComMumble_radios.start_rdf(rdfinputNode);
+
+    # Show error message, if no radios could be found
+    if (size(FGComMumble_radios.get_com_radios_usable()) == 0) {
+      print("Addon FGCom-mumble WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
+      fgcommand("dialog-show", {"dialog-name" : "fgcom-mumble-comoverride"});
+    }
+
     
     # Start intercom logic
     print("Addon FGCom-mumble initializing intercom...");

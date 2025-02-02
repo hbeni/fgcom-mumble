@@ -97,7 +97,11 @@ var GenericRadio = {
         me.listeners = {};
         me.timers = {};
         me.aliases = {};
-        fgcomPacketStr.setValue("");
+        if (me.fgcomPacketStr != nil) {
+            #print("Addon FGCom-mumble     removing output node as "~me.fgcomPacketStr.getPath());
+            me.fgcomPacketStr.setValue("");
+            me.fgcomPacketStr.remove();
+        }
     },
 
     updatePacketString: func {
@@ -306,12 +310,38 @@ var destroy_radios = func {
     foreach (var i; keys(ADF_radios)) ADF_radios[i].del();
     COM_radios = {};
     ADF_radios = {};
+
+    # check leftover radio output nodes
+    # Note: That should not be neccessary, however for some still unknown reason, there are remnants.
+    foreach (r; GenericRadio.outputRootNode.getChildren("COM")) {
+#        debug.dump(["DBG clean out remnant output node", r]);
+        r.remove();
+    }
+}
+
+var get_com_radios = func() {
+    var r = [];
+    foreach (var i; keys(COM_radios)) append(r, COM_radios[i]);
+    return r;
+}
+var get_com_radios_usable = func() {
+    var r = [];
+    foreach (var o; get_com_radios()) {
+        if (o.is_used) append(r, o);
+    }
+    return r;
+}
+
+var get_adf_radios = func {
+    var r = [];
+    foreach (var i; keys(ADF_radios)) append(r, ADF_radios[i]);
+    return r;
 }
 
 var get_radios = func {
     var r = [];
-    foreach (var i; keys(COM_radios)) append(r, COM_radios[i]);
-    foreach (var i; keys(ADF_radios)) append(r, ADF_radios[i]);
+    foreach (var o; get_com_radios()) append(r, o);
+    foreach (var o; get_adf_radios()) append(r, o);
     return r;
 }
 
