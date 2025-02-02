@@ -153,7 +153,7 @@ var main = func( addon ) {
           var r_out_l_idx = 0;
           foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
 #            print("Addon FGCom-mumble    add listener for radio udp_output node (" ~ r_out.getPath() ~")");
-            fgcom_listeners["upd_com_out:"~r_out_l_idx] = setlistener(r_out.getPath(), func { update_udp_output(); }, 0, 0);
+            fgcom_listeners["upd_com_out:"~r_out_l_idx] = _setlistener(r_out.getPath(), func { update_udp_output(); }, 0, 0);
             r_out_l_idx = r_out_l_idx + 1;
           }
           
