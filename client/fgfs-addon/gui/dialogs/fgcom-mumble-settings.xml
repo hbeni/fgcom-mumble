@@ -154,8 +154,19 @@
         </group>
         
         <group>
-            <layout>hbox</layout>
+            <layout>vbox</layout>
 
+            <checkbox>
+                <halign>left</halign>
+                <name>chbx_enable_echotest</name>
+                <label>Enable Echotest</label>
+                <live>true</live>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/force-echotest-frq</property>
+                <binding>
+                    <command>dialog-apply</command>
+                    <object-name>chbx_enable_echotest</object-name>
+                </binding>
+            </checkbox>
             <button>
                 <legend>Open COMBar</legend>
                 <pref-width>180</pref-width>

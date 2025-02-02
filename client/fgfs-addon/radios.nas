@@ -19,11 +19,16 @@ var GenericRadio = {
         return r;
     },
 
-    # initialized by addon-main.nas after load to specify where the output should go
-    outputRootNode: nil,
-    setOutputRoot: func(p) {
-        GenericRadio.outputRootNode = p;
+    # initialized by addon-main.nas after load to grant access to the global settings
+    globalSettings: nil,
+    setGlobalSettings: func(p) {
+        GenericRadio.globalSettings = p;
+        GenericRadio.outputRootNode = props.globals.getNode(p.settingsRootPath ~ "/output", 1);
     },
+
+    # Node base where the output should go (initialized by setGlobalSettings() via addon-main.nas)
+    outputRootNode: nil,
+
 
     fgcomPacketStr: nil, # node for udp output
     fields2props: {},    # map packet field names to properties
@@ -80,6 +85,7 @@ var GenericRadio = {
 #                print("Addon FGCom-mumble     add listener for " ~ f ~ " ("~me.fields2props[f]~")");
                 me.listeners["upd_udp_field:"~f] = setlistener(me.fields2props[f], func { me.updatePacketString(); }, 0, 0);
             }
+            me.listeners["forceEchoTest"] = setlistener(GenericRadio.globalSettings.forceEchoTestNode, func { me.updatePacketString(); }, 0, 0);
             me.updatePacketString();
         }
     },
@@ -102,8 +108,13 @@ var GenericRadio = {
         var fields = [];
         foreach (var f; keys(me.fields2props)) {
             var propval = getprop(me.fields2props[f]);
+
+            # If the global ECHOTEST mode was requested, force radios FRQ field output to the echotest frequency
+            if (f == "FRQ" and GenericRadio.globalSettings.forceEchoTestNode.getBoolValue()) propval = "910.00";
+            if (f == "PBT" and GenericRadio.globalSettings.forceEchoTestNode.getBoolValue()) propval = "1";
+
+            # because of float type characteristics, sometimes values are returned like "127.549999999", and rounding fixes that
             if (substr(sprintf("%s",propval), -3) == "999") {
-                # because of float type characteristics, sometimes values are returned like "127.549999999", and rounding fixes that
                 propval = sprintf("%.4f", propval);
             }
 

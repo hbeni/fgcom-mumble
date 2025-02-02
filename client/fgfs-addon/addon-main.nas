@@ -17,36 +17,41 @@ var main = func( addon ) {
     print("Addon FGCom-mumble loading...");
     
     # init props with defaults
-    var enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
-    enabledNode.setAttribute("userarchive", "y");
-    if (enabledNode.getValue() == nil) {
-      enabledNode.setBoolValue(1);
+    var configNodes = {};
+    configNodes.settingsRootPath = mySettingsRootPath;
+    configNodes.enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
+    configNodes.enabledNode.setAttribute("userarchive", "y");
+    if (configNodes.enabledNode.getValue() == nil) {
+      configNodes.enabledNode.setBoolValue(1);
     }
-    var refreshNode = props.globals.getNode(mySettingsRootPath ~ "/refresh-rate", 1);
-    refreshNode.setAttribute("userarchive", "y");
-    if (refreshNode.getValue() == nil) {
-      refreshNode.setIntValue("10");
+    configNodes.refreshNode = props.globals.getNode(mySettingsRootPath ~ "/refresh-rate", 1);
+    configNodes.refreshNode.setAttribute("userarchive", "y");
+    if (configNodes.refreshNode.getValue() == nil) {
+      configNodes.refreshNode.setIntValue("10");
     }
-    var hostNode = props.globals.getNode(mySettingsRootPath ~ "/host", 1);
-    hostNode.setAttribute("userarchive", "y");
-    if (hostNode.getValue() == nil) {
-      hostNode.setValue("localhost");
+    configNodes.hostNode = props.globals.getNode(mySettingsRootPath ~ "/host", 1);
+    configNodes.hostNode.setAttribute("userarchive", "y");
+    if (configNodes.hostNode.getValue() == nil) {
+      configNodes.hostNode.setValue("localhost");
     }
-    var portNode = props.globals.getNode(mySettingsRootPath ~ "/port", 1);
-    portNode.setAttribute("userarchive", "y");
-    if (portNode.getValue() == nil) {
-      portNode.setIntValue("16661");
+    configNodes.portNode = props.globals.getNode(mySettingsRootPath ~ "/port", 1);
+    configNodes.portNode.setAttribute("userarchive", "y");
+    if (configNodes.portNode.getValue() == nil) {
+      configNodes.portNode.setIntValue("16661");
     }
-    var audioEffectsEnableNode = props.globals.getNode(mySettingsRootPath ~ "/audio-effects-enabled", 1);
-    audioEffectsEnableNode.setAttribute("userarchive", "y");
-    if (audioEffectsEnableNode.getValue() == nil) {
-      audioEffectsEnableNode.setBoolValue(1);
+    configNodes.audioEffectsEnableNode = props.globals.getNode(mySettingsRootPath ~ "/audio-effects-enabled", 1);
+    configNodes.audioEffectsEnableNode.setAttribute("userarchive", "y");
+    if (configNodes.audioEffectsEnableNode.getValue() == nil) {
+      configNodes.audioEffectsEnableNode.setBoolValue(1);
     }
-    var audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
-    audioHearAllNode.setAttribute("userarchive", "y");
-    if (audioHearAllNode.getValue() == nil) {
-      audioHearAllNode.setBoolValue(0);
+    configNodes.audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
+    configNodes.audioHearAllNode.setAttribute("userarchive", "y");
+    if (configNodes.audioHearAllNode.getValue() == nil) {
+      configNodes.audioHearAllNode.setBoolValue(0);
     }
+    configNodes.forceEchoTestNode = props.globals.getNode(mySettingsRootPath ~ "/force-echotest-frq", 1);
+    configNodes.forceEchoTestNode.setAttribute("userarchive", "n");
+    configNodes.forceEchoTestNode.setBoolValue(0);
 
     # Init GUI menu entry
     var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
@@ -62,7 +67,7 @@ var main = func( addon ) {
     print("Addon FGCom-mumble initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
     var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
-    FGComMumble_radios.GenericRadio.setOutputRoot(props.globals.getNode(mySettingsRootPath ~ "/output", 1));
+    FGComMumble_radios.GenericRadio.setGlobalSettings(configNodes);
     FGComMumble_radios.create_radios();
     FGComMumble_radios.start_rdf(rdfinputNode);
     
