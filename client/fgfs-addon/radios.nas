@@ -118,7 +118,9 @@ var GenericRadio = {
             if (f == "PBT" and GenericRadio.globalSettings.forceEchoTestNode.getBoolValue()) propval = "1";
 
             # because of float type characteristics, sometimes values are returned like "127.549999999", and rounding fixes that
-            if (substr(sprintf("%s",propval), -3) == "999") {
+            var field_last_str = substr(sprintf("%s",propval), -3);
+            if ( contains(["FRQ", "VOL", "SQC", "PWR"], f)
+            and field_last_str == "999" or field_last_str == "001") {
                 propval = sprintf("%.4f", propval);
             }
 
