@@ -12,8 +12,41 @@
                 print("Addon FGCom-mumble WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
                 fgcommand("dialog-show", {"dialog-name" : "fgcom-mumble-comoverride"});
             }
+
+            # Create Test strings from usable radios
+            var ptt_test_string     = "loading...";
+            var ptt_test_string_p   = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/dialogs/ptt-test-string";
+            var oprbl_test_string   = "loading...";
+            var oprbl_test_string_p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/dialogs/operable-test-string";
+            setprop(ptt_test_string_p, ptt_test_string);
+            setprop(oprbl_test_string_p, oprbl_test_string);
+            ptt_test_string_timer = maketimer(0.10, func(){
+                var useable_radios = FGComMumble_radios.get_com_radios_usable();
+                if (size(useable_radios) > 0) {
+                    ptt_test_vals   = [];
+                    oprbl_test_vals = [];
+                    foreach(r; useable_radios) {
+#                        print("Addon FGCom-mumble PTT state of "~r.name~" read from "~r.fields2props.PTT);
+                        append(ptt_test_vals,   r.name~":"~getprop(r.fields2props.PTT) );
+                        append(oprbl_test_vals, r.name~":"~r.operable.getValue() );
+                    }
+                    ptt_test_string   = string.join(" | ", ptt_test_vals);
+                    oprbl_test_string = string.join(" | ", oprbl_test_vals);
+                } else {
+                    ptt_test_string   = "no usable radios found!";
+                    oprbl_test_string = "-";
+                };
+                setprop(ptt_test_string_p, ptt_test_string);
+                setprop(oprbl_test_string_p, oprbl_test_string);
+            });
+            ptt_test_string_timer.start();
         ]]>
         </open>
+        <close>
+        <![CDATA[
+            ptt_test_string_timer.stop();
+        ]]>
+        </close>
     </nasal>
 
     <group>
@@ -167,22 +200,39 @@
         
         <group>
             <layout>vbox</layout>
+            <halign>left</halign>
 
-            <checkbox>
+            <group>
+                <layout>hbox</layout>
                 <halign>left</halign>
-                <name>chbx_enable_echotest</name>
-                <label>Enable Echotest</label>
-                <live>true</live>
-                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/force-echotest-frq</property>
-                <binding>
-                    <command>dialog-apply</command>
-                    <object-name>chbx_enable_echotest</object-name>
-                </binding>
-            </checkbox>
+                
+                <checkbox>
+                    <halign>left</halign>
+                    <name>chbx_enable_echotest</name>
+                    <label>Enable Echotest</label>
+                    <live>true</live>
+                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/force-echotest-frq</property>
+                    <binding>
+                        <command>dialog-apply</command>
+                        <object-name>chbx_enable_echotest</object-name>
+                    </binding>
+                </checkbox>
+                <text>
+                    <label>(Active, frequencies forced to 910.00)</label>
+                    <visible>
+                        <equals>
+                            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/force-echotest-frq</property>
+                            <value>1</value>
+                        </equals>
+                    </visible>
+                </text>
+            </group>
+            
             <button>
                 <legend>Open COMBar</legend>
                 <pref-width>180</pref-width>
                 <pref-height>30</pref-height>
+                <halign>left</halign>
                 <binding>
                     <command>nasal</command>
                     <script><![CDATA[
@@ -203,6 +253,43 @@
                     <command>dialog-close</command>
                 </binding>
             </button>
+        </group>
+    </group>
+    
+    <hrule/>
+    
+    <text>
+        <halign>left</halign>
+        <label>Test information:</label>
+    </text>
+    <group>
+        <layout>hbox</layout>
+        <halign>left</halign>
+        <group>
+            <layout>hbox</layout>
+            
+            <default-padding>10</default-padding>
+            <empty><width>6</width><stretch>1</stretch></empty>
+        </group>
+        
+        <group>
+            <layout>vbox</layout>
+            <halign>left</halign>
+
+            <text>
+                <halign>left</halign>
+                <live>true</live>
+                <label>xxxxxxxxxxxxxxxxxxxxx</label>
+                <format>PTT test indicator: %s</format>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/dialogs/ptt-test-string</property>
+            </text>
+            <text>
+                <halign>left</halign>
+                <live>true</live>
+                <label>xxxxxxxxxxxxxxxxxxxxx</label>
+                <format>Operable indicator: %s</format>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/dialogs/operable-test-string</property>
+            </text>
         </group>
     </group>
     

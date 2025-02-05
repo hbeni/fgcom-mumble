@@ -30,6 +30,8 @@ Configuration
 If you wish to adjust the parameters, you can access them via the new *Multiplayer* menu entry. This is usually not needed except you are running several mumble instances or mumble not on the same computer as FlightGear.  
 Changes to the parameters will reinitialize the addon automatically, making them effective.
 
+The settings dialog also shows some helpful informtion like the registered COM radios and PTT state.
+
 
 Compatible aircraft
 ----------------------
