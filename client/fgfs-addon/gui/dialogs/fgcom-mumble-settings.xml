@@ -19,20 +19,10 @@
     <group>
         <layout>hbox</layout>
 
-        <button>
-            <legend> </legend>
-            <pref-width>16</pref-width>
-            <pref-height>16</pref-height>
-            <binding>
-                <command>dialog-close</command>
-            </binding>
-        </button>
-
-        <empty><stretch>1</stretch></empty>
-
         <text>
             <stretch>1</stretch>
-            <label>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</label>
+            <halign>left</halign>
+            <label>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</label>
             <format>FGCom-mumble (%s) settings</format>
             <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/version</property>
         </text>
@@ -40,10 +30,20 @@
         <empty><stretch>1</stretch></empty>
 
         <button>
-            <legend> </legend>
+            <pref-width>20</pref-width>
+            <pref-height>20</pref-height>
+            <legend>?</legend>
+            <binding>
+                <command>open-browser</command>
+                <path>https://wiki.flightgear.org/FGCom-mumble</path>
+            </binding>
+        </button>
+
+        <button>
+            <legend>X</legend>
             <key>Esc</key>
-            <pref-width>16</pref-width>
-            <pref-height>16</pref-height>
+            <pref-width>20</pref-width>
+            <pref-height>20</pref-height>
             <binding>
                 <command>dialog-close</command>
             </binding>

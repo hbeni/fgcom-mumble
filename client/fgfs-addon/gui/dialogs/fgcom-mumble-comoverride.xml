@@ -31,19 +31,9 @@ a working FGCom-mumble despite unsupported/non-default radio implementations.
     <group>
         <layout>hbox</layout>
 
-        <button>
-            <legend> </legend>
-            <pref-width>16</pref-width>
-            <pref-height>16</pref-height>
-            <binding>
-                <command>dialog-close</command>
-            </binding>
-        </button>
-
-        <empty><stretch>1</stretch></empty>
-
         <text>
             <stretch>1</stretch>
+            <halign>left</halign>
             <label>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</label>
             <format>FGCom-mumble (%s) WARNING: found no usable radios!</format>
             <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/version</property>
@@ -52,10 +42,10 @@ a working FGCom-mumble despite unsupported/non-default radio implementations.
         <empty><stretch>1</stretch></empty>
 
         <button>
-            <legend> </legend>
+            <legend>X</legend>
             <key>Esc</key>
-            <pref-width>16</pref-width>
-            <pref-height>16</pref-height>
+            <pref-width>20</pref-width>
+            <pref-height>20</pref-height>
             <binding>
                 <command>dialog-close</command>
             </binding>
