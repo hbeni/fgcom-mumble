@@ -45,7 +45,8 @@ body div.footer {
     background-color: #fafafa;
     background-image: url("fgcom_logo.png");
     background-repeat: no-repeat;
-    background-size: 4em, 4em;
+    /*background-size: 5.5em, 5.5em;*/
+    background-size: contain;
     padding-left: 2.2em;
     padding-top: -1em;
     min-height: 4em;
@@ -71,6 +72,15 @@ body div.footer {
 }
 .title .lastdbupdate {
     font-size:10pt;
+}
+.title .mumbleinfo{
+    display: block;
+    font-size:10pt;
+    font-style: normal;
+}
+
+.hide{
+    visibility: hidden;
 }
 
 /* Message block */
