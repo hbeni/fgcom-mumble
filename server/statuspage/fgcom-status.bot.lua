@@ -219,7 +219,7 @@ local generateOutData = function()
     -- generate metadata
     data.meta.schema = "1.1"
     local hostport
-    if port == 64738 then hostport = host else hostport = hostport..":"..port end
+    if port == 64738 then hostport = host else hostport = host..":"..port end
     data.meta.mumble_url = "mumble://"..hostport.."/"..fgcom.channel
     fgcom.dbg("generateOutData(): generating highscore data...")
     if highscore.num < users_alive then
