@@ -74,4 +74,4 @@ The format is a JSON structure: `{"clients":[<clients_data-1>, <clients_data-n>]
 
 - "clients": array holds elements representing one user record each: `{"type":"client", "callsign":"Calls-1", "radios":[<radio1>, <radio-n>"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}`
 - "radio" holds the state of a radio: `{"frequency":"123.45000", "dialedFRQ":"123.45", "operable":1, ...}`
-- "meta": metadata table `{"highscore_num":12,"highscore_date":1599719381}`
+- "meta": metadata table `{"schema":"1.1","highscore_num":12,"highscore_date":1599719381,mumble_url="mumble://fgcom-dev.hallinger.org/fgcom-mumble"}`
