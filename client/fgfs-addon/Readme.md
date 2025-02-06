@@ -37,6 +37,11 @@ Compatible aircraft
 ----------------------
 Basicly every aircraft utilizing the standard radio implementation properties should work without modification.
 
+### PTT handling
+Push-to-talk handling is implemented by simply setting the PTT of the desired radio to `1` or `0` (`/instrumentation/comm[n]/ptt=x`). The mumble plugin takes care to only open the mic when the device is `operable=1`.
+
+The fgcom-legacy property (`/controls/radio/comm-ptt`) is also monitored and will automatically translate the values to the individual comms ptt property.
+
 
 ### COM / ADF Radios
 When initializing, the addon will inspect the defined radios and enable them for FGCom-Mumble. Currently this are the `comm` and `adf` subnodes in `/instrumentation/`.  

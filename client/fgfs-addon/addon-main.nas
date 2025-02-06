@@ -157,6 +157,45 @@ var main = func( addon ) {
             r_out_l_idx = r_out_l_idx + 1;
           }
           
+          # FGCom 3.0 compatibility:
+          # The old FGCom protocol seems outdated and transmit an old property.
+          # To get compatibility out-of-the-box, we listen to changes and
+          # translate the value to the individual comms ptt property.
+          # (the code tries to do this only for existing properties, so we don't create nodes accidentally)
+          var legacy_fgcom_ptt_prop = "/controls/radios/comm-ptt";
+          var legacy_fgcom_ptt_oldVal = 0;
+          var legacy_fgcom_ptt_set = func(id, active) {
+            var selected_comm = props.globals.getNode("/instrumentation/").getChild("comm", id);
+            if (selected_comm != nil) {
+              var selected_comm_ptt = selected_comm.getChild("ptt");
+              if (selected_comm_ptt != nil) {
+#                print("Addon FGCom-mumble      comm["~id~"] set to "~active);
+                selected_comm_ptt.setBoolValue(active);
+              } else {
+#                print("Addon FGCom-mumble      comm["~id~"] has no ptt node");
+              }
+            } else {
+#              print("Addon FGCom-mumble      comm["~id~"] not registered");
+            }
+          };
+          print("Addon FGCom-mumble add listener for legacy_fgcom_ptt (" ~ legacy_fgcom_ptt_prop ~")");
+          fgcom_listeners["legacy_fgcom_ptt"] = _setlistener(legacy_fgcom_ptt_prop, func {
+            var fgcom_ptt_selector = getprop(legacy_fgcom_ptt_prop);
+#            print("Addon FGCom-mumble    legacy_fgcom_ptt(" ~ fgcom_ptt_selector ~")");
+            if (fgcom_ptt_selector > 0) {
+              # Activate PTT
+              legacy_fgcom_ptt_set(fgcom_ptt_selector-1, 1);
+            } else {
+              # Reset PTT
+              if (legacy_fgcom_ptt_oldVal > 0) {
+                # reset previous com-ptt
+                legacy_fgcom_ptt_set(legacy_fgcom_ptt_oldVal-1, 0);
+              }
+            }
+            legacy_fgcom_ptt_oldVal = fgcom_ptt_selector;
+          }, 0, 0);
+
+          
           update_udp_output();
           
           protocolInitialized = 1;
