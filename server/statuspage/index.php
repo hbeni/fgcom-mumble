@@ -282,6 +282,22 @@ $tpl_bots->assignVar('user_table_entries', $tpl_bots_body);
 $tpl_index->assignVar('bots', $tpl_bots->generate());
 $tpl_index->assignVar('playbackcount', $numBots);
 
+/**
+ * Add some more info
+ */
+$mumble_url = "";
+if (isset($ini_config['ui']['mumble_info']) && $ini_config['ui']['mumble_info'] == "db") {
+    // fetch from db
+    if (isset($db_data['meta']['mumble_url']))
+        $mumble_url = $db_data['meta']['mumble_url'];
+} elseif (is_string($ini_config['ui']['mumble_info']) && $ini_config['ui']['mumble_info'] != "hide") {
+    $mumble_url = $ini_config['ui']['mumble_info'];
+}
+if (!is_string($mumble_url) || preg_match('/^\s*$/', $mumble_url)) {
+    $tpl_index->assignVar('mumble_url_hide', "hide");
+}
+$tpl_index->assignVar('mumble_url', htmlspecialchars($mumble_url));
+
 
 /**
 * Integrate the leaflet map

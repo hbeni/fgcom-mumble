@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.9.1"
+fgcom.botversion = "1.10.0"
 json = require("dkjson")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -136,7 +136,7 @@ end
 --   Expected format is a JSON array representing the data; in the "clients" member, one user record each:
 --   {
 --     "clients": [{"type":"client", "callsign":"Calls-1", "freqencies":["123.456"], "lat":12.3456, "lon":20.11111, "alt":1234.45, "updated":1111111122}, ...],
---     "meta": {"highscore_clients":12, "highscore_date":1599719381}
+--     "meta": {"schema":"1.1","highscore_num":12,"highscore_date":1599719381,mumble_url="mumble://fgcom-dev.hallinger.org/fgcom-mumble"}
 --   }
 local generateOutData = function()
     local allUsers = {} -- sid=>mumbleUser table
@@ -217,6 +217,10 @@ local generateOutData = function()
     
     
     -- generate metadata
+    data.meta.schema = "1.1"
+    local hostport
+    if port == 64738 then hostport = host else hostport = host..":"..port end
+    data.meta.mumble_url = "mumble://"..hostport.."/"..fgcom.channel
     fgcom.dbg("generateOutData(): generating highscore data...")
     if highscore.num < users_alive then
         highscore.num  = users_alive
