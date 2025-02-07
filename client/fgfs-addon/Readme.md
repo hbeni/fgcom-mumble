@@ -30,15 +30,31 @@ Configuration
 If you wish to adjust the parameters, you can access them via the new *Multiplayer* menu entry. This is usually not needed except you are running several mumble instances or mumble not on the same computer as FlightGear.  
 Changes to the parameters will reinitialize the addon automatically, making them effective.
 
+The settings dialog also shows some helpful informtion like the registered COM radios and PTT state.
+
 
 Compatible aircraft
 ----------------------
 Basicly every aircraft utilizing the standard radio implementation properties should work without modification.
 
+### PTT handling
+Push-to-talk handling is implemented by simply setting the PTT of the desired radio to `1` or `0` (`/instrumentation/comm[n]/ptt=x`). The mumble plugin takes care to only open the mic when the device is `operable=1`.
+
+The fgcom-legacy property (`/controls/radio/comm-ptt`) is also monitored and will automatically translate the values to the individual comms ptt property.
+
+The legacy FGCOM keybinds for COM1 and COM2 are reused, and enhanced with a new one for COM3 and Intercom:
+
+| Device | Default keybind |
+|--------|-----------------|
+|  COM1  | SPACE           |
+|  COM2  | SHIFT+SPACE     |
+|  COM3  | ALT+SPACE       |
+|  IC1   | CTRL+SPACE      |
+
 
 ### COM / ADF Radios
-When initializing, the addon will inspect the defined radios and enable them for FGCom-Mumble. Currently this is: COM1, COM2, COM3, ADF1 and ADF2.  
-Only radios providing the property `operable` are considered (which is set by the standard C++ radio implementation).
+When initializing, the addon will inspect the defined radios and enable them for FGCom-Mumble. Currently this are the `comm` and `adf` subnodes in `/instrumentation/`.  
+Only radios providing the property `operable` are considered (which is set by the standard C++ radio implementation). If no such radios are found, a dialog will open when loading, explaining the situation and providing a manual workaround.
 
 The addon uses the following standard properties:
 
@@ -63,7 +79,7 @@ The addon uses the following standard properties:
 FlightGear has a copilot feature that allows you to ride alongside another pilot. Usually planes have some kind of intercom system.  
 Since version 1.2.0 the FGFS-addon will periodically check if such a pilot/copilot connection has been made and provide intercom functionality, so you can talk to each other.
 
-The intercom works like the other radios but in full-duplex mode. Currently, you can access the PTT button of the intercom using the combar.
+The intercom works like the other radios but in full-duplex mode. Currently, you can access the PTT button of the intercom using the combar or by pressing CTRL+SPACE.
 
 
 #### Plane API

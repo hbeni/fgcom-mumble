@@ -19,11 +19,16 @@ var GenericRadio = {
         return r;
     },
 
-    # initialized by addon-main.nas after load to specify where the output should go
-    outputRootNode: nil,
-    setOutputRoot: func(p) {
-        GenericRadio.outputRootNode = p;
+    # initialized by addon-main.nas after load to grant access to the global settings
+    globalSettings: nil,
+    setGlobalSettings: func(p) {
+        GenericRadio.globalSettings = p;
+        GenericRadio.outputRootNode = props.globals.getNode(p.settingsRootPath ~ "/output", 1);
     },
+
+    # Node base where the output should go (initialized by setGlobalSettings() via addon-main.nas)
+    outputRootNode: nil,
+
 
     fgcomPacketStr: nil, # node for udp output
     fields2props: {},    # map packet field names to properties
@@ -80,6 +85,7 @@ var GenericRadio = {
 #                print("Addon FGCom-mumble     add listener for " ~ f ~ " ("~me.fields2props[f]~")");
                 me.listeners["upd_udp_field:"~f] = setlistener(me.fields2props[f], func { me.updatePacketString(); }, 0, 0);
             }
+            me.listeners["forceEchoTest"] = setlistener(GenericRadio.globalSettings.forceEchoTestNode, func { me.updatePacketString(); }, 0, 0);
             me.updatePacketString();
         }
     },
@@ -91,7 +97,11 @@ var GenericRadio = {
         me.listeners = {};
         me.timers = {};
         me.aliases = {};
-        fgcomPacketStr.setValue("");
+        if (me.fgcomPacketStr != nil) {
+            #print("Addon FGCom-mumble     removing output node as "~me.fgcomPacketStr.getPath());
+            me.fgcomPacketStr.setValue("");
+            me.fgcomPacketStr.remove();
+        }
     },
 
     updatePacketString: func {
@@ -102,8 +112,15 @@ var GenericRadio = {
         var fields = [];
         foreach (var f; keys(me.fields2props)) {
             var propval = getprop(me.fields2props[f]);
-            if (substr(sprintf("%s",propval), -3) == "999") {
-                # because of float type characteristics, sometimes values are returned like "127.549999999", and rounding fixes that
+
+            # If the global ECHOTEST mode was requested, force radios FRQ field output to the echotest frequency
+            if (f == "FRQ" and GenericRadio.globalSettings.forceEchoTestNode.getBoolValue()) propval = "910.00";
+            if (f == "PBT" and GenericRadio.globalSettings.forceEchoTestNode.getBoolValue()) propval = "1";
+
+            # because of float type characteristics, sometimes values are returned like "127.549999999", and rounding fixes that
+            var field_last_str = substr(sprintf("%s",propval), -3);
+            if ( contains(["FRQ", "VOL", "SQC", "PWR"], f)
+            and field_last_str == "999" or field_last_str == "001") {
                 propval = sprintf("%.4f", propval);
             }
 
@@ -295,12 +312,38 @@ var destroy_radios = func {
     foreach (var i; keys(ADF_radios)) ADF_radios[i].del();
     COM_radios = {};
     ADF_radios = {};
+
+    # check leftover radio output nodes
+    # Note: That should not be neccessary, however for some still unknown reason, there are remnants.
+    foreach (r; GenericRadio.outputRootNode.getChildren("COM")) {
+#        debug.dump(["DBG clean out remnant output node", r]);
+        r.remove();
+    }
+}
+
+var get_com_radios = func() {
+    var r = [];
+    foreach (var i; keys(COM_radios)) append(r, COM_radios[i]);
+    return r;
+}
+var get_com_radios_usable = func() {
+    var r = [];
+    foreach (var o; get_com_radios()) {
+        if (o.is_used) append(r, o);
+    }
+    return r;
+}
+
+var get_adf_radios = func {
+    var r = [];
+    foreach (var i; keys(ADF_radios)) append(r, ADF_radios[i]);
+    return r;
 }
 
 var get_radios = func {
     var r = [];
-    foreach (var i; keys(COM_radios)) append(r, COM_radios[i]);
-    foreach (var i; keys(ADF_radios)) append(r, ADF_radios[i]);
+    foreach (var o; get_com_radios()) append(r, o);
+    foreach (var o; get_adf_radios()) append(r, o);
     return r;
 }
 
