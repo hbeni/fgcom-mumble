@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!--
+This dialog is shown when the init function does not find any usable radios.
+It's intend is that one can manually create radio properties in order to get
+a working FGCom-mumble despite unsupported/non-default radio implementations.
+-->
+<PropertyList>
+    <name>fgcom-mumble-comoverride</name>
+    <layout>vbox</layout>
+    <width>850</width>
+
+    <nasal>
+        <open>
+        <![CDATA[
+            # function to initialize a com to be used for FGCom-mumble
+            FGComMumble_radios.init_missing_com = func(i) {
+                var com = props.globals.getNode("/instrumentation/comm["~i~"]", 1);
+                #com.setValue("frequencies/selected-channel-width-khz", "");
+                com.setBoolValue("operable", 1);
+                com.setBoolValue("ptt", 0);
+                com.setDoubleValue("volume", 1.0);
+                #com.setValue("tx-power", "");
+                #com.setDoubleValue("cutoff-signal-quality", 0.4);
+                print("Addon FGCom-mumble unused COM"~(i+1)~" accepted for override");
+                setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/com-override-text["~i~"]", "add on reload");
+            }
+        ]]>
+        </open>
+    </nasal>
+
+    <group>
+        <layout>hbox</layout>
+
+        <text>
+            <stretch>1</stretch>
+            <halign>left</halign>
+            <label>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</label>
+            <format>FGCom-mumble (%s) WARNING: found no usable radios!</format>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/version</property>
+        </text>
+
+        <empty><stretch>1</stretch></empty>
+
+        <button>
+            <legend>X</legend>
+            <key>Esc</key>
+            <pref-width>20</pref-width>
+            <pref-height>20</pref-height>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+
+    </group>
+
+    <hrule/>
+
+    <!-- body -->
+    <group>
+        <layout>vbox</layout>
+        <text>
+            <halign>left</halign>
+            <label>FGCom mumble could not find any usable radios in this aircraft.</label>
+        </text>
+        <text>
+            <halign>left</halign>
+            <label>Please contact the aircraft maintainers to inform them about the situation, so they can add</label>
+        </text>
+        <text>
+            <halign>left</halign>
+            <label>a correct radio stack simulation (They need to include a <![CDATA[<comm-radio>]]> node in instrumentation.xml).</label>
+        </text>
+        <text>
+            <halign>left</halign>
+            <label/>
+        </text>
+        <text>
+            <halign>left</halign>
+            <label>You can setup FGcom-mumble to initialize some. These radios will</label>
+        </text>
+        <text>
+            <halign>left</halign>
+            <label>provide some basic operation to communicate and will be "always on".</label>
+        </text>
+        <text>
+            <halign>left</halign>
+            <label>You can tune them using the default radio dialog (F12).</label>
+        </text>
+    </group>
+    <group>
+        <layout>hbox</layout>
+        <button>
+            <legend>Add COM 1</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>nasal</command>
+                <script>
+                    FGComMumble_radios.init_missing_com(0);
+                </script>
+            </binding>
+        </button>
+        <text>
+            <halign>left</halign>
+            <stretch>1</stretch>
+            <label>xxxxxxxxxxxx</label>
+            <live>true</live>
+            <format>%s</format>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/com-override-text[0]</property>
+        </text>
+    </group>
+    <group>
+        <layout>hbox</layout>
+        <button>
+            <legend>Add COM 2</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>nasal</command>
+                <script>
+                    FGComMumble_radios.init_missing_com(1);
+                </script>
+            </binding>
+        </button>
+        <text>
+            <halign>left</halign>
+            <stretch>1</stretch>
+            <label>xxxxxxxxxxxx</label>
+            <live>true</live>
+            <format>%s</format>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/com-override-text[1]</property>
+        </text>
+    </group>
+
+
+    <hrule/>
+
+    <!-- footer -->
+    <group>
+        <layout>hbox</layout>
+        <empty><stretch>1</stretch></empty>
+        <button>
+            <legend>Reload</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>nasal</command>
+                <script>
+                    var addonNode = props.globals.getNode("/addons/by-id/org.hallinger.flightgear.FGCom-mumble");
+                    FGComMumble_radios.destroy_radios();
+                    FGComMumble_radios.create_radios();
+                    if (addonNode.getValue("enabled")) {
+                        # restart protocol
+                        addonNode.setBoolValue("enabled",0);
+                        var fgcom_restart_protocol_timer = maketimer(1, addonNode, func() {
+                            me.setBoolValue("enabled",1);
+                        });
+                        fgcom_restart_protocol_timer.singleShot = 1; # timer will only be run once
+                        fgcom_restart_protocol_timer.start();
+                    }
+
+                    # addon reload not needed:
+                    #var addonNode = props.globals.getNode("/addons/by-id/org.hallinger.flightgear.FGCom-mumble");
+                    #addons.commandAddonReload(addonNode);
+                </script>
+            </binding>
+            <binding>
+                <command>dialog-apply</command>
+            </binding>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+        <button>
+            <legend>Ignore</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>dialog-apply</command>
+            </binding>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+
+        <empty><stretch>1</stretch></empty>
+    </group>
+</PropertyList>

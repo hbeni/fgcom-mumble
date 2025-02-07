@@ -17,36 +17,41 @@ var main = func( addon ) {
     print("Addon FGCom-mumble loading...");
     
     # init props with defaults
-    var enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
-    enabledNode.setAttribute("userarchive", "y");
-    if (enabledNode.getValue() == nil) {
-      enabledNode.setBoolValue(1);
+    var configNodes = {};
+    configNodes.settingsRootPath = mySettingsRootPath;
+    configNodes.enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
+    configNodes.enabledNode.setAttribute("userarchive", "y");
+    if (configNodes.enabledNode.getValue() == nil) {
+      configNodes.enabledNode.setBoolValue(1);
     }
-    var refreshNode = props.globals.getNode(mySettingsRootPath ~ "/refresh-rate", 1);
-    refreshNode.setAttribute("userarchive", "y");
-    if (refreshNode.getValue() == nil) {
-      refreshNode.setIntValue("10");
+    configNodes.refreshNode = props.globals.getNode(mySettingsRootPath ~ "/refresh-rate", 1);
+    configNodes.refreshNode.setAttribute("userarchive", "y");
+    if (configNodes.refreshNode.getValue() == nil) {
+      configNodes.refreshNode.setIntValue("10");
     }
-    var hostNode = props.globals.getNode(mySettingsRootPath ~ "/host", 1);
-    hostNode.setAttribute("userarchive", "y");
-    if (hostNode.getValue() == nil) {
-      hostNode.setValue("localhost");
+    configNodes.hostNode = props.globals.getNode(mySettingsRootPath ~ "/host", 1);
+    configNodes.hostNode.setAttribute("userarchive", "y");
+    if (configNodes.hostNode.getValue() == nil) {
+      configNodes.hostNode.setValue("localhost");
     }
-    var portNode = props.globals.getNode(mySettingsRootPath ~ "/port", 1);
-    portNode.setAttribute("userarchive", "y");
-    if (portNode.getValue() == nil) {
-      portNode.setIntValue("16661");
+    configNodes.portNode = props.globals.getNode(mySettingsRootPath ~ "/port", 1);
+    configNodes.portNode.setAttribute("userarchive", "y");
+    if (configNodes.portNode.getValue() == nil) {
+      configNodes.portNode.setIntValue("16661");
     }
-    var audioEffectsEnableNode = props.globals.getNode(mySettingsRootPath ~ "/audio-effects-enabled", 1);
-    audioEffectsEnableNode.setAttribute("userarchive", "y");
-    if (audioEffectsEnableNode.getValue() == nil) {
-      audioEffectsEnableNode.setBoolValue(1);
+    configNodes.audioEffectsEnableNode = props.globals.getNode(mySettingsRootPath ~ "/audio-effects-enabled", 1);
+    configNodes.audioEffectsEnableNode.setAttribute("userarchive", "y");
+    if (configNodes.audioEffectsEnableNode.getValue() == nil) {
+      configNodes.audioEffectsEnableNode.setBoolValue(1);
     }
-    var audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
-    audioHearAllNode.setAttribute("userarchive", "y");
-    if (audioHearAllNode.getValue() == nil) {
-      audioHearAllNode.setBoolValue(0);
+    configNodes.audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
+    configNodes.audioHearAllNode.setAttribute("userarchive", "y");
+    if (configNodes.audioHearAllNode.getValue() == nil) {
+      configNodes.audioHearAllNode.setBoolValue(0);
     }
+    configNodes.forceEchoTestNode = props.globals.getNode(mySettingsRootPath ~ "/force-echotest-frq", 1);
+    configNodes.forceEchoTestNode.setAttribute("userarchive", "n");
+    configNodes.forceEchoTestNode.setBoolValue(0);
 
     # Init GUI menu entry
     var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
@@ -62,9 +67,16 @@ var main = func( addon ) {
     print("Addon FGCom-mumble initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
     var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
-    FGComMumble_radios.GenericRadio.setOutputRoot(props.globals.getNode(mySettingsRootPath ~ "/output", 1));
+    FGComMumble_radios.GenericRadio.setGlobalSettings(configNodes);
     FGComMumble_radios.create_radios();
     FGComMumble_radios.start_rdf(rdfinputNode);
+
+    # Show error message, if no radios could be found
+    if (size(FGComMumble_radios.get_com_radios_usable()) == 0) {
+      print("Addon FGCom-mumble WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
+      fgcommand("dialog-show", {"dialog-name" : "fgcom-mumble-comoverride"});
+    }
+
     
     # Start intercom logic
     print("Addon FGCom-mumble initializing intercom...");
@@ -141,9 +153,48 @@ var main = func( addon ) {
           var r_out_l_idx = 0;
           foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
 #            print("Addon FGCom-mumble    add listener for radio udp_output node (" ~ r_out.getPath() ~")");
-            fgcom_listeners["upd_com_out:"~r_out_l_idx] = setlistener(r_out.getPath(), func { update_udp_output(); }, 0, 0);
+            fgcom_listeners["upd_com_out:"~r_out_l_idx] = _setlistener(r_out.getPath(), func { update_udp_output(); }, 0, 0);
             r_out_l_idx = r_out_l_idx + 1;
           }
+          
+          # FGCom 3.0 compatibility:
+          # The old FGCom protocol seems outdated and transmit an old property.
+          # To get compatibility out-of-the-box, we listen to changes and
+          # translate the value to the individual comms ptt property.
+          # (the code tries to do this only for existing properties, so we don't create nodes accidentally)
+          var legacy_fgcom_ptt_prop = "/controls/radios/comm-ptt";
+          var legacy_fgcom_ptt_oldVal = 0;
+          var legacy_fgcom_ptt_set = func(id, active) {
+            var selected_comm = props.globals.getNode("/instrumentation/").getChild("comm", id);
+            if (selected_comm != nil) {
+              var selected_comm_ptt = selected_comm.getChild("ptt");
+              if (selected_comm_ptt != nil) {
+#                print("Addon FGCom-mumble      comm["~id~"] set to "~active);
+                selected_comm_ptt.setBoolValue(active);
+              } else {
+#                print("Addon FGCom-mumble      comm["~id~"] has no ptt node");
+              }
+            } else {
+#              print("Addon FGCom-mumble      comm["~id~"] not registered");
+            }
+          };
+          print("Addon FGCom-mumble add listener for legacy_fgcom_ptt (" ~ legacy_fgcom_ptt_prop ~")");
+          fgcom_listeners["legacy_fgcom_ptt"] = _setlistener(legacy_fgcom_ptt_prop, func {
+            var fgcom_ptt_selector = getprop(legacy_fgcom_ptt_prop);
+#            print("Addon FGCom-mumble    legacy_fgcom_ptt(" ~ fgcom_ptt_selector ~")");
+            if (fgcom_ptt_selector > 0) {
+              # Activate PTT
+              legacy_fgcom_ptt_set(fgcom_ptt_selector-1, 1);
+            } else {
+              # Reset PTT
+              if (legacy_fgcom_ptt_oldVal > 0) {
+                # reset previous com-ptt
+                legacy_fgcom_ptt_set(legacy_fgcom_ptt_oldVal-1, 0);
+              }
+            }
+            legacy_fgcom_ptt_oldVal = fgcom_ptt_selector;
+          }, 0, 0);
+
           
           update_udp_output();
           
