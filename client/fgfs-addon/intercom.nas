@@ -32,7 +32,7 @@ var IntercomDevice = {
     },
     
     init: func() {
-        print("Addon FGCom-mumble   created new intercom device subnode (" ~ me.root.getPath() ~ ")");
+        FGComMumble.logger.log("intercom", 3, "Addon FGCom-mumble   created new intercom device subnode (" ~ me.root.getPath() ~ ")");
         me.root.setValue("channel", me.root.getIndex() + 1);
         me.root.setValue("volume",           1.0);
         me.root.setBoolValue("operable",     1);
@@ -77,12 +77,12 @@ var IntercomDevice = {
         me.is_used = 1;
         me.isConnected = 1;
         me.root.setValue("connected-callsigns", string.join(".", connection));
-        print("Addon FGCom-mumble     connected "~me.name~" to "~me.getFQChannelName());
+        FGComMumble.logger.log("intercom", 2, "    connected "~me.name~" to "~me.getFQChannelName());
     },
     
     # Remove connection for Intercom
     disconnect: func() {
-        print("Addon FGCom-mumble     disconnected "~me.name~" from "~me.getFQChannelName());
+        FGComMumble.logger.log("intercom", 2, "    disconnected "~me.name~" from "~me.getFQChannelName());
         me.root.setValue("connected-callsigns", "");
         me.root.setBoolValue("is-used", 0);
         me.is_used = 0;
@@ -109,7 +109,7 @@ var IntercomDevice = {
         var fields = [];
         var comidx = me.fgcomPacketStr.getIndex();
         if (me.root.getValue("is-used") and me.isConnected) {
-#            print("Addon FGCom-mumble      processing IC "~me.root.getPath());
+            FGComMumble.logger.log("udp", 4, "     processing IC "~me.root.getPath());
             
             append(fields, "COM" ~ comidx ~ "_FRQ="~me.getFQChannelName());
             append(fields, "COM" ~ comidx ~ "_PTT="~me.root.getValue("ptt"));
@@ -117,7 +117,7 @@ var IntercomDevice = {
             append(fields, "COM" ~ comidx ~ "_PBT="~me.root.getValue("operable"));
             
         } else {
-#            print("Addon FGCom-mumble      skipping IC "~me.root.getPath());
+            FGComMumble.logger.log("intercom", 4, "     skipping IC "~me.root.getPath());
         }
         
         me.fgcomPacketStr.setValue(string.join(",", fields));
@@ -170,12 +170,12 @@ var IntercomSystem = {
     # If so, activate the intercom handling/channel
     connection_established: 0,
     copilotWatchdog: func() {
-#        print("Addon FGCom-mumble   copilot module watchdog checking connection state");
+        FGComMumble.logger.log("intercom", 3, "  copilot module watchdog checking connection state");
         var connection = me.getPilotCopilotConnection();
         
         if (connection and !me.connection_established) {
             # New connection detected
-            print("Addon FGCom-mumble     copilot module watchdog detected new connection");
+            FGComMumble.logger.log("intercom", 2, "    copilot module watchdog detected new connection");
             me.connection_established = 1;
             me.devices[0].connect(connection);
             
@@ -184,7 +184,7 @@ var IntercomSystem = {
         
         if (!connection and me.connection_established) {
             # Established connection broke down
-            print("Addon FGCom-mumble     copilot module watchdog detected disconnect");
+            FGComMumble.logger.log("intercom", 2, "    copilot module watchdog detected disconnect");
             me.connection_established = 0;
             me.devices[0].disconnect();
             

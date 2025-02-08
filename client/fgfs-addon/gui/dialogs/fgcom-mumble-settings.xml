@@ -63,6 +63,16 @@
         <empty><stretch>1</stretch></empty>
 
         <button>
+            <pref-width>40</pref-width>
+            <pref-height>20</pref-height>
+            <legend>DBG</legend>
+            <binding>
+                <command>dialog-show</command>
+                <dialog-name>fgcom-mumble-debug</dialog-name>
+            </binding>
+        </button>
+
+        <button>
             <pref-width>20</pref-width>
             <pref-height>20</pref-height>
             <legend>?</legend>

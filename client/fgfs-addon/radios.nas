@@ -40,7 +40,7 @@ var GenericRadio = {
         # It is created by the C++ instrument code, if the radio is used.
         me.operable = me.root.getNode("operable");
         me.is_used = (me.operable != nil);
-        print("Addon FGCom-mumble   radio "~(me.is_used?"using:   ":"skipped: ")~me.root.getPath());
+        FGComMumble.logger.log("radio", 2, "radio "~(me.is_used?"using:   ":"skipped: ")~me.root.getPath());
 
         # Property subtree for fgcom-mumble properties.
         me.fgcom_root        = me.root.getNode("fgcom-mumble", 1);
@@ -58,7 +58,7 @@ var GenericRadio = {
         # "operable" is a tied property, so we need a polling mechanism updating it
         me.timers.operable_poller = maketimer(1.0, me, 
             func{
-#                print("Addon FGCom-mumble   polling operable: "~me.root.getPath()~"/operable");
+                FGComMumble.logger.log("radio", 5, "   polling operable: "~me.root.getPath()~"/operable");
                 me.fgcom_pbt.setBoolValue(getprop(me.root.getPath()~"/operable"));
             }
         );
@@ -68,7 +68,7 @@ var GenericRadio = {
         # for this register a new distinct output subnode
         if (me.is_used) {
             me.fgcomPacketStr = me.outputRootNode.addChild("COM", 1);
-            print("Addon FGCom-mumble     registered output node as "~me.fgcomPacketStr.getPath());
+            FGComMumble.logger.log("radio", 3, "     registered output node as "~me.fgcomPacketStr.getPath());
             me.fields2props = {
                 # Map the fgcom-mumble protocol fields to properties
                 FRQ:     me.fgcom_root.getPath() ~ "/selected-mhz",
@@ -82,7 +82,7 @@ var GenericRadio = {
                 PUBLISH: me.fgcom_root.getPath() ~ "/publish",
             };
             foreach (var f; keys(me.fields2props)) {
-#                print("Addon FGCom-mumble     add listener for " ~ f ~ " ("~me.fields2props[f]~")");
+                FGComMumble.logger.log("radio", 4, "     add listener for " ~ f ~ " ("~me.fields2props[f]~")");
                 me.listeners["upd_udp_field:"~f] = setlistener(me.fields2props[f], func { me.updatePacketString(); }, 0, 0);
             }
             me.listeners["forceEchoTest"] = setlistener(GenericRadio.globalSettings.forceEchoTestNode, func { me.updatePacketString(); }, 0, 0);
@@ -98,7 +98,7 @@ var GenericRadio = {
         me.timers = {};
         me.aliases = {};
         if (me.fgcomPacketStr != nil) {
-            #print("Addon FGCom-mumble     removing output node as "~me.fgcomPacketStr.getPath());
+            FGComMumble.logger.log("radio", 4, "     removing output node as "~me.fgcomPacketStr.getPath());
             me.fgcomPacketStr.setValue("");
             me.fgcomPacketStr.remove();
         }
@@ -124,7 +124,7 @@ var GenericRadio = {
                 propval = sprintf("%.4f", propval);
             }
 
-#            print("Addon FGCom-mumble     generate udp packet field: "~f~ " ("~(propval != nil? propval:"<nil>")~")");
+            FGComMumble.logger.log("udp", 4, "     generate udp packet field: "~f~ " ("~(propval != nil? propval:"<nil>")~")");
             if (propval != nil) append(fields, "COM" ~ me.fgcomPacketStr.getIndex() ~ "_" ~ f ~ "=" ~ propval);
         }
 
@@ -395,7 +395,7 @@ var start_rdf = func(rdfInputNode) {
     if (rdf_data_listener != nil) return;
 
     # Init RDF input nodes
-    print("Addon FGCom-mumble start RDF input handling using "~rdfInputNode.getPath());
+    FGComMumble.logger.log("radio", 2, " start RDF input handling using "~rdfInputNode.getPath());
     fgcom_rdf_input_radio     = rdfInputNode.initNode("radio", "");
     fgcom_rdf_input_callsign  = rdfInputNode.initNode("callsign", "");
     fgcom_rdf_input_direction = rdfInputNode.initNode("direction", "");

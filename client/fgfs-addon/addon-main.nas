@@ -5,6 +5,53 @@
 #
 # @author Benedikt Hallinger, 2021
 
+var FGComMumble = {
+  addon: nil,
+  rootPath: "",
+  rootNode: nil,
+  listeners: {},
+  timers: {},
+  
+  # Small simple logger which allows filtering by category and severity
+  # changeable at runtime by setting props
+  logger: {
+    level_node: nil,   # setting means: 0=none, 1=ERROR, 2=INFO; 3=FINE, 4=FINER, 5=FINEST
+    dbg_node: nil,
+    init: func() {
+      # init nodes with defaults. Can be overridden at commandline by --prop:
+      me.dbg_node = FGComMumble.rootNode.getNode("debug", 1);
+      me.level_node = me.dbg_node.initNode("level", 2, "INT");
+      me.dbg_node.initNode("category_core",     1, "BOOL");
+      me.dbg_node.initNode("category_radio",    1, "BOOL");
+      me.dbg_node.initNode("category_intercom", 1, "BOOL");
+      me.dbg_node.initNode("category_combar",   1, "BOOL");
+      me.dbg_node.initNode("category_udp",      1, "BOOL");
+      foreach (cfg; me.dbg_node.getChildren()) {
+        FGComMumble.listeners["debug:"~cfg.getName()] = 
+          setlistener(cfg.getPath(), func(node) {
+            FGComMumble.logger.log("core", -1, "debug config changed: "~node.getName()~"=>"~node.getValue());
+          }, 0, 0);
+      }
+    },
+    log: func(category, level, msg) {
+      var levelSelected    = (level <= me.level_node.getValue());
+      var categorySelected = (me.dbg_node.getChild("category_"~category));
+      if ( levelSelected and categorySelected )
+        print("Addon FGCom-mumble ["~string.uc(category)~"]: "~msg);
+    }
+  },
+  
+  # Initialize system
+  init: func(addon) {
+    me.addon    = addon;
+    me.rootPath = "/addons/by-id/" ~ addon.id;
+    me.rootNode = props.globals.getNode(me.rootPath);
+    
+    me.logger.init();
+    
+    FGComMumble.logger.log("core", -1, "Version "~me.rootNode.getChild("version").getValue() ~ " loading..." );
+  }
+};
 
 var main = func( addon ) {
     var root = addon.basePath;
@@ -14,7 +61,7 @@ var main = func( addon ) {
     var fgcom_timers = {};
     var fgcom_listeners = {};
     
-    print("Addon FGCom-mumble loading...");
+    FGComMumble.init(addon);
     
     # init props with defaults
     var configNodes = {};
@@ -64,8 +111,9 @@ var main = func( addon ) {
 	fgcommand("gui-redraw");
 
     # Start radios logic
-    print("Addon FGCom-mumble initializing radios...");
+    FGComMumble.logger.log("core", 2, "initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
+    FGComMumble_radios.FGComMumble = FGComMumble;
     var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
     FGComMumble_radios.GenericRadio.setGlobalSettings(configNodes);
     FGComMumble_radios.create_radios();
@@ -73,20 +121,22 @@ var main = func( addon ) {
 
     # Show error message, if no radios could be found
     if (size(FGComMumble_radios.get_com_radios_usable()) == 0) {
-      print("Addon FGCom-mumble WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
+      FGComMumble.logger.log("core", 1, "WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
       fgcommand("dialog-show", {"dialog-name" : "fgcom-mumble-comoverride"});
     }
 
     
     # Start intercom logic
-    print("Addon FGCom-mumble initializing intercom...");
+    FGComMumble.logger.log("core", 2, "initializing intercom...");
     var intercom_root = props.globals.getNode(mySettingsRootPath ~ "/intercom/",1);
     io.load_nasal(root~"/intercom.nas", "FGComMumble_intercom");
+    FGComMumble_intercom.FGComMumble = FGComMumble;
     FGComMumble_intercom.intercom_system = FGComMumble_intercom.IntercomSystem.new(intercom_root);
 
     # Load the FGCom-mumble combar
-    print("Addon FGCom-mumble loading combar...");
+    FGComMumble.logger.log("core", 2, "loading combar...");
     io.load_nasal(root~"/gui/combar.nas", "FGComMumble_combar");
+    FGComMumble_combar.FGComMumble = FGComMumble;
 
     # Build the final UDP output string transmitted by the protocol file out of the individual radios udp string
     # (note: the generic protocl handler can only process ~256 chars; to prevent truncation,
@@ -98,12 +148,12 @@ var main = func( addon ) {
       props.globals.getNode(mySettingsRootPath ~ "/output/udp[3]",1)
     ];
     var update_udp_output = func() {
-#      print("Addon FGCom-mumble   updating final UDP transmit field...");
+      FGComMumble.logger.log("udp", 3, "  updating final UDP transmit field...");
       var udpout_idx   = 0;
       var udpout_chars = 0;
       var str_v = [];
       foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
-#        print("Addon FGCom-mumble      processing "~r_out.getPath());
+        FGComMumble.logger.log("udp", 4, "     processing "~r_out.getPath());
         if (udpout_chars + size(r_out.getValue()) < 256) {
           append(str_v, r_out.getValue());
           udpout_chars = udpout_chars + size(r_out.getValue());
@@ -124,22 +174,23 @@ var main = func( addon ) {
 
     var initProtocol = func() {
       if (protocolInitialized == 0) {
-        print("Addon FGCom-mumble initializing");
+        FGComMumble.logger.log("core", 2, "initializing addon");
         var enabled = getprop(mySettingsRootPath ~ "/enabled");
         var refresh = getprop(mySettingsRootPath ~ "/refresh-rate");
         var host    = getprop(mySettingsRootPath ~ "/host");
         var port    = getprop(mySettingsRootPath ~ "/port");
 
         if (enabled == 1) {
+          FGComMumble.logger.log("core", 2, "initializing protocol");
           var protocolstring_out = "generic,socket,out," ~ refresh ~ "," ~ host ~ "," ~ port ~",udp,fgcom-mumble";
-          print("Addon FGCom-mumble activating protocol '"~protocolstring_out~"'");
+          FGComMumble.logger.log("udp", 2, "activating protocol '"~protocolstring_out~"'");
           fgcommand("add-io-channel", props.Node.new({
             "config": protocolstring_out,
             "name":"fgcom-mumble"
           }));
           
           var protocolstring_in = "generic,socket,in," ~ refresh ~ ",,19991,udp,fgcom-mumble";
-          print("Addon FGCom-mumble activating protocol '"~protocolstring_in~"'");
+          FGComMumble.logger.log("udp", 2, "activating protocol '"~protocolstring_in~"'");
           fgcommand("add-io-channel", props.Node.new({
             "config": protocolstring_in,
             "name":"fgcom-mumble"
@@ -152,7 +203,7 @@ var main = func( addon ) {
           # Register a listener to each initialized radios output node
           var r_out_l_idx = 0;
           foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
-#            print("Addon FGCom-mumble    add listener for radio udp_output node (" ~ r_out.getPath() ~")");
+            FGComMumble.logger.log("udp", 3, "   add listener for radio udp_output node (" ~ r_out.getPath() ~")");
             fgcom_listeners["upd_com_out:"~r_out_l_idx] = _setlistener(r_out.getPath(), func { update_udp_output(); }, 0, 0);
             r_out_l_idx = r_out_l_idx + 1;
           }
@@ -169,19 +220,19 @@ var main = func( addon ) {
             if (selected_comm != nil) {
               var selected_comm_ptt = selected_comm.getChild("ptt");
               if (selected_comm_ptt != nil) {
-#                print("Addon FGCom-mumble      comm["~id~"] set to "~active);
+                FGComMumble.logger.log("radio", 4, "     comm["~id~"] set to "~active);
                 selected_comm_ptt.setBoolValue(active);
               } else {
-#                print("Addon FGCom-mumble      comm["~id~"] has no ptt node");
+                FGComMumble.logger.log("radio", 4, "     comm["~id~"] has no ptt node");
               }
             } else {
-#              print("Addon FGCom-mumble      comm["~id~"] not registered");
+              FGComMumble.logger.log("radio", 4, "     comm["~id~"] not registered");
             }
           };
-          print("Addon FGCom-mumble add listener for legacy_fgcom_ptt (" ~ legacy_fgcom_ptt_prop ~")");
+          FGComMumble.logger.log("radio", 3, "add listener for legacy_fgcom_ptt (" ~ legacy_fgcom_ptt_prop ~")");
           fgcom_listeners["legacy_fgcom_ptt"] = _setlistener(legacy_fgcom_ptt_prop, func {
             var fgcom_ptt_selector = getprop(legacy_fgcom_ptt_prop);
-#            print("Addon FGCom-mumble    legacy_fgcom_ptt(" ~ fgcom_ptt_selector ~")");
+            FGComMumble.logger.log("radio", 4, "   legacy_fgcom_ptt(" ~ fgcom_ptt_selector ~")");
             if (fgcom_ptt_selector > 0) {
               # Activate PTT
               legacy_fgcom_ptt_set(fgcom_ptt_selector-1, 1);
@@ -205,7 +256,7 @@ var main = func( addon ) {
 
     var shutdownProtocol = func() {
         if (protocolInitialized == 1) {
-            print("Addon FGCom-mumble shutdown protocol...");
+            FGComMumble.logger.log("udp", 2, "shutdown protocol...");
             fgcommand("remove-io-channel",
               props.Node.new({
                   "name" : "fgcom-mumble"
@@ -223,7 +274,7 @@ var main = func( addon ) {
     }
 
     var reinitProtocol = func() {
-        print("Addon FGCom-mumble re-initializing");
+        FGComMumble.logger.log("core", 2, "re-initializing");
         shutdownProtocol();
         initProtocol();
     }
@@ -271,12 +322,12 @@ var compareVersion = func(a, b) {
 
 var checkUpdate = func(rp) {
     var curVer = getprop(rp ~ "/version");
-    print("Addon FGCom-mumble checking for updates (local version: "~curVer~")");
+    FGComMumble.logger.log("core", 2, "checking for updates (local version: "~curVer~")");
     var curVer_v = split(".", curVer);
 
     # Fetch latest release tag from github release list
     var releaseInfo_url = "https://github.com/hbeni/fgcom-mumble/releases";
-    print("Addon FGCom-mumble    using releaseInfo_url: "~releaseInfo_url);
+    FGComMumble.logger.log("core", 3, "   using releaseInfo_url: "~releaseInfo_url);
 
     http.load(releaseInfo_url).done(func(r) {
         # something like: <a href="/hbeni/fgcom-mumble/releases/tag/v.0.14.0">v.0.14.0</a>
@@ -286,7 +337,7 @@ var checkUpdate = func(rp) {
             #                   we want this: ^^^
             tag_name = split("/", split('"', substr(r.response, release_tag_idx, 32) )[0] )[2];
         } else {
-            print("Addon FGCom-mumble   unable to get latest release tag");
+            FGComMumble.logger.log("core", 1, "  unable to get latest release tag");
             canvas.MessageBox.warning(
                 "FGCom-mumble updater "~curVer,
                 "There was a serious problem getting the latest release info.\n\nPlease file a bug report:\n" ~
@@ -310,7 +361,7 @@ var checkUpdate = func(rp) {
             upstream_version_v = split(".", upstream_version);
             var versionCompare = compareVersion(curVer_v, upstream_version_v);
             if (versionCompare  > 0) {
-                print("Addon FGCom-mumble  release version "~upstream_version~ " is newer than the local version "~curVer);
+                FGComMumble.logger.log("core", 2, " release version "~upstream_version~ " is newer than the local version "~curVer);
                 
                 # Make a canvas window to show the info
                 canvas.MessageBox.information(
@@ -321,7 +372,7 @@ var checkUpdate = func(rp) {
                     buttons = canvas.MessageBox.Ok
                 );
             } else {
-                print("Addon FGCom-mumble  local version "~curVer~ " is up-to-date (upstream release: "~upstream_version~")");
+                FGComMumble.logger.log("core", 2, " local version "~curVer~ " is up-to-date (upstream release: "~upstream_version~")");
             }
         });
         fgcommand("xmlhttprequest", params);
