@@ -101,7 +101,7 @@ Debugging
 The addon has a debug mode that may help to see whats going on internally. You can open the debug settings by clicking on the "DBG" button in the settings dialogs title bar.
 
 ### Logging
-The addon will log messages to the normal Flightear log. Unless you specify an alternative `--logdir= in your launcher, the `fgfs.log` is written to its default location (which varies by your operating system). You can get more details on finding it in the [FGFS wiki](https://wiki.flightgear.org/Commonly_used_debugging_tools#fgfs.log).  
+The addon will log messages to the normal Flightear log. Unless you specify an alternative `--logdir=` in your launcher, the `fgfs.log` is written to its default location (which varies by your operating system). You can get more details on finding it in the [FGFS wiki](https://wiki.flightgear.org/Commonly_used_debugging_tools#fgfs.log).  
 Besides that, if you happen to run flightgear from a terminal window, you will also see the messages there.
 
 The debug settings window will allow you to adjust the loglevel and categories. The default will log every category, but just normal informative messages. You might get more details by increasing the log level. If you know what component you want to analyze, you can filter for that by disabling categorys.
