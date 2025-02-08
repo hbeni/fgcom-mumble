@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<PropertyList>
+    <name>fgcom-mumble-debug</name>
+    <layout>vbox</layout>
+    <width>800</width>
+
+    <nasal>
+        <open>
+        <![CDATA[
+            fgcom_mumble_write_debug_sim_data = func() {
+                print("FGCom-mumble SIM DATA:" );
+                debug.tree("//sim/version/", 1);
+            }
+            
+            fgcom_mumble_write_debug_addon_data = func() {
+                print("FGCom-mumble INTERNAL STATE:" );
+                debug.tree("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/", 1);
+            }
+            
+            fgcom_mumble_write_debug_aircraft_data = func() {
+                print("FGCom-mumble AIRCRAFT DATA:" );
+                debug.tree("/sim/aero", 1);
+                debug.tree("/sim/aircraft", 1);
+                debug.tree("/sim/aircraft-id", 1);
+                debug.tree("/sim/aircraft-dir", 1);
+                debug.tree("/sim/aircraft-version", 1);
+            }
+                
+            fgcom_mumble_write_debug_com_data = func() {
+                print("FGCom-mumble AIRCRAFT COM DEVICES:" );
+                var aircraft_instr = props.globals.getNode("/instrumentation");
+                foreach (o; aircraft_instr.getChildren("audio-panel")) {
+                    debug.tree(o, 1);
+                }
+                foreach (o; aircraft_instr.getChildren("comm")) {
+                    debug.tree(o, 1);
+                }
+                foreach (o; aircraft_instr.getChildren("adf")) {
+                    debug.tree(o, 1);
+                }
+            }
+        ]]>
+        </open>
+    </nasal>
+
+
+    <group>
+        <layout>hbox</layout>
+
+        <text>
+            <stretch>1</stretch>
+            <halign>left</halign>
+            <label>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</label>
+            <format>FGCom-mumble (%s) DEBUG options</format>
+            <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/version</property>
+        </text>
+
+        <empty><stretch>1</stretch></empty>
+
+        <button>
+            <legend>X</legend>
+            <key>Esc</key>
+            <pref-width>20</pref-width>
+            <pref-height>20</pref-height>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+
+    </group>
+
+    <hrule/>
+
+    <text>
+        <halign>left</halign>
+        <label>If you want to track down a bug or compatibility issue, or want to help the devs fix a bug,</label>
+    </text>
+    <text>
+        <halign>left</halign>
+        <label>you can generate debug data here. The data will be printed to your fgfs.log file (and terminal).</label>
+    </text>
+    <text>
+        <halign>left</halign>
+        <label>Unless you specify an alternative '--logdir=' in your launcher, the fgfs.log is written to</label>
+    </text>
+    <text>
+        <halign>left</halign>
+        <label>the default location (see: https://wiki.flightgear.org/Commonly_used_debugging_tools#fgfs.log).</label>
+    </text>
+
+    <hrule/>
+
+    <text>
+        <halign>left</halign>
+        <label>Debug messages:</label>
+    </text>
+    <group>
+        <layout>hbox</layout>
+        <halign>left</halign>
+        <group>
+            <layout>hbox</layout>
+            
+            <default-padding>10</default-padding>
+            <empty><width>6</width><stretch>1</stretch></empty>
+        </group>
+        
+        <group>
+            <layout>vbox</layout>
+            <halign>left</halign>
+            <group>
+                <layout>hbox</layout>
+                <halign>left</halign>
+                
+<!--                <combo>
+                    <label>Level</label>
+                    <name>level_selector</name>
+                    <pref-width>16</pref-width>
+                    <editable>false</editable>
+                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/level</property>
+                    <value>0</value>
+                    <value>1</value>
+                    <value>2</value>
+                    <value>3</value>
+                    <value>4</value>
+                    <value>5</value>
+                    <binding>
+                        <command>dialog-apply</command>
+                        <object-name>level_selector</object-name>
+                    </binding>
+                </combo>-->
+                <input>
+                    <name>level_selector</name>
+                    <halign>left</halign>
+                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/level</property>
+                    <type>INT</type>
+                    <width>2</width>
+                    <binding>
+                        <command>dialog-apply</command>
+                        <object-name>level_selector</object-name>
+                    </binding>
+                </input>
+                
+                <text>
+                    <halign>left</halign>
+                    <label>(0=none, 1=ERROR, 2=INFO; 3=FINE, 4=FINER, 5=FINEST)</label>
+                </text>
+            </group>
+
+            <checkbox>
+                <halign>left</halign>
+                <label>core</label>
+                <live>true</live>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_core</property>
+                <binding>
+                    <command>dialog-apply</command>
+                </binding>
+            </checkbox>
+            <checkbox>
+                <halign>left</halign>
+                <label>radio</label>
+                <live>true</live>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_radio</property>
+                <binding>
+                    <command>dialog-apply</command>
+                </binding>
+            </checkbox>
+            <checkbox>
+                <halign>left</halign>
+                <label>intercom</label>
+                <live>true</live>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_intercom</property>
+                <binding>
+                    <command>dialog-apply</command>
+                </binding>
+            </checkbox>
+            <checkbox>
+                <halign>left</halign>
+                <label>combar</label>
+                <live>true</live>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_combar</property>
+                <binding>
+                    <command>dialog-apply</command>
+                </binding>
+            </checkbox>
+            <checkbox>
+                <halign>left</halign>
+                <label>udp</label>
+                <live>true</live>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_udp</property>
+                <binding>
+                    <command>dialog-apply</command>
+                </binding>
+            </checkbox>
+
+        </group>
+    </group>
+    
+    <hrule/>
+    
+    <text>
+        <halign>left</halign>
+        <label>Dump stuff to log:</label>
+    </text>
+    <group>
+        <layout>hbox</layout>
+        <halign>left</halign>
+        <group>
+            <layout>hbox</layout>
+            
+            <default-padding>10</default-padding>
+            <empty><width>6</width><stretch>1</stretch></empty>
+        </group>
+        
+        <button>
+            <legend>Dump all</legend>
+            <pref-width>180</pref-width>
+            <pref-height>30</pref-height>
+            <halign>left</halign>
+            <binding>
+                <command>nasal</command>
+                <script><![CDATA[
+                    fgcom_mumble_write_debug_sim_data();
+                    fgcom_mumble_write_debug_addon_data();
+                    fgcom_mumble_write_debug_aircraft_data();
+                    fgcom_mumble_write_debug_com_data();
+                ]]></script>
+            </binding>
+        </button>
+        
+        <vrule/>
+        
+        <button>
+            <legend>Addon state</legend>
+            <pref-width>180</pref-width>
+            <pref-height>30</pref-height>
+            <halign>left</halign>
+            <binding>
+                <command>nasal</command>
+                <script><![CDATA[
+                    fgcom_mumble_write_debug_sim_data();
+                    fgcom_mumble_write_debug_addon_data();
+                ]]></script>
+            </binding>
+        </button>
+        <button>
+            <legend>Aircraft data</legend>
+            <pref-width>180</pref-width>
+            <pref-height>30</pref-height>
+            <halign>left</halign>
+            <binding>
+                <command>nasal</command>
+                <script><![CDATA[
+                    fgcom_mumble_write_debug_sim_data();
+                    fgcom_mumble_write_debug_aircraft_data();
+                    fgcom_mumble_write_debug_com_data();
+                ]]></script>
+            </binding>
+        </button>
+            
+    </group>
+    
+    <hrule/>
+
+    <group>
+        <layout>hbox</layout>
+        <empty><stretch>1</stretch></empty>
+
+        <button>
+            <legend>Close</legend>
+            <pref-width>90</pref-width>
+            <pref-height>30</pref-height>
+            <binding>
+                <command>dialog-close</command>
+            </binding>
+        </button>
+        <empty><stretch>1</stretch></empty>
+    </group>
+</PropertyList>

@@ -95,3 +95,30 @@ Plane developers can access the intercom device below `/addons/by-id/org.halling
 
 You can also register additional Intercom devices by calling `var myNewDevice = FGComMumble_intercom.intercom_system.add_intercom_device();`. This will provide a fresh subnode you can handle. The resulting UDP packages will be gathered automatically, but things like channel name and PTT you need to handle yourself.  
 For the intercom to be connected you need to call `myNewDevice.connect(["A","B"])` on the device (where `["A","B"]` is the combined callsigns to establish the default channel name (you can also use `connect(["someCustomChannelname"])` instead). You can also alter the channel name afterwards via the property described above).
+
+Debugging
+---------
+The addon has a debug mode that may help to see whats going on internally. You can open the debug settings by clicking on the "DBG" button in the settings dialogs title bar.
+
+### Logging
+The addon will log messages to the normal Flightear log. Unless you specify an alternative `--logdir= in your launcher, the `fgfs.log` is written to its default location (which varies by your operating system). You can get more details on finding it in the [FGFS wiki](https://wiki.flightgear.org/Commonly_used_debugging_tools#fgfs.log).  
+Besides that, if you happen to run flightgear from a terminal window, you will also see the messages there.
+
+The debug settings window will allow you to adjust the loglevel and categories. The default will log every category, but just normal informative messages. You might get more details by increasing the log level. If you know what component you want to analyze, you can filter for that by disabling categorys.
+
+In case you want to do this at startup (which is adviseable if you want to get more details on initialization processes), you can do so by setting the properties in your launcher:
+
+| Launcher command | Description |
+| ---------------- | ----------- |
+| `--prop:/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/level=2` | Set log level:  `0`=none, `1`=ERROR, `2`=INFO; `3`=FINE, `4`=FINER, `5`=FINEST |
+| `--prop:/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_core=1` | `0` or `1`; Core messages |
+| `--prop:/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_radio=1` | `0` or `1`; Radio devices |
+| `--prop:/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_intercom=1` | `0` or `1`; Intercom devices |
+| `--prop:/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_combar=1` | `0` or `1`; Combar |
+| `--prop:/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_udp=1` | `0` or `1`; UDP message generation |
+
+### Dumping state
+By pressing one of the buttons, you can export parts of the internal property tree to the log. This is helpful to get information on the underlying data the addon uses.
+
+### Helping the devs
+In case you want to report an Issue, it would be helpful to get the `fgfs.log` of the instance the problem occured. Unless you have better information, it is really helpful if you could hit "Dump all" directly before and after your bug triggers.

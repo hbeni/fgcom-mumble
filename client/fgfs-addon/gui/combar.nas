@@ -21,11 +21,11 @@ canvas.gui.widgets.SpringButton.setDown = func(down = 1)
 
     if (!me._down){
         me._trigger("mouse_up", {checked: 0});
-        #print ("mouse up");
+        FGComMumble.logger.log("combar", 5, "event: mouse up");
     }
     else{
         me._trigger("mouse_down", {checked: 0});
-        #print ("mouse down");
+        FGComMumble.logger.log("combar", 5, "event: mouse down");
     }
 
     return me;
@@ -39,12 +39,12 @@ var combar = {
     show: func() {
         if (me.dialogOpened == 1) return; # allow just one dialog instance
         
-        print("Addon FGCom-mumble: combar initializing");
+        FGComMumble.logger.log("combar", 3, "initializing");
         me.dlgWindow = canvas.Window.new([975, 25], "dialog")
                         .setTitle("FGCom-mumble COMBar");
 
         me.dlgWindow.del = func() {
-            print("Addon FGCom-mumble: combar closed");
+            FGComMumble.logger.log("combar", 3, "closed");
             combar.dialogOpened = 0;
 
             call(canvas.Window.del, [], me);
@@ -71,11 +71,11 @@ var combar = {
         
         foreach (var r; radios) {
             if (!r.is_used) {
-                print("Addon FGCom-mumble: combar skipping "~r.root.getPath());
+                FGComMumble.logger.log("combar", 4, "skipping "~r.root.getPath());
                 continue;
             }
 
-            print("Addon FGCom-mumble: combar adding "~r.root.getPath()~" ("~r.name~")");
+            FGComMumble.logger.log("combar", 4, "adding "~r.root.getPath()~" ("~r.name~")");
 
             button_nr = button_nr + 1;
             var newSizeWidth = math.round((button_nr)*me.comPTTButton_size[0] + me.comPTTButton_size[0]/4);
@@ -87,11 +87,11 @@ var combar = {
             var init_button = func(b,rp,ci) {
                 b.ptt_prop = rp~"/ptt";
                 b.listen("mouse_down", func(e) {
-                    print("Addon FGCom-mumble: pushing "~ci~" "~b.ptt_prop);
+                    FGComMumble.logger.log("combar", 4, "pushing "~ci~" "~b.ptt_prop);
                     setprop(b.ptt_prop, 1);
                 });
                 b.listen("mouse_up", func(e) {
-                    print("Addon FGCom-mumble: releasing "~ci~" "~b.ptt_prop);
+                    FGComMumble.logger.log("combar", 4, "releasing "~ci~" "~b.ptt_prop);
                     setprop(b.ptt_prop, 0);
                 });
 
