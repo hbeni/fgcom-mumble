@@ -100,16 +100,6 @@ var main = func( addon ) {
     configNodes.forceEchoTestNode.setAttribute("userarchive", "n");
     configNodes.forceEchoTestNode.setBoolValue(0);
 
-    # Init GUI menu entry
-    var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
-    var menudata = {
-		label   : "FGCom-mumble",
-		name    : "fgcom-mumble",
-		binding : { command : "dialog-show", "dialog-name" : "fgcom-mumble-settings" }
-	};
-	props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
-	fgcommand("gui-redraw");
-
     # Start radios logic
     FGComMumble.logger.log("core", 2, "initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
@@ -245,6 +235,50 @@ var main = func( addon ) {
             }
             legacy_fgcom_ptt_oldVal = fgcom_ptt_selector;
           }, 0, 0);
+
+          # FCOM 3.0 bug prevention (#204)
+          # Running FGCom-mumble and legacy FGCom has resulted in legacy FGCom segfaulting.
+          # So, if we activate FGCom-mumble, legacy FGCom must be turned off.
+          var legacy_fgcom_enabled_prop = "/sim/fgcom/enabled";
+          if (getprop(legacy_fgcom_enabled_prop)) {
+            FGComMumble.logger.log("core", 2, "disabling legacy FGCom (" ~ legacy_fgcom_enabled_prop ~")");
+            setprop(legacy_fgcom_enabled_prop, 0);
+          }
+          # Also we search the menu bar item to disable it, so nobody accidentally
+          # opens the old FGCom dialoge which will reenable itself.
+          # We do this by overwriting the classic menu entry, if possible.
+          var menubar = props.globals.getNode("/sim/menubar/default");
+          var legacy_fgcom_menuDisabled = 0;
+          foreach (menu_entry; menubar.getChildren("menu")) {
+            foreach (menu_item; menu_entry.getChildren("item")) {
+              if (menu_item.getValue("name") == "fgcom-settings") {
+                legacy_fgcom_menuDisabled = 1;
+                FGComMumble.logger.log("core", 2, "overwriting legacy FGCom menu entry ("~menu_item.getPath()~")" );
+                #menu_item.setBoolValue("enabled", 0);
+                
+                # overwrite the entry with our menu
+                menu_item.setValue("label", "FGCom-mumble");
+                menu_item.setValue("name", "fgcom-mumble");
+                menu_item.getChild("binding").setValue("dialog-name", "fgcom-mumble-settings");
+                fgcommand("gui-redraw");
+                break;
+              }
+            }
+            if (legacy_fgcom_menuDisabled) break;
+          }
+          
+          # Init GUI menu entry, in case we could't overwrite the classic FGCom one
+          if (!legacy_fgcom_menuDisabled) {
+            FGComMumble.logger.log("core", 2, "adding FGCom-mumble menu entry" );
+            var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
+            var menudata = {
+                label   : "FGCom-mumble",
+                name    : "fgcom-mumble",
+                binding : { command : "dialog-show", "dialog-name" : "fgcom-mumble-settings" }
+            };
+            props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
+            fgcommand("gui-redraw");
+          }
 
           
           update_udp_output();
