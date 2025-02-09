@@ -111,11 +111,10 @@
                 <layout>hbox</layout>
                 <halign>left</halign>
                 
-<!--                <combo>
-                    <label>Level</label>
+                <combo>
                     <name>level_selector</name>
-                    <pref-width>16</pref-width>
-                    <editable>false</editable>
+                    <pref-width>60</pref-width>
+                    <live>true</live>
                     <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/level</property>
                     <value>0</value>
                     <value>1</value>
@@ -127,22 +126,11 @@
                         <command>dialog-apply</command>
                         <object-name>level_selector</object-name>
                     </binding>
-                </combo>-->
-                <input>
-                    <name>level_selector</name>
-                    <halign>left</halign>
-                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/level</property>
-                    <type>INT</type>
-                    <width>2</width>
-                    <binding>
-                        <command>dialog-apply</command>
-                        <object-name>level_selector</object-name>
-                    </binding>
-                </input>
+                </combo>
                 
                 <text>
                     <halign>left</halign>
-                    <label>(0=none, 1=ERROR, 2=INFO; 3=FINE, 4=FINER, 5=FINEST)</label>
+                    <label>Level (0=none, 1=ERROR, 2=INFO; 3=FINE, 4=FINER, 5=FINEST)</label>
                 </text>
             </group>
 
