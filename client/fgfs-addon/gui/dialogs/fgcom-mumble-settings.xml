@@ -238,31 +238,47 @@
                 </text>
             </group>
             
-            <button>
-                <legend>Open COMBar</legend>
-                <pref-width>180</pref-width>
-                <pref-height>30</pref-height>
+            <group>
+                <layout>hbox</layout>
                 <halign>left</halign>
-                <binding>
-                    <command>nasal</command>
-                    <script><![CDATA[
-                        if (size(FGComMumble_radios.get_com_radios_usable()) > 0) {
-                            FGComMumble_combar.combar.show();
-                        } else {
-                            # instead of the combar, show a message.
-                            canvas.MessageBox.critical(
-                                "FGCOM-mumble error",
-                                "No usable radios where found!",
-                                cb = nil,
-                                buttons = canvas.MessageBox.Ok
-                            );
-                        }
-                    ]]></script>
-                </binding>
-                <binding>
-                    <command>dialog-close</command>
-                </binding>
-            </button>
+                <button>
+                    <legend>Open COMBar</legend>
+                    <pref-width>180</pref-width>
+                    <pref-height>30</pref-height>
+                    <halign>left</halign>
+                    <binding>
+                        <command>nasal</command>
+                        <script><![CDATA[
+                            if (size(FGComMumble_radios.get_com_radios_usable()) > 0) {
+                                FGComMumble_combar.combar.show();
+                            } else {
+                                # instead of the combar, show a message.
+                                canvas.MessageBox.critical(
+                                    "FGCOM-mumble error",
+                                    "No usable radios where found!",
+                                    cb = nil,
+                                    buttons = canvas.MessageBox.Ok
+                                );
+                            }
+                        ]]></script>
+                    </binding>
+                    <binding>
+                        <command>dialog-close</command>
+                    </binding>
+                </button>
+                
+                <button>
+                    <legend>Open Statuspage</legend>
+                    <pref-width>180</pref-width>
+                    <pref-height>30</pref-height>
+                    <halign>left</halign>
+                    <binding>
+                        <command>open-browser</command>
+                        <path>https://fgcom.hallinger.org/</path>
+                    </binding>
+                </button>
+            </group>
+            
         </group>
     </group>
     
