@@ -26,6 +26,7 @@ var FGComMumble = {
       me.dbg_node.initNode("category_intercom", 1, "BOOL");
       me.dbg_node.initNode("category_combar",   1, "BOOL");
       me.dbg_node.initNode("category_udp",      1, "BOOL");
+      me.dbg_node.initNode("category_rdf",      1, "BOOL");
       foreach (cfg; me.dbg_node.getChildren()) {
         FGComMumble.listeners["debug:"~cfg.getName()] = 
           setlistener(cfg.getPath(), func(node) {
@@ -188,6 +189,11 @@ var main = func( addon ) {
     configNodes.audioEffectsEnableNode.setAttribute("userarchive", "y");
     if (configNodes.audioEffectsEnableNode.getValue() == nil) {
       configNodes.audioEffectsEnableNode.setBoolValue(1);
+    }
+    configNodes.enableCOMRDF = props.globals.getNode(mySettingsRootPath ~ "/com-rdf-enabled", 1);
+    configNodes.enableCOMRDF.setAttribute("userarchive", "y");
+    if (configNodes.enableCOMRDF.getValue() == nil) {
+      configNodes.enableCOMRDF.setBoolValue(1);
     }
     configNodes.audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
     configNodes.audioHearAllNode.setAttribute("userarchive", "y");
