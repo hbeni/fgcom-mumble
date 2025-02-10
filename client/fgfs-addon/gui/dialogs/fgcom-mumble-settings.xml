@@ -189,6 +189,15 @@
                 <label>Enable hearing non-plugin Mumble users</label>
                 <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-hear-all</property>
             </checkbox>
+
+            <!-- Not shown: this is currently a startup feature.
+                 Default is ON, and override can be done trough launcher setting the prop to 0.
+            <checkbox>
+                <halign>left</halign>
+                <label>Enable COM RDF</label>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/com-rdf-enabled</property>
+            </checkbox>
+            -->
         </group>
     </group>
     
