@@ -215,7 +215,30 @@
             <group>
                 <layout>hbox</layout>
                 <halign>left</halign>
+                <checkbox>
+                    <halign>left</halign>
+                    <name>chbx_chUpdates</name>
+                    <label>Check for updates at startup</label>
+                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/check-for-updates</property>
+                </checkbox>
+                <button>
+                    <legend>check now</legend>
+                    <pref-width>100</pref-width>
+                    <pref-height>20</pref-height>
+                    <halign>left</halign>
+                    <binding>
+                        <command>nasal</command>
+                        <script><![CDATA[
+                            var fgcom_module = addons._modules["org.hallinger.flightgear.FGCom-mumble"].getNamespace()["FGComMumble"];
+                            fgcom_module.checkUpdate(1);
+                        ]]></script>
+                    </binding>
+                </button>
+            </group>
                 
+            <group>
+                <layout>hbox</layout>
+                <halign>left</halign>
                 <checkbox>
                     <halign>left</halign>
                     <name>chbx_enable_echotest</name>
