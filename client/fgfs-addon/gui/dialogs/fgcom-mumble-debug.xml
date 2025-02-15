@@ -179,6 +179,15 @@
                     <command>dialog-apply</command>
                 </binding>
             </checkbox>
+            <checkbox>
+                <halign>left</halign>
+                <label>rdf</label>
+                <live>true</live>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/debug/category_rdf</property>
+                <binding>
+                    <command>dialog-apply</command>
+                </binding>
+            </checkbox>
 
         </group>
     </group>
