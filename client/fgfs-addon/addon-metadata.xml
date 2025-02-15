@@ -43,7 +43,7 @@
             <url type="string">https://www.gnu.org/licenses/gpl-3.0</url>
         </license>
 
-        <min-FG-version type="string">2018.3.0</min-FG-version>
+        <min-FG-version type="string">2024.1.0</min-FG-version>
         <max-FG-version type="string">none</max-FG-version>
 
         <urls>

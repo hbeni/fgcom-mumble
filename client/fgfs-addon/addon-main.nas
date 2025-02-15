@@ -36,8 +36,9 @@ var FGComMumble = {
     log: func(category, level, msg) {
       var levelSelected    = (level <= me.level_node.getValue());
       var categorySelected = (me.dbg_node.getChild("category_"~category));
-      if ( levelSelected and categorySelected )
-        print("Addon FGCom-mumble ["~string.uc(category)~"]: "~msg);
+      if ( levelSelected and categorySelected ) {
+        printf("Addon FGCom-mumble [%s]: %s", category, msg);
+      }
     }
   },
   
