@@ -26,6 +26,7 @@ var FGComMumble = {
       me.dbg_node.initNode("category_intercom", 1, "BOOL");
       me.dbg_node.initNode("category_combar",   1, "BOOL");
       me.dbg_node.initNode("category_udp",      1, "BOOL");
+      me.dbg_node.initNode("category_rdf",      1, "BOOL");
       foreach (cfg; me.dbg_node.getChildren()) {
         FGComMumble.listeners["debug:"~cfg.getName()] = 
           setlistener(cfg.getPath(), func(node) {
@@ -34,11 +35,19 @@ var FGComMumble = {
       }
     },
     log: func(category, level, msg) {
-      var levelSelected    = (level <= me.level_node.getValue());
+      var levelSelected    = (level <= me.get_level());
       var categorySelected = (me.dbg_node.getChild("category_"~category));
       if ( levelSelected and categorySelected ) {
         printf("Addon FGCom-mumble [%s]: %s", category, msg);
       }
+    },
+    logHash: func(category, level, msg, hash) {
+      me.log(category, level, msg);
+      var levelSelected = (level <= me.get_level());
+      if (levelSelected) debug.dump(hash);
+    },
+    get_level: func() {
+      return me.level_node.getValue();
     }
   },
   
@@ -180,6 +189,11 @@ var main = func( addon ) {
     configNodes.audioEffectsEnableNode.setAttribute("userarchive", "y");
     if (configNodes.audioEffectsEnableNode.getValue() == nil) {
       configNodes.audioEffectsEnableNode.setBoolValue(1);
+    }
+    configNodes.enableCOMRDF = props.globals.getNode(mySettingsRootPath ~ "/com-rdf-enabled", 1);
+    configNodes.enableCOMRDF.setAttribute("userarchive", "y");
+    if (configNodes.enableCOMRDF.getValue() == nil) {
+      configNodes.enableCOMRDF.setBoolValue(1);
     }
     configNodes.audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
     configNodes.audioHearAllNode.setAttribute("userarchive", "y");
