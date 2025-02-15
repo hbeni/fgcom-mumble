@@ -9,7 +9,7 @@
         <![CDATA[
             # (re-)open the missing radio dialog in case there are no COMs
             if (size(FGComMumble_radios.get_com_radios_usable()) == 0) {
-                print("Addon FGCom-mumble WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
+                FGComMumble.logger.log("core", -1, "WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
                 fgcommand("dialog-show", {"dialog-name" : "fgcom-mumble-comoverride"});
             }
 
@@ -26,7 +26,7 @@
                     ptt_test_vals   = [];
                     oprbl_test_vals = [];
                     foreach(r; useable_radios) {
-#                        print("Addon FGCom-mumble PTT state of "~r.name~" read from "~r.fields2props.PTT);
+                        FGComMumble.logger.log("core", 4, "settingsGui: PTT state of "~r.name~" read from "~r.fields2props.PTT");
                         append(ptt_test_vals,   r.name~":"~getprop(r.fields2props.PTT) );
                         append(oprbl_test_vals, r.name~":"~r.operable.getValue() );
                     }
