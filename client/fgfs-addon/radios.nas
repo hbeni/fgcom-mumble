@@ -183,7 +183,7 @@ var COM = {
         me.vol       = me.root.getNode("volume", 1);
         me.freq_mhz  = me.root.getNode("frequencies/selected-mhz", 1);
 
-        me.rdf_signal_flag_node = me.root.getNode("receiving-flag_fgcom-mumble", 1);
+        me.rdf_signal_flag_node = me.fgcom_root.getNode("receiving-flag", 1);
 
         # Only initialize properties if the radio is used.
         if (me.is_used) {
