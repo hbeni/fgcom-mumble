@@ -258,7 +258,7 @@ var main = func( addon ) {
           append(str_v, r_out.getValue());
           udpout_chars = udpout_chars + size(r_out.getValue());
         } else {
-          # Overflow: finish current prop and store into next prop. TODO: this is rather rough but works for now, but we could optimize space usage by splitting not entire COM udp stirngs, but at the individual field level
+          # Overflow: finish current prop and store into next prop. TODO: this is rather rough but works for now, but we could optimize space usage by splitting not entire COM udp stirngs, but at the individual field level. We now have code for that in the debug dialog canvas!
           out_prop[udpout_idx].setValue(string.join(",", str_v));
           str_v = [];
           udpout_idx = udpout_idx + 1;
