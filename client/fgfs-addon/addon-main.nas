@@ -181,6 +181,11 @@ var main = func( addon ) {
     if (configNodes.portNode.getValue() == nil) {
       configNodes.portNode.setIntValue("16661");
     }
+    configNodes.rdfportNode = props.globals.getNode(mySettingsRootPath ~ "/rdfport", 1);
+    configNodes.rdfportNode.setAttribute("userarchive", "y");
+    if (configNodes.rdfportNode.getValue() == nil) {
+      configNodes.rdfportNode.setIntValue("19991");
+    }
     configNodes.updateCheckNode = props.globals.getNode(mySettingsRootPath ~ "/check-for-updates", 1);
     configNodes.updateCheckNode.setAttribute("userarchive", "y");
     if (configNodes.updateCheckNode.getValue() == nil) {
@@ -274,6 +279,7 @@ var main = func( addon ) {
         var refresh = getprop(mySettingsRootPath ~ "/refresh-rate");
         var host    = getprop(mySettingsRootPath ~ "/host");
         var port    = getprop(mySettingsRootPath ~ "/port");
+        var rdfport = getprop(mySettingsRootPath ~ "/rdfport");
 
         if (enabled == 1) {
           FGComMumble.logger.log("udp", 2, "initializing protocol");
@@ -284,7 +290,7 @@ var main = func( addon ) {
             "name":"fgcom-mumble-out"
           }));
           
-          var protocolstring_in = "generic,socket,in," ~ refresh ~ ",,19991,udp,fgcom-mumble";
+          var protocolstring_in = "generic,socket,in," ~ refresh ~ ",,"~rdfport~",udp,fgcom-mumble";
           FGComMumble.logger.log("udp", 3, "activating protocol '"~protocolstring_in~"'");
           fgcommand("add-io-channel", props.Node.new({
             "config": protocolstring_in,
@@ -447,9 +453,10 @@ var main = func( addon ) {
         }
     });
     
-    var reinit_hzChange   = setlistener(mySettingsRootPath ~ "/refresh-rate", reinitProtocol, 0, 0);
-    var reinit_hostChange = setlistener(mySettingsRootPath ~ "/host", reinitProtocol, 0, 0);
-    var reinit_portChange = setlistener(mySettingsRootPath ~ "/port", reinitProtocol, 0, 0);
+    var reinit_hzChange       = setlistener(mySettingsRootPath ~ "/refresh-rate", reinitProtocol, 0, 0);
+    var reinit_hostChange     = setlistener(mySettingsRootPath ~ "/host", reinitProtocol, 0, 0);
+    var reinit_portChange     = setlistener(mySettingsRootPath ~ "/port", reinitProtocol, 0, 0);
+    var reinit_rdfportChange  = setlistener(mySettingsRootPath ~ "/rdfport", reinitProtocol, 0, 0);
     
     # Check for upates at init time
     if (configNodes.updateCheckNode.getValue()) {
