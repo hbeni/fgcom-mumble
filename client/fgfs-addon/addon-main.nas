@@ -36,15 +36,16 @@ var FGComMumble = {
     },
     log: func(category, level, msg) {
       var levelSelected    = (level <= me.get_level());
-      var categorySelected = (me.dbg_node.getChild("category_"~category));
+      var categorySelected = (me.dbg_node.getChild("category_"~category).getValue());
       if ( levelSelected and categorySelected ) {
         printf("Addon FGCom-mumble [%s]: %s", category, msg);
       }
     },
     logHash: func(category, level, msg, hash) {
       me.log(category, level, msg);
-      var levelSelected = (level <= me.get_level());
-      if (levelSelected) debug.dump(hash);
+      var levelSelected    = (level <= me.get_level());
+      var categorySelected = (me.dbg_node.getChild("category_"~category).getValue());
+      if (levelSelected and categorySelected) debug.dump(hash);
     },
     get_level: func() {
       return me.level_node.getValue();
