@@ -100,7 +100,7 @@
 
     <text>
         <halign>left</halign>
-        <label>Options for sending data to the FGCom-Mumble plugin:</label>
+        <label>Options for exchanging data to the FGCom-Mumble plugin:</label>
     </text>
     <group>
         <layout>hbox</layout>
@@ -113,50 +113,68 @@
         </group>
         
         <group>
-            <layout>vbox</layout>
+            <layout>table</layout>
 
             <checkbox>
+                <row>0</row>
+                <col>0</col>
                 <halign>left</halign>
                 <label>Enable sending data</label>
                 <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/enabled</property>
             </checkbox>
 
-            <group>
-                <layout>hbox</layout>
+            <text>
+                <row>1</row>
+                <col>0</col>
+                <halign>left</halign>
+                <label>Send rate (Hz):</label>
+            </text>
 
-                <text>
-                    <halign>left</halign>
-                    <label>Send rate (Hz):</label>
-                </text>
+            <input>
+                <row>1</row>
+                <col>1</col>
+                <name>refresh-rate</name>
+                <height>25</height>
+                <halign>left</halign>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate</property>
+            </input>
 
-                <input>
-                    <name>refresh-rate</name>
-                    <height>25</height>
-                    <halign>left</halign>
-                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate</property>
-                </input>
-            </group>
+            <text>
+                <row>2</row>
+                <col>0</col>
+                <label>Mumble plugin Host/Port:</label>
+                <halign>left</halign>
+            </text>
 
-            <group>
-                <layout>hbox</layout>
+            <input>
+                <row>2</row>
+                <col>1</col>
+                <height>25</height>
+                <halign>left</halign>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/host</property>
+            </input>
+            <input>
+                <row>2</row>
+                <col>2</col>
+                <height>25</height>
+                <halign>left</halign>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/port</property>
+            </input>
+            
+            <text>
+                <row>3</row>
+                <col>0</col>
+                <label>RDF Port:</label>
+                <halign>left</halign>
+            </text>
 
-                <text>
-                    <label>Host/Port:</label>
-                    <halign>left</halign>
-                </text>
-
-                <input>
-                    <height>25</height>
-                    <halign>left</halign>
-                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/host</property>
-                </input>
-                <input>
-                    <height>25</height>
-                    <halign>left</halign>
-                    <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/port</property>
-                </input>
-            </group>
-        
+            <input>
+                <row>3</row>
+                <col>2</col>
+                <height>25</height>
+                <halign>left</halign>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfport</property>
+            </input>
             
         </group>
     </group>

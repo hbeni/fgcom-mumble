@@ -113,7 +113,8 @@
          cannot assign the sending client port, but chooses a random one -->
     <name>fgcom-udp-client-port</name>
     <type>string</type>
-    <format>UDP_TGT_PORT=19991</format>
+    <format>UDP_TGT_PORT=%s</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfport</node>
    </chunk>
    <chunk>
     <name>audio-effects-enabled</name>
