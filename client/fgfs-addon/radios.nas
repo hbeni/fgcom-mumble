@@ -249,6 +249,8 @@ var ADF = {
         me.freq_khz          = me.root.getNode("frequencies/selected-khz", 1);
         me.indicated_bearing = me.root.getNode("indicated-bearing-deg", 1);
 
+        me.rdf_signal_flag_node = me.fgcom_root.getNode("receiving-flag", 1);
+
         # Only initialize properties / listeners / timers if the radio is used.
         if (me.is_used) {
             # Volume update
@@ -298,11 +300,13 @@ var ADF = {
             if (direction != nil and quality != nil and quality > me.rdf_quality_threshold and me.mode.getValue() == "adf") {
                 # Has signal, and is in the correct mode: animate the needle
                 me.has_rdf_signal = 1;
+                me.rdf_signal_flag_node.setBoolValue(1);
                 interpolate(me.indicated_bearing, direction, 1);
             } else {
                 if (me.has_rdf_signal) {
                     # signal lost, reset needle
                     me.has_rdf_signal = 0;
+                    me.rdf_signal_flag_node.setBoolValue(0);
                     interpolate(me.indicated_bearing, 90, 1);
                 }
             }
