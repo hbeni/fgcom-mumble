@@ -2,7 +2,7 @@
 <PropertyList>
     <name>fgcom-mumble-debug</name>
     <layout>vbox</layout>
-    <width>800</width>
+    <width>825</width>
 
     <nasal>
         <open>
@@ -41,6 +41,10 @@
             }
         ]]>
         </open>
+        <close>
+            udpout_text_update_t.stop();
+            udpin_text_update_t.stop();
+        </close>
     </nasal>
 
 
@@ -270,6 +274,142 @@
             
     </group>
     
+    <hrule/>
+    
+    <group>
+        <layout>vbox</layout>
+        <empty><stretch>10</stretch></empty>
+        <text>
+            <halign>left</halign>
+            <label>UDP protocol raw output data:</label>
+        </text>
+        <canvas>
+            <name>udp_out</name>
+
+            <valign>top</valign>
+            <halign>fill</halign>
+            <stretch>false</stretch>
+            <pref-width>300</pref-width>
+            <pref-height>100</pref-height>
+            <!--<height>480</height>-->
+            <nasal>
+                <load>
+                    <![CDATA[
+                    var my_canvas = canvas.get(cmdarg());
+                    var udpout_root = my_canvas.createGroup();
+                    var udpout_text = udpout_root.createChild("text")
+                    .setText("loading...")
+                    .setFontSize(12, 1.0)      # font size (in texels) and font aspect ratio
+                    .setColor(1,1,1,1)         # font color
+                    .setAlignment("top-left")  # how the text is aligned to where you place it
+                    .setTranslation(0, 15);     # where to place the text
+                    
+                    var udpout_text_update_t = maketimer(0.1, udpout_text, func(){
+                        var wrapAt = 100;      # after so many characters, sart a new line
+                        var s = "";
+                        var udp_out_nodes = props.globals.getNode("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output").getChildren("udp");
+                        foreach (var udp_out_n; udp_out_nodes) {
+                            # Generate debug string and do a nice wrapping:
+                            #   walk each chunk and print its chars as long as we have space for the chunk in the line
+                            var pfx = sprintf("%s[%d]=",udp_out_n.getName(), udp_out_n.getIndex());
+                            var chunks = split(",", pfx~udp_out_n.getValue());  # a chunk is a udp protocol part: "field=value"
+                            var charsLeft = wrapAt;
+                            for (var i=0; i<size(chunks); i = i+1) {
+                                var ch_chrs = split("", chunks[i]);
+                                if (charsLeft <= size(ch_chrs)) {
+                                    # wrapping needed
+                                    s = s ~ "\n";
+                                    for (var pfx_c=0;pfx_c<size(pfx);pfx_c=pfx_c+1) s = s~" "; # left-pad the new line by the size of the prefix
+                                    charsLeft = wrapAt-size(pfx);
+                                }
+                                for (var ch=0; ch<size(ch_chrs); ch=ch+1) {
+                                    s = s ~ ch_chrs[ch];
+                                    charsLeft = charsLeft -1;
+                                }
+                                if (size(ch_chrs) > 0) {
+                                    s = s ~ ",";
+                                    charsLeft = charsLeft -1;
+                                }
+                            }
+                            
+                            s = s~"\n"; # end this udp string prop
+                        }
+                        udpout_text.setText(s);
+                    });
+                    udpout_text_update_t.start();
+                    ]]>
+                </load>
+            </nasal>
+        </canvas>
+    </group>
+    
+    <group>
+        <layout>vbox</layout>
+        <empty><stretch>10</stretch></empty>
+        <text>
+            <halign>left</halign>
+            <label>UDP protocol raw input data:</label>
+        </text>
+        <canvas>
+            <name>udp_in</name>
+
+            <valign>top</valign>
+            <halign>fill</halign>
+            <stretch>false</stretch>
+            <pref-width>300</pref-width>
+            <pref-height>100</pref-height>
+            <!--<height>480</height>-->
+            <nasal>
+                <load>
+                    <![CDATA[
+                    var my_canvas = canvas.get(cmdarg());
+                    var udpin_root = my_canvas.createGroup();
+                    var udpin_text = udpin_root.createChild("text")
+                    .setText("loading...")
+                    .setFontSize(12, 1.0)      # font size (in texels) and font aspect ratio
+                    .setColor(1,1,1,1)         # font color
+                    .setAlignment("top-left")  # how the text is aligned to where you place it
+                    .setTranslation(0, 15);     # where to place the text
+                    
+                    var udpin_text_update_t = maketimer(0.1, udpin_text, func(){
+                        var wrapAt = 100;      # after so many characters, sart a new line
+                        var s = "";
+                        var udp_in_nodes = props.globals.getNode("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput").getChildren();
+                        foreach (var udp_in_n; udp_in_nodes) {
+                            # Generate debug string and do a nice wrapping:
+                            #   walk each chunk and print its chars as long as we have space for the chunk in the line
+                            var pfx = sprintf("%s=",udp_in_n.getName());
+                            var chunks = split(",", pfx~udp_in_n.getValue());  # a chunk is a udp protocol part: "field=value"
+                            var charsLeft = wrapAt;
+                            for (var i=0; i<size(chunks); i = i+1) {
+                                var ch_chrs = split("", chunks[i]);
+                                if (charsLeft <= size(ch_chrs)) {
+                                    # wrapping needed
+                                    s = s ~ "\n";
+                                    for (var pfx_c=0;pfx_c<size(pfx);pfx_c=pfx_c+1) s = s~" "; # left-pad the new line by the size of the prefix
+                                    charsLeft = wrapAt-size(pfx);
+                                }
+                                for (var ch=0; ch<size(ch_chrs); ch=ch+1) {
+                                    s = s ~ ch_chrs[ch];
+                                    charsLeft = charsLeft -1;
+                                }
+                                if (size(ch_chrs) > 0) {
+                                    s = s ~ "";
+                                    charsLeft = charsLeft -1;
+                                }
+                            }
+                            
+                            s = s~"\n"; # end this udp string prop
+                        }
+                        udpin_text.setText(s);
+                    });
+                    udpin_text_update_t.start();
+                    ]]>
+                </load>
+            </nasal>
+        </canvas>
+    </group>
+
     <hrule/>
 
     <group>
