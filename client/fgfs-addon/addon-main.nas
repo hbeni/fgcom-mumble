@@ -275,19 +275,19 @@ var main = func( addon ) {
         var port    = getprop(mySettingsRootPath ~ "/port");
 
         if (enabled == 1) {
-          FGComMumble.logger.log("core", 2, "initializing protocol");
+          FGComMumble.logger.log("udp", 2, "initializing protocol");
           var protocolstring_out = "generic,socket,out," ~ refresh ~ "," ~ host ~ "," ~ port ~",udp,fgcom-mumble";
-          FGComMumble.logger.log("udp", 2, "activating protocol '"~protocolstring_out~"'");
+          FGComMumble.logger.log("udp", 3, "activating protocol '"~protocolstring_out~"'");
           fgcommand("add-io-channel", props.Node.new({
             "config": protocolstring_out,
-            "name":"fgcom-mumble"
+            "name":"fgcom-mumble-out"
           }));
           
           var protocolstring_in = "generic,socket,in," ~ refresh ~ ",,19991,udp,fgcom-mumble";
-          FGComMumble.logger.log("udp", 2, "activating protocol '"~protocolstring_in~"'");
+          FGComMumble.logger.log("udp", 3, "activating protocol '"~protocolstring_in~"'");
           fgcommand("add-io-channel", props.Node.new({
             "config": protocolstring_in,
-            "name":"fgcom-mumble"
+            "name":"fgcom-mumble-in"
           }));
           
           foreach(var p; rdfinputNode.getChildren()) {
@@ -395,11 +395,14 @@ var main = func( addon ) {
     var shutdownProtocol = func() {
         if (protocolInitialized == 1) {
             FGComMumble.logger.log("udp", 2, "shutdown protocol...");
-            fgcommand("remove-io-channel",
-              props.Node.new({
-                  "name" : "fgcom-mumble"
-              })
-            );
+            foreach (var channelName; ["fgcom-mumble-out", "fgcom-mumble-in"]) {
+              FGComMumble.logger.log("udp", 3, "remove-io-channel("~channelName~")");
+              fgcommand("remove-io-channel",
+                props.Node.new({
+                    "name" : channelName
+                })
+              );
+            }
             
             foreach (var t; keys(fgcom_timers)) fgcom_timers[t].stop();
             fgcom_timers = {};
