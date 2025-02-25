@@ -417,7 +417,11 @@ var main = func( addon ) {
     var reinitProtocol = func() {
         FGComMumble.logger.log("core", 2, "re-initializing");
         shutdownProtocol();
-        initProtocol();
+
+        # Delay start so the closing channel has time to finalize the socket
+        var delayRestart_t = maketimer(1, FGComMumble, initProtocol);
+        delayRestart_t.singleShot = 1;
+        delayRestart_t.start();
     }
 
     var init = _setlistener(mySettingsRootPath ~ "/enabled", func() {
