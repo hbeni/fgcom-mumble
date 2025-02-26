@@ -270,6 +270,8 @@ var main = func( addon ) {
       
       # clean remaining unused fields in case there was old data
       for (var i=udpout_idx+1; i < 4; i = i+1)  out_prop[i].setValue("");
+
+      FGComMumble.logger.logHash("udp", 5, "  final UDP transmit field result", {udp_fields:FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")});
     }
 
     var initProtocol = func() {
