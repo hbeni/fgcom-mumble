@@ -34,6 +34,7 @@ var GenericRadio = {
     fields2props: {},    # map packet field names to properties
 
     init: func {
+        FGComMumble.logger.log("radio", 4, "GenericRadio.init() for: "~me.root.getPath());
         # Radio frequencies are initialized by C++ code even for aircrafts which do not use the radio.
         # To avoid transmitting the frequency for an unused radio (which would make it functional
         # in the fgcom-mumble plugin), test if the 'operable' property exist.
@@ -180,6 +181,7 @@ var COM = {
     },
 
     init: func {
+        FGComMumble.logger.log("radio", 4, "COM.init() for: "~me.root.getPath());
         me.vol       = me.root.getNode("volume", 1);
         me.freq_mhz  = me.root.getNode("frequencies/selected-mhz", 1);
 
@@ -193,6 +195,8 @@ var COM = {
             me.listeners.vol = setlistener(me.vol.getPath(), func { me.recalcVolume(); }, 1, 0);
             me.init_rdf();
         }
+
+        me.updatePacketString();
     },
 
     recalcVolume: func {
@@ -242,6 +246,7 @@ var ADF = {
     },
 
     init: func {
+        FGComMumble.logger.log("radio", 4, "ADF.init() for: "~me.root.getPath());
         # FG ADF properties
         me.vol               = me.root.getNode("volume-norm", 1);
         me.ident_aud         = me.root.getNode("ident-audible", 1);
@@ -263,6 +268,8 @@ var ADF = {
             me.fgcom_publish.setValue(0);
             me.init_rdf();
         }
+
+        me.updatePacketString();
     },
 
     recalcVolume: func {
