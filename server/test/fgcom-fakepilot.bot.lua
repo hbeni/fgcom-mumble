@@ -33,7 +33,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.0.1"
+fgcom.botversion = "1.0.2"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -191,10 +191,15 @@ fgcom.log("move vector: latmv="..latmv..", lonmv="..lonmv)
 
 
 -- Connect to server, so we get the API
+fgcom.log(botname..": "..fgcom.getVersion())
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth(fgcom.callsign)
-fgcom.dbg("connect and bind: OK")
+local client = mumble.client()
+assert(client:connect(host, port, cert, key))
+
+client:hook("OnConnect", function(client)
+    client:auth(fgcom.callsign)
+    fgcom.dbg("connect and bind: OK")
+end)
 
 
 
