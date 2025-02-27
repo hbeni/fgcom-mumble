@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.10.0"
+fgcom.botversion = "1.10.1"
 json = require("dkjson")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -101,9 +101,13 @@ end
 -- Connect to server, so we get the API
 fgcom.log(botname..": "..fgcom.getVersion())
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth(fgcom.callsign)
-fgcom.log("connect and bind: OK")
+local client = mumble.client()
+assert(client:connect(host, port, cert, key))
+
+client:hook("OnConnect", function(client)
+    client:auth(fgcom.callsign)
+    fgcom.dbg("connect and bind: OK")
+end)
 
 
 -- Store for last highscore

@@ -14,7 +14,7 @@ if arg[1] then
         print("  Options:")
         print("    --host=    host to connect to           (default="..host..")")
         print("    --port=    port to connect to           (default="..port..")")
-        print("    --channel= channel to join                  (default="..fgcom.channel..")")
+        print("    --channel= channel to join                  (default="..channel..")")
         print("    --cert=    path to PEM encoded cert     (default="..cert..")")
         print("    --key=     path to the certs key        (default="..key..")")
         os.exit(0)
@@ -24,7 +24,7 @@ if arg[1] then
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         if k=="host"    then host=v end
         if k=="port"    then port=v end
-        if k=="channel"   then fgcom.channel=v end
+        if k=="channel"   then channel=v end
         if k=="cert"    then cert=v end
         if k=="key"     then key=v end
     end
@@ -33,10 +33,13 @@ end
 
 
 
-print("connecting to "..host.." on port "..port.." (cert: "..cert.."; key: "..key..")")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth("test-rcv")
-print("  connect and bind: OK")
+print("connecting to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..channel.."'")
+local client = mumble.client()
+client:hook("OnConnect", function(client)
+    client:auth("test-rcv")
+    print("connect and bind: OK")
+end)
+assert(client:connect(host, port, cert, key))
 
 
 client:hook("OnServerSync", function(client, event)
@@ -45,7 +48,7 @@ client:hook("OnServerSync", function(client, event)
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(channel)
     event.user:move(ch)
-    print("joined channel "..channel)
+    print("joined channel "..ch:getName())
 
     -- Ask present clients for data
     client:sendPluginData("FGCOM:ICANHAZDATAPLZ", "orly!", ch:getUsers())

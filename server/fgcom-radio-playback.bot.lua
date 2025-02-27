@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.8.1"
+fgcom.botversion = "1.8.2"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -255,9 +255,13 @@ end
 -- Connect to server, so we get the API
 fgcom.log(botname..": "..fgcom.getVersion())
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth(fgcom.callsign)
-fgcom.dbg("connect and bind: OK")
+local client = mumble.client()
+assert(client:connect(host, port, cert, key))
+
+client:hook("OnConnect", function(client)
+    client:auth(fgcom.callsign)
+    fgcom.dbg("connect and bind: OK")
+end)
 
 
 
@@ -422,6 +426,7 @@ end
   If it is not playing, it checks wether it should terminate or play another round.
 ]]
 local playbackTimer_ogg = mumble.timer()
+local stream
 playbackTimer_ogg_func = function(t)
     fgcom.dbg("playback timer (ogg): tick")
     local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
@@ -438,7 +443,7 @@ playbackTimer_ogg_func = function(t)
         t.stop() -- Stop the timer
     else
         fgcom.dbg(sample..": OGG file still valid for "..timeLeft.."s")
-        if not client:isPlaying() then
+        if not stream or not stream:isPlaying() then
             -- See if we need to add a pause
             local sleep = getPause(pause)
             if sleep > 0 then
@@ -454,8 +459,8 @@ playbackTimer_ogg_func = function(t)
             end
             
             fgcom.dbg(sample..": starting sample")
-            local f=io.open(sample,"r") if f~=nil then  io.close(f) else print("error opening "..sample..": no such file") os.exit(1) end
-            client:play(sample)
+            stream = assert( client:openAudio(sample) )
+            stream:play()
         else
             -- client is still playing, let him finish the current sample
             fgcom.dbg("OGG still playing")
