@@ -162,8 +162,11 @@ local generateOutData = function()
             -- I really have no Idea, why table entries are sometimes iterated more than once.
             local already_processed_clients_key = string.format("%s:%s", sid, iid)
             if already_processed_clients[already_processed_clients_key] ~= nil then
-                fgcom.dbg("skipping entry '"..already_processed_clients_key.."'); already processed")
-                
+                fgcom.dbg("skipping entry '"..already_processed_clients_key.."'; already processed")
+
+            elseif user.type ~= nil and user.type == "new/unknown" then
+                fgcom.dbg("skipping entry '"..string.format("%s:%s", sid, iid).."'; type=new/unknown")
+
             else
                 fgcom.dbg("processing entry '"..already_processed_clients_key.."'")
                 already_processed_clients[already_processed_clients_key] = true
