@@ -542,40 +542,7 @@ client:hook("OnServerSync", function(client, event)
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
-    fgcom.log("joined channel "..fgcom.channel)
-    
-    -- update current users of channel
-    updateAllChannelUsersforSend(client)
 
-    -- Establish authentication token
-    -- try to get the matching user for the sessionID in owntoken
-    local owntoken_user = nil
-    for key,value in ipairs(playback_targets) do
-        if value:getSession() == tonumber(owntoken) then owntoken_user = value break end
-    end
-    fgcom.auth.generateToken(owntoken_user)
-
-    -- Setup the Bots location on earth
-    notifyUserdata(playback_targets)
-    notifyLocation(playback_targets)
-        
-    -- Setup a radio to broadcast from
-    notifyRadio(playback_targets)
-           
-    -- periodically update the comment
-    updateCommentTimer:start(updateComment, 0.0, updateComment_t)
-        
-    if sampleType == "FGCS" then
-        -- start the playback timer.
-        -- this will process the voice buffer.
-        playbackTimer_fgcs:start(playbackTimer_fgcs_func, 0.0, lastHeader.samplespeed)
-    end
-    if sampleType == "OGG" then
-        -- start the OGG playback timer loop
-        playbackTimer_ogg:start(playbackTimer_ogg_func, 0.0, 0.5)
-    end
-           
-    
     -- A timer that will send PING packets from time to time
     local pingTimer = mumble.timer()
     pingTimer:start(function(t)
@@ -613,11 +580,51 @@ client:hook("OnUserChannel", function(client, event)
 	--["from"]	= mumble.channel from,
 	--["to"]	= mumble.channel to,
 
-    if event.to:getName() == fgcom.channel then
+    -- someone else joined the fgcom.channel
+    if event.to:getName() == fgcom.channel
+      and not event.user == client:getSelf() then
         fgcom.dbg("OnUserChannel(): client joined fgcom.channel: "..event.user:getName())
         notifyUserdata({event.user})
         notifyLocation({event.user})
         notifyRadio({event.user})
+    end
+    
+    -- the bot itself joined the fgcom.channel
+    if event.user == client:getSelf() then
+        
+        fgcom.log("joined channel "..fgcom.channel)
+        
+        -- update current users of channel
+        updateAllChannelUsersforSend(client)
+
+        -- Establish authentication token
+        -- try to get the matching user for the sessionID in owntoken
+        local owntoken_user = nil
+        for key,value in ipairs(playback_targets) do
+            if value:getSession() == tonumber(owntoken) then owntoken_user = value break end
+        end
+        fgcom.auth.generateToken(owntoken_user)
+
+        -- Setup the Bots location on earth
+        notifyUserdata(playback_targets)
+        notifyLocation(playback_targets)
+            
+        -- Setup a radio to broadcast from
+        notifyRadio(playback_targets)
+            
+        -- periodically update the comment
+        updateCommentTimer:start(updateComment, 0.0, updateComment_t)
+            
+        fgcom.log("start playback ("..sampleType..")")
+        if sampleType == "FGCS" then
+            -- start the playback timer.
+            -- this will process the voice buffer.
+            playbackTimer_fgcs:start(playbackTimer_fgcs_func, 0.0, lastHeader.samplespeed)
+        end
+        if sampleType == "OGG" then
+            -- start the OGG playback timer loop
+            playbackTimer_ogg:start(playbackTimer_ogg_func, 0.0, 0.5)
+        end
     end
 end)
 
