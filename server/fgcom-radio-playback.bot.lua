@@ -208,16 +208,19 @@ getPause = function(p_opt)
     fgcom.dbg("Loop pause (from param="..p_opt.."): "..p.." seconds")
     return p
 end
-getPause(pause)   -- silent invocation to check the param
 
 -----------------------------
 --[[      BOT RUNTIME      ]]
 -----------------------------
 
+fgcom.log(botname..": "..fgcom.getVersion())
+getPause(pause)   -- silent invocation to check the param
+
 -- read the file the first time and see if it parses.
 -- usually we want the file deleted after validity expired, but for that we need
 -- to make sure its a FGCS file... otherwise its another rm tool... ;)
 if sampleType == "FGCS" then
+    fgcom.log("Sample format: FGCS")
     lastHeader, voiceBuffer = readFGCSSampleFile(sample)
     if not lastHeader then  fgcom.log("ERROR: '"..sample.."' not readable or no FGCS file") os.exit(1) end
 
@@ -253,7 +256,6 @@ end
 
 
 -- Connect to server, so we get the API
-fgcom.log(botname..": "..fgcom.getVersion())
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = mumble.client()
 assert(client:connect(host, port, cert, key))
@@ -302,11 +304,17 @@ end
 local playbackTimer_fgcs = mumble.timer()
 playbackTimer_fgcs_func = function(t)
     fgcom.dbg("playback timer (fgcs): tick")
+    --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
+    
+    -- Debug out: header
+    --[[for k,v in pairs(lastHeader) do
+        fgcom.dbg("header read: '"..k.."'='"..v.."'")
+    end]]
     
     -- So, a new timer tick started.
     -- See if we have still samples in the voice buffer. If not, reload it from file, if it was a looped one.
     if voiceBuffer:size() > 0 then
-        fgcom.dbg("voiceBuffer is still filled, samples: "..voiceBuffer:size())
+        fgcom.dbg("voiceBuffer is still filled, samples: "..voiceBuffer:size().." (speed: "..lastHeader.samplespeed..")")
         
         -- get the next sample from the buffer and play it
         local nextSample  = voiceBuffer:popleft()
@@ -418,6 +426,7 @@ playbackTimer_fgcs_func = function(t)
             end
         end
     end
+    fgcom.dbg("playback timer (fgcs): tick done")
 end
 
 --[[
@@ -429,6 +438,8 @@ local playbackTimer_ogg = mumble.timer()
 local stream
 playbackTimer_ogg_func = function(t)
     fgcom.dbg("playback timer (ogg): tick")
+    --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
+
     local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
     local persistent = false
     if lastHeader.timetolive == "0" then
@@ -466,6 +477,7 @@ playbackTimer_ogg_func = function(t)
             fgcom.dbg("OGG still playing")
         end
     end
+    fgcom.dbg("playback timer (ogg): tick done")
 end
 
 
