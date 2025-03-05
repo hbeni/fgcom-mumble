@@ -54,28 +54,27 @@ local ttl   = 120*60  -- default time-to-live after recordings in secs
 local spawn = false
 local fnotify  = ""      -- notify about recorded samples into this file
 
+printhelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --name=    Change Bot's name                (default="..botname..")")
+    print("    --host=    host to connect to               (default="..host..")")
+    print("    --port=    port to connect to               (default="..port..")")
+    print("    --channel= channel to join                  (default="..fgcom.channel..")")
+    print("    --cert=    path to PEM encoded cert         (default="..cert..")")
+    print("    --key=     path to the certs key            (default="..key..")")
+    print("    --path=    Path to store the recordings to  (default="..path..")")
+    print("    --limit=   Max limit to record, in seconds  (default="..limit..")")
+    print("    --ttl=     Max timeToLive in seconds        (default="..ttl..")")
+    print("    --fnotify= notify about recorded sample into this file.")
+    --print("    --spawn    Spawn playback bots after recording")
+    print("    --debug    print debug messages             (default=no)")
+    print("    --version  print version and exit")
+    os.exit(0)
+end
 
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --name=    Change Bot's name                (default="..botname..")")
-        print("    --host=    host to connect to               (default="..host..")")
-        print("    --port=    port to connect to               (default="..port..")")
-        print("    --channel= channel to join                  (default="..fgcom.channel..")")
-        print("    --cert=    path to PEM encoded cert         (default="..cert..")")
-        print("    --key=     path to the certs key            (default="..key..")")
-        print("    --path=    Path to store the recordings to  (default="..path..")")
-        print("    --limit=   Max limit to record, in seconds  (default="..limit..")")
-        print("    --ttl=     Max timeToLive in seconds        (default="..ttl..")")
-        print("    --fnotify= notify about recorded sample into this file.")
-        --print("    --spawn    Spawn playback bots after recording")
-        print("    --debug    print debug messages             (default=no)")
-        print("    --version  print version and exit")
-        os.exit(0)
-    end
-    
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         --print("KEY='"..k.."'; VAL='"..v.."'")
@@ -92,8 +91,11 @@ if arg[1] then
         if k=="fnotify"   then fnotify=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "-h" or opt == "--help" then printhelp() end
     end
-    
+
+else
+    printhelp()
 end
 
 if fnotify:len() > 0 then
