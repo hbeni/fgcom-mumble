@@ -143,22 +143,28 @@ if sample:match(".+[.]ogg") then
         if not v or v == "" then print("with OGG files, parameter "..k.." is mandatory!") os.exit(1) end
     end
 
+    nodel = false -- never delete OGG files
+
     -- prepare a faked FGCS header
     sampleType = "OGG"
     lastHeader = {}
-    lastHeader.callsign     = overwriteHeader.callsign
-    lastHeader.lat          = overwriteHeader.lat
-    lastHeader.lon          = overwriteHeader.lon
-    lastHeader.height       = overwriteHeader.height
-    lastHeader.frequency    = overwriteHeader.frequency
-    lastHeader.dialedFRQ    = overwriteHeader.frequency
+    --lastHeader.callsign     = overwriteHeader.callsign
+    --lastHeader.lat          = overwriteHeader.lat
+    --lastHeader.lon          = overwriteHeader.lon
+    --lastHeader.height       = overwriteHeader.height
+    --lastHeader.frequency    = overwriteHeader.frequency
+    --lastHeader.dialedFRQ    = overwriteHeader.frequency
     lastHeader.txpower      = 10
     lastHeader.playbacktype = "looped"
-    lastHeader.timetolive   = overwriteHeader.timetolive
+    --lastHeader.timetolive   = overwriteHeader.timetolive
     lastHeader.timestamp    = os.time()
     lastHeader.voicecodec   = sampleType
-    if overwriteHeader.txpower then
-        lastHeader.txpower  = overwriteHeader.txpower
+    --if overwriteHeader.txpower then
+    --    lastHeader.txpower  = overwriteHeader.txpower
+    --end
+    -- apply overrides
+    for k,v in pairs(overwriteHeader) do
+        lastHeader[k] = v
     end
 end
 
@@ -288,6 +294,14 @@ if sampleType == "FGCS" then
 
 else if sampleType == "OGG" then
     fgcom.log("Sample format: OGG")
+
+    if verify then
+        fgcom.log("verify header (generated):")
+        for k,v in pairs(lastHeader) do
+            fgcom.log(string.format("  %s=%s", k, v))
+        end
+        os.exit(0)
+    end
 else
     fgcom.log("ERROR: '"..sample.."' not readable or no FGCS or no OGG file") os.exit(1) end
 end
