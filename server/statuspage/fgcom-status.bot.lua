@@ -463,7 +463,7 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-            if command == "exit" then
+            if command == "exit" or command == "quit" then
                 fgcom.dbg("exit command received")
                 event.actor:message("goodbye!")
                 shutdownBot()
