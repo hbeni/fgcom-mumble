@@ -53,11 +53,14 @@ run_recorderbot="1"
 run_playbackbot="1"
 run_statusbot="1"
 
+verify="0"
+
 # print usage information
 function usage() {
     echo "Manage FGCOM-mumble bots"
     echo "Options:"
     echo "    --help -h  print usage and exit"
+    echo "    --verify   print set optins and exit"
     echo ""
     echo "Common options, that will be passed to bots:"
     echo "    --host=    host to connect to               (default=$host)"
@@ -98,6 +101,7 @@ for opt in "$@"; do
     case $opt in
        --help)  usage; exit 0  ;;
        -h)      usage; exit 0 ;;
+       --verify) verify="1" ;;
        --host=*)  host=$(echo $opt|cut -d"=" -f2);;
        --port=*)  port=$(echo $opt|cut -d"=" -f2);;
        --channel=*)   channel=$(echo $opt|cut -d"=" -f2);;
@@ -153,6 +157,13 @@ common_opts="--host=$host --port=$port --channel=$channel"
 playback_opts="$common_opts --cert=$pcert --key=$pkey"
 recorder_opts="$common_opts --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
 status_opts="$common_opts --cert=$scert --key=$skey --db=$statusbot_db"
+
+if [[ $verify == "1" ]] then
+    echo "basic playback_opts=$playback_opts"
+    echo "basic recorder_opts=$recorder_opts"
+    echo "basic status_opts=$status_opts"
+    exit 0
+fi
 
 
 # define cleanup routine
