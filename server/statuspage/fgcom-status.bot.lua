@@ -495,8 +495,7 @@ client:hook("OnMessage", function(client, event)
                 fgcom.log(m)
                 event.actor:message(m)
                 speed = f
-                dbUpdateTimer:stop()
-                dbUpdateTimer:start(dbUpdateTimer_func, 0.0, speed)
+                dbUpdateTimer:setRepeat(speed)
                 return
             end
 
@@ -526,8 +525,7 @@ client:hook("OnMessage", function(client, event)
                     fgcom.log(m)
                     event.actor:message(m)
                     speedStats = f
-                    statsWriterTimer:stop()
-                    statsWriterTimer:start(statsWriterTimer_func, 0.0, speedStats)
+                    statsWriterTimer:setRepeat(speedStats)
                 else
                     event.actor:message("Usage statistics collection is disabled, not changing update interval")
                 end
