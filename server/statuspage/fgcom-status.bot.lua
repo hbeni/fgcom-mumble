@@ -54,28 +54,28 @@ local stats = ""
 local speedStats = 60 -- write interval for statistic entries in seconds
 local stalepurge = 60 -- clean out stale entries after this seconds
 
+printhelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --name=    Change Bot's name                (default="..fgcom.callsign..")")
+    print("    --host=    host to connect to               (default="..host..")")
+    print("    --port=    port to connect to               (default="..port..")")
+    print("    --channel= channel to join                  (default="..fgcom.channel..")")
+    print("    --cert=    path to PEM encoded cert         (default="..cert..")")
+    print("    --key=     path to the certs key            (default="..key..")")
+    print("    --db=      Path to the db                   (default="..db..")")
+    print("    --speed=   db update interval               (seconds, default="..speed..")")
+    print("    --web=     Advertise url in comment         (default=no commercials!)")
+    print("    --stats=   append usage stats to this file  (default=no)")
+    print("    --speedst= usage stats update interval      (seconds, default="..speedStats..")")
+    print("    --purge=   stale entries retention time     (seconds, default="..stalepurge..")")
+    print("    --debug    print debug messages             (default=no)")
+    print("    --version  print version and exit")
+    os.exit(0)
+end
 
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --name=    Change Bot's name                (default="..fgcom.callsign..")")
-        print("    --host=    host to connect to               (default="..host..")")
-        print("    --port=    port to connect to               (default="..port..")")
-        print("    --channel= channel to join                  (default="..fgcom.channel..")")
-        print("    --cert=    path to PEM encoded cert         (default="..cert..")")
-        print("    --key=     path to the certs key            (default="..key..")")
-        print("    --db=      Path to the db                   (default="..db..")")
-        print("    --speed=   db update interval               (seconds, default="..speed..")")
-        print("    --web=     Advertise url in comment         (default=no commercials!)")
-        print("    --stats=   append usage stats to this file  (default=no)")
-        print("    --speedst= usage stats update interval      (seconds, default="..speedStats..")")
-        print("    --purge=   stale entries retention time     (seconds, default="..stalepurge..")")
-        print("    --debug    print debug messages             (default=no)")
-        print("    --version  print version and exit")
-        os.exit(0)
-    end
     
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
@@ -94,8 +94,10 @@ if arg[1] then
         if k=="purge"     then stalepurge=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "-h" or opt == "--help" then printhelp() end
     end
-    
+else
+    printhelp()
 end
 
 -- Connect to server, so we get the API
