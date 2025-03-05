@@ -618,7 +618,7 @@ playbackTimer_ogg_func = function(t)
             -- See if we need to add a pause
             local sleep = getPause(pause)
             if sleep > 0 then
-                --fgcom.dbg("Looped timer: pause for "..sleep.."s")
+                fgcom.dbg("Looped timer: pause for "..sleep.."s")
                 t:stop() -- Stop the loop timer
                 local pauseTimer = mumble.timer()
                 pauseTimer:start(
