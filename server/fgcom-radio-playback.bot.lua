@@ -405,7 +405,7 @@ local playbackTimer_fgcs_func = function(t)
             end
             shutdownBot()
             fgcom.dbg("disconnected: we are done.")
-            t:stop() -- Stop the timer
+            t:pause() -- Stop the timer
         
         else
             -- It was a looped timer: we reread the file to see if its still there,
@@ -415,15 +415,13 @@ local playbackTimer_fgcs_func = function(t)
             -- See if we need to add a pause
             local sleep = getPause(pause)
             if sleep > 0 then
-                --fgcom.dbg("Looped timer: pause for "..sleep.."s")
-                t:stop() -- Stop the loop timer
+                fgcom.dbg("Looped timer: pause for "..sleep.."s")
+                t:pause() -- Stop the loop timer
                 local pauseTimer = mumble.timer()
-                pauseTimer:start(
-                function()
+                pauseTimer:start(function()
                     --fgcom.dbg("Looped timer: pause done, restarting playback timer")
-                    t:again()
-                    end
-                , sleep, 0)
+                    t:resume()
+                end, sleep, 0)
             end
     
             -- Read/update FGCS data file
@@ -515,7 +513,7 @@ playbackTimer_fgcs_func_streamed = function(t)
         local sleep = getPause(pause)
         if sleep > 0 then
             --fgcom.dbg("Looped timer: pause for "..sleep.."s")
-            t:stop() -- Stop the loop timer
+            t:pause() -- Stop the loop timer
             local pauseTimer = mumble.timer()
             pauseTimer:start(
             function()
@@ -619,14 +617,12 @@ playbackTimer_ogg_func = function(t)
             local sleep = getPause(pause)
             if sleep > 0 then
                 fgcom.dbg("Looped timer: pause for "..sleep.."s")
-                t:stop() -- Stop the loop timer
+                t:pause() -- Stop the loop timer
                 local pauseTimer = mumble.timer()
-                pauseTimer:start(
-                function()
+                pauseTimer:start(function()
                     --fgcom.dbg("Looped timer: pause done, restarting playback timer")
-                    t:again()
-                    end
-                , sleep, 0)
+                    t:resume()
+                end, sleep, 0)
             end
             
             fgcom.dbg(sample..": starting sample")

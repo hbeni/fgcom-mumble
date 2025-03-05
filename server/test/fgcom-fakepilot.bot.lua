@@ -235,7 +235,6 @@ end
   the playback-rate and looks if there are samples buffered. If so,
   he fetches them and plays them, one packet per timer tick.
 ]]
-local playbackTimer = mumble.timer()
 playbackTimer_func = function(t)
     --fgcom.dbg("playback timer: tick; ptt=",ptt)
     
@@ -300,8 +299,8 @@ playbackTimer_func = function(t)
                     client:sendPluginData("FGCOM:UPD_COM:0:0", msg, playback_targets)
                 end
                 
-                t:stop() -- Stop the timer
                 fgcom.log("Transmission complete.")
+                t:stop() -- Stop the timer
             end
         end
         
@@ -379,6 +378,7 @@ client:hook("OnServerSync", function(client, event)
             if not ptt then
                 --fgcom.dbg("activating PTT")
                 ptt = true
+                playbackTimer = mumble.timer()
                 playbackTimer:start(playbackTimer_func, 0.0, lastHeader.samplespeed)
             else
                 -- fgcom.dbg("(not activating PTT, its still active)")

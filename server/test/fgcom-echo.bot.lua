@@ -134,8 +134,8 @@ playbackTimer_func = function(t)
         -- no samples left?
         print("no samples left, playback complete")
         client:sendPluginData("FGCOM:UPD_COM:0", "FRQ=910.0,PTT=0", {playback_target})
-        t:stop() -- Stop the audio timer
         print("timer done.")
+        t:pause() -- Stop the audio timer
     end
     
 end
