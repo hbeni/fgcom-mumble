@@ -32,8 +32,10 @@ port="64738"
 channel="fgcom-mumble"
 rcert="recbot.pem"
 rkey="recbot.key"
+rname="$(grep "local botname" fgcom-radio-recorder.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 pcert="playbot.pem"
 pkey="playbot.key"
+pname="$(grep "local callsignPrefix" fgcom-radio-playback.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 scert="statusbot.pem"
 skey="statusbot.key"
 path="./recordings"
@@ -43,6 +45,7 @@ fnotify="/tmp/fgcom-fnotify-fifo"
 statusbot_db="/tmp/fgcom-web.db"
 statusbot_web=""
 statusbot_stats=""
+sname="$(grep "fgcom.callsign" statuspage/fgcom-status.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 debug="0"
 
 recorderbot_log=/dev/null
@@ -69,6 +72,7 @@ function usage() {
     echo "    --debug    enable debug mode"
     echo ""
     echo "Recording bot options:"
+    echo "    --rname=   Name for the bot                 (default=$rname)"
     echo "    --norec    Do not run recorder bot"
     echo "    --rcert=   path to PEM encoded cert         (default=$rcert)"
     echo "    --rkey=    path to the certs key            (default=$rkey)"
@@ -81,12 +85,15 @@ function usage() {
     echo "    --rlog=    Recorder bot logfile (\"-\"=STDOUT) (default=$recorderbot_log)"
     echo ""
     echo "Playback bot options:"
+    echo "    --pname    Name for the bot          (default=$pname)"
+    echo "               (%s will be replaced by random numbers)"
     echo "    --noplay   Do not run playback bots"
     echo "    --pcert=   path to PEM encoded cert         (default=$pcert)"
     echo "    --pkey=    path to the certs key            (default=$pkey)"
     echo "    --plog=    Playback bot logfile (\"-\"=STDOUT) (default=$playbackbot_log)"
     echo ""
     echo "Statuspage bot options:"
+    echo "    --sname=   Name for the bot                 (default=$sname)"
     echo "    --nostatus Do not run status bot"
     echo "    --scert=   path to PEM encoded cert         (default=$scert)"
     echo "    --skey=    path to the certs key            (default=$skey)"
@@ -105,8 +112,10 @@ for opt in "$@"; do
        --host=*)  host=$(echo $opt|cut -d"=" -f2);;
        --port=*)  port=$(echo $opt|cut -d"=" -f2);;
        --channel=*)   channel=$(echo $opt|cut -d"=" -f2);;
+       --rname=*) rname=$(echo $opt|cut -d"=" -f2);;
        --rcert=*) rcert=$(echo $opt|cut -d"=" -f2);;
        --rkey=*)  rkey=$(echo $opt|cut -d"=" -f2);;
+       --pname=*) pname=$(echo $opt|cut -d"=" -f2);;
        --pcert=*) pcert=$(echo $opt|cut -d"=" -f2);;
        --pkey=*)  pkey=$(echo $opt|cut -d"=" -f2);;
        --scert=*) scert=$(echo $opt|cut -d"=" -f2);;
@@ -121,6 +130,7 @@ for opt in "$@"; do
        --sdb=*)   statusbot_db=$(echo $opt|cut -d"=" -f2);;
        --sweb=*)  statusbot_web=$(echo $opt|cut -d"=" -f2);;
        --sstats=*)  statusbot_stats=$(echo $opt|cut -d"=" -f2);;
+       --sname=*) sname=$(echo $opt|cut -d"=" -f2);;
        --debug)   debug="1";;
        --norec)    run_recorderbot="0";;
        --noplay)   run_playbackbot="0";;
@@ -134,8 +144,10 @@ echo "Starting FGCom-mumble bot manager..."
 echo "  --host=$host"
 echo "  --port=$port"
 echo "  --channel=$channel"
+echo "  --rname=$rname"
 echo "  --rcert=$rcert"
 echo "  --rkey=$rkey"
+echo "  --pname=$pname"
 echo "  --pcert=$pcert"
 echo "  --pkey=$pkey"
 echo "  --scert=$scert"
@@ -145,6 +157,7 @@ echo "  --limit=$limit"
 echo "  --ttl=$ttl"
 echo "  --rlog=$recorderbot_log"
 echo "  --plog=$playbackbot_log"
+echo "  --sname=$sname"
 echo "  --slog=$statusbot_log"
 echo "  --sdb=$statusbot_db"
 echo "  --sweb=$statusbot_web"
@@ -154,9 +167,9 @@ echo "  --sstats=$statusbot_stats"
 # define cmd options for the bot callups
 common_opts="--host=$host --port=$port --channel=$channel"
 [[ $debug == "1" ]] && common_opts="$common_opts --debug"
-playback_opts="$common_opts --cert=$pcert --key=$pkey"
-recorder_opts="$common_opts --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
-status_opts="$common_opts --cert=$scert --key=$skey --db=$statusbot_db"
+playback_opts="$common_opts --name=$pname --cert=$pcert --key=$pkey"
+recorder_opts="$common_opts --name=$rname --cert=$rcert --key=$rkey --path=$path --limit=$limit --ttl=$ttl"
+status_opts="$common_opts --name=$sname --cert=$scert --key=$skey --db=$statusbot_db"
 
 if [[ $verify == "1" ]] then
     echo "basic playback_opts=$playback_opts"
