@@ -60,38 +60,43 @@ local updateComment_t = 60 --time in seconds to update the comment
 local owntoken = nil
 local verify = false
 
+local printhelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --host=     host to connect to           (default="..host..")")
+    print("    --port=     port to connect to           (default="..port..")")
+    print("    --channel=  channel to join              (default="..fgcom.channel..")")
+    print("    --cert=     path to PEM encoded cert     (default="..cert..")")
+    print("    --key=      path to the certs key        (default="..key..")")
+    print("    --sample=   Path to the FGCS or OGG sample file")
+    print("                If the sample file is an OGG, --lat, --lon, --hgt,")
+    print("                --frq, --callsign and --ttl overrides are mandatory.")
+    print("    --nodel     Don't delete outdated samples from disk")
+    print("    --pause=    When looped, add a pause between iterations (default="..pause..")")
+    print("                Either seconds, or '<min>,<max>' for randomisation")
+    print("    --lat=      Latitude override            (default: use FGCS header)")
+    print("    --lon=      Longitude override           (default: use FGCS header)")
+    print("    --loop      set looped mode")
+    print("    --oneshot   set to oneshot mode")
+    print("    --hgt=      Height override              (default: use FGCS header)")
+    print("    --frq=      Frequency override           (default: use FGCS header)")
+    print("    --pwr=      Power in Watts override      (default: use FGCS header)")
+    print("    --callsign= Callsign override            (default: use FGCS header)")
+    print("    --ttl=      Time to live (seconds) for OGG playback (default: use FGCS header)")
+    print("                0=persistent sample (played in an endless loop).")
+    print("    --owntoken= Inform the given sessionID about the generated token")
+    print("    --debug     print debug messages         (default=no)")
+    print("    --verify    Load and show FGCS header, then quit")
+    print("    --version   print version and exit")
+    print("\nNotice:")
+    print("  * OGG sample type implies --nodel (files are never deleted from disk by the bot).")
+    print("  * --ttl=0 (loop) has precedence over --oneshot.")
+    print("  * --ttl=n overwrites the FGCS stored timestamp, so that ttl gives the remaining new validity from 'now'.")
+    os.exit(0)
+end
+
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --host=     host to connect to           (default="..host..")")
-        print("    --port=     port to connect to           (default="..port..")")
-        print("    --channel=  channel to join              (default="..fgcom.channel..")")
-        print("    --cert=     path to PEM encoded cert     (default="..cert..")")
-        print("    --key=      path to the certs key        (default="..key..")")
-        print("    --sample=   Path to the FGCS or OGG sample file")
-        print("                If the sample file is an OGG, --lat, --lon, --hgt,")
-        print("                --frq, --callsign and --ttl overrides are mandatory.")
-        print("    --nodel     Don't delete outdated samples from disk")
-        print("    --pause=    When looped, add a pause between iterations (default="..pause..")")
-        print("                Either seconds, or '<min>,<max>' for randomisation")
-        print("    --lat=      Latitude override            (default: use FGCS header)")
-        print("    --lon=      Longitude override           (default: use FGCS header)")
-        print("    --hgt=      Height override              (default: use FGCS header)")
-        print("    --frq=      Frequency override           (default: use FGCS header)")
-        print("    --pwr=      Power in Watts override      (default: use FGCS header)")
-        print("    --callsign= Callsign override            (default: use FGCS header)")
-        print("    --ttl=      Time to live (seconds) for OGG playback (default: use FGCS header)")
-        print("                0=persistent sample (played in an endless loop).")
-        print("    --owntoken= Inform the given sessionID about the generated token")
-        print("    --debug     print debug messages         (default=no)")
-        print("    --verify    Load and show FGCS header, then quit")
-        print("    --version   print version and exit")
-        print("\nNotice that OGG sample implies --nodel.\n(files are never deleted from disk by the bot)")
-        os.exit(0)
-    end
-    
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         if k=="host"   then host=v end
@@ -104,6 +109,8 @@ if arg[1] then
         if k=="pause"  then pause=v end
         if k=="lat"    then overwriteHeader.lat=v end
         if k=="lon"    then overwriteHeader.lon=v end
+        if opt=="--loop"   then overwriteHeader.playbacktype="looped" end
+        if opt=="--oneshot" then overwriteHeader.playbacktype="oneshot" end
         if k=="hgt"    then overwriteHeader.height=v end
         if k=="frq"    then overwriteHeader.frequency=v overwriteHeader.dialedFRQ=v end
         if k=="pwr"    then overwriteHeader.txpower=v end
@@ -113,8 +120,10 @@ if arg[1] then
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
         if opt == "--verify" then verify = true end
+        if opt == "-h" or opt == "--help" then printhelp() end
     end
-    
+else
+    printhelp()
 end
 
 -- parameter checks
