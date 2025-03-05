@@ -353,12 +353,18 @@ client:hook("OnUserSpeak", function(client, event)
         end
     
         if remote.record_filename and remote.record_fh then
-            local recordingSecsLeft = remote.record_timeout - os.time() +1
+            local recordingSecsLeft = remote.record_timeout - os.time() +1 -- add one second, so user has time to start
             if recordingSecsLeft > 0 then
                 fgcom.dbg(remote.record_filename..": recording sample, len="..#event.data.." ("..recordingSecsLeft.."s rectime left)")
                 fgcom.io.writeFGCSSample(remote.record_fh, event.data)
+                remote.recordingExceededNotified = false
             else
                 fgcom.dbg(remote.record_filename..": sample discarded: recording time exceeded ("..recordingSecsLeft.."s)")
+                if not remote.recordingExceededNotified then
+                    remote.recordingExceededNotified = true
+                    local ch = client:getChannel(fgcom.channel)
+                    ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' exceeded the limit of "..limit.."s. Not recording further samples.")
+                end
             end
         end
     
