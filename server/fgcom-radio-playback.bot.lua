@@ -58,6 +58,7 @@ local pause  = "0"
 local pingT  = 10  -- ping time spacing in seconds
 local updateComment_t = 60 --time in seconds to update the comment
 local owntoken = nil
+local verify = false
 
 if arg[1] then
     if arg[1]=="-h" or arg[1]=="--help" then
@@ -85,6 +86,7 @@ if arg[1] then
         print("                0=persistent sample (played in an endless loop).")
         print("    --owntoken= Inform the given sessionID about the generated token")
         print("    --debug     print debug messages         (default=no)")
+        print("    --verify    Load and show FGCS header, then quit")
         print("    --version   print version and exit")
         print("\nNotice that OGG sample implies --nodel.\n(files are never deleted from disk by the bot)")
         os.exit(0)
@@ -110,6 +112,7 @@ if arg[1] then
         if k=="owntoken" then owntoken=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "--verify" then verify = true end
     end
     
 end
@@ -219,7 +222,6 @@ getPause(pause)   -- silent invocation to check the param
 -- read the file the first time and see if it parses.
 -- usually we want the file deleted after validity expired, but for that we need
 -- to make sure its a FGCS file... otherwise its another rm tool... ;)
-local fgcs_audiostream = nil
 if sampleType == "FGCS" then
     fgcom.log("Sample format: FGCS")
     lastHeader, voiceBuffer = readFGCSSampleFile(sample)
@@ -230,11 +232,25 @@ if sampleType == "FGCS" then
     --   voiceBuffer is initialized with the read samples
     fgcom.log(sample..": successfully loaded.")
 
+    if verify then
+        fgcom.log("verify header (loaded):")
+        for k,v in pairs(lastHeader) do
+            fgcom.log(string.format("  %s=%s", k, v))
+        end
+    end
+
     -- apply overrides
     for k,v in pairs(overwriteHeader) do
         lastHeader[k] = v
     end
-    if overwriteHeader.timetolive and overwriteHeader.timetolive == "0" then lastHeader.playbacktype = "looped" end
+    if overwriteHeader.timetolive then
+        if overwriteHeader.timetolive == "0" then lastHeader.playbacktype = "looped" end
+        if tonumber(overwriteHeader.timetolive) > 0 then
+            -- when --ttl was given explicitely, make it relative to "now" instead of the original sample
+            lastHeader.timestamp = os.time()
+            overwriteHeader.timestamp = os.time()
+        end
+    end
     
     local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
     local persistent = false
@@ -243,12 +259,24 @@ if sampleType == "FGCS" then
         timeLeft   = 1337   -- just some arbitary dummy value in the future
         persistent = true   -- loops forever!
     end
+
     if not persistent and timeLeft < 0 then
         fgcom.log(sample..": sample is invalid, since "..timeLeft.."s. Aborting.")
-        os.exit(0)
     else
         fgcom.log(sample..": sample is valid, remaining time: "..timeLeft.."s")
     end
+
+    if verify then
+        fgcom.log("verify header (effective/overrriden):")
+        for k,v in pairs(lastHeader) do
+            fgcom.log(string.format("  %s=%s", k, v));
+        end
+        os.exit(0)
+    end
+
+    -- exit, if sample is not vaid anymore
+    if not persistent and timeLeft < 0 then  os.exit(0)  end
+
 else if sampleType == "OGG" then
     fgcom.log("Sample format: OGG")
 else
@@ -298,99 +326,12 @@ end
 
 
 --[[
-  Playback loop (FGCS): we use a mumble timer for this. The timer loops
-  and checks if the audio buffer is played and still valid. If not,
-  the bot is shutdown.
+  Playback loop (FGCS): we use a mumble timer for this. The timer loops in
+  the playback-rate and looks if there are samples buffered. If so,
+  he fetches them and plays them, one packet per timer tick.
 ]]
-local decoder = mumble.decoder()
 local playbackTimer_fgcs = mumble.timer()
-local fgcs_playedCount = 0
-playbackTimer_fgcs_func = function(t)
-    fgcom.dbg("playback timer (fgcs): tick")
-    --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
-    
-    -- Debug out: header
-    --[[for k,v in pairs(lastHeader) do
-        fgcom.dbg("header read: '"..k.."'='"..v.."'")
-    end]]
-    
-    -- So, a new timer tick started.
-    if not fgcs_audiostream == nil and fgcs_audiostream:isPlaying() then
-        fgcom.dbg("still playing sample.")
-    else
-        -- See if we need to add a pause
-        local sleep = getPause(pause)
-        if sleep > 0 then
-            --fgcom.dbg("Looped timer: pause for "..sleep.."s")
-            t:stop() -- Stop the loop timer
-            local pauseTimer = mumble.timer()
-            pauseTimer:start(
-            function()
-                --fgcom.dbg("Looped timer: pause done, restarting playback timer")
-                t:again()
-                end
-            , sleep, 0)
-        end
-
-        -- check if the file is still valid
-        local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
-        local persistent = false
-        if lastHeader.timetolive == "0" then
-            fgcom.dbg(sample..": This is a persistent sample.")
-            timeLeft   = 1337   -- just some arbitary dummy value in the future
-            persistent = true   -- loops forever!
-        end
-        if not persistent and timeLeft < 0 then
-            fgcom.log(sample..": FGCS file outdated since "..timeLeft.." seconds; removing")
-            delSample(sample)
-            shutdownBot()
-            fgcom.dbg("disconnected: we are done.")
-            t:stop() -- Stop the timer
-        else
-            -- Samples are still valid;  and start to play
-            if lastHeader.playbacktype == "oneshot" and fgcs_playedCount >= 1 then
-                fgcom.log("Oneshot sample detected, not looping.")
-                local persistent = false
-                if lastHeader.timetolive ~= "0" then
-                    fgcom.log("deleting oneshot non-persistent sample file.")
-                    delSample(sample)
-                end
-                shutdownBot()
-                fgcom.dbg("disconnected: we are done.")
-                t:stop() -- Stop the timer
-
-            else
-                -- loop over (or start playing the first time)
-                if (fgcs_playedCount == 0) then
-                    fgcom.dbg(sample..": FGCS file still valid for "..timeLeft.."s: start playing sample.")
-                    -- prepare audio buffer
-                    fgcom.dbg("building audio buffer...")
-                    fgcs_audiostream = client:createAudioBuffer(48000, 2)
-                    for k,nextSample in pairs(voiceBuffer) do 
-                        --fgcom.dbg("  tgt="..playback_target:getSession())
-                        --fgcom.dbg("  eos="..tostring(endofStream))
-                        fgcom.dbg("  cdc="..lastHeader.voicecodec)
-                        fgcom.dbg("  dta="..#nextSample.data)
-                        --fgcom.dbg("  dta="..nextSample.data)
-                        local decoded = decoder:decodeFloat(nextSample.data)
-                        fgcs_audiostream:writeFloat(decoded)
-                    end
-                else
-                    fgcom.dbg(sample..": FGCS file still valid for "..timeLeft.."s: looping over.")
-                end
-
-                fgcs_playedCount = fgcs_playedCount + 1
-                fgcs_audiostream:stop() --reset audio stream to start
-                fgcs_audiostream:play()
-
-            end
-        end
-    end
-
-    --fgcom.dbg("playback timer (fgcs): tick done")
-end
-
-playbackTimer_fgcs_func_old = function(t)
+local playbackTimer_fgcs_func = function(t)
     fgcom.dbg("playback timer (fgcs): tick")
     --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
     
@@ -631,6 +572,40 @@ client:hook("OnServerSync", function(client, event)
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
+    fgcom.log("joined channel "..fgcom.channel)
+
+    -- update current users of channel
+    updateAllChannelUsersforSend(client)
+
+    -- Establish authentication token
+    -- try to get the matching user for the sessionID in owntoken
+    local owntoken_user = nil
+    for key,value in ipairs(playback_targets) do
+        if value:getSession() == tonumber(owntoken) then owntoken_user = value break end
+    end
+    fgcom.auth.generateToken(owntoken_user)
+
+    -- Setup the Bots location on earth
+    notifyUserdata(playback_targets)
+    notifyLocation(playback_targets)
+        
+    -- Setup a radio to broadcast from
+    notifyRadio(playback_targets)
+        
+    -- periodically update the comment
+    updateCommentTimer:start(updateComment, 0.0, updateComment_t)
+        
+    fgcom.log("start playback ("..sampleType..")")
+    if sampleType == "FGCS" then
+        -- start the playback timer.
+        -- this will control playback validity time. The actual FGCS sample
+        -- is payed until the bot is shutdown from the check timer or the FGCS is invalid.
+        playbackTimer_fgcs:start(playbackTimer_fgcs_func, 0.0, lastHeader.samplespeed)
+    end
+    if sampleType == "OGG" then
+        -- start the OGG playback timer loop
+        playbackTimer_ogg:start(playbackTimer_ogg_func, 0.0, 0.5)
+    end
 
     -- A timer that will send PING packets from time to time
     local pingTimer = mumble.timer()
@@ -677,44 +652,10 @@ client:hook("OnUserChannel", function(client, event)
         notifyLocation({event.user})
         notifyRadio({event.user})
     end
-    
+
     -- the bot itself joined the fgcom.channel
     if event.user == client:getSelf() then
-        
-        fgcom.log("joined channel "..fgcom.channel)
-        
-        -- update current users of channel
-        updateAllChannelUsersforSend(client)
-
-        -- Establish authentication token
-        -- try to get the matching user for the sessionID in owntoken
-        local owntoken_user = nil
-        for key,value in ipairs(playback_targets) do
-            if value:getSession() == tonumber(owntoken) then owntoken_user = value break end
-        end
-        fgcom.auth.generateToken(owntoken_user)
-
-        -- Setup the Bots location on earth
-        notifyUserdata(playback_targets)
-        notifyLocation(playback_targets)
-            
-        -- Setup a radio to broadcast from
-        notifyRadio(playback_targets)
-            
-        -- periodically update the comment
-        updateCommentTimer:start(updateComment, 0.0, updateComment_t)
-            
-        fgcom.log("start playback ("..sampleType..")")
-        if sampleType == "FGCS" then
-            -- start the playback timer.
-            -- this will control playback validity time. The actual FGCS sample
-            -- is payed until the bot is shutdown from the check timer or the FGCS is invalid.
-            playbackTimer_fgcs:start(playbackTimer_fgcs_func, 0.0, 0.5)
-        end
-        if sampleType == "OGG" then
-            -- start the OGG playback timer loop
-            playbackTimer_ogg:start(playbackTimer_ogg_func, 0.0, 0.5)
-        end
+        -- nothing to do right now
     end
 end)
 
