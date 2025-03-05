@@ -40,7 +40,7 @@ fgcom.botversion = "1.8.2"
 fgcom.rng.initialize()
 
 local botname     = "FGCOM-radio-playback"
-fgcom.callsign    = "FGCOM-RADIO-"..math.random(1, 99999)
+-- callsign is setup further down: fgcom.callsign    = ...
 
 local voiceBuffer = nil -- Queue voice buffer holding the cached samples
 local lastHeader  = nil -- holds last header data
@@ -59,11 +59,13 @@ local pingT  = 10  -- ping time spacing in seconds
 local updateComment_t = 60 --time in seconds to update the comment
 local owntoken = nil
 local verify = false
+local callsignPattern = "FGCOM-RADIO-%s" --%s will be relaced by random number
 
 local printhelp = function()
     print(botname..", "..fgcom.getVersion())
     print("usage: "..arg[0].." [opt=val ...]")
     print("  Options:")
+    print("    --name=     Bot mumble name prefix       (default="..callsignPattern..")")
     print("    --host=     host to connect to           (default="..host..")")
     print("    --port=     port to connect to           (default="..port..")")
     print("    --channel=  channel to join              (default="..fgcom.channel..")")
@@ -82,7 +84,7 @@ local printhelp = function()
     print("    --hgt=      Height override              (default: use FGCS header)")
     print("    --frq=      Frequency override           (default: use FGCS header)")
     print("    --pwr=      Power in Watts override      (default: use FGCS header)")
-    print("    --callsign= Callsign override            (default: use FGCS header)")
+    print("    --callsign= Sample Callsign override            (default: use FGCS header)")
     print("    --ttl=      Time to live (seconds) for OGG playback (default: use FGCS header)")
     print("                0=persistent sample (played in an endless loop).")
     print("    --owntoken= Inform the given sessionID about the generated token")
@@ -90,6 +92,8 @@ local printhelp = function()
     print("    --verify    Load and show FGCS header, then quit")
     print("    --version   print version and exit")
     print("\nNotice:")
+    print("  * The bots mumble client name must be unique will be formed by the --name prefix and a random number.")
+    print("    This has nothing to do with the callsign other FGCom-mumble instances will see.")
     print("  * OGG sample type implies --nodel (files are never deleted from disk by the bot).")
     print("  * --ttl=0 (loop) has precedence over --oneshot.")
     print("  * --ttl=n overwrites the FGCS stored timestamp, so that ttl gives the remaining new validity from 'now'.")
@@ -99,6 +103,7 @@ end
 if arg[1] then
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
+        if k=="name"   then callsignPattern=v end
         if k=="host"   then host=v end
         if k=="port"   then port=v end
         if k=="channel"   then fgcom.channel=v end
@@ -308,6 +313,7 @@ end
 
 
 -- Connect to server, so we get the API
+fgcom.callsign = string.format( callsignPattern, math.random(1, 99999) )
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = mumble.client()
 assert(client:connect(host, port, cert, key))
