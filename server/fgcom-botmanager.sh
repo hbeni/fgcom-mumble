@@ -105,7 +105,7 @@ for opt in "$@"; do
        --pkey=*)  pkey=$(echo $opt|cut -d"=" -f2);;
        --scert=*) scert=$(echo $opt|cut -d"=" -f2);;
        --skey=*)  skey=$(echo $opt|cut -d"=" -f2);;
-       --path=*)  key=$(echo $opt|cut -d"=" -f2);;
+       --path=*)  path=$(echo $opt|cut -d"=" -f2);;
        --limit=*) limit=$(echo $opt|cut -d"=" -f2);;
        --ttl=*)   ttl=$(echo $opt|cut -d"=" -f2);;
        --fnotify=*)   fnotify=$(echo $opt|cut -d"=" -f2);;
