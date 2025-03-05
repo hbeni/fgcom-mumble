@@ -128,12 +128,12 @@ end
 
 -- Connect to server, so we get the API
 fgcom.log(botname..": "..fgcom.getVersion())
-fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
+fgcom.log("connecting as '"..botname.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
 local client = mumble.client()
 assert(client:connect(host, port, cert, key))
 
 client:hook("OnConnect", function(client)
-    client:auth(fgcom.callsign)
+    client:auth(botname)
     fgcom.dbg("connect and bind: OK")
 end)
 
