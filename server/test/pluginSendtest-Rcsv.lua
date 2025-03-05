@@ -66,6 +66,7 @@ client:hook("OnPluginData", function(client, event)
     print("DATA INCOMING FROM="..event.sender:getSession())
     print("  ID="..event.id)
     print("  DATA="..event.data)
+    print("")
 
 end)
 
