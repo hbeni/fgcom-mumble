@@ -70,30 +70,30 @@ local s_lat  = "random"
 local s_lon  = "random"
 local s_alt  = "random"
 
+printHelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --id=      id to join with              (default=random)")
+    print("    --host=    host to connect to           (default="..host..")")
+    print("    --port=    port to connect to           (default="..port..")")
+    print("    --channel= channel to join                  (default="..fgcom.channel..")")
+    print("    --cert=    path to PEM encoded cert     (default="..cert..")")
+    print("    --key=     path to the certs key        (default="..key..")")
+    print("    --sample=  FGCS sample file to transmit")
+    print("    --locs=    Seconds between location updates (default="..locs..")")
+    print("    --sleep=   Time interval between checks (default="..sleep..")")
+    print("    --chancet= Chance for transmission      (default="..chance_transmit..")")
+    print("    --chancee= Chance that transmit is echotest   (default="..chance_echotest..")")
+    print("    --lat=     start latitude (decimal)     (default="..s_lat..")")
+    print("    --lon=     start longitude (decimal)    (default="..s_lon..")")
+    print("    --alt=     start altitude (decimal)     (default="..s_alt..")")
+    print("    --debug    print debug messages         (default=no)")
+    print("    --version  print version and exit")
+    os.exit(0)
+end
+
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --id=      id to join with              (default=random)")
-        print("    --host=    host to connect to           (default="..host..")")
-        print("    --port=    port to connect to           (default="..port..")")
-        print("    --channel= channel to join                  (default="..fgcom.channel..")")
-        print("    --cert=    path to PEM encoded cert     (default="..cert..")")
-        print("    --key=     path to the certs key        (default="..key..")")
-        print("    --sample=  FGCS sample file to transmit")
-        print("    --locs=    Seconds between location updates (default="..locs..")")
-        print("    --sleep=   Time interval between checks (default="..sleep..")")
-        print("    --chancet= Chance for transmission      (default="..chance_transmit..")")
-        print("    --chancee= Chance that transmit is echotest   (default="..chance_echotest..")")
-        print("    --lat=     start latitude (decimal)     (default="..s_lat..")")
-        print("    --lon=     start longitude (decimal)    (default="..s_lon..")")
-        print("    --alt=     start altitude (decimal)     (default="..s_alt..")")
-        print("    --debug    print debug messages         (default=no)")
-        print("    --version  print version and exit")
-        os.exit(0)
-    end
-    
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         if k=="id"      then botid=v end
@@ -112,8 +112,10 @@ if arg[1] then
         if k=="alt"     then s_alt=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "--help" or opt == "-h" then printHelp() end
     end
-    
+else
+    printHelp()
 end
 
 -- parameter checks
