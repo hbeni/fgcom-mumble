@@ -481,6 +481,108 @@ local playbackTimer_fgcs_func = function(t)
     --fgcom.dbg("playback timer (fgcs): tick done")
 end
 
+
+--[[
+  Playback loop (FGCS): we use a mumble timer for this. The timer loops
+  and checks if the audio buffer is played and still valid. If not,
+  the bot is shutdown.
+]]
+--[[  EXPERIMENTAL
+local decoder = mumble.decoder()
+local playbackTimer_fgcs = mumble.timer()
+local fgcs_playedCount = 0
+playbackTimer_fgcs_func_streamed = function(t)
+    fgcom.dbg("playback timer (fgcs): tick")
+    --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
+    
+    -- Debug out: header
+    --for k,v in pairs(lastHeader) do
+    --    fgcom.dbg("header read: '"..k.."'='"..v.."'")
+    --end
+    
+    -- So, a new timer tick started.
+    local isPlaying = (not fgcs_audiostream == nil and not fgcs_audiostream:isEmpty())
+    print("DBG; isPlaying:"..tostring(isPlaying))
+
+    if not isPlaying then
+        -- See if we need to add a pause
+        local sleep = getPause(pause)
+        if sleep > 0 then
+            --fgcom.dbg("Looped timer: pause for "..sleep.."s")
+            t:stop() -- Stop the loop timer
+            local pauseTimer = mumble.timer()
+            pauseTimer:start(
+            function()
+                --fgcom.dbg("Looped timer: pause done, restarting playback timer")
+                t:again()
+                end
+            , sleep, 0)
+        end
+
+        -- check if the file is still valid
+        local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
+        local persistent = false
+        if lastHeader.timetolive == "0" then
+            fgcom.dbg(sample..": This is a persistent sample.")
+            timeLeft   = 1337   -- just some arbitary dummy value in the future
+            persistent = true   -- loops forever!
+        end
+        if not persistent and timeLeft < 0 then
+            fgcom.log(sample..": FGCS file outdated since "..timeLeft.." seconds; removing")
+            delSample(sample)
+            shutdownBot()
+            fgcom.dbg("disconnected: we are done.")
+            t:stop() -- Stop the timer
+        else
+            -- Samples are still valid;  and start to play
+            if lastHeader.playbacktype == "oneshot" and fgcs_playedCount >= 1 then
+                fgcom.log("Oneshot sample detected, not looping.")
+                local persistent = false
+                if lastHeader.timetolive ~= "0" then
+                    fgcom.log("deleting oneshot non-persistent sample file.")
+                    delSample(sample)
+                end
+                shutdownBot()
+                fgcom.dbg("disconnected: we are done.")
+                t:stop() -- Stop the timer
+
+            else
+                -- loop over (or start playing the first time)
+                if (fgcs_playedCount == 0) then
+                    fgcom.dbg(sample..": FGCS file still valid for "..timeLeft.."s: start playing sample.")
+                    -- prepare audio buffer
+                    --fgcom.dbg("building audio buffer...")
+                    fgcs_audiostream = client:createAudioBuffer(48000, 2)
+                    for k,nextSample in pairs(voiceBuffer) do 
+                        --fgcom.dbg("  tgt="..playback_target:getSession())
+                        --fgcom.dbg("  eos="..tostring(endofStream))
+                        --fgcom.dbg("  cdc="..lastHeader.voicecodec)
+                        if type(nextSample) == "table" then
+                            --fgcom.dbg("  dta="..#nextSample.data)
+                            --fgcom.dbg("  dta="..nextSample.data)
+                            local decoded = decoder:decodeFloat(nextSample.data)
+                            fgcs_audiostream:write(decoded)
+                        end
+                    end
+                else
+                    fgcom.dbg(sample..": FGCS file still valid for "..timeLeft.."s: looping over.")
+                end
+
+                fgcs_playedCount = fgcs_playedCount + 1
+                --fgcs_audiostream:stop() --reset audio stream to start
+                --fgcs_audiostream:play()
+
+            end
+        end
+    else
+        fgcom.dbg("buffer still playing")
+    end
+
+    --fgcom.dbg("playback timer (fgcs): tick done")
+end
+--]]
+
+
 --[[
   Playback loop (ogg): we use a mumble timer for this.
   The timer loops every half second or so and checks if the ogg was finished.
@@ -624,6 +726,7 @@ client:hook("OnServerSync", function(client, event)
         -- this will control playback validity time. The actual FGCS sample
         -- is payed until the bot is shutdown from the check timer or the FGCS is invalid.
         playbackTimer_fgcs:start(playbackTimer_fgcs_func, 0.0, lastHeader.samplespeed)
+        -- TODO experimental stream FGCS player: playbackTimer_fgcs:start(playbackTimer_fgcs_func_streamed, 0.0, 0.5)
     end
     if sampleType == "OGG" then
         -- start the OGG playback timer loop
