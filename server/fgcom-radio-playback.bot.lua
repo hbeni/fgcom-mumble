@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.8.2"
+fgcom.botversion = "1.9.0"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -60,6 +60,8 @@ local updateComment_t = 60 --time in seconds to update the comment
 local owntoken = nil
 local verify = false
 local callsignPattern = "FGCOM-RADIO-%s" --%s will be relaced by random number
+local speedV = nil
+local movementTimerT = 1.0 -- speed the locUpdate runs at
 
 local printhelp = function()
     print(botname..", "..fgcom.getVersion())
@@ -84,6 +86,7 @@ local printhelp = function()
     print("    --lat=      Latitude override            (default: use FGCS header)")
     print("    --lon=      Longitude override           (default: use FGCS header)")
     print("    --hgt=      Height override              (default: use FGCS header)")
+    print("    --speed=    Let the bot move: speed=<heading>,<knots>,<vs in ft/min>")
     print("    --frq=      Frequency override           (default: use FGCS header)")
     print("    --pwr=      Power in Watts override      (default: use FGCS header)")
     print("    --callsign= Sample Callsign override            (default: use FGCS header)")
@@ -122,6 +125,7 @@ if arg[1] then
         if k=="ttl"    then overwriteHeader.timetolive=v end
         if k=="callsign" then overwriteHeader.callsign=v end
         if k=="owntoken" then owntoken=v end
+        if k=="speed" then speedV=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
         if opt == "--verify" then verify = true end
@@ -172,6 +176,16 @@ if sample:match(".+[.]ogg") then
         lastHeader[k] = v
     end
 end
+
+-- parse and check speed param
+if speedV then
+    _, _, k, v, h = string.find(speedV, "(%d+),(%d+),(-?%d+)")
+    if tonumber(k)==nil or tonumber(v)==nil or tonumber(h)==nil then print("--speed=<heading>,<knots>,<vs> invalid parameter format") os.exit(1) end
+    speedV = {heading=tonumber(k), knots=tonumber(v), vs=tonumber(h)}
+    if speedV.heading < 0 or speedV.heading > 359 then print("--speed heading must be between 0 and 359") os.exit(1) end
+    if speedV.knots < 0 then print("--speed knots must be >= 0") os.exit(1) end
+end
+
 
 -----------------------------
 --[[ DEFINE SOME FUNCTIONS ]]
@@ -649,9 +663,11 @@ notifyLocation = function(tgts)
     if overwriteHeader.lat    then lastHeader.lat    = overwriteHeader.lat end
     if overwriteHeader.lon    then lastHeader.lon    = overwriteHeader.lon end
     if overwriteHeader.height then lastHeader.height = overwriteHeader.height end
-    local msg = "LON="..lastHeader.lon
-              ..",LAT="..lastHeader.lat
-              ..",ALT="..lastHeader.height
+
+    -- build message. (5 decimal places are way enough precision (~1 meter), so we can save protocol data ammount)
+    local msg =  "LON="..tonumber(string.format("%2.5f", lastHeader.lon))
+              ..",LAT="..tonumber(string.format("%2.5f", lastHeader.lat))
+              ..",ALT="..math.floor(lastHeader.height)
     fgcom.dbg("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC:0", msg, tgts)
 end
@@ -687,9 +703,76 @@ updateComment = function()
                      .."<tr><th>Channel:</th><td><tt>"..lastHeader.dialedFRQ.."</tt></td></tr>"
                      .."<tr><th>Frequency:</th><td><tt>"..lastHeader.frequency.."</tt></td></tr>"
                      .."<tr><th>Power:</th><td><tt>"..lastHeader.txpower.."W</tt></td></tr>"
-                     .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..lastHeader.lat.."</tt></td></tr><tr><td>Lon:</td><td><tt>"..lastHeader.lon.."</tt></td></tr><tr><td>Height:</td><td><tt>"..lastHeader.height.."</tt></td></tr></table></td></tr>"
+                     .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..string.format("%2.5f",lastHeader.lat).."</tt></td></tr><tr><td>Lon:</td><td><tt>"..string.format("%2.5f",lastHeader.lon).."</tt></td></tr><tr><td>Height:</td><td><tt>"..math.floor(lastHeader.height).."</tt></td></tr></table></td></tr>"
                      .."<tr><th>Valid for:</th><td><tt>"..ttl_str.."</tt></td></tr>"
                      .."</table>")
+end
+
+-- A timer that will send PING packets from time to time
+local pingTimer = mumble.timer()
+pingTimer_func = function(t)
+    fgcom.dbg("sending PING packet")
+    updateAllChannelUsersforSend(client)
+    client:sendPluginData("FGCOM:PING", "0", playback_targets)
+end
+
+
+-- Movement timer
+local movementTimer = mumble.timer()
+movementTimer_func = function()
+    local dt = 1/(60/movementTimerT) -- dt is the fraction of one minute
+
+    if speedV and (speedV.knots > 0 or speedV.vs ~= 0) then
+        fgcom.dbg("movementTimer: calculate new location")
+
+        -- If we send periodically location updates, we don't need pings
+        if not pingTimer:isPaused() then pingTimer:pause() end
+
+        -- initialize a fresh overwrite header if not available already
+        if not overwriteHeader.lat    then overwriteHeader.lat    = lastHeader.lat end
+        if not overwriteHeader.lon    then overwriteHeader.lon    = lastHeader.lon end
+        if not overwriteHeader.height then overwriteHeader.height = lastHeader.height end
+
+        -- calculate new position
+        if speedV.knots > 0 then
+            local distKMperMinute = fgcom.geo.nauticalMiles2kilometers(speedV.knots)/60 --knots is nM/hour
+            fgcom.dbg("movementTimer:   distKMperMinute="..distKMperMinute.." (from "..speedV.knots.." kias)")
+            fgcom.dbg("movementTimer:   heading="..string.format("%03d", speedV.heading))
+            local newLat, newLon, poleWrapped = fgcom.geo.getPointAtDistance(
+                overwriteHeader.lat, overwriteHeader.lon, speedV.heading, distKMperMinute*dt)
+
+            overwriteHeader.lat = newLat
+            overwriteHeader.lon = newLon
+
+            -- when coming near the poles, take a new heading to the equator
+            -- Note: This wrapping code is currently very naive and not realistic. One would expect a plane/sattelite to just
+            --       continue its track over the pole. We might do better in the future by detecting the wrap (for example maybe
+            --       when lat is increasing and then suddenly decreasing accompanied wit a huge change in longitude)
+            if newLat >  85.0 and speedV.heading <  90 then speedV.heading = speedV.heading+(90-speedV.heading)*2 end
+            if newLat >  85.0 and speedV.heading > 270 then speedV.heading = speedV.heading-(speedV.heading-270)*2 end
+            if newLat < -85.0 and speedV.heading >  90 and speedV.heading <= 180 then speedV.heading = speedV.heading+(90-speedV.heading)*2 end
+            if newLat < -85.0 and speedV.heading < 270 and speedV.heading  > 180 then speedV.heading = speedV.heading-(speedV.heading-270)*2 end
+        end
+
+        -- calculate new height
+        if speedV.vs ~= 0 then
+            local vsInMeter = fgcom.geo.ft2m(speedV.vs) -- FGCom-mumble calculates height in SI units (meters)
+            overwriteHeader.height = math.max(0, overwriteHeader.height + vsInMeter*dt)
+        end
+
+        -- send UPD:LOC packet to clients
+        updateAllChannelUsersforSend(client)
+        notifyLocation(playback_targets)
+        -- spam ok? updateComment()
+
+    else
+        fgcom.dbg("movementTimer: enter pause mode")
+        -- reactivate pings
+        if pingTimer:isPaused() then pingTimer:resume() end
+
+        --pause our timer
+        if not movementTimer:isPaused() then movementTimer:pause() end
+    end
 end
 
 client:hook("OnServerSync", function(client, event)
@@ -735,16 +818,13 @@ client:hook("OnServerSync", function(client, event)
         playbackTimer_ogg:start(playbackTimer_ogg_func, 0.0, 0.5)
     end
 
-    -- A timer that will send PING packets from time to time
-    local pingTimer = mumble.timer()
-    pingTimer:start(function(t)
-        fgcom.dbg("sending PING packet")
-        updateAllChannelUsersforSend(client)
-        client:sendPluginData("FGCOM:PING", "0", playback_targets)
-    end, pingT, pingT)
-    
-end)
+    -- send pings from time to time
+    pingTimer:start(pingTimer_func, pingT, pingT)
 
+    -- periodically update the location
+    movementTimer:start(movementTimer_func, 0.0, movementTimerT)
+
+end)
 
 client:hook("OnPluginData", function(client, event)
     --["sender"] = mumble.user sender, -- Who sent this data packet
@@ -825,6 +905,7 @@ client:hook("OnMessage", function(client, event)
                     .."<tr><th style=\"text-align:left\"><tt>/frq &lt;mhz&gt;</tt></th><td>Switch frequency to this real-wave-frequency (Mhz in <tt>x.xxxx</tt>).</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/pwr &lt;watts&gt;</tt></th><td>Change output watts.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/move &lt;lat lon hgt&gt;</tt></th><td>Move to new coordinates. lat/lon are decimal degrees (<tt>x.xxx</tt>), hgt is meters above ground.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/speed &lt;heading knots vs&gt;</tt></th><td>Let the bot move itself (heading is 0-359, knots is airspeed, vs is ft/min). <tt>/speed 0</tt> stops movement.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/rename &lt;callsign&gt;</tt></th><td>Rename to new callsign.</td></tr>"
                     .."</table>"
                 )
@@ -862,7 +943,7 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-           if command == "move" then
+            if command == "move" then
                 if not param then event.actor:message("/move needs new x,y,z coordinates as argument!") return end
                 _, _, ly, lx, la = string.find(param, "([-%d.]+) ([-%d.]+) ([%d.]+)")
                 if not ly or not lx or not la then event.actor:message("/move params need to be proper decimals!") return end
@@ -876,10 +957,28 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-           if command == "rename" then
+            if command == "speed" then
+                if not param then event.actor:message("/speed needs heading, knots, verticalSpeed as arguments!") return end
+                if param == "0" then
+                    -- param shortcut
+                    speedV = {heading=0, knots=0, vs=0}
+                else
+                    _, _, h, k, v = string.find(param, "(%d+) (%d+) (-?%d+)")
+                    h=tonumber(h)  k=tonumber(k)  v=tonumber(v)
+                    if k==nil or v==nil or h==nil then event.actor:message("/speed needs heading, knots, verticalSpeed as numeric arguments!") return end
+                    if h < 0 or h > 359 then event.actor:message("/speed heading must be between 0 and 359") return end
+                    if k < 0 then event.actor:message("/speed knots must be >= 0") return end
+                    speedV = {heading=tonumber(h), knots=tonumber(k), vs=tonumber(v)}
+                end
+                movementTimer:resume()
+                event.actor:message(string.format("new movement speed: heading=%03d deg, knots=%d KIAS, verticalSpeed=%d ft/min", speedV.heading, speedV.knots, speedV.vs))
+                return
+            end
+
+            if command == "rename" then
                 if not param then event.actor:message("/rename needs an argument!") return end
                 _, _, cs = string.find(param, "([-%w]+)")
-                if not cs then event.actor:message("/move param need to be ASCII chars!") return end
+                if not cs then event.actor:message("/rename param need to be ASCII chars!") return end
                 overwriteHeader.callsign = cs
                 updateAllChannelUsersforSend(client)
                 notifyUserdata(playback_targets)
