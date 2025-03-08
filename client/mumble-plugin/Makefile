@@ -66,6 +66,8 @@ libs:  $(lib_OBJS)
 tools: libs
 	$(CC) -o test/geotest lib/radio_model.o lib/audio.o test/geotest.cpp $(CFLAGS)
 	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o test/frqtest.cpp $(CFLAGS)
+	$(CC) -o test/updater-test test/updater-test.cpp $(CFLAGS)
+	
 
 
 # catch2 unit tests linking against main
