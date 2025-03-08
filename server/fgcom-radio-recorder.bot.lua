@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.8.2"
+fgcom.botversion  = "1.8.3"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -54,28 +54,27 @@ local ttl   = 120*60  -- default time-to-live after recordings in secs
 local spawn = false
 local fnotify  = ""      -- notify about recorded samples into this file
 
+printhelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --name=    Change Bot's name                (default="..botname..")")
+    print("    --host=    host to connect to               (default="..host..")")
+    print("    --port=    port to connect to               (default="..port..")")
+    print("    --channel= channel to join                  (default="..fgcom.channel..")")
+    print("    --cert=    path to PEM encoded cert         (default="..cert..")")
+    print("    --key=     path to the certs key            (default="..key..")")
+    print("    --path=    Path to store the recordings to  (default="..path..")")
+    print("    --limit=   Max limit to record, in seconds  (default="..limit..")")
+    print("    --ttl=     Max timeToLive in seconds        (default="..ttl..")")
+    print("    --fnotify= notify about recorded sample into this file.")
+    --print("    --spawn    Spawn playback bots after recording")
+    print("    --debug    print debug messages             (default=no)")
+    print("    --version  print version and exit")
+    os.exit(0)
+end
 
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --name=    Change Bot's name                (default="..botname..")")
-        print("    --host=    host to connect to               (default="..host..")")
-        print("    --port=    port to connect to               (default="..port..")")
-        print("    --channel= channel to join                  (default="..fgcom.channel..")")
-        print("    --cert=    path to PEM encoded cert         (default="..cert..")")
-        print("    --key=     path to the certs key            (default="..key..")")
-        print("    --path=    Path to store the recordings to  (default="..path..")")
-        print("    --limit=   Max limit to record, in seconds  (default="..limit..")")
-        print("    --ttl=     Max timeToLive in seconds        (default="..ttl..")")
-        print("    --fnotify= notify about recorded sample into this file.")
-        --print("    --spawn    Spawn playback bots after recording")
-        print("    --debug    print debug messages             (default=no)")
-        print("    --version  print version and exit")
-        os.exit(0)
-    end
-    
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         --print("KEY='"..k.."'; VAL='"..v.."'")
@@ -92,8 +91,11 @@ if arg[1] then
         if k=="fnotify"   then fnotify=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "-h" or opt == "--help" then printhelp() end
     end
-    
+
+else
+    printhelp()
 end
 
 if fnotify:len() > 0 then
@@ -126,10 +128,14 @@ end
 
 -- Connect to server, so we get the API
 fgcom.log(botname..": "..fgcom.getVersion())
-fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth(botname)
-fgcom.log("connect and bind: OK")
+fgcom.log("connecting as '"..botname.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
+local client = mumble.client()
+assert(client:connect(host, port, cert, key))
+
+client:hook("OnConnect", function(client)
+    client:auth(botname)
+    fgcom.dbg("connect and bind: OK")
+end)
 
 
 
@@ -347,12 +353,18 @@ client:hook("OnUserSpeak", function(client, event)
         end
     
         if remote.record_filename and remote.record_fh then
-            local recordingSecsLeft = remote.record_timeout - os.time() +1
+            local recordingSecsLeft = remote.record_timeout - os.time() +1 -- add one second, so user has time to start
             if recordingSecsLeft > 0 then
                 fgcom.dbg(remote.record_filename..": recording sample, len="..#event.data.." ("..recordingSecsLeft.."s rectime left)")
                 fgcom.io.writeFGCSSample(remote.record_fh, event.data)
+                remote.recordingExceededNotified = false
             else
                 fgcom.dbg(remote.record_filename..": sample discarded: recording time exceeded ("..recordingSecsLeft.."s)")
+                if not remote.recordingExceededNotified then
+                    remote.recordingExceededNotified = true
+                    local ch = client:getChannel(fgcom.channel)
+                    ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' exceeded the limit of "..limit.."s. Not recording further samples.")
+                end
             end
         end
     

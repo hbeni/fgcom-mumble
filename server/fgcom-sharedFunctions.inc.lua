@@ -80,7 +80,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.8.0",
+    libversion = "1.9.0",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -279,6 +279,33 @@ fgcom = {
             return ret
         end,
           
+        -- ensure internal state for an user is sane
+        -- will add new template state in case of missing data
+        verifyUserState = function(sid, iid)
+            fgcom.dbg("verifyUserState: sid="..sid.."; iid="..iid)
+            -- check if we already have state for this client; if not add
+            if not fgcom_clients[sid] then
+                fgcom_clients[sid] = {}
+                fgcom.dbg("added new client state: "..sid)
+            end
+
+            -- check if we already know this clients identity with given iid; if not, add template
+            if fgcom_clients[sid][iid] then
+                if fgcom.hooks.parsePluginData_updateKnownClient ~= nil then fgcom.hooks.parsePluginData_updateKnownClient(sid, iid) end
+            else
+                fgcom_clients[sid][iid] = {
+                    callsign="",
+                    lat="",
+                    lon="",
+                    alt="",
+                    radios={},
+                    lastUpdate=0,
+                    missingDataSince=0  -- 0: need to check; >0: missing-timestamp; -1: verified ok
+                }
+                if fgcom.hooks.parsePluginData_newClient ~= nil then fgcom.hooks.parsePluginData_newClient(sid, iid) end
+            end
+        end,
+        
         -- Parse incoming plugin data and populate fgcom_clients array with it
         -- @param string dataID mumble dataID
         -- @param string data payload
@@ -301,27 +328,8 @@ fgcom = {
                     local sid = sender:getSession()  -- mumble session id
                     fgcom.dbg("  iid='"..iid.."'")
 
-                    -- check if we already have state for this client; if not add
-                    if not fgcom_clients[sid] then
-                        fgcom_clients[sid] = {}
-                        fgcom.dbg("added new client state: "..sid)
-                    end
-          
-                    -- check if we already know this clients identity with given iid; if not, add template
-                    if fgcom_clients[sid][iid] then
-                        if fgcom.hooks.parsePluginData_updateKnownClient ~= nil then fgcom.hooks.parsePluginData_updateKnownClient(sid, iid) end
-                    else
-                        fgcom_clients[sid][iid] = {
-                            callsign="",
-                            lat="",
-                            lon="",
-                            alt="",
-                            radios={},
-                            lastUpdate=0,
-                            missingDataSince=0  -- 0: need to check; >0: missing-timestamp; -1: verified ok
-                        }
-                        if fgcom.hooks.parsePluginData_newClient ~= nil then fgcom.hooks.parsePluginData_newClient(sid, iid) end
-                    end
+                    -- ensure valid datastore for this user
+                    fgcom.data.verifyUserState(sid, iid)
           
                     -- record that we had an data update
                     fgcom_clients[sid][iid].lastUpdate = os.time()
@@ -379,6 +387,13 @@ fgcom = {
                 elseif packtype == "PING" then
                     -- update the contained identites lastUpdate timestamps
                     local sid       = sender:getSession()  -- mumble session id
+
+                    -- Ensure valid datastore for IDs in the payload
+                    for _,iid in ipairs(fgcom.data.csplit(data, ",")) do
+                        fgcom.data.verifyUserState(sid, iid)
+                    end
+
+                    -- Update data timestamp for the identites
                     for _,iid in ipairs(fgcom.data.csplit(data, ",")) do
                         fgcom.dbg("ping packet for sid="..sid.."; iid="..iid)
                         if fgcom_clients[sid][iid] then 
@@ -555,7 +570,57 @@ fgcom = {
             return fgcom.auth.isAuthenticated(user)
         end,
     },
-    
+
+    -- Geo functions
+    geo = {
+        -- Calculate new location based on distance and bearing
+        -- bearing is in degrees (0-360); -- distance is in kilometers
+        -- returns new lat, lon
+        getPointAtDistance = function(lat, lon, bearingDeg, distanceKm)
+            local earthR=6371
+            local lat = math.rad(lat)
+            local lon = math.rad(lon)
+            local bearingRad = math.rad(bearingDeg)
+
+            -- atan2 was deprecated in lua 5.3 and directly replaced by math.atan. We still call atan2 to stay compatible
+            if math.atan2 == nil then math.atan2 = math.atan end
+
+            local lat2 = math.asin(math.sin(lat) * math.cos(distanceKm/earthR) + math.cos(lat) * math.sin(distanceKm/earthR) * math.cos(bearingRad))
+            local lon2 = lon + math.atan2(
+                math.sin(bearingRad) * math.sin(distanceKm/earthR) * math.cos(lat),
+                math.cos(distanceKm/earthR) - math.sin(lat) * math.sin(lat2)
+            )
+
+            -- convert do degree
+            lat2 = math.deg(lat2)
+            lon2 = math.deg(lon2)
+
+            -- wrap around
+            if lat2 < -90 then lat2 = -180-lat2 end
+            if lat2 >  90 then lat2 =  180-lat2 end
+            if lon2 < -180 then lon2 = 360-lon2 end
+            if lon2 >  180 then lon2 = lon2-360 end
+
+            return lat2, lon2
+        end,
+
+        -- Convert between kilometers and nautical miles
+        kilometers2nauticalMiles = function(km)
+            return m * 0.53995680
+        end,
+        nauticalMiles2kilometers = function(nm)
+            return nm / 0.53995680
+        end,
+
+        -- Covert between feet and meters
+        ft2m = function(ft)
+            return ft / 3.28084
+        end,
+        m2ft = function(m)
+            return m * 3.28084
+        end,
+    },
+
     -- Various hooks, bots can implement to have event based adjustment options.
     -- If they are not defined, they will not be called.
     hooks = {

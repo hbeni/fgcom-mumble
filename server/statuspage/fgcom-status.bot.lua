@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.10.0"
+fgcom.botversion = "1.10.1"
 json = require("dkjson")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -54,28 +54,28 @@ local stats = ""
 local speedStats = 60 -- write interval for statistic entries in seconds
 local stalepurge = 60 -- clean out stale entries after this seconds
 
+printhelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --name=    Change Bot's name                (default="..fgcom.callsign..")")
+    print("    --host=    host to connect to               (default="..host..")")
+    print("    --port=    port to connect to               (default="..port..")")
+    print("    --channel= channel to join                  (default="..fgcom.channel..")")
+    print("    --cert=    path to PEM encoded cert         (default="..cert..")")
+    print("    --key=     path to the certs key            (default="..key..")")
+    print("    --db=      Path to the db                   (default="..db..")")
+    print("    --speed=   db update interval               (seconds, default="..speed..")")
+    print("    --web=     Advertise url in comment         (default=no commercials!)")
+    print("    --stats=   append usage stats to this file  (default=no)")
+    print("    --speedst= usage stats update interval      (seconds, default="..speedStats..")")
+    print("    --purge=   stale entries retention time     (seconds, default="..stalepurge..")")
+    print("    --debug    print debug messages             (default=no)")
+    print("    --version  print version and exit")
+    os.exit(0)
+end
 
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --name=    Change Bot's name                (default="..fgcom.callsign..")")
-        print("    --host=    host to connect to               (default="..host..")")
-        print("    --port=    port to connect to               (default="..port..")")
-        print("    --channel= channel to join                  (default="..fgcom.channel..")")
-        print("    --cert=    path to PEM encoded cert         (default="..cert..")")
-        print("    --key=     path to the certs key            (default="..key..")")
-        print("    --db=      Path to the db                   (default="..db..")")
-        print("    --speed=   db update interval               (seconds, default="..speed..")")
-        print("    --web=     Advertise url in comment         (default=no commercials!)")
-        print("    --stats=   append usage stats to this file  (default=no)")
-        print("    --speedst= usage stats update interval      (seconds, default="..speedStats..")")
-        print("    --purge=   stale entries retention time     (seconds, default="..stalepurge..")")
-        print("    --debug    print debug messages             (default=no)")
-        print("    --version  print version and exit")
-        os.exit(0)
-    end
     
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
@@ -94,16 +94,22 @@ if arg[1] then
         if k=="purge"     then stalepurge=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "-h" or opt == "--help" then printhelp() end
     end
-    
+else
+    printhelp()
 end
 
 -- Connect to server, so we get the API
 fgcom.log(botname..": "..fgcom.getVersion())
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth(fgcom.callsign)
-fgcom.log("connect and bind: OK")
+local client = mumble.client()
+assert(client:connect(host, port, cert, key))
+
+client:hook("OnConnect", function(client)
+    client:auth(fgcom.callsign)
+    fgcom.dbg("connect and bind: OK")
+end)
 
 
 -- Store for last highscore
@@ -158,8 +164,11 @@ local generateOutData = function()
             -- I really have no Idea, why table entries are sometimes iterated more than once.
             local already_processed_clients_key = string.format("%s:%s", sid, iid)
             if already_processed_clients[already_processed_clients_key] ~= nil then
-                fgcom.dbg("skipping entry '"..already_processed_clients_key.."'); already processed")
-                
+                fgcom.dbg("skipping entry '"..already_processed_clients_key.."'; already processed")
+
+            elseif user.type ~= nil and user.type == "new/unknown" then
+                fgcom.dbg("skipping entry '"..string.format("%s:%s", sid, iid).."'; type=new/unknown")
+
             else
                 fgcom.dbg("processing entry '"..already_processed_clients_key.."'")
                 already_processed_clients[already_processed_clients_key] = true
@@ -454,7 +463,7 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-            if command == "exit" then
+            if command == "exit" or command == "quit" then
                 fgcom.dbg("exit command received")
                 event.actor:message("goodbye!")
                 shutdownBot()
@@ -486,8 +495,7 @@ client:hook("OnMessage", function(client, event)
                 fgcom.log(m)
                 event.actor:message(m)
                 speed = f
-                dbUpdateTimer:stop()
-                dbUpdateTimer:start(dbUpdateTimer_func, 0.0, speed)
+                dbUpdateTimer:setRepeat(speed)
                 return
             end
 
@@ -517,8 +525,7 @@ client:hook("OnMessage", function(client, event)
                     fgcom.log(m)
                     event.actor:message(m)
                     speedStats = f
-                    statsWriterTimer:stop()
-                    statsWriterTimer:start(statsWriterTimer_func, 0.0, speedStats)
+                    statsWriterTimer:setRepeat(speedStats)
                 else
                     event.actor:message("Usage statistics collection is disabled, not changing update interval")
                 end
