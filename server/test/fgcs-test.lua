@@ -20,21 +20,21 @@ local botname     = "FGOM-Recorder"
 fgcom.callsign    = "FGOM-REC"
 
  
--- | Line | Content                               |
 -- | Line | Content                                |
 -- |------|----------------------------------------|
--- |   1  | Version and Type field: "1.0 FGCS"     |
+-- |   1  | Version and Type field: "1.1 FGCS"     |
 -- |   2  | Callsign                               |
 -- |   3  | LAT          (decimal)                 |
 -- |   4  | LON          (decimal)                 |
 -- |   5  | HGT          (altitude in meter AGL)   |
 -- |   6  | Frequency                              |
--- |   7  | TX-Power     (in Watts)                |
--- |   8  | PlaybackType (`oneshot` or `loop`)     |
--- |   9  | TimeToLive   (seconds; `0`=persistent) |
--- |  10  | RecTimestamp (unix timestamp)          |
--- |  11  | VoiceCodec   (`int` from lua-mumble)   |
--- |  12  | SampleSpeed  (seconds between samples) |
+-- |   7  | Dialed Frequency                       |
+-- |   8  | TX-Power     (in Watts)                |
+-- |   9  | PlaybackType (`oneshot` or `loop`)     |
+-- |  10  | TimeToLive   (seconds; `0`=persistent) |
+-- |  11  | RecTimestamp (unix timestamp)          |
+-- |  12  | VoiceCodec   (`int` from lua-mumble)   |
+-- |  13  | SampleSpeed  (seconds between samples) |
 local header = {
     version      = "1.1 FGCS",
     callsign     = fgcom.callsign,
@@ -42,6 +42,7 @@ local header = {
     lon          = "23.456789",
     height       = 12.345,
     frequency    = "124.05",
+    dialedFRQ    = "124.05",
     txpower      = 10.5,
     playbacktype = "oneshot",
     timetolive   = 5,

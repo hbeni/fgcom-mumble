@@ -34,13 +34,13 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.8.1"
+fgcom.botversion = "1.9.0"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
 
 local botname     = "FGCOM-radio-playback"
-fgcom.callsign    = "FGCOM-RADIO-"..math.random(1, 99999)
+-- callsign is setup further down: fgcom.callsign    = ...
 
 local voiceBuffer = nil -- Queue voice buffer holding the cached samples
 local lastHeader  = nil -- holds last header data
@@ -58,40 +58,55 @@ local pause  = "0"
 local pingT  = 10  -- ping time spacing in seconds
 local updateComment_t = 60 --time in seconds to update the comment
 local owntoken = nil
+local verify = false
+local callsignPattern = "FGCOM-RADIO-%s" --%s will be relaced by random number
+local speedV = nil
+local movementTimerT = 1.0 -- speed the locUpdate runs at
+
+local printhelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --name=     Bot mumble name prefix       (default="..callsignPattern..")")
+    print("    --host=     host to connect to           (default="..host..")")
+    print("    --port=     port to connect to           (default="..port..")")
+    print("    --channel=  channel to join              (default="..fgcom.channel..")")
+    print("    --cert=     path to PEM encoded cert     (default="..cert..")")
+    print("    --key=      path to the certs key        (default="..key..")")
+    print("    --sample=   Path to the FGCS or OGG sample file")
+    print("                If the sample file is an OGG, --lat, --lon, --hgt,")
+    print("                --frq, --callsign and --ttl overrides are mandatory.")
+    print("    --loop      set sample looped mode")
+    print("    --oneshot   set sample to oneshot mode")
+    print("    --nodel     Don't delete outdated samples from disk")
+    print("    --ttl=      Time to live (seconds) for OGG playback (default: use FGCS header)")
+    print("                0=persistent sample (played in an endless loop).")
+    print("    --pause=    When looped, add a pause between iterations (default="..pause..")")
+    print("                Either seconds, or '<min>,<max>' for randomisation")
+    print("    --lat=      Latitude override            (default: use FGCS header)")
+    print("    --lon=      Longitude override           (default: use FGCS header)")
+    print("    --hgt=      Height override              (default: use FGCS header)")
+    print("    --speed=    Let the bot move: speed=<heading>,<knots>,<vs in ft/min>")
+    print("    --frq=      Frequency override           (default: use FGCS header)")
+    print("    --pwr=      Power in Watts override      (default: use FGCS header)")
+    print("    --callsign= Sample Callsign override            (default: use FGCS header)")
+    print("    --owntoken= Inform the given sessionID about the generated token")
+    print("    --debug     print debug messages         (default=no)")
+    print("    --verify    Load and show FGCS header, then quit")
+    print("    --version   print version and exit")
+    print("\nNotice:")
+    print("  * The bots mumble client name must be unique will be formed by the --name prefix and a random number.")
+    print("    This has nothing to do with the callsign other FGCom-mumble instances will see.")
+    print("  * OGG sample type implies --nodel (files are never deleted from disk by the bot).")
+    print("  * --ttl=0 (loop) has precedence over --oneshot.")
+    print("  * --ttl=n overwrites the FGCS stored timestamp, so that ttl gives the remaining new validity from 'now'.")
+    os.exit(0)
+end
 
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --host=     host to connect to           (default="..host..")")
-        print("    --port=     port to connect to           (default="..port..")")
-        print("    --channel=  channel to join              (default="..fgcom.channel..")")
-        print("    --cert=     path to PEM encoded cert     (default="..cert..")")
-        print("    --key=      path to the certs key        (default="..key..")")
-        print("    --sample=   Path to the FGCS or OGG sample file")
-        print("                If the sample file is an OGG, --lat, --lon, --hgt,")
-        print("                --frq, --callsign and --ttl overrides are mandatory.")
-        print("    --nodel     Don't delete outdated samples from disk")
-        print("    --pause=    When looped, add a pause between iterations (default="..pause..")")
-        print("                Either seconds, or '<min>,<max>' for randomisation")
-        print("    --lat=      Latitude override            (default: use FGCS header)")
-        print("    --lon=      Longitude override           (default: use FGCS header)")
-        print("    --hgt=      Height override              (default: use FGCS header)")
-        print("    --frq=      Frequency override           (default: use FGCS header)")
-        print("    --pwr=      Power in Watts override      (default: use FGCS header)")
-        print("    --callsign= Callsign override            (default: use FGCS header)")
-        print("    --ttl=      Time to live (seconds) for OGG playback (default: use FGCS header)")
-        print("                0=persistent sample (played in an endless loop).")
-        print("    --owntoken= Inform the given sessionID about the generated token")
-        print("    --debug     print debug messages         (default=no)")
-        print("    --version   print version and exit")
-        print("\nNotice that OGG sample implies --nodel.\n(files are never deleted from disk by the bot)")
-        os.exit(0)
-    end
-    
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
+        if k=="name"   then callsignPattern=v end
         if k=="host"   then host=v end
         if k=="port"   then port=v end
         if k=="channel"   then fgcom.channel=v end
@@ -102,16 +117,22 @@ if arg[1] then
         if k=="pause"  then pause=v end
         if k=="lat"    then overwriteHeader.lat=v end
         if k=="lon"    then overwriteHeader.lon=v end
+        if opt=="--loop"   then overwriteHeader.playbacktype="looped" end
+        if opt=="--oneshot" then overwriteHeader.playbacktype="oneshot" end
         if k=="hgt"    then overwriteHeader.height=v end
         if k=="frq"    then overwriteHeader.frequency=v overwriteHeader.dialedFRQ=v end
         if k=="pwr"    then overwriteHeader.txpower=v end
         if k=="ttl"    then overwriteHeader.timetolive=v end
         if k=="callsign" then overwriteHeader.callsign=v end
         if k=="owntoken" then owntoken=v end
+        if k=="speed" then speedV=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "--verify" then verify = true end
+        if opt == "-h" or opt == "--help" then printhelp() end
     end
-    
+else
+    printhelp()
 end
 
 -- parameter checks
@@ -131,24 +152,40 @@ if sample:match(".+[.]ogg") then
         if not v or v == "" then print("with OGG files, parameter "..k.." is mandatory!") os.exit(1) end
     end
 
+    nodel = false -- never delete OGG files
+
     -- prepare a faked FGCS header
     sampleType = "OGG"
     lastHeader = {}
-    lastHeader.callsign     = overwriteHeader.callsign
-    lastHeader.lat          = overwriteHeader.lat
-    lastHeader.lon          = overwriteHeader.lon
-    lastHeader.height       = overwriteHeader.height
-    lastHeader.frequency    = overwriteHeader.frequency
-    lastHeader.dialedFRQ    = overwriteHeader.frequency
+    --lastHeader.callsign     = overwriteHeader.callsign
+    --lastHeader.lat          = overwriteHeader.lat
+    --lastHeader.lon          = overwriteHeader.lon
+    --lastHeader.height       = overwriteHeader.height
+    --lastHeader.frequency    = overwriteHeader.frequency
+    --lastHeader.dialedFRQ    = overwriteHeader.frequency
     lastHeader.txpower      = 10
     lastHeader.playbacktype = "looped"
-    lastHeader.timetolive   = overwriteHeader.timetolive
+    --lastHeader.timetolive   = overwriteHeader.timetolive
     lastHeader.timestamp    = os.time()
     lastHeader.voicecodec   = sampleType
-    if overwriteHeader.txpower then
-        lastHeader.txpower  = overwriteHeader.txpower
+    --if overwriteHeader.txpower then
+    --    lastHeader.txpower  = overwriteHeader.txpower
+    --end
+    -- apply overrides
+    for k,v in pairs(overwriteHeader) do
+        lastHeader[k] = v
     end
 end
+
+-- parse and check speed param
+if speedV then
+    _, _, k, v, h = string.find(speedV, "(%d+),(%d+),(-?%d+)")
+    if tonumber(k)==nil or tonumber(v)==nil or tonumber(h)==nil then print("--speed=<heading>,<knots>,<vs> invalid parameter format") os.exit(1) end
+    speedV = {heading=tonumber(k), knots=tonumber(v), vs=tonumber(h)}
+    if speedV.heading < 0 or speedV.heading > 359 then print("--speed heading must be between 0 and 359") os.exit(1) end
+    if speedV.knots < 0 then print("--speed knots must be >= 0") os.exit(1) end
+end
+
 
 -----------------------------
 --[[ DEFINE SOME FUNCTIONS ]]
@@ -208,16 +245,19 @@ getPause = function(p_opt)
     fgcom.dbg("Loop pause (from param="..p_opt.."): "..p.." seconds")
     return p
 end
-getPause(pause)   -- silent invocation to check the param
 
 -----------------------------
 --[[      BOT RUNTIME      ]]
 -----------------------------
 
+fgcom.log(botname..": "..fgcom.getVersion())
+getPause(pause)   -- silent invocation to check the param
+
 -- read the file the first time and see if it parses.
 -- usually we want the file deleted after validity expired, but for that we need
 -- to make sure its a FGCS file... otherwise its another rm tool... ;)
 if sampleType == "FGCS" then
+    fgcom.log("Sample format: FGCS")
     lastHeader, voiceBuffer = readFGCSSampleFile(sample)
     if not lastHeader then  fgcom.log("ERROR: '"..sample.."' not readable or no FGCS file") os.exit(1) end
 
@@ -226,11 +266,25 @@ if sampleType == "FGCS" then
     --   voiceBuffer is initialized with the read samples
     fgcom.log(sample..": successfully loaded.")
 
+    if verify then
+        fgcom.log("verify header (loaded):")
+        for k,v in pairs(lastHeader) do
+            fgcom.log(string.format("  %s=%s", k, v))
+        end
+    end
+
     -- apply overrides
     for k,v in pairs(overwriteHeader) do
         lastHeader[k] = v
     end
-    if overwriteHeader.timetolive and overwriteHeader.timetolive == "0" then lastHeader.playbacktype = "looped" end
+    if overwriteHeader.timetolive then
+        if overwriteHeader.timetolive == "0" then lastHeader.playbacktype = "looped" end
+        if tonumber(overwriteHeader.timetolive) > 0 then
+            -- when --ttl was given explicitely, make it relative to "now" instead of the original sample
+            lastHeader.timestamp = os.time()
+            overwriteHeader.timestamp = os.time()
+        end
+    end
     
     local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
     local persistent = false
@@ -239,25 +293,49 @@ if sampleType == "FGCS" then
         timeLeft   = 1337   -- just some arbitary dummy value in the future
         persistent = true   -- loops forever!
     end
+
     if not persistent and timeLeft < 0 then
         fgcom.log(sample..": sample is invalid, since "..timeLeft.."s. Aborting.")
-        os.exit(0)
     else
         fgcom.log(sample..": sample is valid, remaining time: "..timeLeft.."s")
     end
+
+    if verify then
+        fgcom.log("verify header (effective/overrriden):")
+        for k,v in pairs(lastHeader) do
+            fgcom.log(string.format("  %s=%s", k, v));
+        end
+        os.exit(0)
+    end
+
+    -- exit, if sample is not vaid anymore
+    if not persistent and timeLeft < 0 then  os.exit(0)  end
+
 else if sampleType == "OGG" then
     fgcom.log("Sample format: OGG")
+
+    if verify then
+        fgcom.log("verify header (generated):")
+        for k,v in pairs(lastHeader) do
+            fgcom.log(string.format("  %s=%s", k, v))
+        end
+        os.exit(0)
+    end
 else
     fgcom.log("ERROR: '"..sample.."' not readable or no FGCS or no OGG file") os.exit(1) end
 end
 
 
 -- Connect to server, so we get the API
-fgcom.log(botname..": "..fgcom.getVersion())
+fgcom.callsign = string.format( callsignPattern, math.random(1, 99999) )
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth(fgcom.callsign)
-fgcom.dbg("connect and bind: OK")
+local client = mumble.client()
+assert(client:connect(host, port, cert, key))
+
+client:hook("OnConnect", function(client)
+    client:auth(fgcom.callsign)
+    fgcom.dbg("connect and bind: OK")
+end)
 
 
 
@@ -296,13 +374,19 @@ end
   he fetches them and plays them, one packet per timer tick.
 ]]
 local playbackTimer_fgcs = mumble.timer()
-playbackTimer_fgcs_func = function(t)
+local playbackTimer_fgcs_func = function(t)
     fgcom.dbg("playback timer (fgcs): tick")
+    --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
+    
+    -- Debug out: header
+    --[[for k,v in pairs(lastHeader) do
+        fgcom.dbg("header read: '"..k.."'='"..v.."'")
+    end]]
     
     -- So, a new timer tick started.
     -- See if we have still samples in the voice buffer. If not, reload it from file, if it was a looped one.
     if voiceBuffer:size() > 0 then
-        fgcom.dbg("voiceBuffer is still filled, samples: "..voiceBuffer:size())
+        fgcom.dbg("voiceBuffer is still filled, samples: "..voiceBuffer:size().." (speed: "..lastHeader.samplespeed..")")
         
         -- get the next sample from the buffer and play it
         local nextSample  = voiceBuffer:popleft()
@@ -311,9 +395,9 @@ playbackTimer_fgcs_func = function(t)
 
         fgcom.dbg("transmit next sample")
         --fgcom.dbg("  tgt="..playback_target:getSession())
-        fgcom.dbg("  eos="..tostring(endofStream))
-        fgcom.dbg("  cdc="..lastHeader.voicecodec)
-        fgcom.dbg("  dta="..#nextSample.data)
+        --fgcom.dbg("  eos="..tostring(endofStream))
+        --fgcom.dbg("  cdc="..lastHeader.voicecodec)
+        --fgcom.dbg("  dta="..#nextSample.data)
         --fgcom.dbg("  dta="..nextSample.data)
         client:transmit(lastHeader.voicecodec, nextSample.data, not endofStream) -- Transmit the single frame as an audio packet (the bot "speaks")
         fgcom.dbg("transmit ok")
@@ -335,7 +419,7 @@ playbackTimer_fgcs_func = function(t)
             end
             shutdownBot()
             fgcom.dbg("disconnected: we are done.")
-            t:stop() -- Stop the timer
+            t:pause() -- Stop the timer
         
         else
             -- It was a looped timer: we reread the file to see if its still there,
@@ -345,15 +429,13 @@ playbackTimer_fgcs_func = function(t)
             -- See if we need to add a pause
             local sleep = getPause(pause)
             if sleep > 0 then
-                --fgcom.dbg("Looped timer: pause for "..sleep.."s")
-                t:stop() -- Stop the loop timer
+                fgcom.dbg("Looped timer: pause for "..sleep.."s")
+                t:pause() -- Stop the loop timer
                 local pauseTimer = mumble.timer()
-                pauseTimer:start(
-                function()
+                pauseTimer:start(function()
                     --fgcom.dbg("Looped timer: pause done, restarting playback timer")
-                    t:again()
-                    end
-                , sleep, 0)
+                    t:resume()
+                end, sleep, 0)
             end
     
             -- Read/update FGCS data file
@@ -414,7 +496,110 @@ playbackTimer_fgcs_func = function(t)
             end
         end
     end
+    --fgcom.dbg("playback timer (fgcs): tick done")
 end
+
+
+--[[
+  Playback loop (FGCS): we use a mumble timer for this. The timer loops
+  and checks if the audio buffer is played and still valid. If not,
+  the bot is shutdown.
+]]
+--[[  EXPERIMENTAL
+local decoder = mumble.decoder()
+local playbackTimer_fgcs = mumble.timer()
+local fgcs_playedCount = 0
+playbackTimer_fgcs_func_streamed = function(t)
+    fgcom.dbg("playback timer (fgcs): tick")
+    --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
+    
+    -- Debug out: header
+    --for k,v in pairs(lastHeader) do
+    --    fgcom.dbg("header read: '"..k.."'='"..v.."'")
+    --end
+    
+    -- So, a new timer tick started.
+    local isPlaying = (not fgcs_audiostream == nil and not fgcs_audiostream:isEmpty())
+    print("DBG; isPlaying:"..tostring(isPlaying))
+
+    if not isPlaying then
+        -- See if we need to add a pause
+        local sleep = getPause(pause)
+        if sleep > 0 then
+            --fgcom.dbg("Looped timer: pause for "..sleep.."s")
+            t:pause() -- Stop the loop timer
+            local pauseTimer = mumble.timer()
+            pauseTimer:start(
+            function()
+                --fgcom.dbg("Looped timer: pause done, restarting playback timer")
+                t:again()
+                end
+            , sleep, 0)
+        end
+
+        -- check if the file is still valid
+        local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
+        local persistent = false
+        if lastHeader.timetolive == "0" then
+            fgcom.dbg(sample..": This is a persistent sample.")
+            timeLeft   = 1337   -- just some arbitary dummy value in the future
+            persistent = true   -- loops forever!
+        end
+        if not persistent and timeLeft < 0 then
+            fgcom.log(sample..": FGCS file outdated since "..timeLeft.." seconds; removing")
+            delSample(sample)
+            shutdownBot()
+            fgcom.dbg("disconnected: we are done.")
+            t:stop() -- Stop the timer
+        else
+            -- Samples are still valid;  and start to play
+            if lastHeader.playbacktype == "oneshot" and fgcs_playedCount >= 1 then
+                fgcom.log("Oneshot sample detected, not looping.")
+                local persistent = false
+                if lastHeader.timetolive ~= "0" then
+                    fgcom.log("deleting oneshot non-persistent sample file.")
+                    delSample(sample)
+                end
+                shutdownBot()
+                fgcom.dbg("disconnected: we are done.")
+                t:stop() -- Stop the timer
+
+            else
+                -- loop over (or start playing the first time)
+                if (fgcs_playedCount == 0) then
+                    fgcom.dbg(sample..": FGCS file still valid for "..timeLeft.."s: start playing sample.")
+                    -- prepare audio buffer
+                    --fgcom.dbg("building audio buffer...")
+                    fgcs_audiostream = client:createAudioBuffer(48000, 2)
+                    for k,nextSample in pairs(voiceBuffer) do 
+                        --fgcom.dbg("  tgt="..playback_target:getSession())
+                        --fgcom.dbg("  eos="..tostring(endofStream))
+                        --fgcom.dbg("  cdc="..lastHeader.voicecodec)
+                        if type(nextSample) == "table" then
+                            --fgcom.dbg("  dta="..#nextSample.data)
+                            --fgcom.dbg("  dta="..nextSample.data)
+                            local decoded = decoder:decodeFloat(nextSample.data)
+                            fgcs_audiostream:write(decoded)
+                        end
+                    end
+                else
+                    fgcom.dbg(sample..": FGCS file still valid for "..timeLeft.."s: looping over.")
+                end
+
+                fgcs_playedCount = fgcs_playedCount + 1
+                --fgcs_audiostream:stop() --reset audio stream to start
+                --fgcs_audiostream:play()
+
+            end
+        end
+    else
+        fgcom.dbg("buffer still playing")
+    end
+
+    --fgcom.dbg("playback timer (fgcs): tick done")
+end
+--]]
+
 
 --[[
   Playback loop (ogg): we use a mumble timer for this.
@@ -422,8 +607,11 @@ end
   If it is not playing, it checks wether it should terminate or play another round.
 ]]
 local playbackTimer_ogg = mumble.timer()
+local stream
 playbackTimer_ogg_func = function(t)
     fgcom.dbg("playback timer (ogg): tick")
+    --fgcom.dbg("  duration="..t:getDuration().."; repeat="..t:getRepeat());
+
     local timeLeft = fgcom.data.getFGCSremainingValidity(lastHeader)
     local persistent = false
     if lastHeader.timetolive == "0" then
@@ -438,29 +626,29 @@ playbackTimer_ogg_func = function(t)
         t.stop() -- Stop the timer
     else
         fgcom.dbg(sample..": OGG file still valid for "..timeLeft.."s")
-        if not client:isPlaying() then
+        if not stream or not stream:isPlaying() then
             -- See if we need to add a pause
             local sleep = getPause(pause)
             if sleep > 0 then
-                --fgcom.dbg("Looped timer: pause for "..sleep.."s")
-                t:stop() -- Stop the loop timer
+                fgcom.dbg("Looped timer: pause for "..sleep.."s")
+                t:pause() -- Stop the loop timer
                 local pauseTimer = mumble.timer()
-                pauseTimer:start(
-                function()
+                pauseTimer:start(function()
                     --fgcom.dbg("Looped timer: pause done, restarting playback timer")
-                    t:again()
-                    end
-                , sleep, 0)
+                    t:resume()
+                end, sleep, 0)
             end
             
             fgcom.dbg(sample..": starting sample")
-            local f=io.open(sample,"r") if f~=nil then  io.close(f) else print("error opening "..sample..": no such file") os.exit(1) end
-            client:play(sample)
+            stream = assert( client:openAudio(sample) )
+            stream:stop() -- reset to start
+            stream:play()
         else
             -- client is still playing, let him finish the current sample
             fgcom.dbg("OGG still playing")
         end
     end
+    --fgcom.dbg("playback timer (ogg): tick done")
 end
 
 
@@ -475,9 +663,11 @@ notifyLocation = function(tgts)
     if overwriteHeader.lat    then lastHeader.lat    = overwriteHeader.lat end
     if overwriteHeader.lon    then lastHeader.lon    = overwriteHeader.lon end
     if overwriteHeader.height then lastHeader.height = overwriteHeader.height end
-    local msg = "LON="..lastHeader.lon
-              ..",LAT="..lastHeader.lat
-              ..",ALT="..lastHeader.height
+
+    -- build message. (5 decimal places are way enough precision (~1 meter), so we can save protocol data ammount)
+    local msg =  "LON="..tonumber(string.format("%2.5f", lastHeader.lon))
+              ..",LAT="..tonumber(string.format("%2.5f", lastHeader.lat))
+              ..",ALT="..math.floor(lastHeader.height)
     fgcom.dbg("Bot sets location: "..msg)
     client:sendPluginData("FGCOM:UPD_LOC:0", msg, tgts)
 end
@@ -513,9 +703,76 @@ updateComment = function()
                      .."<tr><th>Channel:</th><td><tt>"..lastHeader.dialedFRQ.."</tt></td></tr>"
                      .."<tr><th>Frequency:</th><td><tt>"..lastHeader.frequency.."</tt></td></tr>"
                      .."<tr><th>Power:</th><td><tt>"..lastHeader.txpower.."W</tt></td></tr>"
-                     .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..lastHeader.lat.."</tt></td></tr><tr><td>Lon:</td><td><tt>"..lastHeader.lon.."</tt></td></tr><tr><td>Height:</td><td><tt>"..lastHeader.height.."</tt></td></tr></table></td></tr>"
+                     .."<tr><th>Position:</b></th><td><table><tr><td>Lat:</td><td><tt>"..string.format("%2.5f",lastHeader.lat).."</tt></td></tr><tr><td>Lon:</td><td><tt>"..string.format("%2.5f",lastHeader.lon).."</tt></td></tr><tr><td>Height:</td><td><tt>"..math.floor(lastHeader.height).."</tt></td></tr></table></td></tr>"
                      .."<tr><th>Valid for:</th><td><tt>"..ttl_str.."</tt></td></tr>"
                      .."</table>")
+end
+
+-- A timer that will send PING packets from time to time
+local pingTimer = mumble.timer()
+pingTimer_func = function(t)
+    fgcom.dbg("sending PING packet")
+    updateAllChannelUsersforSend(client)
+    client:sendPluginData("FGCOM:PING", "0", playback_targets)
+end
+
+
+-- Movement timer
+local movementTimer = mumble.timer()
+movementTimer_func = function()
+    local dt = 1/(60/movementTimerT) -- dt is the fraction of one minute
+
+    if speedV and (speedV.knots > 0 or speedV.vs ~= 0) then
+        fgcom.dbg("movementTimer: calculate new location")
+
+        -- If we send periodically location updates, we don't need pings
+        if not pingTimer:isPaused() then pingTimer:pause() end
+
+        -- initialize a fresh overwrite header if not available already
+        if not overwriteHeader.lat    then overwriteHeader.lat    = lastHeader.lat end
+        if not overwriteHeader.lon    then overwriteHeader.lon    = lastHeader.lon end
+        if not overwriteHeader.height then overwriteHeader.height = lastHeader.height end
+
+        -- calculate new position
+        if speedV.knots > 0 then
+            local distKMperMinute = fgcom.geo.nauticalMiles2kilometers(speedV.knots)/60 --knots is nM/hour
+            fgcom.dbg("movementTimer:   distKMperMinute="..distKMperMinute.." (from "..speedV.knots.." kias)")
+            fgcom.dbg("movementTimer:   heading="..string.format("%03d", speedV.heading))
+            local newLat, newLon, poleWrapped = fgcom.geo.getPointAtDistance(
+                overwriteHeader.lat, overwriteHeader.lon, speedV.heading, distKMperMinute*dt)
+
+            overwriteHeader.lat = newLat
+            overwriteHeader.lon = newLon
+
+            -- when coming near the poles, take a new heading to the equator
+            -- Note: This wrapping code is currently very naive and not realistic. One would expect a plane/sattelite to just
+            --       continue its track over the pole. We might do better in the future by detecting the wrap (for example maybe
+            --       when lat is increasing and then suddenly decreasing accompanied wit a huge change in longitude)
+            if newLat >  85.0 and speedV.heading <  90 then speedV.heading = speedV.heading+(90-speedV.heading)*2 end
+            if newLat >  85.0 and speedV.heading > 270 then speedV.heading = speedV.heading-(speedV.heading-270)*2 end
+            if newLat < -85.0 and speedV.heading >  90 and speedV.heading <= 180 then speedV.heading = speedV.heading+(90-speedV.heading)*2 end
+            if newLat < -85.0 and speedV.heading < 270 and speedV.heading  > 180 then speedV.heading = speedV.heading-(speedV.heading-270)*2 end
+        end
+
+        -- calculate new height
+        if speedV.vs ~= 0 then
+            local vsInMeter = fgcom.geo.ft2m(speedV.vs) -- FGCom-mumble calculates height in SI units (meters)
+            overwriteHeader.height = math.max(0, overwriteHeader.height + vsInMeter*dt)
+        end
+
+        -- send UPD:LOC packet to clients
+        updateAllChannelUsersforSend(client)
+        notifyLocation(playback_targets)
+        -- spam ok? updateComment()
+
+    else
+        fgcom.dbg("movementTimer: enter pause mode")
+        -- reactivate pings
+        if pingTimer:isPaused() then pingTimer:resume() end
+
+        --pause our timer
+        if not movementTimer:isPaused() then movementTimer:pause() end
+    end
 end
 
 client:hook("OnServerSync", function(client, event)
@@ -526,7 +783,7 @@ client:hook("OnServerSync", function(client, event)
     local ch = client:getChannel(fgcom.channel)
     event.user:move(ch)
     fgcom.log("joined channel "..fgcom.channel)
-    
+
     -- update current users of channel
     updateAllChannelUsersforSend(client)
 
@@ -544,31 +801,30 @@ client:hook("OnServerSync", function(client, event)
         
     -- Setup a radio to broadcast from
     notifyRadio(playback_targets)
-           
+        
     -- periodically update the comment
     updateCommentTimer:start(updateComment, 0.0, updateComment_t)
         
+    fgcom.log("start playback ("..sampleType..")")
     if sampleType == "FGCS" then
         -- start the playback timer.
-        -- this will process the voice buffer.
+        -- this will control playback validity time. The actual FGCS sample
+        -- is payed until the bot is shutdown from the check timer or the FGCS is invalid.
         playbackTimer_fgcs:start(playbackTimer_fgcs_func, 0.0, lastHeader.samplespeed)
+        -- TODO experimental stream FGCS player: playbackTimer_fgcs:start(playbackTimer_fgcs_func_streamed, 0.0, 0.5)
     end
     if sampleType == "OGG" then
         -- start the OGG playback timer loop
         playbackTimer_ogg:start(playbackTimer_ogg_func, 0.0, 0.5)
     end
-           
-    
-    -- A timer that will send PING packets from time to time
-    local pingTimer = mumble.timer()
-    pingTimer:start(function(t)
-        fgcom.dbg("sending PING packet")
-        updateAllChannelUsersforSend(client)
-        client:sendPluginData("FGCOM:PING", "0", playback_targets)
-    end, pingT, pingT)
-    
-end)
 
+    -- send pings from time to time
+    pingTimer:start(pingTimer_func, pingT, pingT)
+
+    -- periodically update the location
+    movementTimer:start(movementTimer_func, 0.0, movementTimerT)
+
+end)
 
 client:hook("OnPluginData", function(client, event)
     --["sender"] = mumble.user sender, -- Who sent this data packet
@@ -596,11 +852,18 @@ client:hook("OnUserChannel", function(client, event)
 	--["from"]	= mumble.channel from,
 	--["to"]	= mumble.channel to,
 
-    if event.to:getName() == fgcom.channel then
+    -- someone else joined the fgcom.channel
+    if event.to:getName() == fgcom.channel
+      and not event.user == client:getSelf() then
         fgcom.dbg("OnUserChannel(): client joined fgcom.channel: "..event.user:getName())
         notifyUserdata({event.user})
         notifyLocation({event.user})
         notifyRadio({event.user})
+    end
+
+    -- the bot itself joined the fgcom.channel
+    if event.user == client:getSelf() then
+        -- nothing to do right now
     end
 end)
 
@@ -642,6 +905,7 @@ client:hook("OnMessage", function(client, event)
                     .."<tr><th style=\"text-align:left\"><tt>/frq &lt;mhz&gt;</tt></th><td>Switch frequency to this real-wave-frequency (Mhz in <tt>x.xxxx</tt>).</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/pwr &lt;watts&gt;</tt></th><td>Change output watts.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/move &lt;lat lon hgt&gt;</tt></th><td>Move to new coordinates. lat/lon are decimal degrees (<tt>x.xxx</tt>), hgt is meters above ground.</td></tr>"
+                    .."<tr><th style=\"text-align:left\"><tt>/speed &lt;heading knots vs&gt;</tt></th><td>Let the bot move itself (heading is 0-359, knots is airspeed, vs is ft/min). <tt>/speed 0</tt> stops movement.</td></tr>"
                     .."<tr><th style=\"text-align:left\"><tt>/rename &lt;callsign&gt;</tt></th><td>Rename to new callsign.</td></tr>"
                     .."</table>"
                 )
@@ -679,7 +943,7 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-           if command == "move" then
+            if command == "move" then
                 if not param then event.actor:message("/move needs new x,y,z coordinates as argument!") return end
                 _, _, ly, lx, la = string.find(param, "([-%d.]+) ([-%d.]+) ([%d.]+)")
                 if not ly or not lx or not la then event.actor:message("/move params need to be proper decimals!") return end
@@ -693,10 +957,28 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-           if command == "rename" then
+            if command == "speed" then
+                if not param then event.actor:message("/speed needs heading, knots, verticalSpeed as arguments!") return end
+                if param == "0" then
+                    -- param shortcut
+                    speedV = {heading=0, knots=0, vs=0}
+                else
+                    _, _, h, k, v = string.find(param, "(%d+) (%d+) (-?%d+)")
+                    h=tonumber(h)  k=tonumber(k)  v=tonumber(v)
+                    if k==nil or v==nil or h==nil then event.actor:message("/speed needs heading, knots, verticalSpeed as numeric arguments!") return end
+                    if h < 0 or h > 359 then event.actor:message("/speed heading must be between 0 and 359") return end
+                    if k < 0 then event.actor:message("/speed knots must be >= 0") return end
+                    speedV = {heading=tonumber(h), knots=tonumber(k), vs=tonumber(v)}
+                end
+                movementTimer:resume()
+                event.actor:message(string.format("new movement speed: heading=%03d deg, knots=%d KIAS, verticalSpeed=%d ft/min", speedV.heading, speedV.knots, speedV.vs))
+                return
+            end
+
+            if command == "rename" then
                 if not param then event.actor:message("/rename needs an argument!") return end
                 _, _, cs = string.find(param, "([-%w]+)")
-                if not cs then event.actor:message("/move param need to be ASCII chars!") return end
+                if not cs then event.actor:message("/rename param need to be ASCII chars!") return end
                 overwriteHeader.callsign = cs
                 updateAllChannelUsersforSend(client)
                 notifyUserdata(playback_targets)
@@ -705,7 +987,7 @@ client:hook("OnMessage", function(client, event)
                 return
             end
 
-            if command == "exit" then
+            if command == "exit" or command == "quit" then
                 fgcom.dbg("exit command received")
                 event.actor:message("goodbye!")
                 shutdownBot()

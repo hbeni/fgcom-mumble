@@ -33,7 +33,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.0.1"
+fgcom.botversion = "1.0.2"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -70,30 +70,30 @@ local s_lat  = "random"
 local s_lon  = "random"
 local s_alt  = "random"
 
+printHelp = function()
+    print(botname..", "..fgcom.getVersion())
+    print("usage: "..arg[0].." [opt=val ...]")
+    print("  Options:")
+    print("    --id=      id to join with              (default=random)")
+    print("    --host=    host to connect to           (default="..host..")")
+    print("    --port=    port to connect to           (default="..port..")")
+    print("    --channel= channel to join                  (default="..fgcom.channel..")")
+    print("    --cert=    path to PEM encoded cert     (default="..cert..")")
+    print("    --key=     path to the certs key        (default="..key..")")
+    print("    --sample=  FGCS sample file to transmit")
+    print("    --locs=    Seconds between location updates (default="..locs..")")
+    print("    --sleep=   Time interval between checks (default="..sleep..")")
+    print("    --chancet= Chance for transmission      (default="..chance_transmit..")")
+    print("    --chancee= Chance that transmit is echotest   (default="..chance_echotest..")")
+    print("    --lat=     start latitude (decimal)     (default="..s_lat..")")
+    print("    --lon=     start longitude (decimal)    (default="..s_lon..")")
+    print("    --alt=     start altitude (decimal)     (default="..s_alt..")")
+    print("    --debug    print debug messages         (default=no)")
+    print("    --version  print version and exit")
+    os.exit(0)
+end
+
 if arg[1] then
-    if arg[1]=="-h" or arg[1]=="--help" then
-        print(botname..", "..fgcom.getVersion())
-        print("usage: "..arg[0].." [opt=val ...]")
-        print("  Options:")
-        print("    --id=      id to join with              (default=random)")
-        print("    --host=    host to connect to           (default="..host..")")
-        print("    --port=    port to connect to           (default="..port..")")
-        print("    --channel= channel to join                  (default="..fgcom.channel..")")
-        print("    --cert=    path to PEM encoded cert     (default="..cert..")")
-        print("    --key=     path to the certs key        (default="..key..")")
-        print("    --sample=  FGCS sample file to transmit")
-        print("    --locs=    Seconds between location updates (default="..locs..")")
-        print("    --sleep=   Time interval between checks (default="..sleep..")")
-        print("    --chancet= Chance for transmission      (default="..chance_transmit..")")
-        print("    --chancee= Chance that transmit is echotest   (default="..chance_echotest..")")
-        print("    --lat=     start latitude (decimal)     (default="..s_lat..")")
-        print("    --lon=     start longitude (decimal)    (default="..s_lon..")")
-        print("    --alt=     start altitude (decimal)     (default="..s_alt..")")
-        print("    --debug    print debug messages         (default=no)")
-        print("    --version  print version and exit")
-        os.exit(0)
-    end
-    
     for _, opt in ipairs(arg) do
         _, _, k, v = string.find(opt, "--(%w+)=(.+)")
         if k=="id"      then botid=v end
@@ -112,8 +112,10 @@ if arg[1] then
         if k=="alt"     then s_alt=v end
         if opt == "--debug" then fgcom.debugMode = true end
         if opt == "--version" then print(botname..", "..fgcom.getVersion()) os.exit(0) end
+        if opt == "--help" or opt == "-h" then printHelp() end
     end
-    
+else
+    printHelp()
 end
 
 -- parameter checks
@@ -191,10 +193,15 @@ fgcom.log("move vector: latmv="..latmv..", lonmv="..lonmv)
 
 
 -- Connect to server, so we get the API
+fgcom.log(botname..": "..fgcom.getVersion())
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = assert(mumble.connect(host, port, cert, key))
-client:auth(fgcom.callsign)
-fgcom.dbg("connect and bind: OK")
+local client = mumble.client()
+assert(client:connect(host, port, cert, key))
+
+client:hook("OnConnect", function(client)
+    client:auth(fgcom.callsign)
+    fgcom.dbg("connect and bind: OK")
+end)
 
 
 
@@ -228,7 +235,6 @@ end
   the playback-rate and looks if there are samples buffered. If so,
   he fetches them and plays them, one packet per timer tick.
 ]]
-local playbackTimer = mumble.timer()
 playbackTimer_func = function(t)
     --fgcom.dbg("playback timer: tick; ptt=",ptt)
     
@@ -293,8 +299,8 @@ playbackTimer_func = function(t)
                     client:sendPluginData("FGCOM:UPD_COM:0:0", msg, playback_targets)
                 end
                 
-                t:stop() -- Stop the timer
                 fgcom.log("Transmission complete.")
+                t:stop() -- Stop the timer
             end
         end
         
@@ -372,6 +378,7 @@ client:hook("OnServerSync", function(client, event)
             if not ptt then
                 --fgcom.dbg("activating PTT")
                 ptt = true
+                playbackTimer = mumble.timer()
                 playbackTimer:start(playbackTimer_func, 0.0, lastHeader.samplespeed)
             else
                 -- fgcom.dbg("(not activating PTT, its still active)")
