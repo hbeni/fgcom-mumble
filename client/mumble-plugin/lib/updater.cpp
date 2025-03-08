@@ -434,6 +434,7 @@ void fgcom_getLatestReleaseFrom_WebVersionChecker() {
                                         + "." + std::to_string(fgcom_release_latest.version.minor)
                                         + "." + std::to_string(fgcom_release_latest.version.patch);
                     //fgcom_release_latest.downUrl = dlurlbase+"/fgcom-mumble-client-binOnly-"+verStr+".zip";
+                    //if (scheme == "http") fgcom_bin_postfix += "-nossl";
                     fgcom_release_latest.downUrl = dlurlbase+"/"+fgcom_asset_name+verStr+fgcom_bin_postfix+fgcom_bin_extension;
 
                 } else {
