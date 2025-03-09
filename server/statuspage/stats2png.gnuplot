@@ -4,7 +4,7 @@
 # 'timeselect' parameters accept timestamps for an actual day (YYYYmmdd). Time information is optional and will be filled in with zeroes.
 #              You can give a timestamp with up to seconds resolution (YYYYmmddHHMMSS) like '20210401133766'.
 
-set terminal png
+set terminal pngcairo
 set autoscale
 set datafile separator whitespace
 set xdata time
