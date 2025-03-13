@@ -42,10 +42,25 @@
                 setprop(oprbl_test_string_p, oprbl_test_string);
             });
             ptt_test_string_timer.start();
+
+            validate_input = func() {
+                var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate";
+                if (getprop(p) == 0) setprop(p, 10);
+
+                var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/host";
+                if (getprop(p) == "") setprop(p, "localhost");
+
+                var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/port";
+                if (getprop(p) == 0) setprop(p, 16661);
+
+                var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfport";
+                if (getprop(p) == 0) setprop(p, 19991);
+            }
         ]]>
         </open>
         <close>
         <![CDATA[
+            validate_input();
             ptt_test_string_timer.stop();
         ]]>
         </close>
@@ -396,6 +411,13 @@
             <enable> <not> <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/protocol-init-locked</property> </not>  </enable>
             <binding>
                 <command>dialog-apply</command>
+            </binding>
+            <binding>
+                <command>nasal</command>
+                <script>validate_input();</script>
+            </binding>
+            <binding>
+                <command>dialog-update</command>
             </binding>
         </button>
 
