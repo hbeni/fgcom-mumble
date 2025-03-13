@@ -422,6 +422,20 @@
         </button>
 
         <button>
+            <halign>left</halign>
+            <legend>Apply defaults</legend>
+            <enable> <not> <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/protocol-init-locked</property> </not>  </enable>
+            <binding>
+                <command>nasal</command>
+                <script>validate_input(1);</script>
+            </binding>
+            <binding>
+                <!-- NOTE/INFO/TODO: Using canvas this would be better. Currently dialog-update will reinit like "apply" does. What we really want is to reset the input elements temporary in-memory value, so we still can choose to apply or cancel. -->
+                <command>dialog-update</command>
+            </binding>
+        </button>
+
+        <button>
             <legend>Cancel</legend>
             <pref-width>90</pref-width>
             <pref-height>30</pref-height>
