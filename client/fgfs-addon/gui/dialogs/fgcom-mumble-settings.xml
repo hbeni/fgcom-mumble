@@ -380,6 +380,7 @@
             <legend>OK</legend>
             <pref-width>90</pref-width>
             <pref-height>30</pref-height>
+            <enable> <not> <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/protocol-init-locked</property> </not>  </enable>
             <binding>
                 <command>dialog-apply</command>
             </binding>
@@ -392,6 +393,7 @@
             <legend>Apply</legend>
             <pref-width>90</pref-width>
             <pref-height>30</pref-height>
+            <enable> <not> <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/protocol-init-locked</property> </not>  </enable>
             <binding>
                 <command>dialog-apply</command>
             </binding>

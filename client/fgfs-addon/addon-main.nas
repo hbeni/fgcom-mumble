@@ -12,6 +12,9 @@ var FGComMumble = {
   listeners: {},
   timers: {},
   
+  protocolInitializedNode: nil,
+  protocolInitLockNode: nil,
+  
   # Small simple logger which allows filtering by category and severity
   # changeable at runtime by setting props
   logger: {
@@ -61,8 +64,111 @@ var FGComMumble = {
     me.logger.init();
     
     FGComMumble.logger.log("core", -1, "Version "~me.rootNode.getChild("version").getValue() ~ " loading..." );
+    
+    me.fgcom3_compatInit();
+    
+    me.initMenu();
+    
+    me.protocolInitializedNode = me.rootNode.initNode("protocol-initialized", 0, "BOOL");
+    me.protocolInitLockNode    = me.rootNode.initNode("protocol-init-locked", 0, "BOOL");
+  },
+
+  destroy: func() {
+    foreach (var t; keys(me.timers)) me.timers[t].stop();
+    me.timers = {};
+
+    foreach (var l; keys(me.listeners)) removelistener(me.listeners[l]);
+    me.listeners = {};
+  },
+
+  fgcom3_compatInit: func() {
+    # FGCom 3.0 compatibility:
+    # The old FGCom protocol seems outdated and transmit an old property.
+    # To get compatibility out-of-the-box, we listen to changes and
+    # translate the value to the individual comms ptt property.
+    # (the code tries to do this only for existing properties, so we don't create nodes accidentally)
+    var legacy_fgcom_ptt_prop = "/controls/radios/comm-ptt";
+    FGComMumble.logger.log("core", 2, "adding legacy FGCom PTT handling ("~legacy_fgcom_ptt_prop~")");
+
+    var legacy_fgcom_ptt_oldVal = 0;
+    var legacy_fgcom_ptt_set = func(id, active) {
+      var selected_comm = props.globals.getNode("/instrumentation/").getChild("comm", id);
+      if (selected_comm != nil) {
+        var selected_comm_ptt = selected_comm.getChild("ptt");
+        if (selected_comm_ptt != nil) {
+          FGComMumble.logger.log("radio", 4, "     comm["~id~"] set to "~active);
+          selected_comm_ptt.setBoolValue(active);
+        } else {
+          FGComMumble.logger.log("radio", 4, "     comm["~id~"] has no ptt node");
+        }
+      } else {
+        FGComMumble.logger.log("radio", 4, "     comm["~id~"] not registered");
+      }
+    };
+    FGComMumble.logger.log("radio", 3, "add listener for legacy_fgcom_ptt (" ~ legacy_fgcom_ptt_prop ~")");
+    FGComMumble.listeners["legacy_fgcom_ptt"] = _setlistener(legacy_fgcom_ptt_prop, func {
+      var fgcom_ptt_selector = getprop(legacy_fgcom_ptt_prop);
+      FGComMumble.logger.log("radio", 4, "   legacy_fgcom_ptt(" ~ fgcom_ptt_selector ~")");
+      if (fgcom_ptt_selector > 0) {
+        # Activate PTT
+        legacy_fgcom_ptt_set(fgcom_ptt_selector-1, 1);
+      } else {
+        # Reset PTT
+        if (legacy_fgcom_ptt_oldVal > 0) {
+          # reset previous com-ptt
+          legacy_fgcom_ptt_set(legacy_fgcom_ptt_oldVal-1, 0);
+        }
+      }
+      legacy_fgcom_ptt_oldVal = fgcom_ptt_selector;
+    }, 0, 0);
+
+    # FCOM 3.0 bug prevention (#204)
+    # Running FGCom-mumble and legacy FGCom has resulted in legacy FGCom segfaulting.
+    # So, if we activate FGCom-mumble, legacy FGCom must be turned off.
+    var legacy_fgcom_enabled_prop = "/sim/fgcom/enabled";
+    if (getprop(legacy_fgcom_enabled_prop)) {
+      FGComMumble.logger.log("core", 2, "disabling legacy FGCom (" ~ legacy_fgcom_enabled_prop ~")");
+      setprop(legacy_fgcom_enabled_prop, 0);
+    }
   },
   
+  initMenu: func() {
+    # We search the old FGCOM menu bar item to disable it, so nobody accidentally
+    # opens the old FGCom dialoge which will reenable itself.
+    # We do this by overwriting the classic menu entry, if possible.
+    var menubar = props.globals.getNode("/sim/menubar/default");
+    var legacy_fgcom_menuDisabled = 0;
+    foreach (menu_entry; menubar.getChildren("menu")) {
+      foreach (menu_item; menu_entry.getChildren("item")) {
+        if (menu_item.getValue("name") == "fgcom-settings") {
+          legacy_fgcom_menuDisabled = 1;
+          FGComMumble.logger.log("core", 2, "overwriting legacy FGCom menu entry ("~menu_item.getPath()~")" );
+          #menu_item.setBoolValue("enabled", 0);
+
+          # overwrite the entry with our menu
+          menu_item.setValue("label", "FGCom-mumble");
+          menu_item.setValue("name", "fgcom-mumble");
+          menu_item.getChild("binding").setValue("dialog-name", "fgcom-mumble-settings");
+          fgcommand("gui-redraw");
+          break;
+        }
+      }
+      if (legacy_fgcom_menuDisabled) break;
+    }
+
+    # Init GUI menu entry, in case we could't overwrite the classic FGCom one
+    if (!legacy_fgcom_menuDisabled) {
+      FGComMumble.logger.log("core", 2, "adding FGCom-mumble menu entry" );
+      var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
+      var menudata = {
+          label   : "FGCom-mumble",
+          name    : "fgcom-mumble",
+          binding : { command : "dialog-show", "dialog-name" : "fgcom-mumble-settings" }
+      };
+      props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
+      fgcommand("gui-redraw");
+    }
+  },
 
   # Udpate checks
   checkUpdate: func(showOK) {
@@ -152,7 +258,6 @@ var main = func( addon ) {
     var root = addon.basePath;
     var myAddonId  = addon.id;
     var mySettingsRootPath = "/addons/by-id/" ~ myAddonId;
-    var protocolInitialized = 0;
     var fgcom_timers = {};
     var fgcom_listeners = {};
     
@@ -275,7 +380,9 @@ var main = func( addon ) {
     }
 
     var initProtocol = func() {
-      if (protocolInitialized == 0) {
+      FGComMumble.protocolInitLockNode.setBoolValue(1);
+
+      if (! FGComMumble.protocolInitializedNode.getBoolValue()) {
         FGComMumble.logger.log("core", 2, "initializing addon");
         var enabled = getprop(mySettingsRootPath ~ "/enabled");
         var refresh = getprop(mySettingsRootPath ~ "/refresh-rate");
@@ -311,98 +418,19 @@ var main = func( addon ) {
             r_out_l_idx = r_out_l_idx + 1;
           }
           
-          # FGCom 3.0 compatibility:
-          # The old FGCom protocol seems outdated and transmit an old property.
-          # To get compatibility out-of-the-box, we listen to changes and
-          # translate the value to the individual comms ptt property.
-          # (the code tries to do this only for existing properties, so we don't create nodes accidentally)
-          var legacy_fgcom_ptt_prop = "/controls/radios/comm-ptt";
-          var legacy_fgcom_ptt_oldVal = 0;
-          var legacy_fgcom_ptt_set = func(id, active) {
-            var selected_comm = props.globals.getNode("/instrumentation/").getChild("comm", id);
-            if (selected_comm != nil) {
-              var selected_comm_ptt = selected_comm.getChild("ptt");
-              if (selected_comm_ptt != nil) {
-                FGComMumble.logger.log("radio", 4, "     comm["~id~"] set to "~active);
-                selected_comm_ptt.setBoolValue(active);
-              } else {
-                FGComMumble.logger.log("radio", 4, "     comm["~id~"] has no ptt node");
-              }
-            } else {
-              FGComMumble.logger.log("radio", 4, "     comm["~id~"] not registered");
-            }
-          };
-          FGComMumble.logger.log("radio", 3, "add listener for legacy_fgcom_ptt (" ~ legacy_fgcom_ptt_prop ~")");
-          fgcom_listeners["legacy_fgcom_ptt"] = _setlistener(legacy_fgcom_ptt_prop, func {
-            var fgcom_ptt_selector = getprop(legacy_fgcom_ptt_prop);
-            FGComMumble.logger.log("radio", 4, "   legacy_fgcom_ptt(" ~ fgcom_ptt_selector ~")");
-            if (fgcom_ptt_selector > 0) {
-              # Activate PTT
-              legacy_fgcom_ptt_set(fgcom_ptt_selector-1, 1);
-            } else {
-              # Reset PTT
-              if (legacy_fgcom_ptt_oldVal > 0) {
-                # reset previous com-ptt
-                legacy_fgcom_ptt_set(legacy_fgcom_ptt_oldVal-1, 0);
-              }
-            }
-            legacy_fgcom_ptt_oldVal = fgcom_ptt_selector;
-          }, 0, 0);
-
-          # FCOM 3.0 bug prevention (#204)
-          # Running FGCom-mumble and legacy FGCom has resulted in legacy FGCom segfaulting.
-          # So, if we activate FGCom-mumble, legacy FGCom must be turned off.
-          var legacy_fgcom_enabled_prop = "/sim/fgcom/enabled";
-          if (getprop(legacy_fgcom_enabled_prop)) {
-            FGComMumble.logger.log("core", 2, "disabling legacy FGCom (" ~ legacy_fgcom_enabled_prop ~")");
-            setprop(legacy_fgcom_enabled_prop, 0);
-          }
-          # Also we search the menu bar item to disable it, so nobody accidentally
-          # opens the old FGCom dialoge which will reenable itself.
-          # We do this by overwriting the classic menu entry, if possible.
-          var menubar = props.globals.getNode("/sim/menubar/default");
-          var legacy_fgcom_menuDisabled = 0;
-          foreach (menu_entry; menubar.getChildren("menu")) {
-            foreach (menu_item; menu_entry.getChildren("item")) {
-              if (menu_item.getValue("name") == "fgcom-settings") {
-                legacy_fgcom_menuDisabled = 1;
-                FGComMumble.logger.log("core", 2, "overwriting legacy FGCom menu entry ("~menu_item.getPath()~")" );
-                #menu_item.setBoolValue("enabled", 0);
-                
-                # overwrite the entry with our menu
-                menu_item.setValue("label", "FGCom-mumble");
-                menu_item.setValue("name", "fgcom-mumble");
-                menu_item.getChild("binding").setValue("dialog-name", "fgcom-mumble-settings");
-                fgcommand("gui-redraw");
-                break;
-              }
-            }
-            if (legacy_fgcom_menuDisabled) break;
-          }
-          
-          # Init GUI menu entry, in case we could't overwrite the classic FGCom one
-          if (!legacy_fgcom_menuDisabled) {
-            FGComMumble.logger.log("core", 2, "adding FGCom-mumble menu entry" );
-            var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
-            var menudata = {
-                label   : "FGCom-mumble",
-                name    : "fgcom-mumble",
-                binding : { command : "dialog-show", "dialog-name" : "fgcom-mumble-settings" }
-            };
-            props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
-            fgcommand("gui-redraw");
-          }
-
           
           update_udp_output();
           
-          protocolInitialized = 1;
+          FGComMumble.protocolInitializedNode.setBoolValue(1);
         }
       }
+      FGComMumble.protocolInitLockNode.setBoolValue(0);
     }
 
     var shutdownProtocol = func() {
-        if (protocolInitialized == 1) {
+        FGComMumble.protocolInitLockNode.setBoolValue(1);
+
+        if (FGComMumble.protocolInitializedNode.getBoolValue()) {
             FGComMumble.logger.log("udp", 2, "shutdown protocol...");
             foreach (var channelName; ["fgcom-mumble-out", "fgcom-mumble-in"]) {
               FGComMumble.logger.log("udp", 3, "remove-io-channel("~channelName~")");
@@ -418,9 +446,11 @@ var main = func( addon ) {
           
             foreach (var l; keys(fgcom_listeners)) removelistener(fgcom_listeners[l]);
             fgcom_listeners = {};
-          
-            protocolInitialized = 0;
+            
+            FGComMumble.protocolInitializedNode.setBoolValue(0);
         }
+        
+        FGComMumble.protocolInitLockNode.setBoolValue(0);
     }
 
     var reinitProtocol = func() {
@@ -428,6 +458,7 @@ var main = func( addon ) {
         shutdownProtocol();
 
         # Delay start so the closing channel has time to finalize the socket
+        FGComMumble.protocolInitLockNode.setBoolValue(1);   # relock for the duration of the timer
         var delayRestart_t = maketimer(1, FGComMumble, initProtocol);
         delayRestart_t.singleShot = 1;
         delayRestart_t.start();
