@@ -14,6 +14,20 @@ var FGComMumble = {
   
   protocolInitializedNode: nil,
   protocolInitLockNode: nil,
+
+  defaults: {
+    enabled:             1,
+    refreshRate:         10,
+    host:                "localhost",
+    port:                16661,
+    rdfport:             19991,
+    checkForUpdates:     1,
+    audioEffectsEnabled: 1,
+    comRDFEnabled:       1,
+    audioHearAll:        0,
+    forceEchoTestFRQ:    0,
+  },
+  configNodes: nil,
   
   # Small simple logger which allows filtering by category and severity
   # changeable at runtime by setting props
@@ -65,6 +79,8 @@ var FGComMumble = {
     
     FGComMumble.logger.log("core", -1, "Version "~me.rootNode.getChild("version").getValue() ~ " loading..." );
     
+    me.initNodes();
+    
     me.fgcom3_compatInit();
     
     me.initMenu();
@@ -81,6 +97,62 @@ var FGComMumble = {
     me.listeners = {};
   },
 
+  initNodes: func() {
+    me.configNodes = {};
+    var configRootNode = me.rootNode;
+    me.configNodes.enabledNode = configRootNode.getNode("enabled", 1);
+    me.configNodes.enabledNode.setAttribute("userarchive", "y");
+    if (me.configNodes.enabledNode.getValue() == nil) {
+      me.configNodes.enabledNode.setBoolValue(me.defaults.enabled);
+    }
+    me.configNodes.refreshNode = configRootNode.getNode("refresh-rate", 1);
+    me.configNodes.refreshNode.setAttribute("userarchive", "y");
+    if (me.configNodes.refreshNode.getValue() == nil) {
+      me.configNodes.refreshNode.setIntValue(me.defaults.refreshRate);
+    }
+    me.configNodes.hostNode = configRootNode.getNode("host", 1);
+    me.configNodes.hostNode.setAttribute("userarchive", "y");
+    if (me.configNodes.hostNode.getValue() == nil) {
+      me.configNodes.hostNode.setValue(me.defaults.host);
+    }
+    me.configNodes.portNode = configRootNode.getNode("port", 1);
+    me.configNodes.portNode.setAttribute("userarchive", "y");
+    if (me.configNodes.portNode.getValue() == nil) {
+      me.configNodes.portNode.setIntValue(me.defaults.port);
+    }
+    me.configNodes.rdfportNode = configRootNode.getNode("rdfport", 1);
+    me.configNodes.rdfportNode.setAttribute("userarchive", "y");
+    if (me.configNodes.rdfportNode.getValue() == nil) {
+      me.configNodes.rdfportNode.setIntValue(me.defaults.rdfport);
+    }
+    me.configNodes.updateCheckNode = configRootNode.getNode("check-for-updates", 1);
+    me.configNodes.updateCheckNode.setAttribute("userarchive", "y");
+    if (me.configNodes.updateCheckNode.getValue() == nil) {
+      me.configNodes.updateCheckNode.setBoolValue(me.defaults.checkForUpdates);
+    }
+    me.configNodes.audioEffectsEnableNode = configRootNode.getNode("audio-effects-enabled", 1);
+    me.configNodes.audioEffectsEnableNode.setAttribute("userarchive", "y");
+    if (me.configNodes.audioEffectsEnableNode.getValue() == nil) {
+      me.configNodes.audioEffectsEnableNode.setBoolValue(me.defaults.audioEffectsEnabled);
+    }
+    me.configNodes.enableCOMRDF = configRootNode.getNode("com-rdf-enabled", 1);
+    me.configNodes.enableCOMRDF.setAttribute("userarchive", "y");
+    if (me.configNodes.enableCOMRDF.getValue() == nil) {
+      me.configNodes.enableCOMRDF.setBoolValue(me.defaults.comRDFEnabled);
+    }
+    me.configNodes.audioHearAllNode = configRootNode.getNode("audio-hear-all", 1);
+    me.configNodes.audioHearAllNode.setAttribute("userarchive", "y");
+    if (me.configNodes.audioHearAllNode.getValue() == nil) {
+      me.configNodes.audioHearAllNode.setBoolValue(me.defaults.audioHearAll);
+    }
+    me.configNodes.forceEchoTestNode = configRootNode.getNode("force-echotest-frq", 1);
+    me.configNodes.forceEchoTestNode.setAttribute("userarchive", "n");
+    me.configNodes.forceEchoTestNode.setBoolValue(me.defaults.forceEchoTestFRQ);
+    
+    # Generic UDP output root tree, to be used by individual radio instances
+    me.rootNodeOutput = me.rootNode.getNode("output", 1);
+  },
+  
   fgcom3_compatInit: func() {
     # FGCom 3.0 compatibility:
     # The old FGCom protocol seems outdated and transmit an old property.
@@ -263,64 +335,11 @@ var main = func( addon ) {
     
     FGComMumble.init(addon);
     
-    # init props with defaults
-    var configNodes = {};
-    configNodes.settingsRootPath = mySettingsRootPath;
-    configNodes.enabledNode = props.globals.getNode(mySettingsRootPath ~ "/enabled", 1);
-    configNodes.enabledNode.setAttribute("userarchive", "y");
-    if (configNodes.enabledNode.getValue() == nil) {
-      configNodes.enabledNode.setBoolValue(1);
-    }
-    configNodes.refreshNode = props.globals.getNode(mySettingsRootPath ~ "/refresh-rate", 1);
-    configNodes.refreshNode.setAttribute("userarchive", "y");
-    if (configNodes.refreshNode.getValue() == nil) {
-      configNodes.refreshNode.setIntValue("10");
-    }
-    configNodes.hostNode = props.globals.getNode(mySettingsRootPath ~ "/host", 1);
-    configNodes.hostNode.setAttribute("userarchive", "y");
-    if (configNodes.hostNode.getValue() == nil) {
-      configNodes.hostNode.setValue("localhost");
-    }
-    configNodes.portNode = props.globals.getNode(mySettingsRootPath ~ "/port", 1);
-    configNodes.portNode.setAttribute("userarchive", "y");
-    if (configNodes.portNode.getValue() == nil) {
-      configNodes.portNode.setIntValue("16661");
-    }
-    configNodes.rdfportNode = props.globals.getNode(mySettingsRootPath ~ "/rdfport", 1);
-    configNodes.rdfportNode.setAttribute("userarchive", "y");
-    if (configNodes.rdfportNode.getValue() == nil) {
-      configNodes.rdfportNode.setIntValue("19991");
-    }
-    configNodes.updateCheckNode = props.globals.getNode(mySettingsRootPath ~ "/check-for-updates", 1);
-    configNodes.updateCheckNode.setAttribute("userarchive", "y");
-    if (configNodes.updateCheckNode.getValue() == nil) {
-      configNodes.updateCheckNode.setBoolValue(1);
-    }
-    configNodes.audioEffectsEnableNode = props.globals.getNode(mySettingsRootPath ~ "/audio-effects-enabled", 1);
-    configNodes.audioEffectsEnableNode.setAttribute("userarchive", "y");
-    if (configNodes.audioEffectsEnableNode.getValue() == nil) {
-      configNodes.audioEffectsEnableNode.setBoolValue(1);
-    }
-    configNodes.enableCOMRDF = props.globals.getNode(mySettingsRootPath ~ "/com-rdf-enabled", 1);
-    configNodes.enableCOMRDF.setAttribute("userarchive", "y");
-    if (configNodes.enableCOMRDF.getValue() == nil) {
-      configNodes.enableCOMRDF.setBoolValue(1);
-    }
-    configNodes.audioHearAllNode = props.globals.getNode(mySettingsRootPath ~ "/audio-hear-all", 1);
-    configNodes.audioHearAllNode.setAttribute("userarchive", "y");
-    if (configNodes.audioHearAllNode.getValue() == nil) {
-      configNodes.audioHearAllNode.setBoolValue(0);
-    }
-    configNodes.forceEchoTestNode = props.globals.getNode(mySettingsRootPath ~ "/force-echotest-frq", 1);
-    configNodes.forceEchoTestNode.setAttribute("userarchive", "n");
-    configNodes.forceEchoTestNode.setBoolValue(0);
-
     # Start radios logic
     FGComMumble.logger.log("core", 2, "initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
     FGComMumble_radios.FGComMumble = FGComMumble;
     var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
-    FGComMumble_radios.GenericRadio.setGlobalSettings(configNodes);
     FGComMumble_radios.create_radios();
     FGComMumble_radios.start_rdf(rdfinputNode);
 
@@ -357,7 +376,7 @@ var main = func( addon ) {
       var udpout_idx   = 0;
       var udpout_chars = 0;
       var str_v = [];
-      foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
+      foreach (r_out; FGComMumble.rootNodeOutput.getChildren("COM")) {
         FGComMumble.logger.log("udp", 4, "     processing "~r_out.getPath());
         if (udpout_chars + size(r_out.getValue()) < 256) {
           append(str_v, r_out.getValue());
@@ -376,7 +395,7 @@ var main = func( addon ) {
       # clean remaining unused fields in case there was old data
       for (var i=udpout_idx+1; i < 4; i = i+1)  out_prop[i].setValue("");
 
-      FGComMumble.logger.logHash("udp", 5, "  final UDP transmit field result", {udp_fields:FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")});
+      FGComMumble.logger.logHash("udp", 5, "  final UDP transmit field result", {udp_fields:FGComMumble.rootNodeOutput.getChildren("COM")});
     }
 
     var initProtocol = func() {
@@ -412,7 +431,7 @@ var main = func( addon ) {
           
           # Register a listener to each initialized radios output node
           var r_out_l_idx = 0;
-          foreach (r_out; FGComMumble_radios.GenericRadio.outputRootNode.getChildren("COM")) {
+          foreach (r_out; FGComMumble.rootNodeOutput.getChildren("COM")) {
             FGComMumble.logger.log("udp", 3, "   add listener for radio udp_output node (" ~ r_out.getPath() ~")");
             fgcom_listeners["upd_com_out:"~r_out_l_idx] = _setlistener(r_out.getPath(), func { update_udp_output(); }, 0, 0);
             r_out_l_idx = r_out_l_idx + 1;
@@ -492,7 +511,7 @@ var main = func( addon ) {
     var reinit_rdfportChange  = setlistener(mySettingsRootPath ~ "/rdfport", reinitProtocol, 0, 0);
     
     # Check for upates at init time
-    if (configNodes.updateCheckNode.getValue()) {
+    if (FGComMumble.configNodes.updateCheckNode.getValue()) {
       FGComMumble.checkUpdate(0);
     } else {
       FGComMumble.logger.log("core", 2, "ATTENTION: Not checking for updates (as requested by user setting)");

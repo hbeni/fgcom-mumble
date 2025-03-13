@@ -19,22 +19,12 @@ var GenericRadio = {
         return r;
     },
 
-    # initialized by addon-main.nas after load to grant access to the global settings
-    globalSettings: nil,
-    setGlobalSettings: func(p) {
-        GenericRadio.globalSettings = p;
-        GenericRadio.outputRootNode = props.globals.getNode(p.settingsRootPath ~ "/output", 1);
-    },
-
-    # Node base where the output should go (initialized by setGlobalSettings() via addon-main.nas)
-    outputRootNode: nil,
-
-
     fgcomPacketStr: nil, # node for udp output
     fields2props: {},    # map packet field names to properties
 
     init: func {
         FGComMumble.logger.log("radio", 4, "GenericRadio.init() for: "~me.root.getPath());
+
         # Radio frequencies are initialized by C++ code even for aircrafts which do not use the radio.
         # To avoid transmitting the frequency for an unused radio (which would make it functional
         # in the fgcom-mumble plugin), test if the 'operable' property exist.
@@ -70,7 +60,7 @@ var GenericRadio = {
         # Update the udp string once a prop changes;
         # for this register a new distinct output subnode
         if (me.is_used) {
-            me.fgcomPacketStr = me.outputRootNode.addChild("COM", 1);
+            me.fgcomPacketStr = FGComMumble.rootNodeOutput.addChild("COM", 1);
             FGComMumble.logger.log("radio", 3, "     registered output node as "~me.fgcomPacketStr.getPath());
             me.fields2props = {
                 # Map the fgcom-mumble protocol fields to properties
@@ -88,7 +78,7 @@ var GenericRadio = {
                 FGComMumble.logger.log("radio", 4, "     add listener for " ~ f ~ " ("~me.fields2props[f]~")");
                 me.listeners["upd_udp_field:"~f] = setlistener(me.fields2props[f], func { me.updatePacketString(); }, 0, 0);
             }
-            me.listeners["forceEchoTest"] = setlistener(GenericRadio.globalSettings.forceEchoTestNode, func { me.updatePacketString(); }, 0, 0);
+            me.listeners["forceEchoTest"] = setlistener(FGComMumble.configNodes.forceEchoTestNode, func { me.updatePacketString(); }, 0, 0);
             me.updatePacketString();
         }
     },
@@ -117,8 +107,8 @@ var GenericRadio = {
             var propval = getprop(me.fields2props[f]);
 
             # If the global ECHOTEST mode was requested, force radios FRQ field output to the echotest frequency
-            if (f == "FRQ" and GenericRadio.globalSettings.forceEchoTestNode.getBoolValue()) propval = "910.00";
-            if (f == "PBT" and GenericRadio.globalSettings.forceEchoTestNode.getBoolValue()) propval = "1";
+            if (f == "FRQ" and FGComMumble.configNodes.forceEchoTestNode.getBoolValue()) propval = "910.00";
+            if (f == "PBT" and FGComMumble.configNodes.forceEchoTestNode.getBoolValue()) propval = "1";
 
             # because of float type characteristics, sometimes values are returned like "127.549999999", and rounding fixes that
             var field_last_str = substr(sprintf("%s",propval), -3);
@@ -189,7 +179,7 @@ var COM = {
 
         # Only initialize properties if the radio is used.
         if (me.is_used) {
-            me.fgcom_rdf_enabled.setValue( GenericRadio.globalSettings.enableCOMRDF.getBoolValue() );
+            me.fgcom_rdf_enabled.setValue( FGComMumble.configNodes.enableCOMRDF.getBoolValue() );
             me.fgcom_publish.setValue(1);
             me.listeners.frq = setlistener(me.freq_mhz.getPath(), func { me.recalcFrequency(); }, 1, 0);
             me.listeners.vol = setlistener(me.vol.getPath(), func { me.recalcVolume(); }, 1, 0);
@@ -359,7 +349,7 @@ var destroy_radios = func {
 
     # check leftover radio output nodes
     # Note: That should not be neccessary, however for some still unknown reason, there are remnants.
-    foreach (r; GenericRadio.outputRootNode.getChildren("COM")) {
+    foreach (r; FGComMumble.rootNodeOutput.getChildren("COM")) {
         FGComMumble.logger.log("radio", 5, "DBG clean out remnant output node: "~r.getPath());
         r.remove();
     }

@@ -43,18 +43,18 @@
             });
             ptt_test_string_timer.start();
 
-            validate_input = func() {
+            validate_input = func(forceDefaults) {
                 var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate";
-                if (getprop(p) == 0) setprop(p, 10);
+                if (getprop(p) == 0 or forceDefaults) setprop(p, fgcom_module.defaults.refreshRate);
 
                 var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/host";
-                if (getprop(p) == "") setprop(p, "localhost");
+                if (getprop(p) == "" or forceDefaults) setprop(p, fgcom_module.defaults.host);
 
                 var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/port";
-                if (getprop(p) == 0) setprop(p, 16661);
+                if (getprop(p) == 0 or forceDefaults) setprop(p, fgcom_module.defaults.port);
 
                 var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfport";
-                if (getprop(p) == 0) setprop(p, 19991);
+                if (getprop(p) == 0 or forceDefaults) setprop(p, fgcom_module.defaults.rdfport);
             }
         ]]>
         </open>

@@ -47,7 +47,7 @@ var IntercomDevice = {
         
         # Register a common output root node, so the normal radio code will pickup the changes
         # (for this to work, the radio code already has to bee initialized)
-        me.fgcomPacketStr = FGComMumble_radios.GenericRadio.outputRootNode.addChild("COM", 1);
+        me.fgcomPacketStr = FGComMumble.rootNodeOutput.addChild("COM", 1);
         me.fgcomPacketStr.setValue("");
         
         # Register some listeners to trigger the UPD field update for this intercom
