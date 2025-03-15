@@ -98,12 +98,12 @@ public class OptionsWindow extends javax.swing.JFrame {
         });
 
         jLabel3.setText("Plugin UDP send rate (Hz)");
-        jLabel3.setToolTipText("If enabled, you will hear static and degraded signal quality based on signal reception");
+        jLabel3.setToolTipText("How often (per second) RadioGUI sends UDP packets to the plugin");
 
         jCheckBox_EnableAudioEffects.setToolTipText("If enabled, you will hear static and degraded signal quality based on signal reception");
 
         jLabel10.setText("Enable audio effects");
-        jLabel10.setToolTipText("When enabled, you will hear mumble users that do not use the plugin");
+        jLabel10.setToolTipText("If enabled, you will hear static and degraded signal quality based on signal reception");
 
         jCheckBox_HearAllUsers.setToolTipText("When enabled, you will hear mumble users that do not use the plugin");
 
@@ -117,7 +117,7 @@ public class OptionsWindow extends javax.swing.JFrame {
         jLabel12.setToolTipText("When enabled, you will hear mumble users that do not use the plugin");
 
         jTextField_udpSendRateHz.setText("err");
-        jTextField_udpSendRateHz.setToolTipText("Where Radio GUI sends its packets");
+        jTextField_udpSendRateHz.setToolTipText("How often (per second) RadioGUI sends UDP packets to the plugin");
         jTextField_udpSendRateHz.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 jTextField_udpSendRateHzKeyReleased(evt);

@@ -170,7 +170,7 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Plugin UDP send rate (Hz)"/>
-            <Property name="toolTipText" type="java.lang.String" value="If enabled, you will hear static and degraded signal quality based on signal reception"/>
+            <Property name="toolTipText" type="java.lang.String" value="How often (per second) RadioGUI sends UDP packets to the plugin"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jCheckBox_EnableAudioEffects">
@@ -181,7 +181,7 @@
         <Component class="javax.swing.JLabel" name="jLabel10">
           <Properties>
             <Property name="text" type="java.lang.String" value="Enable audio effects"/>
-            <Property name="toolTipText" type="java.lang.String" value="When enabled, you will hear mumble users that do not use the plugin"/>
+            <Property name="toolTipText" type="java.lang.String" value="If enabled, you will hear static and degraded signal quality based on signal reception"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jCheckBox_HearAllUsers">
@@ -210,7 +210,7 @@
         <Component class="javax.swing.JTextField" name="jTextField_udpSendRateHz">
           <Properties>
             <Property name="text" type="java.lang.String" value="err"/>
-            <Property name="toolTipText" type="java.lang.String" value="Where Radio GUI sends its packets"/>
+            <Property name="toolTipText" type="java.lang.String" value="How often (per second) RadioGUI sends UDP packets to the plugin"/>
           </Properties>
           <Events>
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_udpSendRateHzKeyReleased"/>
