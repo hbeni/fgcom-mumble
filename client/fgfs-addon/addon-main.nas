@@ -26,6 +26,7 @@ var FGComMumble = {
     comRDFEnabled:       1,
     audioHearAll:        0,
     forceEchoTestFRQ:    0,
+    alwaysMumblePTT:     0,
   },
   configNodes: nil,
   
@@ -144,6 +145,11 @@ var FGComMumble = {
     me.configNodes.audioHearAllNode.setAttribute("userarchive", "y");
     if (me.configNodes.audioHearAllNode.getValue() == nil) {
       me.configNodes.audioHearAllNode.setBoolValue(me.defaults.audioHearAll);
+    }
+    me.configNodes.alwaysMumblePTTNode = configRootNode.getNode("always-mumble-ptt", 1);
+    me.configNodes.alwaysMumblePTTNode.setAttribute("userarchive", "y");
+    if (me.configNodes.alwaysMumblePTTNode.getValue() == nil) {
+      me.configNodes.alwaysMumblePTTNode.setBoolValue(me.defaults.alwaysMumblePTT);
     }
     me.configNodes.forceEchoTestNode = configRootNode.getNode("force-echotest-frq", 1);
     me.configNodes.forceEchoTestNode.setAttribute("userarchive", "n");

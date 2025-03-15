@@ -46,7 +46,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel2" min="-2" pref="183" max="-2" attributes="0"/>
+              <Component id="jPanel2" min="-2" pref="199" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
@@ -80,29 +80,36 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="91" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="filler1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel11" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="filler1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                      </Group>
+                      <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel20" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jTextField_udpHost" alignment="0" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jTextField_udpPort" min="-2" pref="103" max="-2" attributes="0"/>
+                              <Component id="jCheckBox_alwaysMumblePTT" min="-2" max="-2" attributes="0"/>
+                              <Component id="jCheckBox_HearAllUsers" min="-2" max="-2" attributes="0"/>
                               <Component id="jCheckBox_EnableAudioEffects" min="-2" max="-2" attributes="0"/>
                               <Component id="jTextField_udpSendRateHz" min="-2" pref="103" max="-2" attributes="0"/>
-                              <Component id="jCheckBox_HearAllUsers" min="-2" max="-2" attributes="0"/>
+                              <Component id="jTextField_udpPort" min="-2" pref="103" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -114,35 +121,39 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace pref="33" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextField_udpHost" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="18" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextField_udpPort" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="18" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextField_udpSendRateHz" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="0" attributes="0">
+                      <Group type="102" attributes="0">
                           <Component id="jCheckBox_EnableAudioEffects" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="jCheckBox_HearAllUsers" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCheckBox_alwaysMumblePTT" alignment="0" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -170,7 +181,7 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Plugin UDP send rate (Hz)"/>
-            <Property name="toolTipText" type="java.lang.String" value="If enabled, you will hear static and degraded signal quality based on signal reception"/>
+            <Property name="toolTipText" type="java.lang.String" value="How often (per second) RadioGUI sends UDP packets to the plugin"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jCheckBox_EnableAudioEffects">
@@ -181,7 +192,7 @@
         <Component class="javax.swing.JLabel" name="jLabel10">
           <Properties>
             <Property name="text" type="java.lang.String" value="Enable audio effects"/>
-            <Property name="toolTipText" type="java.lang.String" value="When enabled, you will hear mumble users that do not use the plugin"/>
+            <Property name="toolTipText" type="java.lang.String" value="If enabled, you will hear static and degraded signal quality based on signal reception"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="jCheckBox_HearAllUsers">
@@ -210,7 +221,7 @@
         <Component class="javax.swing.JTextField" name="jTextField_udpSendRateHz">
           <Properties>
             <Property name="text" type="java.lang.String" value="err"/>
-            <Property name="toolTipText" type="java.lang.String" value="Where Radio GUI sends its packets"/>
+            <Property name="toolTipText" type="java.lang.String" value="How often (per second) RadioGUI sends UDP packets to the plugin"/>
           </Properties>
           <Events>
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField_udpSendRateHzKeyReleased"/>
@@ -231,6 +242,17 @@
           <AuxValues>
             <AuxValue name="classDetails" type="java.lang.String" value="Box.Filler.VerticalStrut"/>
           </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel20">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Always handle mumble PTT"/>
+            <Property name="toolTipText" type="java.lang.String" value="When enabled, the plugin will activate mumbles PTT even if the plugin is not active."/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jCheckBox_alwaysMumblePTT">
+          <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="When enabled, the plugin will activate mumbles PTT even if the plugin is not active"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>
@@ -268,7 +290,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel_qlyvalue" max="32767" attributes="0"/>
+                          <Component id="jLabel_qlyvalue" pref="63" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="jLabel14" min="-2" max="-2" attributes="0"/>

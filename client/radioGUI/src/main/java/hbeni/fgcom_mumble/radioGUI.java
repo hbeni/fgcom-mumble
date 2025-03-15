@@ -44,6 +44,7 @@ public class radioGUI {
         public static int     simConnectPort      = 500; // 500=MSFS2020
         public static boolean enableAudioEffecs   = true;
         public static boolean allowHearingNonPluginUsers = false;
+        public static boolean alwaysMumblePTT     = false;
     }
     
     /* A structure with the internal model */

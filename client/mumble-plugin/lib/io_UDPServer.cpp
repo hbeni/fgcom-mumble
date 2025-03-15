@@ -443,6 +443,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     pluginDbg("[UDP-server] override AUDIO_HEAR_ALL updated to "+std::to_string(fgcom_cfg.allowHearingNonPluginUsers));
                 }
                 
+                // Allow toggling of mumbles PTT state if plugin is not active
+                if (token_key == "ALWAYSMUMBLEPTT") {
+                    fgcom_cfg.alwaysMumblePTT = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
+                    pluginDbg("[UDP-server] ALWAYSMUMBLEPTT updated to "+std::to_string(fgcom_cfg.alwaysMumblePTT));
+                }
+                
                 
 #ifdef DEBUG
                 // DEBUG: allow override of signal quality for incoming transmissions
