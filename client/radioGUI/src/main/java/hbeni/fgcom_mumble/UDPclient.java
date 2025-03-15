@@ -111,6 +111,8 @@ public class UDPclient {
         msg += ",AUDIO_FX_RADIO="+audioFX;
         String audioHearall = (radioGUI.Options.allowHearingNonPluginUsers)? "1" : "0";
         msg += ",AUDIO_HEAR_ALL="+audioHearall;
+        String alwaysMumblePTT = (radioGUI.Options.alwaysMumblePTT)? "1" : "0";
+        msg += ",ALWAYSMUMBLEPTT="+alwaysMumblePTT;
                 
         return msg;
     }
