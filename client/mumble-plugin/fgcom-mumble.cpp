@@ -164,10 +164,31 @@ void fgcom_handlePTT() {
         mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, radio_ptt_result);
         
     } else {
-        // Todo: do we need to reset something or so? i think no:
-        //       plugin deactivation will already handle setting the old transmission mode,
-        //       so the mic will be open according to that...
-        pluginDbg("Handling PTT protocol request state: PLUGIN NOT ACTIVE");
+        if (fgcom_cfg.alwaysMumblePTT) {
+            // always open the mic in case we have some radio PTT set.
+            // This is a special feature for users that want to use their sim PTT
+            // to also trigger mumbles PTT in ordinary channels.
+            pluginDbg("Handling PTT protocol request state: Plugin not active, but fgcom_cfg.alwaysMumblePTT requested");
+            bool radio_ptt_result = false; // if we should open or close the mic, default no
+            fgcom_localcfg_mtx.lock();
+            for (const auto &lcl_idty : fgcom_local_client) {
+                fgcom_client lcl = lcl_idty.second;
+                for (long unsigned int i=0; i<lcl.radios.size(); i++) {
+                    if (lcl.radios[i].ptt_req) {
+                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active -> open mic");
+                        radio_ptt_result = true;
+                    }
+                }
+            }
+            fgcom_localcfg_mtx.unlock();
+            pluginDbg("final PTT/radio openmic state: "+std::to_string(radio_ptt_result));
+            mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, radio_ptt_result);
+
+        } else {
+            // Plugin deactivation will already handle setting the old transmission mode,
+            // so the mic will be open according to that.
+            pluginDbg("Handling PTT protocol request state: PLUGIN NOT ACTIVE, doing nothing.");
+        }
     }
 }
 
@@ -318,6 +339,8 @@ mumble_error_t fgcom_loadConfig() {
                         radio_id--; // convert to array index
                         fgcom_cfg.mapMumblePTT[radio_id] = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
                     }
+
+                    if (token_key == "alwaysMumblePTT")   fgcom_cfg.alwaysMumblePTT = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
                 }
             }
         } else {
@@ -337,6 +360,7 @@ mumble_error_t fgcom_loadConfig() {
     for (const auto& cv : fgcom_cfg.mapMumblePTT) {
         pluginDbg("[CFG]              mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
     }
+    pluginDbg("[CFG]              alwaysMumblePTT="+std::to_string(fgcom_cfg.alwaysMumblePTT));
 
 #endif
     return MUMBLE_STATUS_OK;
