@@ -44,6 +44,18 @@
             ptt_test_string_timer.start();
 
             validate_input = func(forceDefaults) {
+                if (forceDefaults) {
+                    setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/check-for-updates", fgcom_module.defaults.checkForUpdates);
+                    setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-effects-enabled", fgcom_module.defaults.audioEffectsEnabled);
+                    setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/check-for-updates", fgcom_module.defaults.checkForUpdates);
+                    setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/com-rdf-enabled", fgcom_module.defaults.comRDFEnabled);
+                    setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-hear-all", fgcom_module.defaults.audioHearAll);
+                    setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/always-mumble-ptt", fgcom_module.defaults.alwaysMumblePTT);
+                    setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/force-echotest-frq", fgcom_module.defaults.forceEchoTestFRQ);
+                    #tpl: setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/xx", fgcom_module.defaults.xxx);
+                    # others are already set below
+                }
+
                 var p = "/addons/by-id/org.hallinger.flightgear.FGCom-mumble/refresh-rate";
                 if (getprop(p) == 0 or forceDefaults) setprop(p, fgcom_module.defaults.refreshRate);
 
@@ -60,7 +72,7 @@
         </open>
         <close>
         <![CDATA[
-            validate_input();
+            validate_input(0);
             ptt_test_string_timer.stop();
         ]]>
         </close>
@@ -223,6 +235,12 @@
                 <halign>left</halign>
                 <label>Enable hearing non-plugin Mumble users</label>
                 <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-hear-all</property>
+            </checkbox>
+            
+            <checkbox>
+                <halign>left</halign>
+                <label>Always handle mumble PTT</label>
+                <property>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/always-mumble-ptt</property>
             </checkbox>
 
             <!-- Not shown: this is currently a startup feature.
@@ -414,7 +432,7 @@
             </binding>
             <binding>
                 <command>nasal</command>
-                <script>validate_input();</script>
+                <script>validate_input(0);</script>
             </binding>
             <binding>
                 <command>dialog-update</command>
