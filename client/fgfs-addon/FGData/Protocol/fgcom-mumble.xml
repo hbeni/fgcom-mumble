@@ -128,6 +128,12 @@
     <format>AUDIO_HEAR_ALL=%d</format>
     <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-hear-all</node>
    </chunk>
+   <chunk>
+    <name>always-mumble-ptt</name>
+    <type>bool</type>
+    <format>ALWAYSMUMBLEPTT=%d</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/always-mumble-ptt</node>
+   </chunk>
   </output>
 
 
