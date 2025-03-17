@@ -50,9 +50,9 @@ protected:
      * Process audio samples
      * 
      * This is a somewhat generic implementation for invocation by the VHF, UHF and HF models,
-     * providing mono stream, hogh/lowpass filtering and noise addition
+     * providing mono stream, high/lowpass filtering and noise addition
      */
-    virtual void processAudioSamples_VHF(int highpass_cutoff, int lowpass_cutoff, float minimumNoiseVolume, float maximumNoiseVolume, fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+    virtual void processAudioSamples_VHF(int highpass_cutoff, int lowpass_cutoff, float minimumNoiseVolume, float maximumNoiseVolume, fgcom_radio lclRadio, float lastSignalQuality, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
 
         /*
         * Make the audio stream mono
@@ -78,16 +78,22 @@ protected:
         noiseVolume  = pow(0.9 - 0.9*signalQuality, 2) + minimumNoiseVolume;
         if (noiseVolume > maximumNoiseVolume) noiseVolume = maximumNoiseVolume;
 
+        float prev_signalVolume;
+        float prev_noiseVolume;
+        prev_signalVolume = lastSignalQuality;
+        prev_noiseVolume  = pow(0.9 - 0.9*lastSignalQuality, 2) + minimumNoiseVolume;
+        if (prev_noiseVolume > maximumNoiseVolume) prev_noiseVolume = maximumNoiseVolume;
+
         // Now tune down the signal according to calculated noise volume level, then add noise
-        fgcom_audio_applyVolume(signalVolume, outputPCM, sampleCount, channelCount);
-        fgcom_audio_addNoise(noiseVolume, outputPCM, sampleCount, channelCount);
+        fgcom_audio_applyVolume(prev_signalVolume, signalVolume, outputPCM, sampleCount, channelCount);
+        fgcom_audio_addNoise(prev_noiseVolume, noiseVolume, outputPCM, sampleCount, channelCount);
         // TODO: we may clip some random samples from the signal on low quality
 
 
         /*
         * Finally apply radio volume setting
         */
-        fgcom_audio_applyVolume(lclRadio.volume, outputPCM, sampleCount, channelCount);
+        fgcom_audio_applyVolume(lclRadio.volume, lclRadio.volume, outputPCM, sampleCount, channelCount);
     }
     
 public:
@@ -323,7 +329,7 @@ public:
     /*
      * Process audio samples
      */
-    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+    void processAudioSamples(fgcom_radio lclRadio, float lastSignalQuality, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
         // HighPass filter cuts away lower frequency ranges and let higher ones pass
         // Lower cutoff limit depends on signal quality: the less quality, the more to cut away
         //   worst is 1000@30% signal; best is 300@1.0
@@ -339,6 +345,6 @@ public:
         
         float minimumNoiseVolume = 0.05;
         float maximumNoiseVolume = 0.45;
-        processAudioSamples_VHF(highpass_cutoff, lowpass_cutoff, minimumNoiseVolume, maximumNoiseVolume, lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+        processAudioSamples_VHF(highpass_cutoff, lowpass_cutoff, minimumNoiseVolume, maximumNoiseVolume, lclRadio, lastSignalQuality, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
     }
 };

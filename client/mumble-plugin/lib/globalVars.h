@@ -72,6 +72,7 @@ struct fgcom_client {
     float alt;  // in meters
     std::string  callsign;
     std::vector<fgcom_radio> radios;
+    float lastSeenSignal;
     fgcom_client()  {
         lon = -130.000;   // 60°S / 130°W is somewhere in the middle of the pacific ocean... 
         lat = -60.000;
@@ -79,6 +80,7 @@ struct fgcom_client {
         callsign = "ZZZZ";
         lastUpdate = std::chrono::system_clock::now();
         lastNotification = std::chrono::system_clock::from_time_t((std::time_t)0);
+        lastSeenSignal = -1;
     };
 };
 

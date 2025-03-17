@@ -135,9 +135,9 @@ public:
     /*
      * Process audio samples
      */
-    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+    void processAudioSamples(fgcom_radio lclRadio, float lastSignalQuality, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
         // Audio processing is like VHF characteristics for now
         std::unique_ptr<FGCom_radiowaveModel_VHF> vhf_radio = std::make_unique<FGCom_radiowaveModel_VHF>();
-        vhf_radio->processAudioSamples(lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+        vhf_radio->processAudioSamples(lclRadio, lastSignalQuality, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
     }
 };

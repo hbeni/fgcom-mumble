@@ -174,7 +174,7 @@ public:
      * This method processes the samples based on the radio model in use
      * and considers signal quality etc.
      */
-    virtual void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) = 0;
+    virtual void processAudioSamples(fgcom_radio lclRadio, float lastSignalQuality, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) = 0;
 
 
     /********************************************************************/

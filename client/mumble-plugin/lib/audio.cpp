@@ -37,24 +37,35 @@
 /**
  * Following functions are called from plugin code
  */
-void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
+void fgcom_audio_addNoise(float oldNoiseVolume, float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
     PinkNoise fgcom_PinkSource;
     InitializePinkNoise(&fgcom_PinkSource, 12);     // Init new PinkNoise source with num of rows
+
+    float interpolate_stepSize = (noiseVolume - oldNoiseVolume) / sampleCount;
+    int   sampleNum = 0;
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
+        float tgtVol = oldNoiseVolume + sampleNum * interpolate_stepSize;
         float noise = GeneratePinkNoise( &fgcom_PinkSource );
-        noise = noise * noiseVolume;
+        noise = noise * tgtVol;
         outputPCM[s] = outputPCM[s] + noise;
+
+        sampleNum++;
     }
-    
 }
 
 
-void fgcom_audio_applyVolume(float volume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    // just loop over the array, applying the volume
+void fgcom_audio_applyVolume(float oldVolume, float volume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
+    // just loop over the array, applying the interpolated volume
     if (volume == 1.0) return; // no adjustment requested
+
+    float interpolate_stepSize = (volume - oldVolume) / sampleCount;
+    int   sampleNum = 0;
     // TODO: Make sure we are not going off limits
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
-         outputPCM[s] = outputPCM[s] * volume;
+        float tgtVol = oldVolume + sampleNum * interpolate_stepSize;
+        outputPCM[s] = outputPCM[s] * tgtVol;
+
+        sampleNum++;
     }
 }
 

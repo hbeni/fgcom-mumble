@@ -19,19 +19,21 @@
 #include "mumble/PluginComponents_v_1_0_x.h"
 
 /*
- * Add static noise to the signal
+ * Add static noise to the signal (with interpolation)
  * 
- * @param float noiseVolume 0.0 to 1.0 for normalized volume
+ * @param float oldNoiseVolume: 0.0 to 1.0 for normalized volume
+ * @param float noiseVolume:    0.0 to 1.0 for normalized volume
  */
-void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
+void fgcom_audio_addNoise(float oldNoiseVolume, float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
 
 /*
- * Apply volume modificator to samples
+ * Apply volume modificator to samples (with interpolation)
  * 
- * @param float volume: <1.0 make quieter, >1.0 boost
+ * @param float oldVolume: <1.0 make quieter, >1.0 boost
+ * @param float volume:    <1.0 make quieter, >1.0 boost
  */
-void fgcom_audio_applyVolume(float volume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
+void fgcom_audio_applyVolume(float oldVolume, float volume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
 
 /*
