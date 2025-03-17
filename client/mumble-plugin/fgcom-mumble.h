@@ -26,6 +26,10 @@
 #define FGCOM_VERSION_MINOR 1
 #define FGCOM_VERSION_PATCH 0
 
+
+#define SIGNAL_INTERPOLATE_MS  500  // timeframe for signal quality interpolation
+
+
 /*
  * Is the plugin currently active?
  * 
