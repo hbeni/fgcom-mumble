@@ -894,7 +894,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
 
 
     // some remote client is speaking.
-    if (userID != localMumId && fgcom_isPluginActive() && mumble_talk_detected) {
+    if (userID != localMumId && fgcom_isPluginActive()) {
         // check if we know this client, but don't have user data yet;
         // if so: request data update (workaround for https://github.com/hbeni/fgcom-mumble/issues/119)
         fgcom_client tmp_default = fgcom_client();
@@ -906,12 +906,18 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
                 //int rmt_iid      = idty.first;
                 fgcom_client rmt = idty.second;
                 
-                bool isCallsignInitialized = rmt.callsign != tmp_default.callsign;
-                bool isLocationInitialized = rmt.alt != tmp_default.alt || rmt.lat != tmp_default.lat || rmt.lon != tmp_default.lon;
-                if ( !isCallsignInitialized || !isLocationInitialized ) {
-                    // ATTENTION: Seeing this in the log indicates that there is a problem with the userdata synchronization process!
-                    pluginLog("WARNING: known remote plugin user speaking, but no user data received so far: requesting it now");
-                    notifyRemotes(0, NTFY_ASK); // request all other state
+                if (mumble_talk_detected) {
+                    bool isCallsignInitialized = rmt.callsign != tmp_default.callsign;
+                    bool isLocationInitialized = rmt.alt != tmp_default.alt || rmt.lat != tmp_default.lat || rmt.lon != tmp_default.lon;
+                    if ( !isCallsignInitialized || !isLocationInitialized ) {
+                        // ATTENTION: Seeing this in the log indicates that there is a problem with the userdata synchronization process!
+                        pluginLog("WARNING: known remote plugin user speaking, but no user data received so far: requesting it now");
+                        notifyRemotes(0, NTFY_ASK); // request all other state
+                    }
+
+                } else {
+                    // reset last remembered signal, so interpolation can start fresh
+                    rmt.lastSeenSignal = -1;
                 }
             }
         }
@@ -941,7 +947,8 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 }
 
 bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRate, bool isSpeech, mumble_userid_t userID) {
-	//std::ostream& stream = pluginLog() << "Audio output source with " << channelCount << " channels and " << sampleCount << " samples per channel fetched.";
+    //pluginDbg("Audio output source with "+std::to_string(channelCount)+" channels and "+std::to_string(sampleCount)+" samples per channel fetched.");
+    //pluginDbg("Audio output source has "+std::to_string(sampleRate)+" sampleRate and isSpeech is "+std::to_string(isSpeech)+".");
     // the PCM format is an float array. The cells are inidvidual apmplitudes.
     // With two channels, the first float at outputPCM[0] the left channel, outputPCM[1] right, [2] left etc.
     //  channelCount The amount of channels in the audio
@@ -973,16 +980,17 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         
         float bestSignalStrength = -1.0; // we want to get the connections signal strength.
         fgcom_radio matchedLocalRadio;
+        int matchedIID  = -1;
         bool useRawData = false;
         
         // Fetch the remote clients data
         fgcom_remotecfg_mtx.lock();
         auto search = fgcom_remote_clients.find(userID);
         if (search != fgcom_remote_clients.end()) {
-            // we found remote state.            
-            for (const auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
-                //int rmt_iid      = idty.first;
-                fgcom_client rmt = idty.second;
+            // we found remote state.
+            for (auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
+                int rmt_iid       = idty.first;
+                fgcom_client& rmt = idty.second;
             
                 pluginDbg("mumble_onAudioSourceFetched():   sender callsign="+rmt.callsign);
                 
@@ -1073,8 +1081,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                     // one, this will result in hearing the best signal quality of those available.
                                     if (signal.quality > lcl.radios[lri].squelch && signal.quality > bestSignalStrength) {
                                         // the signal is stronger than our squelch and tops the current last best signal
-                                        bestSignalStrength = signal.quality;
-                                        matchedLocalRadio  = lcl.radios[lri];
+                                        bestSignalStrength  = signal.quality;
+                                        matchedIID          = rmt_iid;
+                                        matchedLocalRadio   = lcl.radios[lri];
                                         pluginDbg("mumble_onAudioSourceFetched():         taking it, its better than the previous one");
                                     } else {
                                         pluginDbg("mumble_onAudioSourceFetched():         not taking it. squelch="+std::to_string(lcl.radios[lri].squelch)+", previousBestSignal="+std::to_string(bestSignalStrength));
@@ -1117,14 +1126,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         //   - we did not have any info on the client
         //   - the client was out of range
         //   - we did not tune the frequency (or radio was broken, or radio squelch cut off)
-#ifdef DEBUG
-        // Debug code: Allow override of signal quality for debugging purposes
-        if (fgcom_debug_signalstrength >= 0) {
-            bestSignalStrength = fgcom_debug_signalstrength;
-            pluginDbg("mumble_onAudioSourceFetched():   signalQuality debug override to "+std::to_string(fgcom_debug_signalstrength)+" in effect!");
-        }
-#endif
-
         rv = true;
         if (useRawData) {
             // we should use the raw audio packets unaffected
@@ -1133,13 +1134,48 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
 
         } else if (bestSignalStrength > 0.0) {
             // we got a connection!
+#ifdef DEBUG
+            // Debug code: Allow override of signal quality for debugging purposes
+            if (fgcom_debug_signalstrength >= 0) {
+                bestSignalStrength = fgcom_debug_signalstrength;
+                pluginDbg("mumble_onAudioSourceFetched():   signalQuality debug override to "+std::to_string(fgcom_debug_signalstrength)+" in effect!");
+            }
+#endif
+
+            // Interpolate the signal quality, so we don't have such nasty audible steps with fast moving senders
+            float interpolated_bestSignalStrength = bestSignalStrength;
+            if (matchedIID > -1) {
+                fgcom_remotecfg_mtx.lock();
+                float& lastSignalStrength = fgcom_remote_clients[userID][matchedIID].lastSeenSignal;
+                if (lastSignalStrength >= 0.0) {
+                    const float interpolateOver_ms        = (float)SIGNAL_INTERPOLATE_MS; // interpolate over this milliseconds.
+                    const float samplesDuration_ms        = ((float)sampleCount/(float)sampleRate)*1000; //in milliseconds (10.6666666667 for 512 samples and 48000 rate)
+                    const float interpolate_stepsize      = (bestSignalStrength-lastSignalStrength) / interpolateOver_ms;
+                    interpolated_bestSignalStrength = lastSignalStrength + interpolate_stepsize*samplesDuration_ms;
+                    //pluginDbg("mumble_onAudioSourceFetched():   signalQuality interpolate: interpolateOver_ms="+std::to_string(interpolateOver_ms)+"; samplesDuration_ms="+std::to_string(samplesDuration_ms)+"; interpolate_stepsize="+std::to_string(interpolate_stepsize));
+                }
+
+                pluginDbg("mumble_onAudioSourceFetched():   signalQuality interpolate: "+std::to_string(interpolated_bestSignalStrength)+" (lastSignalStrength="+std::to_string(lastSignalStrength)+" -> bestSignalStrength="+std::to_string(bestSignalStrength)+")");
+                lastSignalStrength = interpolated_bestSignalStrength;
+                fgcom_remotecfg_mtx.unlock();
+            }
+
             std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(matchedLocalRadio.frequency));
-            pluginDbg("mumble_onAudioSourceFetched():   connected (lcl_type="+radio_model_lcl->getType()+"), bestSignalStrength="+std::to_string(bestSignalStrength));
+            pluginDbg("mumble_onAudioSourceFetched():   connected (lcl_type="+radio_model_lcl->getType()+"), signalStrength="+std::to_string(interpolated_bestSignalStrength));
             if (fgcom_cfg.radioAudioEffects)
-                radio_model_lcl->processAudioSamples(matchedLocalRadio, bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
+                radio_model_lcl->processAudioSamples(matchedLocalRadio, interpolated_bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
             
         } else {
             pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
+
+            // reset interpolator of all remote identities, because none matched
+            fgcom_remotecfg_mtx.lock();
+            for (auto &idty : fgcom_remote_clients[userID]) {
+                fgcom_client& rmt = idty.second;
+                rmt.lastSeenSignal = -1;
+            }
+            fgcom_remotecfg_mtx.unlock();
+
             memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(float) );
         }
         
