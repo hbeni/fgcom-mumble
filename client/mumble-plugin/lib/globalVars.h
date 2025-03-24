@@ -43,6 +43,8 @@ struct fgcom_config {
     std::map<int, bool> mapMumblePTT;  // which radios to activate when mumble-internal talk activation is used
     bool        alwaysMumblePTT;       // if true, always enable mumble PTT on COM/PTT, even if plugin not active
     std::string updaterURL;
+    bool        autoJoinChannel;
+    std::string autoJoinChannelPW;
     
     fgcom_config()  {
         allowHearingNonPluginUsers = false;
@@ -54,6 +56,8 @@ struct fgcom_config {
         mapMumblePTT      = {{0,true}};
         alwaysMumblePTT   = false;
         updaterURL        = "";
+        autoJoinChannel   = false;
+        autoJoinChannelPW = "";
     };
 };
 extern struct fgcom_config fgcom_cfg;
