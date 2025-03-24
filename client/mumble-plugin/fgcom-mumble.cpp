@@ -331,6 +331,8 @@ mumble_error_t fgcom_loadConfig() {
                     if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
                     if (token_key == "logfile")           fgcom_cfg.logfile           = token_value;
                     if (token_key == "updaterURL")        fgcom_cfg.updaterURL        = token_value;
+                    if (token_key == "autoJoinChannel")   fgcom_cfg.autoJoinChannel   = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
+                    if (token_key == "autoJoinChannelPW") fgcom_cfg.autoJoinChannelPW = token_value;
                     
                     std::smatch sm_m;
                     std::regex re_mblmap ("^mapMumblePTT(\\d+)$");
@@ -349,6 +351,7 @@ mumble_error_t fgcom_loadConfig() {
     }
     
     // Debug print final parsed config
+    std::string channelPwS = fgcom_cfg.autoJoinChannelPW;     channelPwS.replace(channelPwS.begin(), channelPwS.end(), channelPwS.length(), '*');
     pluginDbg("[CFG] final parsed config:");
     pluginDbg("[CFG]   allowHearingNonPluginUsers="+std::to_string(fgcom_cfg.allowHearingNonPluginUsers));
     pluginDbg("[CFG]            radioAudioEffects="+std::to_string(fgcom_cfg.radioAudioEffects));
@@ -357,6 +360,8 @@ mumble_error_t fgcom_loadConfig() {
     pluginDbg("[CFG]                udpServerPort="+std::to_string(fgcom_cfg.udpServerPort));
     pluginDbg("[CFG]                      logfile="+fgcom_cfg.logfile);
     pluginDbg("[CFG]                   updaterURL="+fgcom_cfg.updaterURL);
+    pluginDbg("[CFG]              autoJoinChannel="+std::to_string(fgcom_cfg.autoJoinChannel));
+    pluginDbg("[CFG]            autoJoinChannelPW="+channelPwS);
     for (const auto& cv : fgcom_cfg.mapMumblePTT) {
         pluginDbg("[CFG]              mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
     }
@@ -486,6 +491,7 @@ mumble_error_t fgcom_initPlugin() {
                         return MUMBLE_EC_CHANNEL_NOT_FOUND; // abort online init - something horribly went wrong.
                     }
                 }
+                std::stable_sort(fgcom_specialChannelID.begin(), fgcom_specialChannelID.end());
                 
                 if (fgcom_specialChannelID.empty()) {
                     pluginLog("ERROR: FAILED TO RETRIEVE SPECIAL CHANNEL '"+fgcom_cfg.specialChannel+"'! Please setup such an channel.");
@@ -797,6 +803,28 @@ void mumble_onServerSynchronized(mumble_connection_t connection) {
     // particularly it will run the online part if the plugin was loaded when
     // we were not connected/synchronized yet)
     fgcom_initPlugin();
+
+
+    // Autojoin FGCom channel
+    if (fgcom_cfg.autoJoinChannel) {
+        pluginLog("Autojoin channel requested");
+        if (fgcom_specialChannelID.size() > 0) {
+            mumble_channelid_t sc_id = fgcom_specialChannelID.front();
+            pluginDbg("Autojoin channel: id="+std::to_string(sc_id));
+            mumble_error_t merr;
+            if (fgcom_cfg.autoJoinChannelPW.length() > 0) {
+                merr = mumAPI.requestUserMove(ownPluginID, connection, localMumId, sc_id, fgcom_cfg.autoJoinChannelPW.c_str());
+            } else {
+                merr = mumAPI.requestUserMove(ownPluginID, connection, localMumId, sc_id, nullptr);
+            }
+            if (merr != MUMBLE_STATUS_OK) {
+                pluginLog("Autojoin channel: failed ("+std::to_string(merr)+")");
+            }
+        } else {
+            pluginLog("Autojoin channel: not possible, no fgcom channel found!");
+        }
+    }
+
 }
 
 void mumble_onChannelEntered(mumble_connection_t connection, mumble_userid_t userID, mumble_channelid_t previousChannelID, mumble_channelid_t newChannelID) {
