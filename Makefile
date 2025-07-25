@@ -121,7 +121,8 @@ ifneq (,$(wildcard client/mumble-plugin/fgcom-mumble-x86_32.dll))
 endif
 ifneq (,$(wildcard client/mumble-plugin/fgcom-mumble-macOS.bundle))
 	cp client/mumble-plugin/fgcom-mumble-macOS.bundle fgcom-mumble-plugin-bundle/
-	@echo '    <plugin os="macos" arch="x64">fgcom-mumble-macOS.bundle</plugin>' >> fgcom-mumble-plugin-bundle/manifest.xml
+	@echo '    <plugin os="macos" arch="arm64">fgcom-mumble-macOS.bundle</plugin>' >> fgcom-mumble-plugin-bundle/manifest.xml
+	@echo '    <plugin os="macos" arch="x86_64">fgcom-mumble-macOS.bundle</plugin>' >> fgcom-mumble-plugin-bundle/manifest.xml
 endif
 	@echo '  </assets>' >> fgcom-mumble-plugin-bundle/manifest.xml
 	
