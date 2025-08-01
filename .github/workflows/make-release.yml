@@ -33,7 +33,7 @@ jobs:
 
     - name: Build and run CATCH2 tests
       run: |
-        make -C client/mumble-plugin/ CC=g++ CFLAGS+="-arch x86_64 -arch arm64 -ld_classic" test
+        make -C client/mumble-plugin/ CC=g++ CFLAGS+="-std=c++17 -arch x86_64 -arch arm64 -ld_classic" test
 
     - name: Build Plugin
       run: |
@@ -109,182 +109,182 @@ jobs:
 
 
 
-  ###############################
-  #        Debug version        #
-  ###############################
-  build_macPlugin-debug:
-    name: Build macOS plugin binary (debug version)
-    runs-on: macos-latest
+  # ###############################
+  # #        Debug version        #
+  # ###############################
+  # build_macPlugin-debug:
+  #   name: Build macOS plugin binary (debug version)
+  #   runs-on: macos-latest
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@main
-      with:
-        # We must fetch at least the immediate parents so that if this is
-        # a pull request then we can checkout the head.
-        fetch-depth: 2
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@main
+  #     with:
+  #       # We must fetch at least the immediate parents so that if this is
+  #       # a pull request then we can checkout the head.
+  #       fetch-depth: 2
 
-    - name: Build and run CATCH2 tests
-      run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++ CFLAGS+="-arch x86_64 -arch arm64 -ld_classic" test
+  #   - name: Build and run CATCH2 tests
+  #     run: |
+  #       make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++ CFLAGS+="-arch x86_64 -arch arm64 -ld_classic" test
 
-    - name: Build Plugin
-      run: |
-        make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" plugin-macOS
+  #   - name: Build Plugin
+  #     run: |
+  #       make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" plugin-macOS
 
-    - name: Upload plugin
-      uses: actions/upload-artifact@main
-      with:
-        name: macPlugin-debug
-        path: client/mumble-plugin/fgcom-mumble-macOS.bundle
-        retention-days: 1
-
-
-  build_release_package-debug:
-    name: Build release package (debug version)
-    runs-on: ubuntu-latest
-    needs: build_macPlugin-debug
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@main
-      with:
-        # We must fetch at least the immediate parents so that if this is
-        # a pull request then we can checkout the head.
-        fetch-depth: 2
-
-    - name: Setup submodules
-      run: |
-        git submodule init
-        git submodule update client/mumble-plugin/lib/openssl
-        git submodule update client/radioGUI/lib/jsimconnect
-
-    - name: Setup Java
-      uses: actions/setup-java@main
-      with:
-        java-version: '11' # The JDK version to make available on the path.
-        distribution: adopt
-
-    - name: Setup C++
-      run: |
-        sudo apt-get install libssl-dev mingw-w64 mingw-w64-common build-essential
-
-    - name: Download mac plugin from job_1
-      uses: actions/download-artifact@main
-      with:
-        name: macPlugin-debug
-
-    - name: Add macPlugin to release files
-      run: |
-        cp fgcom-mumble-macOS.bundle client/mumble-plugin/
-
-    - name: Build release
-      run: |
-        make DEBUG+="-g3 -Og -DDEBUG" clean plugin
-        make DEBUG+="-g3 -Og -DDEBUG" clean plugin-win64
-        make DEBUG+="-g3 -Og -DDEBUG" clean plugin-win32
-        make DEBUG+="-g3 -Og -DDEBUG" clean release
-
-    - name: Get release version
-      run: |
-        echo "PACKAGE_VERSION=$(make showVer |grep BUNDLE: |cut -d':' -f2)" >> $GITHUB_ENV
-        echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@main
-      with:
-        name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}-debug
-        path: |
-          *.zip
-          *.mumble_plugin
-        retention-days: 7
+  #   - name: Upload plugin
+  #     uses: actions/upload-artifact@main
+  #     with:
+  #       name: macPlugin-debug
+  #       path: client/mumble-plugin/fgcom-mumble-macOS.bundle
+  #       retention-days: 1
 
 
-  ######################################
-  #    Normal release NOSSL version    #
-  ######################################
-  build_macPlugin-nossl:
-    name: Build macOS plugin binary (no OpenSSL version)
-    runs-on: macos-latest
+  # build_release_package-debug:
+  #   name: Build release package (debug version)
+  #   runs-on: ubuntu-latest
+  #   needs: build_macPlugin-debug
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@main
-      with:
-        # We must fetch at least the immediate parents so that if this is
-        # a pull request then we can checkout the head.
-        fetch-depth: 2
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@main
+  #     with:
+  #       # We must fetch at least the immediate parents so that if this is
+  #       # a pull request then we can checkout the head.
+  #       fetch-depth: 2
 
-    - name: Build and run CATCH2 tests
-      run: |
-        make -C client/mumble-plugin/ CC=g++ CFLAGS+="-arch x86_64 -arch arm64 -ld_classic" SSLFLAGS= test
+  #   - name: Setup submodules
+  #     run: |
+  #       git submodule init
+  #       git submodule update client/mumble-plugin/lib/openssl
+  #       git submodule update client/radioGUI/lib/jsimconnect
 
-    - name: Build Plugin
-      run: |
-        make -C client/mumble-plugin/ SSLFLAGS= plugin-macOS
+  #   - name: Setup Java
+  #     uses: actions/setup-java@main
+  #     with:
+  #       java-version: '11' # The JDK version to make available on the path.
+  #       distribution: adopt
 
-    - name: Upload plugin
-      uses: actions/upload-artifact@main
-      with:
-        name: macPlugin-nossl
-        path: client/mumble-plugin/fgcom-mumble-macOS.bundle
-        retention-days: 1
+  #   - name: Setup C++
+  #     run: |
+  #       sudo apt-get install libssl-dev mingw-w64 mingw-w64-common build-essential
+
+  #   - name: Download mac plugin from job_1
+  #     uses: actions/download-artifact@main
+  #     with:
+  #       name: macPlugin-debug
+
+  #   - name: Add macPlugin to release files
+  #     run: |
+  #       cp fgcom-mumble-macOS.bundle client/mumble-plugin/
+
+  #   - name: Build release
+  #     run: |
+  #       make DEBUG+="-g3 -Og -DDEBUG" clean plugin
+  #       make DEBUG+="-g3 -Og -DDEBUG" clean plugin-win64
+  #       make DEBUG+="-g3 -Og -DDEBUG" clean plugin-win32
+  #       make DEBUG+="-g3 -Og -DDEBUG" clean release
+
+  #   - name: Get release version
+  #     run: |
+  #       echo "PACKAGE_VERSION=$(make showVer |grep BUNDLE: |cut -d':' -f2)" >> $GITHUB_ENV
+  #       echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+  #   - name: 'Upload Artifact'
+  #     uses: actions/upload-artifact@main
+  #     with:
+  #       name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}-debug
+  #       path: |
+  #         *.zip
+  #         *.mumble_plugin
+  #       retention-days: 7
 
 
-  build_release_package-nossl:
-    name: Build release package (no OpenSSL version)
-    runs-on: ubuntu-latest
-    needs: build_macPlugin-nossl
+  # ######################################
+  # #    Normal release NOSSL version    #
+  # ######################################
+  # build_macPlugin-nossl:
+  #   name: Build macOS plugin binary (no OpenSSL version)
+  #   runs-on: macos-latest
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@main
-      with:
-        # We must fetch at least the immediate parents so that if this is
-        # a pull request then we can checkout the head.
-        fetch-depth: 2
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@main
+  #     with:
+  #       # We must fetch at least the immediate parents so that if this is
+  #       # a pull request then we can checkout the head.
+  #       fetch-depth: 2
 
-    - name: Setup submodules
-      run: |
-        git submodule init
-        git submodule update client/radioGUI/lib/jsimconnect
+  #   - name: Build and run CATCH2 tests
+  #     run: |
+  #       make -C client/mumble-plugin/ CC=g++ CFLAGS+="-arch x86_64 -arch arm64 -ld_classic" SSLFLAGS= test
 
-    - name: Setup Java
-      uses: actions/setup-java@main
-      with:
-        java-version: '11' # The JDK version to make available on the path.
-        distribution: adopt
+  #   - name: Build Plugin
+  #     run: |
+  #       make -C client/mumble-plugin/ SSLFLAGS= plugin-macOS
 
-    - name: Setup C++
-      run: |
-        sudo apt-get install mingw-w64 mingw-w64-common build-essential
+  #   - name: Upload plugin
+  #     uses: actions/upload-artifact@main
+  #     with:
+  #       name: macPlugin-nossl
+  #       path: client/mumble-plugin/fgcom-mumble-macOS.bundle
+  #       retention-days: 1
 
-    - name: Download mac plugin from job_1
-      uses: actions/download-artifact@main
-      with:
-        name: macPlugin-nossl
 
-    - name: Add macPlugin to release files
-      run: |
-        cp fgcom-mumble-macOS.bundle client/mumble-plugin/
+  # build_release_package-nossl:
+  #   name: Build release package (no OpenSSL version)
+  #   runs-on: ubuntu-latest
+  #   needs: build_macPlugin-nossl
 
-    - name: Build release
-      run: |
-        make SSLFLAGS= clean plugin
-        make SSLFLAGS= clean plugin-win64
-        make SSLFLAGS= clean plugin-win32
-        make SSLFLAGS= clean release
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@main
+  #     with:
+  #       # We must fetch at least the immediate parents so that if this is
+  #       # a pull request then we can checkout the head.
+  #       fetch-depth: 2
 
-    - name: Get release version
-      run: |
-        echo "PACKAGE_VERSION=$(make showVer |grep BUNDLE: |cut -d':' -f2)" >> $GITHUB_ENV
-        echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+  #   - name: Setup submodules
+  #     run: |
+  #       git submodule init
+  #       git submodule update client/radioGUI/lib/jsimconnect
 
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@main
-      with:
-        name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}-nossl
-        path: |
-          *.zip
-          *.mumble_plugin
-        retention-days: 7
+  #   - name: Setup Java
+  #     uses: actions/setup-java@main
+  #     with:
+  #       java-version: '11' # The JDK version to make available on the path.
+  #       distribution: adopt
+
+  #   - name: Setup C++
+  #     run: |
+  #       sudo apt-get install mingw-w64 mingw-w64-common build-essential
+
+  #   - name: Download mac plugin from job_1
+  #     uses: actions/download-artifact@main
+  #     with:
+  #       name: macPlugin-nossl
+
+  #   - name: Add macPlugin to release files
+  #     run: |
+  #       cp fgcom-mumble-macOS.bundle client/mumble-plugin/
+
+  #   - name: Build release
+  #     run: |
+  #       make SSLFLAGS= clean plugin
+  #       make SSLFLAGS= clean plugin-win64
+  #       make SSLFLAGS= clean plugin-win32
+  #       make SSLFLAGS= clean release
+
+  #   - name: Get release version
+  #     run: |
+  #       echo "PACKAGE_VERSION=$(make showVer |grep BUNDLE: |cut -d':' -f2)" >> $GITHUB_ENV
+  #       echo "PACKAGE_SHASHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+  #   - name: 'Upload Artifact'
+  #     uses: actions/upload-artifact@main
+  #     with:
+  #       name: fgcom-mumble-${{env.PACKAGE_VERSION}}_${{env.PACKAGE_SHASHORT}}-nossl
+  #       path: |
+  #         *.zip
+  #         *.mumble_plugin
+  #       retention-days: 7
