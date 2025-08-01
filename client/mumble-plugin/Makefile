@@ -178,7 +178,34 @@ ifdef SSLFLAGS
 	git submodule init
 	git submodule update
 	cd lib/openssl/ && git reset --hard
-	cd lib/openssl/ && ./Configure $(openSSLBuildOpts) no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 $(openSSLCrossCompileOpts) && make clean && make -j4
+
+	# Create separate build directories for arm64 and x86_64, since openssl's configure doesn't support universal binaries out of the box
+	mkdir -p lib/openssl/build_arm64
+	mkdir -p lib/openssl/build_x86_64
+
+	# Build for arm64
+	cd lib/openssl && \
+	CFLAGS="-arch arm64" ./Configure darwin64-arm64-cc $(openSSLBuildOpts) no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 $(openSSLCrossCompileOpts) && \
+	make clean && make -j4 && \
+	cp libcrypto.3.dylib build_arm64/libcrypto.3.dylib && cp libssl.3.dylib build_arm64/libssl.3.dylib
+
+	# Build for x86_64
+	cd lib/openssl && \
+	make distclean && \
+	CFLAGS="-arch x86_64" ./Configure darwin64-x86_64-cc $(openSSLBuildOpts) no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 $(openSSLCrossCompileOpts) && \
+	make clean && make -j4 && \
+	cp libcrypto.3.dylib build_x86_64/libcrypto.3.dylib && cp libssl.3.dylib build_x86_64/libssl.3.dylib
+
+	# Merge into universal binaries
+	lipo -create \
+		lib/openssl/build_arm64/libssl.3.dylib \
+		lib/openssl/build_x86_64/libssl.3.dylib \
+		-output lib/openssl/libssl.dylib
+
+	lipo -create \
+		lib/openssl/build_arm64/libcrypto.3.dylib \
+		lib/openssl/build_x86_64/libcrypto.3.dylib \
+		-output lib/openssl/libcrypto.dylib
 else
 	@echo "Skipping building OpenSSL"
 endif
