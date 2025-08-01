@@ -724,9 +724,9 @@ MumbleStringWrapper mumble_getDescription() {
             "FGCom-mumble %d.%d.%d provides an (aircraft) radio simulation.\n\nhttps://github.com/hbeni/fgcom-mumble",
             version.major, version.minor, version.patch);
         if (len < 0)
-            throw std::system_error();
+            throw std::system_error(std::make_error_code(std::errc::not_enough_memory), "sprintf failed when constructing description");
     } else {
-        throw std::system_error();
+        throw std::system_error(std::make_error_code(std::errc::not_enough_memory), "malloc failed when constructing description");
     }
 
     MumbleStringWrapper wrapper;
