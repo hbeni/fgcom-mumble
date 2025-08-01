@@ -169,10 +169,7 @@ openssl-win32: openSSLBuildOpts=mingw -static
 openssl-win32: openSSLCrossCompileOpts=--cross-compile-prefix=i686-w64-mingw32-
 openssl-win32: openssl
 
-openssl-macOS: openSSLBuildOpts=
-openssl-macOS: openssl
-
-openssl:
+openssl-macOS:
 ifdef SSLFLAGS
 	@echo "BUILD OpenSSL"
 	git submodule init
@@ -185,14 +182,14 @@ ifdef SSLFLAGS
 
 	# Build for arm64
 	cd lib/openssl && \
-	CFLAGS="-arch arm64" ./Configure darwin64-arm64-cc $(openSSLBuildOpts) no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 $(openSSLCrossCompileOpts) && \
+	CFLAGS="-arch arm64" ./Configure darwin64-arm64-cc no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
 	make clean && make -j4 && \
 	cp libcrypto.3.dylib build_arm64/libcrypto.3.dylib && cp libssl.3.dylib build_arm64/libssl.3.dylib
 
 	# Build for x86_64
 	cd lib/openssl && \
 	make distclean && \
-	CFLAGS="-arch x86_64" ./Configure darwin64-x86_64-cc $(openSSLBuildOpts) no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 $(openSSLCrossCompileOpts) && \
+	CFLAGS="-arch x86_64" ./Configure darwin64-x86_64-cc no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
 	make clean && make -j4 && \
 	cp libcrypto.3.dylib build_x86_64/libcrypto.3.dylib && cp libssl.3.dylib build_x86_64/libssl.3.dylib
 
@@ -206,6 +203,17 @@ ifdef SSLFLAGS
 		lib/openssl/build_arm64/libcrypto.3.dylib \
 		lib/openssl/build_x86_64/libcrypto.3.dylib \
 		-output lib/openssl/libcrypto.dylib
+else
+	@echo "Skipping building OpenSSL"
+endif
+
+openssl:
+ifdef SSLFLAGS
+	@echo "BUILD OpenSSL"
+	git submodule init
+	git submodule update
+	cd lib/openssl/ && git reset --hard
+	cd lib/openssl/ && ./Configure $(openSSLBuildOpts) no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 $(openSSLCrossCompileOpts) && make clean && make -j4
 else
 	@echo "Skipping building OpenSSL"
 endif
