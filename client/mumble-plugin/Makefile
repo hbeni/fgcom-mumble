@@ -182,27 +182,27 @@ ifdef SSLFLAGS
 
 	# Build for arm64
 	cd lib/openssl && \
-	CFLAGS="-arch arm64" ./Configure darwin64-arm64-cc no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
+	CFLAGS="-arch arm64" ./Configure darwin64-arm64-cc no-shared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
 	make clean && make -j4 && \
-	cp libcrypto.3.dylib build_arm64/libcrypto.3.dylib && cp libssl.3.dylib build_arm64/libssl.3.dylib
+	cp libcrypto.a build_arm64/libcrypto.a && cp libssl.a build_arm64/libssl.a
 
 	# Build for x86_64
 	cd lib/openssl && \
 	make distclean && \
-	CFLAGS="-arch x86_64" ./Configure darwin64-x86_64-cc no-pinshared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
+	CFLAGS="-arch x86_64" ./Configure darwin64-x86_64-cc no-shared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
 	make clean && make -j4 && \
-	cp libcrypto.3.dylib build_x86_64/libcrypto.3.dylib && cp libssl.3.dylib build_x86_64/libssl.3.dylib
+	cp libcrypto.a build_x86_64/libcrypto.a && cp libssl.a build_x86_64/libssl.a
 
 	# Merge into universal binaries
 	lipo -create \
-		lib/openssl/build_arm64/libssl.3.dylib \
-		lib/openssl/build_x86_64/libssl.3.dylib \
-		-output lib/openssl/libssl.dylib
+		lib/openssl/build_arm64/libssl.a \
+		lib/openssl/build_x86_64/libssl.a \
+		-output lib/openssl/libssl.a
 
 	lipo -create \
-		lib/openssl/build_arm64/libcrypto.3.dylib \
-		lib/openssl/build_x86_64/libcrypto.3.dylib \
-		-output lib/openssl/libcrypto.dylib
+		lib/openssl/build_arm64/libcrypto.a \
+		lib/openssl/build_x86_64/libcrypto.a \
+		-output lib/openssl/libcrypto.a
 else
 	@echo "Skipping building OpenSSL"
 endif
