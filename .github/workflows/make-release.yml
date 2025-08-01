@@ -126,7 +126,7 @@ jobs:
 
   #   - name: Build and run CATCH2 tests
   #     run: |
-  #       make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++ CFLAGS+="-arch x86_64 -arch arm64 -ld_classic" test
+  #       make -C client/mumble-plugin/ DEBUG+="-g3 -Og -DDEBUG" CC=g++ CFLAGS+="-std=c++17 -arch x86_64 -arch arm64 -ld_classic" test
 
   #   - name: Build Plugin
   #     run: |
@@ -217,7 +217,7 @@ jobs:
 
     - name: Build and run CATCH2 tests
       run: |
-        make -C client/mumble-plugin/ CC=g++ CFLAGS+="-arch x86_64 -arch arm64 -ld_classic" SSLFLAGS= test
+        make -C client/mumble-plugin/ CC=g++ CFLAGS+="-std=c++17 -arch x86_64 -arch arm64 -ld_classic" SSLFLAGS= test
 
     - name: Build Plugin
       run: |
