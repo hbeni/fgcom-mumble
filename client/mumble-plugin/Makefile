@@ -153,7 +153,7 @@ plugin-win-dllresource:
 	$(mingwprefix)windres dllResource.rc dllResource.o
 
 # shortcut for building natively on macOS
-plugin-macOS: CC=g++-13
+plugin-macOS: CC=g++
 plugin-macOS: outname=fgcom-mumble-macOS.bundle
 plugin-macOS: openssl-macOS
 	make CC=$(CC) outname=$(outname) CFLAGS+="-arch x86_64 -arch arm64 -mmacosx-version-min=10.13 -ld_classic" plugin
