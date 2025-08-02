@@ -153,10 +153,10 @@ plugin-win-dllresource:
 	$(mingwprefix)windres dllResource.rc dllResource.o
 
 # shortcut for building natively on macOS
-plugin-macOS: CC=g++-13
+plugin-macOS: CC=g++
 plugin-macOS: outname=fgcom-mumble-macOS.bundle
 plugin-macOS: openssl-macOS
-	make CC=$(CC) outname=$(outname) CFLAGS+=-ld_classic plugin
+	make CC=$(CC) outname=$(outname) CFLAGS+="-std=c++17 -arch x86_64 -arch arm64 -mmacosx-version-min=10.13" plugin
 
 # OpenSSL
 # The sources are located under lib/openssl as git submodule, and supposed to point to the latest stable head
@@ -169,8 +169,43 @@ openssl-win32: openSSLBuildOpts=mingw -static
 openssl-win32: openSSLCrossCompileOpts=--cross-compile-prefix=i686-w64-mingw32-
 openssl-win32: openssl
 
-openssl-macOS: openSSLBuildOpts=
-openssl-macOS: openssl
+openssl-macOS:
+ifdef SSLFLAGS
+	@echo "BUILD OpenSSL"
+	git submodule init
+	git submodule update
+	cd lib/openssl/ && git reset --hard
+
+	# Create separate build directories for arm64 and x86_64, since openssl's configure doesn't support universal binaries out of the box
+	mkdir -p lib/openssl/build_arm64
+	mkdir -p lib/openssl/build_x86_64
+
+	# Build for arm64
+	cd lib/openssl && \
+	CFLAGS="-arch arm64" ./Configure darwin64-arm64-cc no-shared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
+	make clean && make -j4 && \
+	cp libcrypto.a build_arm64/libcrypto.a && cp libssl.a build_arm64/libssl.a
+
+	# Build for x86_64
+	cd lib/openssl && \
+	make distclean && \
+	CFLAGS="-arch x86_64" ./Configure darwin64-x86_64-cc no-shared no-weak-ssl-ciphers no-ssl3 no-idea no-dtls1 && \
+	make clean && make -j4 && \
+	cp libcrypto.a build_x86_64/libcrypto.a && cp libssl.a build_x86_64/libssl.a
+
+	# Merge into universal binaries
+	lipo -create \
+		lib/openssl/build_arm64/libssl.a \
+		lib/openssl/build_x86_64/libssl.a \
+		-output lib/openssl/libssl.a
+
+	lipo -create \
+		lib/openssl/build_arm64/libcrypto.a \
+		lib/openssl/build_x86_64/libcrypto.a \
+		-output lib/openssl/libcrypto.a
+else
+	@echo "Skipping building OpenSSL"
+endif
 
 openssl:
 ifdef SSLFLAGS
