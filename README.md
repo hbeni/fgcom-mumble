@@ -21,6 +21,22 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - Modularity, so individual components can be easily updated and extended with new features
 - Good and complete documentation
 
+### New Advanced Features (v2.0+):
+- **Multi-threaded Architecture**: 7 specialized background threads for optimal performance
+- **GPU Acceleration**: Configurable GPU acceleration for complex calculations (client/server/hybrid modes)
+- **Feature Toggle System**: 107 configurable features across 17 categories for runtime customization
+- **Advanced Debugging**: Comprehensive logging, profiling, and memory tracking system
+- **RESTful API**: Complete HTTP API with WebSocket real-time updates for external integration
+- **Amateur Radio Support**: Full amateur radio band coverage with ITU region compliance
+- **Aviation & Maritime HF**: Dedicated HF communication models for aviation and maritime operations
+- **Antenna Pattern Library**: Comprehensive EZNEC-based antenna patterns for all vehicle types
+- **Solar Data Integration**: Real-time NOAA/SWPC solar data for accurate propagation modeling
+- **Vehicle Dynamics API**: Complete vehicle position, attitude, and antenna orientation tracking
+- **Power Management**: Advanced transmit power control with efficiency and safety features
+- **Frequency Offset Simulation**: Realistic audio effects including Doppler shift and "Donald Duck" effect
+- **Lightning Data Integration**: Real-time atmospheric noise simulation from lightning strikes
+- **Weather Data Integration**: Atmospheric condition effects on radio propagation
+
 Documentation
 =============
 The documentation is split up into relevant parts:
@@ -32,6 +48,17 @@ The documentation is split up into relevant parts:
 - [client/fgfs-addon/Readme.md](client/fgfs-addon/Readme.md) Documentation for the Flightgear integration addon
 - [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
+
+### Advanced Features Documentation:
+- [API Documentation](client/mumble-plugin/lib/API_DOCUMENTATION.md) Complete RESTful API and WebSocket documentation
+- [Implementation Summary](client/mumble-plugin/lib/IMPLEMENTATION_SUMMARY.md) Comprehensive overview of all implemented features
+- [Threading Architecture](client/mumble-plugin/lib/THREADING_ARCHITECTURE_DOCUMENTATION.md) Multi-threaded system documentation
+- [NEC Modeling Guide](client/mumble-plugin/lib/NEC_MODELING_DOCUMENTATION.md) Antenna modeling and calculation guide
+- [Vehicle Dynamics API](VEHICLE_DYNAMICS_API.md) Vehicle tracking and antenna orientation API
+- [Vehicle Dynamics Examples](VEHICLE_DYNAMICS_EXAMPLES.md) Practical examples for vehicle dynamics integration
+- [Military HF Frequencies](client/mumble-plugin/lib/MILITARY_HF_FREQUENCIES.md) NATO and Eastern Bloc military frequency documentation
+- [Frequency Offset Documentation](client/mumble-plugin/lib/FREQUENCY_OFFSET_DOCUMENTATION.md) Audio processing and frequency offset simulation
+- [Changes Log](client/mumble-plugin/lib/changes.md) Detailed development history and feature implementation log
 
 ### Bugs/Feature requests/coding help
 The project lives on github: https://github.com/hbeni/fgcom-mumble
@@ -100,6 +127,23 @@ You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-m
   - `<home>\fgcom-mumble.ini`
   - `<home>\Documents\fgcom-mumble.ini`
 
+### Advanced Configuration (v2.0+)
+FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced features:
+
+- **[fgcom-mumble.conf.example](fgcom-mumble.conf.example)**: Complete configuration template with all available options
+- **[fgcom-mumble.conf.minimal](fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
+- **Feature Toggles**: Runtime enable/disable of 107 features across 17 categories
+- **GPU Acceleration**: Configure client/server/hybrid GPU acceleration modes
+- **Threading**: Customize thread intervals and resource allocation
+- **API Server**: Configure RESTful API endpoints and WebSocket settings
+- **Debugging**: Set logging levels, output handlers, and performance monitoring
+- **Power Management**: Configure transmit power limits and efficiency settings
+- **Solar Data**: Set NOAA/SWPC data update intervals and fallback options
+- **Lightning Data**: Configure atmospheric noise simulation parameters
+- **Weather Data**: Set weather data sources and update frequencies
+
+All configuration files support INI format with comprehensive documentation and validation.
+
 
 
 Running the client
@@ -109,6 +153,18 @@ Running the client
 - join a channel starting with `fgcom-mumble` 
 
 You are ready for radio usage! Some client needs to supply information to the plugin now, so it knows about your location and radio stack.
+
+### API Integration (v2.0+)
+FGCom-mumble v2.0+ provides comprehensive API integration for external applications:
+
+- **RESTful API**: HTTP endpoints for propagation data, solar conditions, band status, antenna patterns, vehicle dynamics, power management, and system status
+- **WebSocket Real-time Updates**: Live propagation updates, solar data changes, vehicle position tracking, and system monitoring
+- **Client Examples**: JavaScript, Python, and C++ integration examples provided
+- **Authentication**: API key management with secure storage and rotation
+- **Rate Limiting**: Built-in abuse detection and prevention
+- **Documentation**: Complete API reference with request/response examples
+
+See [API Documentation](client/mumble-plugin/lib/API_DOCUMENTATION.md) for complete integration details.
 
 
 ### Generic compatibility
@@ -241,6 +297,11 @@ The FGCom-mumble client plugin needs to be in binary form. If you want to use th
 - Prerequisites:
   - `git`, `make`, `g++`, `mingw32` (for windows build)
   - OpenSSL: Linux builds dynamically against the installed `libssl-dev`. MingW/Windows links statically against a build from the git submodule `lib/openssl` by invoking `make openssl-win`.
+  - **v2.0+ Additional Dependencies**:
+    - `httplib.h` (included): HTTP client for solar data, lightning data, and weather data
+    - `json.hpp` (included): JSON parsing for API responses and configuration
+    - `nec2c` (optional): NEC2 antenna simulation for pattern generation
+    - GPU libraries (optional): CUDA/OpenCL for GPU acceleration features
 
 - Building:
   - Download the source tree: `git clone https://github.com/hbeni/fgcom-mumble.git`
@@ -255,6 +316,10 @@ Other interesting compile targets:
   - `make debug` will build the plugin and add debug code that will print lots of stuff to the terminal window when running the plugin
   - `make test` builds and runs catch2-unittests
   - `make tools` builds some utilitys and test tools
+  - **v2.0+ New Targets**:
+    - `make patterns` generates antenna patterns using EZNEC/NEC2
+    - `make api-docs` generates API documentation
+    - `make config-examples` creates configuration file examples
 
 
 Windows native build
