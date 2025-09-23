@@ -7,6 +7,20 @@ The whole idea is that the system is modular, so if something breaks, it will no
 It is also a lot easier to detect what exactly is broken and keep individual modules small enough to handle.
 One additional advantage is, that each module's implementation may be swapped without affecting the other modules.
 
+### v2.0+ Enhanced Architecture
+FGCom-mumble v2.0+ introduces a comprehensive multi-threaded architecture with advanced features:
+
+- **Multi-threaded Design**: 7 specialized background threads for optimal performance
+- **GPU Acceleration**: Configurable GPU acceleration for complex calculations
+- **Feature Toggle System**: Runtime configuration of 107 features across 17 categories
+- **Advanced Debugging**: Comprehensive logging, profiling, and memory tracking
+- **RESTful API**: Complete HTTP API with WebSocket real-time updates
+- **Modular Radio Models**: Extensible radio propagation models for different frequency bands
+- **Antenna Pattern Library**: EZNEC-based antenna patterns for realistic modeling
+- **Real-time Data Integration**: Solar data, lightning data, and weather data integration
+- **Vehicle Dynamics**: Complete vehicle tracking and antenna orientation system
+- **Power Management**: Advanced transmit power control with safety features
+
 The FGCom mumble client plugin
 ------------------------------
 This is the central cornerstone of the system. The plugin handles sending/receiving of the radio broadcasts from players and also bots.
@@ -21,6 +35,33 @@ Then, if the frequency is currently tuned AND the sender is in radio-range AND t
 This inherently enables listening and sending on multiple frequencies in parallel.
 
 "Frequency" thereby is an arbitary string, which enables to tune arbitary frequencies and also may be used to simulate land-lines for ATC. To receive a transmission, the frequency string must match between sender and receiver. If the frequency is numeric, comparison is handled by the radio model.
+
+### v2.0+ Enhanced Plugin Architecture
+The v2.0+ plugin includes significant architectural enhancements:
+
+#### Multi-threaded Processing
+- **Solar Data Thread**: Updates solar conditions every 15 minutes from NOAA/SWPC
+- **Propagation Engine Thread**: Processes propagation calculations every 100ms
+- **API Server Thread**: Handles HTTP/WebSocket requests and responses
+- **GPU Compute Engine Thread**: Manages GPU-accelerated calculations every 10ms
+- **Lightning Data Thread**: Updates lightning strike data every 30 seconds
+- **Weather Data Thread**: Updates weather conditions every 5 minutes
+- **Antenna Pattern Thread**: Manages antenna pattern loading and caching every 50ms
+
+#### Advanced Radio Models
+- **Modular Design**: Extensible radio model architecture for different frequency bands
+- **Amateur Radio**: Complete amateur radio band coverage with ITU region compliance
+- **Aviation HF**: Dedicated HF communication models for aviation operations
+- **Maritime HF**: Maritime HF communication with channel allocations
+- **Military HF**: NATO and Eastern Bloc military frequency support
+- **Solar Integration**: Real-time solar data integration for accurate propagation
+
+#### Enhanced Audio Processing
+- **Frequency Offset Simulation**: Realistic "Donald Duck" effect and Doppler shift
+- **BFO Simulation**: Beat Frequency Oscillator for CW/SSB operations
+- **Advanced Filtering**: Bandpass filters for different modulation types
+- **Atmospheric Noise**: Real-time lightning-based atmospheric noise simulation
+- **Power Management**: Advanced transmit power control with efficiency monitoring
 
 ### Plugin input data
 To get the needed data the plugin opens a simple network socket listening for updates on UDP Port **16661** (original FGCom port, it's compatible).  
@@ -91,3 +132,36 @@ Status webpage
 ----------------------------
 For user convenience there is also a webpage that shows the current status.  
 refer to the *server/statuspage/Readme.statuspage.md* file for details.
+
+### v2.0+ API Architecture
+FGCom-mumble v2.0+ includes a comprehensive API system for external integration:
+
+#### RESTful API Endpoints
+- **Propagation Data**: Real-time propagation calculations and map generation
+- **Solar Data**: Current solar conditions and historical data
+- **Band Status**: Band availability and propagation conditions
+- **Antenna Patterns**: Pattern lookup with vehicle and frequency specification
+- **Vehicle Dynamics**: Vehicle registration, position updates, and antenna control
+- **Power Management**: Power level control and efficiency monitoring
+- **GPU Status**: GPU utilization and performance metrics
+- **System Status**: Health monitoring and feature status reporting
+
+#### WebSocket Real-time Updates
+- **Propagation Updates**: Live signal strength and propagation condition changes
+- **Solar Data Updates**: Real-time solar condition modifications
+- **Vehicle Position Updates**: Live vehicle tracking and position changes
+- **System Status Updates**: Real-time system health and performance monitoring
+
+#### API Integration Features
+- **Authentication**: API key management with secure storage and rotation
+- **Rate Limiting**: Built-in abuse detection and prevention
+- **Input Validation**: Comprehensive input sanitization and error handling
+- **Client Examples**: JavaScript, Python, and C++ integration examples
+- **Documentation**: Complete API reference with request/response examples
+
+#### Configuration and Monitoring
+- **Feature Toggles**: Runtime enable/disable of 107 features across 17 categories
+- **Performance Monitoring**: Real-time performance tracking and optimization recommendations
+- **Debugging System**: Comprehensive logging, profiling, and memory tracking
+- **GPU Acceleration**: Configurable GPU acceleration with resource management
+- **Threading Management**: Customizable thread intervals and resource allocation
