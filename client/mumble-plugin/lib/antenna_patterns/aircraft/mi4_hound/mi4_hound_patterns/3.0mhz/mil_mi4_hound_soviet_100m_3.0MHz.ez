@@ -1,0 +1,193 @@
+EZNEC ver. 7.0
+
+; Mil Mi-4 "Hound" Soviet Military Helicopter
+; Typical Eastern Bloc helicopter HF/VHF antenna configuration
+; Low altitude operations (0-2000m typical)
+; Ground effects significant for helicopter operations
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Mi-4 main fuselage (16.8m length, 3.3m diameter - large helicopter)
+; Main fuselage structure
+W001  -8.4   0.0   0.0   8.4   0.0   0.0   1.65  34
+W002  -8.4   1.2   0.0   8.4   1.2   0.0   1.4   34
+W003  -8.4  -1.2   0.0   8.4  -1.2   0.0   1.4   34
+W004  -8.4   0.0   1.2   8.4   0.0   1.2   1.4   34
+W005  -8.4   0.0  -1.2   8.4   0.0  -1.2   1.4   34
+
+; Fuselage cross-sections for current distribution
+W006  -6.0  -1.6   0.0  -6.0   1.6   0.0   0.05   6
+W007  -3.0  -1.6   0.0  -3.0   1.6   0.0   0.05   6
+W008   0.0  -1.6   0.0   0.0   1.6   0.0   0.05   6
+W009   3.0  -1.6   0.0   3.0   1.6   0.0   0.05   6
+W010   6.0  -1.6   0.0   6.0   1.6   0.0   0.05   6
+
+; Main rotor hub and support structure (simplified)
+W011   0.0   0.0   3.0   0.0   0.0   4.2   0.3    6
+
+; Main rotor blades (4-blade configuration - simplified as crossed wires)
+; Rotor diameter 21m - major radiating elements
+W012   0.0 -10.5   4.2   0.0  10.5   4.2   0.15  42
+W013 -10.5   0.0   4.2  10.5   0.0   4.2   0.15  42
+
+; Engine compartment area
+W014  -2.0  -1.5   1.8   2.0  -1.5   1.8   0.2    8
+W015  -2.0   1.5   1.8   2.0   1.5   1.8   0.2    8
+W016  -2.0  -1.5   1.8  -2.0   1.5   1.8   0.2    6
+W017   2.0  -1.5   1.8   2.0   1.5   1.8   0.2    6
+
+; Tail boom (long, important for HF radiation)
+W018   6.0   0.0   1.0  16.0   0.0   2.5   0.4   20
+
+; Tail rotor assembly
+W019  16.0   0.0   2.5  16.0   0.0   5.0   0.2    5
+W020  16.0  -1.25  3.75 16.0   1.25  3.75  0.08   5
+
+; Landing gear struts (metal, contribute to ground plane)
+W021  -2.0  -2.5  -1.5  -2.0  -2.5   0.0   0.05   7
+W022  -2.0   2.5  -1.5  -2.0   2.5   0.0   0.05   7
+W023   4.0  -2.5  -1.5   4.0  -2.5   0.0   0.05   7
+W024   4.0   2.5  -1.5   4.0   2.5   0.0   0.05   7
+
+; Landing gear cross-bracing
+W025  -2.0  -2.5  -1.0   4.0  -2.5  -1.0   0.03  12
+W026  -2.0   2.5  -1.0   4.0   2.5  -1.0   0.03  12
+
+; SOVIET HELICOPTER ANTENNA SYSTEMS
+
+; Primary HF whip antenna (belly-mounted)
+; Helicopters use shorter antennas due to rotor clearance
+W027   2.0   0.0  -1.2   2.0   0.0  -4.5   0.006  17
+
+; VHF tactical antenna (fuselage side-mounted)
+W028   4.0   1.8   0.5   4.0   1.8   1.8   0.005   7
+
+; HF blade antenna on fuselage top (backup)
+W029  -3.0   0.0   2.2  -3.0   0.0   3.4   0.005  12
+
+; Tail boom HF coupling antenna
+W030  12.0   0.0   2.0  12.0   0.0   2.8   0.004   8
+
+; Navigation/IFF antenna (dorsal)
+W031   1.0   0.0   2.5   1.0   0.0   3.2   0.003   7
+
+; Landing gear bonding straps (important for HF ground)
+W032  -2.0  -2.5  -0.5  -2.0  -1.8  -0.2   0.002   5
+W033  -2.0   2.5  -0.5  -2.0   1.8  -0.2   0.002   5
+W034   4.0  -2.5  -0.5   4.0  -1.8  -0.2   0.002   5
+W035   4.0   2.5  -0.5   4.0   1.8  -0.2   0.002   5
+
+; SOURCE
+SY SRC  W027  8  1  ; HF whip antenna (mid-point for better matching)
+
+; GROUND
+; Low altitude helicopter operations - strong ground effects
+GD 0 0 0 0 0.005 0.013  ; Very low altitude - strong ground effects
+
+; LOADS
+; Helicopter structure - aluminum/steel construction
+LD 5 1 24 0 2.5E+07 0   ; Main fuselage and tail boom
+; Main rotor system - mixed materials, lower conductivity
+LD 5 12 13 0 1E+06 0    ; Rotor blades (fiberglass/wood/steel)
+
+; FREQUENCY
+FR 0 1 0 0 3.0 0      ; Soviet military HF frequency
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; FREQUENCY SWEEP - Soviet helicopter bands
+; FR 0 30 0 0 3.0 1.0    ; HF military sweep 3-30 MHz
+; FR 0 20 0 0 30.0 2.0   ; VHF tactical sweep 30-70 MHz
+
+; COMMENTS
+; Mil Mi-4 "Hound" Soviet Military Helicopter Antenna System
+; Large transport/utility helicopter used throughout Warsaw Pact
+; Typical Eastern Bloc helicopter communication configuration
+;
+; Aircraft specifications:
+; - Length: 16.8m (fuselage)
+; - Main rotor diameter: 21m
+; - Typical altitude: 0-2000m (low-level operations)
+; - Crew: 2-3 plus up to 11 passengers/troops
+; - First flight: 1952, widely exported
+;
+; Helicopter Antenna Challenges:
+; - Rotor blade interference and detuning effects
+; - Limited antenna mounting space (rotor clearance)
+; - Constant vibration environment
+; - Low altitude operations (strong ground effects)
+; - Metal rotor blades act as parasitic elements
+;
+; Soviet Helicopter Radio Systems:
+; - R-860: VHF-FM tactical radio (30-48 MHz)
+; - R-123M: VHF-FM communications (20-52 MHz) 
+; - R-832: HF transceiver (2-18 MHz)
+; - SPU-7: Intercom system
+; - Various navigation aids
+;
+; Antenna Configuration:
+; - Primary HF: Belly-mounted whip (3.3m length)
+; - VHF tactical: Side-mounted blade antenna
+; - Backup HF: Fuselage top blade antenna
+; - Navigation: Dorsal mounted antenna
+; - Tail boom: Coupling element for HF
+;
+; Rotor Effects on Antennas:
+; - 21m rotor disc acts as large parasitic element
+; - Rotor blade position affects pattern (modulation)
+; - Metal blades detune nearby antennas
+; - Pattern nulls/peaks rotate with rotor
+; - Frequency shifts with rotor RPM
+;
+; Ground Effects (Critical for Helicopters):
+; - Operating altitude typically 10-200m
+; - Strong multipath from ground reflections
+; - Pattern changes dramatically with height
+; - Forward flight attitude affects patterns
+; - Hover vs forward flight pattern differences
+;
+; Typical Soviet Helicopter Applications:
+; - Troop transport and assault
+; - Medical evacuation
+; - Supply missions to forward areas
+; - Search and rescue operations
+; - Electronic warfare and reconnaissance
+;
+; Frequency Bands:
+; - HF military: 3-18 MHz (long-range communication)
+; - VHF tactical: 30-70 MHz (ground coordination)
+; - UHF: 225-400 MHz (air traffic control)
+; - Navigation: Various LF/MF beacons
+;
+; Expected Performance:
+; - HF efficiency reduced by rotor interference (30-50%)
+; - VHF performance better but still affected
+; - Pattern highly dependent on rotor position
+; - Ground effects dominant at typical altitudes
+; - Communication range: 50-300 km depending on band/altitude
+;
+; NATO Equivalent Helicopters:
+; - Bell UH-1 "Huey" (similar size/role)
+; - Sikorsky UH-60 "Black Hawk" (later generation)
+; - Similar antenna challenges and solutions
+; - Different frequency allocations (NATO vs Warsaw Pact)
+;
+; Operational Considerations:
+; - Antenna patterns change with flight attitude
+; - Rotor downwash affects ground-mounted antennas
+; - Vibration requires robust antenna mounting
+; - Low altitude limits HF sky wave propagation
+; - Ground wave primary HF propagation mode
+;
+; The Mi-4 represents typical Soviet-era helicopter antenna
+; challenges - limited space, rotor interference, and
+; low-altitude operations creating complex RF environments
+; Altitude: 100m
+; Ground effects: Significant
+Moderate
+Minimal
+; Pattern characteristics: Ground wave dominant, multipath interference
+Mixed ground/sky wave, transitional effects
+Sky wave dominant, pattern stabilizing

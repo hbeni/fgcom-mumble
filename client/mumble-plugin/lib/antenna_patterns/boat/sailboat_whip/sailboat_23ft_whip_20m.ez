@@ -1,0 +1,53 @@
+EZNEC ver. 7.0
+
+; Sailboat 23-foot whip antenna model for 20m band
+; Antenna mounted on stern, 3m above waterline
+; Saltwater ground, 40-foot sailboat hull
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Hull representation (simplified as wire grid)
+W001  -6.0   0.0   0.0   6.0   0.0   0.0   0.1   11
+W002  -6.0  -1.5   0.0   6.0  -1.5   0.0   0.1   11  
+W003  -6.0   1.5   0.0   6.0   1.5   0.0   0.1   11
+W004  -6.0  -1.5   0.0  -6.0   1.5   0.0   0.1    5
+W005   6.0  -1.5   0.0   6.0   1.5   0.0   0.1    5
+
+; Hull cross-connections for better ground
+W006  -3.0  -1.5   0.0  -3.0   1.5   0.0   0.1    5
+W007   0.0  -1.5   0.0   0.0   1.5   0.0   0.1    5  
+W008   3.0  -1.5   0.0   3.0   1.5   0.0   0.1    5
+
+; Whip antenna (23 feet = 7 meters)
+; Mounted at stern, 3m above waterline
+W009   5.5   0.0   3.0   5.5   0.0  10.0   0.008  35
+
+; SOURCE
+; Source on whip antenna base
+SY SRC  W009  1  1  ; Wire 9, segment 1, 50+j0 ohms
+
+; GROUND
+; Saltwater ground parameters
+GD 0 0 0 0 5.0 0.003  ; Saltwater: conductivity=5 S/m, permittivity=81
+
+; LOADS
+; Hull connections - perfect conductor
+LD 5 0 0 0 1E+07 0  ; Perfect conductor for hull wires
+
+; FREQUENCY
+FR 0 1 0 0 14.200 0  ; 20m band center frequency
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0  ; Elevation and azimuth pattern
+
+; NEAR FIELD (optional)
+NE 0 10 10 10 -5 5 0 5 -5 5  ; Near field calculation
+
+; COMMENTS
+; This model represents a 23-foot whip on a 40-foot sailboat
+; Mounted 3 meters above saltwater
+; Hull modeled as wire grid ground plane
+; Adjust wire W009 length for different whip sizes
+; Change frequency for other bands
+; Typical SWR should be <3:1 on 20m with this length

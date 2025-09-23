@@ -1,0 +1,83 @@
+EZNEC ver. 7.0
+
+; Cushcraft A3WS 20-Meter Yagi Antenna Model
+; 3-element Yagi for 20m band (14.0-14.35 MHz)
+; Gain: 6-7 dBi, Boom Length: 18-24 ft
+; Popular commercial 20m Yagi design
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Boom (24 ft = 7.32m)
+W001  -3.66  0.0   0.0   3.66  0.0   0.0   0.02  15
+
+; Reflector (longest element, behind driven element)
+W002  -3.66 -1.35  0.0  -3.66  1.35  0.0   0.003  27
+
+; Driven Element (center, fed element)
+W003   0.0   -1.30  0.0   0.0    1.30  0.0   0.003  26
+
+; Director (shortest element, in front of driven element)
+W004   2.5   -1.25  0.0   2.5    1.25  0.0   0.003  25
+
+; SOURCE
+SY SRC  W003  1  1  ; Driven element feed point
+
+; GROUND
+; Average ground conditions
+GD 0 0 0 0 0.005 0.013  ; Average soil: conductivity=0.005 S/m, permittivity=13
+
+; LOADS
+; Boom - aluminum
+LD 5 1 1 0 3.7E+07 0    ; Aluminum boom
+
+; FREQUENCY
+FR 0 1 0 0 14.175 0     ; 20m band center frequency
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; FREQUENCY SWEEP - 20m amateur band
+; FR 0 20 0 0 14.000 0.025  ; 20m band sweep 14.0-14.35 MHz
+
+; COMMENTS
+; Cushcraft A3WS 20-Meter Yagi Antenna
+; Popular commercial 3-element Yagi for 20m band
+;
+; Specifications:
+; - Elements: 3 (reflector, driven, director)
+; - Gain: 6-7 dBi
+; - Boom length: 24 ft (7.32m)
+; - Frequency: 14.0-14.35 MHz (20m amateur band)
+; - Impedance: ~50 ohms
+;
+; Element lengths (approximate):
+; - Reflector: 2.7m (longest)
+; - Driven: 2.6m (center, fed)
+; - Director: 2.5m (shortest)
+;
+; Spacing:
+; - Reflector to driven: 3.66m
+; - Driven to director: 2.5m
+; - Total boom: 7.32m
+;
+; Performance characteristics:
+; - Front-to-back ratio: 15-20 dB
+; - SWR: <1.5:1 across band
+; - Beamwidth: ~60° horizontal, ~45° vertical
+; - Polarization: Horizontal
+;
+; Installation considerations:
+; - Height: Minimum 1/2 wavelength (10m) for best performance
+; - Ground: Average soil conditions assumed
+; - Wind loading: Moderate (3 elements)
+; - Rotor: Required for directional operation
+;
+; Typical applications:
+; - DX communication on 20m
+; - Contest operation
+; - Long-distance amateur radio
+; - Emergency communication
+;
+; This model represents the typical performance
+; of a well-designed 3-element 20m Yagi antenna

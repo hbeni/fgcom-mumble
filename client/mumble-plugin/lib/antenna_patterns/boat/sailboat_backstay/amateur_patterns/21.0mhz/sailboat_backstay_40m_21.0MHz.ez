@@ -1,0 +1,81 @@
+EZNEC ver. 7.0
+
+; Sailboat backstay antenna model (inverted-L configuration)
+; Mast height 15m, backstay to stern 12m
+; 40m band optimization, saltwater ground
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Hull representation (40-foot boat)
+W001  -6.0   0.0   0.0   6.0   0.0   0.0   0.1   11
+W002  -6.0  -1.5   0.0   6.0  -1.5   0.0   0.1   11  
+W003  -6.0   1.5   0.0   6.0   1.5   0.0   0.1   11
+W004  -6.0  -1.5   0.0  -6.0   1.5   0.0   0.1    5
+W005   6.0  -1.5   0.0   6.0   1.5   0.0   0.1    5
+
+; Hull cross-connections
+W006  -3.0  -1.5   0.0  -3.0   1.5   0.0   0.1    5
+W007   0.0  -1.5   0.0   0.0   1.5   0.0   0.1    5  
+W008   3.0  -1.5   0.0   3.0   1.5   0.0   0.1    5
+
+; Mast (simplified as vertical wire)
+W009   1.0   0.0   0.0   1.0   0.0  15.0   0.05   25
+
+; Backstay antenna wire
+; Vertical portion: from deck to masthead
+W010   1.0   0.0  10.0   1.0   0.0  15.0   0.002  10
+; Horizontal portion: from masthead to stern
+W011   1.0   0.0  15.0  -5.5   0.0  12.0   0.002  15
+
+; Short counterpoise/ground connection
+W012  -5.5   0.0   3.0  -5.5   0.0   0.0   0.002   5
+
+; SOURCE
+; Source at base of backstay antenna (with antenna tuner)
+SY SRC  W010  1  1  ; Wire 10, segment 1
+
+; GROUND
+; Saltwater ground parameters  
+GD 0 0 0 0 5.0 0.003  ; Saltwater: conductivity=5 S/m, permittivity=81
+
+; LOADS
+; Hull connections - good conductor
+LD 5 1 8 0 1E+06 0    ; Good conductor for hull wires W001-W008
+; Mast - aluminum
+LD 5 9 9 0 3.5E+07 0  ; Mast as aluminum conductor
+
+; TRANSMISSION LINES
+; Antenna tuner representation (not modeled in detail)
+; In practice, tuner would be between feedline and antenna
+
+; FREQUENCY
+FR 0 1 0 0 21.0 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0  ; Full pattern calculation
+
+; NEAR FIELD
+NE 0 10 10 10 -8 8 0 20 -8 8  ; Near field for larger area
+
+; FREQUENCY SWEEP (optional)
+; Uncomment for multi-frequency analysis
+; FR 0 21 0 0 7.000 0.025  ; 7.000 to 7.500 MHz in 25 kHz steps
+
+; COMMENTS
+; This model represents an inverted-L backstay antenna
+; Total antenna length approximately 22 meters
+; Vertical portion: 5m (masthead to 10m height)  
+; Horizontal portion: 17m (masthead to stern at angle)
+; Optimized for 40m band but will work on other bands with tuner
+; 
+; Key dimensions to modify for your boat:
+; - Mast height: Change z-coordinate of W009 end and W010 start
+; - Backstay length: Adjust W011 coordinates for your stern position
+; - Hull size: Modify W001-W008 coordinates for boat length/beam
+; 
+; Expected characteristics:
+; - Low angle radiation for DX on 40m
+; - Will require antenna tuner for 50-ohm match
+; - Should work on 80m, 30m, 20m with tuner
+; - May have high RF current near feedpoint - use RF choke

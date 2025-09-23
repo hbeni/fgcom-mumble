@@ -1,0 +1,60 @@
+# FGCom-mumble Minimal Configuration
+# This is a minimal configuration file for basic operation
+# Copy this file to fgcom-mumble.conf and modify as needed
+
+[amateur_radio]
+enabled = true
+itu_region = auto
+strict_band_compliance = true
+default_power = 100
+antenna_height = 10
+enable_grid_locator = true
+enable_solar_effects = true
+
+[solar_data]
+enabled = true
+noaa_api_url = https://services.swpc.noaa.gov/json/
+update_interval = 900
+enable_background_updates = true
+enable_offline_mode = true
+
+[propagation]
+enable_muf_luf = true
+enable_solar_effects = true
+enable_seasonal_variations = true
+cache_propagation_results = true
+
+[antenna_system]
+enable_4nec2_patterns = true
+enable_gpu_acceleration = false
+default_ground_type = average
+pattern_directory = /usr/share/fgcom-mumble/antenna_patterns/
+default_antenna_type = vertical
+default_height = 10.0
+
+[api_server]
+enabled = true
+port = 8080
+host = 0.0.0.0
+enable_websocket = true
+enable_cors = true
+enable_rate_limiting = true
+rate_limit_requests_per_minute = 100
+
+[non_amateur_hf]
+enable_aviation_hf = true
+enable_maritime_hf = true
+enable_mwara_frequencies = true
+enable_uscg_channels = true
+
+[logging]
+enable_file_logging = true
+enable_console_logging = true
+log_level = info
+log_file = /var/log/fgcom-mumble/fgcom-mumble.log
+
+[performance]
+enable_multithreading = true
+max_threads = 4
+enable_propagation_cache = true
+propagation_cache_size = 1000

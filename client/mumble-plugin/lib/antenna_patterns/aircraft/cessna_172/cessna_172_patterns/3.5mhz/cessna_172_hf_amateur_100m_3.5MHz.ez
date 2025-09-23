@@ -1,0 +1,189 @@
+EZNEC ver. 7.0
+
+; Cessna 172 General Aviation Aircraft with HF Radio
+; Typical small civilian aircraft HF installation
+; Amateur radio or long-range communication setup
+; Cruising altitude 2,400m - ground effects minimal
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Cessna 172 fuselage (8.28m length, 1.2m diameter - small aircraft)
+; Main fuselage structure
+W001  -4.14  0.0   0.0   4.14  0.0   0.0   0.6   17
+W002  -4.14  0.5   0.0   4.14  0.5   0.0   0.5   17
+W003  -4.14 -0.5   0.0   4.14 -0.5   0.0   0.5   17
+W004  -4.14  0.0   0.5   4.14  0.0   0.5   0.5   17
+W005  -4.14  0.0  -0.5   4.14  0.0  -0.5   0.5   17
+
+; Fuselage cross-sections (fewer due to small size)
+W006  -2.5  -0.6   0.0  -2.5   0.6   0.0   0.03   4
+W007   0.0  -0.6   0.0   0.0   0.6   0.0   0.03   4
+W008   2.5  -0.6   0.0   2.5   0.6   0.0   0.03   4
+
+; High wing configuration (11.0m wingspan - small but good ground plane)
+; Port wing
+W009  -0.5  -0.6   1.3  -0.5  -5.5   1.4   0.6   20
+W010   0.5  -0.6   1.3   0.5  -5.5   1.4   0.4   20
+; Starboard wing
+W011  -0.5   0.6   1.3  -0.5   5.5   1.4   0.6   20
+W012   0.5   0.6   1.3   0.5   5.5   1.4   0.4   20
+
+; Wing root connections
+W013  -0.5  -0.6   1.3   0.5  -0.6   1.3   0.3    4
+W014  -0.5   0.6   1.3   0.5   0.6   1.3   0.3    4
+
+; Wing tip connections
+W015  -0.5  -5.5   1.4   0.5  -5.5   1.4   0.2    4
+W016  -0.5   5.5   1.4   0.5   5.5   1.4   0.2    4
+
+; Engine cowling (single engine)
+W017  -4.0  -0.4  -0.2  -3.2  -0.4  -0.2   0.2    4
+W018  -4.0   0.4  -0.2  -3.2   0.4  -0.2   0.2    4
+W019  -4.0  -0.4  -0.2  -4.0   0.4  -0.2   0.2    4
+W020  -3.2  -0.4  -0.2  -3.2   0.4  -0.2   0.2    4
+
+; Vertical stabilizer (small)
+W021   3.5   0.0   0.0   3.5   0.0   1.8   0.15   9
+W022   3.8   0.0   0.0   3.8   0.0   1.8   0.12   9
+W023   3.5   0.0   1.8   3.8   0.0   1.8   0.1    2
+
+; Horizontal stabilizer
+W024   3.4  -1.5   0.4   3.4   1.5   0.4   0.15   6
+W025   3.7  -1.5   0.4   3.7   1.5   0.4   0.12   6
+W026   3.4  -1.5   0.4   3.7  -1.5   0.4   0.1    2
+W027   3.4   1.5   0.4   3.7   1.5   0.4   0.1    2
+
+; GENERAL AVIATION HF ANTENNA SYSTEMS
+; Option 1: HF whip antenna (most common GA installation)
+; Mounted on wing strut or fuselage top
+W028   1.0   0.0   1.4   1.0   0.0   4.0   0.004  13
+
+; Option 2: HF wire antenna strung between wing tips
+; Port side wire (wing tip to fuselage)
+W029   0.0  -5.3   1.4   2.0   0.0   1.6   0.002  11
+; Starboard side wire (fuselage to wing tip)  
+W030   2.0   0.0   1.6   0.0   5.3   1.4   0.002  11
+
+; HF antenna loading coil (for efficiency on small aircraft)
+W031   1.0   0.0   1.4   1.0   0.0   1.7   0.02    3
+
+; Amateur radio ground plane radials (if installed)
+W032   1.0   0.0   1.4   1.3   0.0   1.4   0.002   3
+W033   1.0   0.0   1.4   0.7   0.0   1.4   0.002   3
+W034   1.0   0.0   1.4   1.0   0.3   1.4   0.002   3
+W035   1.0   0.0   1.4   1.0  -0.3   1.4   0.002   3
+
+; SOURCE
+SY SRC  W031  1  1  ; HF antenna base/loading coil feed
+
+; GROUND
+; Low altitude ground effects (2,400m typical GA cruise)
+GD 0 0 0 0 0.005 0.013  ; Very low altitude - strong ground effects
+
+; LOADS
+; Small aircraft structure - aluminum
+LD 5 1 27 0 3.7E+07 0  ; Aluminum fuselage, wings, control surfaces
+; HF loading coil for small aircraft efficiency
+LD 4 31 31 0 0 25.0    ; High inductance loading coil
+
+; FREQUENCY
+FR 0 1 0 0 3.5 0    ; 20m amateur band (popular for HF mobile)
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; FREQUENCY SWEEP - Amateur HF bands
+; FR 0 20 0 0 14.0 0.025  ; 20m band detailed sweep
+; FR 0 15 0 0 7.0 0.1     ; 40m band sweep
+
+; COMMENTS
+; Cessna 172 General Aviation HF Radio Installation
+; Typical small civilian aircraft amateur/long-range HF setup
+; Represents most common GA aircraft type with HF capability
+;
+; Aircraft specifications:
+; - Length: 8.28m (27.2 ft)
+; - Wingspan: 11.0m (36 ft)
+; - Typical cruise: 2,400m (8,000 ft)
+; - High-wing design provides good ground plane
+; - Single engine, 2-4 seats
+; - Most produced aircraft in history (44,000+ built)
+;
+; HF Installation Challenges for Small GA:
+; - Very limited space for antennas
+; - Small ground plane compared to larger aircraft
+; - Weight and balance critical
+; - Electrical system limitations (28V, limited current)
+; - Cost constraints for recreational users
+;
+; Common HF Antenna Solutions:
+; 1. Loaded whip antenna (2.5m with loading coil)
+; 2. Wire antenna between wing tips (inverted-V)
+; 3. Wing strut mounted whip
+; 4. Horizontal loop under wings (rare)
+;
+; Amateur Radio in GA Aircraft:
+; - 20m band most popular (14.230 MHz - aviation calling freq)
+; - 40m band for local/regional communication
+; - 80m band limited by antenna size constraints
+; - 10m/15m bands for DX when propagation allows
+;
+; HF Radio Equipment (typical GA):
+; - Yaesu FT-857D (compact mobile transceiver)
+; - Icom IC-706 series (popular aircraft installation)
+; - Kenwood TS-480 (mobile/base station)
+; - Power: 100W maximum (electrical system limitations)
+;
+; Installation Considerations:
+; - STC (Supplemental Type Certificate) required
+; - Interference with aircraft electronics (GPS, comm, nav)
+; - Lightning protection
+; - RF exposure limits (SAR) in small cabin
+; - Antenna placement for best performance vs aesthetics
+;
+; Performance Expectations:
+; - Much lower efficiency than larger aircraft (20-40%)
+; - Loading coil essential for reasonable efficiency
+; - Ground effects significant at typical GA altitudes
+; - Communication range: 200-800 km depending on:
+;   * Band conditions
+;   * Time of day  
+;   * Antenna configuration
+;   * Power level
+;
+; Frequency Band Performance:
+; - 20m: Best compromise of antenna size vs propagation
+; - 40m: Good for regional communication, large loading coil needed
+; - 80m: Very inefficient due to small antenna/aircraft size
+; - 15m/10m: Good when propagation conditions permit
+;
+; Typical GA HF Applications:
+; - Cross-country flight communication
+; - Emergency communication backup
+; - Amateur radio mobile operation
+; - International flight coordination
+; - Remote area communication (Alaska, Canada, Australia)
+;
+; Regulatory Considerations:
+; - Amateur radio license required for amateur bands
+; - Aircraft station license for aeronautical use
+; - Coordination with ATC for HF use in controlled airspace
+; - International agreements for cross-border flights
+;
+; Modern Alternatives:
+; - Satellite communication (Iridium, Inmarsat)
+; - Cellular data at low altitudes
+; - Internet-based communication when on ground
+; - Emergency locator beacons (406 MHz ELTs)
+;
+; The Cessna 172 HF installation represents the practical
+; minimum for HF communication in small aircraft - 
+; compromised performance but adequate for many GA applications
+; Altitude: 100m
+; Ground effects: Significant
+Moderate
+Minimal
+; Pattern characteristics: Ground wave dominant, multipath interference
+Mixed ground/sky wave, transitional effects
+Sky wave dominant, pattern stabilizing

@@ -1,0 +1,151 @@
+EZNEC ver. 7.0
+
+; Modern Sedan Whip Antenna - VW Passat with Hi-Q HF Loaded Antenna - VERTICAL
+; Typical amateur radio mobile setup with trunk-mount whip
+; HF/VHF/UHF optimized with limited HF capability
+; Modern unibody construction with mixed materials
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; VW Passat main body (4.77m length, 1.83m width)
+; Lower body/frame
+W001  -2.4   -0.91  0.0   2.37  -0.91  0.0   0.04  19
+W002  -2.4    0.91  0.0   2.37   0.91  0.0   0.04  19
+W003  -2.4   -0.91  0.0  -2.4    0.91  0.0   0.04   7
+W004   2.37  -0.91  0.0   2.37   0.91  0.0   0.04   7
+
+; Engine bay area
+W005  -2.4   -0.75  0.0  -1.5   -0.75  0.0   0.03   9
+W006  -2.4    0.75  0.0  -1.5    0.75  0.0   0.03   9
+W007  -2.4   -0.75  0.0  -2.4    0.75  0.0   0.03   6
+
+; Passenger cabin roof
+W008  -1.3   -0.8   1.45  1.0   -0.8   1.45  0.03  11
+W009  -1.3    0.8   1.45  1.0    0.8   1.45  0.03  11
+W010  -1.3   -0.8   1.45 -1.3    0.8   1.45  0.03   6
+W011   1.0   -0.8   1.45  1.0    0.8   1.45  0.03   6
+
+; Boot area (important ground plane for rear-mount antenna)
+W012   1.0   -0.85  1.4   2.2   -0.85  1.4   0.03   6
+W013   1.0    0.85  1.4   2.2    0.85  1.4   0.03   6
+W014   1.0   -0.85  1.4   1.0    0.85  1.4   0.03   7
+W015   2.2   -0.85  1.4   2.2    0.85  1.4   0.03   7
+
+; Hood/bonnet
+W016  -2.3   -0.8   1.35 -1.4   -0.8   1.35  0.03   9
+W017  -2.3    0.8   1.35 -1.4    0.8   1.35  0.03   9
+W018  -2.3   -0.8   1.35 -2.3    0.8   1.35  0.03   6
+W019  -1.4   -0.8   1.35 -1.4    0.8   1.35  0.03   6
+
+; A-pillar and roof support structure
+W020  -1.3   -0.8   0.0  -1.3   -0.8   1.45  0.02   7
+W021  -1.3    0.8   0.0  -1.3    0.8   1.45  0.02   7
+W022   1.0   -0.8   0.0   1.0   -0.8   1.45  0.02   7
+W023   1.0    0.8   0.0   1.0    0.8   1.45  0.02   7
+
+; Hi-Q style loaded HF antenna (37.75" total length) - VERTICAL
+; Base coil section (13.75" coil housing + 24" mast)
+W024   1.8    0.0   1.4   1.8    0.0   1.75  0.07    7  ; Coil housing (5.5" diameter)
+W025   1.8    0.0   1.75  1.8    0.0   2.0   0.025   5  ; Mast section (2" diameter)
+
+; Whip section (can be changed for different bands) - VERTICAL
+; 87.5" whip for 160m, shorter whips for higher bands
+W026   1.8    0.0   2.0   1.8    0.0   4.2   0.003  22  ; 87.5" whip for 160m
+
+; Antenna mount/base (boot-mounted for best ground plane) - VERTICAL
+W027   1.8    0.0   1.35  1.8    0.0   1.4   0.008   1
+
+; Small ground plane radials (mounting hardware)
+W028   1.8    0.0   1.35  2.0    0.0   1.35  0.002   1
+W029   1.8    0.0   1.35  1.6    0.0   1.35  0.002   1
+W030   1.8    0.0   1.35  1.8    0.2   1.35  0.002   1
+W031   1.8    0.0   1.35  1.8   -0.2   1.35  0.002   1
+
+; SOURCE
+SY SRC  W027  1  1  ; Source at antenna mount base
+
+; GROUND
+; Typical urban/suburban environment
+GD 0 0 0 0 0.005 0.013  ; Average ground (concrete, asphalt, grass)
+
+; LOADS
+; Modern car body - mixed steel/aluminum with some composites
+LD 5 1 23 0 1.5E+07 0   ; Good conductor but not perfect (modern materials)
+; HF loading coil (high-Q inductor)
+LD 4 24 24 0 0 15.0     ; Loading inductance for HF resonance
+
+; FREQUENCY  
+FR 0 1 0 0 3.75 0       ; 80m amateur band with loaded antenna
+
+; FREQUENCY SWEEP for typical mobile bands
+; FR 0 40 0 0 144.0 0.1  ; 2m amateur band sweep
+; FR 0 30 0 0 420.0 1.0  ; 70cm amateur band sweep
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; NEAR FIELD
+NE 0 10 10 10 -5 5 0 4 -5 5
+
+; COMMENTS
+; Modern sedan HF loaded antenna model - Hi-Q style antenna - VERTICAL CONFIGURATION
+; VW Passat with high-efficiency HF mobile antenna
+;
+; Hi-Q-6 style antenna specifications:
+; - Overall length: 37.75" without whip
+; - Coil housing: 13.75" × 5.5" diameter  
+; - Mast: 24" × 2" diameter
+; - Whip options: 87.5" for 160m, shorter for higher bands
+; - High-Q loading coil for efficient HF operation
+; - VERTICAL configuration for optimal performance
+;
+; Vehicle characteristics remain the same:
+; - VW Passat: 4.77m × 1.83m × 1.45m
+; - Modern unibody construction
+; - Boot-mounted for best ground plane
+;
+; VERTICAL configuration advantages:
+; - Optimal radiation pattern (omnidirectional)
+; - Best efficiency for HF mobile operations
+; - No clearance issues (civilian use)
+; - Maximum performance for amateur radio
+; - Standard practice for civilian vehicles
+;
+; Antenna performance with Hi-Q loading (vertical):
+; - 160m: Excellent efficiency with 87.5" whip
+; - 80m: Very good with shorter whip (modeled)
+; - 40m: Excellent with appropriate whip length
+; - 20m: Good to excellent  
+; - Higher bands: Good with band-specific whips
+;
+; Key advantages of loaded antennas (vertical):
+; - Efficient HF operation from compact cars
+; - Manageable physical size (vs full-size antennas)
+; - High-Q coil compensates for short radiator
+; - Interchangeable whips for different bands
+; - Professional mobile HF performance
+; - Optimal vertical radiation pattern
+;
+; Expected performance vs simple whip (vertical):
+; - HF efficiency: 50-80% (excellent for mobile)
+; - Simple whip HF efficiency: 5-15% (very poor)
+; - Loading coil allows proper impedance matching
+; - Bandwidth: Narrow but acceptable for amateur use
+; - Omnidirectional pattern for best coverage
+;
+; Installation considerations:
+; - Requires substantial mounting (weight ~10-15 lbs)
+; - Boot lid mounting most common for sedans
+; - May need antenna tuner for multi-band operation
+; - Whip selection critical for target frequency
+; - Coil must be weatherproofed
+; - Higher profile than simple VHF/UHF antennas
+; - VERTICAL configuration for optimal performance
+;
+; Frequency coverage examples:
+; - 160m: 87.5" whip + coil tuning
+; - 80m: 45" whip + coil tuning  
+; - 40m: 22" whip + coil tuning
+; - 20m: 11" whip + coil tuning
+; - Multi-band: Antenna tuner + medium whip

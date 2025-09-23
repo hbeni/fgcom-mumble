@@ -1,0 +1,189 @@
+EZNEC ver. 7.0
+
+; Boeing 737-800 Commercial Airliner HF Antenna System
+; Long-range oceanic communication configuration
+; HF required for transoceanic flights outside VHF coverage
+; Cruising altitude 11,300m - free space conditions
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; B737-800 fuselage (39.5m length, 3.8m diameter)
+; Main fuselage structure
+W001  -19.75 0.0   0.0   19.75 0.0   0.0   1.9   79
+W002  -19.75 1.3   0.0   19.75 1.3   0.0   1.6   79
+W003  -19.75 -1.3  0.0   19.75 -1.3  0.0   1.6   79
+W004  -19.75 0.0   1.3   19.75 0.0   1.3   1.6   79
+W005  -19.75 0.0  -1.3   19.75 0.0  -1.3   1.6   79
+
+; Fuselage cross-sections
+W006  -15.0 -1.9   0.0  -15.0  1.9   0.0   0.05  8
+W007  -10.0 -1.9   0.0  -10.0  1.9   0.0   0.05  8
+W008  -5.0  -1.9   0.0  -5.0   1.9   0.0   0.05  8
+W009   0.0  -1.9   0.0   0.0   1.9   0.0   0.05  8
+W010   5.0  -1.9   0.0   5.0   1.9   0.0   0.05  8
+W011  10.0  -1.9   0.0  10.0   1.9   0.0   0.05  8
+W012  15.0  -1.9   0.0  15.0   1.9   0.0   0.05  8
+
+; Low wing configuration (35.8m wingspan)
+; Port wing
+W013   2.0  -1.9  -0.8   2.0 -17.9   1.2   1.8   32
+W014   3.5  -1.9  -0.8   3.5 -17.9   1.2   1.4   32
+; Starboard wing
+W015   2.0   1.9  -0.8   2.0  17.9   1.2   1.8   32
+W016   3.5   1.9  -0.8   3.5  17.9   1.2   1.4   32
+
+; Wing root connections
+W017   2.0  -1.9  -0.8   3.5  -1.9  -0.8   1.0    3
+W018   2.0   1.9  -0.8   3.5   1.9  -0.8   1.0    3
+
+; Wing tip connections
+W019   2.0 -17.9   1.2   3.5 -17.9   1.2   0.6    3
+W020   2.0  17.9   1.2   3.5  17.9   1.2   0.6    3
+
+; Engine nacelles under wings (CFM56 engines)
+W021   3.0  -4.5  -2.0   3.0  -4.5  -1.0   0.7    5
+W022   3.0   4.5  -2.0   3.0   4.5  -1.0   0.7    5
+
+; Vertical stabilizer
+W023  15.2   0.0   0.0  15.2   0.0  12.5   0.4   25
+W024  17.2   0.0   0.0  17.2   0.0  12.5   0.35  25
+W025  15.2   0.0  12.5  17.2   0.0  12.5   0.3    4
+
+; Horizontal stabilizers
+W026  15.5  -6.6   3.1  15.5   6.6   3.1   0.4   26
+W027  16.5  -6.6   3.1  16.5   6.6   3.1   0.35  26
+W028  15.5  -6.6   3.1  16.5  -6.6   3.1   0.25   4
+W029  15.5   6.6   3.1  16.5   6.6   3.1   0.25   4
+
+; COMMERCIAL HF ANTENNA SYSTEM
+; HF antenna coupler/feed point (avionics bay)
+W030   8.0   0.0   0.0   8.0   0.0  -0.3   0.005  3
+
+; Commercial HF probe antenna (fuselage belly-mounted)
+; Shorter than military - typically 2-3m probe
+W031   8.0   0.0  -0.3   8.0   0.0  -3.3   0.008  15
+
+; Alternative: Wing-mounted HF probe (some configurations)
+W032   2.5  -8.0   0.5   2.5  -8.0  -1.5   0.006  10
+
+; HF blade antenna (backup - fuselage top)
+W033  -5.0   0.0   2.0  -5.0   0.0   2.8   0.006   8
+
+; Notch antenna in vertical stabilizer (modern installation)
+W034  16.0   0.0   6.0  16.5   0.0   6.0   0.004   5
+W035  16.25 0.0   5.8  16.25  0.0   6.2   0.004   4
+
+; SATCOM antenna (standard on modern commercial aircraft)
+W036  -2.0   0.0   2.1  -2.0   0.0   2.3   0.1     2
+
+; SOURCE
+SY SRC  W030  1  1  ; HF transceiver feed point
+
+; GROUND
+; Free space conditions at commercial cruise altitude
+GD -1 0 0 0 0 0  ; High altitude - free space conditions
+
+; LOADS
+; Aircraft structure - aluminum
+LD 5 1 29 0 3.7E+07 0  ; Aluminum fuselage, wings, stabilizers
+; HF antenna coupler (automatic tuning)
+LD 4 30 30 0 0 8.0     ; Automatic antenna coupler
+
+; FREQUENCY
+FR 0 1 0 0 8.900 0     ; Aeronautical HF frequency (8.9 MHz common)
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; FREQUENCY SWEEP - Aeronautical HF bands
+; FR 0 20 0 0 2.8 1.0   ; Aeronautical HF sweep 2.8-21.8 MHz
+; FR 0 10 0 0 8.8 0.1   ; Primary aeronautical band detail
+
+; COMMENTS
+; Boeing 737-800 Commercial Airliner HF Communication System
+; Required for transoceanic flights outside VHF coverage
+; ICAO compliant oceanic communication equipment
+;
+; Aircraft specifications:
+; - Length: 39.5m
+; - Wingspan: 35.8m (112.5 ft)
+; - Cruise altitude: 11,300m (37,000 ft)
+; - Low-wing design with underwing engines
+; - Typical seating: 162-189 passengers
+; - Range: 5,400 km (2,900 nm)
+;
+; HF Communication Requirements:
+; - Oceanic airspace communication (beyond VHF range)
+; - Position reporting over oceans
+; - ATC communication in remote areas
+; - Emergency communication backup
+; - Weather routing coordination
+;
+; Commercial HF Antenna Options:
+; 1. Belly-mounted probe antenna (2-3m length)
+; 2. Wing-mounted probe antenna  
+; 3. Notch antenna in vertical stabilizer (modern)
+; 4. Blade antenna on fuselage top (backup)
+;
+; Commercial HF Radio Equipment:
+; - Collins HF-9000 series
+; - Rockwell Collins HF-8000 series  
+; - Honeywell Primus HF-1050
+; - Automatic antenna couplers for tuning
+;
+; Aeronautical HF Frequencies:
+; - Primary: 2.8-22.0 MHz (aeronautical mobile service)
+; - Oceanic control: 3.016, 5.649, 8.864, 13.291 MHz
+; - Emergency: 121.5 MHz (VHF Guard)
+; - Distress: 2182 kHz (MF), 8364 kHz (HF)
+;
+; ICAO Oceanic Requirements:
+; - Dual HF communication systems for ETOPS flights
+; - Automatic position reporting capability
+; - Integration with flight management systems
+; - Data link communication (CPDLC) over HF
+;
+; Commercial vs Military HF:
+; - Much shorter antennas (no trailing wires)
+; - Lower power output (typically 125W vs 400W+ military)
+; - Automatic tuning systems (no manual adjustment)
+; - Integration with avionics systems
+; - Passenger safety considerations
+;
+; Antenna Performance Limitations:
+; - Short probe antennas compromise efficiency
+; - Low-wing design reduces ground plane effectiveness
+; - Engine interference on wing-mounted antennas
+; - Limited space for HF antenna systems
+; - Aesthetic and aerodynamic constraints
+;
+; Typical HF Performance:
+; - Communication range: 1,000-3,000 km depending on:
+;   * Time of day (ionospheric conditions)
+;   * Frequency selection
+;   * Solar activity
+;   * Antenna configuration
+; - Efficiency: 10-30% (much lower than military systems)
+; - Power: 125W typical (vs 400W+ military)
+;
+; Modern Alternatives:
+; - SATCOM primary for oceanic communication
+; - HF backup for emergencies
+; - ACARS over satellite data links
+; - Controller-Pilot Data Link Communication (CPDLC)
+; - Automatic Dependent Surveillance (ADS-C)
+;
+; Installation Challenges:
+; - Lightning protection requirements
+; - Passenger cabin interference (RFI/EMI)
+; - Limited mounting space on commercial aircraft
+; - Weight and balance considerations
+; - Maintenance accessibility
+;
+; The B737's HF system represents the minimum viable
+; configuration for oceanic operations - functionality
+; over performance due to commercial constraints
+; Altitude: 8000m
+; Ground effects: Negligible
+; Pattern characteristics: Free space conditions, stable patterns

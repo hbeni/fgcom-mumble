@@ -1,0 +1,165 @@
+EZNEC ver. 7.0
+
+; Tupolev Tu-95 "Bear" Strategic Bomber/Reconnaissance Aircraft
+; HF Communications and SIGINT antenna systems
+; Commonly intercepted over Norwegian airspace during Cold War
+; Cruising altitude 11,000m - free space conditions
+
+; GEOMETRY  
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Tu-95 fuselage (49.5m length, 2.9m diameter - much larger than transport)
+; Main fuselage structure
+W001  -24.75 0.0   0.0   24.75 0.0   0.0   1.45  99
+W002  -24.75 1.0   0.0   24.75 1.0   0.0   1.2   99
+W003  -24.75 -1.0  0.0   24.75 -1.0  0.0   1.2   99
+W004  -24.75 0.0   1.0   24.75 0.0   1.0   1.2   99
+W005  -24.75 0.0  -1.0   24.75 0.0  -1.0   1.2   99
+
+; Fuselage cross-sections (more sections due to larger aircraft)
+W006  -20.0 -1.4   0.0  -20.0  1.4   0.0   0.06  6
+W007  -15.0 -1.4   0.0  -15.0  1.4   0.0   0.06  6
+W008  -10.0 -1.4   0.0  -10.0  1.4   0.0   0.06  6
+W009  -5.0  -1.4   0.0  -5.0   1.4   0.0   0.06  6
+W010   0.0  -1.4   0.0   0.0   1.4   0.0   0.06  6
+W011   5.0  -1.4   0.0   5.0   1.4   0.0   0.06  6
+W012  10.0  -1.4   0.0  10.0   1.4   0.0   0.06  6
+W013  15.0  -1.4   0.0  15.0   1.4   0.0   0.06  6
+W014  20.0  -1.4   0.0  20.0   1.4   0.0   0.06  6
+
+; Wings (swept-back design, 51.1m wingspan)
+; Port wing
+W015  -8.0  -1.5   0.5  -12.0 -25.55  2.0   1.2   48
+W016  -6.0  -1.5   0.5  -10.0 -25.55  2.0   0.8   48
+; Starboard wing
+W017  -8.0   1.5   0.5  -12.0  25.55  2.0   1.2   48
+W018  -6.0   1.5   0.5  -10.0  25.55  2.0   0.8   48
+
+; Wing root connections
+W019  -8.0  -1.5   0.5  -6.0  -1.5   0.5   0.6    4
+W020  -8.0   1.5   0.5  -6.0   1.5   0.5   0.6    4
+
+; Wing tip connections  
+W021  -12.0 -25.55 2.0  -10.0 -25.55 2.0   0.4    4
+W022  -12.0  25.55 2.0  -10.0  25.55 2.0   0.4    4
+
+; Vertical stabilizer (large tail)
+W023  20.0   0.0   0.0  20.0   0.0   11.1  0.4   22
+W024  22.0   0.0   0.0  22.0   0.0   11.1  0.35  22
+W025  20.0   0.0  11.1  22.0   0.0   11.1  0.3    4
+
+; Horizontal stabilizers (large span)
+W026  18.0  -6.0   2.0  18.0   6.0   2.0   0.4   24
+W027  20.0  -6.0   2.0  20.0   6.0   2.0   0.35  24
+W028  18.0  -6.0   2.0  20.0  -6.0   2.0   0.25   4
+W029  18.0   6.0   2.0  20.0   6.0   2.0   0.25   4
+
+; HF LONG-RANGE COMMUNICATION SYSTEM
+; Primary HF trailing wire (200m - longer than transport aircraft)
+; Feed point at radio operator station (mid-fuselage)
+W030   8.0   0.0   0.0   8.0   0.0  -0.5   0.006  5
+
+; Main trailing wire antenna (200m deployed)
+W031   8.0   0.0  -0.5  208.0  0.0 -20.0   0.003 200
+
+; ELECTRONIC INTELLIGENCE (ELINT) ANTENNAS
+; Dorsal HF intercept antenna (Bears often carried SIGINT equipment)
+W032   5.0   0.0   2.0   5.0   0.0   3.2   0.005  12
+
+; Wing-mounted HF direction-finding loop antennas
+W033  -10.0 -20.0  1.5  -10.0 -19.5  2.0   0.004   5
+W034  -10.0 -19.5  2.0  -10.0 -20.0  2.5   0.004   5
+W035  -10.0 -20.0  2.5  -10.0 -19.5  2.0   0.004   5
+W036  -10.0 -19.5  2.0  -10.0 -20.0  1.5   0.004   5
+
+; Mirror on starboard wing
+W037  -10.0  20.0  1.5  -10.0  19.5  2.0   0.004   5
+W038  -10.0  19.5  2.0  -10.0  20.0  2.5   0.004   5
+W039  -10.0  20.0  2.5  -10.0  19.5  2.0   0.004   5
+W040  -10.0  19.5  2.0  -10.0  20.0  1.5   0.004   5
+
+; Long-range navigation antenna (astrocompass antenna)
+W041 -15.0   0.0   2.5 -15.0   0.0   3.0   0.003   5
+
+; SOURCE
+SY SRC  W030  3  1  ; HF transmitter at radio operator position
+
+; GROUND
+; Free space at strategic bomber altitude (11,000m)
+GD 0 0 0 0 0.003 0.012  ; Low altitude - moderate ground effects
+
+; LOADS  
+; Aircraft structure - aluminum construction
+LD 5 1 29 0 3.7E+07 0  ; Main fuselage and wings
+; HF antenna tuning system
+LD 4 30 30 0 0 12.0    ; Antenna tuner for multi-band operation
+
+; FREQUENCY
+FR 0 1 0 0 13.0 0     ; Soviet military HF frequency (common intercept freq)
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; FREQUENCY SWEEP - Soviet military HF bands  
+; FR 0 25 0 0 3.0 1.0   ; 3-28 MHz sweep
+; FR 0 20 0 0 4.0 0.5   ; Soviet military band detailed
+
+; COMMENTS
+; Tupolev Tu-95 "Bear" Strategic Bomber HF Antenna System
+; Frequently intercepted by Norwegian F-16s during Cold War patrols
+; Long-range strategic bomber with extensive communications suite
+;
+; Aircraft specifications:
+; - Length: 49.5m (much larger than transport aircraft)
+; - Wingspan: 51.1m
+; - Typical cruise altitude: 11,000m
+; - Role: Strategic bombing, reconnaissance, SIGINT
+; - Crew: Up to 7 including dedicated radio operator
+;
+; HF Antenna Systems:
+; - Main trailing wire: 200m (longer than transport aircraft)
+; - Operating range: 2-30 MHz
+; - Primary role: Long-range strategic communications
+; - Secondary: SIGINT/ELINT collection during reconnaissance
+; - Direction-finding loops for navigation and intercept
+;
+; Soviet Radio Equipment (typical):
+; - R-832: HF transceiver (2-18 MHz)
+; - R-855: Long-range HF communications  
+; - Various SIGINT receivers for intelligence gathering
+; - Navigation aids: R-848, RSBN systems
+;
+; Norwegian Intercept Context:
+; - Bears regularly probed Norwegian airspace during Cold War
+; - Intercepted by Norwegian F-16s from Bodø and Ørland
+; - Often conducting SIGINT missions along NATO coast
+; - HF communications monitored by Norwegian intelligence
+; - Flight patterns: Kola Peninsula → Norwegian Sea → return
+;
+; HF Performance at Altitude:
+; - Excellent propagation conditions (free space)
+; - 200m wire ≈ 3/4 wave on 40m, full wave on 20m
+; - Long-range communication capability (1000+ km)
+; - No ground wave losses at 11km altitude  
+; - Ideal for strategic communications with USSR
+;
+; SIGINT Capabilities:
+; - Wing-mounted DF loops for signal intercept
+; - Multiple HF receivers for NATO frequency monitoring
+; - Capable of intercepting ship, aircraft, and ground communications
+; - Electronic intelligence gathering during "reconnaissance" flights
+;
+; Frequency Bands Used:
+; - Soviet military: 3-18 MHz primary
+; - Navigation: 200-1750 kHz (LF/MF beacons)  
+; - Intercept monitoring: 2-30 MHz (NATO frequencies)
+; - Emergency: 121.5, 243 MHz (international)
+;
+; This configuration made the Tu-95 one of the most capable
+; long-range HF communication platforms of the Cold War era
+; Altitude: 600m
+; Ground effects: Significant
+Moderate
+Minimal
+; Pattern characteristics: Mixed ground/sky wave, transitional effects
+Sky wave dominant, pattern stabilizing

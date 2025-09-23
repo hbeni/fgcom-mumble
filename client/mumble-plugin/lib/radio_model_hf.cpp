@@ -19,30 +19,119 @@
 #include <regex>
 #include "radio_model.h"
 #include "audio.h"
+#include "solar_data.h"
+#include "power_management.h"
 
 /**
  * A HF based radio model for the FGCom-mumble plugin
  *
- * The model implements basic high frequency propagation (between 3 and 30 MHz).
- * Currently this is a simple model that justs takes distance and wattage into account.
- * Transmissions behind the radio horizon travel via ground waves, we simulate this by applying some loss to the signal.
- * TODO: advanced stuff like influences of day/night, terminator, sun spots, etc are not modelled yet.
+ * The model implements high frequency propagation (between 3 and 30 MHz) with solar condition effects.
+ * Includes day/night variations, solar flux effects, and geomagnetic activity impacts.
+ * Transmissions behind the radio horizon travel via sky waves with solar-dependent characteristics.
  */
 class FGCom_radiowaveModel_HF : public FGCom_radiowaveModel {
+private:
+    static FGCom_SolarDataProvider solar_provider;
 protected:
     /*
     * Calculate the signal quality loss by power/distance model
     * 
-    * TODO: use realistic numbers/formulas
+    * Enhanced with power management integration
     * 
     * @param power in Watts
     * @param dist  slant distance in km
     * @return float with the signal quality for given power and distance
     */
     virtual float calcPowerDistance(float power, double slantDist) {
-        float wr = power * 1000; // gives maximum range in km for the supplied power
+        // Get power management instance
+        auto& power_manager = FGCom_PowerManager::getInstance();
+        
+        // Calculate effective radiated power considering efficiency
+        float effective_power = power * power_manager.getCurrentPowerEfficiency();
+        
+        // Apply power limiting if enabled
+        if (power_manager.isPowerLimitingActive()) {
+            int limited_power = 0;
+            if (power_manager.applyPowerLimits(static_cast<int>(effective_power), limited_power)) {
+                effective_power = static_cast<float>(limited_power);
+            }
+        }
+        
+        // Enhanced power/distance model with efficiency
+        float wr = effective_power * 1000; // gives maximum range in km for the effective power
         float sq = (-1/wr*pow(slantDist,2)+100)/100;
+        
+        // Apply additional efficiency factors
+        sq *= power_manager.getCurrentPowerEfficiency();
+        
         return sq;
+    }
+    
+    // Calculate skywave propagation effects
+    float calcSkywavePropagation(double distance, const fgcom_solar_conditions& solar, double solar_zenith) {
+        float skywave_factor = 0.7; // Base skywave efficiency
+        
+        // Solar flux effect on ionosphere
+        float sfi_effect = (solar.sfi - 70.0) / 100.0 * 0.3;
+        skywave_factor += sfi_effect;
+        
+        // Geomagnetic activity effect
+        if (solar.k_index > 4.0) {
+            skywave_factor *= (1.0 - (solar.k_index - 4.0) / 5.0 * 0.5);
+        }
+        
+        // Day/night effect
+        if (solar_zenith < 90.0) { // Daytime
+            skywave_factor *= 0.8; // D-layer absorption
+        } else { // Nighttime
+            skywave_factor *= 1.2; // Better propagation
+        }
+        
+        return std::max(0.1f, std::min(1.5f, skywave_factor));
+    }
+    
+    // Calculate line-of-sight propagation effects
+    float calcLineOfSightPropagation(double distance, const fgcom_solar_conditions& solar, double solar_zenith) {
+        float los_factor = 1.0; // Base line-of-sight efficiency
+        
+        // Solar flux has minimal effect on line-of-sight
+        float sfi_effect = (solar.sfi - 70.0) / 100.0 * 0.1;
+        los_factor += sfi_effect;
+        
+        // Geomagnetic activity has minimal effect on line-of-sight
+        if (solar.k_index > 6.0) {
+            los_factor *= 0.95; // Slight degradation
+        }
+        
+        return std::max(0.8f, std::min(1.2f, los_factor));
+    }
+    
+    // Calculate overall solar effects
+    float calcSolarEffects(const fgcom_solar_conditions& solar, double solar_zenith, double distance) {
+        float effect = 1.0;
+        
+        // Solar flux effect
+        float sfi_effect = (solar.sfi - 70.0) / 100.0 * 0.2;
+        effect += sfi_effect;
+        
+        // Geomagnetic effect
+        if (solar.k_index > 2.0) {
+            effect *= (1.0 - (solar.k_index - 2.0) / 7.0 * 0.3);
+        }
+        
+        // Day/night effect
+        if (solar_zenith < 90.0) { // Daytime
+            effect *= 0.9; // Slight degradation due to D-layer
+        } else { // Nighttime
+            effect *= 1.1; // Better propagation
+        }
+        
+        // Distance-dependent solar effects
+        if (distance > 1000.0) { // Long distance
+            effect *= (1.0 + sfi_effect * 0.5); // Solar flux more important for long distance
+        }
+        
+        return std::max(0.3f, std::min(2.0f, effect));
     }
     
     
@@ -55,15 +144,11 @@ public:
     }
     
     
-    // Signal depends on HF characteristics.
+    // Signal depends on HF characteristics with solar condition effects.
     fgcom_radiowave_signal getSignal(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power) {
         struct fgcom_radiowave_signal signal;
         signal.quality = 0.85; // Base signal quality; but we will degrade that using the model below
     
-        // get distance to radio horizon (that is the both ranges combined)
-        // double radiodist = this->getDistToHorizon(alt1) + this->getDistToHorizon(alt2);
-        // note: not needed currently, as we use heightAboveHorizon() for the check below.
-        
         // get surface distance
         double dist = this->getSurfaceDistance(lat1, lon1, lat2, lon2);
         
@@ -71,15 +156,29 @@ public:
         signal.quality = this->calcPowerDistance(power, dist);
         if (signal.quality <= 0.0) signal.quality = 0.0; // in case signal strength got negative, that means we are out of range (too less tx-power)
         
-
+        // Get current solar conditions
+        fgcom_solar_conditions solar = solar_provider.getCurrentConditions();
+        
+        // Calculate solar zenith angle for midpoint
+        double mid_lat = (lat1 + lat2) / 2.0;
+        double mid_lon = (lon1 + lon2) / 2.0;
+        double solar_zenith = solar_provider.calculateSolarZenith(mid_lat, mid_lon, std::chrono::system_clock::now());
+        
         // Check if the target is behind the radio horizon
         double heightAboveHorizon = this->heightAboveHorizon(dist, alt1, alt2);
         if (heightAboveHorizon < 0) {
-            // behind horizon: only skywaves reach the destination, so we degrade the signal a bit.
-            signal.quality *= 0.70;
+            // behind horizon: skywave propagation with solar effects
+            signal.quality *= this->calcSkywavePropagation(dist, solar, solar_zenith);
+        } else {
+            // line of sight: apply basic solar effects
+            signal.quality *= this->calcLineOfSightPropagation(dist, solar, solar_zenith);
         }
         
+        // Apply solar condition effects
+        signal.quality *= this->calcSolarEffects(solar, solar_zenith, dist);
         
+        // Ensure signal quality is within bounds
+        signal.quality = std::max(0.0f, std::min(1.0f, signal.quality));
         
         // prepare return struct
         signal.direction     = this->getDirection(lat1, lon1, lat2, lon2);
@@ -141,3 +240,6 @@ public:
         vhf_radio->processAudioSamples(lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
     }
 };
+
+// Static member definition
+FGCom_SolarDataProvider FGCom_radiowaveModel_HF::solar_provider;

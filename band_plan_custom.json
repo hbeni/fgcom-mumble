@@ -1,0 +1,359 @@
+{
+  "description": "Custom amateur radio band plan for FGCom-mumble",
+  "version": "1.0",
+  "itu_regions": {
+    "1": "Europe, Africa, Middle East",
+    "2": "Americas",
+    "3": "Asia, Pacific"
+  },
+  "bands": [
+    {
+      "name": "160m",
+      "start_freq": 1800.0,
+      "end_freq": 2000.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 1800.0,
+          "end_freq": 1838.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 1838 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 1838.0,
+          "end_freq": 2000.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Top band - excellent for local and regional contacts, especially at night"
+    },
+    {
+      "name": "80m",
+      "start_freq": 3500.0,
+      "end_freq": 4000.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 3500.0,
+          "end_freq": 3580.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 3580 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 3580.0,
+          "end_freq": 4000.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Popular for regional contacts, good day and night"
+    },
+    {
+      "name": "60m",
+      "start_freq": 5351.5,
+      "end_freq": 5366.5,
+      "modes": [
+        {
+          "name": "USB",
+          "start_freq": 5351.5,
+          "end_freq": 5366.5,
+          "channel_spacing": 3000.0,
+          "power_limit": 100.0,
+          "notes": "USB only, 5 specific channels"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 100.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Limited to 5 specific channels, USB only, lower power limit"
+    },
+    {
+      "name": "40m",
+      "start_freq": 7000.0,
+      "end_freq": 7300.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 7000.0,
+          "end_freq": 7040.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 7040 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 7040.0,
+          "end_freq": 7300.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Excellent for worldwide contacts, good day and night"
+    },
+    {
+      "name": "30m",
+      "start_freq": 10100.0,
+      "end_freq": 10150.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 10100.0,
+          "end_freq": 10150.0,
+          "channel_spacing": 500.0,
+          "power_limit": 200.0,
+          "notes": "CW and digital modes only, no voice"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 200.0,
+      "antenna_height_limit": 200.0,
+      "notes": "CW and digital modes only, no voice transmissions"
+    },
+    {
+      "name": "20m",
+      "start_freq": 14000.0,
+      "end_freq": 14350.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 14000.0,
+          "end_freq": 14070.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 14070 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 14070.0,
+          "end_freq": 14350.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Most popular HF band, excellent for worldwide contacts"
+    },
+    {
+      "name": "17m",
+      "start_freq": 18068.0,
+      "end_freq": 18168.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 18068.0,
+          "end_freq": 18110.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 18110 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 18110.0,
+          "end_freq": 18168.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "WARC band, good for worldwide contacts"
+    },
+    {
+      "name": "15m",
+      "start_freq": 21000.0,
+      "end_freq": 21450.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 21000.0,
+          "end_freq": 21070.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 21070 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 21070.0,
+          "end_freq": 21450.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Good for worldwide contacts during daylight hours"
+    },
+    {
+      "name": "12m",
+      "start_freq": 24890.0,
+      "end_freq": 24990.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 24890.0,
+          "end_freq": 24930.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 24930 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 24930.0,
+          "end_freq": 24990.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "WARC band, good for worldwide contacts"
+    },
+    {
+      "name": "10m",
+      "start_freq": 28000.0,
+      "end_freq": 29700.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 28000.0,
+          "end_freq": 28070.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 28070 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 28070.0,
+          "end_freq": 29700.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Excellent for worldwide contacts during solar maximum"
+    }
+  ],
+  "special_allocations": [
+    {
+      "name": "Beacon Frequencies",
+      "frequencies": [
+        {
+          "freq": 14099.5,
+          "band": "20m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 18110.0,
+          "band": "17m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 21099.5,
+          "band": "15m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 24929.0,
+          "band": "12m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 28099.5,
+          "band": "10m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        }
+      ]
+    },
+    {
+      "name": "Emergency Frequencies",
+      "frequencies": [
+        {
+          "freq": 14300.0,
+          "band": "20m",
+          "mode": "USB",
+          "notes": "Emergency and disaster relief"
+        },
+        {
+          "freq": 18160.0,
+          "band": "17m",
+          "mode": "USB",
+          "notes": "Emergency and disaster relief"
+        },
+        {
+          "freq": 21360.0,
+          "band": "15m",
+          "mode": "USB",
+          "notes": "Emergency and disaster relief"
+        }
+      ]
+    }
+  ],
+  "regional_variations": {
+    "1": {
+      "description": "Europe, Africa, Middle East",
+      "notes": "Standard ITU Region 1 allocations"
+    },
+    "2": {
+      "description": "Americas",
+      "notes": "Standard ITU Region 2 allocations"
+    },
+    "3": {
+      "description": "Asia, Pacific",
+      "notes": "Standard ITU Region 3 allocations"
+    }
+  },
+  "usage_guidelines": [
+    "Always check current band conditions before operating",
+    "Use appropriate power levels for the band and mode",
+    "Follow proper operating procedures and etiquette",
+    "Respect other users and avoid interference",
+    "Use clear, concise communications",
+    "Monitor emergency frequencies when appropriate"
+  ],
+  "propagation_notes": {
+    "160m": "Best at night, excellent for local and regional contacts",
+    "80m": "Good day and night, popular for regional contacts",
+    "60m": "Limited to 5 channels, USB only, good for regional contacts",
+    "40m": "Excellent worldwide band, good day and night",
+    "30m": "CW and digital only, good for worldwide contacts",
+    "20m": "Most popular HF band, excellent worldwide coverage",
+    "17m": "WARC band, good worldwide coverage",
+    "15m": "Good worldwide coverage during daylight hours",
+    "12m": "WARC band, good worldwide coverage",
+    "10m": "Excellent worldwide coverage during solar maximum"
+  }
+}

@@ -345,6 +345,29 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // must never be sended - it's a local config property
                     }
                     
+                    // Amateur radio specific fields
+                    if (radio_var == "BAND") {
+                        // Store band information (e.g., "20m", "40m")
+                        // This is informational and helps with validation
+                        pluginDbg("[UDP-server] amateur radio band: " + token_value);
+                    }
+                    if (radio_var == "MODE") {
+                        // Store mode information (e.g., "CW", "SSB", "AM")
+                        pluginDbg("[UDP-server] amateur radio mode: " + token_value);
+                    }
+                    if (radio_var == "GRID") {
+                        // Store Maidenhead grid locator (e.g., "FN31pr")
+                        pluginDbg("[UDP-server] amateur radio grid locator: " + token_value);
+                    }
+                    if (radio_var == "AMATEUR") {
+                        // Set amateur radio flag
+                        pluginDbg("[UDP-server] amateur radio flag: " + token_value);
+                    }
+                    if (radio_var == "REGION") {
+                        // Set ITU region (1, 2, 3)
+                        pluginDbg("[UDP-server] ITU region: " + token_value);
+                    }
+                    
                 }
                 
                 

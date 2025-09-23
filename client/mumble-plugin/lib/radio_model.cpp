@@ -31,6 +31,8 @@
 #include "radio_model_hf.cpp"
 #include "radio_model_uhf.cpp"
 #include "radio_model_string.cpp"
+#include "radio_model_amateur.cpp"
+#include "non_amateur_hf.cpp"
 
 
 /*
@@ -72,6 +74,27 @@ std::unique_ptr<FGCom_radiowaveModel> FGCom_radiowaveModel::selectModel(std::str
         
         float frq_num = std::stof(freq_p.frequency);
         if (frq_num == 910.00) return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());  // echo test frequency (it is UHF, but needs to be treatened as VHF)
+        
+        // Check for aviation HF frequencies first
+        FGCom_NonAmateurHF::initialize();
+        if (FGCom_NonAmateurHF::isAviationFrequency(frq_num)) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_AviationHF(35000.0, "COMMERCIAL"));
+        }
+        
+        // Check for maritime HF frequencies
+        if (FGCom_NonAmateurHF::isMaritimeFrequency(frq_num)) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_MaritimeHF("COMMERCIAL", true));
+        }
+        
+        // Check if this is an amateur radio frequency (1.8-54 MHz range)
+        if (frq_num >= 1800.0 && frq_num <= 54000.0) {
+            // Initialize amateur radio data to check if this is a valid amateur frequency
+            FGCom_AmateurRadio::initialize();
+            // For now, use region 1 (can be made configurable later)
+            if (FGCom_AmateurRadio::isAmateurFrequency(frq_num, 1)) {
+                return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_Amateur(1));
+            }
+        }
         
         if (frq_num <=  30.0)                    return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_HF());
         if (frq_num >  30.0 && frq_num <= 300.0) return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());

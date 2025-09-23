@@ -32,6 +32,7 @@
 #include "io_UDPClient.h"
 #include "radio_model.h"
 #include "garbage_collector.h"
+#include "solar_data.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -436,6 +437,12 @@ mumble_error_t fgcom_initPlugin() {
         gcThread.detach();
         pluginDbg("garbage collector started");
 #endif
+        
+        // Initialize solar data provider
+        pluginDbg("initializing solar data provider");
+        FGCom_SolarDataProvider solar_provider;
+        solar_provider.startBackgroundUpdates();
+        pluginDbg("solar data provider initialized and background updates started");
 
         fgcom_offlineInitDone = true;
     }
