@@ -179,6 +179,29 @@ The following internal plugin data packets are defined:
   - `PTT` If PTT is active
   - `VOL` (volume, not transmitted currently)
   - `PWR` tx power in Watts
+  - `ANT_TYPE` antenna type (vertical, yagi, loop, whip, etc.)
+  - `FREQ_BAND` frequency band for regulatory compliance (amateur, commercial, military)
+  - `PWR_EFF` power efficiency (0.0-1.0)
+  - `PWR_LIMIT` power limiting enabled (true/false)
+  - `SWR` standing wave ratio
+  - `TEMP` antenna temperature in Celsius
+  - `BATTERY` battery level (0.0-1.0)
+  - `BAND` amateur radio band (e.g., "20m", "40m")
+  - `MODE` amateur radio mode ("CW", "SSB", "AM")
+  - `GRID` Maidenhead grid locator (e.g., "FN31pr")
+  - `AMATEUR` amateur radio flag (0=commercial, 1=amateur)
+  - `REGION` ITU Region (1, 2, 3)
+  - `HEADING` vehicle heading in degrees (0-360, true heading)
+  - `SPEED` vehicle speed in knots
+  - `COURSE` course over ground in degrees (0-360)
+  - `PITCH` vehicle pitch angle in degrees (-90 to +90)
+  - `ROLL` vehicle roll angle in degrees (-180 to +180)
+  - `YAW` vehicle yaw angle in degrees (0-360)
+  - `VS` vertical speed in feet per minute
+  - `ALT_AGL` altitude above ground level in feet
+  - `ANT_AZ` antenna azimuth in degrees (0-360)
+  - `ANT_EL` antenna elevation in degrees (-90 to +90)
+  - `ANT_ROT` antenna rotation speed in degrees per second
 - `FGCOM:ICANHAZDATAPLZ` asks already present clients to send all state to us (payload is insignificant)
 - `FGCOM:PING` keys a ping package and lets others know which local identities are still alive but don't had any updates for some time (payload is INT list of alive IIDs).
 
