@@ -29,13 +29,14 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **RESTful API**: Complete HTTP API with WebSocket real-time updates for external integration
 - **Amateur Radio Support**: Full amateur radio band coverage with ITU region compliance
 - **Aviation & Maritime HF**: Dedicated HF communication models for aviation and maritime operations
-- **Antenna Pattern Library**: Comprehensive EZNEC-based antenna patterns for all vehicle types
+- **Antenna Pattern Library**: Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow
 - **Solar Data Integration**: Real-time NOAA/SWPC solar data for accurate propagation modeling
 - **Vehicle Dynamics API**: Complete vehicle position, attitude, and antenna orientation tracking
 - **Power Management**: Advanced transmit power control with efficiency and safety features
 - **Frequency Offset Simulation**: Realistic audio effects including Doppler shift and "Donald Duck" effect
 - **Lightning Data Integration**: Real-time atmospheric noise simulation from lightning strikes
 - **Weather Data Integration**: Atmospheric condition effects on radio propagation
+- **Security Features**: TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration
 
 Documentation
 =============
@@ -48,14 +49,15 @@ The documentation is split up into relevant parts:
 - [client/fgfs-addon/Readme.md](client/fgfs-addon/Readme.md) Documentation for the Flightgear integration addon
 - [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
+- [SECURITY.md](SECURITY.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
 
 ### Advanced Features Documentation:
 - [API Documentation](client/mumble-plugin/lib/API_DOCUMENTATION.md) Complete RESTful API and WebSocket documentation
 - [Implementation Summary](client/mumble-plugin/lib/IMPLEMENTATION_SUMMARY.md) Comprehensive overview of all implemented features
 - [Threading Architecture](client/mumble-plugin/lib/THREADING_ARCHITECTURE_DOCUMENTATION.md) Multi-threaded system documentation
 - [NEC Modeling Guide](client/mumble-plugin/lib/NEC_MODELING_DOCUMENTATION.md) Antenna modeling and calculation guide
-- [Vehicle Dynamics API](VEHICLE_DYNAMICS_API.md) Vehicle tracking and antenna orientation API
-- [Vehicle Dynamics Examples](VEHICLE_DYNAMICS_EXAMPLES.md) Practical examples for vehicle dynamics integration
+- [Vehicle Dynamics API](docs/VEHICLE_DYNAMICS_API.md) Vehicle tracking and antenna orientation API
+- [Vehicle Dynamics Examples](docs/VEHICLE_DYNAMICS_EXAMPLES.md) Practical examples for vehicle dynamics integration
 - [Military HF Frequencies](client/mumble-plugin/lib/MILITARY_HF_FREQUENCIES.md) NATO and Eastern Bloc military frequency documentation
 - [Frequency Offset Documentation](client/mumble-plugin/lib/FREQUENCY_OFFSET_DOCUMENTATION.md) Audio processing and frequency offset simulation
 - [Changes Log](client/mumble-plugin/lib/changes.md) Detailed development history and feature implementation log
@@ -130,8 +132,8 @@ You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-m
 ### Advanced Configuration (v2.0+)
 FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced features:
 
-- **[fgcom-mumble.conf.example](fgcom-mumble.conf.example)**: Complete configuration template with all available options
-- **[fgcom-mumble.conf.minimal](fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
+- **[config/fgcom-mumble.conf.example](config/fgcom-mumble.conf.example)**: Complete configuration template with all available options
+- **[config/fgcom-mumble.conf.minimal](config/fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
 - **Feature Toggles**: Runtime enable/disable of 107 features across 17 categories
 - **GPU Acceleration**: Configure client/server/hybrid GPU acceleration modes
 - **Threading**: Customize thread intervals and resource allocation

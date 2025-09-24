@@ -235,3 +235,235 @@ For broadband analysis, create multiple models:
 3. **Memory management**: Manage pattern memory efficiently
 
 This basic model will give you antenna patterns and impedance characteristics for a vehicle-mounted antenna scenario, providing a foundation for more complex modeling in the FGCom-mumble system.
+
+## Pattern Generation Workflow
+
+### Overview
+
+Creating antenna patterns for vehicles involves several steps:
+1. **EZNEC Model Creation** - Define antenna geometry and vehicle structure
+2. **Frequency-Specific Generation** - Create models for each operational frequency
+3. **NEC2 Conversion** - Convert EZNEC format to NEC2 format
+4. **Simulation** - Run `nec2c` to calculate radiation patterns
+5. **Pattern Extraction** - Extract and format radiation pattern data
+
+### Step-by-Step Pattern Generation
+
+#### 1. EZNEC Model Requirements
+
+**File Structure:**
+```
+antenna_patterns/
+├── military-land/
+│   ├── vehicle_name/
+│   │   ├── vehicle_name.ez          # Main EZNEC model
+│   │   └── vehicle_name_patterns/   # Generated patterns
+│   │       ├── 3.0mhz/
+│   │       ├── 5.0mhz/
+│   │       ├── 7.0mhz/
+│   │       └── 9.0mhz/
+```
+
+**EZNEC File Components:**
+- **Wire Geometry (GW):** Define vehicle structure and antenna
+- **Ground (GD):** Specify ground characteristics
+- **Excitation (EX):** Define voltage source location
+- **Frequency (FR):** Set operating frequency
+- **Radiation Pattern (RP):** Calculate far-field pattern
+
+#### 2. Military Vehicle Frequencies
+
+**NATO Military Vehicles:**
+- 3.0 MHz (3000 kHz) - Tactical communications
+- 5.0 MHz (5000 kHz) - Medium-range tactical
+- 7.0 MHz (7000 kHz) - Long-range tactical
+- 9.0 MHz (9000 kHz) - Strategic communications
+
+**Soviet/Eastern Bloc Vehicles:**
+- 3.0 MHz (3000 kHz) - Tactical communications
+- 5.0 MHz (5000 kHz) - Medium-range tactical
+- 7.0 MHz (7000 kHz) - Long-range tactical
+- 9.0 MHz (9000 kHz) - Strategic communications
+
+#### 3. Pattern Generation Script
+
+**Using `generate_military_vehicle_patterns.sh`:**
+
+```bash
+#!/bin/bash
+# Generate patterns for military vehicles
+
+# Process NATO Jeep
+./generate_military_vehicle_patterns.sh
+
+# Or process individual vehicles:
+process_military_vehicle "antenna_patterns/military-land/nato_jeep_10ft_whip_45deg.ez" "NATO Jeep"
+process_military_vehicle "antenna_patterns/military-land/soviet_uaz_4m_whip_45deg.ez" "Soviet UAZ"
+```
+
+**Script Functions:**
+1. **Frequency Processing:** Creates frequency-specific EZNEC files
+2. **NEC2 Conversion:** Uses `eznec2nec.sh` to convert format
+3. **Simulation:** Runs `nec2c` for each frequency
+4. **Pattern Extraction:** Uses `extract_pattern_advanced.sh` to extract radiation data
+
+#### 4. Manual Pattern Generation
+
+**Step 1: Create Frequency-Specific EZNEC**
+```bash
+# Copy base EZNEC file
+cp vehicle.ez vehicle_3.0MHz.ez
+
+# Update frequency in EZNEC file
+sed -i "s/^FR.*/FR 0 1 0 0 3000.0 0/" vehicle_3.0MHz.ez
+```
+
+**Step 2: Convert to NEC2 Format**
+```bash
+./eznec2nec.sh vehicle_3.0MHz.ez
+# Creates: vehicle_3.0MHz.nec
+```
+
+**Step 3: Run NEC2 Simulation**
+```bash
+# Run from within the directory (to avoid filename length issues)
+cd frequency_directory/
+nec2c -i vehicle_3.0MHz.nec -o vehicle_3.0MHz.out
+```
+
+**Step 4: Extract Radiation Pattern**
+```bash
+source extract_pattern_advanced.sh
+extract_radiation_pattern_advanced vehicle_3.0MHz.out vehicle_3.0MHz_pattern.txt 3.0 0
+```
+
+#### 5. Pattern File Format
+
+**Generated Pattern Files:**
+- **Format:** ASCII text with header and data
+- **Content:** Theta, Phi, Gain (dBi), H_Polarization, V_Polarization
+- **Resolution:** Typically 5° increments in theta and phi
+- **Size:** ~1,000-1,500 data points per pattern
+
+**Example Pattern File Header:**
+```
+# FGCom-mumble Far-Field Radiation Pattern
+# Frequency: 3.0 MHz
+# Altitude: 0 m
+# Format: Theta Phi Gain_dBi H_Polarization V_Polarization
+# Theta: Elevation angle (0-180 degrees)
+# Phi: Azimuth angle (0-360 degrees)
+# Gain: Antenna gain in dBi
+# H_Polarization: Horizontal polarization component
+# V_Polarization: Vertical polarization component
+```
+
+#### 6. Quality Control
+
+**Verification Steps:**
+1. **File Sizes:** Pattern files should be 20-40 KB
+2. **Data Points:** Should contain 1,000+ radiation points
+3. **Gain Range:** Typical gains -20 to +10 dBi
+4. **Format Check:** Verify header and data format
+
+**Common Issues:**
+- **Filename Length:** `nec2c` has path length limitations
+- **Frequency Format:** Ensure kHz values in EZNEC files
+- **Ground Parameters:** Verify ground characteristics match vehicle type
+- **Antenna Geometry:** Check wire segmentation and radius values
+
+#### 7. Integration with FGCom-mumble
+
+**Pattern Loading:**
+```cpp
+// Load pattern for specific frequency
+FGCom_AntennaPattern pattern;
+pattern.loadPattern("antenna_patterns/military-land/vehicle_patterns/3.0mhz/vehicle_3.0MHz_pattern.txt");
+
+// Get gain for specific direction
+float gain = pattern.getGain(theta, phi);
+```
+
+**Frequency Selection:**
+```cpp
+// Select appropriate pattern based on operating frequency
+std::string pattern_file = selectPatternFile(vehicle_type, frequency_mhz);
+```
+
+### Automated Pattern Generation
+
+#### Using Existing Scripts
+
+**For Military Vehicles:**
+```bash
+# Generate all military vehicle patterns
+./generate_military_vehicle_patterns.sh
+
+# Generate specific vehicle patterns
+./generate_leopard1_patterns.sh
+./generate_t55_patterns.sh
+```
+
+**For Civilian Vehicles:**
+```bash
+# Generate all civilian patterns
+./generate_all_patterns.sh
+
+# Generate specific vehicle patterns
+./generate_amateur_bands.sh
+```
+
+#### Script Features
+
+**Multi-Core Processing:**
+- Uses `xargs -P` for parallel processing
+- Configurable CPU core usage
+- Faster pattern generation
+
+**Error Handling:**
+- Comprehensive error checking
+- Detailed logging and status messages
+- Graceful failure handling
+
+**File Management:**
+- Automatic directory creation
+- Consistent file naming
+- Pattern file organization
+
+### Troubleshooting Pattern Generation
+
+#### Common Errors
+
+**"Input file name too long"**
+- **Cause:** `nec2c` has path length limitations
+- **Solution:** Run `nec2c` from within the target directory
+- **Fix:** Use `(cd "$freq_dir" && nec2c -i "$filename" -o "$output")`
+
+**"NON-NUMERICAL CHARACTER"**
+- **Cause:** Comments in EZNEC file not stripped
+- **Solution:** Use `sed 's/;.*$//'` to remove comments
+- **Fix:** Clean EZNEC files before conversion
+
+**"Pattern extraction failed"**
+- **Cause:** Incorrect function parameters
+- **Solution:** Use correct parameter count for extraction function
+- **Fix:** `extract_radiation_pattern_advanced input output frequency altitude`
+
+#### Performance Optimization
+
+**File Size Management:**
+- Use shorter filenames to avoid path length issues
+- Compress pattern files for storage
+- Cache frequently used patterns
+
+**Processing Speed:**
+- Use multi-core processing for batch operations
+- Parallel execution of independent simulations
+- Optimize EZNEC models for faster computation
+
+**Memory Usage:**
+- Process patterns in batches
+- Clean up temporary files
+- Use streaming processing for large datasets
+
+This comprehensive workflow ensures consistent, high-quality antenna patterns for all vehicles in the FGCom-mumble system, with proper documentation and troubleshooting guidance for pattern generation.

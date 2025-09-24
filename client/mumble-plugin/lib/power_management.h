@@ -90,7 +90,7 @@ private:
     std::map<std::string, RegulatoryPowerLimits> regulatory_limits;
     
     // Internal state
-    std::mutex power_mutex;
+    mutable std::mutex power_mutex;
     bool power_limiting_active;
     bool thermal_protection_active;
     bool swr_protection_active;

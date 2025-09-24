@@ -20,10 +20,12 @@
         
         <!-- you must install the dependency to your local repo; kindly use the provided jar in the projects lib tree -->
         <!-- eg. `mvn install:install-file ...`; see the makefile for the command -->
+        <!-- jsimconnect dependency is optional and controlled by Maven profile -->
         <dependency>
             <groupId>flightsim</groupId>
             <artifactId>jsimconnect</artifactId>
             <version>0.8.0</version>
+            <scope>provided</scope>
         </dependency>
         
         <!-- https://mvnrepository.com/artifact/org.openstreetmap.jmapviewer/jmapviewer -->
@@ -35,6 +37,34 @@
             <version>2.14</version>
         </dependency>
     </dependencies>
+    
+    <profiles>
+        <profile>
+            <id>with-jsimconnect</id>
+            <activation>
+                <property>
+                    <name>enable.jsimconnect</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>flightsim</groupId>
+                    <artifactId>jsimconnect</artifactId>
+                    <version>0.8.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>without-jsimconnect</id>
+            <activation>
+                <property>
+                    <name>enable.jsimconnect</name>
+                    <value>false</value>
+                </property>
+            </activation>
+        </profile>
+    </profiles>
     
     <build>
         <resources>

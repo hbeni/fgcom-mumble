@@ -162,6 +162,7 @@ public:
     std::string conv_chan2freq(std::string frq) override;
     std::string conv_freq2chan(std::string frq) override;
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) override;
+    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) override;
     
     // Aviation-specific methods
     float calculateWhipAntennaEfficiency(float frequency_khz);
@@ -184,6 +185,7 @@ public:
     std::string conv_chan2freq(std::string frq) override;
     std::string conv_freq2chan(std::string frq) override;
     float getFrqMatch(fgcom_radio r1, fgcom_radio r2) override;
+    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) override;
     
     // Maritime-specific methods
     float calculateSeaPathPropagation(double distance_km, float frequency_khz);

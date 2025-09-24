@@ -210,7 +210,7 @@ bool FGCom_FrequencyOffsetProcessor::applyFFTBasedOffset(float* audio_buffer, si
     }
     
     // Ensure FFT buffer is large enough
-    if (fft_buffer.size() < config.fft_size) {
+    if (fft_buffer.size() < static_cast<size_t>(config.fft_size)) {
         fft_buffer.resize(config.fft_size);
         ifft_buffer.resize(config.fft_size);
     }
@@ -778,7 +778,8 @@ void FGCom_FrequencyOffsetProcessor::bitReversePermute(std::complex<float>* data
 }
 
 void FGCom_FrequencyOffsetProcessor::butterflyOperation(std::complex<float>* data, int size, bool inverse) {
-    int sign = inverse ? 1 : -1;
+    // Note: sign variable removed as it's not used in the current implementation
+    // The FFT implementation uses twiddle factors directly
     
     for (int len = 2; len <= size; len <<= 1) {
         int step = size / len;

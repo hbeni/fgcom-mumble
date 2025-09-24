@@ -256,20 +256,23 @@ bool FGCom_PowerManager::applyPowerLimits(int requested_power, int& actual_power
         }
     }
     
+    // Get antenna efficiency data for thermal and SWR limits
+    const AntennaPowerEfficiency* efficiency_data = nullptr;
+    auto it = antenna_efficiency_data.find(current_antenna_type);
+    if (it != antenna_efficiency_data.end()) {
+        efficiency_data = &it->second;
+    }
+    
     // Apply thermal limit
-    if (config.enable_thermal_protection) {
-        auto it = antenna_efficiency_data.find(current_antenna_type);
-        if (it != antenna_efficiency_data.end()) {
-            const AntennaPowerEfficiency& efficiency_data = it->second;
-            if (actual_power > efficiency_data.thermal_limit) {
-                actual_power = static_cast<int>(efficiency_data.thermal_limit);
-            }
+    if (config.enable_thermal_protection && efficiency_data) {
+        if (actual_power > efficiency_data->thermal_limit) {
+            actual_power = static_cast<int>(efficiency_data->thermal_limit);
         }
     }
     
     // Apply SWR limit
-    if (config.enable_swr_protection && current_swr > efficiency_data.swr_limit) {
-        actual_power = static_cast<int>(actual_power * (efficiency_data.swr_limit / current_swr));
+    if (config.enable_swr_protection && efficiency_data && current_swr > efficiency_data->swr_limit) {
+        actual_power = static_cast<int>(actual_power * (efficiency_data->swr_limit / current_swr));
     }
     
     // Apply battery limit

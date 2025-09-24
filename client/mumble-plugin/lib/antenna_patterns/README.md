@@ -141,4 +141,31 @@ Each antenna model includes:
 - **Ground effect modeling**
 - **Altitude-dependent variations** (aircraft only)
 
+## Visualization Examples
+
+### NATO Jeep Radiation Pattern Visualization
+
+This is an example of how the radiation pattern looks on a NATO Jeep with an antenna tied down in a 45-degree fashion. The visualization shows:
+
+- **Spherical/egg-shaped mesh** showing how the HF antenna radiates
+- **Based on actual NEC2 simulation data** with realistic gain values
+- **3D electromagnetic field pattern** visualization
+
+#### What the wireframe shows:
+
+- **Basic rectangular chassis outline** (footprint)
+- **Simple cab structure** (rectangular box shape)
+- **Minimal vertical lines** connecting ground to cab level
+
+#### What's missing from the simplified model:
+
+- **Side panels/doors** of the jeep
+- **Wheels** (as noted in the visualization)
+- **Hood/engine compartment** details
+- **More realistic vehicle proportions**
+
+The wireframe is quite simplified - it's more like a "schematic jeep" than a detailed vehicle model, but it effectively demonstrates the antenna radiation pattern characteristics.
+
+**Screenshot location**: `/Screenshots/gain pattern.png`
+
 This comprehensive collection provides realistic antenna modeling for all major vehicle types and antenna configurations used in amateur radio and commercial/military communications.

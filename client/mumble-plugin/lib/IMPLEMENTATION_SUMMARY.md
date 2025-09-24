@@ -467,12 +467,6 @@ FGCOM_FEATURE_USAGE(FeatureToggle::GPU_ANTENNA_PATTERNS, 15.5);
 
 ## 📈 Future Enhancements
 
-### Planned Features
-1. **Machine Learning Integration**: AI-powered propagation prediction
-2. **Advanced Antenna Modeling**: 3D antenna pattern generation
-3. **Real-time Collaboration**: Multi-user real-time editing
-4. **Cloud Integration**: Cloud-based computation offloading
-5. **Mobile Support**: Mobile device integration
 
 ### Performance Improvements
 1. **SIMD Optimization**: Vector instruction utilization

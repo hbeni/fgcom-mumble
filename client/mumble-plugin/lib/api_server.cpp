@@ -23,6 +23,11 @@
 #include <chrono>
 #include <algorithm>
 #include <random>
+#include <regex>
+#include <cctype>
+#include <limits>
+#include <stdexcept>
+#include <cassert>
 
 // Static member definitions
 std::unique_ptr<FGCom_Config> FGCom_Config::instance = nullptr;
@@ -60,24 +65,44 @@ FGCom_APIServer::~FGCom_APIServer() {
 }
 
 bool FGCom_APIServer::startServer(int port, const std::string& host) {
-    if (server_running) {
+    try {
+        // Validate input parameters
+        if (!validatePort(port)) {
+            std::cerr << "[APIServer] Invalid port: " << port << std::endl;
+            return false;
+        }
+        
+        if (!validateHost(host)) {
+            std::cerr << "[APIServer] Invalid host: " << host << std::endl;
+            return false;
+        }
+        
+        if (server_running) {
+            std::cerr << "[APIServer] Server is already running" << std::endl;
+            return false;
+        }
+        
+        server_port = port;
+        server_host = host;
+        
+        setupEndpoints();
+        setupCORS();
+        setupLogging();
+        setupErrorHandling();
+        
+        server_thread = std::thread(&FGCom_APIServer::serverThreadFunction, this);
+        
+        // Wait a moment for server to start
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        
+        return server_running;
+    } catch (const std::exception& e) {
+        std::cerr << "[APIServer] Exception in startServer: " << e.what() << std::endl;
+        return false;
+    } catch (...) {
+        std::cerr << "[APIServer] Unknown exception in startServer" << std::endl;
         return false;
     }
-    
-    server_port = port;
-    server_host = host;
-    
-    setupEndpoints();
-    setupCORS();
-    setupLogging();
-    setupErrorHandling();
-    
-    server_thread = std::thread(&FGCom_APIServer::serverThreadFunction, this);
-    
-    // Wait a moment for server to start
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    
-    return server_running;
 }
 
 void FGCom_APIServer::stopServer() {

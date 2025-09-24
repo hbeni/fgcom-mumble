@@ -503,10 +503,12 @@ std::string FGCom_AmateurRadio::latLonToGrid(double lat, double lon, int precisi
     grid += (char)('0' + square_lon);
     grid += (char)('0' + square_lat);
     
+    // Calculate subsquare coordinates (needed for extended precision)
+    double subsquare_lon = (lon - field_lon * 20.0 - square_lon * 2.0) * 12.0;
+    double subsquare_lat = (lat - field_lat * 10.0 - square_lat * 1.0) * 24.0;
+    
     if (precision >= 6) {
         // Add subsquare
-        double subsquare_lon = (lon - field_lon * 20.0 - square_lon * 2.0) * 12.0;
-        double subsquare_lat = (lat - field_lat * 10.0 - square_lat * 1.0) * 24.0;
         grid += (char)('A' + (int)subsquare_lon);
         grid += (char)('A' + (int)subsquare_lat);
     }

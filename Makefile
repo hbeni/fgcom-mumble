@@ -3,6 +3,10 @@
 #   note: set this to the releases package version (at least version of the most recent subcomponent)
 BUNDLE_VER:=1.4.1
 
+# Build configuration options
+# Set to 'false' to skip jsimconnect dependency (useful for clients that don't need MSFS2020 integration)
+ENABLE_JSIMCONNECT:=true
+
 
 # The subpackages versions are sourced from there
 GITVER:=$(shell git log -1 --pretty=format:"%h")
@@ -196,14 +200,26 @@ build-radioGUI:
 		-DartifactId=jmapviewer \
 		-Dversion=2.14 \
 		-Dpackaging=jar
+ifeq ($(ENABLE_JSIMCONNECT),true)
+	# Build and install jsimconnect if enabled
 	cd client/radioGUI/lib/jsimconnect && mvn clean package
 	mvn install:install-file -Dfile=client/radioGUI/lib/jsimconnect/target/jsimconnect-0.8.0.jar \
 		-DgroupId=flightsim \
 		-DartifactId=jsimconnect \
 		-Dversion=0.8.0 \
 		-Dpackaging=jar
-	cd client/radioGUI/ && mvn clean animal-sniffer:check package
+	@echo "Building radioGUI with jsimconnect support..."
+else
+	@echo "Building radioGUI without jsimconnect (MSFS2020 integration disabled)..."
+endif
+	cd client/radioGUI/ && mvn clean animal-sniffer:check package -Denable.jsimconnect=$(ENABLE_JSIMCONNECT)
 
+# Convenience targets for building with/without jsimconnect
+build-radioGUI-with-jsimconnect:
+	$(MAKE) build-radioGUI ENABLE_JSIMCONNECT=true
+
+build-radioGUI-without-jsimconnect:
+	$(MAKE) build-radioGUI ENABLE_JSIMCONNECT=false
 
 showVer:
 	@echo "GITCOMMIT:$(GITVER)"
