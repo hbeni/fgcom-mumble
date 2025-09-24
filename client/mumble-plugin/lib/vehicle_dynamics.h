@@ -59,13 +59,12 @@ struct fgcom_antenna_orientation {
     std::string antenna_type;   // "yagi", "dipole", "vertical", "loop", "whip"
     float azimuth_deg;          // Azimuth pointing direction (0-360)
     float elevation_deg;        // Elevation angle (-90 to +90)
-    bool is_rotatable;          // Can this antenna be rotated?
     bool is_auto_tracking;      // Is auto-tracking enabled?
     float rotation_speed_deg_per_sec; // Rotation speed for motorized antennas
     std::chrono::system_clock::time_point timestamp;
     
     fgcom_antenna_orientation() : azimuth_deg(0.0f), elevation_deg(0.0f),
-                                 is_rotatable(false), is_auto_tracking(false),
+                                 is_auto_tracking(false),
                                  rotation_speed_deg_per_sec(0.0f) {
         timestamp = std::chrono::system_clock::now();
     }
