@@ -300,6 +300,46 @@ external_data_url =
 external_data_update_interval = 3600
 
 # =============================================================================
+# HISTORICAL MARITIME HF BANDS CONFIGURATION
+# =============================================================================
+[historical_maritime_bands]
+# Enable historical maritime HF bands (472 kHz, 136 kHz, 500 kHz, 2 MHz)
+# These bands were historically used for maritime distress and communication
+# before being allocated to amateur radio operators
+enable_historical_maritime_bands = true
+
+# 500 kHz band - International distress and calling frequency
+enable_500khz_band = true
+500khz_power_limit_watts = 500
+500khz_mode = CW
+500khz_historical_use = "International distress and calling frequency"
+500khz_primary_until_gmdss = true
+
+# 2 MHz band (1.6-4 MHz) - Marine MF/HF-SSB radios
+enable_2mhz_band = true
+2mhz_power_limit_watts = 1000
+2mhz_mode = SSB
+2mhz_frequency_range = "1.6-4.0 MHz"
+2mhz_historical_use = "Marine MF/HF-SSB radios"
+
+# 630 meter band (472-479 kHz) - Historical maritime distress frequency
+enable_630m_band = true
+630m_power_limit_watts = 100
+630m_mode = CW
+630m_secondary_allocation = true
+
+# 2200 meter band (135.7-137.8 kHz) - Historical maritime navigation
+enable_2200m_band = true
+2200m_power_limit_watts = 200
+2200m_mode = CW
+2200m_secondary_allocation = true
+
+# Interference protection settings
+protect_primary_services = true
+automatic_power_reduction = true
+interference_monitoring = true
+
+# =============================================================================
 # AUDIO CONFIGURATION
 # =============================================================================
 [audio]

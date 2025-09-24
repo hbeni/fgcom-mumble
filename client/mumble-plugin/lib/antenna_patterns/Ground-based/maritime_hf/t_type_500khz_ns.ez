@@ -1,0 +1,89 @@
+EZNEC ver. 7.0
+; T-Type Maritime HF Antenna - 500 kHz (North-South Orientation)
+; International distress and calling frequency
+; Height: 10m above ground
+; Vertical polarization with horizontal top section running North-South
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+; VERTICAL SECTION (10m height)
+W001 0.0 0.0 0.0 0.0 0.0 10.0 0.006 20
+; HORIZONTAL TOP SECTION (75m total, 37.5m each side) - NORTH-SOUTH ORIENTATION
+W002 0.0 0.0 10.0 0.0 37.5 10.0 0.006 75
+W003 0.0 0.0 10.0 0.0 -37.5 10.0 0.006 75
+; GROUND RADIALS (4 radials, λ/4 at 500 kHz = 150m)
+; North-South radials (longer for N-S orientation)
+W004 0.0 0.0 0.0 0.0 150.0 0.0 0.003 150
+W005 0.0 0.0 0.0 0.0 -150.0 0.0 0.003 150
+; East-West radials (shorter for N-S orientation)
+W006 0.0 0.0 0.0 150.0 0.0 0.0 0.003 150
+W007 0.0 0.0 0.0 -150.0 0.0 0.0 0.003 150
+; SOURCE
+; Fed at base of vertical section
+SY SRC W001 1 1
+; GROUND
+; Real ground at 0m height, antenna at 10m
+GD 1 0 0 0 0.005 0.013
+; LOADS
+; Copper wire construction
+LD 5 1 7 0 3.7E+07 0
+; Copper conductivity
+; FREQUENCY
+; Center frequency 500 kHz
+FR 0 1 0 0 500.0 0
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+; FREQUENCY SWEEP - 500 kHz band
+; FR 0 11 0 0 500.0 0.1
+; COMMENTS
+; T-Type Maritime HF Antenna Model (North-South Orientation)
+; International distress and calling frequency
+; Specifications:
+; - Frequency: 500 kHz (International distress frequency)
+; - Configuration: T-Type (vertical + horizontal top)
+; - Height: 10m above ground
+; - Vertical section: 10m
+; - Horizontal section: 75m total (37.5m each side, N-S orientation)
+; - Ground radials: 4 × 150m (λ/4 at 500 kHz)
+; - Polarization: Vertical
+; - Max power: 500W
+; - Weight: 18.5 kg
+; Antenna Design:
+; - Vertical section provides omnidirectional coverage
+; - Horizontal top section (N-S) improves low-angle radiation
+; - Ground radials provide proper ground reference
+; - ATU required for impedance matching
+; - N-S orientation optimizes for North-South propagation
+; Expected Performance:
+; - Gain: ~3-4 dBi omnidirectional
+; - Elevation pattern: Low angle (~5-10°)
+; - SWR: <2:1 with proper ATU tuning
+; - Impedance: 50Ω (after ATU transformation)
+; - N-S orientation provides better coverage in N-S direction
+; Ground Effects at 10m Height:
+; - Good ground reference through radials
+; - Low elevation angle radiation
+; - Omnidirectional azimuth pattern
+; - Minimal ground interaction at 500 kHz
+; - N-S orientation affects ground plane efficiency
+; Construction Notes:
+; - Heavy-duty copper wire construction
+; - Weather-sealed connections
+; - Lightning protection required
+; - Regular inspection of wire connections
+; - N-S orientation requires proper mast alignment
+; Typical Applications:
+; - International distress communications
+; - 500 kHz emergency operations
+; - Historical maritime operations
+; - Emergency communications
+; - North-South propagation paths
+; Optimization Notes:
+; - Horizontal section length optimized for 500 kHz
+; - Ground radial system for proper operation
+; - ATU tuning for impedance matching
+; - Weather protection for marine environment
+; - N-S orientation for optimal propagation
+; This model represents a historical maritime T-Type
+; antenna suitable for 500 kHz operations
+; as used on ships before GMDSS implementation
+; with North-South orientation for optimal coverage

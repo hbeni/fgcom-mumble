@@ -51,11 +51,19 @@ EOF
                     continue
                 fi
                 
-                # Parse pattern data (Theta Phi Gain format)
-                if [[ "$line" =~ ^[[:space:]]*([0-9]+\.?[0-9]*)[[:space:]]+([0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]* ]]; then
+                # Parse pattern data (Theta Phi VERTC HORIZ TOTAL format)
+                # Format: "    0.00      0.00     -9.44  -999.99    -9.44"
+                if [[ "$line" =~ ^[[:space:]]*([0-9]+\.?[0-9]*)[[:space:]]+([0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]* ]]; then
                     local theta="${BASH_REMATCH[1]}"
                     local phi="${BASH_REMATCH[2]}"
-                    local gain="${BASH_REMATCH[3]}"
+                    local vertc="${BASH_REMATCH[3]}"
+                    local horiz="${BASH_REMATCH[4]}"
+                    local gain="${BASH_REMATCH[5]}"
+                    
+                    # Skip lines with -999.99 values (invalid data)
+                    if [[ "$gain" == "-999.99" ]]; then
+                        continue
+                    fi
                     
                     # Calculate polarization components (simplified)
                     local h_pol="0.0"
@@ -146,53 +154,12 @@ EOF
         fi
     fi
     
-    # Method 3: Generate synthetic pattern if no data found
+    # Method 3: FAIL if no real data found (NO SYNTHETIC PATTERNS!)
     if [ "$pattern_found" = false ]; then
-        echo "No pattern data found, generating synthetic pattern..."
-        
-        # Generate a basic dipole-like pattern
-        for theta in $(seq 0 5 180); do
-            for phi in $(seq 0 10 350); do
-                # Simple dipole pattern calculation
-                local gain="0.0"
-                
-                # Basic dipole gain calculation (simplified)
-                if (( $(echo "$theta > 0 && $theta < 180" | bc -l) )); then
-                    # Simple dipole pattern approximation
-                    if (( $(echo "$theta < 30" | bc -l) )); then
-                        gain="2.0"  # Good gain at low angles
-                    elif (( $(echo "$theta < 60" | bc -l) )); then
-                        gain="0.0"  # Moderate gain
-                    elif (( $(echo "$theta < 120" | bc -l) )); then
-                        gain="-3.0" # Reduced gain
-                    else
-                        gain="-6.0" # Poor gain at high angles
-                    fi
-                fi
-                
-                # Add some frequency-dependent variation
-                local freq_factor=$(echo "scale=2; $frequency_mhz / 14.0" | bc -l)
-                gain=$(echo "scale=2; $gain * $freq_factor" | bc -l)
-                
-                # Calculate polarization components
-                local h_pol="0.0"
-                local v_pol="0.0"
-                
-                if (( $(echo "$theta < 45" | bc -l) )); then
-                    v_pol="1.0"
-                elif (( $(echo "$theta > 135" | bc -l) )); then
-                    h_pol="1.0"
-                else
-                    h_pol="0.5"
-                    v_pol="0.5"
-                fi
-                
-                echo "$theta $phi $gain $h_pol $v_pol" >> "$pattern_file"
-                pattern_lines=$((pattern_lines + 1))
-            done
-        done
-        
-        echo "Synthetic pattern: Generated $pattern_lines pattern points"
+        echo "ERROR: No real radiation pattern data found in NEC2 output!"
+        echo "This indicates a problem with the antenna model or simulation."
+        echo "Synthetic patterns are NOT generated as they are inaccurate."
+        return 1
     fi
     
     # Final validation
@@ -207,3 +174,8 @@ EOF
 
 # Export the function for use in other scripts
 export -f extract_radiation_pattern_advanced
+
+# If called directly with arguments, run the function
+if [ $# -eq 4 ]; then
+    extract_radiation_pattern_advanced "$1" "$2" "$3" "$4"
+fi

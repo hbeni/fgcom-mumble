@@ -21,6 +21,7 @@
 #include "audio.h"
 #include "pattern_interpolation.h"
 #include "antenna_ground_system.h"
+#include "antenna_pattern_mapping.h"
 #include "propagation_physics.h"
 
 /**
@@ -58,28 +59,36 @@ private:
     }
     
     void loadMilitaryUHFPatterns() {
-        // Military UHF tactical patterns (225-400 MHz)
-        // These would be loaded from UHF-specific pattern files
-        std::cout << "Loading military UHF patterns..." << std::endl;
+        // Use pattern mapping system to load all available UHF patterns
+        if (!g_antenna_pattern_mapping) {
+            g_antenna_pattern_mapping = std::make_unique<FGCom_AntennaPatternMapping>();
+        }
         
-        // Example: Load tactical UHF patterns for military vehicles
-        // if (uhf_pattern_interpolation->load4NEC2Pattern(
-        //     "antenna_patterns/military/uhf_tactical.ez", 
-        //     "military_uhf_tactical", 0, 300.0)) {
-        //     std::cout << "Loaded military UHF tactical pattern" << std::endl;
-        // }
+        // Load all available UHF patterns dynamically
+        std::vector<AntennaPatternInfo> uhf_patterns = 
+            g_antenna_pattern_mapping->getAvailableUHFPatterns("ground_station");
+        
+        for (const auto& pattern_info : uhf_patterns) {
+            if (uhf_pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded UHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
+        }
     }
     
     void loadCivilianUHFPatterns() {
-        // Civilian UHF patterns (400-1000 MHz)
-        std::cout << "Loading civilian UHF patterns..." << std::endl;
+        // Load default UHF patterns for civilian use
+        std::vector<AntennaPatternInfo> default_patterns = 
+            g_antenna_pattern_mapping->getAvailableUHFPatterns("default");
         
-        // Example: Load civilian UHF patterns
-        // if (uhf_pattern_interpolation->load4NEC2Pattern(
-        //     "antenna_patterns/civilian/uhf_civilian.ez", 
-        //     "civilian_uhf", 0, 450.0)) {
-        //     std::cout << "Loaded civilian UHF pattern" << std::endl;
-        // }
+        for (const auto& pattern_info : default_patterns) {
+            if (uhf_pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded civilian UHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
+        }
     }
     
     // Get UHF antenna gain from pattern interpolation
@@ -97,14 +106,23 @@ private:
             antenna_name, altitude_m, frequency_mhz, theta_deg, phi_deg);
     }
     
-    // Determine UHF antenna name based on vehicle type and frequency
+    // Determine UHF antenna name based on vehicle type and frequency using pattern mapping
     std::string getUHFAntennaName(const std::string& vehicle_type, double frequency_mhz) {
-        // Map vehicle types to UHF antenna names
-        if (vehicle_type.find("military") != std::string::npos || 
-            vehicle_type.find("tactical") != std::string::npos) {
-            return "military_uhf_tactical";
-        } else if (vehicle_type.find("civilian") != std::string::npos) {
-            return "civilian_uhf";
+        if (!g_antenna_pattern_mapping) {
+            g_antenna_pattern_mapping = std::make_unique<FGCom_AntennaPatternMapping>();
+        }
+        
+        // Use pattern mapping system to get appropriate UHF antenna
+        AntennaPatternInfo pattern_info = g_antenna_pattern_mapping->getUHFPattern(vehicle_type, frequency_mhz);
+        
+        if (!pattern_info.antenna_name.empty()) {
+            return pattern_info.antenna_name;
+        }
+        
+        // Fallback to closest pattern
+        pattern_info = g_antenna_pattern_mapping->getClosestUHFPattern(vehicle_type, frequency_mhz);
+        if (!pattern_info.antenna_name.empty()) {
+            return pattern_info.antenna_name;
         }
         
         // Default UHF antenna for unknown vehicle types

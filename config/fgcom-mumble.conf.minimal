@@ -47,6 +47,14 @@ enable_maritime_hf = true
 enable_mwara_frequencies = true
 enable_uscg_channels = true
 
+[historical_maritime_bands]
+# Enable historical maritime HF bands (472 kHz, 136 kHz, 500 kHz, 2 MHz)
+enable_historical_maritime_bands = true
+enable_500khz_band = true
+enable_2mhz_band = true
+enable_630m_band = true
+enable_2200m_band = true
+
 [logging]
 enable_file_logging = true
 enable_console_logging = true
