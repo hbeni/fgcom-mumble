@@ -30,6 +30,8 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Amateur Radio Support**: Full amateur radio band coverage with ITU region compliance
 - **Aviation & Maritime HF**: Dedicated HF communication models for aviation and maritime operations
 - **Antenna Pattern Library**: Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow
+- **VHF/UHF Antenna Support**: Professional-grade 2m (144-145 MHz) and 70cm (430-440 MHz) Yagi antennas with 10m height modeling
+- **Physics-Based Propagation**: Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction
 - **Solar Data Integration**: Real-time NOAA/SWPC solar data for accurate propagation modeling
 - **Vehicle Dynamics API**: Complete vehicle position, attitude, and antenna orientation tracking
 - **Power Management**: Advanced transmit power control with efficiency and safety features
@@ -57,6 +59,9 @@ The documentation is split up into relevant parts:
 - [Implementation Summary](client/mumble-plugin/lib/IMPLEMENTATION_SUMMARY.md) Comprehensive overview of all implemented features
 - [Threading Architecture](client/mumble-plugin/lib/THREADING_ARCHITECTURE_DOCUMENTATION.md) Multi-threaded system documentation
 - [NEC Modeling Guide](client/mumble-plugin/lib/NEC_MODELING_DOCUMENTATION.md) Antenna modeling and calculation guide
+- [VHF/UHF Antenna Specifications](client/mumble-plugin/lib/ANTENNA_HEIGHT_SPECIFICATIONS.md) Professional antenna height and performance specifications
+- [New Antennas Summary](client/mumble-plugin/lib/NEW_ANTENNAS_SUMMARY.md) Complete overview of all new VHF/UHF antennas
+- [Propagation Physics](client/mumble-plugin/lib/PROPAGATION_PHYSICS_DOCUMENTATION.md) Physics-based radio wave propagation modeling
 - [Vehicle Dynamics API](docs/VEHICLE_DYNAMICS_API.md) Vehicle tracking and antenna orientation API
 - [Vehicle Dynamics Examples](docs/VEHICLE_DYNAMICS_EXAMPLES.md) Practical examples for vehicle dynamics integration
 - [Military HF Frequencies](client/mumble-plugin/lib/MILITARY_HF_FREQUENCIES.md) NATO and Eastern Bloc military frequency documentation

@@ -93,7 +93,7 @@ GET /api/propagation/map
 }
 ```
 
-## ☀️ Solar Data API
+## Solar Data API
 
 ### Get Current Solar Conditions
 ```http
@@ -536,7 +536,7 @@ GET /api/system/features
 }
 ```
 
-## 🌐 WebSocket API
+## WebSocket API
 
 ### Connection
 ```javascript

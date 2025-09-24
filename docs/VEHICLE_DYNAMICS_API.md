@@ -574,6 +574,161 @@ antenna_rotation_enabled = true
 - `429`: Too Many Requests - Rate limit exceeded
 - `500`: Internal Server Error - Server error
 
+## EZNEC Multi-Antenna Modeling Guidelines
+
+### Critical Limitation: Single Active Antenna Per Model
+
+**Important**: Due to EZNEC's computational nature, it is not possible to model multiple active antennas (VHF and HF) simultaneously in the same model. This will produce incorrect radiation data and other modeling issues.
+
+### Proper Multi-Antenna Modeling Approach
+
+To get correct radiation patterns for vehicles with multiple antennas:
+
+1. **Active Antenna**: Only one antenna should have a source/feed point
+2. **Passive Elements**: Other antennas must be modeled as wires without feed points
+3. **Mutual Coupling**: Passive elements will still affect the active antenna through mutual coupling
+
+### Example: Tu-95 "Bear" with VHF Antenna
+
+```eznec
+EZNEC ver. 7.0
+
+DESCRIPTION
+Tu-95 "Bear" Strategic Bomber with Primary VHF Communications Antenna
+Aircraft Structure: 49.5m fuselage, 51.1m wingspan, realistic wire grid
+VHF Antenna: 3m monopole on fuselage centerline for 118-174 MHz operation
+Model includes fuselage, wings, stabilizers, and existing HF antennas
+Grid spacing optimized for VHF frequency analysis
+
+FREQUENCY
+150.0  MHz
+
+ENVIRONMENT
+0  (Free Space)
+
+GROUND
+0  (No Ground)
+
+WIRES
+99
+
+WIRE DATA
+W001  99  -24.750  0.000  0.000  24.750  0.000  0.000  0.003
+W002  10  -24.750  0.000  1.450  -19.750  0.000  1.450  0.003
+W003  10  -19.750  0.000  1.450  -14.750  0.000  1.450  0.003
+W004  10  -14.750  0.000  1.450  -9.750  0.000  1.450  0.003
+W005  10  -9.750  0.000  1.450  -4.750  0.000  1.450  0.003
+W006  10  -4.750  0.000  1.450  0.250  0.000  1.450  0.003
+W007  10  0.250  0.000  1.450  5.250  0.000  1.450  0.003
+W008  10  5.250  0.000  1.450  10.250  0.000  1.450  0.003
+W009  10  10.250  0.000  1.450  15.250  0.000  1.450  0.003
+W010  10  15.250  0.000  1.450  20.250  0.000  1.450  0.003
+W011  10  20.250  0.000  1.450  24.750  0.000  1.450  0.003
+
+REM Fuselage Cross-Sections (Circular approximation)
+W012  8  -20.000  -1.450  0.000  -20.000  1.450  0.000  0.003
+W013  8  -20.000  1.450  0.000  -20.000  -1.450  0.000  0.003
+W014  8  -15.000  -1.450  0.000  -15.000  1.450  0.000  0.003
+W015  8  -15.000  1.450  0.000  -15.000  -1.450  0.000  0.003
+W016  8  -10.000  -1.450  0.000  -10.000  1.450  0.000  0.003
+W017  8  -10.000  1.450  0.000  -10.000  -1.450  0.000  0.003
+W018  8  -5.000  -1.450  0.000  -5.000  1.450  0.000  0.003
+W019  8  -5.000  1.450  0.000  -5.000  -1.450  0.000  0.003
+W020  8  0.000  -1.450  0.000  0.000  1.450  0.000  0.003
+W021  8  0.000  1.450  0.000  0.000  -1.450  0.000  0.003
+W022  8  5.000  -1.450  0.000  5.000  1.450  0.000  0.003
+W023  8  5.000  1.450  0.000  5.000  -1.450  0.000  0.003
+W024  8  10.000  -1.450  0.000  10.000  1.450  0.000  0.003
+W025  8  10.000  1.450  0.000  10.000  -1.450  0.000  0.003
+W026  8  15.000  -1.450  0.000  15.000  1.450  0.000  0.003
+W027  8  15.000  1.450  0.000  15.000  -1.450  0.000  0.003
+W028  8  20.000  -1.450  0.000  20.000  1.450  0.000  0.003
+W029  8  20.000  1.450  0.000  20.000  -1.450  0.000  0.003
+
+REM Main Wings (Swept back design)
+W030  48  -8.000  -25.550  -0.500  -12.000  -1.550  0.500  0.003
+W031  48  -8.000  25.550  -0.500  -12.000  1.550  0.500  0.003
+W032  10  -8.000  -25.550  -0.500  -8.000  -1.550  -0.500  0.003
+W033  10  -8.000  25.550  -0.500  -8.000  1.550  -0.500  0.003
+W034  10  -12.000  -25.550  0.500  -12.000  -1.550  0.500  0.003
+W035  10  -12.000  25.550  0.500  -12.000  1.550  0.500  0.003
+
+REM Vertical Stabilizer
+W036  22  15.000  0.000  1.450  15.000  0.000  12.550  0.003
+W037  10  15.000  -2.000  1.450  15.000  2.000  1.450  0.003
+W038  10  15.000  -2.000  12.550  15.000  2.000  12.550  0.003
+
+REM Horizontal Stabilizers
+W039  24  10.000  -6.000  2.000  10.000  6.000  2.000  0.003
+W040  12  10.000  -6.000  2.000  20.000  -6.000  2.500  0.003
+W041  12  10.000  6.000  2.000  20.000  6.000  2.500  0.003
+W042  10  20.000  -6.000  2.500  20.000  6.000  2.500  0.003
+
+REM Existing HF Antennas (PASSIVE - No Source)
+W043  26  8.000  0.000  -0.500  34.000  0.000  -3.500  0.003
+W044  12  5.000  0.000  2.000  5.000  0.000  5.000  0.005
+
+REM Direction Finding Loops (PASSIVE - No Source)
+W045  4  -10.000  -20.000  1.800  -10.000  -19.500  2.200  0.004
+W046  4  -10.000  20.000  1.800  -10.000  19.500  2.200  0.004
+
+REM VHF Communications Antenna (ACTIVE - With Source)
+W047  12  0.000  0.000  1.450  0.000  0.000  4.450  0.008
+
+SOURCES
+1
+SRC  W047  6  0  1.000  0.000
+
+LOADS
+0
+
+TRANSMISSION LINES
+0
+
+NETWORKS
+0
+
+END
+```
+
+### Key Modeling Principles
+
+1. **Single Source**: Only one antenna (W047) has a source point
+2. **Passive Elements**: HF antennas (W043, W044) and DF loops (W045, W046) are present but unpowered
+3. **Mutual Coupling**: Passive elements affect the active antenna's radiation pattern
+4. **Realistic Effects**: Shows actual operational scenario with multiple antennas present
+
+### Expected Mutual Coupling Effects
+
+- **26m HF trailing wire**: Acts as parasitic element at VHF frequencies
+- **Pattern distortion**: Especially in aft sectors due to long trailing wire
+- **Near-field coupling**: HF dorsal whip affects VHF antenna performance
+- **Minor ripples**: DF loops create small pattern variations
+- **Electrically long elements**: All HF elements are long at VHF frequencies
+
+### Analysis Benefits
+
+- **Realistic operational scenario**: VHF active, HF antennas present but inactive
+- **Actual mutual coupling**: Shows real-world multi-antenna installation effects
+- **Pattern distortion**: Passive elements clearly visible in radiation pattern
+- **Accurate predictions**: More realistic gain and impedance calculations
+
+### Frequency Analysis Recommendations
+
+- **Primary frequency**: 150 MHz (center of VHF aviation band)
+- **Frequency sweep**: 118-174 MHz for full band analysis
+- **Comparison studies**: Remove passive elements (W043-W046) for baseline comparison
+- **Pattern analysis**: Focus on 150 MHz for realistic aircraft effects
+
+### Expected Performance Characteristics
+
+- **Omnidirectional horizontal pattern**: With aircraft structure effects
+- **Pattern distortion**: From 26m trailing wire parasitic coupling
+- **Vertical polarization**: With some cross-pol from passive elements
+- **Ground plane effect**: From fuselage structure
+- **Typical gain**: -2 to +3 dBi depending on frequency and direction
+- **Pattern nulls/lobes**: From parasitic coupling effects
+
 ## Performance Considerations
 
 - Vehicle dynamics updates are optimized for real-time performance

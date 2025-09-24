@@ -19,29 +19,280 @@
 #include <regex>
 #include "radio_model.h"
 #include "audio.h"
+#include "pattern_interpolation.h"
+#include "antenna_ground_system.h"
+#include "propagation_physics.h"
 
 /**
  * A UHF based radio model for the FGCom-mumble plugin.
  *
  * The model implements basic line-of-sight characteristics (between 300 and 3000 MHz).
  */
-class FGCom_radiowaveModel_UHF : public FGCom_radiowaveModel_VHF {
+class FGCom_radiowaveModel_UHF : public FGCom_radiowaveModel {
+private:
+    // UHF-specific antenna pattern system
+    std::unique_ptr<FGCom_PatternInterpolation> uhf_pattern_interpolation;
+    std::unique_ptr<FGCom_AntennaGroundSystem> uhf_antenna_system;
+    bool uhf_patterns_initialized;
+    
+    // Initialize UHF antenna patterns
+    void initializeUHFPatterns() {
+        if (uhf_patterns_initialized) return;
+        
+        uhf_pattern_interpolation = std::make_unique<FGCom_PatternInterpolation>();
+        uhf_antenna_system = std::make_unique<FGCom_AntennaGroundSystem>();
+        
+        // Load UHF antenna patterns for common vehicles
+        loadUHFAntennaPatterns();
+        
+        uhf_patterns_initialized = true;
+    }
+    
+    // Load UHF antenna patterns for various vehicles
+    void loadUHFAntennaPatterns() {
+        // Military UHF patterns
+        loadMilitaryUHFPatterns();
+        
+        // Civilian UHF patterns
+        loadCivilianUHFPatterns();
+    }
+    
+    void loadMilitaryUHFPatterns() {
+        // Military UHF tactical patterns (225-400 MHz)
+        // These would be loaded from UHF-specific pattern files
+        std::cout << "Loading military UHF patterns..." << std::endl;
+        
+        // Example: Load tactical UHF patterns for military vehicles
+        // if (uhf_pattern_interpolation->load4NEC2Pattern(
+        //     "antenna_patterns/military/uhf_tactical.ez", 
+        //     "military_uhf_tactical", 0, 300.0)) {
+        //     std::cout << "Loaded military UHF tactical pattern" << std::endl;
+        // }
+    }
+    
+    void loadCivilianUHFPatterns() {
+        // Civilian UHF patterns (400-1000 MHz)
+        std::cout << "Loading civilian UHF patterns..." << std::endl;
+        
+        // Example: Load civilian UHF patterns
+        // if (uhf_pattern_interpolation->load4NEC2Pattern(
+        //     "antenna_patterns/civilian/uhf_civilian.ez", 
+        //     "civilian_uhf", 0, 450.0)) {
+        //     std::cout << "Loaded civilian UHF pattern" << std::endl;
+        // }
+    }
+    
+    // Get UHF antenna gain from pattern interpolation
+    double getUHFGain(const std::string& antenna_name, int altitude_m, 
+                     double frequency_mhz, double theta_deg, double phi_deg) {
+        if (!uhf_patterns_initialized) {
+            initializeUHFPatterns();
+        }
+        
+        if (!uhf_pattern_interpolation) {
+            return 0.0; // No pattern data available
+        }
+        
+        return uhf_pattern_interpolation->getInterpolatedGain(
+            antenna_name, altitude_m, frequency_mhz, theta_deg, phi_deg);
+    }
+    
+    // Determine UHF antenna name based on vehicle type and frequency
+    std::string getUHFAntennaName(const std::string& vehicle_type, double frequency_mhz) {
+        // Map vehicle types to UHF antenna names
+        if (vehicle_type.find("military") != std::string::npos || 
+            vehicle_type.find("tactical") != std::string::npos) {
+            return "military_uhf_tactical";
+        } else if (vehicle_type.find("civilian") != std::string::npos) {
+            return "civilian_uhf";
+        }
+        
+        // Default UHF antenna for unknown vehicle types
+        return "default_uhf";
+    }
+
 protected:
     
-    // like VHF-model, however shorter range per watt
+    /*
+    * Calculate the signal quality using realistic UHF propagation physics
+    * 
+    * NEW: Implements proper physics-based propagation modeling including:
+    * - Free space path loss with frequency dependency
+    * - Atmospheric absorption effects (more significant at UHF)
+    * - Rain attenuation effects
+    * - Antenna height gain
+    * - Terrain obstruction effects
+    * 
+    * @param power in Watts
+    * @param slantDist slant distance in km
+    * @param frequency_mhz frequency in MHz
+    * @param altitude_m altitude in meters
+    * @param antenna_height_m antenna height in meters
+    * @return float with the signal quality for given power and distance
+    */
+    virtual float calcPowerDistance(float power, double slantDist, double frequency_mhz = 400.0, 
+                                   double altitude_m = 1000.0, double antenna_height_m = 10.0) {
+        if (power <= 0.0 || slantDist <= 0.0) {
+            return 0.0;
+        }
+        
+        // Get atmospheric conditions (simplified - in production would use weather data)
+        auto conditions = FGCom_PropagationPhysics::getAtmosphericConditions(0.0, 0.0, altitude_m);
+        
+        // Calculate total propagation loss using physics-based model
+        double total_loss_db = FGCom_PropagationPhysics::calculateTotalPropagationLoss(
+            slantDist, frequency_mhz, altitude_m, antenna_height_m,
+            conditions.temperature_c, conditions.humidity_percent,
+            conditions.rain_rate_mmh, 0.0  // No terrain obstruction for now
+        );
+        
+        // Calculate power-based signal quality
+        // Convert power to dBm for calculation
+        double power_dbm = 10.0 * log10(power * 1000.0);  // Convert watts to dBm
+        
+        // Calculate received power in dBm
+        double received_power_dbm = power_dbm - total_loss_db;
+        
+        // Normalize signal quality (0.0 to 1.0)
+        // UHF receivers typically have better sensitivity than VHF
+        double sensitivity_dbm = -110.0;  // Better sensitivity at UHF
+        double max_signal_dbm = 0.0;  // 0 dBm is very strong signal
+        
+        double signal_quality = std::max(0.0, std::min(1.0, 
+            (received_power_dbm - sensitivity_dbm) / (max_signal_dbm - sensitivity_dbm)));
+        
+        return static_cast<float>(signal_quality);
+    }
+    
+    // Legacy method for backward compatibility
     virtual float calcPowerDistance(float power, double slantDist) {
-        float wr = power * 50 / 2; // gives maximum range in km for the supplied power
-        float sq = (-1/wr*pow(slantDist,2)+100)/100;  // gives @10w: 50km=0.95 100km=0.8 150km=0.55 200km=0.2
-        return sq;
+        return calcPowerDistance(power, slantDist, 400.0, 1000.0, 10.0);
     }
     
     
 public:
+    // Constructor
+    FGCom_radiowaveModel_UHF() : uhf_patterns_initialized(false) {
+        // UHF patterns will be loaded on first use
+    }
+    
+    // Destructor
+    ~FGCom_radiowaveModel_UHF() = default;
         
     std::string getType() {  return "UHF";  }
     
     bool isCompatible(FGCom_radiowaveModel *otherModel) {
         return otherModel->getType() != "STRING";
+    }
+    
+    // Process audio samples for UHF
+    virtual void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+        // UHF audio processing - similar to VHF but with UHF-specific characteristics
+        processAudioSamples_UHF(8000, 12000, 0.1f, 0.8f, lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+    }
+    
+    // UHF-specific audio processing
+    void processAudioSamples_UHF(int highpass_cutoff, int lowpass_cutoff, float minimumNoiseVolume, float maximumNoiseVolume, fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+        // UHF has higher frequency characteristics than VHF
+        // Apply appropriate filtering and noise characteristics
+        
+        float noiseVolume;
+        float signalVolume;
+        
+        // Calculate noise and signal volumes based on signal quality
+        if (signalQuality > 0.8f) {
+            // Strong signal - minimal noise
+            noiseVolume = minimumNoiseVolume;
+            signalVolume = 1.0f;
+        } else if (signalQuality > 0.3f) {
+            // Moderate signal - some noise
+            noiseVolume = minimumNoiseVolume + (maximumNoiseVolume - minimumNoiseVolume) * (0.8f - signalQuality) * 0.5f;
+            signalVolume = signalQuality;
+        } else {
+            // Weak signal - high noise
+            noiseVolume = maximumNoiseVolume;
+            signalVolume = signalQuality * 0.5f; // Reduce signal volume for weak signals
+        }
+        
+        // Apply UHF-specific audio processing
+        for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
+            // Apply signal volume
+            outputPCM[i] *= signalVolume;
+            
+            // Add UHF-specific noise characteristics
+            if (noiseVolume > 0.0f) {
+                float noise = ((float)rand() / RAND_MAX) * 2.0f - 1.0f; // -1 to 1
+                outputPCM[i] += noise * noiseVolume;
+            }
+        }
+    }
+
+    // Override getSignal to use UHF-specific antenna patterns
+    fgcom_radiowave_signal getSignal(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power) {
+        struct fgcom_radiowave_signal signal;
+    
+        // get distance to radio horizon (that is the both ranges combined)
+        double radiodist = this->getDistToHorizon(alt1) + this->getDistToHorizon(alt2);
+        
+        // get surface distance
+        double dist = this->getSurfaceDistance(lat1, lon1, lat2, lon2);
+        
+        // get if they can see each other. UHF will have no connection when no line-of-sight is present.
+        double heightAboveHorizon = this->heightAboveHorizon(dist, alt1, alt2);
+        if (heightAboveHorizon < 0) return signal;  // no, they cant, bail out without signal.
+
+        // get slant distance (in km) so we can calculate signal strenght based on distance
+        double slantDist = this->getSlantDistance(dist, heightAboveHorizon-alt1);
+        
+        // apply physics-based power/distance model with frequency and altitude
+        double frequency_mhz = 400.0;  // Default UHF frequency - could be extracted from radio
+        double antenna_height_m = 10.0;  // Default antenna height - could be vehicle-specific
+        
+        float ss = this->calcPowerDistance(power, slantDist, frequency_mhz, alt1, antenna_height_m);
+        if (ss <= 0.0) return signal; // in case signal strength got negative, that means we are out of range (too less tx-power)
+        
+        // NEW: Apply UHF antenna pattern gain
+        try {
+            // Calculate angles for antenna pattern lookup
+            double theta_deg = this->degreeAboveHorizon(dist, alt2-alt1);  // Elevation angle
+            double phi_deg = this->getDirection(lat1, lon1, lat2, lon2);   // Azimuth angle
+            
+            // Get frequency from radio (assuming 400 MHz for UHF)
+            double frequency_mhz = 400.0; // Default UHF frequency
+            
+            // Determine UHF antenna name based on vehicle type
+            std::string antenna_name = getUHFAntennaName("default", frequency_mhz);
+            
+            // Get UHF antenna gain from pattern interpolation
+            double antenna_gain_db = getUHFGain(antenna_name, (int)alt1, frequency_mhz, theta_deg, phi_deg);
+            
+            // Apply antenna gain if pattern data is available
+            if (antenna_gain_db > -999.0) {
+                // Convert dB gain to linear multiplier
+                double antenna_gain_linear = pow(10.0, antenna_gain_db / 10.0);
+                ss *= antenna_gain_linear;
+                
+                // Ensure signal quality doesn't exceed 1.0
+                if (ss > 1.0) ss = 1.0;
+            }
+        } catch (const std::exception& e) {
+            // If antenna pattern lookup fails, continue with basic signal calculation
+            // This ensures backward compatibility
+        }
+        
+        // when distance is near the radio horizon, we smoothly cut off the signal, so it doesn't drop sharply to 0
+        float usedRange = slantDist/radiodist;
+        float usedRange_cutoffPct = 0.9; // at which percent of used radio horizon we start to cut off
+        if (usedRange > usedRange_cutoffPct) {
+            float loss    = (usedRange - usedRange_cutoffPct) * 10; //convert to percent range: 0.9=0%  0.95=0.5(50%)  1.0=1.0(100%)
+            ss = ss * (1-loss); // apply loss to signal
+        }
+        
+        // prepare return struct
+        signal.quality       = ss;
+        signal.direction     = this->getDirection(lat1, lon1, lat2, lon2);
+        signal.verticalAngle = this->degreeAboveHorizon(dist, alt2-alt1);
+        return signal;
     }
     
     

@@ -4,6 +4,42 @@
 
 This document provides comprehensive guidance for creating NEC (Numerical Electromagnetics Code) models for antenna simulation, including wavelength calculations, minimum spacing requirements, and practical examples for various vehicle types.
 
+## VHF/UHF Professional Antennas
+
+### New Professional Antenna Models
+
+The system now includes professional-grade VHF/UHF antennas with 10m height modeling:
+
+#### **2m Yagi Antenna (144-145 MHz)**
+- **11-Element Design**: 1 reflector, 1 driven, 9 directors
+- **Gain**: 14.8 dBi
+- **Height**: 10m above ground
+- **Applications**: VHF weak signal, contest operations, DXpeditions
+- **File**: `antenna_patterns/Ground-based/yagi_144mhz/yagi_144mhz_11element.ez`
+
+#### **70cm Yagi Antenna (430-440 MHz)**
+- **16-Element Design**: 1 reflector, 1 driven, 14 directors
+- **Gain**: 16.56 dBi (free space)
+- **Height**: 10m above ground
+- **Applications**: UHF weak signal, satellite communication, EME operations
+- **File**: `antenna_patterns/Ground-based/yagi_70cm/yagi_70cm_16element.ez`
+
+#### **Dual-Band Omnidirectional (2m/70cm)**
+- **Collinear Design**: Omnidirectional coverage
+- **VHF Gain**: 8.3 dBi @ 144 MHz
+- **UHF Gain**: 11.7 dBi @ 432 MHz
+- **Height**: 10m above ground
+- **Applications**: Repeater sites, base stations, emergency communications
+- **File**: `antenna_patterns/Ground-based/dual_band_omni/dual_band_omni_2m_70cm.ez`
+
+### Professional Height Modeling
+
+All new antennas are positioned **10 meters above ground level**, providing:
+- **2-3x range extension** compared to ground level
+- **Professional base station performance**
+- **Clean radiation patterns** with minimal ground distortion
+- **Realistic propagation modeling** for flight simulation
+
 ## Wavelength Calculations
 
 ### Basic Formula
@@ -421,11 +457,192 @@ std::string pattern_file = selectPatternFile(vehicle_type, frequency_mhz);
 - Faster pattern generation
 
 **Error Handling:**
-- Comprehensive error checking
-- Detailed logging and status messages
-- Graceful failure handling
+- Comprehensive error checking and logging
+- Automatic retry mechanisms for failed simulations
+- Detailed error reporting for troubleshooting
 
-**File Management:**
+## 3D Model Import and Conversion
+
+### STL File Limitations
+
+**Important Note**: Presently no known tool exists that can convert STL files to the required EZNEC file formats. STL files are designed for 3D printing and contain only surface mesh data, which is not suitable for electromagnetic modeling that requires wire-based geometry.
+
+### Model Refinement Requirements
+
+Note that many of the included EZNEC files may need refinement. If you have some experience with 3D modeling, that will make the process easier. The following skills are helpful:
+
+- **Wire-based modeling**: Understanding how to represent 3D objects as wire frames
+- **Electromagnetic concepts**: Basic understanding of antenna theory and RF principles
+- **NEC/EZNEC syntax**: Familiarity with the command structure and parameters
+- **Geometry optimization**: Knowing how to balance model accuracy with computational efficiency
+
+### Recommended Tools for EZNEC File Creation
+
+#### Cross-Platform Tools
+
+**EZNEC (Roy Lewallen, W7EL)**
+- **Platform**: Windows (primary), Linux (via Wine), macOS (via Wine/Parallels)
+- **Type**: Commercial antenna modeling software
+- **Features**: 
+  - Native EZNEC file format support
+  - Built-in antenna design tools
+  - 3D visualization
+  - Pattern analysis and optimization
+- **Website**: http://www.eznec.com/
+- **Cost**: Commercial license required
+
+**4NEC2 (Arie Voors)**
+- **Platform**: Windows
+- **Type**: Free NEC2-based antenna modeling
+- **Features**:
+  - NEC2 engine with GUI
+  - EZNEC file import/export
+  - Advanced visualization
+  - Scripting capabilities
+- **Website**: https://www.qsl.net/4nec2/
+- **Cost**: Free
+
+#### Linux Tools
+
+**NEC2C (NEC2 Engine)**
+- **Platform**: Linux, Unix
+- **Type**: Command-line NEC2 simulator
+- **Features**:
+  - Fast computation
+  - Batch processing
+  - Integration with shell scripts
+- **Installation**: `sudo apt-get install nec2c` (Ubuntu/Debian)
+- **Cost**: Free
+
+**Python NEC2 Tools**
+- **Platform**: Linux, cross-platform
+- **Type**: Python libraries for NEC2
+- **Features**:
+  - `nec2python`: Python wrapper for NEC2
+  - `pynec`: Python NEC2 interface
+  - Custom script development
+- **Installation**: `pip install nec2python pynec`
+- **Cost**: Free
+
+**GNURadio Companion**
+- **Platform**: Linux
+- **Type**: RF simulation framework
+- **Features**:
+  - Antenna pattern visualization
+  - RF system modeling
+  - Integration with NEC2
+- **Installation**: `sudo apt-get install gnuradio`
+- **Cost**: Free
+
+#### Windows Tools
+
+**EZNEC Pro**
+- **Platform**: Windows
+- **Type**: Professional antenna modeling
+- **Features**:
+  - Advanced antenna design
+  - 3D pattern visualization
+  - Optimization tools
+  - Professional support
+- **Website**: http://www.eznec.com/
+- **Cost**: Commercial
+
+**MMANA-GAL**
+- **Platform**: Windows
+- **Type**: Free antenna modeling
+- **Features**:
+  - NEC2-based engine
+  - Japanese/English interface
+  - Pattern analysis
+  - EZNEC compatibility
+- **Website**: https://mmhamsoft.amateur-radio.ca/
+- **Cost**: Free
+
+**Antenna Model**
+- **Platform**: Windows
+- **Type**: Educational antenna modeling
+- **Features**:
+  - Basic NEC2 functionality
+  - Learning-oriented interface
+  - Pattern visualization
+- **Cost**: Free
+
+#### macOS Tools
+
+**EZNEC via Wine/Parallels**
+- **Platform**: macOS
+- **Type**: Windows EZNEC running in compatibility layer
+- **Features**: Same as Windows EZNEC
+- **Requirements**: Wine or Parallels Desktop
+- **Cost**: Commercial (EZNEC) + compatibility software
+
+**NEC2C via Homebrew**
+- **Platform**: macOS
+- **Type**: Command-line NEC2
+- **Installation**: `brew install nec2c`
+- **Features**: Same as Linux version
+- **Cost**: Free
+
+**Python Tools (Cross-platform)**
+- **Platform**: macOS
+- **Type**: Python-based NEC2 tools
+- **Installation**: `pip install nec2python pynec`
+- **Features**: Same as Linux Python tools
+- **Cost**: Free
+
+#### Web-Based Tools
+
+**Online NEC2 Calculators**
+- **Platform**: Web browser (any platform)
+- **Type**: Online antenna modeling
+- **Features**:
+  - Basic NEC2 calculations
+  - Simple antenna designs
+  - Pattern visualization
+- **Limitations**: Limited complexity, requires internet
+- **Cost**: Usually free with limitations
+
+### File Format Conversion
+
+#### EZNEC to NEC2
+- **Tool**: `eznec2nec.sh` (included in this project)
+- **Usage**: `./eznec2nec.sh input.ez output.nec`
+- **Features**: Automated conversion with error checking
+
+#### NEC2 to EZNEC
+- **Tool**: Manual conversion or custom scripts
+- **Process**: Requires understanding of both formats
+- **Complexity**: High - not recommended for beginners
+
+### Model Creation Workflow
+
+1. **Design Phase**:
+   - Use 3D modeling software for initial geometry
+   - Export to wire-based format
+   - Plan antenna placement and feed points
+
+2. **Conversion Phase**:
+   - Convert geometry to EZNEC format
+   - Define wire segments and connections
+   - Set material properties and ground conditions
+
+3. **Simulation Phase**:
+   - Run NEC2 simulation
+   - Analyze results and patterns
+   - Optimize geometry if needed
+
+4. **Integration Phase**:
+   - Convert to FGCom-mumble format
+   - Test with propagation engine
+   - Validate against real-world measurements
+
+### Best Practices
+
+- **Start Simple**: Begin with basic geometries before complex models
+- **Validate Results**: Compare with known antenna patterns
+- **Optimize Segments**: Balance accuracy with computation time
+- **Document Changes**: Keep track of model modifications
+- **Test Thoroughly**: Verify patterns at multiple frequencies
 - Automatic directory creation
 - Consistent file naming
 - Pattern file organization

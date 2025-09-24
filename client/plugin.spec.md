@@ -237,6 +237,36 @@ The reported frequency is the effective real wave frequency in MHz.
 The `DIR` and `VRT` angles are in decimal degrees and to be interpreted "as viewed from you to the signal source".  For example, assume you are an ATC station and receive `RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1`: The Airplane transmitting is thus directly south and above of you.  
 The values are true bearings relative to your position, and `DIR=0.0` is due north relative to the WSG84 grid.
 
+Radio Models and Propagation
+-----------------------------
+The plugin supports multiple radio frequency models with realistic propagation characteristics:
+
+### HF (High Frequency) - 3-30 MHz
+- **Aviation HF**: Long-range communication for transoceanic flights
+- **Maritime HF**: Ship-to-shore and ship-to-ship communication
+- **Amateur Radio**: Ham radio bands with realistic propagation
+- **Military HF**: NATO and Eastern Bloc military frequencies
+
+### VHF (Very High Frequency) - 30-300 MHz
+- **Aviation VHF**: Air traffic control and pilot communication (118-137 MHz)
+- **Maritime VHF**: Ship-to-ship and ship-to-shore communication (156-162 MHz)
+- **Amateur Radio**: 2m band (144-146 MHz) with professional Yagi antennas
+- **Ground Station**: 10m height base station antennas with extended range
+
+### UHF (Ultra High Frequency) - 300+ MHz
+- **Military UHF**: Tactical communication (225-400 MHz)
+- **Amateur Radio**: 70cm band (430-440 MHz) with high-gain Yagi antennas
+- **Ground Station**: Professional base station installations
+- **Satellite Communication**: Linear transponder access
+
+### Physics-Based Propagation
+The system implements realistic radio wave propagation including:
+- **Free Space Path Loss**: Distance and frequency-dependent signal attenuation
+- **Atmospheric Absorption**: Weather-dependent signal loss
+- **Tropospheric Ducting**: Extended range under favorable conditions
+- **Antenna Height Gain**: Professional base station performance modeling
+- **Terrain Obstruction**: Realistic signal blocking and diffraction
+
 #### Checking UDP client output
 Aside from using real clients, the UDP output can be displayed using the linux tool "`netcat`": `netcat -l -u -p 19991` will display all sent UDP packets to port 19991.
 

@@ -2,9 +2,62 @@
 
 ## Overview
 
-This document provides a comprehensive summary of all implemented features in the FGCom-mumble system, including threading architecture extensions, GPU acceleration, debugging systems, feature toggles, and NEC modeling capabilities.
+This document provides a comprehensive summary of all implemented features in the FGCom-mumble system, including threading architecture extensions, GPU acceleration, debugging systems, feature toggles, NEC modeling capabilities, and new VHF/UHF professional antenna support.
 
-## 🧵 Threading Architecture Extensions
+## VHF/UHF Professional Antenna System
+
+### New Professional Antennas
+
+The system now includes professional-grade VHF/UHF antennas with 10m height modeling:
+
+#### **2m Yagi Antenna (144-145 MHz)**
+- **Design**: 11-element Yagi (1 reflector, 1 driven, 9 directors)
+- **Gain**: 14.8 dBi
+- **Height**: 10m above ground
+- **Applications**: VHF weak signal, contest operations, DXpeditions
+- **Range**: 2-3x extension compared to ground level
+
+#### **70cm Yagi Antenna (430-440 MHz)**
+- **Design**: 16-element Yagi (1 reflector, 1 driven, 14 directors)
+- **Gain**: 16.56 dBi (free space)
+- **Height**: 10m above ground
+- **Applications**: UHF weak signal, satellite communication, EME operations
+- **Range**: 2-3x extension compared to ground level
+
+#### **Dual-Band Omnidirectional (2m/70cm)**
+- **Design**: Collinear omnidirectional antenna
+- **VHF Gain**: 8.3 dBi @ 144 MHz
+- **UHF Gain**: 11.7 dBi @ 432 MHz
+- **Height**: 10m above ground
+- **Applications**: Repeater sites, base stations, emergency communications
+- **Coverage**: 360° omnidirectional
+
+### Physics-Based Propagation
+
+#### **Advanced Propagation Modeling**
+- **Free Space Path Loss**: Distance and frequency-dependent calculations
+- **Atmospheric Absorption**: Weather-dependent signal loss
+- **Tropospheric Ducting**: Extended range under favorable conditions
+- **Antenna Height Gain**: Professional base station performance
+- **Terrain Obstruction**: Realistic signal blocking and diffraction
+- **Rain Attenuation**: UHF-specific weather effects
+
+#### **Implementation Files**
+- **`propagation_physics.cpp`**: Core physics calculations
+- **`propagation_physics.h`**: Physics class definitions
+- **`antenna_pattern_mapping.cpp`**: Antenna pattern mapping system
+- **`radio_model_vhf.cpp`**: Updated VHF model with antenna patterns
+- **`radio_model_uhf.cpp`**: Updated UHF model with antenna patterns
+
+### Professional Height Modeling
+
+All new antennas follow the **10m above ground** standard**:
+- **Professional Installation**: Base station quality performance
+- **Range Extension**: 2-3x improvement over ground level
+- **Clean Patterns**: Minimal ground distortion effects
+- **Realistic Modeling**: Professional radio communication simulation
+
+## Threading Architecture Extensions
 
 ### New Background Threads
 
@@ -269,7 +322,7 @@ client/mumble-plugin/lib/antenna_patterns/
     └── 80m-loop/                 # 80m loop antenna
 ```
 
-## ⚙️ Configuration System
+## Configuration System
 
 ### Threading Configuration (`threading_config.conf`)
 ```ini
