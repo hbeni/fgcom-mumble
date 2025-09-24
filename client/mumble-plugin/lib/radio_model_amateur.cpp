@@ -308,6 +308,15 @@ public:
     std::vector<std::string> getAvailableModes(const std::string& band) {
         return FGCom_AmateurRadio::getAvailableModes(band, itu_region);
     }
+    
+    // Implement processAudioSamples for amateur radio
+    void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+        // Basic audio processing for amateur radio
+        // Apply signal quality as volume scaling
+        for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
+            outputPCM[i] *= signalQuality;
+        }
+    }
 };
 
 // Static member definition

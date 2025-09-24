@@ -8,6 +8,16 @@
 #include <chrono>
 #include <mutex>
 #include <functional>
+#include <atomic>
+#include <thread>
+#include <queue>
+#include <condition_variable>
+#include <cstdint>
+#include <cassert>
+#include <stdexcept>
+
+// Forward declarations
+#include "gpu_types.h"
 
 // GPU acceleration configuration
 enum class GPUAccelerationMode {

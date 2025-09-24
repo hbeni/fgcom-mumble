@@ -6,6 +6,9 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
+#include <mutex>
+#include <chrono>
+#include <functional>
 
 // Frequency offset configuration
 struct FrequencyOffsetConfig {
@@ -84,7 +87,7 @@ private:
     bool fft_initialized;
     
     // Real-time processing state
-    std::mutex processing_mutex;
+    mutable std::mutex processing_mutex;
     bool is_processing;
     float current_offset_hz;
     float target_offset_hz;

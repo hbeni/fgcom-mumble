@@ -12,6 +12,15 @@
 #include <chrono>
 #include <memory>
 #include <functional>
+#include <string>
+#include <cstdint>
+#include <ctime>
+
+// Forward declarations
+#include "threading_types.h"
+
+// Forward declaration for solar conditions
+struct fgcom_solar_conditions;
 
 // Thread management configuration
 struct ThreadingConfig {

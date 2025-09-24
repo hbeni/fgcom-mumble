@@ -61,4 +61,13 @@ fgcom-mumble_LOCAL.ini
 server/statuspage/config.ini
 *.stats
 *.db
+
+# Maven build directories
 /client/radioGUI/target/
+/client/radioGUI/lib/jsimconnect/target/
+
+# Java compiled files
+*.class
+
+# Maven dependencies (if installed locally)
+.m2/

@@ -5,6 +5,13 @@
 #include <map>
 #include <mutex>
 #include <atomic>
+#include <vector>
+#include <memory>
+#include <chrono>
+#include <cstdint>
+#include <stdexcept>
+#include <algorithm>
+#include <cassert>
 
 // =============================================================================
 // FEATURE TOGGLE SYSTEM

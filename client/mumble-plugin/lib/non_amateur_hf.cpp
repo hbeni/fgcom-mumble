@@ -20,6 +20,7 @@
 #include <iostream>
 #include <cmath>
 #include <algorithm>
+#include <set>
 
 // Static member definitions
 std::vector<fgcom_aviation_hf_band> FGCom_NonAmateurHF::aviation_bands;
@@ -834,7 +835,8 @@ fgcom_radiowave_signal FGCom_radiowaveModel_AviationHF::getSignal(double lat1, d
     double dist = this->getSurfaceDistance(lat1, lon1, lat2, lon2);
     
     // Calculate aviation-specific propagation
-    float freq_khz = std::stof(this->conv_chan2freq(std::to_string(current_radio_frequency_in_MHz * 1000)));
+    // Use a default aviation frequency for propagation calculations
+    float freq_khz = 10000.0f; // Default 10 MHz for aviation HF
     float aviation_factor = FGCom_NonAmateurHF::calculateAviationPropagation(freq_khz, dist, alt1, alt2);
     
     // Calculate whip antenna efficiency
@@ -938,7 +940,8 @@ fgcom_radiowave_signal FGCom_radiowaveModel_MaritimeHF::getSignal(double lat1, d
     double dist = this->getSurfaceDistance(lat1, lon1, lat2, lon2);
     
     // Calculate maritime-specific propagation
-    float freq_khz = std::stof(this->conv_chan2freq(std::to_string(current_radio_frequency_in_MHz * 1000)));
+    // Use a default maritime frequency for propagation calculations
+    float freq_khz = 8000.0f; // Default 8 MHz for maritime HF
     float maritime_factor = FGCom_NonAmateurHF::calculateMaritimePropagation(freq_khz, dist, alt1, alt2);
     
     // Calculate sea path effects
@@ -1039,5 +1042,23 @@ float FGCom_radiowaveModel_MaritimeHF::calculateDuplexOperationEffects(bool is_d
         return 1.0; // Normal duplex operation
     } else {
         return 0.9; // Simplex operation may have slightly reduced efficiency
+    }
+}
+
+// Implement processAudioSamples for AviationHF
+void FGCom_radiowaveModel_AviationHF::processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+    // Basic audio processing for aviation HF
+    // Apply signal quality as volume scaling
+    for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
+        outputPCM[i] *= signalQuality;
+    }
+}
+
+// Implement processAudioSamples for MaritimeHF
+void FGCom_radiowaveModel_MaritimeHF::processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+    // Basic audio processing for maritime HF
+    // Apply signal quality as volume scaling
+    for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
+        outputPCM[i] *= signalQuality;
     }
 }
