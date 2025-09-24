@@ -33,12 +33,11 @@ struct fgcom_antenna_pattern_characteristics {
     float side_lobe_level_db;       // Side lobe level
     float gain_dbi;                 // Peak gain in dBi
     bool is_directional;            // Is this a directional antenna?
-    bool is_rotatable;              // Can this antenna be rotated?
     std::vector<float> frequency_range_mhz; // Operating frequency range
     
     fgcom_antenna_pattern_characteristics() : beamwidth_azimuth_deg(0.0f), beamwidth_elevation_deg(0.0f),
                                              front_to_back_ratio_db(0.0f), side_lobe_level_db(0.0f),
-                                             gain_dbi(0.0f), is_directional(false), is_rotatable(false) {}
+                                             gain_dbi(0.0f), is_directional(false) {}
 };
 
 // Main antenna orientation calculator class

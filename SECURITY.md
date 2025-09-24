@@ -450,7 +450,7 @@ grep "certificate" /var/log/murmur/murmur.log
 
 ```bash
 # Monitor connection count
-netstat -an | grep :64738 | wc -l
+netstat -an | grep :64738 | wc -lDI
 
 # Check SSL/TLS performance
 ss -tuln | grep :64738

@@ -49,11 +49,10 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   },
   "antennas": [
     {
-      "antenna_id": "yagi_20m",
-      "antenna_type": "yagi",
+      "antenna_id": "hf_wire_dipole",
+      "antenna_type": "dipole",
       "azimuth_deg": 090.0,    // Pointing east
       "elevation_deg": 15.0,   // 15° elevation
-      "is_rotatable": true,
       "rotation_speed_deg_per_sec": 10.0
     }
   ]
@@ -90,10 +89,10 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   "alt2": 100.0,
   "frequency_mhz": 14.230,
   "power_watts": 100.0,
-  "antenna_type": "yagi",
+  "antenna_type": "dipole",
   "include_vehicle_dynamics": true,
   "vehicle_id": "N12345",
-  "antenna_id": "yagi_20m"
+  "antenna_id": "hf_wire_dipole"
 }
 ```
 
@@ -114,9 +113,9 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 
 ### Scenario
 - **Vessel**: 40-foot sailboat
-- **Antenna**: Backstay antenna (inverted-L)
-- **Frequency**: 7.150 MHz (40m SSB)
-- **Target**: Another vessel 50km away
+- **Antenna**: Backstay antenna (inverted-L configuration)
+- **Frequency**: 14.230 MHz (20m SSB)
+- **Target**: Ground station with Yagi antenna 200km away
 
 ### Vehicle Dynamics
 ```json
@@ -141,11 +140,10 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   },
   "antennas": [
     {
-      "antenna_id": "backstay_40m",
+      "antenna_id": "backstay_20m",
       "antenna_type": "inverted_l",
       "azimuth_deg": 0.0,      // Omnidirectional
       "elevation_deg": 0.0,
-      "is_rotatable": false,
       "is_auto_tracking": false
     }
   ]
@@ -170,12 +168,12 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   "lon2": -87.1298,
   "alt1": 0.0,
   "alt2": 0.0,
-  "frequency_mhz": 7.150,
+  "frequency_mhz": 14.230,
   "power_watts": 100.0,
   "antenna_type": "inverted_l",
   "include_vehicle_dynamics": true,
   "vehicle_id": "SV_SEAHAWK",
-  "antenna_id": "backstay_40m"
+  "antenna_id": "backstay_20m"
 }
 ```
 
@@ -195,9 +193,9 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 
 ### Scenario
 - **Station**: Amateur radio station
-- **Antenna**: 20m Yagi with rotator
+- **Antenna**: Cushcraft A3WS 20m Yagi with rotator (3-element)
 - **Frequency**: 14.230 MHz (20m SSB)
-- **Target**: Aircraft 200km away
+- **Target**: Sailboat 200km away
 
 ### Vehicle Dynamics
 ```json
@@ -222,11 +220,10 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   },
   "antennas": [
     {
-      "antenna_id": "yagi_20m_rotator",
+      "antenna_id": "cushcraft_a3ws_20m",
       "antenna_type": "yagi",
       "azimuth_deg": 045.0,    // Pointing northeast
       "elevation_deg": 20.0,   // 20° elevation
-      "is_rotatable": true,
       "is_auto_tracking": true,
       "rotation_speed_deg_per_sec": 5.0
     }
@@ -236,21 +233,21 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 
 ### Auto-tracking Calculation
 
-**Target Aircraft Position:**
+**Target Sailboat Position:**
 - Latitude: 43.3601
 - Longitude: -70.0589
-- Altitude: 5000ft
+- Altitude: 0ft (sea level)
 
 **Optimal Antenna Orientation:**
 - Bearing to target: 045°
-- Elevation angle: 15°
+- Elevation angle: 5° (low angle for ground wave)
 - Auto-tracking: Enabled
 
 **Antenna Rotation:**
 ```json
 {
   "target_azimuth_deg": 045.0,
-  "target_elevation_deg": 15.0,
+  "target_elevation_deg": 5.0,
   "current_azimuth_deg": 045.0,
   "current_elevation_deg": 20.0,
   "rotation_time_sec": 1.0,
@@ -267,13 +264,13 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   "lat2": 43.3601,
   "lon2": -70.0589,
   "alt1": 100.0,
-  "alt2": 5000.0,
+  "alt2": 0.0,
   "frequency_mhz": 14.230,
   "power_watts": 100.0,
   "antenna_type": "yagi",
   "include_vehicle_dynamics": true,
   "vehicle_id": "W1ABC",
-  "antenna_id": "yagi_20m_rotator"
+  "antenna_id": "cushcraft_a3ws_20m"
 }
 ```
 
@@ -307,7 +304,7 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
     "latitude": 52.5200,
     "longitude": 13.4050,
     "altitude_ft_msl": 100.0,
-    "altitude_ft_agl": 100.0
+    "altitude_ft_agl": 0.0
   },
   "attitude": {
     "pitch_deg": 0.0,      // Level ground
@@ -326,7 +323,6 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
       "antenna_type": "whip",
       "azimuth_deg": 0.0,      // Omnidirectional
       "elevation_deg": 0.0,
-      "is_rotatable": false,
       "is_auto_tracking": false
     },
     {
@@ -334,7 +330,6 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
       "antenna_type": "whip",
       "azimuth_deg": 0.0,      // Omnidirectional
       "elevation_deg": 0.0,
-      "is_rotatable": false,
       "is_auto_tracking": false
     }
   ]
@@ -415,7 +410,7 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
       "antenna_type": "loop",
       "azimuth_deg": 0.0,      // Fixed orientation
       "elevation_deg": 0.0,
-      "is_rotatable": false,   // Loops cannot be rotated
+   // Loops cannot be rotated
       "is_auto_tracking": false
     }
   ]

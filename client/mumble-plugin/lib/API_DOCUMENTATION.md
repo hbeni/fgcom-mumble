@@ -4,7 +4,7 @@
 
 This document provides comprehensive API documentation for all FGCom-mumble features, including RESTful endpoints, WebSocket messages, C++ APIs, and integration examples.
 
-## 🔌 RESTful API Endpoints
+## RESTful API Endpoints
 
 ### Base URL
 ```
@@ -28,7 +28,7 @@ Authorization: Bearer <api_key>
 }
 ```
 
-## 📡 Propagation Data API
+## Propagation Data API
 
 ### Get Propagation Data
 ```http
@@ -143,7 +143,7 @@ GET /api/solar/history
 }
 ```
 
-## 📻 Band Status API
+## Band Status API
 
 ### Get Band Status
 ```http
@@ -204,7 +204,7 @@ GET /api/bands/plan
 }
 ```
 
-## 📡 Antenna Patterns API
+## Antenna Patterns API
 
 ### Get Antenna Pattern
 ```http
@@ -262,7 +262,7 @@ GET /api/antenna-patterns
 }
 ```
 
-## 🚗 Vehicle Dynamics API
+## Vehicle Dynamics API
 
 ### Register Vehicle
 ```http
@@ -367,7 +367,7 @@ PUT /api/vehicle-dynamics/{vehicle_id}/antenna
 }
 ```
 
-## ⚡ Power Management API
+## Power Management API
 
 ### Get Power Status
 ```http
@@ -423,7 +423,7 @@ GET /api/power-management/statistics
 }
 ```
 
-## 🖥️ GPU Status API
+## GPU Status API
 
 ### Get GPU Status
 ```http
@@ -479,7 +479,7 @@ GET /api/gpu-status/performance
 }
 ```
 
-## 🔧 System Status API
+## System Status API
 
 ### Get System Health
 ```http
@@ -606,7 +606,7 @@ const ws = new WebSocket('ws://localhost:8080/ws');
 }
 ```
 
-## 🔧 C++ API Reference
+## C++ API Reference
 
 ### Threading Management
 
@@ -724,7 +724,7 @@ FGCOM_PROFILE_END("antenna_calculation");
 FGCOM_MEMORY_ALLOC("pattern_cache", 1024);
 ```
 
-## 📝 Integration Examples
+## Integration Examples
 
 ### JavaScript/Node.js Client
 ```javascript
@@ -859,7 +859,7 @@ const wsClient = new FGComWebSocketClient();
 wsClient.connect();
 ```
 
-## 🔒 Security Considerations
+## Security Considerations
 
 ### API Key Management
 - Store API keys securely

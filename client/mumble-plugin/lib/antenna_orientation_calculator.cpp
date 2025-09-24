@@ -42,7 +42,6 @@ void FGCom_AntennaOrientationCalculator::setDefaultAntennaCharacteristics() {
     yagi_20m.side_lobe_level_db = -15.0f;
     yagi_20m.gain_dbi = 7.0f;
     yagi_20m.is_directional = true;
-    yagi_20m.is_rotatable = true;
     yagi_20m.frequency_range_mhz = {14.0f, 14.35f};
     antenna_characteristics["yagi_20m"] = yagi_20m;
     
@@ -55,7 +54,6 @@ void FGCom_AntennaOrientationCalculator::setDefaultAntennaCharacteristics() {
     dipole.side_lobe_level_db = 0.0f;
     dipole.gain_dbi = 2.15f;
     dipole.is_directional = false;
-    dipole.is_rotatable = false;
     dipole.frequency_range_mhz = {1.8f, 30.0f};
     antenna_characteristics["dipole"] = dipole;
     
@@ -68,7 +66,6 @@ void FGCom_AntennaOrientationCalculator::setDefaultAntennaCharacteristics() {
     vertical.side_lobe_level_db = 0.0f;
     vertical.gain_dbi = 0.0f;
     vertical.is_directional = false;
-    vertical.is_rotatable = false;
     vertical.frequency_range_mhz = {1.8f, 30.0f};
     antenna_characteristics["vertical"] = vertical;
     
@@ -81,7 +78,6 @@ void FGCom_AntennaOrientationCalculator::setDefaultAntennaCharacteristics() {
     loop.side_lobe_level_db = -10.0f;
     loop.gain_dbi = 3.0f;
     loop.is_directional = true;
-    loop.is_rotatable = false; // Loops cannot be rotated
     loop.frequency_range_mhz = {1.8f, 30.0f};
     antenna_characteristics["loop"] = loop;
     
@@ -94,7 +90,6 @@ void FGCom_AntennaOrientationCalculator::setDefaultAntennaCharacteristics() {
     whip.side_lobe_level_db = 0.0f;
     whip.gain_dbi = -3.0f;
     whip.is_directional = false;
-    whip.is_rotatable = false;
     whip.frequency_range_mhz = {1.8f, 30.0f};
     antenna_characteristics["whip"] = whip;
 }
@@ -273,7 +268,6 @@ fgcom_antenna_orientation FGCom_AntennaOrientationCalculator::calculateOptimalOr
     
     fgcom_antenna_orientation optimal_orientation;
     optimal_orientation.antenna_type = antenna_type;
-    optimal_orientation.is_rotatable = (antenna_type == "yagi" || antenna_type == "dipole");
     
     // Calculate optimal azimuth based on target direction
     float target_azimuth = 0.0f;
@@ -370,7 +364,6 @@ void FGCom_AntennaOrientationCalculator::setCustomAntennaCharacteristics(
     characteristics.beamwidth_elevation_deg = beamwidth_el;
     characteristics.gain_dbi = gain_dbi;
     characteristics.is_directional = is_directional;
-    characteristics.is_rotatable = is_directional;
     
     antenna_characteristics[antenna_type] = characteristics;
 }

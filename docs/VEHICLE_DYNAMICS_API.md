@@ -54,14 +54,12 @@ http://localhost:8080/api/v1/vehicles
       "antenna_type": "vertical",
       "azimuth_deg": 0.0,
       "elevation_deg": 0.0,
-      "is_rotatable": false
     },
     {
       "antenna_id": "dipole_vhf",
       "antenna_type": "dipole",
       "azimuth_deg": 0.0,
       "elevation_deg": 0.0,
-      "is_rotatable": false
     }
   ],
   "status": "active",
@@ -273,7 +271,6 @@ Get current antenna orientation and status.
     "antenna_type": "vertical",
     "azimuth_deg": 0.0,
     "elevation_deg": 0.0,
-    "is_rotatable": false,
     "last_update": "2024-01-15T10:30:00Z"
   },
   "timestamp": "2024-01-15T10:30:00Z"
@@ -293,11 +290,10 @@ Get all antennas for a specific vehicle.
   "success": true,
   "data": [
     {
-      "antenna_id": "yagi_20m",
-      "antenna_type": "yagi",
-      "azimuth_deg": 045.0,
-      "elevation_deg": 15.0,
-      "is_rotatable": true,
+      "antenna_id": "vhf_whip",
+      "antenna_type": "whip",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
       "is_auto_tracking": false
     },
     {
@@ -305,7 +301,6 @@ Get all antennas for a specific vehicle.
       "antenna_type": "vertical",
       "azimuth_deg": 0.0,
       "elevation_deg": 0.0,
-      "is_rotatable": false
     }
   ],
   "timestamp": "2024-01-15T10:30:00Z"
@@ -350,7 +345,7 @@ ws.onmessage = function(event) {
 1. **Vehicle Position Update**: `{"type": "vehicle_position_update", "vehicle_id": "N12345", "position": {...}}`
 2. **Vehicle Attitude Update**: `{"type": "vehicle_attitude_update", "vehicle_id": "N12345", "attitude": {...}}`
 3. **Vehicle Velocity Update**: `{"type": "vehicle_velocity_update", "vehicle_id": "N12345", "velocity": {...}}`
-4. **Antenna Rotation Update**: `{"type": "antenna_rotation_update", "vehicle_id": "N12345", "antenna_id": "yagi_20m", "orientation": {...}}`
+4. **Antenna Rotation Update**: `{"type": "antenna_rotation_update", "vehicle_id": "N12345", "antenna_id": "vhf_whip", "orientation": {...}}`
 5. **Vehicle Registered**: `{"type": "vehicle_registered", "vehicle_id": "N12345", "vehicle_type": "aircraft"}`
 6. **Vehicle Unregistered**: `{"type": "vehicle_unregistered", "vehicle_id": "N12345"}`
 
@@ -373,10 +368,10 @@ Vehicle dynamics are automatically integrated into propagation calculations:
   "lon2": -0.1278,
   "frequency_mhz": 14.0,
   "power_watts": 100.0,
-  "antenna_type": "yagi",
+  "antenna_type": "whip",
   "include_vehicle_dynamics": true,
   "vehicle_id": "N12345",
-  "antenna_id": "yagi_20m"
+  "antenna_id": "vhf_whip"
 }
 ```
 
@@ -437,7 +432,7 @@ rotation_data = {
     "immediate": False
 }
 
-response = requests.post(f"{base_url}/N12345/antennas/yagi_20m/rotate", json=rotation_data)
+response = requests.post(f"{base_url}/N12345/antennas/vhf_whip/rotate", json=rotation_data)
 result = response.json()
 
 if result["success"]:
@@ -539,7 +534,7 @@ curl -X PUT http://localhost:8080/api/v1/vehicles/N12345/attitude \
   }'
 
 # Rotate antenna
-curl -X POST http://localhost:8080/api/v1/vehicles/N12345/antennas/yagi_20m/rotate \
+curl -X POST http://localhost:8080/api/v1/vehicles/N12345/antennas/vhf_whip/rotate \
   -H "Content-Type: application/json" \
   -d '{
     "target_azimuth_deg": 090.0,

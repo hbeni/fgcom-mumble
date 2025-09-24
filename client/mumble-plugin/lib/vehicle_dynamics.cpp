@@ -200,9 +200,6 @@ bool FGCom_VehicleDynamicsManager::rotateAntenna(const std::string& vehicle_id, 
         return false; // Antenna not found
     }
     
-    if (!antenna_it->is_rotatable) {
-        return false; // Antenna is not rotatable
-    }
     
     if (immediate) {
         antenna_it->azimuth_deg = normalizeAngle(target_azimuth);
@@ -318,10 +315,6 @@ AntennaRotationResponse FGCom_VehicleDynamicsManager::calculateAntennaRotation(c
         return response;
     }
     
-    if (!antenna_it->is_rotatable) {
-        response.message = "Antenna is not rotatable";
-        return response;
-    }
     
     response.success = true;
     response.current_orientation = *antenna_it;
@@ -392,9 +385,6 @@ bool FGCom_VehicleDynamicsManager::enableAutoTracking(const std::string& vehicle
         return false; // Antenna not found
     }
     
-    if (!antenna_it->is_rotatable) {
-        return false; // Antenna is not rotatable
-    }
     
     antenna_it->is_auto_tracking = true;
     antenna_it->timestamp = std::chrono::system_clock::now();
@@ -491,9 +481,6 @@ std::map<std::string, std::string> FGCom_VehicleDynamicsManager::getSystemStatus
         total_antennas += vehicle.second.antennas.size();
         
         for (const auto& antenna : vehicle.second.antennas) {
-            if (antenna.is_rotatable) {
-                rotatable_antennas++;
-            }
             if (antenna.is_auto_tracking) {
                 auto_tracking_antennas++;
             }

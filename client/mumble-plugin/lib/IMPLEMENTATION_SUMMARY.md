@@ -82,7 +82,7 @@ extern std::atomic<bool> fgcom_gpu_compute_busy;
 - **WeatherDataCache**: Weather conditions by location
 - **AntennaPatternCache**: Antenna patterns with timestamps
 
-## 🚀 GPU Acceleration System
+## GPU Acceleration System
 
 ### GPU Acceleration Modes
 - **DISABLED**: No GPU acceleration
@@ -106,7 +106,7 @@ extern std::atomic<bool> fgcom_gpu_compute_busy;
 - **Client Distribution**: Optimal client selection for hybrid mode
 - **Performance Tracking**: Operation counts, processing times
 
-## 🔧 Feature Toggle System
+## Feature Toggle System
 
 ### Feature Categories
 1. **Threading** (8 features)
@@ -134,7 +134,7 @@ extern std::atomic<bool> fgcom_gpu_compute_busy;
 - **Performance Impact**: Track resource usage per feature
 - **Configuration Persistence**: Save/load feature states
 
-## 🐛 Debugging System
+## Debugging System
 
 ### Debug Levels
 - **TRACE**: Detailed execution flow
@@ -178,7 +178,7 @@ extern std::atomic<bool> fgcom_gpu_compute_busy;
 - **Resource Monitoring**: CPU, GPU, network usage
 - **Statistical Analysis**: Performance trends and reports
 
-## 📡 NEC Modeling and Antenna Calculations
+## NEC Modeling and Antenna Calculations
 
 ### Wavelength Calculations
 - **Basic Formula**: λ = c / f
@@ -201,7 +201,7 @@ extern std::atomic<bool> fgcom_gpu_compute_busy;
 - **Usage guidelines**: Save as .nec file, run with NEC-2/NEC-4
 - **Advanced features**: Multi-frequency analysis, altitude-dependent patterns
 
-## 🔌 API Integration
+## API Integration
 
 ### RESTful Endpoints
 1. **Propagation Data**: `/api/propagation`
@@ -224,7 +224,7 @@ extern std::atomic<bool> fgcom_gpu_compute_busy;
 - **Power Management**: Monitor and control power levels
 - **Performance Data**: Access performance metrics
 
-## 📁 File Structure and Paths
+## File Structure and Paths
 
 ### Core Implementation Files
 ```
@@ -308,7 +308,7 @@ memory_limit_mb = 1024
 max_concurrent_operations = 4
 ```
 
-## 🔧 Integration Guide
+## Integration Guide
 
 ### Adding to fgcom-mumble.cpp
 
@@ -374,7 +374,7 @@ FGCom_ThreadManager::destroyInstance();
 FGCom_GPUAccelerator::destroyInstance();
 ```
 
-## 📊 Performance Monitoring
+## Performance Monitoring
 
 ### Thread Statistics
 - **Operation Counts**: Total and failed operations per thread
@@ -400,7 +400,7 @@ FGCom_GPUAccelerator::destroyInstance();
 - **Performance Trends**: Historical performance data
 - **Alert System**: Performance threshold alerts
 
-## 🛠️ Debugging and Diagnostics
+## Debugging and Diagnostics
 
 ### Debug Macros
 ```cpp
@@ -436,7 +436,7 @@ if (FGCOM_FEATURE_ENABLED(FeatureToggle::GPU_ANTENNA_PATTERNS)) {
 FGCOM_FEATURE_USAGE(FeatureToggle::GPU_ANTENNA_PATTERNS, 15.5);
 ```
 
-## 🎯 Key Benefits
+## Key Benefits
 
 ### Scalability
 - **Multi-threaded Architecture**: Handles complex calculations across multiple threads
@@ -465,7 +465,7 @@ FGCOM_FEATURE_USAGE(FeatureToggle::GPU_ANTENNA_PATTERNS, 15.5);
 - **API Integration**: RESTful and WebSocket APIs for external access
 - **Extensible Framework**: Easy addition of new features
 
-## 📈 Future Enhancements
+## Future Enhancements
 
 
 ### Performance Improvements
