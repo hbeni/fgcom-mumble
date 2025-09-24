@@ -15,7 +15,7 @@ http://localhost:8080/api/v1/vehicles
 - **Vehicle Registration**: Register and manage vehicles (aircraft, boats, ships, ground vehicles)
 - **Real-time Dynamics**: Track heading, speed, attitude, and altitude
 - **Antenna Rotation**: Control rotatable antennas (Yagis, directional arrays)
-- **Auto-tracking**: Automatic antenna pointing to moving targets
+- **Antenna Control**: Manual antenna pointing and orientation control
 - **WebSocket Updates**: Real-time vehicle dynamics updates
 
 ## Data Structures
@@ -50,13 +50,18 @@ http://localhost:8080/api/v1/vehicles
   },
   "antennas": [
     {
-      "antenna_id": "yagi_20m",
-      "antenna_type": "yagi",
-      "azimuth_deg": 045.0,
-      "elevation_deg": 15.0,
-      "is_rotatable": true,
-      "is_auto_tracking": false,
-      "rotation_speed_deg_per_sec": 10.0
+      "antenna_id": "vertical_hf",
+      "antenna_type": "vertical",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "is_rotatable": false
+    },
+    {
+      "antenna_id": "dipole_vhf",
+      "antenna_type": "dipole",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "is_rotatable": false
     }
   ],
   "status": "active",
@@ -264,34 +269,19 @@ Get current antenna orientation and status.
 {
   "success": true,
   "data": {
-    "antenna_id": "yagi_20m",
-    "antenna_type": "yagi",
-    "azimuth_deg": 045.0,
-    "elevation_deg": 15.0,
-    "is_rotatable": true,
-    "is_auto_tracking": false,
-    "rotation_speed_deg_per_sec": 10.0,
+    "antenna_id": "vertical_hf",
+    "antenna_type": "vertical",
+    "azimuth_deg": 0.0,
+    "elevation_deg": 0.0,
+    "is_rotatable": false,
     "last_update": "2024-01-15T10:30:00Z"
   },
   "timestamp": "2024-01-15T10:30:00Z"
 }
 ```
 
-### 10. Enable Auto-tracking
 
-**POST** `/api/v1/vehicles/{vehicle_id}/antennas/{antenna_id}/auto-tracking`
-
-Enable automatic antenna tracking of a target vehicle.
-
-**Request Body:**
-```json
-{
-  "target_vehicle_id": "N67890",
-  "enable": true
-}
-```
-
-### 11. Get Vehicle Antennas
+### 10. Get Vehicle Antennas
 
 **GET** `/api/v1/vehicles/{vehicle_id}/antennas`
 
@@ -315,8 +305,7 @@ Get all antennas for a specific vehicle.
       "antenna_type": "vertical",
       "azimuth_deg": 0.0,
       "elevation_deg": 0.0,
-      "is_rotatable": false,
-      "is_auto_tracking": false
+      "is_rotatable": false
     }
   ],
   "timestamp": "2024-01-15T10:30:00Z"
@@ -576,8 +565,7 @@ auto_cleanup_enabled = true
 cleanup_interval_seconds = 300
 default_rotation_speed_deg_per_sec = 10.0
 magnetic_declination_source = auto
-enable_auto_tracking = true
-max_auto_tracking_distance_km = 1000.0
+antenna_rotation_enabled = true
 ```
 
 ## Error Codes
@@ -595,7 +583,7 @@ max_auto_tracking_distance_km = 1000.0
 
 - Vehicle dynamics updates are optimized for real-time performance
 - WebSocket connections are limited to prevent resource exhaustion
-- Auto-tracking calculations are throttled to prevent excessive CPU usage
+- Antenna rotation calculations are optimized for performance
 - Vehicle cleanup runs automatically to remove inactive vehicles
 - Antenna rotation calculations include collision detection for safety
 
@@ -603,6 +591,6 @@ max_auto_tracking_distance_km = 1000.0
 
 - Vehicle registration requires appropriate permissions
 - Antenna rotation commands are validated for safety limits
-- Auto-tracking can be disabled for security-sensitive applications
+- Antenna rotation can be disabled for security-sensitive applications
 - Rate limiting prevents abuse of vehicle dynamics APIs
 - WebSocket connections are authenticated and rate-limited

@@ -1,5 +1,134 @@
 # FGCom-mumble Development Changes Log
 
+## 2024-12-19 - Advanced Noise Floor Calculation System Implementation
+
+### Overview
+Implemented comprehensive atmospheric noise floor calculation system with environment-specific modeling, manual position setting via GPS or Maidenhead locators, and advanced noise calculation features that are configurable via API.
+
+### Key Changes
+
+#### 1. Atmospheric Noise Floor System
+- **Environment-Specific Modeling**: Implemented 7 environment types (Industrial, Urban, Suburban, Remote, Ocean, Desert, Polar) with realistic noise floor levels
+- **Manual Position Setting**: Users can set position using GPS coordinates or Maidenhead locators via API
+- **Advanced Noise Calculations**: ITU-R P.372 model, OpenStreetMap integration, population density analysis, power line analysis, traffic analysis, and industrial analysis
+- **Configurable Features**: All advanced features are OFF by default and can be enabled via API
+
+#### 2. Position Setting API
+- **GPS Position Support**: Set user position using latitude/longitude coordinates
+- **Maidenhead Locator Support**: Set position using Maidenhead locators with automatic coordinate conversion
+- **Combined Position Setting**: Support for both GPS and Maidenhead locator simultaneously
+- **Position-Based Calculations**: Noise floor calculations automatically use user position when set
+
+#### 3. Environment Detection and Override
+- **Automatic Environment Detection**: Detect environment type from coordinates or Maidenhead locators
+- **Manual Environment Override**: Users can manually set environment type for more accurate noise calculations
+- **Maidenhead Precision Handling**: Proper handling of Maidenhead locator precision (1 km × 1 km squares) with position uncertainty considerations
+
+#### 4. Advanced Noise Calculation Features
+- **ITU-R P.372 Model**: Full implementation of ITU-R P.372-14 recommendation for radio noise
+- **OpenStreetMap Integration**: Noise calculation based on OSM data (industrial areas, commercial areas, power lines, highways, railways)
+- **Population Density Analysis**: Noise calculation based on population density with time-of-day factors
+- **Power Line Analysis**: Distance-based power line noise with frequency-dependent effects
+- **Traffic Analysis**: Road network analysis with distance decay and time-of-day factors
+- **Industrial Analysis**: Industrial area noise with activity level assessment
+
+#### 5. Configuration Management
+- **Feature Toggle System**: Individual control over each advanced feature
+- **API Configuration**: RESTful API for enabling/disabling features
+- **Default Behavior**: All advanced features disabled by default to avoid complexity
+- **Performance Optimization**: Features only activate when explicitly enabled
+
+### Technical Implementation Details
+
+#### Noise Floor Calculation
+- **Base Noise Levels**: S0-S9+ scale implementation with dBm conversion
+- **Environment Ranking**: Polar (quietest) to Industrial (noisiest) with specific noise floor ranges
+- **Frequency Dependencies**: Frequency-specific noise adjustments across HF spectrum
+- **Time of Day Factors**: Day/night noise variations with seasonal considerations
+- **Weather Effects**: Thunderstorm, precipitation, and temperature effects on noise floor
+
+#### Position Setting System
+- **GPS Coordinate Support**: Direct latitude/longitude position setting
+- **Maidenhead Conversion**: Automatic conversion between GPS and Maidenhead formats
+- **Precision Handling**: Proper handling of different Maidenhead precision levels
+- **Position Validation**: Input validation and bounds checking for all position types
+
+#### Advanced Features Architecture
+- **Modular Design**: Each advanced feature can be enabled/disabled independently
+- **Performance Impact**: Minimal performance impact when features are disabled
+- **External Dependencies**: Advanced features require external data sources (OSM, population data)
+- **Fallback Behavior**: Graceful degradation when external data is unavailable
+
+### API Integration
+
+#### RESTful API Endpoints
+- **Position Setting**: POST /api/v1/noise/position for GPS and Maidenhead position setting
+- **Noise Calculation**: GET /api/v1/noise/floor for noise floor calculation
+- **Configuration**: POST /api/v1/noise/config for feature configuration
+- **Environment Override**: Manual environment setting via API
+
+#### Client Integration
+- **C++ API**: Direct integration with FGCom-mumble plugin
+- **Position Management**: Automatic position-based noise calculations
+- **Environment Detection**: Automatic environment detection with manual override capability
+- **Real-time Updates**: Live noise floor updates based on position and environment changes
+
+### Documentation and Examples
+
+#### Comprehensive Documentation
+- **API Documentation**: Complete RESTful API reference with examples
+- **Integration Examples**: C++, JavaScript, and Python integration examples
+- **Configuration Guide**: Step-by-step configuration for all features
+- **Position Setting Guide**: GPS and Maidenhead locator usage examples
+
+#### Example Implementations
+- **Basic Usage**: Simple noise floor calculation with automatic environment detection
+- **Advanced Usage**: Manual environment override with position-based calculations
+- **API Integration**: External application integration examples
+- **Configuration Examples**: Feature toggle and configuration examples
+
+### Impact on FGCom-mumble
+
+#### Enhanced Realism
+- **Accurate Noise Modeling**: Realistic atmospheric noise simulation based on environment and position
+- **Position-Aware Calculations**: Noise floor calculations that adapt to user location
+- **Environment-Specific Modeling**: Different noise characteristics for different environments
+- **Advanced Propagation**: More accurate radio propagation modeling with noise considerations
+
+#### Improved User Experience
+- **Flexible Position Input**: Support for both GPS and Maidenhead locator position setting
+- **Manual Override Capability**: Users can override automatic environment detection
+- **Configurable Features**: Users can enable/disable advanced features as needed
+- **Real-time Updates**: Live noise floor updates based on position and environment changes
+
+#### Technical Foundation
+- **Modular Architecture**: Clean separation of concerns with configurable features
+- **API Integration**: Comprehensive API system for external integration
+- **Performance Optimization**: Efficient implementation with minimal overhead when features are disabled
+- **Extensible Design**: Easy addition of new noise calculation features
+
+### Future Enhancements
+
+#### Planned Features
+- **Machine Learning Integration**: AI-powered noise prediction based on historical data
+- **Real-time Data Integration**: Live weather and atmospheric data integration
+- **Advanced OSM Analysis**: More sophisticated OpenStreetMap data analysis
+- **Cloud Integration**: Cloud-based noise calculation services
+
+#### Performance Improvements
+- **Caching System**: Intelligent caching of noise calculations and external data
+- **Parallel Processing**: Multi-threaded noise calculation processing
+- **Memory Optimization**: Efficient memory usage for large datasets
+- **Network Optimization**: Optimized external data fetching and processing
+
+### Conclusion
+
+The implementation of the advanced noise floor calculation system represents a significant enhancement to FGCom-mumble's realism and functionality. With comprehensive atmospheric noise modeling, flexible position setting via GPS or Maidenhead locators, and configurable advanced features, the system provides accurate and realistic radio propagation simulation.
+
+The modular architecture and comprehensive API system make the enhanced noise floor system accessible to developers and users, while the configurable feature system ensures optimal performance and flexibility. This work establishes FGCom-mumble as a comprehensive radio simulation platform with advanced atmospheric noise modeling capabilities.
+
+---
+
 ## 2024-12-19 - 80m Loop Antenna Pattern Generation and Script Cleanup
 
 ### Overview
