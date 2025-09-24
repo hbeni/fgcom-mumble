@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
+#include <climits>
 
 // Global pattern interpolation instance
 std::unique_ptr<FGCom_PatternInterpolation> g_pattern_interpolation = nullptr;
@@ -374,7 +375,7 @@ std::vector<FGCom_RadiationPattern*> FGCom_PatternInterpolation::findClosestPatt
     
     for (auto& p : pattern.patterns) {
         double distance = sqrt(pow(p.theta - theta_deg, 2) + pow(p.phi - phi_deg, 2));
-        distances.push_back({distance, &p});
+        distances.push_back(std::make_pair(distance, const_cast<FGCom_RadiationPattern*>(&p)));
     }
     
     // Sort by distance

@@ -1,0 +1,25 @@
+# 70cm Vertical Antenna Pattern Index
+# Generated: on. 24. sep. 19:36:21 +0200 2025
+# 
+# Format: antenna_name frequency_mhz altitude_m band pattern_file
+70cm_vertical 433.5 0 433.5mhz patterns/433.5mhz/70cm_vertical_433.5MHz_0m_pattern.txt
+70cm_vertical 433.0 0 433.0mhz patterns/433.0mhz/70cm_vertical_433.0MHz_0m_pattern.txt
+70cm_vertical 438.0 0 438.0mhz patterns/438.0mhz/70cm_vertical_438.0MHz_0m_pattern.txt
+70cm_vertical 436.0 0 436.0mhz patterns/436.0mhz/70cm_vertical_436.0MHz_0m_pattern.txt
+70cm_vertical 435.0 0 435.0mhz patterns/435.0mhz/70cm_vertical_435.0MHz_0m_pattern.txt
+70cm_vertical 432.0 0 432.0mhz patterns/432.0mhz/70cm_vertical_432.0MHz_0m_pattern.txt
+70cm_vertical 431.0 0 431.0mhz patterns/431.0mhz/70cm_vertical_431.0MHz_0m_pattern.txt
+70cm_vertical 434.5 0 434.5mhz patterns/434.5mhz/70cm_vertical_434.5MHz_0m_pattern.txt
+70cm_vertical 431.5 0 431.5mhz patterns/431.5mhz/70cm_vertical_431.5MHz_0m_pattern.txt
+70cm_vertical 432.5 0 432.5mhz patterns/432.5mhz/70cm_vertical_432.5MHz_0m_pattern.txt
+70cm_vertical 430.5 0 430.5mhz patterns/430.5mhz/70cm_vertical_430.5MHz_0m_pattern.txt
+70cm_vertical 439.5 0 439.5mhz patterns/439.5mhz/70cm_vertical_439.5MHz_0m_pattern.txt
+70cm_vertical 430.0 0 430.0mhz patterns/430.0mhz/70cm_vertical_430.0MHz_0m_pattern.txt
+70cm_vertical 439.0 0 439.0mhz patterns/439.0mhz/70cm_vertical_439.0MHz_0m_pattern.txt
+70cm_vertical 436.5 0 436.5mhz patterns/436.5mhz/70cm_vertical_436.5MHz_0m_pattern.txt
+70cm_vertical 438.5 0 438.5mhz patterns/438.5mhz/70cm_vertical_438.5MHz_0m_pattern.txt
+70cm_vertical 437.5 0 437.5mhz patterns/437.5mhz/70cm_vertical_437.5MHz_0m_pattern.txt
+70cm_vertical 437.0 0 437.0mhz patterns/437.0mhz/70cm_vertical_437.0MHz_0m_pattern.txt
+70cm_vertical 434.0 0 434.0mhz patterns/434.0mhz/70cm_vertical_434.0MHz_0m_pattern.txt
+70cm_vertical 435.5 0 435.5mhz patterns/435.5mhz/70cm_vertical_435.5MHz_0m_pattern.txt
+70cm_vertical 440.0 0 440.0mhz patterns/440.0mhz/70cm_vertical_440.0MHz_0m_pattern.txt

@@ -1,0 +1,77 @@
+EZNEC ver. 7.0
+; Long Wire Maritime HF Antenna - 2 MHz
+; Marine MF/HF-SSB radios
+; Height: 10m above ground
+; Horizontal polarization
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+; LONG WIRE ANTENNA (75m length, horizontal)
+W001 0.0 0.0 10.0 75.0 0.0 10.0 0.006 150
+; GROUND RADIALS (4 radials, λ/4 at 2 MHz = 37.5m)
+W002 0.0 0.0 0.0 37.5 0.0 0.0 0.003 37
+W003 0.0 0.0 0.0 -37.5 0.0 0.0 0.003 37
+W004 0.0 0.0 0.0 0.0 37.5 0.0 0.003 37
+W005 0.0 0.0 0.0 0.0 -37.5 0.0 0.003 37
+; SOURCE
+; Fed at one end of long wire
+SY SRC W001 1 1
+; GROUND
+; Real ground at 0m height, antenna at 10m
+GD 1 0 0 0 0.005 0.013
+; LOADS
+; Copper wire construction
+LD 5 1 5 0 3.7E+07 0
+; Copper conductivity
+; FREQUENCY
+; Center frequency 2 MHz
+FR 0 1 0 0 2000.0 0
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+; FREQUENCY SWEEP - 2 MHz band
+; FR 0 21 0 0 1600.0 0.1
+; COMMENTS
+; Long Wire Maritime HF Antenna Model
+; Marine MF/HF-SSB radios
+; Specifications:
+; - Frequency: 1.6-4.0 MHz (Marine MF/HF-SSB)
+; - Configuration: Long wire horizontal
+; - Height: 10m above ground
+; - Wire length: 75m (optimized for 2 MHz)
+; - Ground radials: 4 × 37.5m (λ/4 at 2 MHz)
+; - Polarization: Horizontal
+; - Max power: 1000W
+; - Weight: 8.5 kg
+; Antenna Design:
+; - Long wire provides directional pattern
+; - End-fed configuration
+; - Ground radials provide ground reference
+; - ATU required for impedance matching
+; Expected Performance:
+; - Gain: ~3-4 dBi directional
+; - Elevation pattern: Low angle (~5-8°)
+; - SWR: <2:1 with proper ATU tuning
+; - Impedance: 50Ω (after ATU transformation)
+; Ground Effects at 10m Height:
+; - Good ground reference through radials
+; - Low elevation angle radiation
+; - Directional azimuth pattern
+; - Minimal ground interaction at 2 MHz
+; Construction Notes:
+; - Heavy-duty copper wire construction
+; - Weather-sealed connections
+; - Lightning protection required
+; - Regular inspection of wire connections
+; Typical Applications:
+; - Marine MF/HF-SSB communications
+; - Ship-to-shore communications
+; - Maritime distress communications
+; - Historical maritime operations
+; Optimization Notes:
+; - Wire length optimized for 2 MHz
+; - Ground radial system for proper operation
+; - ATU tuning for impedance matching
+; - Weather protection for marine environment
+; This model represents a historical maritime long wire
+; antenna suitable for 2 MHz SSB communications
+; as used on ships before GMDSS implementation
+

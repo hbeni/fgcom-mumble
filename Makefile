@@ -40,13 +40,13 @@ package:
 	mkdir fgcom-mumble-$(BUNDLE_VER)/
 	
 	# Add docs
-	cp LICENSE Readme.architecture.md fgcom-mumble-$(BUNDLE_VER)/
-	head -n 1 README.md > fgcom-mumble-$(BUNDLE_VER)/README.md
+	cp LICENSE config/Readme.architecture.md fgcom-mumble-$(BUNDLE_VER)/
+	head -n 1 config/README.md > fgcom-mumble-$(BUNDLE_VER)/README.md
 	@echo Version: $(BUNDLE_VER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(BUNDLE_VER)/README.md
-	tail +2 README.md >> fgcom-mumble-$(BUNDLE_VER)/README.md
-	head -n 1 README-de_DE.md > fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
+	tail +2 config/README.md >> fgcom-mumble-$(BUNDLE_VER)/README.md
+	head -n 1 config/README-de_DE.md > fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
 	@echo Version: $(BUNDLE_VER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
-	tail +2 README-de_DE.md >> fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
+	tail +2 config/README-de_DE.md >> fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
 	
 	# Adjust markdown links in readmes
 	sed -i 's?](client/?](?' fgcom-mumble-$(BUNDLE_VER)/Readme.architecture.md

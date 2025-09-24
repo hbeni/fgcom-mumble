@@ -21,6 +21,7 @@
 #include "audio.h"
 #include "pattern_interpolation.h"
 #include "antenna_ground_system.h"
+#include "antenna_pattern_mapping.h"
 #include "propagation_physics.h"
 
 /**
@@ -61,54 +62,86 @@ private:
     }
     
     void loadAircraftVHFPatterns() {
-        // Boeing 737-800 VHF patterns
-        if (pattern_interpolation->load4NEC2Pattern(
-            "antenna_patterns/aircraft/b737_800/b737_800_vhf.ez", 
-            "b737_800_vhf", 0, 150.0)) {
-            std::cout << "Loaded B737-800 VHF pattern" << std::endl;
+        // Use pattern mapping system to load all available aircraft patterns
+        if (!g_antenna_pattern_mapping) {
+            g_antenna_pattern_mapping = std::make_unique<FGCom_AntennaPatternMapping>();
         }
         
-        // C-130 Hercules VHF patterns
-        if (pattern_interpolation->load4NEC2Pattern(
-            "antenna_patterns/aircraft/c130_hercules/c130_hercules_vhf.ez",
-            "c130_hercules_vhf", 0, 150.0)) {
-            std::cout << "Loaded C-130 VHF pattern" << std::endl;
-        }
+        // Load all available aircraft patterns dynamically
+        std::vector<AntennaPatternInfo> aircraft_patterns = 
+            g_antenna_pattern_mapping->getAvailableVHFPatterns("aircraft");
         
-        // Cessna 172 VHF patterns
-        if (pattern_interpolation->load4NEC2Pattern(
-            "antenna_patterns/aircraft/cessna_172/cessna_172_vhf.ez",
-            "cessna_172_vhf", 0, 150.0)) {
-            std::cout << "Loaded Cessna 172 VHF pattern" << std::endl;
-        }
-        
-        // Mi-4 Hound helicopter VHF patterns
-        if (pattern_interpolation->load4NEC2Pattern(
-            "antenna_patterns/aircraft/mi4_hound/mi4_hound_vhf.ez",
-            "mi4_hound_vhf", 0, 150.0)) {
-            std::cout << "Loaded Mi-4 VHF pattern" << std::endl;
+        for (const auto& pattern_info : aircraft_patterns) {
+            if (pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded aircraft VHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
         }
     }
     
     void loadGroundVehicleVHFPatterns() {
-        // Leopard 1 tank VHF patterns
-        if (pattern_interpolation->load4NEC2Pattern(
-            "antenna_patterns/ground_vehicles/leopard1_tank/leopard1_tank_vhf.ez",
-            "leopard1_tank_vhf", 0, 150.0)) {
-            std::cout << "Loaded Leopard 1 VHF pattern" << std::endl;
+        // Load all available ground vehicle patterns dynamically
+        std::vector<AntennaPatternInfo> ground_patterns = 
+            g_antenna_pattern_mapping->getAvailableVHFPatterns("ground_vehicle");
+        
+        for (const auto& pattern_info : ground_patterns) {
+            if (pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded ground vehicle VHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
         }
         
-        // Soviet UAZ VHF patterns
-        if (pattern_interpolation->load4NEC2Pattern(
-            "antenna_patterns/ground_vehicles/soviet_uaz/soviet_uaz_vhf.ez",
-            "soviet_uaz_vhf", 0, 150.0)) {
-            std::cout << "Loaded Soviet UAZ VHF pattern" << std::endl;
+        // Load military land patterns
+        std::vector<AntennaPatternInfo> military_patterns = 
+            g_antenna_pattern_mapping->getAvailableVHFPatterns("military_land");
+        
+        for (const auto& pattern_info : military_patterns) {
+            if (pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded military land VHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
+        }
+        
+        // Load vehicle patterns
+        std::vector<AntennaPatternInfo> vehicle_patterns = 
+            g_antenna_pattern_mapping->getAvailableVHFPatterns("vehicle");
+        
+        for (const auto& pattern_info : vehicle_patterns) {
+            if (pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded vehicle VHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
         }
     }
     
     void loadMaritimeVHFPatterns() {
-        // Maritime VHF patterns would go here
-        // Currently no maritime VHF patterns in the codebase
+        // Load all available maritime patterns dynamically
+        std::vector<AntennaPatternInfo> maritime_patterns = 
+            g_antenna_pattern_mapping->getAvailableVHFPatterns("maritime");
+        
+        for (const auto& pattern_info : maritime_patterns) {
+            if (pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded maritime VHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
+        }
+        
+        // Load ground-based HF patterns for amateur radio
+        std::vector<AntennaPatternInfo> ground_station_patterns = 
+            g_antenna_pattern_mapping->getAvailableVHFPatterns("ground_station");
+        
+        for (const auto& pattern_info : ground_station_patterns) {
+            if (pattern_interpolation->load4NEC2Pattern(
+                pattern_info.pattern_file, 
+                pattern_info.antenna_name, 0, pattern_info.frequency_mhz)) {
+                std::cout << "Loaded ground station VHF pattern: " << pattern_info.antenna_name << std::endl;
+            }
+        }
     }
     
     // Get antenna gain from pattern interpolation
@@ -126,25 +159,23 @@ private:
             antenna_name, altitude_m, frequency_mhz, theta_deg, phi_deg);
     }
     
-    // Determine antenna name based on vehicle type and frequency
+    // Determine antenna name based on vehicle type and frequency using pattern mapping
     std::string getAntennaName(const std::string& vehicle_type, double frequency_mhz) {
-        // Map vehicle types to antenna names
-        if (vehicle_type.find("b737") != std::string::npos || 
-            vehicle_type.find("boeing") != std::string::npos) {
-            return "b737_800_vhf";
-        } else if (vehicle_type.find("c130") != std::string::npos || 
-                   vehicle_type.find("hercules") != std::string::npos) {
-            return "c130_hercules_vhf";
-        } else if (vehicle_type.find("cessna") != std::string::npos || 
-                   vehicle_type.find("c172") != std::string::npos) {
-            return "cessna_172_vhf";
-        } else if (vehicle_type.find("mi4") != std::string::npos || 
-                   vehicle_type.find("hound") != std::string::npos) {
-            return "mi4_hound_vhf";
-        } else if (vehicle_type.find("leopard") != std::string::npos) {
-            return "leopard1_tank_vhf";
-        } else if (vehicle_type.find("uaz") != std::string::npos) {
-            return "soviet_uaz_vhf";
+        if (!g_antenna_pattern_mapping) {
+            g_antenna_pattern_mapping = std::make_unique<FGCom_AntennaPatternMapping>();
+        }
+        
+        // Use pattern mapping system to get appropriate antenna
+        AntennaPatternInfo pattern_info = g_antenna_pattern_mapping->getVHFPattern(vehicle_type, frequency_mhz);
+        
+        if (!pattern_info.antenna_name.empty()) {
+            return pattern_info.antenna_name;
+        }
+        
+        // Fallback to closest pattern
+        pattern_info = g_antenna_pattern_mapping->getClosestVHFPattern(vehicle_type, frequency_mhz);
+        if (!pattern_info.antenna_name.empty()) {
+            return pattern_info.antenna_name;
         }
         
         // Default antenna for unknown vehicle types

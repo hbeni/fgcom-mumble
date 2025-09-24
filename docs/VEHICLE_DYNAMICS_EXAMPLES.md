@@ -18,11 +18,11 @@ This document provides comprehensive examples of how vehicle dynamics (heading, 
 
 Vehicle dynamics are automatically integrated into propagation calculations to provide accurate signal quality predictions.
 
-## Example 1: Aircraft with Yagi Antenna
+## Example 1: General Aviation Aircraft with Realistic Antennas
 
 ### Scenario
 - **Aircraft**: Cessna 172 (General Aviation)
-- **Antenna**: 20m Yagi antenna
+- **Antenna**: Loaded whip antenna (realistic for small GA)
 - **Frequency**: 14.230 MHz (20m SSB)
 - **Target**: Ground station 100km away
 
@@ -49,11 +49,25 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   },
   "antennas": [
     {
-      "antenna_id": "hf_wire_dipole",
-      "antenna_type": "dipole",
-      "azimuth_deg": 090.0,    // Pointing east
-      "elevation_deg": 15.0,   // 15° elevation
-      "rotation_speed_deg_per_sec": 10.0
+      "antenna_id": "vhf_com_blade",
+      "antenna_type": "blade",
+      "frequency_range": "118-137 MHz",
+      "mounting": "wing_strut",
+      "length": "0.5m",
+      "power": "25W",
+      "azimuth_deg": 0.0,      // Omnidirectional
+      "elevation_deg": 0.0
+    },
+    {
+      "antenna_id": "hf_loaded_whip",
+      "antenna_type": "loaded_whip",
+      "frequency_range": "3-30 MHz",
+      "mounting": "fuselage_top",
+      "length": "2.6m",
+      "power": "100W",
+      "loading_coil": true,
+      "azimuth_deg": 0.0,      // Omnidirectional
+      "elevation_deg": 0.0
     }
   ]
 }
@@ -61,21 +75,17 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 
 ### Antenna Orientation Calculation
 
-**Without Vehicle Dynamics Compensation:**
-- Antenna pointing: 090° (East)
-- Effective pointing: 090° (East)
-- Signal quality: Good
+**Realistic Small Aircraft Constraints:**
+- **VHF COM Blade**: Omnidirectional, minimal attitude effects
+- **HF Loaded Whip**: Omnidirectional, some attitude effects on loading coil
+- **No steerable antennas**: Small GA aircraft don't have directional antennas
+- **Simple mounting**: Fixed positions, no rotation systems
 
-**With Vehicle Dynamics Compensation:**
-- Vehicle yaw: 045° (Northeast)
-- Antenna pointing: 090° (East)
-- Effective pointing: 135° (Southeast) - 090° + 045°
-- Signal quality: Reduced due to pointing error
-
-**Optimal Antenna Orientation:**
-- Target direction: 225° (Southwest) - towards ground station
-- Compensated pointing: 180° (South) - 225° - 045°
-- Signal quality: Excellent
+**Vehicle Dynamics Effects:**
+- **VHF Blade**: Minimal effect from aircraft attitude
+- **HF Whip**: Loading coil efficiency affected by aircraft attitude
+- **Ground plane**: Aircraft fuselage provides ground plane reference
+- **Altitude effects**: Higher altitude improves HF propagation
 
 ### Propagation Calculation
 
@@ -89,22 +99,22 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   "alt2": 100.0,
   "frequency_mhz": 14.230,
   "power_watts": 100.0,
-  "antenna_type": "dipole",
+  "antenna_type": "loaded_whip",
   "include_vehicle_dynamics": true,
   "vehicle_id": "N12345",
-  "antenna_id": "hf_wire_dipole"
+  "antenna_id": "hf_loaded_whip"
 }
 ```
 
 **Result:**
 ```json
 {
-  "signal_quality": 0.85,
-  "signal_strength_db": -1.2,
-  "antenna_gain_db": 6.8,
-  "vehicle_attitude_effect_db": -2.1,
-  "effective_antenna_azimuth_deg": 135.0,
-  "effective_antenna_elevation_deg": 17.5,
+  "signal_quality": 0.72,
+  "signal_strength_db": -3.8,
+  "antenna_gain_db": -2.1,
+  "vehicle_attitude_effect_db": -1.2,
+  "loading_coil_efficiency": 0.65,
+  "ground_plane_effect_db": 2.3,
   "propagation_mode": "skywave"
 }
 ```
@@ -143,8 +153,7 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
       "antenna_id": "backstay_20m",
       "antenna_type": "inverted_l",
       "azimuth_deg": 0.0,      // Omnidirectional
-      "elevation_deg": 0.0,
-      "is_auto_tracking": false
+      "elevation_deg": 0.0
     }
   ]
 }
@@ -189,13 +198,14 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 }
 ```
 
-## Example 3: Ground Station with Rotatable Yagi
+## Example 3: Ground Station with Rotatable Yagi (Future Moonbounce/Satellite)
 
 ### Scenario
 - **Station**: Amateur radio station
 - **Antenna**: Cushcraft A3WS 20m Yagi with rotator (3-element)
 - **Frequency**: 14.230 MHz (20m SSB)
 - **Target**: Sailboat 200km away
+- **Note**: Auto-tracking reserved for future moonbounce/satellite work with Doppler shift
 
 ### Vehicle Dynamics
 ```json
@@ -231,9 +241,9 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 }
 ```
 
-### Auto-tracking Calculation
+### Auto-tracking Calculation (Future Moonbounce/Satellite Work)
 
-**Target Sailboat Position:**
+**Current Target (Sailboat):**
 - Latitude: 43.3601
 - Longitude: -70.0589
 - Altitude: 0ft (sea level)
@@ -241,7 +251,7 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 **Optimal Antenna Orientation:**
 - Bearing to target: 045°
 - Elevation angle: 5° (low angle for ground wave)
-- Auto-tracking: Enabled
+- Auto-tracking: Manual rotation only (future: automatic with Doppler shift for moonbounce/satellite)
 
 **Antenna Rotation:**
 ```json
@@ -284,22 +294,122 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   "effective_antenna_azimuth_deg": 045.0,
   "effective_antenna_elevation_deg": 15.0,
   "propagation_mode": "skywave",
-  "auto_tracking_active": true
+  "auto_tracking_active": false,
+  "note": "Auto-tracking reserved for future moonbounce/satellite work with Doppler shift"
 }
 ```
 
-## Example 4: Military Vehicle with Multiple Antennas
+## Future Enhancements: Moonbounce and Satellite Work
+
+### Planned Auto-tracking Features
+- **Moonbounce (EME)**: Automatic tracking of moon position with Doppler shift compensation
+- **Satellite Communication**: Automatic tracking of satellite orbits with Doppler shift
+- **Doppler Shift Calculation**: Real-time frequency adjustment based on relative velocity
+- **Orbital Mechanics**: Integration with satellite ephemeris data
+
+### Doppler Shift Implementation (Future)
+```json
+{
+  "doppler_shift": {
+    "enabled": true,
+    "target_type": "moon",
+    "relative_velocity_ms": 0.0,
+    "frequency_shift_hz": 0.0,
+    "compensation_applied": true
+  }
+}
+```
+
+## Example 4: Large Commercial Aircraft with Realistic Antennas
 
 ### Scenario
-- **Vehicle**: NATO Main Battle Tank (Leopard 1)
-- **Antennas**: VHF-FM, UHF, HF systems
+- **Aircraft**: Boeing 737-800 (Commercial Airliner)
+- **Antennas**: HF probe, VHF COM, SATCOM systems
+- **Frequency**: 8.900 MHz (Aeronautical HF)
+- **Target**: Ground station 2000km away
+
+### Vehicle Dynamics
+```json
+{
+  "vehicle_id": "N737AB",
+  "position": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "altitude_ft_msl": 35000.0,
+    "altitude_ft_agl": 35000.0
+  },
+  "attitude": {
+    "pitch_deg": 1.5,      // Slight nose up
+    "roll_deg": 0.0,       // Level flight
+    "yaw_deg": 270.0,      // Heading 270°
+    "magnetic_heading_deg": 268.5
+  },
+  "velocity": {
+    "speed_knots": 450.0,
+    "course_deg": 270.0,
+    "vertical_speed_fpm": 0.0
+  },
+  "antennas": [
+    {
+      "antenna_id": "hf_probe_belly",
+      "antenna_type": "probe",
+      "frequency_range": "2-30 MHz",
+      "mounting": "belly_mounted",
+      "length": "3.0m",
+      "power": "400W",
+      "azimuth_deg": 0.0,      // Omnidirectional
+      "elevation_deg": 0.0
+    },
+    {
+      "antenna_id": "vhf_com_blade",
+      "antenna_type": "blade",
+      "frequency_range": "118-137 MHz",
+      "mounting": "fuselage_top",
+      "length": "0.3m",
+      "power": "25W",
+      "azimuth_deg": 0.0,      // Omnidirectional
+      "elevation_deg": 0.0
+    },
+    {
+      "antenna_id": "satcom_dome",
+      "antenna_type": "satcom",
+      "frequency_range": "1.5-1.6 GHz",
+      "mounting": "fuselage_top",
+      "dome_diameter": "0.8m",
+      "power": "50W",
+      "azimuth_deg": 0.0,      // Omnidirectional
+      "elevation_deg": 0.0
+    }
+  ]
+}
+```
+
+### Antenna Orientation Calculation
+
+**Realistic Commercial Aircraft Constraints:**
+- **HF Probe**: Short antenna (3m) for aerodynamic reasons, low efficiency
+- **VHF COM**: Small blade antenna, omnidirectional
+- **SATCOM**: Primary oceanic communication, omnidirectional dome
+- **No steerable antennas**: Commercial aircraft use fixed omnidirectional antennas
+- **Aerodynamic constraints**: All antennas designed for minimal drag
+
+**Vehicle Dynamics Effects:**
+- **HF Probe**: Minimal attitude effects due to short length
+- **VHF COM**: No attitude effects, omnidirectional
+- **SATCOM**: No attitude effects, tracks satellites automatically
+- **Altitude effects**: High altitude (35,000ft) provides excellent propagation
+## Example 5: Military Vehicle with Realistic Antennas
+
+### Scenario
+- **Vehicle**: NATO Military Jeep (M151)
+- **Antennas**: VHF-FM tactical, HF whip (tied down)
 - **Frequency**: 30.000 MHz (VHF-FM tactical)
 - **Target**: Command post 10km away
 
 ### Vehicle Dynamics
 ```json
 {
-  "vehicle_id": "TANK_001",
+  "vehicle_id": "JEEP_001",
   "position": {
     "latitude": 52.5200,
     "longitude": 13.4050,
@@ -321,16 +431,23 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
     {
       "antenna_id": "vhf_fm_whip",
       "antenna_type": "whip",
+      "frequency_range": "30-88 MHz",
+      "mounting": "rear_corner",
+      "length": "2.4m",
+      "power": "50W",
       "azimuth_deg": 0.0,      // Omnidirectional
-      "elevation_deg": 0.0,
-      "is_auto_tracking": false
+      "elevation_deg": 0.0
     },
     {
-      "antenna_id": "hf_whip",
-      "antenna_type": "whip",
+      "antenna_id": "hf_whip_tied_down",
+      "antenna_type": "whip_tied_down",
+      "frequency_range": "2-30 MHz",
+      "mounting": "rear_corner_tied_to_front",
+      "length": "3.05m",
+      "tie_down_angle": "45_degrees",
+      "power": "100W",
       "azimuth_deg": 0.0,      // Omnidirectional
-      "elevation_deg": 0.0,
-      "is_auto_tracking": false
+      "elevation_deg": 0.0
     }
   ]
 }
@@ -338,18 +455,102 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 
 ### Antenna Orientation Calculation
 
-**Whip Antenna Effects:**
-- Vehicle attitude: Minimal effect on whip antennas
-- Ground system: Vehicle hull provides good ground plane
-- Effective gain: 0dB (omnidirectional)
-- Signal quality: Good
+**Realistic Military Vehicle Constraints:**
+- **VHF Whip**: Standard military whip antenna, omnidirectional
+- **HF Whip**: Tied down at 45° for clearance, omnidirectional
+- **No steerable antennas**: Military vehicles use fixed omnidirectional antennas
+- **Tactical considerations**: Antennas must not interfere with vehicle operation
+
+**Vehicle Dynamics Effects:**
+- **VHF Whip**: Minimal attitude effects, omnidirectional
+- **HF Whip**: Tied-down configuration reduces attitude effects
+- **Ground system**: Vehicle hull provides good ground plane
+- **Effective gain**: 0dB (omnidirectional)
+- **Signal quality**: Good
+
+## Example 6: Professional Ground Station with Yagi Antennas
+
+### Scenario
+- **Station**: Professional VHF/UHF Base Station
+- **Antennas**: 2m Yagi, 70cm Yagi, Dual-band omni
+- **Frequency**: 144.500 MHz (2m amateur band)
+- **Target**: Aircraft 150km away
+
+### Station Configuration
+```json
+{
+  "station_id": "W1ABC",
+  "position": {
+    "latitude": 42.3601,
+    "longitude": -71.0589,
+    "altitude_ft_msl": 100.0,
+    "altitude_ft_agl": 100.0
+  },
+  "station_type": "professional_base",
+  "antennas": [
+    {
+      "antenna_id": "yagi_2m_11element",
+      "antenna_type": "yagi",
+      "frequency_range": "144-145 MHz",
+      "mounting": "10m_tower",
+      "elements": 11,
+      "boom_length": "5.72m",
+      "gain": "14.8 dBi",
+      "height": "10m",
+      "power": "500W",
+      "azimuth_deg": 045.0,      // Pointing northeast
+      "elevation_deg": 5.0
+    },
+    {
+      "antenna_id": "yagi_70cm_16element",
+      "antenna_type": "yagi",
+      "frequency_range": "430-440 MHz",
+      "mounting": "10m_tower",
+      "elements": 16,
+      "boom_length": "3.10m",
+      "gain": "16.56 dBi",
+      "height": "10m",
+      "power": "1000W",
+      "azimuth_deg": 045.0,      // Pointing northeast
+      "elevation_deg": 5.0
+    },
+    {
+      "antenna_id": "dual_band_omni",
+      "antenna_type": "collinear",
+      "frequency_range": "144-146 MHz, 430-440 MHz",
+      "mounting": "10m_tower",
+      "length": "5.2m",
+      "gain": "8.3 dBi @ 144 MHz, 11.7 dBi @ 432 MHz",
+      "height": "10m",
+      "power": "200W",
+      "azimuth_deg": 0.0,        // Omnidirectional
+      "elevation_deg": 0.0
+    }
+  ]
+}
+```
+
+### Antenna Orientation Calculation
+
+**Professional Ground Station Capabilities:**
+- **2m Yagi**: High-gain directional antenna, steerable
+- **70cm Yagi**: High-gain directional antenna, steerable
+- **Dual-band Omni**: Omnidirectional coverage for both bands
+- **10m Height**: Professional base station performance
+- **Steerable antennas**: Can track moving targets
+
+**Station Dynamics Effects:**
+- **Yagi antennas**: Directional gain, must be pointed at target
+- **Omnidirectional**: No pointing required, 360° coverage
+- **Height advantage**: 10m height provides significant range extension
+- **Professional performance**: 2-3x range compared to ground level
 
 ### Propagation Calculation
 
 ```json
 {
-  "lat1": 52.5200,
-  "lon1": 13.4050,
+  "lat1": 42.3601,
+  "lon1": -71.0589,
   "lat2": 52.5200,
   "lon2": 13.5050,
   "alt1": 100.0,
@@ -375,13 +576,13 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 }
 ```
 
-## Example 5: Container Ship with HF Loop
+## Example 5: Container Ship with Historical Maritime HF Antennas
 
 ### Scenario
-- **Vessel**: Container ship
-- **Antenna**: 80m square loop antenna
-- **Frequency**: 3.500 MHz (80m SSB)
-- **Target**: Shore station 500km away
+- **Vessel**: Container ship (1,000-4,000 TEUs)
+- **Antennas**: Multiple wire antennas between masts and superstructure
+- **Frequencies**: 500 kHz (distress), 2 MHz (SSB), 472 kHz (630m), 136 kHz (2200m)
+- **Target**: Coast stations and other vessels worldwide
 
 ### Vehicle Dynamics
 ```json
@@ -406,24 +607,210 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   },
   "antennas": [
     {
-      "antenna_id": "hf_loop_80m",
-      "antenna_type": "loop",
-      "azimuth_deg": 0.0,      // Fixed orientation
+      "antenna_id": "t_type_500khz",
+      "antenna_type": "t_type_wire",
+      "frequency_range": "500 kHz",
+      "mounting": "mast_to_superstructure",
+      "wire_length": "150.0m",
+      "wire_type": "insulated_copper",
+      "power": "500W",
+      "mode": "CW",
+      "azimuth_deg": 0.0,
       "elevation_deg": 0.0,
-   // Loops cannot be rotated
-      "is_auto_tracking": false
+      "atu_required": true,
+      "historical_use": "International distress and calling frequency"
+    },
+    {
+      "antenna_id": "long_wire_2mhz",
+      "antenna_type": "long_wire",
+      "frequency_range": "1.6-4.0 MHz",
+      "mounting": "mast_to_mast",
+      "wire_length": "75.0m",
+      "wire_type": "insulated_copper",
+      "power": "1000W",
+      "mode": "SSB",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "atu_required": true,
+      "historical_use": "Marine MF/HF-SSB radios"
+    },
+    {
+      "antenna_id": "inverted_l_630m",
+      "antenna_type": "inverted_l_wire",
+      "frequency_range": "472-479 kHz",
+      "mounting": "mast_to_superstructure",
+      "wire_length": "60.0m",
+      "wire_type": "insulated_copper",
+      "power": "100W",
+      "mode": "CW",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "atu_required": true,
+      "historical_use": "Maritime distress frequency"
+    },
+    {
+      "antenna_id": "long_wire_2200m",
+      "antenna_type": "long_wire",
+      "frequency_range": "135.7-137.8 kHz",
+      "mounting": "mast_to_mast",
+      "wire_length": "200.0m",
+      "wire_type": "insulated_copper",
+      "power": "200W",
+      "mode": "CW",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "atu_required": true,
+      "historical_use": "Maritime navigation"
     }
   ]
 }
 ```
 
-### Antenna Orientation Calculation
+### Maritime HF Antenna Types
 
-**Loop Antenna Effects:**
-- Vehicle roll: 3° (Port side down)
-- Antenna orientation: Affected by roll
-- Effective gain: Reduced by 0.6dB due to roll
-- Signal quality: Good (directional but fixed)
+**T-Type Antenna (500 kHz):**
+- **Configuration**: Vertical wire with horizontal top section
+- **Mounting**: Mast to superstructure
+- **Length**: 150m total (vertical + horizontal)
+- **ATU Required**: Yes (electrical length tuning)
+- **Use**: International distress and calling frequency
+
+**Long Wire Antenna (2 MHz SSB):**
+- **Configuration**: Single wire stretched between masts
+- **Mounting**: Mast to mast
+- **Length**: 75m (optimized for 2 MHz)
+- **ATU Required**: Yes (impedance matching)
+- **Use**: Marine MF/HF-SSB communications
+
+**Inverted-L Antenna (630m):**
+- **Configuration**: Vertical section with horizontal top
+- **Mounting**: Mast to superstructure
+- **Length**: 60m total
+- **ATU Required**: Yes (resonance tuning)
+- **Use**: Maritime distress frequency
+
+**Long Wire Antenna (2200m):**
+- **Configuration**: Very long wire between masts
+- **Mounting**: Mast to mast
+- **Length**: 200m (multiple wavelengths)
+- **ATU Required**: Yes (electrical length adjustment)
+- **Use**: Maritime navigation
+
+### Antenna Tuning Unit (ATU) Requirements
+
+**All maritime HF antennas require ATUs because:**
+- **Electrical Length**: Ship antennas are rarely exactly resonant
+- **Impedance Matching**: 50Ω radio to various antenna impedances
+- **Frequency Coverage**: Single antenna for multiple frequencies
+- **Tuning Components**: Inductors and capacitors for resonance
+- **Automatic Tuning**: Modern ATUs tune automatically
+- **Power Handling**: Must handle full transmitter power
+
+## Example 6: Historical Maritime Vessel with Multiple HF Bands
+
+### Scenario
+- **Vessel**: Historical maritime vessel (pre-GMDSS era)
+- **Antennas**: Multiple wire antennas for different maritime frequency bands
+- **Frequencies**: 500 kHz (distress), 2 MHz (SSB), 472 kHz (630m), 136 kHz (2200m)
+- **Target**: Coast stations and other vessels
+
+### Vehicle Dynamics
+```json
+{
+  "vehicle_id": "SS_MARITIME_HISTORIC",
+  "position": {
+    "latitude": 40.6892,
+    "longitude": -74.0445,
+    "altitude_ft_msl": 0.0,
+    "altitude_ft_agl": 0.0
+  },
+  "attitude": {
+    "pitch_deg": 1.0,      // Slight bow up
+    "roll_deg": 3.0,       // Slight port roll
+    "yaw_deg": 180.0,      // Heading south
+    "magnetic_heading_deg": 178.5
+  },
+  "velocity": {
+    "speed_knots": 15.0,
+    "course_deg": 180.0,
+    "vertical_speed_fpm": 0.0
+  },
+  "antennas": [
+    {
+      "antenna_id": "distress_500khz",
+      "antenna_type": "vertical_wire",
+      "frequency_range": "500 kHz",
+      "mounting": "mast_mounted",
+      "wire_length": "150.0m",
+      "wire_type": "insulated_copper",
+      "power": "500W",
+      "mode": "CW",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "historical_use": "International distress and calling frequency"
+    },
+    {
+      "antenna_id": "marine_2mhz_ssb",
+      "antenna_type": "wire_antenna",
+      "frequency_range": "1.6-4.0 MHz",
+      "mounting": "mast_to_mast",
+      "wire_length": "75.0m",
+      "wire_type": "insulated_copper",
+      "power": "1000W",
+      "mode": "SSB",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "historical_use": "Marine MF/HF-SSB radios"
+    },
+    {
+      "antenna_id": "distress_630m",
+      "antenna_type": "wire_antenna",
+      "frequency_range": "472-479 kHz",
+      "mounting": "mast_to_mast",
+      "wire_length": "60.0m",
+      "wire_type": "insulated_copper",
+      "power": "100W",
+      "mode": "CW",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "historical_use": "Maritime distress frequency"
+    },
+    {
+      "antenna_id": "nav_2200m",
+      "antenna_type": "wire_antenna",
+      "frequency_range": "135.7-137.8 kHz",
+      "mounting": "mast_to_mast",
+      "wire_length": "200.0m",
+      "wire_type": "insulated_copper",
+      "power": "200W",
+      "mode": "CW",
+      "azimuth_deg": 0.0,
+      "elevation_deg": 0.0,
+      "historical_use": "Maritime navigation"
+    }
+  ]
+}
+```
+- **Frequency**: 3.5 MHz (80m band) - optimal for loop antenna
+- **Power**: 400W typical for small-medium commercial vessels
+- **Size**: Up to 1,000 TEUs (first generation containerships)
+- **Mounting**: Deck level, clear of cargo operations
+
+**Technical Advantages of 80m Loop at 3.75 MHz:**
+- **Electrical Length**: 1.05 wavelengths (slightly longer than full wavelength)
+- **Current Distribution**: Maximum current at multiple points around loop
+- **In-Phase Currents**: Reinforce signal capture and radiation
+- **Broadband Response**: Wider frequency response than resonant antennas
+- **Large Capture Area**: ~530 square meters physical aperture
+- **Low Noise Design**: Closed-loop topology rejects common-mode interference
+- **Height Advantage**: 10m above deck reduces local noise sources
+
+**Vehicle Dynamics Effects:**
+- **Ship roll**: 3° (Port side down)
+- **Loop antenna orientation**: Affected by ship roll, directional pattern
+- **Loop efficiency**: Some reduction due to roll, but still effective
+- **Ground plane**: Large ship hull provides excellent ground plane
+- **Signal quality**: Good (directional but fixed orientation)
 
 ### Propagation Calculation
 
@@ -436,8 +823,8 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
   "alt1": 0.0,
   "alt2": 0.0,
   "frequency_mhz": 3.500,
-  "power_watts": 100.0,
-  "antenna_type": "loop",
+  "power_watts": 400.0,
+  "antenna_type": "horizontal_loop",
   "include_vehicle_dynamics": true,
   "vehicle_id": "MSC_OCEAN",
   "antenna_id": "hf_loop_80m"
@@ -447,14 +834,170 @@ Vehicle dynamics are automatically integrated into propagation calculations to p
 **Result:**
 ```json
 {
-  "signal_quality": 0.82,
-  "signal_strength_db": -4.1,
-  "antenna_gain_db": 3.0,
+  "signal_quality": 0.92,
+  "signal_strength_db": 3.8,
+  "antenna_gain_db": 4.2,
   "vehicle_attitude_effect_db": -0.6,
+  "loop_efficiency": 0.85,
+  "electrical_length_wavelengths": 1.05,
+  "capture_area_sqm": 530,
+  "noise_rejection_db": 8.5,
   "propagation_mode": "groundwave",
-  "saltwater_ground_effect": 3.2
+  "ground_plane_effect": 3.8
 }
 ```
+
+### Why This 80m Loop Configuration Is Highly Effective
+
+**Electrical Resonance Characteristics:**
+- **1.05 Wavelengths**: Slightly longer than full wavelength creates multiple current maxima
+- **In-Phase Currents**: Currents at different points around loop reinforce each other
+- **Broadband Response**: Works well across entire 80m band (3.5-4.0 MHz)
+- **Lower Radiation Resistance**: Reduces thermal noise compared to resonant antennas
+
+**Large Capture Area Benefits:**
+- **Physical Aperture**: 530 square meters (assuming square configuration)
+- **Effective Aperture**: Much larger than dipole's linear capture
+- **Signal Gathering**: Intercepts more electromagnetic energy from weak signals
+- **Spatial Diversity**: Multiple current maxima provide reception diversity
+
+**Low Noise Mechanisms:**
+- **Closed Loop Topology**: Balanced system rejects common-mode interference
+- **Differential Mode Enhancement**: Radio waves enhanced, local noise rejected
+- **Height Advantage**: 10m above deck reduces coupling to ship electrical systems
+- **Noise Source Separation**: Clear of LED lights, switching supplies, and utilities
+
+**Why Contesters Value This Configuration:**
+- **Weak Signal Reception**: Large physical size captures more signal power
+- **Low Noise Floor**: Reveals weak stations that other antennas miss
+- **Interference Rejection**: Balanced feed system rejects common-mode interference
+- **Consistent Performance**: Works well across entire 80m band
+- **Directional Nulling**: Loop geometry provides some directional characteristics
+
+## Historical Maritime HF Bands Configuration
+
+### Configuration Options
+
+```ini
+# Historical Maritime HF Bands (Optional)
+[historical_maritime_bands]
+# Enable historical maritime HF bands (472 kHz, 136 kHz, 500 kHz, 2 MHz)
+# These bands were historically used for maritime distress and communication
+# before being allocated to amateur radio operators
+enable_historical_maritime_bands = true
+
+# 500 kHz band - International distress and calling frequency
+enable_500khz_band = true
+500khz_power_limit_watts = 500
+500khz_mode = CW
+500khz_historical_use = "International distress and calling frequency"
+500khz_primary_until_gmdss = true
+
+# 2 MHz band (1.6-4 MHz) - Marine MF/HF-SSB radios
+enable_2mhz_band = true
+2mhz_power_limit_watts = 1000
+2mhz_mode = "SSB"
+2mhz_frequency_range = "1.6-4.0 MHz"
+2mhz_historical_use = "Marine MF/HF-SSB radios"
+
+# 630 meter band (472-479 kHz) - Historical maritime distress frequency
+enable_630m_band = true
+630m_power_limit_watts = 100
+630m_mode = CW
+630m_secondary_allocation = true
+
+# 2200 meter band (135.7-137.8 kHz) - Historical maritime navigation
+enable_2200m_band = true
+2200m_power_limit_watts = 200
+2200m_mode = CW
+2200m_secondary_allocation = true
+
+# Interference protection settings
+protect_primary_services = true
+automatic_power_reduction = true
+interference_monitoring = true
+```
+
+### Why You Might Want to Disable These Bands
+
+**Reasons to Disable Historical Maritime Bands:**
+
+1. **Interference Concerns:**
+   - These are secondary allocations - amateurs must not interfere with primary services
+   - Power lines and electrical equipment can cause significant interference
+   - Local noise sources (LED lights, switching supplies) are problematic
+
+2. **Antenna Requirements:**
+   - Extremely large antennas required (630m = 630 meters wavelength)
+   - Very long wire antennas needed for effective operation
+   - Ground system requirements are extensive
+
+3. **Propagation Limitations:**
+   - Limited propagation during daylight hours
+   - Very slow CW operation required
+   - Limited communication range compared to higher frequencies
+
+4. **Regulatory Compliance:**
+   - Must accept interference from primary services
+   - Automatic power reduction required if interference detected
+   - Complex licensing requirements in some countries
+
+5. **Practical Considerations:**
+   - Very slow data rates (CW only)
+   - Limited number of active operators
+   - Requires specialized equipment and antennas
+
+**When to Enable These Bands:**
+
+1. **Historical Simulation:**
+   - Simulating pre-GMDSS maritime communications
+   - Educational purposes for maritime radio history
+   - Realistic period-accurate radio operations
+
+2. **Specialized Operations:**
+   - Long-distance ground wave propagation simulation
+   - Emergency communication scenarios
+   - Research into low-frequency propagation
+
+3. **Contest Operations:**
+   - Amateur radio contests on these bands
+   - Special event stations
+   - Experimental communications
+
+### Band Characteristics
+
+**500 kHz Band (International Distress):**
+- **Historical Use**: International distress and calling frequency
+- **Primary Use**: CW (Morse code) communications
+- **Emergency Status**: Primary emergency frequency until GMDSS implementation
+- **Power Limit**: 500W maximum (historical maritime)
+- **Mode**: CW only
+- **Wavelength**: 600 meters
+- **Propagation**: Ground wave dominant
+
+**2 MHz Band (1.6-4 MHz):**
+- **Historical Use**: Marine MF/HF-SSB radios
+- **Frequency Range**: 1.6-4.0 MHz
+- **Power Limit**: 1000W maximum (historical maritime)
+- **Mode**: SSB (Single Sideband)
+- **Wavelength**: 150-187 meters
+- **Propagation**: Ground wave and sky wave
+
+**630 Meter Band (472-479 kHz):**
+- **Historical Use**: Maritime distress and calling frequency
+- **Amateur Allocation**: Secondary (2017 in USA)
+- **Power Limit**: 100W maximum
+- **Mode**: CW only
+- **Wavelength**: 630 meters
+- **Propagation**: Ground wave, limited sky wave
+
+**2200 Meter Band (135.7-137.8 kHz):**
+- **Historical Use**: Maritime navigation and communication
+- **Amateur Allocation**: Secondary (2017 in USA, 1998 in UK)
+- **Power Limit**: 200W maximum
+- **Mode**: CW only
+- **Wavelength**: 2200 meters
+- **Propagation**: Ground wave dominant
 
 ## API Usage Examples
 

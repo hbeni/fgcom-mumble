@@ -1,0 +1,77 @@
+EZNEC ver. 7.0
+; Long Wire Maritime HF Antenna - 2200m
+; Maritime navigation frequency (135.7-137.8 kHz)
+; Height: 10m above ground
+; Horizontal polarization
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+; LONG WIRE ANTENNA (200m length, horizontal)
+W001 0.0 0.0 10.0 200.0 0.0 10.0 0.006 400
+; GROUND RADIALS (4 radials, λ/4 at 136 kHz = 551m)
+W002 0.0 0.0 0.0 551.0 0.0 0.0 0.003 551
+W003 0.0 0.0 0.0 -551.0 0.0 0.0 0.003 551
+W004 0.0 0.0 0.0 0.0 551.0 0.0 0.003 551
+W005 0.0 0.0 0.0 0.0 -551.0 0.0 0.003 551
+; SOURCE
+; Fed at one end of long wire
+SY SRC W001 1 1
+; GROUND
+; Real ground at 0m height, antenna at 10m
+GD 1 0 0 0 0.005 0.013
+; LOADS
+; Copper wire construction
+LD 5 1 5 0 3.7E+07 0
+; Copper conductivity
+; FREQUENCY
+; Center frequency 136 kHz
+FR 0 1 0 0 136.0 0
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+; FREQUENCY SWEEP - 2200m band
+; FR 0 11 0 0 136.0 0.1
+; COMMENTS
+; Long Wire Maritime HF Antenna Model
+; Maritime navigation frequency (135.7-137.8 kHz)
+; Specifications:
+; - Frequency: 135.7-137.8 kHz (2200m amateur band)
+; - Configuration: Long wire horizontal
+; - Height: 10m above ground
+; - Wire length: 200m (multiple wavelengths)
+; - Ground radials: 4 × 551m (λ/4 at 136 kHz)
+; - Polarization: Horizontal
+; - Max power: 200W
+; - Weight: 22.5 kg
+; Antenna Design:
+; - Long wire provides directional pattern
+; - End-fed configuration
+; - Ground radials provide ground reference
+; - ATU required for impedance matching
+; Expected Performance:
+; - Gain: ~4-5 dBi directional
+; - Elevation pattern: Low angle (~3-5°)
+; - SWR: <2:1 with proper ATU tuning
+; - Impedance: 50Ω (after ATU transformation)
+; Ground Effects at 10m Height:
+; - Good ground reference through radials
+; - Low elevation angle radiation
+; - Directional azimuth pattern
+; - Minimal ground interaction at 136 kHz
+; Construction Notes:
+; - Heavy-duty copper wire construction
+; - Weather-sealed connections
+; - Lightning protection required
+; - Regular inspection of wire connections
+; Typical Applications:
+; - Maritime navigation communications
+; - 2200m amateur band operations
+; - Historical maritime operations
+; - Long-distance communications
+; Optimization Notes:
+; - Wire length optimized for 136 kHz
+; - Ground radial system for proper operation
+; - ATU tuning for impedance matching
+; - Weather protection for marine environment
+; This model represents a historical maritime long wire
+; antenna suitable for 2200m band operations
+; as used on ships before GMDSS implementation
+

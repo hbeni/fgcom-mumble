@@ -5,8 +5,8 @@
 
 set -e
 
-SCRIPT_DIR="$(dirname "$0")"
-ANTENNA_FILE="$SCRIPT_DIR/antenna_patterns/Ground-based/dual_band_omni/dual_band_omni_2m_70cm.ez"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ANTENNA_FILE="$SCRIPT_DIR/antenna_patterns/Ground-based/vertical/dual_band_omni/dual_band_omni_simple.ez"
 MAX_JOBS=$(nproc)
 
 # 2m band frequencies (144-146 MHz)
@@ -123,12 +123,12 @@ cat > "$(dirname "$ANTENNA_FILE")/dual_band_omni_patterns_index.txt" << EOF
 EOF
 
 find "$(dirname "$ANTENNA_FILE")" -path "*/patterns/*" -name "*_pattern.txt" | while read pattern_file; do
-    local relative_path=$(echo "$pattern_file" | sed "s|$(dirname "$ANTENNA_FILE")/||")
-    local filename=$(basename "$pattern_file")
-    local antenna_name=$(echo "$filename" | sed 's/_[0-9.]*MHz_[0-9]*m_pattern.txt//')
-    local frequency=$(echo "$filename" | sed 's/.*_\([0-9.]*\)MHz_.*/\1/')
-    local altitude=$(echo "$filename" | sed 's/.*_[0-9.]*MHz_\([0-9]*\)m_.*/\1/')
-    local band=$(echo "$pattern_file" | sed 's|.*/patterns/\([^/]*\)/.*|\1|')
+    relative_path=$(echo "$pattern_file" | sed "s|$(dirname "$ANTENNA_FILE")/||")
+    filename=$(basename "$pattern_file")
+    antenna_name=$(echo "$filename" | sed 's/_[0-9.]*MHz_[0-9]*m_pattern.txt//')
+    frequency=$(echo "$filename" | sed 's/.*_\([0-9.]*\)MHz_.*/\1/')
+    altitude=$(echo "$filename" | sed 's/.*_[0-9.]*MHz_\([0-9]*\)m_.*/\1/')
+    band=$(echo "$pattern_file" | sed 's|.*/patterns/\([^/]*\)/.*|\1|')
     
     echo "$antenna_name $frequency $altitude $band $relative_path" >> "$(dirname "$ANTENNA_FILE")/dual_band_omni_patterns_index.txt"
 done
@@ -175,7 +175,7 @@ cat > "$(dirname "$ANTENNA_FILE")/dual_band_omni_specifications.txt" << EOF
 EOF
 
 find "$(dirname "$ANTENNA_FILE")" -path "*/patterns/*" -name "*_pattern.txt" | while read pattern_file; do
-    local filename=$(basename "$pattern_file")
+    filename=$(basename "$pattern_file")
     echo "- $filename" >> "$(dirname "$ANTENNA_FILE")/dual_band_omni_specifications.txt"
 done
 
