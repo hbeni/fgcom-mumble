@@ -1,0 +1,228 @@
+EZNEC ver. 7.0
+
+; Leopard 1 NATO Main Battle Tank VHF Configuration
+; VHF-FM tactical antenna active, all other antennas as passive elements
+; West German MBT with realistic multi-antenna environment
+; Ground-level operations with steel armor ground plane
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Leopard 1 main hull (9.54m length, 3.25m width, 2.39m height to turret ring)
+; Lower hull structure
+W001  -4.77 -1.62  0.0   4.77 -1.62  0.0   0.8   20
+W002  -4.77  1.62  0.0   4.77  1.62  0.0   0.8   20
+W003  -4.77 -1.62  0.0  -4.77  1.62  0.0   0.6   7
+W004   4.77 -1.62  0.0   4.77  1.62  0.0   0.6   7
+
+; Hull top (deck level)
+W005  -4.77 -1.62  2.0   4.77 -1.62  2.0   0.6   20
+W006  -4.77  1.62  2.0   4.77  1.62  2.0   0.6   20
+W007  -4.77 -1.62  2.0  -4.77  1.62  2.0   0.5   7
+W008   4.77 -1.62  2.0   4.77  1.62  2.0   0.5   7
+
+; Hull cross-bracing (internal structure)
+W009  -3.0  -1.62  0.0  -3.0   1.62  0.0   0.4   7
+W010  -1.0  -1.62  0.0  -1.0   1.62  0.0   0.4   7
+W011   1.0  -1.62  0.0   1.0   1.62  0.0   0.4   7
+W012   3.0  -1.62  0.0   3.0   1.62  0.0   0.4   7
+
+; Turret structure (circular, 3.15m diameter)
+; Turret ring and base
+W013   1.0  -1.57  2.0   1.0   1.57  2.0   0.5   6
+W014   0.0  -1.57  2.4   2.0   0.0   2.4   0.5   8
+W015   2.0   0.0   2.4   0.0   1.57  2.4   0.5   8
+W016   0.0   1.57  2.4  -2.0   0.0   2.4   0.5   8
+W017  -2.0   0.0   2.4   0.0  -1.57  2.4   0.5   8
+
+; Turret top (commander's cupola area)
+W018   0.5  -0.8   2.8   0.5   0.8   2.8   0.3   3
+W019  -0.5  -0.8   2.8  -0.5   0.8   2.8   0.3   3
+W020   0.5  -0.8   2.8  -0.5  -0.8   2.8   0.3   3
+W021   0.5   0.8   2.8  -0.5   0.8   2.8   0.3   3
+
+; Main gun (105mm L7 - 7.4m length)
+W022   1.5   0.0   2.5   9.0   0.0   2.5   0.15  15
+
+; TANK ANTENNA SYSTEMS - PRIMARY VHF ACTIVE, OTHERS PASSIVE
+
+; Primary VHF-FM tactical antenna (whip on turret rear) - ACTIVE
+; Standard NATO tank whip - 2.4m length
+W023  -1.8   0.0   2.8  -1.8   0.0   5.2   0.006  12
+
+; Secondary VHF antenna (hull-mounted backup) - PASSIVE
+W024   3.5  -1.5   2.0   3.5  -1.5   3.5   0.005   8
+
+; UHF antenna (NATO SINCGARS - shorter whip) - PASSIVE
+W025  -1.5   1.2   2.8  -1.5   1.2   4.0   0.004   6
+
+; HF antenna (long-range communication) - PASSIVE
+; Collapsible whip when extended (4m total)
+W026   1.2   1.0   2.8   1.2   1.0   6.8   0.008  20
+
+; Commander's antenna (inter-vehicle communication) - PASSIVE
+W027   0.3   0.5   3.0   0.3   0.5   3.8   0.003   4
+
+; IFF/Identification antenna (blade type on turret side) - PASSIVE
+W028   1.5   1.5   2.6   1.5   1.5   3.2   0.004   3
+
+; Navigation antenna (GPS retrofit - modern addition) - PASSIVE
+W029  -0.8  -1.0   2.9  -0.8  -1.0   3.1   0.02    1
+
+; Track/road wheel assemblies (simplified)
+; Port side road wheels
+W030  -3.5  -2.0  -0.5  -3.5  -1.8   0.0   0.1    3
+W031  -1.5  -2.0  -0.5  -1.5  -1.8   0.0   0.1    3
+W032   0.5  -2.0  -0.5   0.5  -1.8   0.0   0.1    3
+W033   2.5  -2.0  -0.5   2.5  -1.8   0.0   0.1    3
+W034   4.0  -2.0  -0.5   4.0  -1.8   0.0   0.1    3
+
+; Starboard side road wheels
+W035  -3.5   2.0  -0.5  -3.5   1.8   0.0   0.1    3
+W036  -1.5   2.0  -0.5  -1.5   1.8   0.0   0.1    3
+W037   0.5   2.0  -0.5   0.5   1.8   0.0   0.1    3
+W038   2.5   2.0  -0.5   2.5   1.8   0.0   0.1    3
+W039   4.0   2.0  -0.5   4.0   1.8   0.0   0.1    3
+
+; Track chains (conductive path)
+W040  -4.5  -2.0  -0.3   4.5  -2.0  -0.3   0.05  18
+W041  -4.5   2.0  -0.3   4.5   2.0  -0.3   0.05  18
+
+; Engine compartment (rear hull - affects RF)
+W042   2.5  -1.5   1.0   4.5  -1.5   1.0   0.3    4
+W043   2.5   1.5   1.0   4.5   1.5   1.0   0.3    4
+W044   2.5  -1.5   1.0   2.5   1.5   1.0   0.3    3
+W045   4.5  -1.5   1.0   4.5   1.5   1.0   0.3    3
+
+; SOURCE - Feed only the primary VHF-FM tactical antenna
+SY SRC  W023  6  1
+
+; GROUND
+; Typical battlefield ground conditions
+GD 0 0 0 0 0.003 0.015  ; Poor to average ground (dirt, sand, gravel)
+
+; LOADS
+; Tank structure - heavy steel armor
+LD 5 1 22 0 1E+07 0     ; Steel hull, turret, gun barrel
+; All passive antennas - steel structure (no active loading)
+LD 5 24 29 0 1E+07 0     ; All other antennas as passive steel elements
+; Tracks and running gear - steel
+LD 5 30 45 0 5E+06 0     ; Track assemblies and road wheels
+; Primary VHF antenna - active with matching
+LD 4 23 23 0 50.0 0.0    ; 50Ω VHF antenna system
+
+; FREQUENCY - NATO VHF-FM tactical frequency
+FR 0 1 0 0 41.500 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; Leopard 1 NATO Main Battle Tank VHF Configuration with Passive Antennas
+; Realistic multi-antenna tank environment with VHF-FM primary active
+; All other communication antennas present but passive (powered down)
+;
+; Key Configuration:
+; 1. Primary VHF-FM (W023): 2.4m whip on turret rear - ACTIVE
+; 2. Secondary VHF (W024): 1.5m hull backup antenna - PASSIVE
+; 3. UHF antenna (W025): 1.2m SINCGARS whip - PASSIVE
+; 4. HF antenna (W026): 4m collapsible whip - PASSIVE
+; 5. Commander's antenna (W027): 0.8m inter-vehicle - PASSIVE
+; 6. IFF antenna (W028): 0.6m blade antenna - PASSIVE
+; 7. GPS antenna (W029): 0.2m patch antenna - PASSIVE
+;
+; Primary VHF-FM Antenna (W023) Details:
+; - Position: Turret rear centerline (-1.8m, 0, 2.8m to 5.2m)
+; - Type: 2.4m military whip antenna (quarter-wave at 31 MHz)
+; - Frequency: 30-88 MHz NATO VHF-FM tactical band
+; - Feed: Center-fed monopole (segment 6 of 12)
+; - Ground plane: Massive steel tank hull (excellent)
+;
+; Passive Antenna Effects on VHF:
+; - Multiple parasitic elements create complex coupling
+; - 4m HF whip = 5.5λ at 41.5 MHz (major parasitic element)
+; - 1.5m secondary VHF = 2.1λ at 41.5 MHz (resonant coupling)
+; - 1.2m UHF whip = 1.7λ at 41.5 MHz (moderate coupling)
+; - Multiple short antennas create pattern ripples
+;
+; Tank-Specific Coupling Effects:
+; - Massive steel hull provides excellent ground plane
+; - Gun barrel acts as major parasitic element (7.4m length)
+; - Turret structure creates pattern asymmetry
+; - Multiple antennas in close proximity (turret-mounted)
+; - Track assemblies provide additional ground connection
+;
+; Expected VHF Performance with Multi-Antenna Coupling:
+; - Gain: +3 to +8 dBi (excellent due to large ground plane)
+; - Pattern: Complex with nulls/lobes from passive elements
+; - SWR: Variable due to parasitic antenna interactions
+; - Efficiency: High due to excellent tank hull ground plane
+;
+; NATO Tank Communication Scenario:
+; - VHF-FM active for tactical battlefield communication
+; - All other radio systems powered down (typical single-net ops)
+; - Multiple antennas always physically present
+; - Realistic armored warfare communication environment
+; - Primary frequency: 41.5 MHz (center of NATO VHF-FM band)
+;
+; Tank Ground Plane Advantages:
+; - Massive steel structure (42-ton tank)
+; - Large horizontal surface (9.5m x 3.25m)
+; - Excellent conductivity (steel armor)
+; - Low ground losses due to size
+; - Enhanced gain compared to smaller vehicles
+;
+; Multi-Antenna Interaction Effects:
+; - 4m HF whip creates major pattern distortion
+; - Secondary VHF antenna affects primary performance
+; - UHF whip adds parasitic coupling
+; - Multiple short antennas create pattern ripples
+; - Gun barrel position affects patterns when traversed
+;
+; Battlefield Environment Considerations:
+; - Tank height (2.8m) creates moderate ground effects
+; - Steel tracks provide additional ground connection
+; - Engine compartment affects rear-sector patterns
+; - Turret rotation changes antenna relative positions
+; - Combat damage may affect antenna performance
+;
+; NATO vs Warsaw Pact Frequency Differences:
+; - NATO: 30-88 MHz VHF-FM (this model)
+; - Warsaw Pact: 20-52 MHz VHF-FM
+; - NATO frequencies chosen to avoid Soviet jamming
+; - Higher frequencies allow shorter, more efficient antennas
+; - Better propagation characteristics for tactical use
+;
+; Analysis Recommendations:
+; - Primary frequency: 41.5 MHz (NATO VHF-FM center)
+; - Sweep analysis: 30-88 MHz for full tactical band
+; - Pattern analysis shows complex multi-antenna effects
+; - Compare with passive antennas removed to see coupling
+; - Ground effects moderate but significant at tank height
+;
+; Expected Pattern Characteristics:
+; - Generally omnidirectional with ground plane enhancement
+; - Pattern distortion from 4m HF whip (major parasitic)
+; - Nulls/lobes from secondary VHF antenna coupling
+; - Enhanced gain in most directions due to tank ground plane
+; - Some directional bias from turret-mounted antenna cluster
+;
+; Combat Communication Reality:
+; - Single radio system active (frequency coordination)
+; - Multiple antennas provide redundancy and capability
+; - Passive antennas create realistic coupling environment
+; - Pattern changes with turret/gun orientation
+; - Excellent VHF performance due to tank ground plane
+;
+; Cold War NATO Doctrine:
+; - VHF-FM primary for company/platoon level communication
+; - Multiple backup systems for combat survivability
+; - Standardization across NATO forces
+; - Integration with combined arms operations
+; - Electronic warfare resistance through frequency agility
+;
+; This model represents the excellent VHF-FM performance
+; achievable with NATO main battle tanks due to their
+; large steel ground plane, while showing the complex
+; antenna interactions present in realistic multi-antenna
+; military vehicle installations.

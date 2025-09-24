@@ -1,0 +1,188 @@
+EZNEC ver. 7.0
+
+; NATO Military Vehicle VHF Configuration - VHF Active, Whip Passive
+; Primary VHF antenna active, tied-down whip as passive element
+; Typical setup: M151 Jeep/Land Rover with multiple antennas
+; Realistic multi-antenna military vehicle environment
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Vehicle body representation (Jeep/Land Rover size)
+; Main chassis/body - 4.5m length, 1.8m width
+W001  -2.25  -0.9   0.0   2.25  -0.9   0.0   0.05  18
+W002  -2.25   0.9   0.0   2.25   0.9   0.0   0.05  18
+W003  -2.25  -0.9   0.0  -2.25   0.9   0.0   0.05   8
+W004   2.25  -0.9   0.0   2.25   0.9   0.0   0.05   8
+
+; Hood and engine compartment
+W005  -2.25  -0.6   0.0  -1.5   -0.6   0.0   0.05   4
+W006  -2.25   0.6   0.0  -1.5    0.6   0.0   0.05   4
+W007  -2.25  -0.6   0.0  -2.25   0.6   0.0   0.05   5
+
+; Roof/cargo area (if hardtop)
+W008  -0.5   -0.8   1.8   1.5   -0.8   1.8   0.03  10
+W009  -0.5    0.8   1.8   1.5    0.8   1.8   0.03  10
+W010  -0.5   -0.8   1.8  -0.5    0.8   1.8   0.03   8
+W011   1.5   -0.8   1.8   1.5    0.8   1.8   0.03   8
+
+; HF WHIP ANTENNA - NOW PASSIVE (10 feet = 3.05m) TIED DOWN AT 45 DEGREES
+; Mounted on rear corner, tied down to front corner - NO SOURCE
+W012   1.8    0.7   1.9  -1.8   -0.7   4.06  0.005  15
+
+; Antenna base spring/mount - PASSIVE
+W013   1.8    0.7   1.8   1.8    0.7   1.9   0.01   1
+
+; Tie-down rope/cable (non-radiating)
+W014   1.8    0.7   1.9  -1.8   -0.7   1.9   0.001   1
+
+; VHF COM ANTENNA - PRIMARY ACTIVE ANTENNA (NEW)
+; Vertical blade antenna on vehicle center (common military position)
+; Positioned for optimal omnidirectional coverage
+W015   0.0    0.0   1.8   0.0    0.0   2.3   0.006  10
+
+; UHF ANTENNA - PASSIVE (typical NATO SINCGARS installation)
+; Short whip on front of vehicle
+W016  -1.5   -0.8   1.8  -1.5   -0.8   2.5   0.004   7
+
+; INTERCOM ANTENNA - PASSIVE (crew coordination)
+; Small whip on driver side
+W017  -0.8    0.9   1.8  -0.8    0.9   2.1   0.003   3
+
+; SOURCE - Feed only the VHF COM antenna
+SY SRC  W015  5  1
+
+; GROUND
+; Average ground (field conditions)
+GD 0 0 0 0 0.005 0.013  ; Typical field ground
+
+; LOADS
+; Vehicle body - steel construction
+LD 5 1 11 0 1E+07 0     ; Good conductor for vehicle body
+; All passive antennas - steel structure (no active loading)
+LD 5 12 13 0 1E+07 0    ; Tied-down whip and base - PASSIVE
+LD 5 16 17 0 1E+07 0    ; UHF and intercom antennas - PASSIVE
+; Tie-down rope - non-conducting
+LD 5 14 14 0 1E-10 0    ; Insulating rope/cable
+; VHF antenna - active with matching
+LD 4 15 15 0 50.0 0.0   ; 50Ω VHF antenna system
+
+; FREQUENCY - NATO VHF tactical frequency
+FR 0 1 0 0 50.0 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; NATO Military Vehicle VHF Configuration with Passive Whip Element
+; Realistic multi-antenna military vehicle with VHF COM primary active
+; 10-foot whip tied down at 45 degrees as passive parasitic element
+;
+; Key Configuration:
+; 1. VHF COM antenna (W015): 0.5m vertical blade on vehicle center - ACTIVE
+; 2. HF whip antenna (W012): 3.05m tied down at 45 degrees - PASSIVE (no source)
+; 3. UHF antenna (W016): 0.7m SINCGARS whip - PASSIVE
+; 4. Intercom antenna (W017): 0.3m crew coordination whip - PASSIVE
+;
+; VHF COM Antenna (W015) Details:
+; - Position: Vehicle center (0, 0, 1.8m to 2.3m)
+; - Type: 0.5m vertical blade antenna (quarter-wave at 150 MHz)
+; - Frequency: 30-88 MHz NATO VHF-FM tactical band
+; - Feed: Center-fed monopole (segment 5 of 10)
+; - Mounting: Vehicle roof center for optimal pattern
+;
+; Passive Whip Antenna Effects on VHF:
+; - 3.05m whip = 5.1λ at 50 MHz (multi-resonant parasitic element)
+; - 45-degree angle creates horizontal and vertical components
+; - Tied-down configuration acts as slanted dipole element
+; - Major pattern distortion due to size and orientation
+; - Creates directional bias toward tie-down direction
+;
+; Vehicle Ground Plane Effects:
+; - 4.5m x 1.8m steel body provides good ground plane
+; - Much smaller than tank but adequate for VHF
+; - Vehicle height (1.8m) creates moderate ground effects
+; - Metal body enhances VHF antenna performance
+; - Roof-mounted position optimal for coverage
+;
+; Expected VHF Performance with Whip Coupling:
+; - Gain: 0 to +4 dBi (good for tactical vehicle)
+; - Pattern: Directional due to large passive whip element
+; - Strong directional bias toward whip tie-down direction
+; - SWR variations from whip coupling effects
+;
+; Military Vehicle Scenario:
+; - VHF COM active for tactical communication
+; - HF whip tied down for movement under obstacles
+; - UHF system powered down (typical single-net ops)
+; - Intercom system inactive (crew coordination when needed)
+; - Realistic field deployment configuration
+;
+; 45-Degree Whip Configuration Effects:
+; - Creates slanted parasitic dipole element
+; - Horizontal component affects VHF horizontal patterns
+; - Vertical component creates vertical pattern distortion
+; - Tie-down point creates current concentration
+; - Major influence on VHF radiation patterns
+;
+; NATO Tactical Vehicle Communication:
+; - Multiple radio systems for different functions
+; - VHF-FM primary for company/platoon level
+; - HF for long-range when needed (whip raised)
+; - UHF for air-ground coordination
+; - Intercom for crew coordination
+;
+; Tied-Down Whip Operational Benefits:
+; - Allows passage under bridges, trees, buildings
+; - Reduces vehicle silhouette for concealment
+; - Prevents antenna damage during movement
+; - Still provides some HF capability if needed
+; - Standard tactical procedure for movement
+;
+; Small Vehicle Limitations:
+; - Limited ground plane compared to larger vehicles
+; - Close antenna spacing creates strong coupling
+; - Height restrictions affect antenna placement
+; - Weight/space constraints limit antenna options
+; - Single operator often manages multiple radios
+;
+; Expected Pattern Characteristics:
+; - Strong directional bias from 45-degree whip
+; - Enhanced gain toward whip tie-down direction
+; - Pattern nulls opposite to whip orientation
+; - Moderate omnidirectional coverage in other directions
+; - Ground plane enhancement from vehicle body
+;
+; Analysis Recommendations:
+; - Primary frequency: 50 MHz (center of VHF tactical band)
+; - Sweep analysis: 30-88 MHz for full NATO VHF-FM band
+; - 3D pattern essential due to complex whip coupling
+; - Compare with whip removed to isolate coupling effects
+; - Ground effects significant for vehicle height operations
+;
+; Realistic Tactical Communication Range:
+; - VHF tactical: 5-15 km depending on terrain
+; - Enhanced range in whip-favored directions
+; - Reduced performance opposite to whip
+; - Adequate for company/platoon operations
+; - Vehicle mobility maintains communication links
+;
+; Cold War NATO Doctrine:
+; - Standardized frequencies across alliance
+; - Multiple communication nets per vehicle
+; - Frequency coordination for multi-vehicle operations
+; - Electronic warfare considerations
+; - Mobility paramount - antennas must not impede movement
+;
+; Field Deployment Considerations:
+; - Whip tied down for tactical movement
+; - VHF maintains essential communications
+; - Antenna interactions accepted for operational flexibility
+; - Crew training emphasizes multi-radio coordination
+; - Pattern distortion compensated by vehicle positioning
+;
+; This model represents typical NATO tactical vehicle
+; communication in field conditions - VHF COM primary
+; for tactical coordination, with HF whip tied down
+; as major parasitic element creating realistic
+; antenna interaction effects in military vehicles.

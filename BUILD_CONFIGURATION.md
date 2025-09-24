@@ -14,18 +14,18 @@ jsimconnect provides integration with Microsoft Flight Simulator 2020 (MSFS2020)
 ### When to use each option:
 
 #### **With jsimconnect** (Default: `ENABLE_JSIMCONNECT=true`)
-- ✅ **Use when**: You want MSFS2020 integration
-- ✅ **Use when**: You need automatic aircraft position tracking
-- ✅ **Use when**: You want radio frequencies synced with flight simulator
-- ❌ **Don't use when**: You only need standalone radio simulation
-- ❌ **Don't use when**: You're using other clients (like supermorse-web)
+- **Use when**: You want MSFS2020 integration
+- **Use when**: You need automatic aircraft position tracking
+- **Use when**: You want radio frequencies synced with flight simulator
+- **Don't use when**: You only need standalone radio simulation
+- **Don't use when**: You're using other clients (like supermorse-web)
 
 #### **Without jsimconnect** (Set: `ENABLE_JSIMCONNECT=false`)
-- ✅ **Use when**: You only need standalone radio simulation
-- ✅ **Use when**: You're using other Mumble clients (supermorse-web, etc.)
-- ✅ **Use when**: You don't have MSFS2020
-- ✅ **Use when**: You want smaller JAR file (663KB vs 789KB)
-- ❌ **Don't use when**: You need MSFS2020 integration
+- **Use when**: You only need standalone radio simulation
+- **Use when**: You're using other Mumble clients (supermorse-web, etc.)
+- **Use when**: You don't have MSFS2020
+- **Use when**: You want smaller JAR file (663KB vs 789KB)
+- **Don't use when**: You need MSFS2020 integration
 
 ## Build Commands
 
@@ -64,7 +64,7 @@ make build-radioGUI-without-jsimconnect
 ```
 
 This will:
-- ✅ Skip jsimconnect compilation
-- ✅ Create smaller JAR file
-- ✅ Still provide full radio simulation features
-- ✅ Work perfectly with supermorse-web and other Mumble clients
+- Skip jsimconnect compilation
+- Create smaller JAR file
+- Still provide full radio simulation features
+- Work perfectly with supermorse-web and other Mumble clients
