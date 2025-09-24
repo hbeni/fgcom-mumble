@@ -37,6 +37,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Lightning Data Integration**: Real-time atmospheric noise simulation from lightning strikes
 - **Weather Data Integration**: Atmospheric condition effects on radio propagation
 - **Security Features**: TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration
+- **Noise Floor Calculation**: Advanced atmospheric noise modeling with environment-specific calculations and manual position setting via GPS or Maidenhead locators
 
 Documentation
 =============
@@ -61,6 +62,11 @@ The documentation is split up into relevant parts:
 - [Military HF Frequencies](client/mumble-plugin/lib/MILITARY_HF_FREQUENCIES.md) NATO and Eastern Bloc military frequency documentation
 - [Frequency Offset Documentation](client/mumble-plugin/lib/FREQUENCY_OFFSET_DOCUMENTATION.md) Audio processing and frequency offset simulation
 - [Changes Log](client/mumble-plugin/lib/changes.md) Detailed development history and feature implementation log
+
+### Antenna Pattern Visualization:
+The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
+
+![Gain Pattern Visualization](https://raw.githubusercontent.com/Supermagnum/fgcom-mumble/refs/heads/master/Screenshots/gain%20pattern.png)
 
 ### Bugs/Feature requests/coding help
 The project lives on github: https://github.com/hbeni/fgcom-mumble

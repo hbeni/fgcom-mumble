@@ -1,0 +1,11 @@
+CM 160m Inverted L Antenna
+CM Ground-fed, 1/4 wavelength vertical with horizontal top
+CM Resonant at 1.8 MHz (160m band)
+CM Vertical section: 40m, Horizontal section: 40m
+CE
+GW 1 1 0 0 0 0 0 40 0.001
+GW 2 1 0 0 40 0 40 40 0.001
+FR 0 1 0 0 1.8 0
+GN 1 0 0 0 13 0.005
+EX 0 1 1 0 1 0
+EN
