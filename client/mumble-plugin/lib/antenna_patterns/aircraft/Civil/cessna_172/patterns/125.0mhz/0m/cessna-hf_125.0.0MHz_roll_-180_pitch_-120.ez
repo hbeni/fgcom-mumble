@@ -1,0 +1,200 @@
+EZNEC ver. 7.0
+
+; Cessna 172 General Aviation Aircraft with VHF Radio
+; VHF COM antenna active, HF antennas as passive elements
+; Typical small civilian aircraft communication setup
+; Cruising altitude 2,400m - minimal ground effects
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Cessna 172 fuselage (8.28m length, 1.2m diameter - small aircraft)
+; Main fuselage structure
+W001 -4.14  0.0   0.0   4.14  0.0   0.0   0.6   17
+W002 -4.14  0.5   0.0   4.14  0.5   0.0   0.5   17
+W003 -4.14 -0.5   0.0   4.14 -0.5   0.0   0.5   17
+W004 -4.14  0.0   0.5   4.14  0.0   0.5   0.5   17
+W005 -4.14  0.0  -0.5   4.14  0.0  -0.5   0.5   17
+
+; Fuselage cross-sections (fewer due to small size)
+W006 -2.5  -0.6   0.0  -2.5   0.6   0.0   0.03   4
+W007   0.0  -0.6   0.0   0.0   0.6   0.0   0.03   4
+W008   2.5  -0.6   0.0   2.5   0.6   0.0   0.03   4
+
+; High wing configuration (11.0m wingspan - small but good ground plane)
+; Port wing
+W009 -0.5  -0.6   1.3  -0.5  -5.5   1.4   0.6   20
+W010   0.5  -0.6   1.3   0.5  -5.5   1.4   0.4   20
+; Starboard wing
+W011 -0.5   0.6   1.3  -0.5   5.5   1.4   0.6   20
+W012   0.5   0.6   1.3   0.5   5.5   1.4   0.4   20
+
+; Wing root connections
+W013 -0.5  -0.6   1.3   0.5  -0.6   1.3   0.3    4
+W014 -0.5   0.6   1.3   0.5   0.6   1.3   0.3    4
+
+; Wing tip connections
+W015 -0.5  -5.5   1.4   0.5  -5.5   1.4   0.2    4
+W016 -0.5   5.5   1.4   0.5   5.5   1.4   0.2    4
+
+; Engine cowling (single engine)
+W017 -4.0  -0.4  -0.2  -3.2  -0.4  -0.2   0.2    4
+W018 -4.0   0.4  -0.2  -3.2   0.4  -0.2   0.2    4
+W019 -4.0  -0.4  -0.2  -4.0   0.4  -0.2   0.2    4
+W020 -3.2  -0.4  -0.2  -3.2   0.4  -0.2   0.2    4
+
+; Vertical stabilizer (small)
+W021   3.5   0.0   0.0   3.5   0.0   1.8   0.15   9
+W022   3.8   0.0   0.0   3.8   0.0   1.8   0.12   9
+W023   3.5   0.0   1.8   3.8   0.0   1.8   0.1    2
+
+; Horizontal stabilizer
+W024   3.4  -1.5   0.4   3.4   1.5   0.4   0.15   6
+W025   3.7  -1.5   0.4   3.7   1.5   0.4   0.12   6
+W026   3.4  -1.5   0.4   3.7  -1.5   0.4   0.1    2
+W027   3.4   1.5   0.4   3.7   1.5   0.4   0.1    2
+
+; HF ANTENNA SYSTEMS - NOW PASSIVE (no sources)
+; HF whip antenna (common GA installation) - PASSIVE
+W028   1.0   0.0   1.4   1.0   0.0   4.0   0.004  13
+
+; HF wire antenna between wing tips - PASSIVE
+; Port side wire (wing tip to fuselage)
+W029   0.0  -5.3   1.4   2.0   0.0   1.6   0.002  11
+; Starboard side wire (fuselage to wing tip)  
+W030   2.0   0.0   1.6   0.0   5.3   1.4   0.002  11
+
+; HF antenna loading coil - PASSIVE
+W031   1.0   0.0   1.4   1.0   0.0   1.7   0.02    3
+
+; Amateur radio ground plane radials - PASSIVE
+W032   1.0   0.0   1.4   1.3   0.0   1.4   0.002   3
+W033   1.0   0.0   1.4   0.7   0.0   1.4   0.002   3
+W034   1.0   0.0   1.4   1.0   0.3   1.4   0.002   3
+W035   1.0   0.0   1.4   1.0  -0.3   1.4   0.002   3
+
+; VHF COM ANTENNA - PRIMARY ACTIVE ANTENNA (NEW)
+; Wing strut mounted blade antenna (common GA position)
+; Position on port wing strut for easy maintenance access
+W036 -0.8  -1.2   1.3  -0.8  -1.2   1.8   0.006   10
+
+; SOURCE - Feed only the VHF COM antenna
+SY SRC  W036  5  1
+
+; GROUND
+; Low altitude ground effects (2,400m typical GA cruise)
+GD 0 0 0 0 0.005 0.013  ; On ground - average soil
+
+; LOADS
+; Small aircraft structure - aluminum
+LD 5 1 35 0 3.7E+07 0  ; Aluminum fuselage, wings, control surfaces (all passive)
+; VHF antenna matching
+LD 4 36 36 0 50.0 0.0  ; 50Ω VHF antenna system
+
+; FREQUENCY - Aviation VHF COM band
+FR 0 1 0 0 125.0 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; Cessna 172 General Aviation VHF Configuration with Passive HF Elements
+; Typical small civilian aircraft with multi-antenna installation
+; VHF COM active, amateur HF antennas present but passive
+;
+; Key Configuration:
+; 1. VHF COM antenna (W036): 0.5m blade on wing strut - ACTIVE
+; 2. HF whip antenna (W028): 2.6m loaded whip - PASSIVE (no source)
+; 3. HF wire antenna (W029/W030): Wing-tip to fuselage wire - PASSIVE
+; 4. HF loading coil (W031): Impedance matching coil - PASSIVE
+; 5. Ground plane radials (W032-W035): HF efficiency elements - PASSIVE
+;
+; VHF COM Antenna (W036) Details:
+; - Position: Port wing strut (-0.8m, -1.2m, 1.3m to 1.8m)
+; - Type: 0.5m blade antenna (quarter-wave at 150 MHz)
+; - Frequency: 118-136.975 MHz aviation VHF COM band
+; - Feed: Center-fed monopole (segment 5 of 10)
+; - Mounting: Wing strut position (common GA installation)
+;
+; Passive HF Elements Effects on VHF:
+; - 2.6m HF whip = 1.08λ at 125 MHz (near-resonant parasitic element)
+; - 10.6m total wire antenna = 4.42λ at 125 MHz (multi-resonant)
+; - Ground plane radials act as coupling elements
+; - Loading coil creates reactive coupling
+; - Small aircraft size means all elements interact strongly
+;
+; Expected VHF Performance with HF Coupling:
+; - Gain: 0 to +4 dBi (good for GA, enhanced by wing ground plane)
+; - Pattern: Directional due to wing strut mounting and HF coupling
+; - SWR: <2:1 across 118-137 MHz (with some HF coupling ripple)
+; - Polarization: Vertical with cross-pol from wire antenna coupling
+;
+; Small Aircraft Coupling Effects:
+; - All antennas electrically close (8.3m fuselage length)
+; - Strong near-field coupling between all elements
+; - HF whip creates significant pattern asymmetry
+; - Wire antenna adds complex multi-lobe effects
+; - Wing strut mounting affects pattern directivity
+;
+; General Aviation Scenario:
+; - VHF COM active for ATC communication
+; - Amateur HF radio powered down (typical flight operations)
+; - All HF antennas physically installed but passive
+; - Realistic GA multi-radio aircraft configuration
+; - High-wing design provides good VHF ground plane
+;
+; High-Wing Small Aircraft Advantages:
+; - Wing acts as ground plane for VHF antenna
+; - Higher antenna position above fuselage
+; - Reduced engine interference on communication
+; - Better line-of-sight for VHF communication
+; - Wing strut convenient antenna mounting location
+;
+; Small Aircraft Limitations:
+; - Limited space creates strong antenna coupling
+; - Small ground plane reduces VHF efficiency
+; - Weight/balance critical for antenna placement
+; - Electrical system power limitations
+; - Cost constraints affect antenna system complexity
+;
+; Analysis Recommendations:
+; - Primary frequency: 125 MHz (center of VHF COM band)
+; - Sweep analysis: 118-137 MHz for full COM band
+; - Pattern analysis shows HF antenna coupling effects
+; - Compare with HF antennas removed to see coupling impact
+; - Ground effects significant at GA cruise altitudes
+;
+; Expected Pattern Characteristics:
+; - Asymmetric due to wing strut mounting position
+; - Pattern distortion from HF whip on opposite side
+; - Some nulls/lobes from wire antenna interaction
+; - Typical GA aircraft communication coverage
+; - Enhanced performance on wing-mounted antenna side
+;
+; Realistic GA Communication Range:
+; - Line-of-sight: 50-150 km (altitude dependent)
+; - ATC communication: 30-80 km typical
+; - Air-to-air: 20-50 km depending on altitude
+; - Ground-to-air: Variable based on terrain/obstacles
+;
+; Amateur Radio Operator Scenario:
+; - Pilot holds amateur radio license
+; - HF equipment installed for long-range communication
+; - VHF COM required for aviation operations
+; - HF typically used on ground or in uncontrolled airspace
+; - Both systems rarely active simultaneously
+;
+; Installation Considerations:
+; - STC required for non-standard antenna installations
+; - RF interference testing between VHF and HF systems
+; - Lightning protection for all antenna systems
+; - Structural analysis for antenna mounting loads
+; - Weight and balance calculations for equipment
+;
+; This model represents a typical general aviation
+; aircraft with both required VHF COM and optional
+; amateur HF radio installations - showing realistic
+; antenna interactions in the space-constrained
+; environment of small aircraft operations.
+EN
+# Attitude: roll=-180°, pitch=-120°

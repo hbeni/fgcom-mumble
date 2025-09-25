@@ -27,6 +27,15 @@ const std::vector<int> FGCom_PatternInterpolation::HIGH_ALTITUDE_ALTITUDES = {
     8000, 10000, 12000, 15000
 };
 
+// Attitude angle intervals for interpolation
+const std::vector<int> FGCom_PatternInterpolation::ROLL_ANGLES = {
+    -180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180
+};
+
+const std::vector<int> FGCom_PatternInterpolation::PITCH_ANGLES = {
+    -180, -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180
+};
+
 FGCom_PatternInterpolation::FGCom_PatternInterpolation() {
     // Initialize pattern interpolation system
 }
@@ -56,6 +65,42 @@ bool FGCom_PatternInterpolation::load4NEC2Pattern(const std::string& filename,
     std::cout << "Loaded pattern for " << antenna_name 
               << " at " << altitude_m << "m, " << frequency_mhz << "MHz" 
               << " (" << pattern.patterns.size() << " points)" << std::endl;
+    
+    return true;
+}
+
+bool FGCom_PatternInterpolation::load3DAttitudePattern(const std::string& filename, 
+                                                       const std::string& antenna_name,
+                                                       int roll_deg, int pitch_deg, 
+                                                       int altitude_m, double frequency_mhz) {
+    FGCom_AttitudePattern pattern(roll_deg, pitch_deg, altitude_m, frequency_mhz);
+    
+    // Convert FGCom_AttitudePattern to FGCom_AltitudePattern for parsing
+    FGCom_AltitudePattern alt_pattern;
+    alt_pattern.altitude_m = pattern.altitude_m;
+    alt_pattern.frequency_mhz = pattern.frequency_mhz;
+    
+    if (!parse4NEC2File(filename, alt_pattern)) {
+        std::cerr << "Failed to parse 3D attitude pattern file: " << filename << std::endl;
+        return false;
+    }
+    
+    if (!validatePattern(alt_pattern)) {
+        std::cerr << "Invalid 3D attitude pattern data in file: " << filename << std::endl;
+        return false;
+    }
+    
+    // Copy parsed data to attitude pattern
+    pattern.patterns = alt_pattern.patterns;
+    
+    // Create attitude key for storage
+    std::string attitude_key = "roll_" + std::to_string(roll_deg) + "_pitch_" + std::to_string(pitch_deg);
+    
+    // Store the attitude pattern
+    attitude_patterns[antenna_name][attitude_key] = pattern;
+    
+    std::cout << "Loaded 3D attitude pattern: " << antenna_name 
+              << " (roll=" << roll_deg << "°, pitch=" << pitch_deg << "°, alt=" << altitude_m << "m, freq=" << frequency_mhz << "MHz)" << std::endl;
     
     return true;
 }
@@ -98,6 +143,52 @@ double FGCom_PatternInterpolation::getInterpolatedGain(const std::string& antenn
     
     for (auto* p : closest) {
         double distance = sqrt(pow(p->theta - theta_deg, 2) + pow(p->phi - phi_deg, 2));
+        double weight = 1.0 / (distance + 0.1); // Avoid division by zero
+        weighted_gain += p->gain_dbi * weight;
+        total_weight += weight;
+    }
+    
+    return weighted_gain / total_weight;
+}
+
+double FGCom_PatternInterpolation::get3DAttitudeGain(const std::string& antenna_name, 
+                                                     double theta, double phi,
+                                                     int roll_deg, int pitch_deg, 
+                                                     int altitude_m, double frequency_mhz) {
+    // Find closest attitude pattern
+    std::string attitude_key = "roll_" + std::to_string(roll_deg) + "_pitch_" + std::to_string(pitch_deg);
+    
+    if (attitude_patterns.find(antenna_name) == attitude_patterns.end() ||
+        attitude_patterns[antenna_name].find(attitude_key) == attitude_patterns[antenna_name].end()) {
+        
+        // Fallback to standard pattern interpolation
+        std::cerr << "No 3D attitude pattern found for " << antenna_name 
+                  << " (roll=" << roll_deg << "°, pitch=" << pitch_deg << "°, alt=" << altitude_m << "m, freq=" << frequency_mhz << "MHz)" << std::endl;
+        return getInterpolatedGain(antenna_name, altitude_m, frequency_mhz, theta, phi);
+    }
+    
+    const FGCom_AttitudePattern& pattern = attitude_patterns[antenna_name][attitude_key];
+    
+    // Find closest pattern points
+    // Convert FGCom_AttitudePattern to FGCom_AltitudePattern for findClosestPatterns
+    FGCom_AltitudePattern alt_pattern;
+    alt_pattern.altitude_m = pattern.altitude_m;
+    alt_pattern.frequency_mhz = pattern.frequency_mhz;
+    alt_pattern.patterns = pattern.patterns;
+    
+    std::vector<FGCom_RadiationPattern*> closest = findClosestPatterns(alt_pattern, theta, phi, 4);
+    
+    if (closest.size() < 2) {
+        std::cerr << "Insufficient 3D attitude pattern points for interpolation" << std::endl;
+        return -999.0;
+    }
+    
+    // Weighted interpolation
+    double total_weight = 0.0;
+    double weighted_gain = 0.0;
+    
+    for (auto* p : closest) {
+        double distance = sqrt(pow(p->theta - theta, 2) + pow(p->phi - phi, 2));
         double weight = 1.0 / (distance + 0.1); // Avoid division by zero
         weighted_gain += p->gain_dbi * weight;
         total_weight += weight;
@@ -521,4 +612,9 @@ namespace FGCom_AltitudeUtils {
         
         return 20.0 * log10(abs(cos(phase_diff * M_PI / 180.0)) + 0.001);
     }
+}
+
+bool FGCom_PatternInterpolation::has3DAttitudePattern(const std::string& antenna_name) {
+    return attitude_patterns.find(antenna_name) != attitude_patterns.end() && 
+           !attitude_patterns[antenna_name].empty();
 }

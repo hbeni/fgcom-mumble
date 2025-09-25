@@ -93,7 +93,8 @@ private:
     
     // Get UHF antenna gain from pattern interpolation
     double getUHFGain(const std::string& antenna_name, int altitude_m, 
-                     double frequency_mhz, double theta_deg, double phi_deg) {
+                     double frequency_mhz, double theta_deg, double phi_deg,
+                     int roll_deg = 0, int pitch_deg = 0) {
         if (!uhf_patterns_initialized) {
             initializeUHFPatterns();
         }
@@ -102,6 +103,14 @@ private:
             return 0.0; // No pattern data available
         }
         
+        // Try 3D attitude pattern first if available
+        if (uhf_pattern_interpolation->has3DAttitudePattern(antenna_name)) {
+            return uhf_pattern_interpolation->get3DAttitudeGain(
+                antenna_name, theta_deg, phi_deg, 
+                roll_deg, pitch_deg, altitude_m, frequency_mhz);
+        }
+        
+        // Fallback to standard pattern
         return uhf_pattern_interpolation->getInterpolatedGain(
             antenna_name, altitude_m, frequency_mhz, theta_deg, phi_deg);
     }

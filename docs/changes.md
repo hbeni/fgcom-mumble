@@ -1,5 +1,14 @@
 # FGCom-mumble Development Changes Log
 
+## 2024-12-19 - Antenna Pattern Generation Issue Identified
+
+### Critical Issue: Pattern Generation System Not Working
+- **Problem**: The automated antenna pattern generation system is not working correctly
+- **Root Cause**: The script `scripts/pattern_generation/generate_all_patterns.sh` is not properly generating patterns at multiple altitudes for aircraft
+- **Impact**: Only patterns at 0m altitude are being generated instead of the required 28 altitude points (0, 25, 50, 100, 150, 200, 250, 300, 500, 650, 800, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 12000, 14000, 16000, 18000, 20000 meters)
+- **Status**: Issue documented in README.md and all relevant documentation files
+- **Workaround**: Manual pattern creation is recommended until this issue is resolved
+
 ## 2024-12-19 - Comprehensive Code Inspection and Quality Assurance
 
 ### Overview

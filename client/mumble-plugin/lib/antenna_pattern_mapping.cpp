@@ -951,3 +951,91 @@ bool loadAntennaPattern(const std::string& vehicle_type, double frequency_mhz) {
     
     return g_antenna_pattern_mapping->loadPatternFromFile(info.pattern_file, info);
 }
+
+// 3D attitude pattern methods
+AntennaPatternInfo FGCom_AntennaPatternMapping::get3DAttitudePattern(const std::string& vehicle_type, 
+                                                                      double frequency_mhz, 
+                                                                      int roll_deg, int pitch_deg, 
+                                                                      int altitude_m) {
+    // Look for exact 3D pattern match
+    std::string attitude_key = "roll_" + std::to_string(roll_deg) + "_pitch_" + std::to_string(pitch_deg);
+    
+    // Check VHF patterns first
+    if (isVHFFrequency(frequency_mhz)) {
+        auto vhf_it = vhf_patterns.find(vehicle_type);
+        if (vhf_it != vhf_patterns.end()) {
+            auto freq_it = vhf_it->second.find(frequency_mhz);
+            if (freq_it != vhf_it->second.end()) {
+                AntennaPatternInfo info = freq_it->second;
+                info.roll_deg = roll_deg;
+                info.pitch_deg = pitch_deg;
+                info.altitude_m = altitude_m;
+                info.is_3d_pattern = true;
+                return info;
+            }
+        }
+    }
+    
+    // Check UHF patterns
+    if (isUHFFrequency(frequency_mhz)) {
+        auto uhf_it = uhf_patterns.find(vehicle_type);
+        if (uhf_it != uhf_patterns.end()) {
+            auto freq_it = uhf_it->second.find(frequency_mhz);
+            if (freq_it != uhf_it->second.end()) {
+                AntennaPatternInfo info = freq_it->second;
+                info.roll_deg = roll_deg;
+                info.pitch_deg = pitch_deg;
+                info.altitude_m = altitude_m;
+                info.is_3d_pattern = true;
+                return info;
+            }
+        }
+    }
+    
+    // Return empty pattern if not found
+    return AntennaPatternInfo();
+}
+
+std::vector<AntennaPatternInfo> FGCom_AntennaPatternMapping::getAvailable3DPatterns(const std::string& vehicle_type, 
+                                                                                    double frequency_mhz, 
+                                                                                    int altitude_m) {
+    std::vector<AntennaPatternInfo> patterns;
+    
+    // Get base patterns for the vehicle type and frequency
+    std::vector<AntennaPatternInfo> base_patterns;
+    if (isVHFFrequency(frequency_mhz)) {
+        base_patterns = getAvailableVHFPatterns(vehicle_type);
+    } else if (isUHFFrequency(frequency_mhz)) {
+        base_patterns = getAvailableUHFPatterns(vehicle_type);
+    }
+    
+    // Create 3D attitude patterns for each base pattern
+    for (const auto& base_pattern : base_patterns) {
+        if (std::abs(base_pattern.frequency_mhz - frequency_mhz) < 1.0) { // Within 1 MHz
+            // Generate patterns for key attitude angles
+            std::vector<int> roll_angles = {-180, -90, -45, 0, 45, 90, 180};
+            std::vector<int> pitch_angles = {-180, -90, -45, 0, 45, 90, 180};
+            
+            for (int roll : roll_angles) {
+                for (int pitch : pitch_angles) {
+                    AntennaPatternInfo pattern = base_pattern;
+                    pattern.roll_deg = roll;
+                    pattern.pitch_deg = pitch;
+                    pattern.altitude_m = altitude_m;
+                    pattern.is_3d_pattern = true;
+                    patterns.push_back(pattern);
+                }
+            }
+        }
+    }
+    
+    return patterns;
+}
+
+bool FGCom_AntennaPatternMapping::has3DAttitudePattern(const std::string& vehicle_type, 
+                                                      double frequency_mhz, 
+                                                      int roll_deg, int pitch_deg, 
+                                                      int altitude_m) {
+    AntennaPatternInfo pattern = get3DAttitudePattern(vehicle_type, frequency_mhz, roll_deg, pitch_deg, altitude_m);
+    return !pattern.antenna_name.empty();
+}

@@ -78,6 +78,34 @@ private:
                 std::cout << "Loaded aircraft VHF pattern: " << pattern_info.antenna_name << std::endl;
             }
         }
+        
+        // Load 3D attitude patterns for aircraft
+        loadAircraft3DAttitudePatterns();
+    }
+    
+    void loadAircraft3DAttitudePatterns() {
+        // Load 3D attitude patterns for key aircraft frequencies
+        std::vector<double> aircraft_frequencies = {125.0, 144.0, 150.0, 160.0};
+        std::vector<int> altitudes = {0, 1000, 3000, 5000, 10000};
+        
+        for (double freq : aircraft_frequencies) {
+            for (int alt : altitudes) {
+                std::vector<AntennaPatternInfo> attitude_patterns = 
+                    g_antenna_pattern_mapping->getAvailable3DPatterns("aircraft", freq, alt);
+                
+                for (const auto& pattern_info : attitude_patterns) {
+                    if (pattern_interpolation->load3DAttitudePattern(
+                        pattern_info.pattern_file, 
+                        pattern_info.antenna_name,
+                        pattern_info.roll_deg, pattern_info.pitch_deg, 
+                        pattern_info.altitude_m, pattern_info.frequency_mhz)) {
+                        std::cout << "Loaded 3D attitude pattern: " << pattern_info.antenna_name 
+                                  << " (roll=" << pattern_info.roll_deg << "°, pitch=" << pattern_info.pitch_deg 
+                                  << "°, alt=" << pattern_info.altitude_m << "m)" << std::endl;
+                    }
+                }
+            }
+        }
     }
     
     void loadGroundVehicleVHFPatterns() {
@@ -146,7 +174,8 @@ private:
     
     // Get antenna gain from pattern interpolation
     double getAntennaGain(const std::string& antenna_name, int altitude_m, 
-                         double frequency_mhz, double theta_deg, double phi_deg) {
+                         double frequency_mhz, double theta_deg, double phi_deg,
+                         int roll_deg = 0, int pitch_deg = 0) {
         if (!patterns_initialized) {
             initializePatterns();
         }
@@ -155,6 +184,14 @@ private:
             return 0.0; // No pattern data available
         }
         
+        // Try 3D attitude pattern first if available
+        if (pattern_interpolation->has3DAttitudePattern(antenna_name)) {
+            return pattern_interpolation->get3DAttitudeGain(
+                antenna_name, theta_deg, phi_deg, 
+                roll_deg, pitch_deg, altitude_m, frequency_mhz);
+        }
+        
+        // Fallback to standard pattern
         return pattern_interpolation->getInterpolatedGain(
             antenna_name, altitude_m, frequency_mhz, theta_deg, phi_deg);
     }
@@ -335,7 +372,7 @@ public:
             std::string antenna_name = "default_vhf"; // Default antenna
             
             // Get antenna gain from pattern interpolation
-            double antenna_gain_db = getAntennaGain(antenna_name, (int)alt1, frequency_mhz, theta_deg, phi_deg);
+            double antenna_gain_db = getAntennaGain(antenna_name, (int)alt1, frequency_mhz, theta_deg, phi_deg, 0, 0);
             
             // Apply antenna gain if pattern data is available
             if (antenna_gain_db > -999.0) {
