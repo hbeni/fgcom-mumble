@@ -1,0 +1,55 @@
+EZNEC ver. 7.0
+
+; 70cm Band Vertical Antenna - 430-440 MHz
+; Simple vertical dipole for UHF
+; Height: 10m above ground
+; Vertical polarization, omnidirectional pattern
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; MOUNTING MAST (bottom section - non-radiating)
+W001   0.0   0.0   5.0   0.0   0.0   6.0   0.015   5
+
+; 70cm BAND VERTICAL DIPOLE (0.35m total)
+; Lower element (λ/4 at 432 MHz)
+W002   0.0   0.0   6.0   0.0   0.0   6.175  0.003   5
+
+; Upper element (λ/4 at 432 MHz)
+W003   0.0   0.0   6.175  0.0   0.0   6.35   0.003   5
+
+; GROUND PLANE RADIALS (4 radials for omnidirectional pattern)
+W004   0.0   0.0   5.0   0.35   0.0   5.0   0.002   4
+W005   0.0   0.0   5.0  -0.35   0.0   5.0   0.002   4
+W006   0.0   0.0   5.0   0.0   0.35   5.0   0.002   4
+W007   0.0   0.0   5.0   0.0  -0.35   5.0   0.002   4
+
+; SOURCE
+SY SRC  W002  1  1
+
+; GROUND
+GD 1 0 0 0 0.005 0.013
+
+; LOADS
+LD 5 1 1 0 1E+06 0       ; Mounting mast (steel)
+LD 5 2 3 0 3.7E+07 0     ; Antenna elements (aluminum)
+LD 5 4 7 0 3.7E+07 0     ; Ground radials (aluminum)
+
+; FREQUENCY
+FR 0 1 0 0 432.0 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; Simple 70cm vertical dipole antenna
+; Lower element: 0.175m (λ/4 at 432 MHz)
+; Upper element: 0.175m (λ/4 at 432 MHz)
+; Ground radials: 0.35m length each
+; Total height: 1.35m above ground plane
+; Expected performance:
+; - Gain: ~2-3 dBi
+; - Omnidirectional pattern
+; - SWR: <2:1 across 430-440 MHz
+; - Impedance: ~50Ω
+EN

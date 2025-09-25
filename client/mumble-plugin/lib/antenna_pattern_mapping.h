@@ -21,11 +21,25 @@ struct AntennaPatternInfo {
     std::string antenna_type;     // Antenna type (blade, whip, yagi, etc.)
     bool is_loaded;               // Whether pattern is currently loaded
     
-    AntennaPatternInfo() : frequency_mhz(0.0), is_loaded(false) {}
+    // 3D attitude pattern support
+    int roll_deg;                 // Roll angle in degrees (-180 to +180)
+    int pitch_deg;                // Pitch angle in degrees (-180 to +180)
+    int altitude_m;               // Altitude in meters
+    bool is_3d_pattern;           // Whether this is a 3D attitude pattern
+    
+    AntennaPatternInfo() : frequency_mhz(0.0), is_loaded(false), 
+                          roll_deg(0), pitch_deg(0), altitude_m(0), is_3d_pattern(false) {}
     AntennaPatternInfo(const std::string& name, const std::string& file, 
                       double freq, const std::string& vtype, const std::string& atype)
         : antenna_name(name), pattern_file(file), frequency_mhz(freq), 
-          vehicle_type(vtype), antenna_type(atype), is_loaded(false) {}
+          vehicle_type(vtype), antenna_type(atype), is_loaded(false),
+          roll_deg(0), pitch_deg(0), altitude_m(0), is_3d_pattern(false) {}
+    AntennaPatternInfo(const std::string& name, const std::string& file, 
+                      double freq, const std::string& vtype, const std::string& atype,
+                      int roll, int pitch, int alt)
+        : antenna_name(name), pattern_file(file), frequency_mhz(freq), 
+          vehicle_type(vtype), antenna_type(atype), is_loaded(false),
+          roll_deg(roll), pitch_deg(pitch), altitude_m(alt), is_3d_pattern(true) {}
 };
 
 class FGCom_AntennaPatternMapping {
@@ -62,6 +76,14 @@ public:
     // Get closest frequency pattern
     AntennaPatternInfo getClosestVHFPattern(const std::string& vehicle_type, double frequency_mhz);
     AntennaPatternInfo getClosestUHFPattern(const std::string& vehicle_type, double frequency_mhz);
+    
+    // 3D attitude pattern methods
+    AntennaPatternInfo get3DAttitudePattern(const std::string& vehicle_type, double frequency_mhz, 
+                                           int roll_deg, int pitch_deg, int altitude_m);
+    std::vector<AntennaPatternInfo> getAvailable3DPatterns(const std::string& vehicle_type, 
+                                                          double frequency_mhz, int altitude_m);
+    bool has3DAttitudePattern(const std::string& vehicle_type, double frequency_mhz, 
+                             int roll_deg, int pitch_deg, int altitude_m);
     
     // Vehicle type detection
     std::string detectVehicleType(const std::string& vehicle_name);

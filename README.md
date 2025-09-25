@@ -48,6 +48,8 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Enhanced Vehicle Support**: Added support for boats, ships, military vehicles, and amateur radio operators
 - **Organized Documentation**: Restructured documentation with proper file organization
 
+**⚠️ KNOWN ISSUE**: Currently the antenna radiation patterns are not generated properly! The pattern generation script is not correctly creating patterns at multiple altitudes for aircraft.
+
 Documentation
 =============
 The documentation is split up into relevant parts:
@@ -75,6 +77,25 @@ The documentation is split up into relevant parts:
 - [Frequency Offset Documentation](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) Audio processing and frequency offset simulation
 - [VHF/UHF Pattern Integration](docs/VHF_UHF_PATTERN_INTEGRATION.md) VHF/UHF antenna pattern integration documentation
 - [Changes Log](docs/changes.md) Detailed development history and feature implementation log
+
+### Antenna Pattern Creation Documentation:
+- [Creating Radiation Patterns Guide](docs/CREATING_RADIATION_PATTERNS_GUIDE.md) Complete guide for creating radiation pattern files
+- [EZNEC Workflow Guide](docs/EZNEC_WORKFLOW_GUIDE.md) Step-by-step EZNEC workflow for pattern creation
+- [Antenna Modeling Tools](docs/ANTENNA_MODELING_TOOLS.md) Tools and software for antenna modeling
+- [Radiation Pattern Examples](docs/RADIATION_PATTERN_EXAMPLES.md) Practical examples for different vehicle types
+- [2M Yagi Antenna Summary](docs/2M_YAGI_ANTENNA_SUMMARY.md) Professional 2m Yagi antenna specifications
+
+### Frequency and Band Documentation:
+- [Aviation VHF Civil](docs/aviation-VHF-civil.md) Civil aviation VHF frequency bands and usage
+- [Military VHF/UHF](docs/military-vhf-uhf.md) Military VHF/UHF frequency bands and protocols
+- [Civil HF Frequencies](docs/CIVIL_HF_freqs.md) Civil HF frequency allocations and usage
+- [Known Military Bands](docs/KNOWN_MILITARY_BANDS_AND_FREQS.md) Military frequency bands and protocols
+- [Vehicle Frequency Analysis](docs/VEHICLE_FREQUENCY_ANALYSIS.md) Frequency analysis for different vehicle types
+
+### Technical Documentation:
+- [Architectural Fixes Summary](docs/ARCHITECTURAL_FIXES_SUMMARY.md) Summary of architectural improvements and fixes
+- [Compilation Status](docs/COMPILATION_STATUS.md) Current compilation status and build information
+- [Standardized Structure Summary](docs/STANDARDIZED_STRUCTURE_SUMMARY.md) Project structure standardization and organization
 
 ### Antenna Pattern Visualization:
 The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.

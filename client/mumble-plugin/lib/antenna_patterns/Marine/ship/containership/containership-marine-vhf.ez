@@ -1,0 +1,37 @@
+EZNEC ver. 7.0
+
+; Container Ship Marine VHF Antenna (156-162 MHz)
+; Antenna mounted on top of wheelhouse or mast for marine VHF communication
+; Frequency: 156.8 MHz (Channel 16 - distress/safety)
+; Ground: Real, High Accuracy
+; Units: Meters
+
+; Marine VHF antenna (1/4 wave vertical on wheelhouse)
+W001  0.000000  0.000000  0.000000  0.000000  0.000000  0.480000  0.005000  5 ; 1/4 wave vertical (0.48m at 156.8 MHz)
+
+; Container ship wheelhouse (conductive structure)
+W004  0.000000  0.000000  0.000000  0.000000  0.000000  15.000000  0.200000  8 ; Wheelhouse 15m tall, 20cm diameter
+W005 -5.000000 -3.000000  0.000000  5.000000 -3.000000  0.000000  0.100000  8 ; Wheelhouse base
+W006 -5.000000  3.000000  0.000000  5.000000  3.000000  0.000000  0.100000  8 ; Wheelhouse base
+W007 -5.000000 -3.000000  0.000000 -5.000000  3.000000  0.000000  0.100000  4 ; Wheelhouse side
+W008  5.000000 -3.000000  0.000000  5.000000  3.000000  0.000000  0.100000  4 ; Wheelhouse side
+
+; Ground plane radials (4 radials)
+W009  0.000000  0.000000  0.000000  1.000000  0.000000  0.000000  0.002000  3 ; Radial 1
+W010  0.000000  0.000000  0.000000  0.000000  1.000000  0.000000  0.002000  3 ; Radial 2
+W011  0.000000  0.000000  0.000000 -1.000000  0.000000  0.000000  0.002000  3 ; Radial 3
+W012  0.000000  0.000000  0.000000  0.000000 -1.000000  0.000000  0.002000  3 ; Radial 4
+
+; Source at base of antenna
+SY SRC  W001  1  1.000000  0.000000
+
+; Ground system (saltwater)
+GD  1  0  0  0  5.0  81
+
+; Frequency
+FR  0  1  0  0  156.8  0
+
+; Radiation pattern
+RP  0  37  73  1000  0  0  5  10  0  0
+
+EN

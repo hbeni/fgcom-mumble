@@ -19,6 +19,19 @@ struct FGCom_RadiationPattern {
         : theta(t), phi(p), gain_dbi(g), phase_deg(ph), polarization(pol) {}
 };
 
+// 3D attitude pattern data structure
+struct FGCom_AttitudePattern {
+    int roll_deg;           // Roll angle in degrees (-180 to +180)
+    int pitch_deg;          // Pitch angle in degrees (-180 to +180)
+    int altitude_m;          // Altitude in meters
+    double frequency_mhz;   // Frequency in MHz
+    std::vector<FGCom_RadiationPattern> patterns;
+    
+    FGCom_AttitudePattern() : roll_deg(0), pitch_deg(0), altitude_m(0), frequency_mhz(0) {}
+    FGCom_AttitudePattern(int roll, int pitch, int alt, double freq) 
+        : roll_deg(roll), pitch_deg(pitch), altitude_m(alt), frequency_mhz(freq) {}
+};
+
 // Altitude-specific pattern data
 struct FGCom_AltitudePattern {
     int altitude_m;         // Altitude in meters
@@ -29,17 +42,24 @@ struct FGCom_AltitudePattern {
     FGCom_AltitudePattern(int alt, double freq) : altitude_m(alt), frequency_mhz(freq) {}
 };
 
-// Pattern interpolation class for altitude-dependent radiation patterns
+// Pattern interpolation class for 3D attitude-dependent radiation patterns
 class FGCom_PatternInterpolation {
 private:
     // Map: antenna_name -> altitude -> pattern data
     std::map<std::string, std::map<int, FGCom_AltitudePattern>> antenna_patterns;
+    
+    // Map: antenna_name -> attitude -> pattern data (3D attitude patterns)
+    std::map<std::string, std::map<std::string, FGCom_AttitudePattern>> attitude_patterns;
     
     // Critical altitude ranges for aircraft
     static const std::vector<int> GROUND_EFFECT_ALTITUDES;
     static const std::vector<int> LOW_ALTITUDE_ALTITUDES;
     static const std::vector<int> MEDIUM_ALTITUDE_ALTITUDES;
     static const std::vector<int> HIGH_ALTITUDE_ALTITUDES;
+    
+    // Attitude angle intervals for interpolation
+    static const std::vector<int> ROLL_ANGLES;
+    static const std::vector<int> PITCH_ANGLES;
     
 public:
     FGCom_PatternInterpolation();
@@ -49,12 +69,23 @@ public:
     bool load4NEC2Pattern(const std::string& filename, const std::string& antenna_name, 
                          int altitude_m, double frequency_mhz);
     
+    // Load 3D attitude pattern file
+    bool load3DAttitudePattern(const std::string& filename, const std::string& antenna_name,
+                               int roll_deg, int pitch_deg, int altitude_m, double frequency_mhz);
+    
     // Load multiple altitude patterns for an antenna
     bool loadAltitudePatterns(const std::string& antenna_name, const std::string& pattern_dir);
     
     // Get interpolated gain at specific angle and altitude
     double getInterpolatedGain(const std::string& antenna_name, int altitude_m, 
                               double frequency_mhz, double theta_deg, double phi_deg);
+    
+    // Get interpolated gain with 3D attitude
+    double get3DAttitudeGain(const std::string& antenna_name, double theta, double phi,
+                             int roll_deg, int pitch_deg, int altitude_m, double frequency_mhz);
+    
+    // Check if 3D attitude pattern exists
+    bool has3DAttitudePattern(const std::string& antenna_name);
     
     // Get interpolated gain with bilinear interpolation
     double getBilinearInterpolatedGain(const std::string& antenna_name, int altitude_m,

@@ -1,0 +1,94 @@
+EZNEC ver. 7.0
+
+; NATO Military Vehicle Whip Antenna (1970s era) - 45 DEGREE TIED DOWN
+; Typical setup: Jeep/Land Rover with 10-foot whip tied down at 45 degrees
+; VHF-FM tactical radio (30-88 MHz)
+; Vehicle body as ground plane
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Vehicle body representation (Jeep/Land Rover size)
+; Main chassis/body - 4.5m length, 1.8m width
+W001 -2.25  -0.9   0.0   2.25  -0.9   0.0   0.05  18
+W002 -2.25   0.9   0.0   2.25   0.9   0.0   0.05  18
+W003 -2.25  -0.9   0.0  -2.25   0.9   0.0   0.05   8
+W004   2.25  -0.9   0.0   2.25   0.9   0.0   0.05   8
+
+; Hood and engine compartment
+W005 -2.25  -0.6   0.0  -1.5   -0.6   0.0   0.05   4
+W006 -2.25   0.6   0.0  -1.5    0.6   0.0   0.05   4
+W007 -2.25  -0.6   0.0  -2.25   0.6   0.0   0.05   5
+
+; Roof/cargo area (if hardtop)
+W008 -0.5   -0.8   1.8   1.5   -0.8   1.8   0.03  10
+W009 -0.5    0.8   1.8   1.5    0.8   1.8   0.03  10
+W010 -0.5   -0.8   1.8  -0.5    0.8   1.8   0.03   8
+W011   1.5   -0.8   1.8   1.5    0.8   1.8   0.03   8
+
+; Whip antenna (10 feet = 3.05m) TIED DOWN AT 45 DEGREES
+; Mounted on rear corner, tied down to front corner
+; Base at rear corner: (1.8, 0.7, 1.9)
+; Tied down to front corner: (-1.8, -0.7, 1.9)
+; 45-degree angle calculation: 
+; Horizontal distance: sqrt((1.8-(-1.8))^2 + (0.7-(-0.7))^2) = sqrt(3.6^2 + 1.4^2) = 3.86m
+; Vertical component: 3.05m * sin(45°) = 2.16m
+; Final tied-down position: (-1.8, -0.7, 1.9 + 2.16) = (-1.8, -0.7, 4.06)
+W012   1.8    0.7   1.9  -1.8   -0.7   4.06  0.005  15
+
+; Antenna base spring/mount
+W013   1.8    0.7   1.8   1.8    0.7   1.9   0.01   1
+
+; Tie-down rope/cable (non-radiating)
+W014   1.8    0.7   1.9  -1.8   -0.7   1.9   0.001   1
+
+; SOURCE
+SY SRC  W013  1  1  ; Source at antenna base
+
+; GROUND
+; Average ground (field conditions)
+GD 0 0 0 0 0.005 0.013  ; Typical field ground
+
+; LOADS
+; Vehicle body - steel construction
+LD 5 1 11 0 1E+07 0     ; Good conductor for vehicle body
+; Tie-down rope - non-conducting
+LD 5 14 14 0 1E-10 0    ; Insulating rope/cable
+
+; FREQUENCY
+FR 0 1 0 0 50.0 0       ; VHF-FM tactical frequency (50 MHz)
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; NATO military vehicle whip antenna model - 45 DEGREE TIED DOWN
+; Typical 1970s setup: M151 Jeep, Land Rover, M35 truck
+; 10-foot whip tied down at 45 degrees for clearance and mobility
+; VHF-FM tactical communications (30-88 MHz)
+; 
+; Vehicle dimensions based on typical military utility vehicles:
+; - Length: 4.5m (jeep/light vehicle)  
+; - Width: 1.8m
+; - Height: 1.8m to roof
+; - Whip mount: Rear corner, spring-loaded base
+; - Tie-down: Front corner for 45-degree angle
+;
+; 45-degree tied-down configuration:
+; - Provides clearance under low obstacles
+; - Maintains communications capability
+; - Reduces vertical profile for concealment
+; - Allows movement under bridges, trees, buildings
+; - Still functional with reduced efficiency
+;
+; Frequency bands:
+; - VHF-FM tactical: 30-88 MHz (primary)
+; - Some HF capability: 2-30 MHz with loading coil
+;
+; Expected performance (45-degree tied-down):
+; - Reduced efficiency compared to vertical (3-6 dB loss)
+; - More directional pattern (favors tie-down direction)
+; - Still adequate for tactical communications
+; - Antenna tuner compensates for impedance changes
+; - Operational capability maintained under obstacles
+EN

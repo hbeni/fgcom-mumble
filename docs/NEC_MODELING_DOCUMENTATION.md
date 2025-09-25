@@ -4,6 +4,8 @@
 
 This document provides comprehensive guidance for creating NEC (Numerical Electromagnetics Code) models for antenna simulation, including wavelength calculations, minimum spacing requirements, and practical examples for various vehicle types.
 
+**⚠️ CURRENT STATUS**: The automated pattern generation system is not working correctly. The script `scripts/pattern_generation/generate_all_patterns.sh` is not properly generating patterns at multiple altitudes for aircraft. Manual pattern creation is recommended until this issue is resolved.
+
 ## VHF/UHF Professional Antennas
 
 ### New Professional Antenna Models

@@ -1,0 +1,33 @@
+EZNEC ver. 7.0
+
+; Sailboat Marine VHF Antenna (156-162 MHz)
+; Antenna mounted on top of mast for marine VHF communication
+; Frequency: 156.8 MHz (Channel 16 - distress/safety)
+; Ground: Real, High Accuracy
+; Units: Meters
+
+; Marine VHF antenna (1/4 wave vertical on mast)
+W001  0.000000  0.000000  0.000000  0.000000  0.000000  0.480000  0.005000  5 ; 1/4 wave vertical (0.48m at 156.8 MHz)
+
+; Sailboat mast (conductive)
+W004  0.000000  0.000000  0.000000  0.000000  0.000000  8.000000  0.100000  8 ; Mast 8m tall, 10cm diameter
+
+; Ground plane radials (4 radials)
+W005  0.000000  0.000000  0.000000  0.500000  0.000000  0.000000  0.002000  3 ; Radial 1
+W006  0.000000  0.000000  0.000000  0.000000  0.500000  0.000000  0.002000  3 ; Radial 2
+W007  0.000000  0.000000  0.000000 -0.500000  0.000000  0.000000  0.002000  3 ; Radial 3
+W008  0.000000  0.000000  0.000000  0.000000 -0.500000  0.000000  0.002000  3 ; Radial 4
+
+; Source at base of antenna
+SY SRC  W001  1  1.000000  0.000000
+
+; Ground system (saltwater)
+GD  1  0  0  0  5.0  81
+
+; Frequency
+FR  0  1  0  0  156.8  0
+
+; Radiation pattern
+RP  0  37  73  1000  0  0  5  10  0  0
+
+EN

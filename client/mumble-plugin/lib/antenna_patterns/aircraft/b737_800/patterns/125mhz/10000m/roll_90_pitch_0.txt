@@ -1,0 +1,3 @@
+# 3D Attitude Pattern: roll=90°, pitch=0°, altitude=10000m
+# Base pattern: b737-vhf_125MHz_10000m_pattern.txt
+# Base pattern not found for altitude 10000m

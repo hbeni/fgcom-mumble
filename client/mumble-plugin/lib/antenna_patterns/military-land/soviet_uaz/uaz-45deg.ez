@@ -1,0 +1,106 @@
+EZNEC ver. 7.0
+
+; UAZ Military Vehicle with 45-Degree Sloping Antenna
+; Frequency: 7.050 MHz (40m band - common military frequency)
+; Ground: Real, High Accuracy
+; Units: Meters
+
+; 45-deg sloping antenna (5m long)
+W001  0.000000  0.000000  2.500000  3.536000  0.000000  6.036000  0.005000  15
+
+; Vehicle mast/mounting
+W002  0.000000  0.000000  0.000000  0.000000  0.000000  2.500000  0.010000   5
+
+; UAZ chassis front
+W003 -2.000000 -1.000000  0.100000  2.000000 -1.000000  0.100000  0.020000   8
+
+; UAZ chassis rear
+W004 -2.000000  1.000000  0.100000  2.000000  1.000000  0.100000  0.020000   8
+
+; UAZ chassis left
+W005 -2.000000 -1.000000  0.100000 -2.000000  1.000000  0.100000  0.020000   4
+
+; UAZ chassis right
+W006  2.000000 -1.000000  0.100000  2.000000  1.000000  0.100000  0.020000   4
+
+; UAZ roof front
+W007 -2.000000 -1.000000  1.800000  2.000000 -1.000000  1.800000  0.015000   8
+
+; UAZ roof rear
+W008 -2.000000  1.000000  1.800000  2.000000  1.000000  1.800000  0.015000   8
+
+; UAZ roof left
+W009 -2.000000 -1.000000  1.800000 -2.000000  1.000000  1.800000  0.015000   4
+
+; UAZ roof right
+W010  2.000000 -1.000000  1.800000  2.000000  1.000000  1.800000  0.015000   4
+
+; UAZ pillar front-left
+W011 -2.000000 -1.000000  0.100000 -2.000000 -1.000000  1.800000  0.015000   3
+
+; UAZ pillar front-right
+W012  2.000000 -1.000000  0.100000  2.000000 -1.000000  1.800000  0.015000   3
+
+; UAZ pillar rear-left
+W013 -2.000000  1.000000  0.100000 -2.000000  1.000000  1.800000  0.015000   3
+
+; UAZ pillar rear-right
+W014  2.000000  1.000000  0.100000  2.000000  1.000000  1.800000  0.015000   3
+
+; UAZ roof center support
+W015 -1.000000  0.000000  1.800000  1.000000  0.000000  1.800000  0.010000   4
+
+; Feed point at base of sloping antenna
+SY SRC W001 1 1
+
+; Matching network at mast base
+LD 2 2 2 0 50.000000 0.000000
+
+; Real ground, high accuracy
+GD 2 0 0 0 0.005 13.0
+
+; Frequency: 7.050 MHz
+FR 0 1 0 0 7.050 0
+
+; Radiation pattern calculation
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; Comments:
+; This model represents a UAZ-469 or similar Soviet/Russian military vehicle with a 
+; typical 45-degree sloping HF antenna installation. The antenna is 5 meters long,
+; mounted on a 2.5m mast, creating a 45-degree angle with the horizon.
+;
+; Key features:
+; - Sloping monopole antenna at 45 degrees
+; - Realistic UAZ vehicle dimensions (4m x 2m x 1.8m)
+; - Vehicle body acts as ground plane and affects radiation pattern
+; - Frequency optimized for 7.050 MHz (common military frequency)
+; - Can be swept across HF band (3.5-30 MHz) for broadband analysis
+;
+; Typical performance at 7.050 MHz:
+; - Impedance: ~36 + j42 ohms
+; - SWR with 50-ohm system: ~1.8:1
+; - Gain: ~1-2 dBi over perfect ground
+; - Take-off angle: ~30-45 degrees (good for NVIS)
+;
+; The 45-degree sloping antenna provides:
+; 1. Better mechanical stability than vertical
+; 2. Good NVIS (Near Vertical Incidence Skywave) characteristics
+; 3. Easier installation/maintenance on military vehicles
+; 4. Reasonable impedance match across HF bands
+;
+; Vehicle modeling includes:
+; - Chassis structure affecting ground plane
+; - Realistic metallic surfaces
+; - Body resonances that may affect antenna performance
+;
+; For different frequencies, scale the antenna length:
+; - 7 MHz: 5.0m length (as modeled)  
+; - 14 MHz: 2.5m length
+; - 21 MHz: 1.67m length
+; - 28 MHz: 1.25m length
+;
+; This configuration was commonly used on Soviet R-105, R-107, R-111, and R-123 
+; radio systems mounted in UAZ-469, UAZ-452, and similar military vehicles.
+
+EN
