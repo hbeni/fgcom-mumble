@@ -48,7 +48,8 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Enhanced Vehicle Support**: Added support for boats, ships, military vehicles, and amateur radio operators
 - **Organized Documentation**: Restructured documentation with proper file organization
 
-**✅ PATTERN GENERATION FIXED**: The antenna radiation pattern generation system has been updated and is now working correctly. The scripts now use `.nec` files exclusively and include working aircraft patterns with proper altitude handling.
+**PATTERN GENERATION**: The antenna radiation pattern generation system is currently not working.
+
 
 Documentation
 =============
