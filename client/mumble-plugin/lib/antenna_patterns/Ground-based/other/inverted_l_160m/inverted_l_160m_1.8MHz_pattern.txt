@@ -1,0 +1,6 @@
+# Radiation Pattern Data
+# Generated from: inverted_l_160m_69.out
+# Frequency: 1.8 MHz
+# Format: Theta Phi Gain_dBi Phase_deg
+# Theta: elevation angle (0-180 degrees)
+# Phi: azimuth angle (0-360 degrees)

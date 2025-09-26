@@ -1,0 +1,108 @@
+EZNEC ver. 7.0
+
+; Bell UH-1 "Huey" NATO Helicopter - VHF COM ANTENNA ONLY
+; Single VHF COM antenna for aviation communication
+; Bottom-mounted for omnidirectional coverage
+; Low altitude tactical operations
+
+; GEOMETRY - UH-1 fuselage (17.6m length, 2.5m diameter)
+W001 -8.8   0.0   0.0   8.8   0.0   0.0   1.25  35
+W002 -8.8   1.0   0.0   8.8   1.0   0.0   1.1   35
+W003 -8.8  -1.0   0.0   8.8  -1.0   0.0   1.1   35
+W004 -8.8   0.0   1.0   8.8   0.0   1.0   1.1   35
+W005 -8.8   0.0  -1.0   8.8   0.0  -1.0   1.1   35
+
+; Fuselage cross-sections
+W006 -6.0  -1.25  0.0  -6.0   1.25  0.0   0.04   5
+W007 -3.0  -1.25  0.0  -3.0   1.25  0.0   0.04   5
+W008   0.0  -1.25  0.0   0.0   1.25  0.0   0.04   5
+W009   3.0  -1.25  0.0   3.0   1.25  0.0   0.04   5
+W010   6.0  -1.25  0.0   6.0   1.25  0.0   0.04   5
+
+; Main rotor mast
+W011   0.0   0.0   2.8   0.0   0.0   4.0   0.25   6
+
+; Rotor blades - SEGMENTED MODEL (electrical breaks at joints)
+; Break each blade into segments to model hinges and joints
+W012   0.0  -1.5   4.0   0.0  -3.0   4.0   0.12   3
+W013   0.0  -4.0   4.0   0.0  -5.5   4.0   0.12   3
+W014   0.0   1.5   4.0   0.0   3.0   4.0   0.12   3
+W015   0.0   4.0   4.0   0.0   5.5   4.0   0.12   3
+
+; Tail boom
+W016   8.8   0.0   0.0  17.6   0.0   0.0   0.3   18
+W017   8.8   0.0   0.0  17.6   0.0   0.0   0.25  18
+W018   8.8   0.0   0.0  17.6   0.0   0.0   0.2   18
+
+; Tail rotor
+W019  17.6   0.0   0.0  17.6   0.0   1.5   0.15   4
+W020  17.6   0.0   0.0  17.6   0.0  -1.5   0.15   4
+
+; Vertical stabilizer
+W021  15.0   0.0   0.0  15.0   0.0   2.5   0.2    8
+W022  17.0   0.0   0.0  17.0   0.0   2.5   0.15   8
+W023  15.0   0.0   2.5  17.0   0.0   2.5   0.1    2
+
+; Horizontal stabilizer
+W024  15.5  -2.0   0.5  15.5   2.0   0.5   0.15   8
+W025  16.5  -2.0   0.5  16.5   2.0   0.5   0.12   8
+W026  15.5  -2.0   0.5  16.5  -2.0   0.5   0.08   2
+W027  15.5   2.0   0.5  16.5   2.0   0.5   0.08   2
+
+; VHF COM ANTENNA - SINGLE ACTIVE ANTENNA
+; Bottom-mounted blade antenna for aviation VHF communication
+W028  -2.0   0.0  -0.8  -2.0   0.0  -1.8   0.006   8
+
+; SOURCE - Feed VHF COM antenna only
+SY SRC  W028  4  1
+
+; GROUND - Low altitude ground effects
+GD 0 0 0 0 0.005 0.013  ; On ground - average soil
+
+; LOADS
+; Aircraft aluminum structure
+LD 5 1 27 0 3.7E+07 0    ; Aluminum structure
+; VHF antenna matching
+LD 4 28 28 0 50.0 0.0    ; VHF: 50Ω military standard
+
+; FREQUENCY - Aviation VHF COM band
+FR 0 1 0 0 125.0 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; UH-1 HUEY VHF COM ANTENNA ONLY
+; Single VHF COM antenna for aviation communication
+;
+; VHF COM Antenna (W028) Details:
+; - Position: Bottom fuselage, forward section (-2.0m, 0.0m, -0.8m to -1.8m)
+; - Type: 1.0m blade antenna (quarter-wave at 125 MHz)
+; - Frequency: 118-136.975 MHz aviation VHF COM band
+; - Feed: Center-fed monopole (segment 4 of 8)
+; - Mounting: Bottom fuselage (near pilots compartment)
+;
+; Bottom-Mounted Antenna Benefits:
+; - Omnidirectional coverage (360° radiation pattern)
+; - No side blindness for tactical operations
+; - Ground communication when hovering/landing
+; - Pilot access for maintenance/emergency
+; - Clear of rotor interference
+; - Tactical advantage for close air support
+;
+; Expected VHF Performance:
+; - Gain: 0-3 dBi (typical for VHF blade on helicopter)
+; - Range: 30-80 km (aviation VHF communication)
+; - VSWR: <2:1 with proper matching
+; - Pattern: Omnidirectional with slight directivity
+;
+; UH-1 Military Operations:
+; - Aviation VHF communication
+; - ATC communication
+; - Air-to-air communication
+; - Tactical helicopter operations
+;
+; This configuration represents a realistic UH-1 Huey
+; with single VHF COM antenna for aviation
+; communication operations.
+EN

@@ -1,3 +1,0 @@
-# 3D Attitude Pattern: roll=45°, pitch=-90°, altitude=2000m
-# Base pattern: cessna-final_125MHz_2000m_pattern.txt
-# Base pattern not found for altitude 2000m

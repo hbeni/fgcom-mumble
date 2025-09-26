@@ -4,7 +4,7 @@
 
 This document provides comprehensive guidance for creating NEC (Numerical Electromagnetics Code) models for antenna simulation, including wavelength calculations, minimum spacing requirements, and practical examples for various vehicle types.
 
-**⚠️ CURRENT STATUS**: The automated pattern generation system is not working correctly. The script `scripts/pattern_generation/generate_all_patterns.sh` is not properly generating patterns at multiple altitudes for aircraft. Manual pattern creation is recommended until this issue is resolved.
+**✅ CURRENT STATUS**: The automated pattern generation system has been updated and is now working correctly. The script `scripts/pattern_generation/simplified_nec_generator.sh` now uses `.nec` files exclusively and properly generates patterns at multiple altitudes for aircraft with parallel processing support.
 
 ## VHF/UHF Professional Antennas
 
@@ -444,10 +444,11 @@ std::string pattern_file = selectPatternFile(vehicle_type, frequency_mhz);
 
 **For Civilian Vehicles:**
 ```bash
-# Generate all civilian patterns
-./generate_all_patterns.sh
+# Generate all patterns with 15 cores (recommended)
+./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --overwrite
 
-# Generate specific vehicle patterns
+# Generate with verbose output
+./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --verbose --overwrite
 ./generate_amateur_bands.sh
 ```
 

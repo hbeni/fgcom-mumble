@@ -1,0 +1,6 @@
+# Radiation Pattern Data
+# Generated from: mi4-uhf_17.out
+# Frequency: 150.0 MHz
+# Format: Theta Phi Gain_dBi Phase_deg
+# Theta: elevation angle (0-180 degrees)
+# Phi: azimuth angle (0-360 degrees)

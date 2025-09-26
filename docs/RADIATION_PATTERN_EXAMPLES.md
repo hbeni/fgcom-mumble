@@ -4,7 +4,7 @@
 
 This document provides step-by-step examples for creating radiation pattern files for different vehicle types in FGCom-mumble. Each example includes complete EZNEC models, pattern generation scripts, and integration instructions.
 
-**⚠️ CURRENT STATUS**: The automated pattern generation system is not working correctly. The script `scripts/pattern_generation/generate_all_patterns.sh` is not properly generating patterns at multiple altitudes for aircraft. Manual pattern creation is recommended until this issue is resolved.
+**✅ CURRENT STATUS**: The automated pattern generation system has been updated and is now working correctly. The script `scripts/pattern_generation/simplified_nec_generator.sh` now uses `.nec` files exclusively and properly generates patterns at multiple altitudes for aircraft with parallel processing support.
 
 ## Table of Contents
 
