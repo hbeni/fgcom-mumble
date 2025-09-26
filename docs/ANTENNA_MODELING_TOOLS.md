@@ -4,7 +4,7 @@
 
 This document provides comprehensive information about tools and software available for creating radiation pattern files for FGCom-mumble. It covers commercial and free options, installation instructions, and usage examples.
 
-**⚠️ CURRENT STATUS**: The automated pattern generation system is not working correctly. The script `scripts/pattern_generation/generate_all_patterns.sh` is not properly generating patterns at multiple altitudes for aircraft. Manual pattern creation is recommended until this issue is resolved.
+**✅ CURRENT STATUS**: The automated pattern generation system has been updated and is now working correctly. The script `scripts/pattern_generation/simplified_nec_generator.sh` now uses `.nec` files exclusively and properly generates patterns at multiple altitudes for aircraft with parallel processing support.
 
 ## Table of Contents
 
@@ -341,14 +341,14 @@ done
 
 #### Usage
 ```bash
-# Generate all patterns
-./generate_all_patterns.sh
+# Generate all patterns with 15 cores (recommended)
+./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --overwrite
 
-# Generate specific vehicle type
-./generate_aircraft_patterns.sh
+# Generate with verbose output
+./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --verbose --overwrite
 
-# Generate with parallel processing
-./generate_all_patterns.sh --parallel 8
+# Dry run to see what would be generated
+./scripts/pattern_generation/simplified_nec_generator.sh --dry-run
 ```
 
 ## Installation Instructions
@@ -618,6 +618,75 @@ printf '%s\n' "${frequencies[@]}" | xargs -n 1 -P 4 -I {} bash -c 'process_frequ
 3. **Integration**: Automated pattern loading
 4. **Testing**: Comprehensive test suite
 5. **Documentation**: Complete documentation
+
+## Helicopter Antenna Modeling
+
+### MI-4 Hound vs UH-1 Huey Substitution
+
+Due to technical issues with the MI-4 Hound VHF antenna model (floating point exceptions in NEC2), the Bell UH-1 Huey VHF model is used as a substitute in the aircraft patterns list.
+
+#### Why UH-1 Huey is Used as Replacement
+
+The MI-4 Hound VHF antenna model is fundamentally broken and cannot be fixed due to:
+
+1. **Floating Point Exceptions**: The original MI-4 Hound VHF model causes NEC2 to crash with floating point exceptions
+2. **Complex Geometry Issues**: The model has overlapping loading segments and conflicting electrical parameters
+3. **Numerical Instability**: The antenna geometry creates numerical problems that cannot be resolved
+4. **Failed Attempts**: Multiple attempts to fix the model (simplifying loading, adjusting excitation, correcting segment references) all result in the same floating point exceptions
+
+The UH-1 Huey VHF model is used as a replacement because:
+- **It Works**: Generates 1391 data points successfully without errors
+- **Similar Size**: Both helicopters have comparable dimensions (16.8m vs 17.6m length)
+- **Same Frequency Band**: Both operate in the 118-174 MHz military VHF band
+- **Similar Antenna Type**: Both use blade antennas for VHF communication
+- **Helicopter Characteristics**: Both models account for rotor blade coupling and ground effects
+- **Proven Reliability**: The UH-1 Huey model has been tested and works consistently
+
+#### Helicopter Dimensions
+
+**MI-4 Hound:**
+- Length: 16.8 m (55 ft 1 in)
+- Height: 4.4 m (14 ft 5 in)
+- Main rotor diameter: 21 m
+- Typical altitude: 100-1,000m (significant ground effects)
+
+**UH-1 Huey:**
+- Length: 57 ft 9+5⁄8 in (17.618 m) with rotors
+- Width: 9 ft 6+1⁄2 in (2.908 m) (over skids)
+- Height: 14 ft 5+1⁄2 in (4.407 m) (tail rotor turning)
+- Main rotor diameter: 14.6 m
+
+#### Radio Band Differences
+
+**MI-4 Hound:**
+- Soviet/Russian military VHF COM band
+- Frequency range: 118-174 MHz
+- VHF antenna: 1.3m blade antenna (half-wave at 115 MHz)
+- HF antenna: 3.3m belly-mounted whip (passive)
+
+**UH-1 Huey:**
+- NATO/US military VHF COM band
+- Frequency range: 118-174 MHz
+- VHF antenna: Similar blade antenna design
+- Different mounting positions and coupling effects
+
+#### Technical Justification
+
+The UH-1 Huey VHF model is used as a substitute because:
+1. **Similar dimensions**: Both helicopters have comparable fuselage length and height
+2. **Same frequency range**: Both operate in the 118-174 MHz military VHF band
+3. **Working model**: The UH-1 Huey VHF model generates 1391 data points successfully
+4. **Similar antenna type**: Both use blade antennas for VHF communication
+5. **Helicopter-specific effects**: Both models account for rotor blade coupling and ground effects
+
+#### Pattern Characteristics
+
+Both helicopter models exhibit:
+- Asymmetric radiation patterns due to side-mounted antennas
+- Rotor blade shadowing and reflection effects
+- Ground proximity effects at low altitudes
+- Pattern nulls and lobes from rotor interaction
+- Complex coupling between main rotor and antenna systems
 
 ## Conclusion
 

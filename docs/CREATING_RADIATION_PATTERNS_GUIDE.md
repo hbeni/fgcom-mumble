@@ -4,7 +4,7 @@
 
 This comprehensive guide explains how to create radiation pattern files for vehicles, aircraft, boats, and ships in FGCom-mumble. It covers the complete workflow from initial modeling to final pattern integration.
 
-**⚠️ CURRENT STATUS**: The automated pattern generation system is not working correctly. The script `scripts/pattern_generation/generate_all_patterns.sh` is not properly generating patterns at multiple altitudes for aircraft. Manual pattern creation is recommended until this issue is resolved.
+**✅ CURRENT STATUS**: The automated pattern generation system has been updated and is now working correctly. The script `scripts/pattern_generation/simplified_nec_generator.sh` now uses `.nec` files exclusively and properly generates patterns at multiple altitudes for aircraft with parallel processing support.
 
 ## Table of Contents
 

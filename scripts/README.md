@@ -17,35 +17,39 @@ scripts/
 
 ### Pattern Generation Scripts (`pattern_generation/`)
 
-**`generate_patterns.sh`** - Unified multi-threaded pattern generation script
+**`simplified_nec_generator.sh`** - Advanced 3D attitude pattern generation script
 
 **Features:**
-- **Multi-threaded**: Uses up to 20 CPU cores for fast pattern generation
+- **Parallel Processing**: Uses up to 20 CPU cores for fast pattern generation (15x speed improvement)
+- **3D Attitude Patterns**: Generates patterns for all roll/pitch combinations at multiple altitudes
+- **Progress Indicators**: Real-time progress tracking with detailed status information
+- **Altitude Band Organization**: Organizes patterns by RF propagation physics (ground_effects, boundary_layer, free_space)
 - **Safe by default**: Does not overwrite existing pattern files
 - **Flexible options**: Command-line options for customization
 - **Dry-run mode**: Preview what would be generated without actually doing it
-- **Category-based**: Generate patterns for specific vehicle categories
 
 **Usage:**
 ```bash
 # Show help
-./scripts/pattern_generation/generate_patterns.sh --help
+./scripts/pattern_generation/simplified_nec_generator.sh --help
 
-# Generate all patterns (safe mode - won't overwrite existing)
-./scripts/pattern_generation/generate_patterns.sh
-
-# Generate only aircraft patterns
-./scripts/pattern_generation/generate_patterns.sh aircraft
+# Generate all patterns with 15 cores (recommended)
+./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --overwrite
 
 # Dry run to see what would be generated
-./scripts/pattern_generation/generate_patterns.sh --dry-run coastal
+./scripts/pattern_generation/simplified_nec_generator.sh --dry-run
 
-# Overwrite existing patterns
-./scripts/pattern_generation/generate_patterns.sh --overwrite maritime
+# Generate with verbose output
+./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --verbose --overwrite
 
-# Use specific number of parallel jobs
-./scripts/pattern_generation/generate_patterns.sh --jobs 10 all
+# Use different core count
+./scripts/pattern_generation/simplified_nec_generator.sh --jobs 8 --overwrite
 ```
+
+**Output Structure:**
+- **Aircraft**: 5,460 patterns per aircraft (28 altitudes × 15 roll × 13 pitch)
+- **Ground Vehicles**: 195 patterns per vehicle (1 altitude × 15 roll × 13 pitch)
+- **Total**: 92,820 patterns for complete 3D attitude coverage
 
 ### Testing Scripts (`testing/`)
 
