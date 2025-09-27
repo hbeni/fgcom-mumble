@@ -14,9 +14,10 @@ This document provides a comprehensive reference for all API endpoints in the FG
 6. [Antenna Patterns API](#antenna-patterns-api)
 7. [Ground Systems API](#ground-systems-api)
 8. [Configuration API](#configuration-api)
-9. [Band Segments Reference](#band-segments-reference)
-10. [Error Codes](#error-codes)
-11. [Rate Limiting](#rate-limiting)
+9. [Band Segments API](#band-segments-api)
+10. [Band Segments Reference](#band-segments-reference)
+11. [Error Codes](#error-codes)
+12. [Rate Limiting](#rate-limiting)
 
 ## Core API Endpoints
 
@@ -845,6 +846,259 @@ print(f"Pending units: {work_status['data']['pending_units']}")
 # Get security status
 security_status = client.get_security_status()
 print(f"Security enabled: {security_status['data']['security_enabled']}")
+```
+
+## Band Segments API
+
+The Band Segments API provides read-only access to amateur radio frequency allocations, power limits, and regional restrictions.
+
+### List Band Segments
+
+**GET /api/v1/band-segments**
+
+Returns all available band segments with optional filtering.
+
+**Query Parameters:**
+- `band` (optional): Filter by band name (e.g., "20m", "40m", "2m")
+- `mode` (optional): Filter by mode (e.g., "CW", "SSB", "AM")
+- `region` (optional): Filter by ITU region (1, 2, or 3)
+
+**Example Request:**
+```
+GET /api/v1/band-segments?band=20m&mode=SSB&region=1
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "total_count": 2,
+    "segments": [
+      {
+        "band": "20m",
+        "mode": "CW",
+        "start_freq_khz": 14000.0,
+        "end_freq_khz": 14070.0,
+        "itu_region": 1,
+        "power_limit_watts": 400.0,
+        "countries": "Europe",
+        "notes": "CW only below 14070 kHz"
+      },
+      {
+        "band": "20m",
+        "mode": "SSB",
+        "start_freq_khz": 14101.0,
+        "end_freq_khz": 14350.0,
+        "itu_region": 1,
+        "power_limit_watts": 400.0,
+        "countries": "Europe",
+        "notes": "SSB and digital modes"
+      }
+    ]
+  }
+}
+```
+
+### Get Band Segment by Frequency
+
+**GET /api/v1/band-segments/frequency**
+
+Returns band segment information for a specific frequency.
+
+**Required Parameters:**
+- `frequency`: Frequency in kHz (e.g., "14100")
+
+**Optional Parameters:**
+- `mode`: Operating mode (default: "SSB")
+- `region`: ITU region (default: 1)
+
+**Example Request:**
+```
+GET /api/v1/band-segments/frequency?frequency=14100&mode=SSB&region=1
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "band": "20m",
+    "mode": "SSB",
+    "start_freq_khz": 14101.0,
+    "end_freq_khz": 14350.0,
+    "itu_region": 1,
+    "power_limit_watts": 400.0,
+    "countries": "Europe",
+    "notes": "SSB and digital modes",
+    "found": true
+  }
+}
+```
+
+### Get Power Limit
+
+**GET /api/v1/band-segments/power-limit**
+
+Returns the maximum power limit for a specific frequency and mode.
+
+**Required Parameters:**
+- `frequency`: Frequency in kHz
+
+**Optional Parameters:**
+- `mode`: Operating mode (default: "SSB")
+- `region`: ITU region (default: 1)
+
+**Example Request:**
+```
+GET /api/v1/band-segments/power-limit?frequency=5310&mode=CW&region=1
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "frequency_khz": 5310.0,
+    "mode": "CW",
+    "itu_region": 1,
+    "power_limit_watts": 50.0,
+    "band": "60m",
+    "countries": "Norway, Denmark, UK, Finland, Iceland, Germany, Sweden, Switzerland, Belgium, Bulgaria, Croatia, Czech Republic, Estonia, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Netherlands, Portugal, Romania, Slovakia, Slovenia, Spain",
+    "is_valid": true
+  }
+}
+```
+
+### Validate Power Level
+
+**GET /api/v1/band-segments/power-validation**
+
+Validates if a power level is within limits for a specific frequency.
+
+**Required Parameters:**
+- `frequency`: Frequency in kHz
+- `power`: Power level in watts
+
+**Optional Parameters:**
+- `mode`: Operating mode (default: "SSB")
+- `region`: ITU region (default: 1)
+
+**Example Request:**
+```
+GET /api/v1/band-segments/power-validation?frequency=5310&power=25&mode=CW&region=1
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "frequency_khz": 5310.0,
+    "mode": "CW",
+    "itu_region": 1,
+    "power_watts": 25.0,
+    "max_power_watts": 50.0,
+    "is_valid": true,
+    "band": "60m",
+    "countries": "Norway, Denmark, UK, Finland, Iceland, Germany, Sweden, Switzerland, Belgium, Bulgaria, Croatia, Czech Republic, Estonia, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Netherlands, Portugal, Romania, Slovakia, Slovenia, Spain"
+  }
+}
+```
+
+### Validate Frequency
+
+**GET /api/v1/band-segments/frequency-validation**
+
+Validates if a frequency is valid for amateur radio operation.
+
+**Required Parameters:**
+- `frequency`: Frequency in kHz
+
+**Optional Parameters:**
+- `mode`: Operating mode (default: "SSB")
+- `region`: ITU region (default: 1)
+
+**Example Request:**
+```
+GET /api/v1/band-segments/frequency-validation?frequency=14100&mode=SSB&region=1
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "frequency_khz": 14100.0,
+    "mode": "SSB",
+    "itu_region": 1,
+    "is_valid": true,
+    "band": "20m",
+    "countries": "Europe",
+    "power_limit_watts": 400.0,
+    "notes": "SSB and digital modes"
+  }
+}
+```
+
+### Python Client Example
+
+```python
+import requests
+
+class BandSegmentsAPIClient:
+    def __init__(self, base_url="http://localhost:8080"):
+        self.base_url = base_url
+        self.session = requests.Session()
+    
+    def get_power_limit(self, frequency, mode="SSB", region=1):
+        """Get power limit for a frequency"""
+        url = f"{self.base_url}/api/v1/band-segments/power-limit"
+        params = {
+            "frequency": frequency,
+            "mode": mode,
+            "region": region
+        }
+        response = self.session.get(url, params=params)
+        return response.json()
+    
+    def validate_power(self, frequency, power, mode="SSB", region=1):
+        """Validate power level"""
+        url = f"{self.base_url}/api/v1/band-segments/power-validation"
+        params = {
+            "frequency": frequency,
+            "power": power,
+            "mode": mode,
+            "region": region
+        }
+        response = self.session.get(url, params=params)
+        return response.json()
+    
+    def validate_frequency(self, frequency, mode="SSB", region=1):
+        """Validate frequency"""
+        url = f"{self.base_url}/api/v1/band-segments/frequency-validation"
+        params = {
+            "frequency": frequency,
+            "mode": mode,
+            "region": region
+        }
+        response = self.session.get(url, params=params)
+        return response.json()
+
+# Usage example
+client = BandSegmentsAPIClient()
+
+# Get power limit for 60m band
+power_limit = client.get_power_limit(5310, "CW", 1)
+print(f"Power limit: {power_limit['data']['power_limit_watts']}W")
+
+# Validate power level
+validation = client.validate_power(5310, 25, "CW", 1)
+print(f"Power valid: {validation['data']['is_valid']}")
+
+# Validate frequency
+freq_validation = client.validate_frequency(14100, "SSB", 1)
+print(f"Frequency valid: {freq_validation['data']['is_valid']}")
 ```
 
 ### cURL Examples

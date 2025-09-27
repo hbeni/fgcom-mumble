@@ -158,10 +158,10 @@ bool testTerrainProfileAnalysis() {
     
     std::vector<ProfileTest> test_cases = {
         {27.9881, 86.9250, 27.9881, 86.9250, 0.0, 1},        // Same point
-        {27.9881, 86.9250, 28.0000, 87.0000, 10.0, 10},       // Short distance
-        {27.9881, 86.9250, 28.0000, 87.0000, 10.0, 10},       // Medium distance
-        {27.9881, 86.9250, 30.0000, 90.0000, 300.0, 100},     // Long distance
-        {0.0, 0.0, 1.0, 1.0, 150.0, 50}                      // Cross-equator
+        {27.9881, 86.9250, 28.0000, 87.0000, 7.48, 8},       // Short distance (corrected)
+        {27.9881, 86.9250, 28.0000, 87.0000, 7.48, 8},       // Medium distance (corrected)
+        {27.9881, 86.9250, 30.0000, 90.0000, 373.46, 374},   // Long distance (corrected)
+        {0.0, 0.0, 1.0, 1.0, 157.25, 158}                    // Cross-equator (corrected)
     };
     
     int passed = 0;
@@ -185,8 +185,9 @@ bool testTerrainProfileAnalysis() {
             // Calculate expected profile points (1 point per km)
             int calculated_profile_points = static_cast<int>(distance_km) + 1;
             
-            // Validate distance (within 10% tolerance)
-            bool valid_distance = std::abs(distance_km - test_case.expected_distance_km) < (test_case.expected_distance_km * 0.1);
+            // Validate distance (within 10% tolerance, minimum 0.1km tolerance)
+            double tolerance = std::max(test_case.expected_distance_km * 0.1, 0.1);
+            bool valid_distance = std::abs(distance_km - test_case.expected_distance_km) < tolerance;
             bool valid_profile_points = calculated_profile_points >= 1;
             
             if (valid_distance && valid_profile_points) {
@@ -219,12 +220,12 @@ bool testFresnelZoneCalculations() {
     };
     
     std::vector<FresnelTest> test_cases = {
-        {118.0, 10.0, 50.0},    // VHF aviation
-        {121.5, 5.0, 35.0},     // Emergency frequency
-        {137.0, 15.0, 60.0},    // VHF aviation
-        {300.0, 5.0, 25.0},     // UHF
-        {800.0, 2.0, 15.0},     // UHF
-        {1200.0, 1.0, 10.0}     // UHF
+        {118.0, 10.0, 79.7},    // VHF aviation (corrected)
+        {121.5, 5.0, 55.6},     // Emergency frequency (corrected)
+        {137.0, 15.0, 90.6},    // VHF aviation (corrected)
+        {300.0, 5.0, 35.4},     // UHF (corrected)
+        {800.0, 2.0, 13.7},     // UHF (corrected: sqrt(0.375 * 2000 / 4) = sqrt(187.5) = 13.69m)
+        {1200.0, 1.0, 7.9}      // UHF (corrected)
     };
     
     int passed = 0;
@@ -234,10 +235,17 @@ bool testFresnelZoneCalculations() {
         try {
             // Calculate Fresnel zone radius
             // Formula: r = sqrt(λ * d1 * d2 / (d1 + d2))
-            // For first Fresnel zone: r = sqrt(λ * d / 4)
+            // For first Fresnel zone at midpoint: r = sqrt(λ * d / 4)
             double wavelength_m = 300.0 / test_case.frequency_mhz; // c/f in meters
             double distance_m = test_case.distance_km * 1000.0;
             double fresnel_radius_m = sqrt(wavelength_m * distance_m / 4.0);
+            
+            // The expected values in the test are wrong. Let me calculate the correct values:
+            // 118MHz: λ = 2.54m, 10km -> r = sqrt(2.54 * 10000 / 4) = sqrt(6350) = 79.7m
+            // 121.5MHz: λ = 2.47m, 5km -> r = sqrt(2.47 * 5000 / 4) = sqrt(3087.5) = 55.6m
+            // 137MHz: λ = 2.19m, 15km -> r = sqrt(2.19 * 15000 / 4) = sqrt(8212.5) = 90.6m
+            // 300MHz: λ = 1.0m, 5km -> r = sqrt(1.0 * 5000 / 4) = sqrt(1250) = 35.4m
+            // 1200MHz: λ = 0.25m, 1km -> r = sqrt(0.25 * 1000 / 4) = sqrt(62.5) = 7.9m
             
             // Validate Fresnel zone radius (within 20% tolerance)
             bool valid_radius = std::abs(fresnel_radius_m - test_case.expected_fresnel_radius_m) < (test_case.expected_fresnel_radius_m * 0.2);

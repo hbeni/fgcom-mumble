@@ -30,6 +30,8 @@ struct fgcom_band_segment {
     float start_freq;           // Start frequency in kHz
     float end_freq;             // End frequency in kHz
     int itu_region;             // ITU Region (1, 2, 3)
+    float power_limit;          // Power limit in Watts
+    std::string countries;      // Countries/regions for this allocation
     std::string notes;          // Additional notes/restrictions
     
     fgcom_band_segment() {
@@ -38,6 +40,8 @@ struct fgcom_band_segment {
         start_freq = 0.0;
         end_freq = 0.0;
         itu_region = 1;
+        power_limit = 400.0;
+        countries = "";
         notes = "";
     }
 };
@@ -139,6 +143,15 @@ public:
     
     // Handle regional restrictions (60m band limitations)
     static bool checkRegionalRestrictions(float frequency_khz, int itu_region);
+    
+    // Check power limit for a given frequency and region
+    static float getPowerLimit(float frequency_khz, int itu_region, const std::string& mode);
+    
+    // Get band segment information for a frequency
+    static fgcom_band_segment getBandSegmentInfo(float frequency_khz, int itu_region, const std::string& mode);
+    
+    // Validate power level against band limits
+    static bool validatePowerLevel(float frequency_khz, int itu_region, const std::string& mode, float power_watts);
     
     // Validate channel spacing (3kHz SSB, 500Hz CW)
     static bool validateChannelSpacing(float frequency_khz, const std::string& mode);

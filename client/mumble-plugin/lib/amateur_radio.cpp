@@ -130,10 +130,16 @@ bool FGCom_AmateurRadio::initialize() {
     band_characteristics["6m"] = band6m;
     
     // Load band segments from CSV
-    if (!loadBandSegments("band_segments.csv")) {
-        std::cerr << "Failed to load band segments" << std::endl;
+    std::string csv_path = "../../configs/band_segments.csv";
+    
+    // Try to get path from configuration if available
+    // This would be integrated with the main config system in practice
+    if (!loadBandSegments(csv_path)) {
+        std::cerr << "Failed to load band segments from: " << csv_path << std::endl;
         return false;
     }
+    
+    std::cout << "Loaded " << band_segments.size() << " band segments from CSV" << std::endl;
     
     initialized = true;
     return true;
@@ -158,25 +164,35 @@ bool FGCom_AmateurRadio::loadBandSegments(const std::string& csv_file) {
         
         if (line.empty()) continue;
         
-        std::stringstream ss(line);
-        std::string field;
+        // Parse CSV line with proper handling of quoted fields
         std::vector<std::string> fields;
+        std::string current_field;
+        bool in_quotes = false;
         
-        // Parse CSV line (simple parsing, doesn't handle quoted fields with commas)
-        while (std::getline(ss, field, ',')) {
-            fields.push_back(field);
+        for (size_t i = 0; i < line.length(); i++) {
+            char c = line[i];
+            
+            if (c == '"') {
+                in_quotes = !in_quotes;
+            } else if (c == ',' && !in_quotes) {
+                fields.push_back(current_field);
+                current_field.clear();
+            } else {
+                current_field += c;
+            }
         }
+        fields.push_back(current_field); // Add the last field
         
-        if (fields.size() >= 5) {
+        if (fields.size() >= 8) {
             fgcom_band_segment segment;
             segment.band = fields[0];
             segment.mode = fields[1];
             segment.start_freq = std::stof(fields[2]);
             segment.end_freq = std::stof(fields[3]);
             segment.itu_region = std::stoi(fields[4]);
-            if (fields.size() > 5) {
-                segment.notes = fields[5];
-            }
+            segment.power_limit = std::stof(fields[5]);
+            segment.countries = fields[6];
+            segment.notes = fields[7];
             
             band_segments.push_back(segment);
         }
@@ -419,15 +435,65 @@ bool FGCom_AmateurRadio::enforceModeSeparation(float frequency_khz, const std::s
 bool FGCom_AmateurRadio::checkRegionalRestrictions(float frequency_khz, int itu_region) {
     if (!initialized) initialize();
     
-    // 60m band has special restrictions
-    if (frequency_khz >= 5300.0 && frequency_khz <= 5400.0) {
-        // 60m band is only available in certain regions and countries
-        // This is a simplified check - in practice, you'd need country-specific data
-        return true; // For now, allow in all regions
+    // Check if frequency is in a restricted band segment
+    for (const auto& segment : band_segments) {
+        if (segment.itu_region == itu_region &&
+            frequency_khz >= segment.start_freq && 
+            frequency_khz <= segment.end_freq) {
+            
+            // Check if this segment has country restrictions
+            if (!segment.countries.empty() && segment.countries != "Europe" && 
+                segment.countries != "Americas" && segment.countries != "Asia-Pacific") {
+                // This segment has specific country restrictions
+                // In a full implementation, you'd check against user's country
+                return true; // For now, allow all
+            }
+            return true;
+        }
     }
     
-    // Other bands don't have regional restrictions beyond ITU region differences
-    return true;
+    return false; // Not in any amateur band
+}
+
+// Check power limit for a given frequency and region
+float FGCom_AmateurRadio::getPowerLimit(float frequency_khz, int itu_region, const std::string& mode) {
+    if (!initialized) initialize();
+    
+    for (const auto& segment : band_segments) {
+        if (segment.itu_region == itu_region &&
+            segment.mode == mode &&
+            frequency_khz >= segment.start_freq && 
+            frequency_khz <= segment.end_freq) {
+            return segment.power_limit;
+        }
+    }
+    
+    return 400.0; // Default power limit
+}
+
+// Get band segment information for a frequency
+fgcom_band_segment FGCom_AmateurRadio::getBandSegmentInfo(float frequency_khz, int itu_region, const std::string& mode) {
+    if (!initialized) initialize();
+    
+    for (const auto& segment : band_segments) {
+        if (segment.itu_region == itu_region &&
+            segment.mode == mode &&
+            frequency_khz >= segment.start_freq && 
+            frequency_khz <= segment.end_freq) {
+            return segment;
+        }
+    }
+    
+    // Return empty segment if not found
+    return fgcom_band_segment();
+}
+
+// Validate power level against band limits
+bool FGCom_AmateurRadio::validatePowerLevel(float frequency_khz, int itu_region, const std::string& mode, float power_watts) {
+    if (!initialized) initialize();
+    
+    float max_power = getPowerLimit(frequency_khz, itu_region, mode);
+    return power_watts <= max_power;
 }
 
 // Validate channel spacing for all modulation modes
