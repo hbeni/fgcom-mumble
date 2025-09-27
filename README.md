@@ -130,10 +130,7 @@ The documentation is split up into relevant parts:
 - [Known Military Bands](docs/KNOWN_MILITARY_BANDS_AND_FREQS.md) Military frequency bands and protocols
 - [Vehicle Frequency Analysis](docs/VEHICLE_FREQUENCY_ANALYSIS.md) Frequency analysis for different vehicle types
 
-### Technical Documentation:
-- [Architectural Fixes Summary](docs/ARCHITECTURAL_FIXES_SUMMARY.md) Summary of architectural improvements and fixes
-- [Compilation Status](docs/COMPILATION_STATUS.md) Current compilation status and build information
-- [Standardized Structure Summary](docs/STANDARDIZED_STRUCTURE_SUMMARY.md) Project structure standardization and organization
+
 
 ### Antenna Pattern Visualization:
 The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
