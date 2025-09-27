@@ -53,7 +53,6 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Security Features**: TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration
 - **Noise Floor Calculation**: Advanced atmospheric noise modeling with environment-specific calculations and manual position setting via GPS or Maidenhead locators
 - **AGC & Squelch System**: Advanced Automatic Gain Control and Squelch functionality with configurable presets
-- **Radio Era Classification**: Comprehensive radio technology classification system for SDR and traditional radios
 - **User-Friendly Documentation**: Simple user guide for non-technical users and gamers
 
 ### Latest Updates (v2.1+):
@@ -71,15 +70,13 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Coding Standards**: Strict architectural and design standards implementation
 - **Zero Tolerance Quality**: Comprehensive code inspection ensuring no race conditions, memory leaks, or security vulnerabilities
 - **Enhanced Documentation**: Updated and consolidated documentation structure
-- **Pattern Generation Fixed**: Antenna radiation pattern generation system now working correctly
 - **Multi-threaded Architecture**: 7 specialized background threads for optimal performance
 - **GPU Acceleration**: Configurable GPU acceleration for complex calculations (client/server/hybrid modes)
 
 **📖 Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
-**PATTERN GENERATION FIXED**: The antenna radiation pattern generation system has been updated and is now working correctly. The scripts now use `.nec` files exclusively and include working aircraft patterns with proper altitude handling.
 
-**PRODUCTION READY**: The system has been thoroughly tested and is ready for production use with comprehensive quality assurance and zero tolerance for race conditions, memory leaks, or security vulnerabilities.
+
 
 Documentation
 =============
@@ -252,7 +249,7 @@ FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced
 - **Threading**: Customize thread intervals and resource allocation
 - **API Server**: Configure RESTful API endpoints and WebSocket settings
 - **Debugging**: Set logging levels, output handlers, and performance monitoring
-- **Power Management**: Configure transmit power limits and efficiency settings
+- **Power Management**: Configure transmit power limits.
 - **Solar Data**: Set NOAA/SWPC data update intervals and fallback options
 - **Lightning Data**: Configure atmospheric noise simulation parameters
 - **Weather Data**: Set weather data sources and update frequencies
@@ -288,7 +285,7 @@ The plugin aims to be compatible to the legacy fgcom-standalone protocol, so vey
 Note that frequencies can be arbitary strings. That said, all participating clients must share a common definition of "frequency", this should be the physical radio wave frequency in MHz and not the "channel" (esp. with 8.3 channels spacing).  
 Also note that callsigns and frequencies are not allowed to contain the comma symbol (`,`). Decimal point symbol has always to be a point (`.`).
 
-Despite we expect the connected simulator to provide PTT-information in order to activate radio transmissions, you may also use the configfile to define mappings for mumble's internal voice activation. This way, you can use mumbles own PTT-binding to activate the radios you mapped. By default, the first Radio is already mapped for your convinience.
+The connected simulator is expected  to provide PTT-information in order to activate radio transmissions, but you may also use the configfile to define mappings for mumble's internal voice activation. This way, you can use mumbles own PTT-binding to activate the radios you mapped. By default, the first Radio is already mapped for your convinience.
 
 
 ### RadioGUI
