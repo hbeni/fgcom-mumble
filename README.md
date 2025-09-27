@@ -1,4 +1,6 @@
-FGCom-mumble - a flightsim radio simulation framework based on mumble
+n FGCom-mumble - a flightsim radio simulation framework based on mumble
+
+ti
 =====================================================================
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
@@ -32,48 +34,52 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 **[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** - Perfect for beginners and non-technical users!
 
 ### New Advanced Features (v2.0+):
-- **Multi-threaded Architecture**: 7 specialized background threads for optimal performance
-- **GPU Acceleration**: Configurable GPU acceleration for complex calculations (client/server/hybrid modes)
-- **Feature Toggle System**: 107 configurable features across 17 categories for runtime customization
-- **Advanced Debugging**: Comprehensive logging, profiling, and memory tracking system
-- **RESTful API**: Complete HTTP API with WebSocket real-time updates for external integration
-- **Amateur Radio Support**: Full amateur radio band coverage with ITU region compliance
-- **Aviation & Maritime HF**: Dedicated HF communication models for aviation and maritime operations
-- **Antenna Pattern Library**: Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow
-- **VHF/UHF Antenna Support**: Professional-grade 2m (144-145 MHz) and 70cm (430-440 MHz) Yagi antennas with 10m height modeling
-- **Physics-Based Propagation**: Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction
-- **Solar Data Integration**: Real-time NOAA/SWPC solar data for accurate propagation modeling
-- **Vehicle Dynamics API**: Complete vehicle position, attitude, and antenna orientation tracking
-- **Power Management**: Advanced transmit power control with efficiency and safety features
-- **Frequency Offset Simulation**: Realistic audio effects including Doppler shift and "Donald Duck" effect
-- **Lightning Data Integration**: Real-time atmospheric noise simulation from lightning strikes
-- **Weather Data Integration**: Atmospheric condition effects on radio propagation
-- **Security Features**: TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration
-- **Noise Floor Calculation**: Advanced atmospheric noise modeling with environment-specific calculations and manual position setting via GPS or Maidenhead locators
-- **AGC & Squelch System**: Advanced Automatic Gain Control and Squelch functionality with configurable presets
-- **Radio Era Classification**: Comprehensive radio technology classification system for SDR and traditional radios
-- **User-Friendly Documentation**: Simple user guide for non-technical users and gamers
+- **Multi-threaded Architecture**: [7 specialized background threads for optimal performance](docs/THREADING_ARCHITECTURE_DOCUMENTATION.md) - Learn how the threading system works and what each thread does
+- **GPU Acceleration**: [Configurable GPU acceleration for complex calculations (client/server/hybrid modes)](docs/GPU_ACCELERATION_GUIDE.md) - Understand GPU modes, performance benefits, and configuration options
+- **Feature Toggle System**: [107 configurable features across 17 categories for runtime customization](client/mumble-plugin/lib/IMPLEMENTATION_SUMMARY.md#feature-toggle-system) - Runtime feature management and configuration
+- **Advanced Debugging**: [Comprehensive logging, profiling, and memory tracking system](docs/DEBUGGING_SYSTEM_DOCUMENTATION.md) - Debugging and monitoring capabilities
+- **RESTful API**: [Complete HTTP API with WebSocket real-time updates for external integration](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
+- **Amateur Radio Support**: [Full amateur radio band coverage with ITU region compliance](docs/BAND_SEGMENTS_API_DOCUMENTATION.md) - Amateur radio band segments and power limits
+- **Aviation & Maritime HF**: [Dedicated HF communication models for aviation and maritime operations](docs/aviation-VHF-civil.md) - Aviation and maritime HF communication
+- **Antenna Pattern Library**: [Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) - Antenna pattern generation and management
+- **VHF/UHF Antenna Support**: [Professional-grade 2m (144-145 MHz) and 70cm (430-440 MHz) Yagi antennas with 10m height modeling](docs/2M_YAGI_ANTENNA_SUMMARY.md) - VHF/UHF antenna specifications and usage
+- **Physics-Based Propagation**: [Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction](docs/PROPAGATION_PHYSICS_DOCUMENTATION.md) - Radio propagation physics and modeling
+- **Solar Data Integration**: [Real-time NOAA/SWPC solar data for accurate propagation modeling](docs/SOLAR_DATA_INTEGRATION.md) - Solar data integration and usage
+- **Vehicle Dynamics API**: [Complete vehicle position, attitude, and antenna orientation tracking](docs/VEHICLE_DYNAMICS_API.md) - Vehicle dynamics and tracking system
+- **Power Management**: [Advanced transmit power control with efficiency and safety features](docs/POWER_MANAGEMENT_API.md) - Power control and efficiency features
+- **Frequency Offset Simulation**: [Realistic audio effects including Doppler shift and "Donald Duck" effect](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) - Audio effects and frequency processing
+- **Lightning Data Integration**: [Real-time atmospheric noise simulation from lightning strikes](docs/LIGHTNING_DATA_INTEGRATION.md) - Lightning data and noise simulation
+- **Weather Data Integration**: [Atmospheric condition effects on radio propagation](docs/WEATHER_DATA_INTEGRATION.md) - Weather effects on radio propagation
+- **Security Features**: [TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration](docs/SECURITY_API_DOCUMENTATION.md) - Comprehensive security implementation guide *(Note: Radio encryption simulation is not yet implemented)*
+- **Noise Floor Calculation**: [Advanced atmospheric noise modeling with environment-specific calculations, distance-based noise falloff, and manual position setting via GPS or Maidenhead locators](docs/NOISE_FLOOR_DISTANCE_GUIDE.md) - Distance-based noise falloff and environment detection
+- **AGC & Squelch System**: [Advanced Automatic Gain Control and Squelch functionality with configurable presets](docs/AGC_SQUELCH_API_DOCUMENTATION.md) - AGC and squelch system configuration and usage
+- **Radio Era Classification**: [Comprehensive radio technology classification system for SDR and traditional radios](docs/RADIO_ERA_CLASSIFICATION.md) - Historical radio technology classification and performance modeling
+- **User-Friendly Documentation**: [Simple user guide for non-technical users and gamers](docs/USER_GUIDE_SIMPLE.md) - Easy-to-follow guide for beginners
 
 ### Latest Updates (v2.1+):
-- **Complete Antenna Pattern Integration**: All 52 available radiation pattern files now loaded and mapped
-- **Historical Maritime Support**: Added coastal stations and HF ship antennas with toggle functionality
-- **Dynamic Pattern Loading**: Replaced hardcoded paths with intelligent pattern discovery system
-- **Enhanced Vehicle Support**: Added support for boats, ships, military vehicles, and amateur radio operators
-- **Organized Documentation**: Restructured documentation with proper file organization
+- **Complete Antenna Pattern Integration**: [All 52 available radiation pattern files now loaded and mapped](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) - Antenna pattern integration and management
+- **Historical Maritime Support**: [Added coastal stations and HF ship antennas with toggle functionality](docs/HISTORICAL_MARITIME_BANDS.md) - Historical maritime HF frequency bands and coastal stations
+- **Dynamic Pattern Loading**: [Replaced hardcoded paths with intelligent pattern discovery system](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) - Dynamic antenna pattern loading system
+- **Enhanced Vehicle Support**: [Added support for boats, ships, military vehicles, and amateur radio operators](docs/VEHICLE_DYNAMICS_API.md) - Vehicle support and dynamics tracking
+- **Organized Documentation**: [Restructured documentation with proper file organization](docs/README.md) - Documentation structure and organization
 
 ### Latest Updates (v2.3+):
-- **Work Unit Distribution**: Distributed computing system for GPU acceleration across multiple clients
-- **Comprehensive Security**: Multi-layer security with authentication, encryption, and threat detection
-- **Advanced API**: Complete RESTful API with work unit distribution and security endpoints
-- **Vehicle Geometry Creation**: Complete guide for creating vehicle geometry and ground planes
-- **Coding Standards**: Strict architectural and design standards implementation
-- **Zero Tolerance Quality**: Comprehensive code inspection ensuring no race conditions, memory leaks, or security vulnerabilities
-- **Enhanced Documentation**: Updated and consolidated documentation structure
+- **Work Unit Distribution**: [Distributed computing system for GPU acceleration across multiple clients](docs/WORK_UNIT_DISTRIBUTION_API.md) - Learn about distributed computing and work unit management
+- **Comprehensive Security**: [Multi-layer security with authentication, encryption, and threat detection](docs/SECURITY_API_DOCUMENTATION.md) - Security implementation and configuration *(Note: Radio encryption simulation is not yet implemented)*
+- **Advanced API**: [Complete RESTful API with work unit distribution and security endpoints](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
+- **Vehicle Geometry Creation**: [Complete guide for creating vehicle geometry and ground planes](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) - Vehicle geometry creation and ground plane modeling
+- **Coding Standards**: [Strict architectural and design standards implementation](docs/CODING_STANDARDS.md) - Coding standards and architectural guidelines
+- **Zero Tolerance Quality**: [Comprehensive code inspection ensuring no race conditions, memory leaks, or security vulnerabilities](docs/QUALITY_ASSURANCE.md) - Quality assurance and code inspection
+- **Enhanced Documentation**: [Updated and consolidated documentation structure](docs/README.md) - Documentation structure and organization
 - **Pattern Generation Fixed**: Antenna radiation pattern generation system now working correctly
-- **Multi-threaded Architecture**: 7 specialized background threads for optimal performance
-- **GPU Acceleration**: Configurable GPU acceleration for complex calculations (client/server/hybrid modes)
 
-**📖 Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
+### Latest Updates (v2.4+):
+- **Radio Model Configuration**: [Comprehensive radio model system with NATO and Soviet/Warsaw Pact equipment support](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md) - Server-side radio model configuration and management
+- **Preset Channel Management**: [Advanced preset channel system for military radios with 99 presets support](docs/PRESET_CHANNEL_API_DOCUMENTATION.md) - Preset channel configuration and read-only API access
+- **Military Radio Equipment**: [Complete implementation of AN/PRC-152, AN/PRC-77, AN/PRC-148, R-105, R-107, R-123 Magnolia and more](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#radio-model-configuration) - Military radio specifications and channel management
+- **Configuration-Based System**: [All radio models and presets defined in JSON configuration files](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#configuration-files) - Server-side configuration management *(Note: Radio encryption simulation is not yet implemented)*
+
+**Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
 **PATTERN GENERATION FIXED**: The antenna radiation pattern generation system has been updated and is now working correctly. The scripts now use `.nec` files exclusively and include working aircraft patterns with proper altitude handling.
 
@@ -246,7 +252,6 @@ FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced
 - **[configs/fgcom-mumble.conf.example](configs/fgcom-mumble.conf.example)**: Complete configuration template with all available options
 - **[configs/fgcom-mumble.conf.minimal](configs/fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
 - **Feature Toggles**: Runtime enable/disable of 107 features across 17 categories
-- **GPU Acceleration**: Configure client/server/hybrid GPU acceleration modes
 - **Threading**: Customize thread intervals and resource allocation
 - **API Server**: Configure RESTful API endpoints and WebSocket settings
 - **Debugging**: Set logging levels, output handlers, and performance monitoring
@@ -271,13 +276,15 @@ You are ready for radio usage! Some client needs to supply information to the pl
 FGCom-mumble v2.0+ provides comprehensive API integration for external applications:
 
 - **RESTful API**: HTTP endpoints for propagation data, solar conditions, band status, antenna patterns, vehicle dynamics, power management, and system status
+- **Band Segments API**: Read-only access to amateur radio frequency allocations, power limits, and regional restrictions
+- **Preset Channel API**: Read-only access to preset channel information for radio models (AN/PRC-152 with 99 presets)
 - **WebSocket Real-time Updates**: Live propagation updates, solar data changes, vehicle position tracking, and system monitoring
 - **Client Examples**: JavaScript, Python, and C++ integration examples provided
 - **Authentication**: API key management with secure storage and rotation
 - **Rate Limiting**: Built-in abuse detection and prevention
 - **Documentation**: Complete API reference with request/response examples
 
-See [API Documentation](docs/API_DOCUMENTATION.md) for complete integration details.
+See [API Documentation](docs/API_DOCUMENTATION.md), [Band Segments API Documentation](docs/BAND_SEGMENTS_API_DOCUMENTATION.md), [Preset Channel API Documentation](docs/PRESET_CHANNEL_API_DOCUMENTATION.md), [Noise Floor Distance Guide](docs/NOISE_FLOOR_DISTANCE_GUIDE.md), [Environment Detection Guide](docs/ENVIRONMENT_DETECTION_GUIDE.md), and [GPU Acceleration Guide](docs/GPU_ACCELERATION_GUIDE.md) for complete integration details.
 
 
 ### Generic compatibility
@@ -440,9 +447,196 @@ The FGCom-mumble client plugin needs to be in binary form. If you want to use th
   - `httplib.h` (included): HTTP client for solar data, lightning data, and weather data
   - `json.hpp` (included): JSON parsing for API responses and configuration
   - `nec2c` (optional): NEC2 antenna simulation for pattern generation
-  - GPU libraries (optional): CUDA/OpenCL for GPU acceleration features
   - `python3` (required): For antenna pattern generation and coordinate transformations
   - `bc` (required): For high-precision trigonometric calculations
+
+Linux native build
+------------------
+The makefile is optimized for Linux systems and provides the most comprehensive build options:
+
+### Prerequisites Installation
+
+**Ubuntu/Debian:**
+```bash
+# Install basic build tools
+sudo apt-get update
+sudo apt-get install build-essential git make g++
+
+# Install OpenSSL development libraries
+sudo apt-get install libssl-dev
+
+# Install v2.0+ dependencies
+sudo apt-get install python3 bc
+
+# Optional: Install NEC2 for antenna pattern generation
+sudo apt-get install nec2c
+
+# Optional: Install GPU acceleration libraries
+sudo apt-get install nvidia-cuda-toolkit  # For CUDA support
+sudo apt-get install opencl-headers      # For OpenCL support
+```
+
+**CentOS/RHEL/Fedora:**
+```bash
+# Install basic build tools
+sudo yum groupinstall "Development Tools"
+sudo yum install git
+
+# Install OpenSSL development libraries
+sudo yum install openssl-devel
+
+# Install v2.0+ dependencies
+sudo yum install python3 bc
+
+# Optional: Install NEC2 for antenna pattern generation
+sudo yum install nec2c
+
+# Optional: Install GPU acceleration libraries
+sudo yum install cuda-toolkit  # For CUDA support
+sudo yum install opencl-headers  # For OpenCL support
+```
+
+**Arch Linux:**
+```bash
+# Install basic build tools
+sudo pacman -S base-devel git
+
+# Install OpenSSL development libraries
+sudo pacman -S openssl
+
+# Install v2.0+ dependencies
+sudo pacman -S python bc
+
+# Optional: Install NEC2 for antenna pattern generation
+sudo pacman -S nec2c
+
+# Optional: Install GPU acceleration libraries
+sudo pacman -S cuda opencl-headers
+```
+
+### Building the Plugin
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Supermagnum/fgcom-mumble.git
+   cd fgcom-mumble
+   ```
+
+2. **Build the plugin:**
+   ```bash
+   # Standard release build
+   make plugin
+   
+   # Debug build (with verbose output)
+   make debug
+   
+   # Release build with all optimizations
+   make release
+   ```
+
+3. **Install the plugin:**
+   ```bash
+   # Copy plugin to Mumble plugins directory
+   sudo cp client/mumble-plugin/fgcom-mumble.so /usr/lib/mumble/plugins/
+   
+   # Or for user installation
+   mkdir -p ~/.local/share/mumble/plugins/
+   cp client/mumble-plugin/fgcom-mumble.so ~/.local/share/mumble/plugins/
+   ```
+
+### Advanced Build Options
+
+**Build with specific compiler:**
+```bash
+make plugin CC=gcc-11 CXX=g++-11
+```
+
+**Build with debug symbols:**
+```bash
+make debug CFLAGS="-g -O0 -DDEBUG"
+```
+
+**Build with specific OpenSSL version:**
+```bash
+make plugin CFLAGS="-I/usr/local/ssl/include" LDFLAGS="-L/usr/local/ssl/lib"
+```
+
+**Build with GPU acceleration:**
+```bash
+# Enable CUDA support
+make plugin ENABLE_CUDA=1
+
+# Enable OpenCL support  
+make plugin ENABLE_OPENCL=1
+
+# Enable both
+make plugin ENABLE_CUDA=1 ENABLE_OPENCL=1
+```
+
+### Testing the Build
+
+**Run unit tests:**
+```bash
+make test
+```
+
+**Run comprehensive test suite:**
+```bash
+make test-all
+```
+
+**Generate documentation:**
+```bash
+make api-docs
+make user-guide
+```
+
+**Generate antenna patterns:**
+```bash
+make patterns
+```
+
+### Troubleshooting Linux Build Issues
+
+**OpenSSL not found:**
+```bash
+# Install OpenSSL development package
+sudo apt-get install libssl-dev  # Ubuntu/Debian
+sudo yum install openssl-devel   # CentOS/RHEL
+```
+
+**Python3 not found:**
+```bash
+# Install Python 3
+sudo apt-get install python3 python3-dev  # Ubuntu/Debian
+sudo yum install python3 python3-devel    # CentOS/RHEL
+```
+
+**bc calculator not found:**
+```bash
+# Install bc calculator
+sudo apt-get install bc  # Ubuntu/Debian
+sudo yum install bc      # CentOS/RHEL
+```
+
+**Permission denied errors:**
+```bash
+# Fix permissions
+sudo chown -R $USER:$USER /usr/share/fgcom-mumble/
+chmod +x scripts/pattern_generation/*.sh
+```
+
+**GPU acceleration not working:**
+```bash
+# Check CUDA installation
+nvcc --version
+
+# Check OpenCL installation
+clinfo
+
+# Install missing GPU libraries
+sudo apt-get install nvidia-cuda-toolkit opencl-headers
+```
 
 ### ASTER GDEM Terrain Data (Optional)
 
@@ -581,9 +775,16 @@ For detailed band segment information and frequency allocations, refer to the co
 
 - **Band Segments CSV**: [https://github.com/Supermagnum/Supermorse-server/blob/main/Bandplans_and_antennas/band_segments.csv](https://github.com/Supermagnum/Supermorse-server/blob/main/Bandplans_and_antennas/band_segments.csv)
 
+**Local CSV File**: `/home/haaken/github-projects/fgcom-mumble/configs/band_segments.csv`
+
 This CSV file contains detailed information about:
 - Frequency allocations for different regions
 - Band segments for various modulation modes
 - ITU region specifications
 - Channel spacing requirements
+- Power limits per band and region
+- Country-specific restrictions
+- Special Norwegian allocations (1000W for EME/MS operations on 2m, 70cm, 23cm bands)
+
+**Modifying Band Segments**: Edit the local CSV file to update frequency allocations, power limits, and regional restrictions. Changes take effect after plugin restart without recompilation.
 - Power limits and restrictions

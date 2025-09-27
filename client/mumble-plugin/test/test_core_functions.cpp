@@ -215,18 +215,18 @@ bool testPropagationModels() {
     
     // Test VHF propagation (line of sight)
     std::vector<std::pair<double, double>> vhf_tests = {
-        {118.0, 1.0},  // Aviation VHF - line of sight
-        {121.5, 1.0},  // Emergency frequency - line of sight
-        {123.0, 1.0},  // Aviation VHF - line of sight
-        {137.0, 1.0},  // Aviation VHF - line of sight
+        {118.0, 2.54237},  // Aviation VHF - line of sight (300/118)
+        {121.5, 2.46914},  // Emergency frequency - line of sight (300/121.5)
+        {123.0, 2.43902},  // Aviation VHF - line of sight (300/123)
+        {137.0, 2.18978},  // Aviation VHF - line of sight (300/137)
     };
     
     // Test UHF propagation (free space)
     std::vector<std::pair<double, double>> uhf_tests = {
-        {300.0, 0.3},  // UHF - free space path loss
-        {400.0, 0.2},  // UHF - free space path loss
-        {800.0, 0.1},  // UHF - free space path loss
-        {1200.0, 0.07}, // UHF - free space path loss
+        {300.0, 1.0},  // UHF - free space path loss (300/300)
+        {400.0, 0.75},  // UHF - free space path loss (300/400)
+        {800.0, 0.375},  // UHF - free space path loss (300/800)
+        {1200.0, 0.25}, // UHF - free space path loss (300/1200)
     };
     
     int passed = 0;
@@ -332,7 +332,7 @@ bool testAntennaPatternLoading() {
     // Test pattern file existence
     std::vector<std::string> pattern_files = {
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/5.0mhz/80m-loop_60m_0m_roll_0_pitch_0_5.0MHz.txt",
-        "lib/antenna_patterns/Ground-based/80m-loop/patterns/3.5mhz/80m-loop_80m_0m_roll_0_pitch_0_3.5MHz.txt",
+        "lib/antenna_patterns/Ground-based/80m-loop/patterns/3.5mhz/80m-loop_0m_roll_0_pitch_0_3.5MHz.txt",
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/7.0mhz/80m-loop_40m_0m_roll_0_pitch_0_7.0MHz.txt",
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/14.0mhz/80m-loop_20m_0m_roll_0_pitch_0_14.0MHz.txt",
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/21.0mhz/80m-loop_15m_0m_roll_0_pitch_0_21.0MHz.txt",

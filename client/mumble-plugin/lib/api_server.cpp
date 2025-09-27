@@ -325,6 +325,41 @@ void FGCom_APIServer::setupEndpoints() {
         });
     }
     
+    // Band segments API endpoints (read-only)
+    if (isFeatureEnabled("amateur_radio")) {
+        server->Get("/api/v1/band-segments", [this](const httplib::Request& req, httplib::Response& res) {
+            handleBandSegmentsListRequest(req, res);
+        });
+        
+        server->Get("/api/v1/band-segments/frequency", [this](const httplib::Request& req, httplib::Response& res) {
+            handleBandSegmentsByFrequencyRequest(req, res);
+        });
+        
+        server->Get("/api/v1/band-segments/band/(.*)", [this](const httplib::Request& req, httplib::Response& res) {
+            handleBandSegmentsByBandRequest(req, res);
+        });
+        
+        server->Get("/api/v1/band-segments/region/(.*)", [this](const httplib::Request& req, httplib::Response& res) {
+            handleBandSegmentsByRegionRequest(req, res);
+        });
+        
+        server->Get("/api/v1/band-segments/power-limit", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePowerLimitRequest(req, res);
+        });
+        
+        server->Get("/api/v1/band-segments/power-validation", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePowerValidationRequest(req, res);
+        });
+        
+        server->Get("/api/v1/band-segments/frequency-validation", [this](const httplib::Request& req, httplib::Response& res) {
+            handleFrequencyValidationRequest(req, res);
+        });
+        
+        server->Get("/api/v1/band-segments/regional-restrictions", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRegionalRestrictionsRequest(req, res);
+        });
+    }
+    
     // Configuration endpoints
     server->Get("/api/v1/config", [this](const httplib::Request& req, httplib::Response& res) {
         handleConfigRequest(req, res);

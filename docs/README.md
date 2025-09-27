@@ -11,7 +11,10 @@ FGCom-mumble is a distributed radio propagation calculation system that enables 
 3. [Work Unit Distribution](WORK_UNIT_DISTRIBUTION_API.md) - Distributed computing features
 4. [Security Guide](SECURITY_API_DOCUMENTATION.md) - Security implementation
 5. [User Guide](USER_GUIDE_SIMPLE.md) - User documentation
-6. [Technical Documentation](#technical-documentation) - Technical details
+6. [Noise Floor Distance Guide](NOISE_FLOOR_DISTANCE_GUIDE.md) - Distance-based noise falloff
+7. [Environment Detection Guide](ENVIRONMENT_DETECTION_GUIDE.md) - Environment detection methods
+8. [GPU Acceleration Guide](GPU_ACCELERATION_GUIDE.md) - GPU acceleration modes and configuration
+9. [Technical Documentation](#technical-documentation) - Technical details
 
 ## Quick Start
 

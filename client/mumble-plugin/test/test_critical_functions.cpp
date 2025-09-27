@@ -26,6 +26,8 @@
 #include <string>
 #include <fstream>
 #include <iomanip>
+#include <memory>
+#include "lib/radio_model.h"
 
 // Test 8.33kHz channel spacing calculation
 bool test833kHzChannelSpacing() {
@@ -108,21 +110,9 @@ bool test833kHzChannelSpacing() {
     
     for (const auto& test_case : test_cases) {
         try {
-            // Parse input frequency
-            double input_freq = std::stod(test_case.first);
-            
-            // Calculate 8.33kHz channel spacing
-            // 8.33kHz = 0.00833 MHz
-            double channel_spacing = 0.00833;
-            
-            // Find the closest 8.33kHz channel
-            double channel_number = std::round(input_freq / channel_spacing);
-            double calculated_channel = channel_number * channel_spacing;
-            
-            // Format to 4 decimal places
-            std::ostringstream oss;
-            oss << std::fixed << std::setprecision(4) << calculated_channel;
-            std::string result = oss.str();
+            // Use the actual radio model method for 8.33kHz channel spacing
+            std::unique_ptr<FGCom_radiowaveModel> frq_model = FGCom_radiowaveModel::selectModel(test_case.first);
+            std::string result = frq_model->conv_chan2freq(test_case.first);
             
             if (result == test_case.second) {
                 passed++;
@@ -213,16 +203,16 @@ bool testPropagationWavelengthCalculations() {
         {28.0, 10.7},  // 10m band
         
         // VHF bands
-        {118.0, 1.0},  // Aviation VHF
-        {121.5, 1.0},  // Emergency frequency
-        {123.0, 1.0},  // Aviation VHF
-        {137.0, 1.0},  // Aviation VHF
+        {118.0, 2.54237},  // Aviation VHF (300/118)
+        {121.5, 2.46914},  // Emergency frequency (300/121.5)
+        {123.0, 2.43902},  // Aviation VHF (300/123)
+        {137.0, 2.18978},  // Aviation VHF (300/137)
         
         // UHF bands
-        {300.0, 0.3},  // UHF
-        {400.0, 0.2},  // UHF
-        {800.0, 0.1},  // UHF
-        {1200.0, 0.07}, // UHF
+        {300.0, 1.0},  // UHF (300/300)
+        {400.0, 0.75},  // UHF (300/400)
+        {800.0, 0.375},  // UHF (300/800)
+        {1200.0, 0.25}, // UHF (300/1200)
     };
     
     int passed = 0;
@@ -260,7 +250,7 @@ bool testAntennaPatternFileExistence() {
     // Test pattern files that should exist
     std::vector<std::string> pattern_files = {
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/5.0mhz/80m-loop_60m_0m_roll_0_pitch_0_5.0MHz.txt",
-        "lib/antenna_patterns/Ground-based/80m-loop/patterns/3.5mhz/80m-loop_80m_0m_roll_0_pitch_0_3.5MHz.txt",
+        "lib/antenna_patterns/Ground-based/80m-loop/patterns/3.5mhz/80m-loop_0m_roll_0_pitch_0_3.5MHz.txt",
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/7.0mhz/80m-loop_40m_0m_roll_0_pitch_0_7.0MHz.txt",
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/14.0mhz/80m-loop_20m_0m_roll_0_pitch_0_14.0MHz.txt",
         "lib/antenna_patterns/Ground-based/80m-loop/patterns/21.0mhz/80m-loop_15m_0m_roll_0_pitch_0_21.0MHz.txt",

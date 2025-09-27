@@ -1,0 +1,231 @@
+{
+  "preset_channels": {
+    "AN/PRC-152": {
+      "modelName": "AN/PRC-152",
+      "totalPresets": 99,
+      "presets": {
+        "1": {
+          "presetNumber": 1,
+          "channelNumber": 100,
+          "frequency": 31.25,
+          "label": "Tactical 1",
+          "description": "Primary tactical frequency",
+          "modulationMode": "FM",
+          "powerWatts": 2.0,
+          "isActive": true,
+          "customProperties": {
+            "priority": "high",
+            "encryption": "enabled",
+            "gps": "enabled"
+          }
+        },
+        "2": {
+          "presetNumber": 2,
+          "channelNumber": 200,
+          "frequency": 32.5,
+          "label": "Tactical 2",
+          "description": "Secondary tactical frequency",
+          "modulationMode": "FM",
+          "powerWatts": 2.0,
+          "isActive": true,
+          "customProperties": {
+            "priority": "medium",
+            "encryption": "enabled",
+            "gps": "enabled"
+          }
+        },
+        "3": {
+          "presetNumber": 3,
+          "channelNumber": 300,
+          "frequency": 33.75,
+          "label": "Emergency",
+          "description": "Emergency frequency",
+          "modulationMode": "FM",
+          "powerWatts": 2.0,
+          "isActive": true,
+          "customProperties": {
+            "priority": "critical",
+            "encryption": "disabled",
+            "gps": "enabled"
+          }
+        },
+        "4": {
+          "presetNumber": 4,
+          "channelNumber": 400,
+          "frequency": 35.0,
+          "label": "Training",
+          "description": "Training frequency",
+          "modulationMode": "FM",
+          "powerWatts": 2.0,
+          "isActive": false,
+          "customProperties": {
+            "priority": "low",
+            "encryption": "disabled",
+            "gps": "disabled"
+          }
+        },
+        "5": {
+          "presetNumber": 5,
+          "channelNumber": 500,
+          "frequency": 36.25,
+          "label": "Test",
+          "description": "Test frequency",
+          "modulationMode": "FM",
+          "powerWatts": 2.0,
+          "isActive": false,
+          "customProperties": {
+            "priority": "low",
+            "encryption": "disabled",
+            "gps": "disabled"
+          }
+        }
+      }
+    },
+    "R-123 Magnolia": {
+      "modelName": "R-123 Magnolia",
+      "totalPresets": 4,
+      "presets": {
+        "1": {
+          "presetNumber": 1,
+          "channelNumber": 50,
+          "frequency": 21.25,
+          "label": "Tactical 1",
+          "description": "Primary tactical frequency",
+          "modulationMode": "FM",
+          "powerWatts": 15.0,
+          "isActive": true,
+          "customProperties": {
+            "priority": "high",
+            "encryption": "disabled",
+            "gps": "disabled"
+          }
+        },
+        "2": {
+          "presetNumber": 2,
+          "channelNumber": 100,
+          "frequency": 22.5,
+          "label": "Tactical 2",
+          "description": "Secondary tactical frequency",
+          "modulationMode": "FM",
+          "powerWatts": 15.0,
+          "isActive": true,
+          "customProperties": {
+            "priority": "medium",
+            "encryption": "disabled",
+            "gps": "disabled"
+          }
+        },
+        "3": {
+          "presetNumber": 3,
+          "channelNumber": 150,
+          "frequency": 23.75,
+          "label": "Emergency",
+          "description": "Emergency frequency",
+          "modulationMode": "FM",
+          "powerWatts": 15.0,
+          "isActive": true,
+          "customProperties": {
+            "priority": "critical",
+            "encryption": "disabled",
+            "gps": "disabled"
+          }
+        },
+        "4": {
+          "presetNumber": 4,
+          "channelNumber": 200,
+          "frequency": 25.0,
+          "label": "Training",
+          "description": "Training frequency",
+          "modulationMode": "FM",
+          "powerWatts": 15.0,
+          "isActive": false,
+          "customProperties": {
+            "priority": "low",
+            "encryption": "disabled",
+            "gps": "disabled"
+          }
+        }
+      }
+    },
+    "AN/PRC-77": {
+      "modelName": "AN/PRC-77",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-113": {
+      "modelName": "AN/PRC-113",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-117F": {
+      "modelName": "AN/PRC-117F",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-117G": {
+      "modelName": "AN/PRC-117G",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-119A": {
+      "modelName": "AN/PRC-119A",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-119B": {
+      "modelName": "AN/PRC-119B",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-148": {
+      "modelName": "AN/PRC-148",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-150": {
+      "modelName": "AN/PRC-150",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-153": {
+      "modelName": "AN/PRC-153",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-154": {
+      "modelName": "AN/PRC-154",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "AN/PRC-163": {
+      "modelName": "AN/PRC-163",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "PSC-5": {
+      "modelName": "PSC-5",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "RF-310": {
+      "modelName": "RF-310",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "R-105M": {
+      "modelName": "R-105M",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "R-105D": {
+      "modelName": "R-105D",
+      "totalPresets": 0,
+      "presets": {}
+    },
+    "R-107": {
+      "modelName": "R-107",
+      "totalPresets": 0,
+      "presets": {}
+    }
+  }
+}

@@ -151,6 +151,74 @@ struct AntennaPatternResponse {
     }
 };
 
+// Band segments API response structures
+struct BandSegmentResponse {
+    std::string band;
+    std::string mode;
+    float start_freq_khz;
+    float end_freq_khz;
+    int itu_region;
+    float power_limit_watts;
+    std::string countries;
+    std::string notes;
+    bool found;
+    std::string error_message;
+    
+    BandSegmentResponse() {
+        band = "";
+        mode = "";
+        start_freq_khz = 0.0;
+        end_freq_khz = 0.0;
+        itu_region = 1;
+        power_limit_watts = 400.0;
+        countries = "";
+        notes = "";
+        found = false;
+        error_message = "";
+    }
+};
+
+struct BandSegmentsListResponse {
+    std::vector<BandSegmentResponse> segments;
+    int total_count;
+    std::string filter_band;
+    std::string filter_mode;
+    int filter_region;
+    bool success;
+    std::string error_message;
+    
+    BandSegmentsListResponse() {
+        total_count = 0;
+        filter_band = "";
+        filter_mode = "";
+        filter_region = 0;
+        success = false;
+        error_message = "";
+    }
+};
+
+struct PowerLimitResponse {
+    float frequency_khz;
+    std::string mode;
+    int itu_region;
+    float power_limit_watts;
+    bool is_valid;
+    std::string band;
+    std::string countries;
+    std::string error_message;
+    
+    PowerLimitResponse() {
+        frequency_khz = 0.0;
+        mode = "";
+        itu_region = 1;
+        power_limit_watts = 400.0;
+        is_valid = false;
+        band = "";
+        countries = "";
+        error_message = "";
+    }
+};
+
 struct GPUStatusResponse {
     bool gpu_available;
     std::string gpu_name;
@@ -307,6 +375,17 @@ public:
     void handleASTERGDEMStatusRequest(const httplib::Request& req, httplib::Response& res);
     void handleAdvancedModulationRequest(const httplib::Request& req, httplib::Response& res);
     void handleMaritimeModulationRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Band segments API endpoints (read-only)
+    void handleBandSegmentsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleBandSegmentsListRequest(const httplib::Request& req, httplib::Response& res);
+    void handleBandSegmentsByFrequencyRequest(const httplib::Request& req, httplib::Response& res);
+    void handleBandSegmentsByBandRequest(const httplib::Request& req, httplib::Response& res);
+    void handleBandSegmentsByRegionRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePowerLimitRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePowerValidationRequest(const httplib::Request& req, httplib::Response& res);
+    void handleFrequencyValidationRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRegionalRestrictionsRequest(const httplib::Request& req, httplib::Response& res);
     
     // Configuration endpoints
     void handleConfigRequest(const httplib::Request& req, httplib::Response& res);

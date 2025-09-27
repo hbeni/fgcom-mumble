@@ -89,8 +89,8 @@ void FGCom_TerrainElevationManager::shutdown() {
         return;
     }
     
+    // CRITICAL: Set shutdown flag before notifying threads to prevent race condition
     shutdown_requested.store(true);
-    workers_running.store(false);
     
     // Notify all worker threads
     {
@@ -98,12 +98,14 @@ void FGCom_TerrainElevationManager::shutdown() {
         task_cv.notify_all();
     }
     
-    // Wait for worker threads to finish
+    // Wait for all threads to finish before setting workers_running to false
     for (auto& thread : worker_threads) {
         if (thread.joinable()) {
             thread.join();
         }
     }
+    
+    workers_running.store(false);
     worker_threads.clear();
     
     // Clear caches

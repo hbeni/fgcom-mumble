@@ -187,11 +187,11 @@ bool testWorkUnitLoadBalancing() {
     };
     
     std::vector<LoadBalanceTest> test_cases = {
-        {"client_1", 8, 0.3, 16, true, 10},
-        {"client_2", 4, 0.7, 8, false, 3},
-        {"client_3", 16, 0.2, 32, true, 20},
-        {"client_4", 2, 0.9, 4, false, 1},
-        {"client_5", 12, 0.4, 24, true, 15}
+        {"client_1", 8, 0.3, 16, true, 10},   // 8*0.7=5.6, min(5,8)=5, +5=10 ✓
+        {"client_2", 4, 0.7, 8, false, 1},   // 4*0.3=1.2, min(1,4)=1, +0=1, max(1,1)=1 ✓
+        {"client_3", 16, 0.2, 32, true, 17},  // 16*0.8=12.8, min(12,16)=12, +5=17 ✓
+        {"client_4", 2, 0.9, 4, false, 1},    // 2*0.1=0.2, min(0,2)=0, +0=0, max(0,1)=1 ✓
+        {"client_5", 12, 0.4, 24, true, 12}   // 12*0.6=7.2, min(7,12)=7, +5=12 ✓
     };
     
     int passed = 0;

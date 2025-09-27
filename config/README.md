@@ -17,6 +17,48 @@ This directory contains configuration files and documentation for the FGCom-mumb
 - **`BUILD_CONFIGURATION.md`** - Build system configuration documentation
 - **`DOCUMENTATION_STATUS.md`** - Documentation status and organization
 
+### Data Files
+- **`band_segments.csv`** - Amateur radio frequency allocations, power limits, and regional restrictions
+
+## Band Segments Configuration
+
+### CSV File Location
+**File Path**: `/home/haaken/github-projects/fgcom-mumble/configs/band_segments.csv`
+
+### CSV File Structure
+The band segments CSV file contains the following columns:
+- **Band**: Amateur radio band (160m, 80m, 60m, 40m, 30m, 20m, 17m, 15m, 12m, 10m, 6m, 2m, 70cm, 23cm)
+- **Mode**: Operating mode (CW, SSB, AM, DSB, ISB, VSB, NFM)
+- **StartFreq**: Start frequency in kHz
+- **EndFreq**: End frequency in kHz
+- **Region**: ITU region (1, 2, 3)
+- **PowerLimit**: Maximum power in watts
+- **Countries**: Country-specific restrictions
+- **Notes**: Additional operating notes
+
+### Modifying Band Segments
+To update band segments data:
+
+1. **Edit the CSV file**: Modify the local CSV file
+2. **Restart the plugin**: Changes take effect after plugin restart
+3. **No recompilation needed**: CSV changes are loaded dynamically
+
+**Important Notes:**
+- Maintain CSV format with proper headers
+- Use quoted strings for fields containing commas
+- Ensure frequency values are in kHz
+- Power limits should be in watts
+- ITU regions: 1 (Europe/Africa), 2 (Americas), 3 (Asia-Pacific)
+
+### Example CSV Entry
+```csv
+Band,Mode,StartFreq,EndFreq,Region,PowerLimit,Countries,Notes
+20m,SSB,14101,14350,1,400,Europe,"SSB and digital modes"
+60m,CW,5305,5315,1,50,"Norway, Denmark, UK, Finland, Iceland, Germany, Sweden, Switzerland, Belgium, Bulgaria, Croatia, Czech Republic, Estonia, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Netherlands, Portugal, Romania, Slovakia, Slovenia, Spain","Limited to 5 channels, 50W max"
+2m,EME,144000,146000,1,1000,Norway,"EME operations, directional antenna required, logging mandatory"
+70cm,MS,430000,440000,1,1000,Norway,"Meteor scatter operations, directional antenna required, logging mandatory"
+```
+
 ## Configuration Features
 
 ### v2.0+ Advanced Configuration
