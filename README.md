@@ -81,9 +81,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 
 **Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
-**PATTERN GENERATION FIXED**: The antenna radiation pattern generation system has been updated and is now working correctly. The scripts now use `.nec` files exclusively and include working aircraft patterns with proper altitude handling.
 
-**PRODUCTION READY**: The system has been thoroughly tested and is ready for production use with comprehensive quality assurance and zero tolerance for race conditions, memory leaks, or security vulnerabilities.
 
 Documentation
 =============
@@ -137,10 +135,7 @@ The documentation is split up into relevant parts:
 - [Known Military Bands](docs/KNOWN_MILITARY_BANDS_AND_FREQS.md) Military frequency bands and protocols
 - [Vehicle Frequency Analysis](docs/VEHICLE_FREQUENCY_ANALYSIS.md) Frequency analysis for different vehicle types
 
-### Technical Documentation:
-- [Architectural Fixes Summary](docs/ARCHITECTURAL_FIXES_SUMMARY.md) Summary of architectural improvements and fixes
-- [Compilation Status](docs/COMPILATION_STATUS.md) Current compilation status and build information
-- [Standardized Structure Summary](docs/STANDARDIZED_STRUCTURE_SUMMARY.md) Project structure standardization and organization
+
 
 ### Antenna Pattern Visualization:
 The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
@@ -255,7 +250,7 @@ FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced
 - **Threading**: Customize thread intervals and resource allocation
 - **API Server**: Configure RESTful API endpoints and WebSocket settings
 - **Debugging**: Set logging levels, output handlers, and performance monitoring
-- **Power Management**: Configure transmit power limits and efficiency settings
+- **Power Management**: Configure transmit power limits.
 - **Solar Data**: Set NOAA/SWPC data update intervals and fallback options
 - **Lightning Data**: Configure atmospheric noise simulation parameters
 - **Weather Data**: Set weather data sources and update frequencies
@@ -293,7 +288,7 @@ The plugin aims to be compatible to the legacy fgcom-standalone protocol, so vey
 Note that frequencies can be arbitary strings. That said, all participating clients must share a common definition of "frequency", this should be the physical radio wave frequency in MHz and not the "channel" (esp. with 8.3 channels spacing).  
 Also note that callsigns and frequencies are not allowed to contain the comma symbol (`,`). Decimal point symbol has always to be a point (`.`).
 
-Despite we expect the connected simulator to provide PTT-information in order to activate radio transmissions, you may also use the configfile to define mappings for mumble's internal voice activation. This way, you can use mumbles own PTT-binding to activate the radios you mapped. By default, the first Radio is already mapped for your convinience.
+The connected simulator is expected  to provide PTT-information in order to activate radio transmissions, but you may also use the configfile to define mappings for mumble's internal voice activation. This way, you can use mumbles own PTT-binding to activate the radios you mapped. By default, the first Radio is already mapped for your convinience.
 
 
 ### RadioGUI
