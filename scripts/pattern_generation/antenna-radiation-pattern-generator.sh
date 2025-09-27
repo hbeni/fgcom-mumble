@@ -682,51 +682,52 @@ process_patterns_parallel() {
     
     log_info "Parallel processing: $total_files files (max $MAX_PARALLEL_JOBS jobs)"
     
-    local running=0
     local failed_files=0
+    local current_job=0
     
-    for ((i=0; i<total_files; i++)); do
-        local nec_file="${nec_files[$i]}"
-        local file_num=$((i + 1))
-        
-        log_info "[$file_num/$total_files] Starting: $(basename "$nec_file")"
-        
-        # Start background job
-        (
-            if process_nec_file "$nec_file"; then
-                exit 0
-            else
-                exit 1
-            fi
-        ) &
-        
-        local job_pid=$!
-        BACKGROUND_PIDS+=("$job_pid")
-        ((running++))
-        
-        # Wait if at job limit
-        if (( running >= MAX_PARALLEL_JOBS )); then
-            if wait -n; then
-                log_debug "Background job completed successfully"
-            else
-                log_debug "Background job failed"
-                ((failed_files++))
-            fi
-            ((running--))
+    # Process files in batches
+    for ((i=0; i<total_files; i+=MAX_PARALLEL_JOBS)); do
+        local batch_end=$((i + MAX_PARALLEL_JOBS))
+        if (( batch_end > total_files )); then
+            batch_end=$total_files
         fi
-    done
-    
-    # Wait for remaining jobs
-    log_info "Waiting for remaining background jobs..."
-    for pid in "${BACKGROUND_PIDS[@]}"; do
-        if kill -0 "$pid" 2>/dev/null; then
+        
+        log_info "Processing batch: files $((i+1))-$batch_end"
+        
+        # Start batch of jobs
+        local batch_pids=()
+        for ((j=i; j<batch_end; j++)); do
+            local nec_file="${nec_files[$j]}"
+            local file_num=$((j + 1))
+            
+            log_info "[$file_num/$total_files] Starting: $(basename "$nec_file")"
+            
+            # Start background job
+            (
+                if process_nec_file "$nec_file"; then
+                    exit 0
+                else
+                    exit 1
+                fi
+            ) &
+            
+            local job_pid=$!
+            batch_pids+=("$job_pid")
+            BACKGROUND_PIDS+=("$job_pid")
+        done
+        
+        # Wait for all jobs in this batch to complete
+        log_info "Waiting for batch to complete..."
+        for pid in "${batch_pids[@]}"; do
             if wait "$pid"; then
                 log_debug "Job $pid completed successfully"
             else
                 log_debug "Job $pid failed"
                 ((failed_files++))
             fi
-        fi
+        done
+        
+        log_info "Batch completed"
     done
     
     BACKGROUND_PIDS=()
