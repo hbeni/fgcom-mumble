@@ -48,7 +48,19 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Enhanced Vehicle Support**: Added support for boats, ships, military vehicles, and amateur radio operators
 - **Organized Documentation**: Restructured documentation with proper file organization
 
+### Latest Updates (v2.2+):
+- **Advanced Pattern Generation**: New `antenna-radiation-pattern-generator.sh` with Python-based coordinate transformations
+- **Reliable Trigonometry**: Replaced AWK with Python for accurate 3D coordinate transformations (pitch/roll/yaw)
+- **3D Attitude Support**: Full support for aircraft attitude-based radiation patterns with real-time yaw rotation via API
+- **Enhanced Coordinate System**: Proper aviation coordinate system implementation (pitch around Y-axis, roll around X-axis)
+- **Improved Pattern Quality**: More accurate antenna radiation patterns with proper ground effects modeling
+- **API Integration**: Seamless integration with Vehicle Dynamics API for real-time antenna orientation control
+
+**📖 Detailed Documentation**: See [Antenna Pattern Generation Improvements](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) for comprehensive technical details.
+
 **✅ PATTERN GENERATION FIXED**: The antenna radiation pattern generation system has been updated and is now working correctly. The scripts now use `.nec` files exclusively and include working aircraft patterns with proper altitude handling.
+
+**⚠️ IMPORTANT NOTICE**: The changes made to this branch compile successfully, but **all functions related to radio propagation simulation have not been tested**. Users should exercise caution when using radio propagation features in production environments until comprehensive testing is completed.
 
 Documentation
 =============

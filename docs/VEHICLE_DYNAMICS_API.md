@@ -14,8 +14,10 @@ http://localhost:8080/api/v1/vehicles
 
 - **Vehicle Registration**: Register and manage vehicles (aircraft, boats, ships, ground vehicles)
 - **Real-time Dynamics**: Track heading, speed, attitude, and altitude
-- **Antenna Rotation**: Control rotatable antennas (Yagis, directional arrays)
+- **3D Attitude Support**: Full pitch, roll, and yaw rotation tracking
+- **Antenna Rotation**: Control rotatable antennas (Yagis, directional arrays) with real-time yaw support
 - **Antenna Control**: Manual antenna pointing and orientation control
+- **Pattern Integration**: Seamless integration with pre-generated 3D attitude radiation patterns
 - **WebSocket Updates**: Real-time vehicle dynamics updates
 
 ## Data Structures
@@ -358,6 +360,16 @@ Vehicle dynamics are automatically integrated into propagation calculations:
 - **Dipole Antennas**: Vehicle orientation affects polarization
 - **Vertical Antennas**: Less affected by vehicle attitude
 - **Loop Antennas**: Cannot be rotated, but vehicle attitude affects orientation
+
+### 3D Attitude Pattern Integration
+
+The system now supports full 3D attitude modeling:
+
+- **Pre-generated Patterns**: 3D attitude patterns generated for pitch/roll combinations
+- **Real-time Yaw**: Yaw rotation handled dynamically via API
+- **Python Transformations**: Reliable coordinate transformations using Python
+- **Aviation Coordinate System**: Standard X-forward, Y-right, Z-up system
+- **Pattern Quality**: More accurate radiation patterns with proper ground effects
 
 ### Propagation Model Integration
 ```json

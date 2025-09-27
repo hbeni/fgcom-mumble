@@ -1,0 +1,9 @@
+# FGCom-mumble Far-Field Radiation Pattern
+# Frequency: 1.8 MHz
+# Altitude: 0 m
+# Format: Theta Phi Gain_dBi H_Polarization V_Polarization
+# Theta: Elevation angle (0-180 degrees)
+# Phi: Azimuth angle (0-360 degrees)
+# Gain: Antenna gain in dBi
+# H_Polarization: Horizontal polarization component
+# V_Polarization: Vertical polarization component

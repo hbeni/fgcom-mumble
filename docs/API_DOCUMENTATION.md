@@ -220,6 +220,9 @@ GET /api/antenna-patterns/{vehicle_type}/{vehicle_model}
 - `altitude` (float): Altitude in meters (for aircraft)
 - `azimuth` (float): Azimuth angle in degrees
 - `elevation` (float): Elevation angle in degrees
+- `pitch` (float): Pitch angle in degrees (for 3D attitude patterns)
+- `roll` (float): Roll angle in degrees (for 3D attitude patterns)
+- `yaw` (float): Yaw angle in degrees (for real-time rotation)
 
 **Response:**
 ```json
@@ -230,11 +233,17 @@ GET /api/antenna-patterns/{vehicle_type}/{vehicle_model}
         "vehicle_model": "b737",
         "frequency_mhz": 14.23,
         "altitude_m": 1000,
+        "attitude": {
+            "pitch_deg": 2.5,
+            "roll_deg": -1.2,
+            "yaw_deg": 045.0
+        },
         "pattern": {
             "azimuth": 0,
             "elevation": 0,
             "gain_dbi": 2.5,
-            "polarization": "vertical"
+            "polarization": "vertical",
+            "is_3d_pattern": true
         }
     }
 }

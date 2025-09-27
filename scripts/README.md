@@ -17,11 +17,14 @@ scripts/
 
 ### Pattern Generation Scripts (`pattern_generation/`)
 
-**`simplified_nec_generator.sh`** - Advanced 3D attitude pattern generation script
+**`antenna-radiation-pattern-generator.sh`** - Advanced 3D attitude pattern generation script
 
 **Features:**
-- **Parallel Processing**: Uses up to 20 CPU cores for fast pattern generation (15x speed improvement)
+- **Python-Based Transformations**: Reliable trigonometry using Python instead of AWK for accurate 3D coordinate transformations
 - **3D Attitude Patterns**: Generates patterns for all roll/pitch combinations at multiple altitudes
+- **Aviation Coordinate System**: Proper implementation of pitch around Y-axis, roll around X-axis
+- **Real-time Yaw Support**: Integration with Vehicle Dynamics API for real-time antenna orientation control
+- **Parallel Processing**: Uses multiple CPU cores for fast pattern generation
 - **Progress Indicators**: Real-time progress tracking with detailed status information
 - **Altitude Band Organization**: Organizes patterns by RF propagation physics (ground_effects, boundary_layer, free_space)
 - **Safe by default**: Does not overwrite existing pattern files
@@ -31,19 +34,19 @@ scripts/
 **Usage:**
 ```bash
 # Show help
-./scripts/pattern_generation/simplified_nec_generator.sh --help
+./scripts/pattern_generation/antenna-radiation-pattern-generator.sh --help
 
-# Generate all patterns with 15 cores (recommended)
-./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --overwrite
+# Generate all patterns with parallel processing
+./scripts/pattern_generation/antenna-radiation-pattern-generator.sh --jobs 8 --force
 
 # Dry run to see what would be generated
-./scripts/pattern_generation/simplified_nec_generator.sh --dry-run
+./scripts/pattern_generation/antenna-radiation-pattern-generator.sh --dry-run --verbose
 
 # Generate with verbose output
-./scripts/pattern_generation/simplified_nec_generator.sh --jobs 15 --verbose --overwrite
+./scripts/pattern_generation/antenna-radiation-pattern-generator.sh --jobs 8 --verbose --force
 
-# Use different core count
-./scripts/pattern_generation/simplified_nec_generator.sh --jobs 8 --overwrite
+# Generate specific vehicle patterns
+./scripts/pattern_generation/antenna-radiation-pattern-generator.sh --aircraft "cessna_172" --jobs 4
 ```
 
 **Output Structure:**
