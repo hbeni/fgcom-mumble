@@ -154,7 +154,7 @@ Wheeled vehicles have a **completely different** ground plane structure than tra
 1. **Metal Rims**: Steel/aluminum rims provide conductive ground plane
 2. **Tire Insulation**: Rubber tires **INSULATE** the metal inside from ground contact
 3. **Ground Clearance**: Vehicle body is elevated above ground by tire height
-4. **Limited Ground Contact**: Only rim edges may contact ground
+4. **No Ground Contact**
 5. **Insulated Ground Plane**: Metal inside tires is **NOT** in direct contact with ground
 
 ### **Wheeled Vehicle vs. Tracked Vehicle Ground Planes**
@@ -166,7 +166,7 @@ Wheeled vehicles have a **completely different** ground plane structure than tra
 
 ### **Wheeled Vehicle Ground Plane Effects**
 
-1. **Reduced Ground Contact**: Only rim edges contact ground
+1. **No Ground Contact**
 2. **Insulated Metal**: Metal inside tires is insulated by rubber
 3. **Higher Ground Clearance**: Vehicle body elevated by tire height
 4. **Limited Ground Plane**: Smaller effective ground plane area
@@ -574,7 +574,6 @@ Creating vehicle geometry for antenna modeling requires:
 
 - **Ground Clearance (0.41m)**: Critical for HF/VHF antenna modeling
 - **Wheel System (0.81m diameter)**: **INSULATED** from ground by rubber tires
-- **Rim Ground Contact**: Only rim edges contact ground, **NOT** the metal inside tires
 - **Limited Ground Plane**: Smaller effective ground plane area than tracked vehicles
 - **Insulated Metal**: Metal inside tires is **INSULATED** by rubber from ground contact
 - **Different Patterns**: Significantly different antenna patterns from tracked vehicles
@@ -584,7 +583,7 @@ Creating vehicle geometry for antenna modeling requires:
 
 | Parameter | Tracked (Abrams) | Wheeled (HMMWV) |
 |-----------|------------------|------------------|
-| **Ground Contact** | **Direct** (Z=0) | **Insulated** (rims only) |
+| **Ground Contact** | **Direct** (Z=0) | **Insulated**  |
 | **Ground Plane** | **Extended** (tracks) | **Limited** (rims) |
 | **Ground Clearance** | 0.43m | 0.41m |
 | **Ground Effect** | **Major** | **Minor** |
@@ -593,6 +592,6 @@ Creating vehicle geometry for antenna modeling requires:
 
 The Abrams tank example demonstrates how to create a complete vehicle geometry with proper ground plane implementation **including the critical track system** for antenna modeling.
 
-The HMMWV example demonstrates how wheeled vehicles have **completely different** ground plane characteristics due to **insulated tires** and **limited ground contact** compared to tracked vehicles.
+The HMMWV example demonstrates how wheeled vehicles have **completely different** ground plane characteristics due to **insulated tires** compared to tracked vehicles.
 
 **Both vehicle types require different approaches to antenna modeling due to their fundamentally different ground plane structures.**

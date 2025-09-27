@@ -62,7 +62,7 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 **Example: Playing a survival or adventure game**
 - **Communicate with other players** using realistic radio systems
 - **Use different radio types** (handheld, vehicle, base station)
-- **Experience radio limitations** (battery life, range, weather effects)
+- **Experience radio limitations** ( range, weather effects)
 - **Create more immersive role-playing scenarios**
 
 ---
@@ -168,7 +168,7 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 - **Static and interference** (just like real radios!)
 - **Range limitations** (can't talk to someone 1000 miles away)
 - **Weather effects** (storms affect radio quality)
-- **Battery life** (handheld radios run out of power)
+
 
 ### **Authentic Communication**
 - **Real radio procedures** and protocols
@@ -325,29 +325,16 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 - **Works with popular games**
 - **No technical knowledge required**
 
-### **Join the Community**
-- **Connect with other users**
-- **Share your experiences**
-- **Learn new techniques**
-- **Have fun with realistic radio communication!**
 
----
 
-## **Need Help?**
-
-### **We're Here to Support You!**
 - **Easy-to-follow tutorials**
-- **Community support**
 - **Step-by-step instructions**
 
 ### **No Technical Jargon**
 - **Simple explanations**
-- **Visual guides**
-- **Beginner-friendly**
-- **We speak your language!**
+
 
 ---
 
 **Ready to experience realistic radio communication in your games? Download FGCom-mumble today and start talking like a real radio operator!**
 
-*FGCom-mumble: Where gaming meets realistic radio communication!*
