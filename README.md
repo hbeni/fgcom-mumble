@@ -33,34 +33,35 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 **[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** - Perfect for beginners and non-technical users!
 
 ### New Advanced Features (v2.0+):
-- **Multi-threaded Architecture**: [7 specialized background threads for optimal performance](docs/THREADING_ARCHITECTURE_DOCUMENTATION.md) - Learn how the threading system works and what each thread does
+- **Multi-threaded Architecture**: [7 specialized background threads for optimal performance](docs/TECHNICAL_DOCUMENTATION.md#threading-architecture) - Learn how the threading system works and what each thread does
 - **GPU Acceleration**: [Configurable GPU acceleration for complex calculations (client/server/hybrid modes)](docs/GPU_ACCELERATION_GUIDE.md) - Understand GPU modes, performance benefits, and configuration options
-- **Feature Toggle System**: [107 configurable features across 17 categories for runtime customization](client/mumble-plugin/lib/IMPLEMENTATION_SUMMARY.md#feature-toggle-system) - Runtime feature management and configuration
-- **Advanced Debugging**: [Comprehensive logging, profiling, and memory tracking system](docs/DEBUGGING_SYSTEM_DOCUMENTATION.md) - Debugging and monitoring capabilities
+- **Feature Toggle System**: [107 configurable features across 17 categories for runtime customization](docs/TECHNICAL_DOCUMENTATION.md#feature-toggle-system) - Runtime feature management and configuration
+- **Advanced Debugging**: [Comprehensive logging, profiling, and memory tracking system](docs/TECHNICAL_DOCUMENTATION.md#debugging-system) - Debugging and monitoring capabilities
 - **RESTful API**: [Complete HTTP API with WebSocket real-time updates for external integration](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
 - **Amateur Radio Support**: [Full amateur radio band coverage with ITU region compliance](docs/BAND_SEGMENTS_API_DOCUMENTATION.md) - Amateur radio band segments and power limits
+- **Amateur Radio Terminology**: [Comprehensive guide to Q-codes, operating procedures, and amateur radio communication](docs/AMATEUR_RADIO_TERMINOLOGY.md) - Complete amateur radio terminology reference
 - **Aviation & Maritime HF**: [Dedicated HF communication models for aviation and maritime operations](docs/aviation-VHF-civil.md) - Aviation and maritime HF communication
-- **Antenna Pattern Library**: [Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) - Antenna pattern generation and management
+- **Antenna Pattern Library**: [Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) - Antenna pattern generation and management
 - **STL-to-NEC Converter**: [Cross-platform tool for converting STL files to EZ and NEC formats for electromagnetic simulation](https://github.com/Supermagnum/stl-to-nec) - Convert 3D vehicle models to antenna simulation files
 - **VHF/UHF Antenna Support**: [Professional-grade 2m (144-145 MHz) and 70cm (430-440 MHz) Yagi antennas with 10m height modeling](docs/2M_YAGI_ANTENNA_SUMMARY.md) - VHF/UHF antenna specifications and usage
-- **Physics-Based Propagation**: [Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction](docs/PROPAGATION_PHYSICS_DOCUMENTATION.md) - Radio propagation physics and modeling
-- **Solar Data Integration**: [Real-time NOAA/SWPC solar data for accurate propagation modeling](docs/SOLAR_DATA_INTEGRATION.md) - Solar data integration and usage
-- **Vehicle Dynamics API**: [Complete vehicle position, attitude, and antenna orientation tracking](docs/VEHICLE_DYNAMICS_API.md) - Vehicle dynamics and tracking system
-- **Power Management**: [Advanced transmit power control with efficiency and safety features](docs/POWER_MANAGEMENT_API.md) - Power control and efficiency features
+- **Physics-Based Propagation**: [Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction](docs/TECHNICAL_DOCUMENTATION.md#propagation-physics) - Radio propagation physics and modeling
+- **Solar Data Integration**: [Real-time NOAA/SWPC solar data for accurate propagation modeling](docs/TECHNICAL_DOCUMENTATION.md#solar-data) - Solar data integration and usage
+- **Vehicle Dynamics API**: [Complete vehicle position, attitude, and antenna orientation tracking](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) - Vehicle dynamics and tracking system
+- **Power Management**: [Advanced transmit power control with efficiency and safety features](docs/TECHNICAL_DOCUMENTATION.md#power-management) - Power control and efficiency features
 - **Frequency Offset Simulation**: [Realistic audio effects including Doppler shift and "Donald Duck" effect](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) - Audio effects and frequency processing
-- **Lightning Data Integration**: [Real-time atmospheric noise simulation from lightning strikes](docs/LIGHTNING_DATA_INTEGRATION.md) - Lightning data and noise simulation
-- **Weather Data Integration**: [Atmospheric condition effects on radio propagation](docs/WEATHER_DATA_INTEGRATION.md) - Weather effects on radio propagation
+- **Lightning Data Integration**: [Real-time atmospheric noise simulation from lightning strikes](docs/TECHNICAL_DOCUMENTATION.md#lightning-data) - Lightning data and noise simulation
+- **Weather Data Integration**: [Atmospheric condition effects on radio propagation](docs/TECHNICAL_DOCUMENTATION.md#weather-data) - Weather effects on radio propagation
 - **Security Features**: [TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration](docs/SECURITY_API_DOCUMENTATION.md) - Comprehensive security implementation guide *(Note: Radio encryption simulation is not yet implemented)*
 - **Noise Floor Calculation**: [Advanced atmospheric noise modeling with environment-specific calculations, distance-based noise falloff, and manual position setting via GPS or Maidenhead locators](docs/NOISE_FLOOR_DISTANCE_GUIDE.md) - Distance-based noise falloff and environment detection
-- **AGC & Squelch System**: [Advanced Automatic Gain Control and Squelch functionality with configurable presets](docs/AGC_SQUELCH_API_DOCUMENTATION.md) - AGC and squelch system configuration and usage
+- **AGC & Squelch System**: [Advanced Automatic Gain Control and Squelch functionality with configurable presets](docs/TECHNICAL_DOCUMENTATION.md#agc-squelch) - AGC and squelch system configuration and usage
 - **Radio Era Classification**: [Comprehensive radio technology classification system for SDR and traditional radios](docs/RADIO_ERA_CLASSIFICATION.md) - Historical radio technology classification and performance modeling
 - **User-Friendly Documentation**: [Simple user guide for non-technical users and gamers](docs/USER_GUIDE_SIMPLE.md) - Easy-to-follow guide for beginners
 
 ### Latest Updates (v2.1+):
-- **Complete Antenna Pattern Integration**: [All 52 available radiation pattern files now loaded and mapped](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) - Antenna pattern integration and management
+- **Complete Antenna Pattern Integration**: [All 52 available radiation pattern files now loaded and mapped](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) - Antenna pattern integration and management
 - **Historical Maritime Support**: [Added coastal stations and HF ship antennas with toggle functionality](docs/HISTORICAL_MARITIME_BANDS.md) - Historical maritime HF frequency bands and coastal stations
-- **Dynamic Pattern Loading**: [Replaced hardcoded paths with intelligent pattern discovery system](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) - Dynamic antenna pattern loading system
-- **Enhanced Vehicle Support**: [Added support for boats, ships, military vehicles, and amateur radio operators](docs/VEHICLE_DYNAMICS_API.md) - Vehicle support and dynamics tracking
+- **Dynamic Pattern Loading**: [Replaced hardcoded paths with intelligent pattern discovery system](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) - Dynamic antenna pattern loading system
+- **Enhanced Vehicle Support**: [Added support for boats, ships, military vehicles, and amateur radio operators](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) - Vehicle support and dynamics tracking
 - **Organized Documentation**: [Restructured documentation with proper file organization](docs/README.md) - Documentation structure and organization
 
 ### Latest Updates (v2.3+):
@@ -77,6 +78,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Preset Channel Management**: [Advanced preset channel system for military radios with 99 presets support](docs/PRESET_CHANNEL_API_DOCUMENTATION.md) - Preset channel configuration and read-only API access
 - **Military Radio Equipment**: [Complete implementation of AN/PRC-152, AN/PRC-77, AN/PRC-148, R-105, R-107, R-123 Magnolia and more](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#radio-model-configuration) - Military radio specifications and channel management
 - **Configuration-Based System**: [All radio models and presets defined in JSON configuration files](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#configuration-files) - Server-side configuration management *(Note: Radio encryption simulation is not yet implemented)*
+- **GPU Resource Limiting**: [Intelligent GPU resource management for Client-Only and Hybrid modes with game detection and adaptive limits](docs/GPU_RESOURCE_LIMITING_GUIDE.md) - GPU resource management and performance optimization
 
 **Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
@@ -105,6 +107,7 @@ The documentation is split up into relevant parts:
 - [Quick Start Guide](docs/QUICK_START_GUIDE.md) Get started quickly with the system
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) Consolidated technical documentation
 - [Vehicle Geometry Creation Guide](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) Complete guide for creating vehicle geometry
+- [Amateur Radio Terminology](docs/AMATEUR_RADIO_TERMINOLOGY.md) Comprehensive amateur radio terminology and Q-codes reference
 - [Coding Standards](docs/CODING_STANDARDS.md) Strict architectural and design standards
 - [Radio Era Classification](docs/RADIO_ERA_CLASSIFICATION.md) Comprehensive radio technology classification system
 - [BFO/SDR Compatibility](docs/BFO_SDR_COMPATIBILITY_ASSESSMENT.md) Beat Frequency Oscillator and Software Defined Radio compatibility
