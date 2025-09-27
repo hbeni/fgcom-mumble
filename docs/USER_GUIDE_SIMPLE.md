@@ -35,7 +35,7 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ---
 
-## 🚁 **What Can You Do With It?**
+## **What Can You Do With It?**
 
 ### **1. Realistic Flight Communication**
 **Example: Flying a helicopter in a flight simulator**
@@ -120,7 +120,7 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ---
 
-## 🔧 **How Does It Work?**
+## **How Does It Work?**
 
 ### **Simple Setup Process**
 1. **Download and install** FGCom-mumble
@@ -136,29 +136,33 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ---
 
-## **Radio Types Available**
+## **Currently Available Radio Systems**
 
-### **Handheld Radios**
-- **Like a walkie-talkie**
-- **Limited range** (realistic!)
-- **Battery life simulation**
-- **Perfect for infantry operations**
+### **Ground-Based Antennas (841 pattern files)**
+- **Yagi Antennas**: 6m, 10m, 20m, 40m, 2m (144MHz), 70cm (432MHz) bands
+- **Vertical Antennas**: 2m and 70cm ground plane antennas
+- **Dipole Antennas**: Multi-band horizontal antennas
+- **Loop Antennas**: 80m multi-band loop (3.5MHz to 50MHz)
+- **Historical Antennas**: Long wire, T-antenna, inverted-L for coastal stations
 
-### **Vehicle Radios**
-- **More powerful** than handheld
-- **Better range** and clarity
-- **Multiple channels**
-- **Great for vehicle operations**
+### **Aircraft Antennas**
+- **Civil Aircraft**: Cessna 172 with HF and VHF systems
+- **Military Aircraft**: Various military aircraft with specialized radio systems
+- **Altitude-Dependent Patterns**: Realistic patterns that change with aircraft altitude
 
-### **Base Station Radios**
-- **Most powerful** radio type
-- **Longest range**
-- **Multiple frequencies**
-- **Perfect for command centers**
+### **Marine Antennas**
+- **Boat Systems**: Sailboat whip and backstay antennas
+- **Ship Systems**: Container ship HF communication systems
+- **Marine Frequencies**: 1.8MHz to 156.8MHz marine bands
+
+### **Military Land Vehicles**
+- **NATO Vehicles**: Jeep and Leopard 1 tank radio systems
+- **Soviet Vehicles**: UAZ and T-55 tank communication systems
+- **Tactical Radios**: HF, VHF, and UHF military communication systems
 
 ---
 
-## 🌟 **Cool Features You'll Love**
+## **Cool Features You'll Love**
 
 ### **Realistic Radio Effects**
 - **Static and interference** (just like real radios!)
@@ -173,7 +177,6 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 - **Emergency procedures** and distress calls
 
 ### **Immersive Experience**
-- **3D audio positioning** (sound comes from the right direction)
 - **Realistic radio limitations** (no magic communication!)
 - **Weather and terrain effects** on radio quality
 - **Authentic military and civilian radio procedures**
@@ -270,7 +273,7 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ---
 
-## 🔧 **Technical Requirements**
+## **Technical Requirements**
 
 ### **What You Need**
 - **Windows, Mac, or Linux** computer
@@ -330,12 +333,11 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ---
 
-## 📞 **Need Help?**
+## **Need Help?**
 
 ### **We're Here to Support You!**
 - **Easy-to-follow tutorials**
 - **Community support**
-- **Video guides**
 - **Step-by-step instructions**
 
 ### **No Technical Jargon**

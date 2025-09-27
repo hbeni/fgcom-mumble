@@ -1,4 +1,4 @@
-# Radio Era Classification and Technology Guide
+ d fre# Radio Era Classification and Technology Guide
 
 **Data Source:** [Sherwood Engineering Receiver Test Data](http://sherweng.com/table.html)  
 **Document Purpose:** Classification of radios by era and technology for FGCom-mumble compatibility  
@@ -552,18 +552,18 @@ struct FGCom_MilitaryRadio_1980s {
 #### **AN/PRC-77 (1980s) - Estimated vs. Known**
 | Parameter | Estimated | Known Range | Accuracy |
 |-----------|-----------|-------------|----------|
-| **Sensitivity** | 2.0 μV | 1.5-3.0 μV | ✅ Good |
-| **Power Output** | 50W | 20-50W | ✅ Good |
-| **Frequency Range** | 2-30 MHz | 2-30 MHz | ✅ Exact |
-| **Channel Spacing** | 25 kHz | 25 kHz | ✅ Exact |
+| **Sensitivity** | 2.0 μV | 1.5-3.0 μV | Good |
+| **Power Output** | 50W | 20-50W | Good |
+| **Frequency Range** | 2-30 MHz | 2-30 MHz | Exact |
+| **Channel Spacing** | 25 kHz | 25 kHz | Exact |
 
 #### **AN/GRC-106 (1980s Vehicle) - Estimated vs. Known**
 | Parameter | Estimated | Known Range | Accuracy |
 |-----------|-----------|-------------|----------|
-| **Sensitivity** | 2.5 μV | 2.0-4.0 μV | ✅ Good |
-| **Power Output** | 50W | 30-100W | ✅ Good |
-| **Noise Floor** | -110 dBm | -108 to -115 dBm | ✅ Good |
-| **Dynamic Range** | 82 dB | 80-90 dB | ✅ Good |
+| **Sensitivity** | 2.5 μV | 2.0-4.0 μV | Good |
+| **Power Output** | 50W | 30-100W | Good |
+| **Noise Floor** | -110 dBm | -108 to -115 dBm | Good |
+| **Dynamic Range** | 82 dB | 80-90 dB | Good |
 
 ### **Usage Guidelines for FGCom-mumble**
 
