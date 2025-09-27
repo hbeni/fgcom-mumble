@@ -58,6 +58,57 @@ enable_sporadic_e = false
 enable_aurora_propagation = false
 
 # =============================================================================
+# TERRAIN ELEVATION CONFIGURATION
+# =============================================================================
+[terrain_elevation]
+# Enable/disable terrain elevation functionality
+enabled = false
+
+# Elevation data source (aster_gdem, srtm, openelevation_api, google_elevation_api)
+elevation_source = aster_gdem
+
+# ASTER GDEM configuration
+[aster_gdem]
+# Enable ASTER GDEM terrain data
+enabled = false
+
+# Path to ASTER GDEM data directory
+data_path = /usr/share/fgcom-mumble/aster_gdem
+
+# Enable automatic tile downloading
+auto_download = false
+
+# Download URL for ASTER GDEM tiles
+download_url = https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/
+
+# Cache size in MB (0 = unlimited)
+cache_size_mb = 1000
+
+# Enable terrain obstruction detection
+enable_obstruction_detection = true
+
+# Terrain resolution in meters (30m for ASTER GDEM)
+terrain_resolution_m = 30
+
+# Enable Fresnel zone calculations
+enable_fresnel_zone = true
+
+# Fresnel zone clearance percentage (0.6 = 60% clearance)
+fresnel_clearance_percent = 0.6
+
+# Enable diffraction effects
+enable_diffraction = true
+
+# Maximum terrain profile distance in km
+max_profile_distance_km = 100.0
+
+# Enable terrain profile caching
+enable_profile_caching = true
+
+# Profile cache size in MB
+profile_cache_size_mb = 500
+
+# =============================================================================
 # SOLAR DATA CONFIGURATION
 # =============================================================================
 [solar_data]

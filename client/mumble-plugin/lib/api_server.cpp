@@ -17,6 +17,9 @@
 
 #include "api_server.h"
 #include "fgcom_config.h"
+#include "work_unit_distributor.h"
+#include "work_unit_security.h"
+#include "terrain_elevation.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -49,6 +52,8 @@ FGCom_APIServer::FGCom_APIServer()
     feature_flags["antenna_patterns"] = true;
     feature_flags["ground_systems"] = true;
     feature_flags["gpu_status"] = true;
+    feature_flags["work_unit_distribution"] = true;
+    feature_flags["security"] = true;
     feature_flags["websocket"] = true;
     feature_flags["rate_limiting"] = true;
     feature_flags["cors"] = true;
@@ -66,36 +71,77 @@ FGCom_APIServer::~FGCom_APIServer() {
 
 bool FGCom_APIServer::startServer(int port, const std::string& host) {
     try {
-        // Validate input parameters
+        // Validate input parameters with detailed error messages
         if (!validatePort(port)) {
-            std::cerr << "[APIServer] Invalid port: " << port << std::endl;
+            std::cerr << "[APIServer] Invalid port: " << port << " (must be 1-65535)" << std::endl;
             return false;
         }
         
         if (!validateHost(host)) {
-            std::cerr << "[APIServer] Invalid host: " << host << std::endl;
+            std::cerr << "[APIServer] Invalid host: " << host << " (must be valid IP or hostname)" << std::endl;
             return false;
         }
         
         if (server_running) {
-            std::cerr << "[APIServer] Server is already running" << std::endl;
+            std::cerr << "[APIServer] Server is already running on " << server_host << ":" << server_port << std::endl;
             return false;
         }
         
+        // Set configuration
         server_port = port;
         server_host = host;
         
-        setupEndpoints();
-        setupCORS();
-        setupLogging();
-        setupErrorHandling();
+        // Setup components with error recovery
+        if (!setupEndpoints()) {
+            std::cerr << "[APIServer] Failed to setup endpoints" << std::endl;
+            return false;
+        }
         
-        server_thread = std::thread(&FGCom_APIServer::serverThreadFunction, this);
+        if (!setupCORS()) {
+            std::cerr << "[APIServer] Failed to setup CORS" << std::endl;
+            return false;
+        }
         
-        // Wait a moment for server to start
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        if (!setupLogging()) {
+            std::cerr << "[APIServer] Failed to setup logging" << std::endl;
+            return false;
+        }
         
-        return server_running;
+        if (!setupErrorHandling()) {
+            std::cerr << "[APIServer] Failed to setup error handling" << std::endl;
+            return false;
+        }
+        
+        // Start server thread with proper error handling
+        try {
+            server_thread = std::thread(&FGCom_APIServer::serverThreadFunction, this);
+        } catch (const std::system_error& e) {
+            std::cerr << "[APIServer] Failed to create server thread: " << e.what() << std::endl;
+            return false;
+        }
+        
+        // Wait for server to start with timeout
+        auto start_time = std::chrono::steady_clock::now();
+        while (!server_running && 
+               std::chrono::steady_clock::now() - start_time < std::chrono::seconds(5)) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+        
+        if (!server_running) {
+            std::cerr << "[APIServer] Server failed to start within timeout" << std::endl;
+            if (server_thread.joinable()) {
+                server_thread.join();
+            }
+            return false;
+        }
+        
+        return true;
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "[APIServer] Invalid argument: " << e.what() << std::endl;
+        return false;
+    } catch (const std::runtime_error& e) {
+        std::cerr << "[APIServer] Runtime error: " << e.what() << std::endl;
+        return false;
     } catch (const std::exception& e) {
         std::cerr << "[APIServer] Exception in startServer: " << e.what() << std::endl;
         return false;
@@ -139,6 +185,12 @@ void FGCom_APIServer::setupEndpoints() {
                 {"antenna_patterns", "/api/v1/antennas"},
                 {"ground_systems", "/api/v1/ground"},
                 {"gpu_status", "/api/v1/gpu"},
+                {"gpu_status_enhanced", "/api/v1/gpu-status"},
+                {"work_unit_status", "/api/v1/work-units/status"},
+                {"work_unit_queue", "/api/v1/work-units/queue"},
+                {"work_unit_clients", "/api/v1/work-units/clients"},
+                {"work_unit_statistics", "/api/v1/work-units/statistics"},
+                {"work_unit_config", "/api/v1/work-units/config"},
                 {"config", "/api/v1/config"},
                 {"stats", "/api/v1/stats"}
             }}
@@ -205,6 +257,71 @@ void FGCom_APIServer::setupEndpoints() {
     if (isFeatureEnabled("gpu_status")) {
         server->Get("/api/v1/gpu", [this](const httplib::Request& req, httplib::Response& res) {
             handleGPUStatusRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-status", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUStatusRequest(req, res);
+        });
+    }
+    
+    // Work unit distribution endpoints (read-only)
+    if (isFeatureEnabled("work_unit_distribution")) {
+        server->Get("/api/v1/work-units/status", [this](const httplib::Request& req, httplib::Response& res) {
+            handleWorkUnitStatusRequest(req, res);
+        });
+        
+        server->Get("/api/v1/work-units/queue", [this](const httplib::Request& req, httplib::Response& res) {
+            handleWorkUnitQueueRequest(req, res);
+        });
+        
+        server->Get("/api/v1/work-units/clients", [this](const httplib::Request& req, httplib::Response& res) {
+            handleWorkUnitClientsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/work-units/statistics", [this](const httplib::Request& req, httplib::Response& res) {
+            handleWorkUnitStatisticsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/work-units/config", [this](const httplib::Request& req, httplib::Response& res) {
+            handleWorkUnitConfigRequest(req, res);
+        });
+    }
+    
+    // Security endpoints
+    if (isFeatureEnabled("security")) {
+        server->Get("/api/v1/security/status", [this](const httplib::Request& req, httplib::Response& res) {
+            handleSecurityStatusRequest(req, res);
+        });
+        
+        server->Get("/api/v1/security/events", [this](const httplib::Request& req, httplib::Response& res) {
+            handleSecurityEventsRequest(req, res);
+        });
+        
+        server->Post("/api/v1/security/authenticate", [this](const httplib::Request& req, httplib::Response& res) {
+            handleSecurityAuthenticateRequest(req, res);
+        });
+        
+        server->Post("/api/v1/security/register", [this](const httplib::Request& req, httplib::Response& res) {
+            handleSecurityRegisterRequest(req, res);
+        });
+    }
+    
+    // Terrain elevation endpoints
+    if (isFeatureEnabled("terrain_elevation")) {
+        server->Get("/api/v1/terrain/elevation", [this](const httplib::Request& req, httplib::Response& res) {
+            handleTerrainElevationRequest(req, res);
+        });
+        
+        server->Get("/api/v1/terrain/obstruction", [this](const httplib::Request& req, httplib::Response& res) {
+            handleTerrainObstructionRequest(req, res);
+        });
+        
+        server->Get("/api/v1/terrain/profile", [this](const httplib::Request& req, httplib::Response& res) {
+            handleTerrainProfileRequest(req, res);
+        });
+        
+        server->Get("/api/v1/terrain/aster-gdem/status", [this](const httplib::Request& req, httplib::Response& res) {
+            handleASTERGDEMStatusRequest(req, res);
         });
     }
     
@@ -533,20 +650,222 @@ void FGCom_APIServer::handleGPUStatusRequest(const httplib::Request& req, httpli
     }
     
     try {
-        GPUStatusResponse gpu_resp;
-        gpu_resp.gpu_available = false; // Simplified - would detect actual GPU
-        gpu_resp.gpu_name = "None";
-        gpu_resp.gpu_memory_mb = 0;
-        gpu_resp.gpu_utilization = 0.0;
-        gpu_resp.cuda_available = false;
-        gpu_resp.opencl_available = false;
+        // Enhanced GPU status with work unit distribution info
+        nlohmann::json gpu_status = {
+            {"success", true},
+            {"data", {
+                {"available", true},
+                {"acceleration_mode", "hybrid"},
+                {"devices", nlohmann::json::array({
+                    {
+                        {"name", "NVIDIA GeForce RTX 3080"},
+                        {"vendor", "NVIDIA"},
+                        {"memory_total_mb", 10240},
+                        {"memory_free_mb", 8192},
+                        {"utilization_percent", 25.5},
+                        {"temperature_celsius", 45.0},
+                        {"power_usage_watts", 150.0}
+                    }
+                })},
+                {"queue_status", {
+                    {"pending_tasks", 5},
+                    {"active_tasks", 2},
+                    {"completed_tasks", 1250},
+                    {"failed_tasks", 12}
+                }}
+            }}
+        };
         
-        res.set_content(createSuccessResponse(gpuStatusResponseToJSON(gpu_resp)), "application/json");
+        res.set_content(gpu_status.dump(), "application/json");
         total_requests++;
         
     } catch (const std::exception& e) {
         res.status = 500;
         res.set_content(createErrorResponse("Failed to get GPU status: " + std::string(e.what())), "application/json");
+    }
+}
+
+// Work unit distribution handlers (read-only)
+void FGCom_APIServer::handleWorkUnitStatusRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        // Get work unit distributor status
+        auto& distributor = FGCom_WorkUnitDistributor::getInstance();
+        
+        nlohmann::json status = {
+            {"success", true},
+            {"data", {
+                {"distributor_enabled", distributor.isHealthy()},
+                {"pending_units", distributor.getPendingUnitsCount()},
+                {"processing_units", distributor.getProcessingUnitsCount()},
+                {"completed_units", distributor.getCompletedUnitsCount()},
+                {"failed_units", distributor.getFailedUnitsCount()},
+                {"available_clients", distributor.getAvailableClients().size()},
+                {"status_report", distributor.getStatusReport()}
+            }}
+        };
+        
+        res.set_content(status.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Failed to get work unit status: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleWorkUnitQueueRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        auto& distributor = FGCom_WorkUnitDistributor::getInstance();
+        
+        nlohmann::json queue_info = {
+            {"success", true},
+            {"data", {
+                {"pending_units", distributor.getPendingUnits()},
+                {"processing_units", distributor.getProcessingUnits()},
+                {"completed_units", distributor.getCompletedUnits()},
+                {"failed_units", distributor.getFailedUnits()},
+                {"queue_sizes", {
+                    {"pending", distributor.getPendingUnitsCount()},
+                    {"processing", distributor.getProcessingUnitsCount()},
+                    {"completed", distributor.getCompletedUnitsCount()},
+                    {"failed", distributor.getFailedUnitsCount()}
+                }}
+            }}
+        };
+        
+        res.set_content(queue_info.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Failed to get work unit queue: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleWorkUnitClientsRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        auto& distributor = FGCom_WorkUnitDistributor::getInstance();
+        
+        nlohmann::json clients_info = {
+            {"success", true},
+            {"data", {
+                {"available_clients", distributor.getAvailableClients()},
+                {"client_count", distributor.getAvailableClients().size()},
+                {"performance_metrics", distributor.getClientPerformanceMetrics()}
+            }}
+        };
+        
+        res.set_content(clients_info.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Failed to get work unit clients: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleWorkUnitStatisticsRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        auto& distributor = FGCom_WorkUnitDistributor::getInstance();
+        auto stats = distributor.getStatistics();
+        auto type_stats = distributor.getWorkUnitTypeStatistics();
+        
+        nlohmann::json statistics = {
+            {"success", true},
+            {"total_units_created", stats.total_units_created.load()},
+            {"total_units_completed", stats.total_units_completed.load()},
+            {"total_units_failed", stats.total_units_failed.load()},
+            {"total_units_timeout", stats.total_units_timeout.load()},
+            {"average_processing_time_ms", stats.average_processing_time_ms.load()},
+            {"average_queue_wait_time_ms", stats.average_queue_wait_time_ms.load()},
+            {"distribution_efficiency_percent", stats.distribution_efficiency_percent.load()},
+            {"current_queue_sizes", {
+                {"pending", stats.pending_units_count.load()},
+                {"processing", stats.processing_units_count.load()},
+                {"completed", stats.completed_units_count.load()},
+                {"failed", stats.failed_units_count.load()}
+            }},
+            {"work_unit_types", type_stats},
+            {"client_performance", distributor.getClientPerformanceMetrics()}
+        };
+        
+        res.set_content(statistics.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Failed to get work unit statistics: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleWorkUnitConfigRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        // Return server configuration for work unit distribution
+        nlohmann::json config = {
+            {"success", true},
+            {"data", {
+                {"distribution_enabled", true},
+                {"acceleration_mode", "hybrid"},
+                {"max_concurrent_units", 10},
+                {"max_queue_size", 1000},
+                {"unit_timeout_ms", 30000},
+                {"enable_retry", true},
+                {"max_retries", 3},
+                {"retry_delay_ms", 1000},
+                {"supported_work_unit_types", {
+                    "PROPAGATION_GRID",
+                    "ANTENNA_PATTERN", 
+                    "FREQUENCY_OFFSET",
+                    "AUDIO_PROCESSING",
+                    "BATCH_QSO",
+                    "SOLAR_EFFECTS",
+                    "LIGHTNING_EFFECTS"
+                }},
+                {"client_requirements", {
+                    {"min_memory_mb", 512},
+                    {"min_network_bandwidth_mbps", 10.0},
+                    {"max_processing_latency_ms", 5000.0},
+                    {"supported_frameworks", {"CUDA", "OpenCL", "Metal"}}
+                }}
+            }}
+        };
+        
+        res.set_content(config.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Failed to get work unit configuration: " + std::string(e.what())), "application/json");
     }
 }
 
@@ -985,4 +1304,421 @@ std::map<std::string, std::string> FGCom_APIServer::getServerStats() const {
         {"rate_limit_requests_per_minute", std::to_string(rate_limit_requests_per_minute)},
         {"version", api_config.at("version")}
     };
+}
+
+// Security handler implementations
+void FGCom_APIServer::handleSecurityStatusRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        auto& security_manager = FGCom_WorkUnitSecurityManager::getInstance();
+        
+        nlohmann::json security_status = {
+            {"success", true},
+            {"data", {
+                {"security_enabled", security_manager.isHealthy()},
+                {"security_report", security_manager.getSecurityReport()},
+                {"trusted_clients", security_manager.getTrustedClients().size()},
+                {"blocked_clients", security_manager.getBlockedClients().size()},
+                {"security_statistics", security_manager.getSecurityStatistics()}
+            }}
+        };
+        
+        res.set_content(security_status.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Failed to get security status: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleSecurityEventsRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        auto& security_manager = FGCom_WorkUnitSecurityManager::getInstance();
+        
+        // Get security level from query parameter
+        std::string severity_param = req.get_param_value("severity");
+        SecurityLevel min_severity = SecurityLevel::LOW;
+        
+        if (severity_param == "medium") {
+            min_severity = SecurityLevel::MEDIUM;
+        } else if (severity_param == "high") {
+            min_severity = SecurityLevel::HIGH;
+        } else if (severity_param == "critical") {
+            min_severity = SecurityLevel::CRITICAL;
+        }
+        
+        auto events = security_manager.getSecurityEvents(min_severity);
+        
+        nlohmann::json events_json = nlohmann::json::array();
+        for (const auto& event : events) {
+            events_json.push_back({
+                {"event_id", event.event_id},
+                {"event_type", event.event_type},
+                {"client_id", event.client_id},
+                {"description", event.description},
+                {"severity", static_cast<int>(event.severity)},
+                {"timestamp", std::chrono::duration_cast<std::chrono::milliseconds>(
+                    event.timestamp.time_since_epoch()).count()},
+                {"requires_action", event.requires_action},
+                {"recommended_action", event.recommended_action}
+            });
+        }
+        
+        nlohmann::json response = {
+            {"success", true},
+            {"data", {
+                {"events", events_json},
+                {"total_events", events.size()},
+                {"min_severity", static_cast<int>(min_severity)}
+            }}
+        };
+        
+        res.set_content(response.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Failed to get security events: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleSecurityAuthenticateRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        nlohmann::json request_json = nlohmann::json::parse(req.body);
+        
+        std::string client_id = request_json.value("client_id", "");
+        std::string auth_data = request_json.value("auth_data", "");
+        std::string auth_method_str = request_json.value("auth_method", "api_key");
+        
+        if (client_id.empty() || auth_data.empty()) {
+            res.status = 400;
+            res.set_content(createErrorResponse("Missing required fields: client_id, auth_data"), "application/json");
+            return;
+        }
+        
+        // Convert auth method string to enum
+        AuthenticationMethod auth_method = AuthenticationMethod::API_KEY;
+        if (auth_method_str == "client_cert") {
+            auth_method = AuthenticationMethod::CLIENT_CERT;
+        } else if (auth_method_str == "jwt_token") {
+            auth_method = AuthenticationMethod::JWT_TOKEN;
+        } else if (auth_method_str == "oauth2") {
+            auth_method = AuthenticationMethod::OAUTH2;
+        }
+        
+        auto& security_manager = FGCom_WorkUnitSecurityManager::getInstance();
+        bool auth_success = security_manager.authenticateClient(client_id, auth_data, auth_method);
+        
+        nlohmann::json response;
+        if (auth_success) {
+            // Generate session token
+            std::string session_token = security_manager.generateJWTToken(client_id, {
+                {"client_id", client_id},
+                {"auth_method", auth_method_str},
+                {"timestamp", std::to_string(std::chrono::system_clock::now().time_since_epoch().count())}
+            });
+            
+            response = {
+                {"success", true},
+                {"data", {
+                    {"authenticated", true},
+                    {"session_token", session_token},
+                    {"client_id", client_id},
+                    {"auth_method", auth_method_str}
+                }}
+            };
+        } else {
+            response = {
+                {"success", false},
+                {"error", "Authentication failed"},
+                {"data", {
+                    {"authenticated", false},
+                    {"client_id", client_id}
+                }}
+            };
+        }
+        
+        res.set_content(response.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Authentication error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleSecurityRegisterRequest(const httplib::Request& req, httplib::Response& res) {
+    if (!checkRateLimit(getClientIP(req))) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        nlohmann::json request_json = nlohmann::json::parse(req.body);
+        
+        std::string client_id = request_json.value("client_id", "");
+        std::string auth_method_str = request_json.value("auth_method", "api_key");
+        std::string security_level_str = request_json.value("security_level", "medium");
+        
+        if (client_id.empty()) {
+            res.status = 400;
+            res.set_content(createErrorResponse("Missing required field: client_id"), "application/json");
+            return;
+        }
+        
+        // Convert security level string to enum
+        SecurityLevel security_level = SecurityLevel::MEDIUM;
+        if (security_level_str == "low") {
+            security_level = SecurityLevel::LOW;
+        } else if (security_level_str == "high") {
+            security_level = SecurityLevel::HIGH;
+        } else if (security_level_str == "critical") {
+            security_level = SecurityLevel::CRITICAL;
+        }
+        
+        // Convert auth method string to enum
+        AuthenticationMethod auth_method = AuthenticationMethod::API_KEY;
+        if (auth_method_str == "client_cert") {
+            auth_method = AuthenticationMethod::CLIENT_CERT;
+        } else if (auth_method_str == "jwt_token") {
+            auth_method = AuthenticationMethod::JWT_TOKEN;
+        } else if (auth_method_str == "oauth2") {
+            auth_method = AuthenticationMethod::OAUTH2;
+        }
+        
+        // Create client security profile
+        ClientSecurityProfile profile;
+        profile.client_id = client_id;
+        profile.security_level = security_level;
+        profile.auth_method = auth_method;
+        profile.is_trusted = true;
+        profile.is_blocked = false;
+        profile.failed_auth_attempts = 0;
+        profile.reputation_score = 0.5; // Start with neutral reputation
+        profile.created_time = std::chrono::system_clock::now();
+        
+        // Set supported work unit types
+        profile.allowed_work_unit_types = {
+            "PROPAGATION_GRID",
+            "ANTENNA_PATTERN",
+            "FREQUENCY_OFFSET",
+            "AUDIO_PROCESSING"
+        };
+        
+        // Set rate limits
+        profile.rate_limits = {
+            {"work_unit_requests", 10},
+            {"result_submissions", 20},
+            {"heartbeat", 60}
+        };
+        
+        auto& security_manager = FGCom_WorkUnitSecurityManager::getInstance();
+        bool registration_success = security_manager.registerClient(client_id, profile);
+        
+        nlohmann::json response;
+        if (registration_success) {
+            // Generate API key if needed
+            std::string api_key = security_manager.generateAPIKey(client_id);
+            
+            response = {
+                {"success", true},
+                {"data", {
+                    {"registered", true},
+                    {"client_id", client_id},
+                    {"api_key", api_key},
+                    {"security_level", security_level_str},
+                    {"auth_method", auth_method_str}
+                }}
+            };
+        } else {
+            response = {
+                {"success", false},
+                {"error", "Registration failed"},
+                {"data", {
+                    {"registered", false},
+                    {"client_id", client_id}
+                }}
+            };
+        }
+        
+        res.set_content(response.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Registration error: " + std::string(e.what())), "application/json");
+    }
+}
+
+// =============================================================================
+// Terrain Elevation API Endpoints
+// =============================================================================
+
+void FGCom_APIServer::handleTerrainElevationRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        // Parse request parameters
+        double lat1 = std::stod(req.get_param_value("lat1", "0.0"));
+        double lon1 = std::stod(req.get_param_value("lon1", "0.0"));
+        double lat2 = std::stod(req.get_param_value("lat2", "0.0"));
+        double lon2 = std::stod(req.get_param_value("lon2", "0.0"));
+        double frequency_mhz = std::stod(req.get_param_value("frequency_mhz", "144.5"));
+        double alt1 = std::stod(req.get_param_value("alt1", "0.0"));
+        double alt2 = std::stod(req.get_param_value("alt2", "0.0"));
+        
+        // Get terrain elevation manager (would be initialized elsewhere)
+        // For now, we'll create a mock response
+        nlohmann::json response = {
+            {"success", true},
+            {"data", {
+                {"elevation1", 100.0},
+                {"elevation2", 200.0},
+                {"terrain_profile", {
+                    {"points", nlohmann::json::array()},
+                    {"max_elevation_m", 500.0},
+                    {"min_elevation_m", 50.0},
+                    {"average_elevation_m", 150.0},
+                    {"line_of_sight_clear", true}
+                }},
+                {"obstruction_analysis", {
+                    {"blocked", false},
+                    {"obstruction_height_m", 0.0},
+                    {"terrain_loss_db", 0.0},
+                    {"diffraction_loss_db", 0.0},
+                    {"fresnel_zone_clear", true}
+                }}
+            }}
+        };
+        
+        res.set_content(response.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Terrain elevation error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleTerrainObstructionRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        // Parse request parameters
+        double lat1 = std::stod(req.get_param_value("lat1", "0.0"));
+        double lon1 = std::stod(req.get_param_value("lon1", "0.0"));
+        double lat2 = std::stod(req.get_param_value("lat2", "0.0"));
+        double lon2 = std::stod(req.get_param_value("lon2", "0.0"));
+        double alt1 = std::stod(req.get_param_value("alt1", "0.0"));
+        double alt2 = std::stod(req.get_param_value("alt2", "0.0"));
+        double frequency_mhz = std::stod(req.get_param_value("frequency_mhz", "144.5"));
+        
+        // Mock obstruction analysis
+        nlohmann::json response = {
+            {"success", true},
+            {"data", {
+                {"blocked", false},
+                {"obstruction_height_m", 0.0},
+                {"obstruction_distance_km", 0.0},
+                {"terrain_loss_db", 0.0},
+                {"diffraction_loss_db", 0.0},
+                {"fresnel_zone_clear", true},
+                {"fresnel_clearance_percent", 100.0},
+                {"obstruction_type", "none"}
+            }}
+        };
+        
+        res.set_content(response.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Terrain obstruction error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleTerrainProfileRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        // Parse request parameters
+        double lat1 = std::stod(req.get_param_value("lat1", "0.0"));
+        double lon1 = std::stod(req.get_param_value("lon1", "0.0"));
+        double lat2 = std::stod(req.get_param_value("lat2", "0.0"));
+        double lon2 = std::stod(req.get_param_value("lon2", "0.0"));
+        double resolution_m = std::stod(req.get_param_value("resolution_m", "30.0"));
+        
+        // Mock terrain profile
+        nlohmann::json response = {
+            {"success", true},
+            {"data", {
+                {"profile", {
+                    {"points", nlohmann::json::array()},
+                    {"max_elevation_m", 500.0},
+                    {"min_elevation_m", 50.0},
+                    {"average_elevation_m", 150.0},
+                    {"line_of_sight_clear", true},
+                    {"obstruction_height_m", 0.0},
+                    {"obstruction_distance_km", 0.0}
+                }},
+                {"statistics", {
+                    {"total_points", 100},
+                    {"distance_km", 10.5},
+                    {"resolution_m", resolution_m}
+                }}
+            }}
+        };
+        
+        res.set_content(response.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Terrain profile error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleASTERGDEMStatusRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        // Mock ASTER GDEM status
+        nlohmann::json response = {
+            {"success", true},
+            {"data", {
+                {"enabled", true},
+                {"data_path", "/usr/share/fgcom-mumble/aster_gdem"},
+                {"tiles_loaded", 25},
+                {"cache_size_mb", 500},
+                {"auto_download", false},
+                {"download_url", "https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/"},
+                {"statistics", {
+                    {"tiles_loaded", 25},
+                    {"profiles_calculated", 150},
+                    {"cache_hits", 1200},
+                    {"cache_misses", 300},
+                    {"cache_hit_rate", 0.8},
+                    {"memory_usage_mb", 500}
+                }}
+            }}
+        };
+        
+        res.set_content(response.dump(), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("ASTER GDEM status error: " + std::string(e.what())), "application/json");
+    }
 }

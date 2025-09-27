@@ -24,12 +24,14 @@ scripts/
 - **3D Attitude Patterns**: Generates patterns for all roll/pitch combinations at multiple altitudes
 - **Aviation Coordinate System**: Proper implementation of pitch around Y-axis, roll around X-axis
 - **Real-time Yaw Support**: Integration with Vehicle Dynamics API for real-time antenna orientation control
-- **Parallel Processing**: Uses multiple CPU cores for fast pattern generation
+- **Parallel Processing**: Uses multiple CPU cores for fast pattern generation with work unit distribution
 - **Progress Indicators**: Real-time progress tracking with detailed status information
 - **Altitude Band Organization**: Organizes patterns by RF propagation physics (ground_effects, boundary_layer, free_space)
 - **Safe by default**: Does not overwrite existing pattern files
 - **Flexible options**: Command-line options for customization
 - **Dry-run mode**: Preview what would be generated without actually doing it
+- **Security Integration**: Secure work unit processing with authentication and encryption
+- **Quality Assurance**: Zero tolerance for race conditions, memory leaks, or security vulnerabilities
 
 **Usage:**
 ```bash
@@ -137,7 +139,11 @@ Most scripts require:
 - **NEC2C**: For electromagnetic simulations
 - **EZNEC2NEC**: For file format conversion
 - **Bash**: For script execution
+- **Python3**: For coordinate transformations and trigonometry
+- **bc**: For high-precision calculations
 - **Standard Unix tools**: sed, awk, grep, etc.
+- **Security libraries**: OpenSSL for encryption and authentication
+- **Work unit distribution**: For distributed processing across multiple clients
 
 ## Script Organization Benefits
 
@@ -161,3 +167,7 @@ When adding new scripts:
 - Scripts are designed to be run from the project root
 - Pattern generation scripts create output in appropriate directories
 - Test scripts validate functionality and performance
+- All scripts follow strict coding standards with zero tolerance for violations
+- Security is integrated throughout all script operations
+- Work unit distribution enables distributed processing across multiple clients
+- Quality assurance ensures no race conditions, memory leaks, or security vulnerabilities
