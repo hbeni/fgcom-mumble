@@ -29,6 +29,8 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Community Support**: Join a friendly community of aviation and military simulation enthusiasts
 - **Free to Use**: No cost, no subscriptions, just download and start communicating!
 
+- **It needs to be properly tested, but it does compile!**
+
 **[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** - Perfect for beginners and non-technical users!
 
 ### New Advanced Features (v2.0+):
