@@ -14,8 +14,9 @@ This document provides a comprehensive reference for all API endpoints in the FG
 6. [Antenna Patterns API](#antenna-patterns-api)
 7. [Ground Systems API](#ground-systems-api)
 8. [Configuration API](#configuration-api)
-9. [Error Codes](#error-codes)
-10. [Rate Limiting](#rate-limiting)
+9. [Band Segments Reference](#band-segments-reference)
+10. [Error Codes](#error-codes)
+11. [Rate Limiting](#rate-limiting)
 
 ## Core API Endpoints
 
@@ -885,6 +886,19 @@ curl -X POST "http://localhost:8080/api/v1/security/authenticate" \
        "auth_method": "api_key"
      }'
 ```
+
+## Band Segments Reference
+
+For detailed band segment information and frequency allocations, refer to the comprehensive band segments database:
+
+- **Band Segments CSV**: [https://github.com/Supermagnum/Supermorse-server/blob/main/Bandplans_and_antennas/band_segments.csv](https://github.com/Supermagnum/Supermorse-server/blob/main/Bandplans_and_antennas/band_segments.csv)
+
+This CSV file contains detailed information about:
+- Frequency allocations for different regions
+- Band segments for various modulation modes
+- ITU region specifications
+- Channel spacing requirements
+- Power limits and restrictions
 
 ## Conclusion
 

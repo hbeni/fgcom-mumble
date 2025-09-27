@@ -33,6 +33,7 @@
 #include "radio_model_string.cpp"
 #include "radio_model_amateur.cpp"
 #include "non_amateur_hf.cpp"
+#include "advanced_modulation.cpp"
 
 
 /*

@@ -355,7 +355,20 @@ fgcom_frequency_validation FGCom_AmateurRadio::validateFrequencyDetailed(const s
     result.valid = true;
     result.band = frequencyToBand(freq_khz);
     result.mode = mode;
-    result.channel_spacing = (mode == "CW") ? 500.0 : 3000.0; // 500Hz for CW, 3kHz for SSB
+    // Calculate channel spacing based on mode
+    if (mode == "CW") {
+        result.channel_spacing = 500.0; // 500Hz for CW
+    } else if (mode == "DSB") {
+        result.channel_spacing = 6000.0; // 6kHz for DSB
+    } else if (mode == "ISB") {
+        result.channel_spacing = 6000.0; // 6kHz for ISB
+    } else if (mode == "VSB") {
+        result.channel_spacing = 4000.0; // 4kHz for VSB
+    } else if (mode == "NFM") {
+        result.channel_spacing = 12500.0; // 12.5kHz for NFM
+    } else {
+        result.channel_spacing = 3000.0; // 3kHz for SSB/AM
+    }
     
     return result;
 }
@@ -417,10 +430,23 @@ bool FGCom_AmateurRadio::checkRegionalRestrictions(float frequency_khz, int itu_
     return true;
 }
 
-// Validate channel spacing (3kHz SSB, 500Hz CW)
+// Validate channel spacing for all modulation modes
 bool FGCom_AmateurRadio::validateChannelSpacing(float frequency_khz, const std::string& mode) {
     // Check if frequency aligns with proper channel spacing
-    float spacing_hz = (mode == "CW") ? 500.0 : 3000.0; // 500Hz for CW, 3kHz for SSB
+    float spacing_hz;
+    if (mode == "CW") {
+        spacing_hz = 500.0; // 500Hz for CW
+    } else if (mode == "DSB") {
+        spacing_hz = 6000.0; // 6kHz for DSB
+    } else if (mode == "ISB") {
+        spacing_hz = 6000.0; // 6kHz for ISB
+    } else if (mode == "VSB") {
+        spacing_hz = 4000.0; // 4kHz for VSB
+    } else if (mode == "NFM") {
+        spacing_hz = 12500.0; // 12.5kHz for NFM
+    } else {
+        spacing_hz = 3000.0; // 3kHz for SSB/AM
+    }
     float spacing_khz = spacing_hz / 1000.0;
     
     // Check if frequency is on a valid channel

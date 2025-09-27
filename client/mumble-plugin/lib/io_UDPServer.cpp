@@ -352,7 +352,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         pluginDbg("[UDP-server] amateur radio band: " + token_value);
                     }
                     if (radio_var == "MODE") {
-                        // Store mode information (e.g., "CW", "SSB", "AM")
+                        // Store mode information (e.g., "CW", "SSB", "AM", "DSB", "ISB", "VSB")
                         pluginDbg("[UDP-server] amateur radio mode: " + token_value);
                     }
                     if (radio_var == "GRID") {

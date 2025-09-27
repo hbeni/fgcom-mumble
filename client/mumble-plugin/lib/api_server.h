@@ -305,6 +305,8 @@ public:
     void handleTerrainObstructionRequest(const httplib::Request& req, httplib::Response& res);
     void handleTerrainProfileRequest(const httplib::Request& req, httplib::Response& res);
     void handleASTERGDEMStatusRequest(const httplib::Request& req, httplib::Response& res);
+    void handleAdvancedModulationRequest(const httplib::Request& req, httplib::Response& res);
+    void handleMaritimeModulationRequest(const httplib::Request& req, httplib::Response& res);
     
     // Configuration endpoints
     void handleConfigRequest(const httplib::Request& req, httplib::Response& res);

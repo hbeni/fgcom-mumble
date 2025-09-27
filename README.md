@@ -574,3 +574,16 @@ There is an makefile alias `make plugin-macOS` that will do the following:
 `make -C client/mumble-plugin/ outname=fgcom-mumble-macOS.bundle CC=g++-11 CFLAGS="-I/usr/local/opt/openssl/include/ -L/usr/local/opt/openssl/lib/" plugin`
 
 - After compilation, rename the plugin binary to `fgcom-mumble-macOS.bundle` to stay compatible with the official releases.
+
+## Band Segments Reference
+
+For detailed band segment information and frequency allocations, refer to the comprehensive band segments database:
+
+- **Band Segments CSV**: [https://github.com/Supermagnum/Supermorse-server/blob/main/Bandplans_and_antennas/band_segments.csv](https://github.com/Supermagnum/Supermorse-server/blob/main/Bandplans_and_antennas/band_segments.csv)
+
+This CSV file contains detailed information about:
+- Frequency allocations for different regions
+- Band segments for various modulation modes
+- ITU region specifications
+- Channel spacing requirements
+- Power limits and restrictions
