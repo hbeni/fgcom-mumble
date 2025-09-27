@@ -207,6 +207,12 @@ public:
     void setDefaultRotationSpeed(float deg_per_sec);
     void setMagneticDeclinationSource(const std::string& source); // "auto", "manual", "file"
     void setManualMagneticDeclination(float declination_deg);
+    
+    // Advanced modulation support
+    void setVehicleModulationMode(const std::string& vehicle_id, const std::string& mode);
+    std::string getVehicleModulationMode(const std::string& vehicle_id);
+    bool validateModulationMode(const std::string& mode);
+    std::vector<std::string> getSupportedModulationModes();
 };
 
 // Global instance

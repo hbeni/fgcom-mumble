@@ -26,7 +26,7 @@
 // Band segment structure for amateur radio frequency allocations
 struct fgcom_band_segment {
     std::string band;           // "160m", "80m", "40m", etc.
-    std::string mode;           // "CW", "SSB", "AM"
+    std::string mode;           // "CW", "SSB", "AM", "DSB", "ISB", "VSB"
     float start_freq;           // Start frequency in kHz
     float end_freq;             // End frequency in kHz
     int itu_region;             // ITU Region (1, 2, 3)

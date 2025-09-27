@@ -1722,3 +1722,124 @@ void FGCom_APIServer::handleASTERGDEMStatusRequest(const httplib::Request& req, 
         res.set_content(createErrorResponse("ASTER GDEM status error: " + std::string(e.what())), "application/json");
     }
 }
+
+// Advanced modulation API endpoint
+void FGCom_API_Server::handleAdvancedModulationRequest(const httplib::Request& req, httplib::Response& res) {
+    // Rate limiting
+    if (isRateLimited()) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        std::string mode = req.get_param_value("mode");
+        std::string application = req.get_param_value("application");
+        
+        if (application.empty()) application = "AMATEUR";
+        
+        nlohmann::json response;
+        response["status"] = "success";
+        response["mode"] = mode;
+        response["application"] = application;
+        
+        if (mode == "DSB") {
+            response["bandwidth_hz"] = 6000.0;
+            response["carrier_suppressed"] = true;
+            response["power_efficiency"] = 0.75;
+            response["channel_spacing_hz"] = 6000.0;
+        } else if (mode == "ISB") {
+            response["bandwidth_hz"] = 6000.0;
+            response["upper_bandwidth_hz"] = 3000.0;
+            response["lower_bandwidth_hz"] = 3000.0;
+            response["power_efficiency"] = 0.85;
+            response["channel_spacing_hz"] = 6000.0;
+        } else if (mode == "VSB") {
+            response["bandwidth_hz"] = 4000.0;
+            response["vestigial_bandwidth_hz"] = 1000.0;
+            response["carrier_present"] = true;
+            response["power_efficiency"] = 0.70;
+            response["channel_spacing_hz"] = 4000.0;
+        } else if (mode == "NFM") {
+            response["bandwidth_hz"] = 12500.0;
+            response["deviation_hz"] = 2500.0;
+            response["preemphasis"] = true;
+            response["squelch_required"] = true;
+            response["power_efficiency"] = 0.60;
+            response["channel_spacing_hz"] = 12500.0;
+        } else {
+            res.status = 400;
+            res.set_content(createErrorResponse("Unsupported modulation mode"), "application/json");
+            return;
+        }
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+// Maritime modulation API endpoint
+void FGCom_API_Server::handleMaritimeModulationRequest(const httplib::Request& req, httplib::Response& res) {
+    // Rate limiting
+    if (isRateLimited()) {
+        res.status = 429;
+        res.set_content(createErrorResponse("Rate limit exceeded"), "application/json");
+        return;
+    }
+    
+    try {
+        std::string frequency = req.get_param_value("frequency");
+        std::string mode = req.get_param_value("mode");
+        
+        if (frequency.empty()) {
+            res.status = 400;
+            res.set_content(createErrorResponse("Frequency parameter required"), "application/json");
+            return;
+        }
+        
+        double freq_khz = std::stod(frequency);
+        
+        nlohmann::json response;
+        response["status"] = "success";
+        response["frequency_khz"] = freq_khz;
+        response["mode"] = mode;
+        response["application"] = "MARITIME";
+        
+        // Maritime-specific modulation characteristics
+        if (mode == "DSB" || mode == "ISB") {
+            response["bandwidth_hz"] = 6000.0;
+            response["carrier_suppressed"] = true;
+            response["power_efficiency"] = 0.75;
+            response["channel_spacing_hz"] = 6000.0;
+            response["squelch_required"] = false;
+        } else if (mode == "NFM") {
+            response["bandwidth_hz"] = 12500.0;
+            response["deviation_hz"] = 2500.0;
+            response["preemphasis"] = true;
+            response["squelch_required"] = true;
+            response["power_efficiency"] = 0.60;
+            response["channel_spacing_hz"] = 12500.0;
+        } else {
+            response["bandwidth_hz"] = 3000.0;
+            response["power_efficiency"] = 1.0;
+            response["channel_spacing_hz"] = 3000.0;
+        }
+        
+        // Maritime-specific features
+        response["emergency_frequency"] = (freq_khz >= 2182.0 && freq_khz <= 2182.0);
+        response["distress_frequency"] = (freq_khz >= 2182.0 && freq_khz <= 2182.0);
+        response["safety_frequency"] = (freq_khz >= 2174.5 && freq_khz <= 2174.5);
+        response["calling_frequency"] = (freq_khz >= 2182.0 && freq_khz <= 2182.0);
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}

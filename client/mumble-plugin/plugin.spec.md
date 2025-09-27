@@ -195,7 +195,7 @@ The following internal plugin data packets are defined:
   - `TEMP` antenna temperature in Celsius
   - `BATTERY` battery level (0.0-1.0)
   - `BAND` amateur radio band (e.g., "20m", "40m")
-  - `MODE` amateur radio mode ("CW", "SSB", "AM")
+  - `MODE` amateur radio mode ("CW", "SSB", "AM", "FM", "NFM", "DSB", "ISB", "VSB")
   - `GRID` Maidenhead grid locator (e.g., "FN31pr")
   - `AMATEUR` amateur radio flag (0=commercial, 1=amateur)
   - `REGION` ITU Region (1, 2, 3)

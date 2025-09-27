@@ -124,7 +124,7 @@ bool validateGridSquare(const std::string& grid) {
 
 bool validateMode(const std::string& mode) {
     std::vector<std::string> valid_modes = {
-        "SSB", "CW", "AM", "FM", "USB", "LSB", "DIGITAL", "FT8", "FT4", "PSK31", "RTTY"
+        "SSB", "CW", "AM", "FM", "NFM", "USB", "LSB", "DSB", "ISB", "VSB", "DIGITAL", "FT8", "FT4", "PSK31", "RTTY"
     };
     
     std::string upper_mode = mode;
