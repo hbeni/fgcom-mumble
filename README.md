@@ -74,9 +74,9 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 
 **📖 Detailed Documentation**: See [Antenna Pattern Generation Improvements](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) for comprehensive technical details.
 
-**✅ PATTERN GENERATION FIXED**: The antenna radiation pattern generation system has been updated and is now working correctly. The scripts now use `.nec` files exclusively and include working aircraft patterns with proper altitude handling.
+**PATTERN GENERATION FIXED**: The antenna radiation pattern generation system has been updated and is now working correctly. The scripts now use `.nec` files exclusively and include working aircraft patterns with proper altitude handling.
 
-**⚠️ IMPORTANT NOTICE**: The changes made to this branch compile successfully, but **all functions related to radio propagation simulation have not been tested**. Users should exercise caution when using radio propagation features in production environments until comprehensive testing is completed.
+**IMPORTANT NOTICE**: The changes made to this branch compile successfully, but **all functions related to radio propagation simulation have not been tested**. Users should exercise caution when using radio propagation features in production environments until comprehensive testing is completed.
 
 Documentation
 =============
@@ -92,7 +92,7 @@ The documentation is split up into relevant parts:
 - [SECURITY.md](config/SECURITY.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
 
 ### User Documentation:
-- **[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** 🎮 **Perfect for non-technical users and gamers!** Easy-to-understand guide explaining what FGCom-mumble is, what it can do, and how to use it with popular games and flight simulators.
+- **[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** **Perfect for non-technical users and gamers!** Easy-to-understand guide explaining what FGCom-mumble is, what it can do, and how to use it with popular games and flight simulators.
 
 ### Advanced Features Documentation:
 - [API Documentation](docs/API_DOCUMENTATION.md) Complete RESTful API and WebSocket documentation
