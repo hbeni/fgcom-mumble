@@ -217,7 +217,7 @@ interference_monitoring = true
 - **EZNEC Models**: `/client/mumble-plugin/lib/antenna_patterns/Ground-based/maritime_hf/`
 - **Coastal Station Models**: `/client/mumble-plugin/lib/antenna_patterns/Ground-based/coastal_stations/`
 - **Generation Scripts**: `/client/mumble-plugin/lib/generate_maritime_hf_patterns.sh`
-- **Configuration**: `config/fgcom-mumble.conf.example`
+- **Configuration**: `configs/fgcom-mumble.conf.example`
 
 ## References
 

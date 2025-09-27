@@ -21,6 +21,16 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - Modularity, so individual components can be easily updated and extended with new features
 - Good and complete documentation
 
+### **Perfect for Gamers and Non-Technical Users!**
+- **Easy Setup**: No technical knowledge required - just install and play!
+- **Game Compatibility**: Works with popular games like Microsoft Flight Simulator, X-Plane, DCS World, Arma 3, Squad, and many more
+- **Realistic Communication**: Experience authentic radio procedures used by real pilots, soldiers, and emergency responders
+- **Educational Value**: Learn real radio communication skills while having fun
+- **Community Support**: Join a friendly community of aviation and military simulation enthusiasts
+- **Free to Use**: No cost, no subscriptions, just download and start communicating!
+
+**[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** - Perfect for beginners and non-technical users!
+
 ### New Advanced Features (v2.0+):
 - **Multi-threaded Architecture**: 7 specialized background threads for optimal performance
 - **GPU Acceleration**: Configurable GPU acceleration for complex calculations (client/server/hybrid modes)
@@ -40,6 +50,9 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Weather Data Integration**: Atmospheric condition effects on radio propagation
 - **Security Features**: TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration
 - **Noise Floor Calculation**: Advanced atmospheric noise modeling with environment-specific calculations and manual position setting via GPS or Maidenhead locators
+- **AGC & Squelch System**: Advanced Automatic Gain Control and Squelch functionality with configurable presets
+- **Radio Era Classification**: Comprehensive radio technology classification system for SDR and traditional radios
+- **User-Friendly Documentation**: Simple user guide for non-technical users and gamers
 
 ### Latest Updates (v2.1+):
 - **Complete Antenna Pattern Integration**: All 52 available radiation pattern files now loaded and mapped
@@ -55,6 +68,9 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Enhanced Coordinate System**: Proper aviation coordinate system implementation (pitch around Y-axis, roll around X-axis)
 - **Improved Pattern Quality**: More accurate antenna radiation patterns with proper ground effects modeling
 - **API Integration**: Seamless integration with Vehicle Dynamics API for real-time antenna orientation control
+- **AGC & Squelch System**: Advanced Automatic Gain Control and Squelch functionality with configurable presets
+- **Radio Era Classification**: Comprehensive radio technology classification system for SDR and traditional radios
+- **User-Friendly Documentation**: Simple user guide for non-technical users and gamers
 
 **📖 Detailed Documentation**: See [Antenna Pattern Generation Improvements](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) for comprehensive technical details.
 
@@ -75,8 +91,14 @@ The documentation is split up into relevant parts:
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
 - [SECURITY.md](config/SECURITY.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
 
+### User Documentation:
+- **[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** 🎮 **Perfect for non-technical users and gamers!** Easy-to-understand guide explaining what FGCom-mumble is, what it can do, and how to use it with popular games and flight simulators.
+
 ### Advanced Features Documentation:
 - [API Documentation](docs/API_DOCUMENTATION.md) Complete RESTful API and WebSocket documentation
+- [AGC & Squelch API](docs/AGC_SQUELCH_API_DOCUMENTATION.md) Advanced Automatic Gain Control and Squelch API documentation
+- [Radio Era Classification](docs/RADIO_ERA_CLASSIFICATION.md) Comprehensive radio technology classification system for SDR and traditional radios
+- [BFO/SDR Compatibility](docs/BFO_SDR_COMPATIBILITY_ASSESSMENT.md) Beat Frequency Oscillator and Software Defined Radio compatibility assessment
 - [Threading Architecture](docs/THREADING_ARCHITECTURE_DOCUMENTATION.md) Multi-threaded system documentation
 - [NEC Modeling Guide](docs/NEC_MODELING_DOCUMENTATION.md) Antenna modeling and calculation guide
 - [VHF/UHF Antenna Specifications](docs/ANTENNA_HEIGHT_SPECIFICATIONS.md) Professional antenna height and performance specifications
@@ -88,6 +110,7 @@ The documentation is split up into relevant parts:
 - [Realistic Antenna Examples](docs/REALISTIC_ANTENNA_EXAMPLES.md) Realistic antenna configurations for various vehicle types
 - [Frequency Offset Documentation](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) Audio processing and frequency offset simulation
 - [VHF/UHF Pattern Integration](docs/VHF_UHF_PATTERN_INTEGRATION.md) VHF/UHF antenna pattern integration documentation
+- [Encrypted Radio Module](docs/ENCRYPTED_RADIO_TRANSMISSION_MODULE.md) Encrypted radio transmission module documentation
 - [Changes Log](docs/changes.md) Detailed development history and feature implementation log
 
 ### Antenna Pattern Creation Documentation:
@@ -171,7 +194,7 @@ Plugin configuration
 -----------------------
 Usually the default values are fine. Some features however can be configured differently, like disabling radio audio effects (white noise etc), changing the plugins UDP listen port or the name match of the special `fgcom-mumble` channel.
 
-You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
+You can do this by copying the [`fgcom-mumble.ini`](configs/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
 
 - Linux:
   - `/etc/mumble/fgcom-mumble.ini`
@@ -184,8 +207,8 @@ You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-m
 ### Advanced Configuration (v2.0+)
 FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced features:
 
-- **[config/fgcom-mumble.conf.example](config/fgcom-mumble.conf.example)**: Complete configuration template with all available options
-- **[config/fgcom-mumble.conf.minimal](config/fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
+- **[configs/fgcom-mumble.conf.example](configs/fgcom-mumble.conf.example)**: Complete configuration template with all available options
+- **[configs/fgcom-mumble.conf.minimal](configs/fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
 - **Feature Toggles**: Runtime enable/disable of 107 features across 17 categories
 - **GPU Acceleration**: Configure client/server/hybrid GPU acceleration modes
 - **Threading**: Customize thread intervals and resource allocation
@@ -361,6 +384,8 @@ The FGCom-mumble client plugin needs to be in binary form. If you want to use th
     - `json.hpp` (included): JSON parsing for API responses and configuration
     - `nec2c` (optional): NEC2 antenna simulation for pattern generation
     - GPU libraries (optional): CUDA/OpenCL for GPU acceleration features
+    - `python3` (required): For antenna pattern generation and coordinate transformations
+    - `bc` (required): For high-precision trigonometric calculations
 
 - Building:
   - Download the source tree: `git clone https://github.com/Supermagnum/fgcom-mumble.git`
@@ -379,6 +404,10 @@ Other interesting compile targets:
     - `make patterns` generates antenna patterns using EZNEC/NEC2
     - `make api-docs` generates API documentation
     - `make config-examples` creates configuration file examples
+    - `make user-guide` generates user-friendly documentation
+    - `make radio-classification` generates radio era classification documentation
+    - `make agc-squelch` builds AGC and Squelch components
+    - `make test-all` runs comprehensive test suite including AGC/Squelch tests
 
 
 Windows native build

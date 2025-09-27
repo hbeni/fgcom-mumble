@@ -95,7 +95,7 @@ Plugin konfigurieren
 -----------------------
 Normalerweise sind die Standardeinstellungen des Plugins ausreichend. Falls doch nicht, können einige Features (wie das Abschalten der Audioeffekte wie Rauschen, oder der Port des UPD-Servers, oder die Erkennung des speziellen Chatraums) abweichend konfiguriert werden.
 
-Dies kannst du tun, indem du die [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) Beispieldatei in dein Benutzer-Heimatverzeichniss kopierst und dann entsprechend anpasst. Die Datei wird dann beim Initialisieren des Plugins einmalig von folgenden Orten geladen (in dieser Reihenfolge):
+Dies kannst du tun, indem du die [`fgcom-mumble.ini`](../configs/fgcom-mumble.ini) Beispieldatei in dein Benutzer-Heimatverzeichniss kopierst und dann entsprechend anpasst. Die Datei wird dann beim Initialisieren des Plugins einmalig von folgenden Orten geladen (in dieser Reihenfolge):
 
 - Linux:
   - `/etc/mumble/fgcom-mumble.ini`

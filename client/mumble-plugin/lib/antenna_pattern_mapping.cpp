@@ -7,8 +7,10 @@
 #include <cmath>
 #include <memory>
 
-// Global pattern mapping instance
+// Thread-safe global pattern mapping instance with proper initialization
 std::unique_ptr<FGCom_AntennaPatternMapping> g_antenna_pattern_mapping = nullptr;
+std::mutex g_antenna_mapping_mutex; // Mutex for thread-safe access
+std::atomic<bool> g_antenna_mapping_initialized{false}; // Initialization flag
 
 FGCom_AntennaPatternMapping::FGCom_AntennaPatternMapping() {
     initializeVHFPatterns();
@@ -19,29 +21,49 @@ FGCom_AntennaPatternMapping::~FGCom_AntennaPatternMapping() {
     // Cleanup
 }
 
+// Thread-safe getter for antenna pattern mapping
+FGCom_AntennaPatternMapping* getAntennaPatternMapping() {
+    // Double-checked locking pattern for thread-safe initialization
+    if (!g_antenna_mapping_initialized.load()) {
+        std::lock_guard<std::mutex> lock(g_antenna_mapping_mutex);
+        if (!g_antenna_mapping_initialized.load()) {
+            try {
+                g_antenna_pattern_mapping = std::make_unique<FGCom_AntennaPatternMapping>();
+                g_antenna_mapping_initialized.store(true);
+            } catch (const std::exception& e) {
+                // Log error and return null
+                std::cerr << "ERROR: Failed to initialize antenna pattern mapping: " << e.what() << std::endl;
+                return nullptr;
+            }
+        }
+    }
+    
+    return g_antenna_pattern_mapping.get();
+}
+
 void FGCom_AntennaPatternMapping::initializeVHFPatterns() {
     // Aircraft VHF patterns - using multiple frequencies for better coverage
     vhf_patterns["aircraft"][150.0] = AntennaPatternInfo(
         "b737_800_vhf", 
-        "antenna_patterns/aircraft/b737_800/b737_800_vhf.ez",
+        "antenna_patterns/aircraft/Civil/b737_800/b737-vhf.ez",
         150.0, "aircraft", "blade"
     );
     
     vhf_patterns["aircraft"][150.0] = AntennaPatternInfo(
         "c130_hercules_vhf",
-        "antenna_patterns/aircraft/c130_hercules/c130_hercules_vhf.ez", 
+        "antenna_patterns/aircraft/Military/c130_hercules/c130-military.ez", 
         150.0, "aircraft", "blade"
     );
     
     vhf_patterns["aircraft"][150.0] = AntennaPatternInfo(
         "cessna_172_vhf",
-        "antenna_patterns/aircraft/cessna_172/cessna_172_vhf.ez",
+        "antenna_patterns/aircraft/Civil/cessna_172/cessna-VHF.ez",
         150.0, "aircraft", "blade"
     );
     
     vhf_patterns["aircraft"][150.0] = AntennaPatternInfo(
         "mi4_hound_vhf",
-        "antenna_patterns/aircraft/mi4_hound/mi4_hound_vhf.ez",
+        "antenna_patterns/aircraft/Military/mi4_hound/mi4-vhf.ez",
         150.0, "aircraft", "blade"
     );
     
@@ -104,46 +126,46 @@ void FGCom_AntennaPatternMapping::initializeVHFPatterns() {
     // Ground-based VHF patterns (10m height)
     vhf_patterns["ground_station"][144.5] = AntennaPatternInfo(
         "yagi_144mhz",
-        "antenna_patterns/Ground-based/Yagi-antennas/yagi_144mhz/yagi_144mhz_11element.ez",
+        "antenna_patterns/Ground-based/Yagi-antennas/yagi_144mhz/yagi-11element.ez",
         144.5, "ground_station", "yagi"
     );
     
     // Ground-based UHF patterns (10m height)
     uhf_patterns["ground_station"][432.0] = AntennaPatternInfo(
         "yagi_70cm",
-        "antenna_patterns/Ground-based/Yagi-antennas/yagi_70cm/yagi_70cm_16element.ez",
+        "antenna_patterns/Ground-based/Yagi-antennas/yagi_70cm/yagi-16element.ez",
         432.0, "ground_station", "yagi"
     );
     
     // Dual-band omnidirectional patterns (10m height)
     vhf_patterns["ground_station"][145.0] = AntennaPatternInfo(
         "dual_band_omni_vhf",
-        "antenna_patterns/Ground-based/vertical/dual_band_omni/dual_band_omni_2m_70cm.ez",
+        "antenna_patterns/Ground-based/vertical/2m_vertical/2m-antenna.ez",
         145.0, "ground_station", "omni"
     );
     
     uhf_patterns["ground_station"][432.0] = AntennaPatternInfo(
         "dual_band_omni_uhf",
-        "antenna_patterns/Ground-based/vertical/dual_band_omni/dual_band_omni_2m_70cm.ez",
+        "antenna_patterns/Ground-based/vertical/70cm_vertical/70cm-antenna.ez",
         432.0, "ground_station", "omni"
     );
     
     // Maritime VHF patterns - using existing boat and ship patterns
     vhf_patterns["maritime"][150.0] = AntennaPatternInfo(
         "sailboat_backstay_vhf",
-        "antenna_patterns/boat/sailboat_backstay/sailboat_backstay_40m.ez",
+        "antenna_patterns/Marine/boat/sailboat_backstay/sailboat-40m.ez",
         150.0, "maritime", "backstay"
     );
     
     vhf_patterns["maritime"][150.0] = AntennaPatternInfo(
         "sailboat_whip_vhf",
-        "antenna_patterns/boat/sailboat_whip/sailboat_23ft_whip_20m.ez",
+        "antenna_patterns/Marine/boat/sailboat_whip/sailboat-20m.ez",
         150.0, "maritime", "whip"
     );
     
     vhf_patterns["maritime"][150.0] = AntennaPatternInfo(
         "containership_vhf",
-        "antenna_patterns/ship/containership/containership_80m_loop.ez",
+        "antenna_patterns/Marine/ship/containership/containership-loop.ez",
         150.0, "maritime", "loop"
     );
     
@@ -188,92 +210,92 @@ void FGCom_AntennaPatternMapping::initializeVHFPatterns() {
     // Ground-based HF patterns for amateur radio
     vhf_patterns["ground_station"][3.5] = AntennaPatternInfo(
         "80m_loop_hf",
-        "antenna_patterns/Ground-based/80m-loop/40m_patterns/80m_loop_40m.ez",
+        "antenna_patterns/Ground-based/80m-loop/80m-loop.ez",
         3.5, "ground_station", "loop"
     );
     
     vhf_patterns["ground_station"][7.0] = AntennaPatternInfo(
         "dipole_80m_ew_hf",
-        "antenna_patterns/Ground-based/dipole/dipole_80m_ew/dipole_80m_ew.ez",
+        "antenna_patterns/Ground-based/dipole/dipole_80m_ew.ez",
         7.0, "ground_station", "dipole"
     );
     
     vhf_patterns["ground_station"][7.0] = AntennaPatternInfo(
         "dipole_80m_ns_hf",
-        "antenna_patterns/Ground-based/dipole/dipole_80m_ns/dipole_80m_ns.ez",
+        "antenna_patterns/Ground-based/dipole/dipole_80m_ns.ez",
         7.0, "ground_station", "dipole"
     );
     
     vhf_patterns["ground_station"][14.0] = AntennaPatternInfo(
         "yagi_20m_hf",
-        "antenna_patterns/Ground-based/Yagi-antennas/yagi_20m/cushcraft_a3ws_20m.ez",
+        "antenna_patterns/Ground-based/Yagi-antennas/yagi_20m/cushcraft-20m.ez",
         14.0, "ground_station", "yagi"
     );
     
     vhf_patterns["ground_station"][21.0] = AntennaPatternInfo(
         "yagi_15m_hf",
-        "antenna_patterns/Ground-based/Yagi-antennas/yagi_15m/hy_gain_th4dxx_15m.ez",
+        "antenna_patterns/Ground-based/Yagi-antennas/yagi_10m/hy-10m.ez",
         21.0, "ground_station", "yagi"
     );
     
     vhf_patterns["ground_station"][28.0] = AntennaPatternInfo(
         "yagi_10m_hf",
-        "antenna_patterns/Ground-based/Yagi-antennas/yagi_10m/hy_gain_th4dxx_10m.ez",
+        "antenna_patterns/Ground-based/Yagi-antennas/yagi_10m/hy-10m.ez",
         28.0, "ground_station", "yagi"
     );
     
     vhf_patterns["ground_station"][50.0] = AntennaPatternInfo(
         "yagi_6m_hf",
-        "antenna_patterns/Ground-based/Yagi-antennas/yagi_6m/hy_gain_vb64fm_6m.ez",
+        "antenna_patterns/Ground-based/Yagi-antennas/yagi_6m/hy-6m.ez",
         50.0, "ground_station", "yagi"
     );
     
     vhf_patterns["ground_station"][144.0] = AntennaPatternInfo(
         "yagi_2m_hf",
-        "antenna_patterns/Ground-based/Yagi-antennas/yagi_144mhz/yagi_144mhz_11element.ez",
+        "antenna_patterns/Ground-based/Yagi-antennas/yagi_144mhz/yagi-11element.ez",
         144.0, "ground_station", "yagi"
     );
     
     vhf_patterns["ground_station"][145.0] = AntennaPatternInfo(
         "vertical_2m_hf",
-        "antenna_patterns/Ground-based/vertical/2m_vertical/2m_vertical_antenna.ez",
+        "antenna_patterns/Ground-based/vertical/2m_vertical/2m-antenna.ez",
         145.0, "ground_station", "vertical"
     );
     
     // Coastal station patterns for maritime communications
     vhf_patterns["ground_station"][0.5] = AntennaPatternInfo(
         "t_type_500khz_coastal_ew",
-        "antenna_patterns/Ground-based/coastal_stations/t_type_500khz_coastal_ew.ez",
+        "antenna_patterns/Ground-based/coastal_stations/t_antenna/t-ew.ez",
         0.5, "ground_station", "t_type"
     );
     
     vhf_patterns["ground_station"][0.5] = AntennaPatternInfo(
         "t_type_500khz_coastal_ns",
-        "antenna_patterns/Ground-based/coastal_stations/t_type_500khz_coastal_ns.ez",
+        "antenna_patterns/Ground-based/coastal_stations/t_antenna/t-ns.ez",
         0.5, "ground_station", "t_type"
     );
     
     vhf_patterns["ground_station"][2.0] = AntennaPatternInfo(
         "long_wire_2mhz_coastal_ew",
-        "antenna_patterns/Ground-based/coastal_stations/long_wire_2mhz_coastal_ew.ez",
+        "antenna_patterns/Ground-based/coastal_stations/long_wire_antenna/long-ew.ez",
         2.0, "ground_station", "long_wire"
     );
     
     vhf_patterns["ground_station"][2.0] = AntennaPatternInfo(
         "long_wire_2mhz_coastal_ns",
-        "antenna_patterns/Ground-based/coastal_stations/long_wire_2mhz_coastal_ns.ez",
+        "antenna_patterns/Ground-based/coastal_stations/long_wire_antenna/long-ns.ez",
         2.0, "ground_station", "long_wire"
     );
     
     vhf_patterns["ground_station"][630.0] = AntennaPatternInfo(
         "inverted_l_630m_coastal_ew",
-        "antenna_patterns/Ground-based/coastal_stations/inverted_l_630m_coastal_ew.ez",
+        "antenna_patterns/Ground-based/coastal_stations/inverted_l_antenna/inverted_l_630m.ez",
         630.0, "ground_station", "inverted_l"
     );
     
     vhf_patterns["ground_station"][630.0] = AntennaPatternInfo(
         "inverted_l_630m_coastal_ns",
-        "antenna_patterns/Ground-based/coastal_stations/inverted_l_630m_coastal_ns.ez",
+        "antenna_patterns/Ground-based/coastal_stations/inverted_l_antenna/inverted_l_630m.ez",
         630.0, "ground_station", "inverted_l"
     );
     

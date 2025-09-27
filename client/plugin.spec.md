@@ -11,7 +11,7 @@ Initialization
 --------------
 The plugin initializes with emtpy internal data and default configuration options.
 
-After loading, the plugin searches for a config file in various locations, whose contents will be parsed (the format is ini-style, e.g `key=value`, comments start with `;`). Contents overwrite previously set state, so there can be potentially an hierarchy of config files. The [example `fgcom-mumble.ini`](mumble-plugin/fgcom-mumble.ini) shows what options are supported currently. Installation and update instructions (like paths) are given in the [client `README.md`](../README.md) file.
+After loading, the plugin searches for a config file in various locations, whose contents will be parsed (the format is ini-style, e.g `key=value`, comments start with `;`). Contents overwrite previously set state, so there can be potentially an hierarchy of config files. The [example `fgcom-mumble.ini`](../../configs/fgcom-mumble.ini) shows what options are supported currently. Installation and update instructions (like paths) are given in the [client `README.md`](../README.md) file.
 
 When receiving local input data (see below), the internal state is updated (ie new radios get registered, frequencies set etc).
 
