@@ -191,6 +191,10 @@ void FGCom_APIServer::setupEndpoints() {
                 {"work_unit_clients", "/api/v1/work-units/clients"},
                 {"work_unit_statistics", "/api/v1/work-units/statistics"},
                 {"work_unit_config", "/api/v1/work-units/config"},
+                {"band_segments", "/api/v1/band-segments"},
+                {"radio_models", "/api/v1/radio-models"},
+                {"preset_channels", "/api/v1/preset-channels"},
+                {"terrain_elevation", "/api/v1/terrain/elevation"},
                 {"config", "/api/v1/config"},
                 {"stats", "/api/v1/stats"}
             }}
@@ -357,6 +361,88 @@ void FGCom_APIServer::setupEndpoints() {
         
         server->Get("/api/v1/band-segments/regional-restrictions", [this](const httplib::Request& req, httplib::Response& res) {
             handleRegionalRestrictionsRequest(req, res);
+        });
+    }
+    
+    // Radio Model Configuration API endpoints (read-only)
+    if (isFeatureEnabled("radio_models")) {
+        server->Get("/api/v1/radio-models", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/(.*)", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/(.*)/specifications", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelSpecificationsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/(.*)/capabilities", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelCapabilitiesRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/search", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelSearchRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/filter", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelFilterRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/compare", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelCompareRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/(.*)/channels", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelChannelsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/(.*)/frequency", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelFrequencyRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/validate", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelValidationRequest(req, res);
+        });
+        
+        server->Get("/api/v1/radio-models/statistics", [this](const httplib::Request& req, httplib::Response& res) {
+            handleRadioModelStatisticsRequest(req, res);
+        });
+    }
+    
+    // Preset Channel Management API endpoints (read-only)
+    if (isFeatureEnabled("preset_channels")) {
+        server->Get("/api/v1/preset-channels", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/preset-channels/(.*)", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelRequest(req, res);
+        });
+        
+        server->Get("/api/v1/preset-channels/search", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelSearchRequest(req, res);
+        });
+        
+        server->Get("/api/v1/preset-channels/frequency", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelByFrequencyRequest(req, res);
+        });
+        
+        server->Get("/api/v1/preset-channels/channel", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelByChannelRequest(req, res);
+        });
+        
+        server->Get("/api/v1/preset-channels/active", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelActiveRequest(req, res);
+        });
+        
+        server->Get("/api/v1/preset-channels/inactive", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelInactiveRequest(req, res);
+        });
+        
+        server->Get("/api/v1/preset-channels/statistics", [this](const httplib::Request& req, httplib::Response& res) {
+            handlePresetChannelStatisticsRequest(req, res);
         });
     }
     
@@ -1872,6 +1958,685 @@ void FGCom_API_Server::handleMaritimeModulationRequest(const httplib::Request& r
         
         res.set_content(createSuccessResponse(response.dump()), "application/json");
         total_requests++;
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+
+// Radio Model Configuration API implementations (read-only)
+void FGCom_APIServer::handleRadioModelsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio models retrieved successfully";
+        
+        // Mock data - in real implementation, this would load from radio_models.json
+        response["data"] = {
+            {"AN/PRC-152", {
+                {"modelName", "AN/PRC-152"},
+                {"manufacturer", "USA"},
+                {"country", "USA"},
+                {"alliance", "NATO"},
+                {"era", "Modern"},
+                {"usage", "Multiband Inter/Intra Team Radio II"},
+                {"frequencyStartMHz", 30.0},
+                {"frequencyEndMHz", 87.975},
+                {"channelSpacingKHz", 12.5},
+                {"totalChannels", 4638},
+                {"presetChannels", 99}
+            }},
+            {"R-105M", {
+                {"modelName", "R-105M"},
+                {"manufacturer", "Soviet Union"},
+                {"country", "USSR"},
+                {"alliance", "Warsaw Pact"},
+                {"era", "Cold War"},
+                {"usage", "Tactical VHF"},
+                {"frequencyStartMHz", 36.0},
+                {"frequencyEndMHz", 46.1},
+                {"channelSpacingKHz", 25.0},
+                {"totalChannels", 404},
+                {"presetChannels", 0}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string modelName = req.matches[1];
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model retrieved successfully";
+        
+        // Mock data - in real implementation, this would load from radio_models.json
+        if (modelName == "AN/PRC-152") {
+            response["data"] = {
+                {"modelName", "AN/PRC-152"},
+                {"manufacturer", "USA"},
+                {"country", "USA"},
+                {"alliance", "NATO"},
+                {"era", "Modern"},
+                {"usage", "Multiband Inter/Intra Team Radio II"},
+                {"frequencyStartMHz", 30.0},
+                {"frequencyEndMHz", 87.975},
+                {"channelSpacingKHz", 12.5},
+                {"totalChannels", 4638},
+                {"presetChannels", 99},
+                {"portablePowerWatts", 2.0},
+                {"vehiclePowerWatts", 20.0},
+                {"encryptionCapable", true},
+                {"gpsCapable", true},
+                {"dataCapable", true},
+                {"networkCapable", true},
+                {"advancedEncryption", true},
+                {"supportedModes", {"FM", "AM", "CW", "Digital"}}
+            };
+        } else {
+            res.status = 404;
+            res.set_content(createErrorResponse("Radio model not found"), "application/json");
+            return;
+        }
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelSpecificationsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string modelName = req.matches[1];
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model specifications retrieved successfully";
+        
+        // Mock specifications data
+        response["data"] = {
+            {"frequencyRange", {
+                {"startMHz", 30.0},
+                {"endMHz", 87.975},
+                {"totalRangeMHz", 57.975}
+            }},
+            {"channelSpecs", {
+                {"spacingKHz", 12.5},
+                {"totalChannels", 4638},
+                {"presetChannels", 99}
+            }},
+            {"powerSpecs", {
+                {"portableWatts", 2.0},
+                {"vehicleWatts", 20.0},
+                {"efficiency", 0.85}
+            }},
+            {"technicalSpecs", {
+                {"modulationModes", {"FM", "AM", "CW", "Digital"}},
+                {"antennaConnector", "BNC"},
+                {"batteryLife", "8-12 hours"},
+                {"operatingTemp", "-20°C to +60°C"}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelCapabilitiesRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string modelName = req.matches[1];
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model capabilities retrieved successfully";
+        
+        // Mock capabilities data
+        response["data"] = {
+            {"communication", {
+                {"encryptionCapable", true},
+                {"gpsCapable", true},
+                {"dataCapable", true},
+                {"networkCapable", true},
+                {"advancedEncryption", true}
+            }},
+            {"operational", {
+                {"portableOperation", true},
+                {"vehicleOperation", true},
+                {"waterproof", true},
+                {"shockResistant", true}
+            }},
+            {"features", {
+                {"presetChannels", 99},
+                {"scanning", true},
+                {"squelch", true},
+                {"volumeControl", true}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelSearchRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string query = req.get_param_value("q");
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model search completed";
+        
+        // Mock search results
+        response["data"] = {
+            {"query", query},
+            {"results", {
+                {"AN/PRC-152", "NATO modern multiband radio"},
+                {"R-105M", "Soviet tactical VHF radio"}
+            }},
+            {"totalResults", 2}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelFilterRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string country = req.get_param_value("country");
+        std::string alliance = req.get_param_value("alliance");
+        std::string era = req.get_param_value("era");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model filter applied";
+        
+        // Mock filtered results
+        response["data"] = {
+            {"filters", {
+                {"country", country},
+                {"alliance", alliance},
+                {"era", era}
+            }},
+            {"results", {
+                {"AN/PRC-152", "USA NATO Modern radio"},
+                {"AN/PRC-77", "USA NATO Cold War radio"}
+            }},
+            {"totalResults", 2}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelCompareRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string model1 = req.get_param_value("model1");
+        std::string model2 = req.get_param_value("model2");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model comparison completed";
+        
+        // Mock comparison data
+        response["data"] = {
+            {"model1", model1},
+            {"model2", model2},
+            {"comparison", {
+                {"frequencyRange", {
+                    {"model1", "30.0-87.975 MHz"},
+                    {"model2", "36.0-46.1 MHz"}
+                }},
+                {"channels", {
+                    {"model1", 4638},
+                    {"model2", 404}
+                }},
+                {"power", {
+                    {"model1", "2W portable, 20W vehicle"},
+                    {"model2", "1.5W portable, 20W vehicle"}
+                }}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelChannelsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string modelName = req.matches[1];
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model channels retrieved successfully";
+        
+        // Mock channel data
+        response["data"] = {
+            {"modelName", modelName},
+            {"totalChannels", 4638},
+            {"channelSpacingKHz", 12.5},
+            {"frequencyStartMHz", 30.0},
+            {"frequencyEndMHz", 87.975},
+            {"sampleChannels", {
+                {"1", 30.0},
+                {"2", 30.0125},
+                {"3", 30.025},
+                {"100", 31.25},
+                {"4638", 87.975}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelFrequencyRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string modelName = req.matches[1];
+        std::string frequency = req.get_param_value("frequency");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Frequency to channel conversion completed";
+        
+        // Mock frequency conversion
+        response["data"] = {
+            {"modelName", modelName},
+            {"frequencyMHz", frequency},
+            {"channelNumber", 100},
+            {"isValid", true},
+            {"channelSpacingKHz", 12.5}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelValidationRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string modelName = req.get_param_value("model");
+        std::string frequency = req.get_param_value("frequency");
+        std::string channel = req.get_param_value("channel");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model validation completed";
+        
+        // Mock validation results
+        response["data"] = {
+            {"modelName", modelName},
+            {"frequencyMHz", frequency},
+            {"channelNumber", channel},
+            {"isValid", true},
+            {"validationResults", {
+                {"frequencyInRange", true},
+                {"channelExists", true},
+                {"spacingCorrect", true}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleRadioModelStatisticsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Radio model statistics retrieved successfully";
+        
+        // Mock statistics data
+        response["data"] = {
+            {"totalModels", 7},
+            {"modelsByCountry", {
+                {"USA", 4},
+                {"USSR", 3}
+            }},
+            {"modelsByAlliance", {
+                {"NATO", 4},
+                {"Warsaw Pact", 3}
+            }},
+            {"modelsByEra", {
+                {"Modern", 2},
+                {"Cold War", 5}
+            }},
+            {"frequencyRanges", {
+                {"VHF", 5},
+                {"UHF", 2}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+// Preset Channel Management API implementations (read-only)
+void FGCom_APIServer::handlePresetChannelsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Preset channels retrieved successfully";
+        
+        // Mock preset channels data
+        response["data"] = {
+            {"AN/PRC-152", {
+                {"totalPresets", 99},
+                {"activePresets", 5},
+                {"presets", {
+                    {"1", {
+                        {"presetNumber", 1},
+                        {"channelNumber", 100},
+                        {"frequency", 31.25},
+                        {"label", "Tactical 1"},
+                        {"description", "Primary tactical frequency"},
+                        {"modulationMode", "FM"},
+                        {"powerWatts", 2.0},
+                        {"isActive", true}
+                    }},
+                    {"2", {
+                        {"presetNumber", 2},
+                        {"channelNumber", 105},
+                        {"frequency", 31.375},
+                        {"label", "Tactical 2"},
+                        {"description", "Secondary tactical frequency"},
+                        {"modulationMode", "FM"},
+                        {"powerWatts", 2.0},
+                        {"isActive", true}
+                    }}
+                }}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handlePresetChannelRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string radioModel = req.matches[1];
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Preset channels for radio model retrieved successfully";
+        
+        // Mock preset data for specific radio model
+        response["data"] = {
+            {"radioModel", radioModel},
+            {"totalPresets", 99},
+            {"activePresets", 5},
+            {"presets", {
+                {"1", {
+                    {"presetNumber", 1},
+                    {"channelNumber", 100},
+                    {"frequency", 31.25},
+                    {"label", "Tactical 1"},
+                    {"description", "Primary tactical frequency"},
+                    {"modulationMode", "FM"},
+                    {"powerWatts", 2.0},
+                    {"isActive", true}
+                }},
+                {"2", {
+                    {"presetNumber", 2},
+                    {"channelNumber", 105},
+                    {"frequency", 31.375},
+                    {"label", "Tactical 2"},
+                    {"description", "Secondary tactical frequency"},
+                    {"modulationMode", "FM"},
+                    {"powerWatts", 2.0},
+                    {"isActive", true}
+                }}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handlePresetChannelSearchRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string query = req.get_param_value("q");
+        std::string radioModel = req.get_param_value("radio");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Preset channel search completed";
+        
+        // Mock search results
+        response["data"] = {
+            {"query", query},
+            {"radioModel", radioModel},
+            {"results", {
+                {"1", {
+                    {"presetNumber", 1},
+                    {"label", "Tactical 1"},
+                    {"frequency", 31.25},
+                    {"isActive", true}
+                }},
+                {"2", {
+                    {"presetNumber", 2},
+                    {"label", "Tactical 2"},
+                    {"frequency", 31.375},
+                    {"isActive", true}
+                }}
+            }},
+            {"totalResults", 2}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handlePresetChannelByFrequencyRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string frequency = req.get_param_value("frequency");
+        std::string radioModel = req.get_param_value("radio");
+        double tolerance = std::stod(req.get_param_value("tolerance", "0.001"));
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Preset channels by frequency retrieved successfully";
+        
+        // Mock frequency search results
+        response["data"] = {
+            {"frequency", frequency},
+            {"tolerance", tolerance},
+            {"radioModel", radioModel},
+            {"results", {
+                {"1", {
+                    {"presetNumber", 1},
+                    {"frequency", 31.25},
+                    {"label", "Tactical 1"},
+                    {"isActive", true}
+                }}
+            }},
+            {"totalResults", 1}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handlePresetChannelByChannelRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string channel = req.get_param_value("channel");
+        std::string radioModel = req.get_param_value("radio");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Preset channels by channel number retrieved successfully";
+        
+        // Mock channel search results
+        response["data"] = {
+            {"channelNumber", channel},
+            {"radioModel", radioModel},
+            {"results", {
+                {"1", {
+                    {"presetNumber", 1},
+                    {"channelNumber", 100},
+                    {"frequency", 31.25},
+                    {"label", "Tactical 1"},
+                    {"isActive", true}
+                }}
+            }},
+            {"totalResults", 1}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handlePresetChannelActiveRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string radioModel = req.get_param_value("radio");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Active preset channels retrieved successfully";
+        
+        // Mock active presets
+        response["data"] = {
+            {"radioModel", radioModel},
+            {"activePresets", {
+                {"1", {
+                    {"presetNumber", 1},
+                    {"label", "Tactical 1"},
+                    {"frequency", 31.25},
+                    {"isActive", true}
+                }},
+                {"2", {
+                    {"presetNumber", 2},
+                    {"label", "Tactical 2"},
+                    {"frequency", 31.375},
+                    {"isActive", true}
+                }}
+            }},
+            {"totalActive", 2}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handlePresetChannelInactiveRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string radioModel = req.get_param_value("radio");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Inactive preset channels retrieved successfully";
+        
+        // Mock inactive presets
+        response["data"] = {
+            {"radioModel", radioModel},
+            {"inactivePresets", {
+                {"4", {
+                    {"presetNumber", 4},
+                    {"label", "Logistics"},
+                    {"frequency", 31.625},
+                    {"isActive", false}
+                }}
+            }},
+            {"totalInactive", 1}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handlePresetChannelStatisticsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "Preset channel statistics retrieved successfully";
+        
+        // Mock statistics data
+        response["data"] = {
+            {"totalPresets", 99},
+            {"activePresets", 5},
+            {"inactivePresets", 94},
+            {"presetsByRadio", {
+                {"AN/PRC-152", 99},
+                {"R-123 Magnolia", 4}
+            }},
+            {"presetsByFrequency", {
+                {"31.25 MHz", 1},
+                {"31.375 MHz", 1},
+                {"31.5 MHz", 1}
+            }},
+            {"presetsByModulation", {
+                {"FM", 5},
+                {"AM", 0}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
         
     } catch (const std::exception& e) {
         res.status = 500;
