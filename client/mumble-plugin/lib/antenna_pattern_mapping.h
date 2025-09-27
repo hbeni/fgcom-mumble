@@ -5,6 +5,8 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <mutex>
+#include <atomic>
 
 /**
  * Antenna Pattern Mapping System for FGCom-mumble
@@ -93,8 +95,13 @@ public:
     bool isUHFFrequency(double frequency_mhz);
 };
 
-// Global pattern mapping instance
+// Thread-safe global pattern mapping instance
 extern std::unique_ptr<FGCom_AntennaPatternMapping> g_antenna_pattern_mapping;
+extern std::mutex g_antenna_mapping_mutex;
+extern std::atomic<bool> g_antenna_mapping_initialized;
+
+// Thread-safe getter function
+FGCom_AntennaPatternMapping* getAntennaPatternMapping();
 
 // Convenience functions
 AntennaPatternInfo getAntennaPattern(const std::string& vehicle_type, double frequency_mhz);

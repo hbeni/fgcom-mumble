@@ -62,7 +62,7 @@ package:
 	# Add mumble plugin bundle
 	mkdir fgcom-mumble-$(BUNDLE_VER)/mumble-plugin
 	cp fgcom-mumble-$(PLUGIN_VER).mumble_plugin fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/
-	cp client/mumble-plugin/fgcom-mumble.ini fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/
+	cp configs/fgcom-mumble.ini fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/
 	head -n 1 client/plugin.spec.md > fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/plugin.spec.md
 	@echo Version: $(PLUGIN_VER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/plugin.spec.md
 	tail +2 client/plugin.spec.md >> fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/plugin.spec.md

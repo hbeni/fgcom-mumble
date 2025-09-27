@@ -131,7 +131,7 @@ Plugin configuration
 -----------------------
 Usually the default values are fine. Some features however can be configured differently, like disabling radio audio effects (white noise etc), changing the plugins UDP listen port or the name match of the special `fgcom-mumble` channel.
 
-You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
+You can do this by copying the [`fgcom-mumble.ini`](../configs/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
 
 - Linux:
   - `/etc/mumble/fgcom-mumble.ini`
@@ -144,8 +144,8 @@ You can do this by copying the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-m
 ### Advanced Configuration (v2.0+)
 FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced features:
 
-- **[config/fgcom-mumble.conf.example](config/fgcom-mumble.conf.example)**: Complete configuration template with all available options
-- **[config/fgcom-mumble.conf.minimal](config/fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
+- **[configs/fgcom-mumble.conf.example](../configs/fgcom-mumble.conf.example)**: Complete configuration template with all available options
+- **[configs/fgcom-mumble.conf.minimal](../configs/fgcom-mumble.conf.minimal)**: Minimal configuration for basic operation
 - **Feature Toggles**: Runtime enable/disable of 107 features across 17 categories
 - **GPU Acceleration**: Configure client/server/hybrid GPU acceleration modes
 - **Threading**: Customize thread intervals and resource allocation

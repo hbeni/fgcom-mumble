@@ -57,16 +57,23 @@
 
 
 
-// Mubmle API global vars.
+// Thread-safe global state management
+#include <mutex>
+#include <atomic>
+
+// Mumble API global vars - these are read-only after initialization
 MumbleAPI_v_1_0_x mumAPI;
 mumble_connection_t activeConnection;
 mumble_plugin_id_t ownPluginID;
 
-// Global plugin state
-std::vector<mumble_channelid_t>  fgcom_specialChannelID;
-bool fgcom_inSpecialChannel = false; // adjust using fgcom_setPluginActive()!
+// Thread-safe global plugin state
+std::vector<mumble_channelid_t> fgcom_specialChannelID;
+std::atomic<bool> fgcom_inSpecialChannel{false}; // Thread-safe atomic boolean
+std::mutex fgcom_state_mutex; // Mutex for state changes
+std::mutex fgcom_channel_mutex; // Mutex for channel operations
 
 struct fgcom_config fgcom_cfg;
+std::mutex fgcom_config_mutex; // Mutex for configuration access
 
 
 /*******************
@@ -86,41 +93,74 @@ std::ostream& operator<<(std::ostream& stream, const mumble_version_t version) {
  * @param bool active if the plugin handling stuff should be active
  */
 mumble_transmission_mode_t fgcom_prevTransmissionMode = MUMBLE_TM_VOICE_ACTIVATION; // we use voice act as default in case something goes wrong
+std::mutex fgcom_ptt_mutex; // Mutex for PTT operations
+
 void fgcom_setPluginActive(bool active) {
-    mumble_error_t merr;
-    if (!fgcom_isConnectedToServer()) return; // not connected: do nothing.
+    // Thread-safe state management
+    std::lock_guard<std::mutex> state_lock(fgcom_state_mutex);
     
-    if (active) {
-        pluginLog("plugin handling activated: ");
-        mumAPI.log(ownPluginID, "plugin handling activated");
-        
-        // switch to push-to-talk
-        merr = mumAPI.getLocalUserTransmissionMode(ownPluginID, &fgcom_prevTransmissionMode);
-        if (merr == MUMBLE_STATUS_OK) {
-            merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, MUMBLE_TM_PUSH_TO_TALK);
-            mumAPI.log(ownPluginID, "enabled push-to-talk");
-        }
-        
-    } else {
-        if (fgcom_inSpecialChannel) {
-            pluginLog("plugin handling deactivated");
-            mumAPI.log(ownPluginID, "plugin handling deactivated");
-	
-            // restore old transmission mode
-            merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, fgcom_prevTransmissionMode);
-        
-            // disable PTT overwrite
-            merr = mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
-        }
-        
+    mumble_error_t merr;
+    if (!fgcom_isConnectedToServer()) {
+        pluginLog("ERROR: Cannot activate plugin - not connected to server");
+        return; // not connected: do nothing.
     }
     
-    fgcom_inSpecialChannel = active;
-    fgcom_updateClientComment();
+    // Check if state is already correct to avoid unnecessary operations
+    if (fgcom_inSpecialChannel.load() == active) {
+        pluginLog("Plugin state already " + std::string(active ? "active" : "inactive"));
+        return;
+    }
     
+    try {
+        if (active) {
+            pluginLog("plugin handling activated: ");
+            mumAPI.log(ownPluginID, "plugin handling activated");
+            
+            // switch to push-to-talk with error handling
+            merr = mumAPI.getLocalUserTransmissionMode(ownPluginID, &fgcom_prevTransmissionMode);
+            if (merr != MUMBLE_STATUS_OK) {
+                pluginLog("ERROR: Failed to get current transmission mode: " + std::to_string(merr));
+                return;
+            }
+            
+            merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, MUMBLE_TM_PUSH_TO_TALK);
+            if (merr != MUMBLE_STATUS_OK) {
+                pluginLog("ERROR: Failed to set push-to-talk mode: " + std::to_string(merr));
+                return;
+            }
+            mumAPI.log(ownPluginID, "enabled push-to-talk");
+            
+        } else {
+            if (fgcom_inSpecialChannel.load()) {
+                pluginLog("plugin handling deactivated");
+                mumAPI.log(ownPluginID, "plugin handling deactivated");
+        
+                // restore old transmission mode with error handling
+                merr = mumAPI.requestLocalUserTransmissionMode(ownPluginID, fgcom_prevTransmissionMode);
+                if (merr != MUMBLE_STATUS_OK) {
+                    pluginLog("ERROR: Failed to restore transmission mode: " + std::to_string(merr));
+                }
+            
+                // disable PTT overwrite with error handling
+                merr = mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, false);
+                if (merr != MUMBLE_STATUS_OK) {
+                    pluginLog("ERROR: Failed to disable microphone overwrite: " + std::to_string(merr));
+                }
+            }
+        }
+        
+        // Thread-safe state update
+        fgcom_inSpecialChannel.store(active);
+        fgcom_updateClientComment();
+        
+    } catch (const std::exception& e) {
+        pluginLog("ERROR: Exception in fgcom_setPluginActive: " + std::string(e.what()));
+    } catch (...) {
+        pluginLog("ERROR: Unknown exception in fgcom_setPluginActive");
+    }
 }
 bool fgcom_isPluginActive() {
-    return fgcom_inSpecialChannel;
+    return fgcom_inSpecialChannel.load(); // Thread-safe atomic read
 }
 
 /*
@@ -204,20 +244,34 @@ void fgcom_updateClientComment() {
         
         // fetch the present comment and read the part we don't want to manage
         std::string preservedComment;
-        const char *comment;
-        if (mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment) == MUMBLE_STATUS_OK) {
-            std::string comment_str(comment);
-            std::smatch sm;
-            std::regex re("^([\\w\\W]*)<p name=\"FGCOM\">.*");  // cool trick: . does not match newline, but \w with negated \W matches really everything
-            //pluginDbg("fgcom_updateClientComment(): got previous comment: '"+comment_str+"'");
-            if (std::regex_match(comment_str, sm, re)) {
-                preservedComment = std::string(sm[1]);
-                //pluginDbg("fgcom_updateClientComment(): extracted: '"+preservedComment+"'");
-            } else {
-                preservedComment = comment_str;
+        const char *comment = nullptr;
+        mumble_error_t comment_result = mumAPI.getUserComment(ownPluginID, activeConnection, localMumId, &comment);
+        
+        if (comment_result == MUMBLE_STATUS_OK && comment != nullptr) {
+            try {
+                std::string comment_str(comment);
+                std::smatch sm;
+                std::regex re("^([\\w\\W]*)<p name=\"FGCOM\">.*");  // cool trick: . does not match newline, but \w with negated \W matches really everything
+                //pluginDbg("fgcom_updateClientComment(): got previous comment: '"+comment_str+"'");
+                if (std::regex_match(comment_str, sm, re)) {
+                    preservedComment = std::string(sm[1]);
+                    //pluginDbg("fgcom_updateClientComment(): extracted: '"+preservedComment+"'");
+                } else {
+                    preservedComment = comment_str;
+                }
+            } catch (const std::exception& e) {
+                pluginLog("ERROR: Exception processing user comment: " + std::string(e.what()));
+                preservedComment = ""; // Use empty string as fallback
             }
+        } else {
+            pluginLog("ERROR: Failed to get user comment: " + std::to_string(comment_result));
+            preservedComment = ""; // Use empty string as fallback
         }
-        mumAPI.freeMemory(ownPluginID, comment);
+        
+        // Always free memory, even if comment is null
+        if (comment != nullptr) {
+            mumAPI.freeMemory(ownPluginID, comment);
+        }
 
         // Add FGCom generic infos
         newComment += "<b>FGCom</b> (v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+"): ";
@@ -313,11 +367,12 @@ mumble_error_t fgcom_loadConfig() {
         std::ifstream cfgFileStream(cfgFilePath);
         pluginDbg("[CFG] looking for plugin ini file at '"+cfgFilePath+"'");
         if (cfgFileStream.good()) {
-            pluginLog("[CFG]   reading plugin ini file '"+cfgFilePath+"'");
-            mumAPI.log(ownPluginID, std::string("reading ini file '"+cfgFilePath+"'").c_str());
-            std::regex parse_key_value ("^([^;]\\w+?)\\s*=\\s*(.+?)(;.*)?\r?$");  // read ini style line, supporting spaces around the '=' and also linux/windows line endings
-            std::string cfgLine;
-            while (std::getline(cfgFileStream, cfgLine)) {
+            try {
+                pluginLog("[CFG]   reading plugin ini file '"+cfgFilePath+"'");
+                mumAPI.log(ownPluginID, std::string("reading ini file '"+cfgFilePath+"'").c_str());
+                std::regex parse_key_value ("^([^;]\\w+?)\\s*=\\s*(.+?)(;.*)?\r?$");  // read ini style line, supporting spaces around the '=' and also linux/windows line endings
+                std::string cfgLine;
+                while (std::getline(cfgFileStream, cfgLine)) {
                 std::smatch sm;
                 if (std::regex_search(cfgLine, sm, parse_key_value)) {
                     // this is a valid token. Lets parse it!
@@ -325,26 +380,103 @@ mumble_error_t fgcom_loadConfig() {
                     std::string token_value = sm[2];
                     pluginDbg("[CFG] Parsing token: "+token_key+"="+token_value);
 
-                    if (token_key == "radioAudioEffects") fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off" || token_value == "no")? false : true;
-                    if (token_key == "allowHearingNonPluginUsers") fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
-                    if (token_key == "specialChannel")    fgcom_cfg.specialChannel    = token_value;
-                    if (token_key == "udpServerHost")     fgcom_cfg.udpServerHost     = token_value;
-                    if (token_key == "udpServerPort")     fgcom_cfg.udpServerPort     = std::stoi(token_value);
-                    if (token_key == "logfile")           fgcom_cfg.logfile           = token_value;
-                    if (token_key == "updaterURL")        fgcom_cfg.updaterURL        = token_value;
-                    if (token_key == "autoJoinChannel")   fgcom_cfg.autoJoinChannel   = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
-                    if (token_key == "autoJoinChannelPW") fgcom_cfg.autoJoinChannelPW = token_value;
+                    // Input validation and sanitization for all configuration values
+                    if (token_key == "radioAudioEffects") {
+                        fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off" || token_value == "no")? false : true;
+                    }
+                    if (token_key == "allowHearingNonPluginUsers") {
+                        fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
+                    }
+                    if (token_key == "specialChannel") {
+                        // Validate channel name (alphanumeric, spaces, hyphens, underscores only)
+                        if (std::regex_match(token_value, std::regex("^[a-zA-Z0-9\\s\\-_]+$"))) {
+                            fgcom_cfg.specialChannel = token_value;
+                        } else {
+                            pluginLog("ERROR: Invalid special channel name (contains invalid characters): " + token_value);
+                        }
+                    }
+                    if (token_key == "udpServerHost") {
+                        // Validate IP address or hostname
+                        if (std::regex_match(token_value, std::regex("^[a-zA-Z0-9\\.\\-]+$"))) {
+                            fgcom_cfg.udpServerHost = token_value;
+                        } else {
+                            pluginLog("ERROR: Invalid UDP server host (contains invalid characters): " + token_value);
+                        }
+                    }
+                    if (token_key == "udpServerPort") {
+                        try {
+                            int port = std::stoi(token_value);
+                            if (port >= 1 && port <= 65535) {
+                                fgcom_cfg.udpServerPort = port;
+                            } else {
+                                pluginLog("ERROR: Invalid UDP server port (must be 1-65535): " + token_value);
+                            }
+                        } catch (const std::exception& e) {
+                            pluginLog("ERROR: Invalid UDP server port format: " + token_value);
+                        }
+                    }
+                    if (token_key == "logfile") {
+                        // Validate file path (basic security check)
+                        if (token_value.find("..") == std::string::npos && token_value.find("/") != std::string::npos) {
+                            fgcom_cfg.logfile = token_value;
+                        } else {
+                            pluginLog("ERROR: Invalid logfile path (security risk): " + token_value);
+                        }
+                    }
+                    if (token_key == "updaterURL") {
+                        // Validate URL format
+                        if (std::regex_match(token_value, std::regex("^https?://[a-zA-Z0-9\\.\\-]+(/.*)?$"))) {
+                            fgcom_cfg.updaterURL = token_value;
+                        } else {
+                            pluginLog("ERROR: Invalid updater URL format: " + token_value);
+                        }
+                    }
+                    if (token_key == "autoJoinChannel") {
+                        fgcom_cfg.autoJoinChannel = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
+                    }
+                    if (token_key == "autoJoinChannelPW") {
+                        // Basic password validation (no null bytes, reasonable length)
+                        if (token_value.length() <= 100 && token_value.find('\0') == std::string::npos) {
+                            fgcom_cfg.autoJoinChannelPW = token_value;
+                        } else {
+                            pluginLog("ERROR: Invalid auto join channel password (too long or contains null bytes)");
+                        }
+                    }
                     
                     std::smatch sm_m;
                     std::regex re_mblmap ("^mapMumblePTT(\\d+)$");
                     if (std::regex_search(token_key, sm_m, re_mblmap)) {
-                        int radio_id = std::stoi(sm_m[1]);
-                        radio_id--; // convert to array index
-                        fgcom_cfg.mapMumblePTT[radio_id] = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
+                        try {
+                            int radio_id = std::stoi(sm_m[1]);
+                            radio_id--; // convert to array index
+                            
+                            // Bounds checking to prevent negative indices and array overflow
+                            if (radio_id < 0) {
+                                pluginLog("ERROR: Invalid radio ID " + std::to_string(radio_id + 1) + " - must be positive");
+                                continue;
+                            }
+                            
+                            // Validate radio_id is within reasonable bounds (0-99)
+                            if (radio_id > 99) {
+                                pluginLog("ERROR: Radio ID " + std::to_string(radio_id + 1) + " exceeds maximum (100)");
+                                continue;
+                            }
+                            
+                            fgcom_cfg.mapMumblePTT[radio_id] = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
+                        } catch (const std::invalid_argument& e) {
+                            pluginLog("ERROR: Invalid radio ID format: " + std::string(e.what()));
+                        } catch (const std::out_of_range& e) {
+                            pluginLog("ERROR: Radio ID out of range: " + std::string(e.what()));
+                        }
                     }
 
                     if (token_key == "alwaysMumblePTT")   fgcom_cfg.alwaysMumblePTT = (token_value == "1" || token_value == "true" || token_value == "on" || token_value == "yes")? true : false;
                 }
+            }
+            } catch (const std::exception& e) {
+                pluginLog("ERROR: Exception reading config file '" + cfgFilePath + "': " + std::string(e.what()));
+            } catch (...) {
+                pluginLog("ERROR: Unknown exception reading config file '" + cfgFilePath + "'");
             }
         } else {
             pluginLog("[CFG]   not using '"+cfgFilePath+"' (not existing or invalid format)");

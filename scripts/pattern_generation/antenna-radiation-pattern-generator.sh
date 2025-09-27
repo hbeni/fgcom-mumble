@@ -58,6 +58,10 @@ ROLL_ANGLES=(-180 -120 -90 -60 -45 -30 -15 0 15 30 45 60 90 120 180)
 # Pitch angles (13 points)
 PITCH_ANGLES=(-120 -90 -60 -45 -30 -15 0 15 30 45 60 90 120)
 
+# Special pitch angles for Yagi antennas 6m and above (horizontal to vertical)
+# More sensible steps focusing on practical antenna orientations
+YAGI_PITCH_ANGLES=(0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90)
+
 # Ground vehicles/ships use only 0m altitude
 GROUND_ALTITUDES=(0)
 
@@ -159,7 +163,12 @@ get_vehicle_type() {
     if [[ "$path" == *"aircraft"* ]]; then
         echo "aircraft"
     elif [[ "$path" == *"ground-based"* ]]; then
-        echo "fixed_installation"
+        # Special handling for Yagi antennas 6m and above - treat as ground_station for attitude variations
+        if is_yagi_6m_and_above "$1"; then
+            echo "ground_station"
+        else
+            echo "fixed_installation"
+        fi
     elif [[ "$path" == *"marine"* ]]; then
         echo "marine"
     elif [[ "$path" == *"military-land"* ]]; then
@@ -188,7 +197,7 @@ get_frequency() {
     if [ -f "$file_path" ] && [ -r "$file_path" ]; then
         local freq
         freq=$(grep -i "^FR" "$file_path" 2>/dev/null | head -1 | awk '{print $6}' | sed 's/[^0-9.]//g')
-        if [[ "$freq" =~ ^[0-9]+(\.[0-9]+)?$ ]] && [ "${freq%.*}" -gt 0 ]; then
+        if [[ "$freq" =~ ^[0-9]+(\.[0-9]+)?$ ]] && [ "$(echo "$freq > 0" | bc -l)" -eq 1 ]; then
             echo "$freq"
             return 0
         fi
@@ -206,6 +215,29 @@ get_frequency() {
         fixed_installation) echo "14.0" ;;
         *)                 echo "100" ;;
     esac
+}
+
+# Detect if antenna is a Yagi 6 meters and above that needs pitch variations
+is_yagi_6m_and_above() {
+    local file_path="$1"
+    local path_lower="${file_path,,}"  # Convert to lowercase
+    local filename
+    filename=$(basename "$file_path")
+    filename_lower="${filename,,}"
+    
+    # Check if it's a Yagi antenna
+    if [[ "$path_lower" == *"yagi"* ]] || [[ "$filename_lower" == *"yagi"* ]]; then
+        # Check if it's 6 meters and above (include 2m/144MHz and 70cm/432MHz as they are above 6m)
+        if [[ "$path_lower" == *"yagi_6m"* ]] || [[ "$path_lower" == *"yagi_10m"* ]] || \
+           [[ "$path_lower" == *"yagi_15m"* ]] || [[ "$path_lower" == *"yagi_20m"* ]] || \
+           [[ "$path_lower" == *"yagi_30m"* ]] || [[ "$path_lower" == *"yagi_40m"* ]] || \
+           [[ "$path_lower" == *"yagi_144mhz"* ]] || [[ "$path_lower" == *"yagi_70cm"* ]]; then
+            log_debug "Detected Yagi 6m+ antenna: $file_path"
+            return 0
+        fi
+    fi
+    
+    return 1
 }
 
 # Get vehicle name from path
@@ -425,8 +457,9 @@ generate_attitude_pattern() {
         return 1
     fi
 
-    # Generate pattern filename
-    local pattern_file="$output_dir/${altitude}m_roll_${roll}_pitch_${pitch}.txt"
+    # Generate pattern filename with antenna name and frequency
+    local antenna_name=$(basename "$nec_file" .nec)
+    local pattern_file="$output_dir/${antenna_name}_${altitude}m_roll_${roll}_pitch_${pitch}_${frequency}MHz.txt"
 
     # Skip if exists and not overwriting
     if [ -f "$pattern_file" ] && [ "$OVERWRITE_EXISTING" = "false" ]; then
@@ -526,7 +559,17 @@ process_nec_file() {
     if [ "$vehicle_type" = "fixed_installation" ]; then
         total_combinations=1  # Only one pattern (0° roll, 0° pitch)
     else
-        total_combinations=$((${#altitude_list[@]} * ${#ROLL_ANGLES[@]} * ${#PITCH_ANGLES[@]}))
+        # Select pitch angles based on antenna type for calculation
+        local pitch_count
+        if is_yagi_6m_and_above "$nec_file"; then
+            # Yagi antennas: only pitch variations, no roll
+            pitch_count=${#YAGI_PITCH_ANGLES[@]}
+            total_combinations=$((${#altitude_list[@]} * pitch_count))
+        else
+            # Other antennas: full roll and pitch combinations
+            pitch_count=${#PITCH_ANGLES[@]}
+            total_combinations=$((${#altitude_list[@]} * ${#ROLL_ANGLES[@]} * pitch_count))
+        fi
     fi
 
     log_debug "[$job_number] Will generate $total_combinations patterns"
@@ -543,10 +586,20 @@ process_nec_file() {
             ((failed_count++))
         fi
     else
+        # Select pitch angles based on antenna type
+        local -a pitch_list
+        if is_yagi_6m_and_above "$nec_file"; then
+            pitch_list=("${YAGI_PITCH_ANGLES[@]}")
+            log_info "[$job_number] Using Yagi 6m+ pitch angles: ${YAGI_PITCH_ANGLES[*]}"
+        else
+            pitch_list=("${PITCH_ANGLES[@]}")
+        fi
+        
         # Generate all attitude combinations
         for altitude in "${altitude_list[@]}"; do
-            for roll in "${ROLL_ANGLES[@]}"; do
-                for pitch in "${PITCH_ANGLES[@]}"; do
+            if is_yagi_6m_and_above "$nec_file"; then
+                # Yagi antennas: only pitch variations, no roll (fixed installations)
+                for pitch in "${pitch_list[@]}"; do
                     ((combination_count++))
                     
                     # Progress reporting
@@ -554,13 +607,31 @@ process_nec_file() {
                         log_debug "[$job_number] Progress: $combination_count/$total_combinations"
                     fi
                     
-                    if generate_attitude_pattern "$nec_file" "$altitude" "$roll" "$pitch"; then
+                    if generate_attitude_pattern "$nec_file" "$altitude" 0 "$pitch"; then
                         ((patterns_generated++))
                     else
                         ((failed_count++))
                     fi
                 done
-            done
+            else
+                # Other antennas: full roll and pitch combinations
+                for roll in "${ROLL_ANGLES[@]}"; do
+                    for pitch in "${pitch_list[@]}"; do
+                        ((combination_count++))
+                        
+                        # Progress reporting
+                        if [ $((combination_count % 50)) -eq 0 ]; then
+                            log_debug "[$job_number] Progress: $combination_count/$total_combinations"
+                        fi
+                        
+                        if generate_attitude_pattern "$nec_file" "$altitude" "$roll" "$pitch"; then
+                            ((patterns_generated++))
+                        else
+                            ((failed_count++))
+                        fi
+                    done
+                done
+            fi
         done
     fi
     
@@ -685,7 +756,7 @@ generate_all_patterns() {
             IFS=',' read -ra folders <<< "$SELECTED_FOLDERS"
             for folder in "${folders[@]}"; do
                 folder=$(echo "$folder" | xargs)  # Trim whitespace
-                path_filters+=(-path "$BASE_DIR/$folder/*")
+                path_filters+=("*/$folder/*")
             done
         fi
         
@@ -693,7 +764,7 @@ generate_all_patterns() {
         if [ -n "$SELECTED_AIRCRAFT" ]; then
             IFS=',' read -ra aircraft <<< "$SELECTED_AIRCRAFT"
             for ac in "${aircraft[@]}"; do
-                path_filters+=(-path "$BASE_DIR/aircraft/*/${ac// /}/*")
+                path_filters+=("*/aircraft/*/${ac// /}/*")
             done
         fi
         
@@ -701,8 +772,8 @@ generate_all_patterns() {
         if [ -n "$SELECTED_VEHICLES" ]; then
             IFS=',' read -ra vehicles <<< "$SELECTED_VEHICLES"
             for vehicle in "${vehicles[@]}"; do
-                path_filters+=(-path "$BASE_DIR/civilian-vehicles/*/${vehicle// /}/*")
-                path_filters+=(-path "$BASE_DIR/military-land/*/${vehicle// /}/*")
+                path_filters+=("*/civilian-vehicles/*/${vehicle// /}/*")
+                path_filters+=("*/military-land/*/${vehicle// /}/*")
             done
         fi
         
@@ -710,19 +781,23 @@ generate_all_patterns() {
         if [ -n "$SELECTED_MARINE" ]; then
             IFS=',' read -ra marine <<< "$SELECTED_MARINE"
             for vessel in "${marine[@]}"; do
-                path_filters+=(-path "$BASE_DIR/Marine/*/${vessel// /}/*")
+                path_filters+=("*/Marine/*/${vessel// /}/*")
             done
         fi
         
         # Build OR condition
         if [ ${#path_filters[@]} -gt 0 ]; then
-            find_args+=(\( "${path_filters[0]}")
+            find_args+=(\()  # Start parentheses
+            find_args+=(-path "${path_filters[0]}")
             for ((i=1; i<${#path_filters[@]}; i++)); do
-                find_args+=(-o "${path_filters[$i]}")
+                find_args+=(-o -path "${path_filters[$i]}")
             done
-            find_args+=(\))
+            find_args+=(\))  # End parentheses
         fi
     fi
+    
+    # Debug: Show find command
+    log_debug "Find command: find ${find_args[*]}"
     
     # Execute find command
     mapfile -t nec_files < <(find "${find_args[@]}" | sort)
@@ -749,11 +824,29 @@ generate_all_patterns() {
             local vt
             vt=$(get_vehicle_type "$nec_file")
             if [ "$vt" = "aircraft" ]; then
-                total_estimated=$((total_estimated + ${#AIRCRAFT_ALTITUDES[@]} * ${#ROLL_ANGLES[@]} * ${#PITCH_ANGLES[@]}))
+                # Select pitch angles based on antenna type
+                local pitch_count
+                if is_yagi_6m_and_above "$nec_file"; then
+                    # Yagi antennas: only pitch variations, no roll
+                    pitch_count=${#YAGI_PITCH_ANGLES[@]}
+                    total_estimated=$((total_estimated + ${#AIRCRAFT_ALTITUDES[@]} * pitch_count))
+                else
+                    pitch_count=${#PITCH_ANGLES[@]}
+                    total_estimated=$((total_estimated + ${#AIRCRAFT_ALTITUDES[@]} * ${#ROLL_ANGLES[@]} * pitch_count))
+                fi
             elif [ "$vt" = "fixed_installation" ]; then
                 total_estimated=$((total_estimated + 1))
             else
-                total_estimated=$((total_estimated + ${#GROUND_ALTITUDES[@]} * ${#ROLL_ANGLES[@]} * ${#PITCH_ANGLES[@]}))
+                # Select pitch angles based on antenna type
+                local pitch_count
+                if is_yagi_6m_and_above "$nec_file"; then
+                    # Yagi antennas: only pitch variations, no roll
+                    pitch_count=${#YAGI_PITCH_ANGLES[@]}
+                    total_estimated=$((total_estimated + ${#GROUND_ALTITUDES[@]} * pitch_count))
+                else
+                    pitch_count=${#PITCH_ANGLES[@]}
+                    total_estimated=$((total_estimated + ${#GROUND_ALTITUDES[@]} * ${#ROLL_ANGLES[@]} * pitch_count))
+                fi
             fi
         done
         
