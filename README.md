@@ -42,6 +42,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Amateur Radio Support**: [Full amateur radio band coverage with ITU region compliance](docs/BAND_SEGMENTS_API_DOCUMENTATION.md) - Amateur radio band segments and power limits
 - **Aviation & Maritime HF**: [Dedicated HF communication models for aviation and maritime operations](docs/aviation-VHF-civil.md) - Aviation and maritime HF communication
 - **Antenna Pattern Library**: [Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow](docs/ANTENNA_PATTERN_GENERATION_IMPROVEMENTS.md) - Antenna pattern generation and management
+- **STL-to-NEC Converter**: [Cross-platform tool for converting STL files to EZ and NEC formats for electromagnetic simulation](https://github.com/Supermagnum/stl-to-nec) - Convert 3D vehicle models to antenna simulation files
 - **VHF/UHF Antenna Support**: [Professional-grade 2m (144-145 MHz) and 70cm (430-440 MHz) Yagi antennas with 10m height modeling](docs/2M_YAGI_ANTENNA_SUMMARY.md) - VHF/UHF antenna specifications and usage
 - **Physics-Based Propagation**: [Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction](docs/PROPAGATION_PHYSICS_DOCUMENTATION.md) - Radio propagation physics and modeling
 - **Solar Data Integration**: [Real-time NOAA/SWPC solar data for accurate propagation modeling](docs/SOLAR_DATA_INTEGRATION.md) - Solar data integration and usage
