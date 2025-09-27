@@ -387,6 +387,29 @@ public:
     void handleFrequencyValidationRequest(const httplib::Request& req, httplib::Response& res);
     void handleRegionalRestrictionsRequest(const httplib::Request& req, httplib::Response& res);
     
+    // Radio Model Configuration API endpoints (read-only)
+    void handleRadioModelsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelSpecificationsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelCapabilitiesRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelSearchRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelFilterRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelCompareRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelChannelsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelFrequencyRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelValidationRequest(const httplib::Request& req, httplib::Response& res);
+    void handleRadioModelStatisticsRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Preset Channel Management API endpoints (read-only)
+    void handlePresetChannelsRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePresetChannelRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePresetChannelSearchRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePresetChannelByFrequencyRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePresetChannelByChannelRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePresetChannelActiveRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePresetChannelInactiveRequest(const httplib::Request& req, httplib::Response& res);
+    void handlePresetChannelStatisticsRequest(const httplib::Request& req, httplib::Response& res);
+    
     // Configuration endpoints
     void handleConfigRequest(const httplib::Request& req, httplib::Response& res);
     void handleConfigUpdateRequest(const httplib::Request& req, httplib::Response& res);
