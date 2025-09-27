@@ -73,7 +73,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Multi-threaded Architecture**: 7 specialized background threads for optimal performance
 - **GPU Acceleration**: Configurable GPU acceleration for complex calculations (client/server/hybrid modes)
 
-**📖 Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
+** Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
 
 
