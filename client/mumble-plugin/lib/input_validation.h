@@ -7,6 +7,7 @@
 #include <limits>
 #include <cctype>
 #include <stdexcept>
+#include <chrono>
 
 // Input validation utilities for FGCom-mumble
 namespace InputValidation {

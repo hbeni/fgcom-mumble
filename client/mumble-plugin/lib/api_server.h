@@ -26,8 +26,8 @@
 #include <atomic>
 #include <memory>
 #include <functional>
-#include "httplib.h"
-#include "json.hpp"
+#include "lib/http/httplib.h"
+#include "lib/json/json.hpp"
 #include "solar_data.h"
 #include "amateur_radio.h"
 #include "antenna_ground_system.h"
@@ -286,6 +286,25 @@ public:
     // GPU status endpoints
     void handleGPUStatusRequest(const httplib::Request& req, httplib::Response& res);
     void handleGPUUtilizationRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Work unit distribution endpoints (read-only)
+    void handleWorkUnitStatusRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWorkUnitQueueRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWorkUnitClientsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWorkUnitStatisticsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWorkUnitConfigRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Security endpoints
+    void handleSecurityStatusRequest(const httplib::Request& req, httplib::Response& res);
+    void handleSecurityEventsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleSecurityAuthenticateRequest(const httplib::Request& req, httplib::Response& res);
+    void handleSecurityRegisterRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Terrain elevation endpoints
+    void handleTerrainElevationRequest(const httplib::Request& req, httplib::Response& res);
+    void handleTerrainObstructionRequest(const httplib::Request& req, httplib::Response& res);
+    void handleTerrainProfileRequest(const httplib::Request& req, httplib::Response& res);
+    void handleASTERGDEMStatusRequest(const httplib::Request& req, httplib::Response& res);
     
     // Configuration endpoints
     void handleConfigRequest(const httplib::Request& req, httplib::Response& res);

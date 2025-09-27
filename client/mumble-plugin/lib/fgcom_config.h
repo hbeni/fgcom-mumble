@@ -24,7 +24,7 @@
 #include <memory>
 #include <mutex>
 #include <functional>
-#include "json.hpp"
+#include "lib/json/json.hpp"
 
 // Configuration section definitions
 struct AmateurRadioConfig {
