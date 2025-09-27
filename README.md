@@ -72,7 +72,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Coding Standards**: [Strict architectural and design standards implementation](docs/CODING_STANDARDS.md) - Coding standards and architectural guidelines
 - **Zero Tolerance Quality**: [Comprehensive code inspection ensuring no race conditions, memory leaks, or security vulnerabilities](docs/QUALITY_ASSURANCE.md) - Quality assurance and code inspection
 - **Enhanced Documentation**: [Updated and consolidated documentation structure](docs/README.md) - Documentation structure and organization
-- **Pattern Generation Fixed**: Antenna radiation pattern generation system now working correctly
+-
 
 ### Latest Updates (v2.4+):
 - **Radio Model Configuration**: [Comprehensive radio model system with NATO and Soviet/Warsaw Pact equipment support](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md) - Server-side radio model configuration and management
