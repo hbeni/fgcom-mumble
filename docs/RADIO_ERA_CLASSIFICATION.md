@@ -1,4 +1,4 @@
- d fre# Radio Era Classification and Technology Guide
+# Radio Era Classification and Technology Guide
 
 **Data Source:** [Sherwood Engineering Receiver Test Data](http://sherweng.com/table.html)  
 **Document Purpose:** Classification of radios by era and technology for FGCom-mumble compatibility  
