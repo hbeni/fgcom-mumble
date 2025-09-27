@@ -1,4 +1,4 @@
-#!/bin/bash
+t #!/bin/bash
 # FGCom-mumble Comprehensive Pattern Generation Script
 # Auto-discovers all EZNEC files and generates patterns for all vehicle types
 # Multi-threaded with up to 20 cores

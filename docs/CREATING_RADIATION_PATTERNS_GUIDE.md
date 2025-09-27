@@ -4,7 +4,7 @@
 
 This comprehensive guide explains how to create radiation pattern files for vehicles, aircraft, boats, and ships in FGCom-mumble. It covers the complete workflow from initial modeling to final pattern integration.
 
-**✅ CURRENT STATUS**: The automated pattern generation system has been updated and is now working correctly. The script `scripts/pattern_generation/simplified_nec_generator.sh` now uses `.nec` files exclusively and properly generates patterns at multiple altitudes for aircraft with parallel processing support.
+**✅ CURRENT STATUS**: The automated pattern generation system has been updated and is now working correctly. The script `scripts/pattern_generation/antenna-radiation-pattern-generator.sh` now uses Python-based coordinate transformations for reliable 3D attitude pattern generation with full yaw rotation support via the Vehicle Dynamics API.
 
 ## Table of Contents
 
@@ -33,6 +33,16 @@ Radiation patterns describe how an antenna radiates electromagnetic energy in 3D
 - **Range Modeling**: Accurate patterns affect communication range and quality
 - **Environmental Effects**: Ground, water, and altitude affect radiation patterns
 - **Vehicle-Specific Behavior**: Aircraft, boats, and ground vehicles behave differently
+
+### 3D Attitude and Coordinate Systems
+
+The new pattern generation system supports full 3D attitude modeling:
+
+- **Pitch Rotation**: Around Y-axis (nose up/down) - affects antenna pointing direction
+- **Roll Rotation**: Around X-axis (wing up/down) - affects antenna polarization
+- **Yaw Rotation**: Around Z-axis (heading change) - handled via Vehicle Dynamics API
+- **Aviation Coordinate System**: Standard X-forward, Y-right, Z-up coordinate system
+- **Python-Based Transformations**: Reliable trigonometry for accurate 3D coordinate transformations
 
 ## Required Tools and Software
 
