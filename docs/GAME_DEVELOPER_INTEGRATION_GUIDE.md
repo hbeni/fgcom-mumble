@@ -9,10 +9,11 @@ This guide provides comprehensive instructions for game developers and modders w
 1. [Integration Requirements](#integration-requirements)
 2. [Data Exchange Protocol](#data-exchange-protocol)
 3. [Game Implementation Requirements](#game-implementation-requirements)
-4. [FGCom-mumble Data Output](#fgcom-mumble-data-output)
-5. [Integration Examples](#integration-examples)
-6. [Testing and Validation](#testing-and-validation)
-7. [Troubleshooting](#troubleshooting)
+4. [Vehicle Dynamics API](#vehicle-dynamics-api)
+5. [FGCom-mumble Data Output](#fgcom-mumble-data-output)
+6. [Integration Examples](#integration-examples)
+7. [Testing and Validation](#testing-and-validation)
+8. [Troubleshooting](#troubleshooting)
 
 ## Integration Requirements
 
@@ -218,6 +219,288 @@ public:
     bool IsConnected();
 };
 ```
+
+## Vehicle Dynamics API
+
+The Vehicle Dynamics API provides comprehensive vehicle tracking and antenna management capabilities for games. This API allows games to register vehicles, update their position and attitude, manage antennas, and perform advanced operations like antenna auto-tracking.
+
+### **API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/vehicle-dynamics`
+
+#### **Vehicle Management**
+- **POST** `/api/v1/vehicle-dynamics/register` - Register a new vehicle
+- **DELETE** `/api/v1/vehicle-dynamics/{vehicle_id}` - Unregister a vehicle
+- **GET** `/api/v1/vehicle-dynamics/vehicles` - List all registered vehicles
+- **GET** `/api/v1/vehicle-dynamics/{vehicle_id}` - Get vehicle dynamics data
+
+#### **Position and Attitude Updates**
+- **PUT** `/api/v1/vehicle-dynamics/{vehicle_id}/position` - Update vehicle position
+- **PUT** `/api/v1/vehicle-dynamics/{vehicle_id}/attitude` - Update vehicle attitude
+- **PUT** `/api/v1/vehicle-dynamics/{vehicle_id}/velocity` - Update vehicle velocity
+- **PUT** `/api/v1/vehicle-dynamics/{vehicle_id}/dynamics` - Update complete dynamics
+
+#### **Antenna Management**
+- **POST** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas` - Add antenna to vehicle
+- **DELETE** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas/{antenna_id}` - Remove antenna
+- **PUT** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas/{antenna_id}` - Update antenna orientation
+- **GET** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas` - List vehicle antennas
+
+#### **Antenna Rotation and Auto-Tracking**
+- **POST** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas/{antenna_id}/rotate` - Rotate antenna
+- **GET** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas/{antenna_id}/rotation-status` - Get rotation status
+- **POST** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas/{antenna_id}/auto-tracking` - Enable auto-tracking
+- **DELETE** `/api/v1/vehicle-dynamics/{vehicle_id}/antennas/{antenna_id}/auto-tracking` - Disable auto-tracking
+
+### **Data Structures**
+
+#### **Vehicle Registration**
+```json
+{
+  "vehicle_id": "player_001",
+  "vehicle_type": "aircraft",
+  "vehicle_name": "Cessna_172",
+  "initial_position": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "altitude": 100.5
+  },
+  "initial_attitude": {
+    "heading": 90.0,
+    "pitch": 0.0,
+    "roll": 0.0
+  }
+}
+```
+
+#### **Position Update**
+```json
+{
+  "latitude": 40.7128,
+  "longitude": -74.0060,
+  "altitude": 100.5,
+  "timestamp": "2024-01-01T12:00:00Z"
+}
+```
+
+#### **Attitude Update**
+```json
+{
+  "heading": 90.0,
+  "pitch": 5.0,
+  "roll": -2.0,
+  "timestamp": "2024-01-01T12:00:00Z"
+}
+```
+
+#### **Velocity Update**
+```json
+{
+  "ground_speed": 120.5,
+  "vertical_speed": 2.0,
+  "heading_rate": 1.5,
+  "timestamp": "2024-01-01T12:00:00Z"
+}
+```
+
+#### **Antenna Configuration**
+```json
+{
+  "antenna_id": "main_antenna",
+  "antenna_type": "yagi",
+  "azimuth": 0.0,
+  "elevation": 0.0,
+  "rotation_speed": 10.0,
+  "auto_tracking_enabled": false
+}
+```
+
+#### **Antenna Rotation Request**
+```json
+{
+  "target_azimuth": 45.0,
+  "target_elevation": 10.0,
+  "immediate": false,
+  "rotation_mode": "absolute"
+}
+```
+
+### **Game Integration Examples**
+
+#### **1. Vehicle Registration**
+```cpp
+// Register a new vehicle
+class VehicleManager {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/vehicle-dynamics";
+    
+public:
+    bool RegisterVehicle(const std::string& vehicle_id, 
+                        const std::string& vehicle_type,
+                        const std::string& vehicle_name,
+                        double lat, double lon, double alt) {
+        
+        nlohmann::json request = {
+            {"vehicle_id", vehicle_id},
+            {"vehicle_type", vehicle_type},
+            {"vehicle_name", vehicle_name},
+            {"initial_position", {
+                {"latitude", lat},
+                {"longitude", lon},
+                {"altitude", alt}
+            }}
+        };
+        
+        return SendAPIRequest("POST", "/register", request);
+    }
+};
+```
+
+#### **2. Position Updates**
+```cpp
+// Update vehicle position
+void UpdateVehiclePosition(const std::string& vehicle_id,
+                          double latitude, double longitude, double altitude) {
+    nlohmann::json position = {
+        {"latitude", latitude},
+        {"longitude", longitude},
+        {"altitude", altitude},
+        {"timestamp", GetCurrentTimestamp()}
+    };
+    
+    SendAPIRequest("PUT", "/" + vehicle_id + "/position", position);
+}
+```
+
+#### **3. Antenna Management**
+```cpp
+// Add antenna to vehicle
+bool AddAntenna(const std::string& vehicle_id,
+                const std::string& antenna_id,
+                const std::string& antenna_type,
+                float azimuth, float elevation) {
+    
+    nlohmann::json antenna = {
+        {"antenna_id", antenna_id},
+        {"antenna_type", antenna_type},
+        {"azimuth", azimuth},
+        {"elevation", elevation},
+        {"rotation_speed", 10.0},
+        {"auto_tracking_enabled", false}
+    };
+    
+    return SendAPIRequest("POST", "/" + vehicle_id + "/antennas", antenna);
+}
+```
+
+#### **4. Antenna Auto-Tracking**
+```cpp
+// Enable antenna auto-tracking
+bool EnableAutoTracking(const std::string& vehicle_id,
+                       const std::string& antenna_id,
+                       const std::string& target_vehicle_id) {
+    
+    nlohmann::json request = {
+        {"target_vehicle_id", target_vehicle_id},
+        {"tracking_mode", "continuous"}
+    };
+    
+    return SendAPIRequest("POST", 
+        "/" + vehicle_id + "/antennas/" + antenna_id + "/auto-tracking", 
+        request);
+}
+```
+
+### **Advanced Features**
+
+#### **1. Multi-Vehicle Tracking**
+```cpp
+// Get all vehicles in range
+std::vector<std::string> GetVehiclesInRange(double center_lat, double center_lon, 
+                                           float radius_km) {
+    nlohmann::json request = {
+        {"center_latitude", center_lat},
+        {"center_longitude", center_lon},
+        {"radius_km", radius_km}
+    };
+    
+    auto response = SendAPIRequest("GET", "/vehicles/in-range", request);
+    return response["vehicle_ids"];
+}
+```
+
+#### **2. Antenna Rotation with Speed Control**
+```cpp
+// Rotate antenna with speed control
+bool RotateAntenna(const std::string& vehicle_id,
+                  const std::string& antenna_id,
+                  float target_azimuth, float target_elevation,
+                  bool immediate = false) {
+    
+    nlohmann::json request = {
+        {"target_azimuth", target_azimuth},
+        {"target_elevation", target_elevation},
+        {"immediate", immediate},
+        {"rotation_mode", "absolute"}
+    };
+    
+    return SendAPIRequest("POST", 
+        "/" + vehicle_id + "/antennas/" + antenna_id + "/rotate", 
+        request);
+}
+```
+
+#### **3. Vehicle Status Monitoring**
+```cpp
+// Get comprehensive vehicle status
+VehicleDynamicsResponse GetVehicleStatus(const std::string& vehicle_id) {
+    auto response = SendAPIRequest("GET", "/" + vehicle_id, nlohmann::json{});
+    
+    VehicleDynamicsResponse status;
+    status.success = response["success"];
+    status.dynamics = ParseVehicleDynamics(response["data"]);
+    status.timestamp = ParseTimestamp(response["timestamp"]);
+    
+    return status;
+}
+```
+
+### **Performance Considerations**
+
+#### **Update Frequency Guidelines**
+- **Position Updates**: 10-20 Hz for aircraft, 5-10 Hz for ground vehicles
+- **Attitude Updates**: 10-20 Hz for aircraft, 1-5 Hz for ground vehicles
+- **Antenna Updates**: 1-5 Hz for manual control, 10-20 Hz for auto-tracking
+
+#### **Network Optimization**
+- Use batch updates when possible
+- Implement connection pooling
+- Handle network failures gracefully
+- Use compression for large data sets
+
+#### **Memory Management**
+- Cache frequently accessed data
+- Implement proper cleanup on vehicle unregistration
+- Monitor memory usage for large vehicle counts
+
+### **Error Handling**
+
+#### **Common Error Responses**
+```json
+{
+  "success": false,
+  "error_code": "VEHICLE_NOT_FOUND",
+  "message": "Vehicle with ID 'player_001' not found",
+  "timestamp": "2024-01-01T12:00:00Z"
+}
+```
+
+#### **Error Codes**
+- `VEHICLE_NOT_FOUND` - Vehicle ID does not exist
+- `INVALID_COORDINATES` - Position data is invalid
+- `ANTENNA_NOT_FOUND` - Antenna ID does not exist
+- `ROTATION_FAILED` - Antenna rotation failed
+- `AUTO_TRACKING_FAILED` - Auto-tracking setup failed
 
 ## FGCom-mumble Data Output
 
