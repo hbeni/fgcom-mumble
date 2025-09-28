@@ -69,7 +69,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Physics-Based Propagation**: [Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction](docs/TECHNICAL_DOCUMENTATION.md#propagation-physics) - Radio propagation physics and modeling
 - **Solar Data Integration**: [Real-time NOAA/SWPC solar data for accurate propagation modeling](docs/TECHNICAL_DOCUMENTATION.md#solar-data) - Solar data integration and usage
 - **Vehicle Dynamics API**: [Complete vehicle position, attitude, and antenna orientation tracking](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) - Vehicle dynamics and tracking system
-- **Power Management**: [Advanced transmit power control with efficiency and safety features](docs/TECHNICAL_DOCUMENTATION.md#power-management) - Power control and efficiency features
+- **Power Management**: [Advanced transmit power control](docs/TECHNICAL_DOCUMENTATION.md#power-management) - Power control and efficiency features
 - **Frequency Offset Simulation**: [Realistic audio effects including Doppler shift and "Donald Duck" effect](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) - Audio effects and frequency processing
 - **Lightning Data Integration**: [Real-time atmospheric noise simulation from lightning strikes](docs/TECHNICAL_DOCUMENTATION.md#lightning-data) - Lightning data and noise simulation
 - **Weather Data Integration**: [Atmospheric condition effects on radio propagation](docs/TECHNICAL_DOCUMENTATION.md#weather-data) - Weather effects on radio propagation
