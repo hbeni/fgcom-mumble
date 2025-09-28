@@ -34,7 +34,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 
 **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Comprehensive setup guide for administrators and technical users
 
-## ⚠️ **Important: Technical Complexity Assessment**
+##  **Important: Technical Complexity Assessment**
 
 **FGCom-mumble is NOT a simple "plug and play" system.** It requires:
 
