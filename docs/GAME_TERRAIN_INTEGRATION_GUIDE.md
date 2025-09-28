@@ -8,12 +8,12 @@ This guide provides comprehensive instructions for game developers on how to int
 
 ### 1. Line of Sight (LOS) - ABSOLUTELY ESSENTIAL
 
-**Why it's critical**: Radio signals cannot penetrate terrain. Without accurate LOS data, radio communication will be completely unrealistic.
+**Why it's critical**: Radio signals cannot penetrate terrain, concrete buildings with rebar, or metal solid metal objects like metal sheets. Without accurate LOS data, radio communication will be completely unrealistic.
 
 **What games must provide**:
-- **Terrain obstruction detection**: Can the signal path reach the receiver without hitting terrain?
+- **Terrain obstruction detection**: Can the signal path reach the receiver?
 - **Obstruction distance**: How far along the path is the first obstruction?
-- **Obstruction height**: How high is the terrain blocking the signal?
+- **Obstruction height**: How high is the terrain/object  blocking the signal?
 
 **Implementation priority**: **HIGHEST** - This is the most critical data for realistic radio simulation.
 
