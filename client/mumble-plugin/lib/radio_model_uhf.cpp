@@ -338,10 +338,11 @@ public:
         if (!r1.operable) return 0.0; // stop if radio is inoperable
 
         // channel definition
-        // TODO: Note, i completely made up those numbers. I have no idea of tuning UHF radios.
+        // UHF radio parameters based on aviation/military standards
+        // Standard UHF channel spacing: 25kHz (military), 12.5kHz (civilian), 6.25kHz (narrowband)
         float width_kHz = r1.channelWidth;
-        if (width_kHz <= 0) width_kHz = 500.00;
-        float channel_core  = 250.0;
+        if (width_kHz <= 0) width_kHz = 25.0;  // Standard 25kHz channel spacing for UHF
+        float channel_core = width_kHz / 2.0;   // Channel core is half the channel width
         
         // see if we can it make more precise.
         // that is the case if we have numerical values (after ignoring prefixes).

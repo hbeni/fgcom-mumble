@@ -1,2 +1,0 @@
-# 3D Attitude Pattern: roll=30°, pitch=-30°
-# Base pattern: containership-loop_7.0MHz_0m_pattern.txt

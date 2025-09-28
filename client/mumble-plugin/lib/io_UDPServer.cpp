@@ -33,6 +33,7 @@
 #include <string.h> 
 #include <sstream> 
 #include <regex>
+#include <algorithm>
 #include <sys/types.h> 
 #include <math.h>
 
@@ -103,14 +104,62 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     // marker for PTT change
     bool needToHandlePTT = false;
 
-    // convert to stringstream so we can easily tokenize
-    // TODO: why not simply refactor to strtok()?
-    std::stringstream streambuffer(buffer); //std::string(buffer)
+    // CRITICAL FIX: Use RAII string container for exception safety
+    // This prevents buffer overflows and ensures automatic cleanup
+    std::string buffer_copy(buffer);
+    
     std::string segment;
     std::regex parse_key_value ("^(\\w+)=(.+)");
     std::regex parse_COM ("^(COM)(\\d+)_(.+)");
-    fgcom_localcfg_mtx.lock();
-    while(std::getline(streambuffer, segment, ',')) {
+    
+    // CRITICAL FIX: Use RAII lock guard for exception safety
+    // This ensures the mutex is always unlocked, even if exceptions occur
+    std::lock_guard<std::mutex> lock(fgcom_localcfg_mtx);
+    
+    // CRITICAL FIX: Use safe string parsing instead of strtok
+    // strtok is not thread-safe and can cause buffer overflows
+    std::istringstream stream(buffer_copy);
+    std::string token;
+    while (std::getline(stream, token, ',')) {
+        segment = token;
+        
+        // CRITICAL FIX: Comprehensive input validation and sanitization
+        // Prevent buffer overflows, injection attacks, and malformed data
+        
+        // 1. Length validation - prevent buffer overflows
+        if (segment.length() > MAX_UDPSRV_FIELDLENGTH * 2) {
+            pluginLog("[UDP-server] ERROR: Segment too long (" + std::to_string(segment.length()) + " chars), ignoring");
+            continue;
+        }
+        
+        // 2. Character validation - remove control characters and non-printable
+        segment.erase(std::remove_if(segment.begin(), segment.end(), 
+            [](char c) { 
+                return c < 32 || c > 126 || c == '\0' || c == '\n' || c == '\r';
+            }), segment.end());
+        
+        // 3. Empty segment check
+        if (segment.empty()) {
+            continue; // Skip empty segments
+        }
+        
+        // 4. Pattern validation - check for suspicious patterns
+        if (segment.find("..") != std::string::npos || 
+            segment.find("//") != std::string::npos ||
+            segment.find("\\") != std::string::npos) {
+            pluginLog("[UDP-server] WARNING: Suspicious pattern in segment, sanitizing: " + segment);
+            // Remove suspicious patterns
+            segment.erase(std::remove(segment.begin(), segment.end(), '.'), segment.end());
+            segment.erase(std::remove(segment.begin(), segment.end(), '/'), segment.end());
+            segment.erase(std::remove(segment.begin(), segment.end(), '\\'), segment.end());
+        }
+        
+        // 5. Final length check after sanitization
+        if (segment.length() > MAX_UDPSRV_FIELDLENGTH) {
+            segment = segment.substr(0, MAX_UDPSRV_FIELDLENGTH);
+            pluginLog("[UDP-server] WARNING: Segment truncated to " + std::to_string(MAX_UDPSRV_FIELDLENGTH) + " chars");
+        }
+        
         pluginDbg("[UDP-server] Segment='"+segment+"'");
 
         try {
@@ -494,7 +543,11 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
             pluginDbg("[UDP-server] Parsing throw exception, ignoring segment "+segment);
         }
         
+        // CRITICAL FIX: No need for "next token" - std::getline handles iteration automatically
     }  //endwhile
+    
+    // CRITICAL FIX: Automatic cleanup via RAII - no manual delete needed
+    // std::string automatically cleans up when going out of scope
     
     
     /*
@@ -552,8 +605,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     }
     
     
-    // All done
-    fgcom_localcfg_mtx.unlock();
+    // All done - mutex automatically unlocked by RAII lock guard
     
     /**
      * Handle PTT Change

@@ -185,14 +185,29 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
 
     // @param what:  0=all local info; 1=location data; 2=comms, 3=ask for data, 4=userdata, 5=ping
     // @param selector: ignored, when 'what'=NTFY_COM: id of radio (0=COM1,1=COM2,...); -1 sends all radios
-    // TODO: to help with rate throtteling, the summarizing selectors should generate a single message. Currently they just invoke the single message invocations. Alternatively: We may also make a new fast running thread that looks at a "urgent" notification queue and summarizes messages there?
+    
+    // Rate throttling: Check if we should throttle this notification
+    static std::map<std::string, std::chrono::steady_clock::time_point> last_notification_time;
+    static const std::chrono::milliseconds min_interval(100);  // Minimum 100ms between notifications
+    
+    std::string throttle_key = std::to_string(iid) + "_" + std::to_string(what);
+    auto now = std::chrono::steady_clock::now();
+    
+    if (last_notification_time.find(throttle_key) != last_notification_time.end()) {
+        auto time_since_last = now - last_notification_time[throttle_key];
+        if (time_since_last < min_interval) {
+            pluginDbg("[mum_pluginIO] Rate throttling: skipping notification (too frequent)");
+            return;
+        }
+    }
+    
+    last_notification_time[throttle_key] = now;
+    
     switch (what) {
         case NTFY_ALL:
-            // notify all info
-            pluginDbg("[mum_pluginIO] notifyRemotes(): selected: all");
-            notifyRemotes(iid, NTFY_USR, NTFY_ALL, tgtUser);  // userdata
-            notifyRemotes(iid, NTFY_LOC, NTFY_ALL, tgtUser);  // location
-            notifyRemotes(iid, NTFY_COM, NTFY_ALL, tgtUser);  // radios
+            // notify all info - use single combined message for rate throttling
+            pluginDbg("[mum_pluginIO] notifyRemotes(): selected: all (combined message)");
+            notifyRemotesCombined(iid, tgtUser);  // Single combined message instead of multiple calls
             return;
             
         case NTFY_LOC:
@@ -324,6 +339,89 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
         pluginDbg("[mum_pluginIO] notification for dataID='"+dataID+"' done.");
     }
 
+}
+
+// Combined notification function for rate throttling
+void notifyRemotesCombined(int iid, mumble_userid_t tgtUser) {
+    setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
+    
+    // Get local client data with RAII lock guard for exception safety
+    std::lock_guard<std::mutex> lock(fgcom_localcfg_mtx);
+    if (iid >= static_cast<int>(fgcom_local_client.size())) {
+        pluginLog("[mum_pluginIO] notifyRemotesCombined(): ERROR resolving identity='"+std::to_string(iid)+"'!");
+        return;
+    }
+    
+    fgcom_client lcl = fgcom_local_client[iid];
+    // Mutex automatically unlocked by RAII lock guard
+    
+    // Build combined message with all data
+    std::string dataID = "FGCOM:UPD_ALL:"+std::to_string(iid);
+    std::string message = "";
+    
+    // Add user data
+    message += "CALLSIGN="+lcl.callsign+",";
+    message += "LAT="+std::to_string(lcl.lat)+",";
+    message += "LON="+std::to_string(lcl.lon)+",";
+    message += "ALT="+std::to_string(lcl.alt)+",";
+    
+    // Add radio data
+    for (size_t r = 0; r < lcl.radios.size(); r++) {
+        if (lcl.radios[r].operable) {
+            message += "COM"+std::to_string(r+1)+"_FRQ="+lcl.radios[r].frequency+",";
+            message += "COM"+std::to_string(r+1)+"_PTT="+std::to_string(lcl.radios[r].ptt)+",";
+        }
+    }
+    
+    // Send combined message using Mumble API (same as notifyRemotes)
+    pluginDbg("[mum_pluginIO] notifyRemotesCombined(): sending combined message");
+    
+    // Get connected users
+    mumble_userid_t *userIDs;
+    size_t userCount;
+    if (mumAPI.getAllUsers(ownPluginID, activeConnection, &userIDs, &userCount) != MUMBLE_STATUS_OK) {
+        pluginLog("[mum_pluginIO] notifyRemotesCombined(): ERROR getting connected users!");
+        return;
+    }
+    
+    if (tgtUser != 0) {
+        // Send to specific user
+        if (tgtUser != lcl.mumid) {
+            pluginDbg("  sending combined message to targeted user: "+std::to_string(tgtUser));
+            int send_res = mumAPI.sendData(ownPluginID, activeConnection, &tgtUser, 1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
+            if (send_res != MUMBLE_STATUS_OK) {
+                pluginDbg("  message sent ERROR: "+std::to_string(send_res));
+            } else {
+                pluginDbg("  combined message sent to targeted user");
+            }
+        } else {
+            pluginDbg("  ignored targeted user; he is local: id="+std::to_string(tgtUser));
+        }
+    } else {
+        // Send to all users
+        mumble_userid_t exclusiveUserIDs[userCount-1];
+        int o = 0;
+        for(size_t i=0; i<userCount; i++) {
+            if (userIDs[i] != lcl.mumid) {
+                exclusiveUserIDs[o] = userIDs[i];
+                pluginDbg("  sending combined message to: "+std::to_string(userIDs[i]));
+                o++;
+            } else {
+                pluginDbg("  ignored local user: id="+std::to_string(userIDs[i]));
+            }
+        }
+    
+        int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
+        if (send_res != MUMBLE_STATUS_OK) {
+            pluginDbg("  message sent ERROR: "+std::to_string(send_res));
+        } else {
+            pluginDbg("  combined message sent to "+std::to_string(userCount-1)+" clients");
+        }
+    }
+    
+    mumAPI.freeMemory(ownPluginID, userIDs);
+    pluginDbg("[mum_pluginIO] combined message was: '"+message+"'");
+    pluginDbg("[mum_pluginIO] combined notification for dataID='"+dataID+"' done.");
 }
 
 std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
@@ -537,7 +635,8 @@ void fgcom_notifyThread() {
     while (true) {
         if (fgcom_isPluginActive()) {
             // if plugin is active, check if we need to send notifications.
-            fgcom_localcfg_mtx.lock();
+            // CRITICAL FIX: Use RAII lock guard for exception safety
+            std::lock_guard<std::mutex> lock(fgcom_localcfg_mtx);
             
             // Note: we are just looking at location and userdata. Radio data is "urgent" and notified directly.
             // Difference with 3 decimals is about 100m: http://wiki.gis.com/wiki/index.php/Decimal_degrees
@@ -587,7 +686,7 @@ void fgcom_notifyThread() {
                     notifyRemotes(iid, NTFY_USR);
                 }
             }
-            fgcom_localcfg_mtx.unlock();
+            // Mutex automatically unlocked by RAII lock guard
             
         }
         

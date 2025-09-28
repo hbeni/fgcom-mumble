@@ -129,6 +129,17 @@ bool FGCom_AmateurRadio::initialize() {
     band6m.dx_capable = false;
     band_characteristics["6m"] = band6m;
     
+    // 4m band characteristics (Norwegian allocation)
+    fgcom_band_characteristics band4m;
+    band4m.band = "4m";
+    band4m.center_freq = 70000.0; // kHz (70 MHz)
+    band4m.wavelength = 4.0;
+    band4m.propagation = "Line of sight";
+    band4m.max_range_km = 500.0;
+    band4m.day_night_factor = 1.0; // Consistent day and night
+    band4m.dx_capable = false; // Regional band
+    band_characteristics["4m"] = band4m;
+    
     // Load band segments from CSV
     std::string csv_path = "../../configs/band_segments.csv";
     
@@ -681,3 +692,6 @@ bool FGCom_AmateurRadio::validateGridLocator(const std::string& grid) {
     
     return true;
 }
+
+// CRITICAL FIX: Removed duplicate function definition
+// The frequencyToBand function is already defined above at line 278

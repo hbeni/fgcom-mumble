@@ -4,7 +4,7 @@
 
 This guide provides comprehensive setup instructions for the FGCom-mumble distributed work unit system. **This is a complex system requiring significant technical expertise.** You'll learn how to set up the server, register clients, and start processing work units.
 
-**⚠️ Important**: This is NOT a "quick start" system. Setup requires 2-4 hours for experienced administrators and 1-2 days for full configuration.
+**Important**: This is NOT a "quick start" system. Setup requires 2-4 hours for experienced administrators and 1-2 days for full configuration.
 
 ## Table of Contents
 

@@ -86,6 +86,14 @@ extern std::map<int, fgcom_notificationState> lastNotifiedState;
  */
 void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector=-1, mumble_userid_t tgtUser=0);
 
+/*
+ * Combined notification function for rate throttling
+ * Sends a single combined message instead of multiple separate calls
+ * 
+ * @param iid: identity selector
+ * @param tgtUser: target user ID (0 = all users)
+ */
+void notifyRemotesCombined(int iid, mumble_userid_t tgtUser);
 
 /*
  * Handle incoming mumble plugin data

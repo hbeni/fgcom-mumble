@@ -98,6 +98,7 @@ private:
     bool validateChannelNumber(int channelNumber) const;
     bool validatePowerLevel(double powerWatts) const;
     bool validatePresetNumber(int presetNumber) const;
+    void addNewBandPresetChannels();
     
     // JSON parsing helpers
     std::vector<std::string> parseStringArray(const std::string& jsonArray) const;

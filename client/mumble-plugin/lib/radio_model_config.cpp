@@ -42,6 +42,72 @@ void RadioModelConfigManager::loadDefaultModels() {
     r105m.supportedModes = {"FM", "AM"};
     radioModels["R-105M"] = r105m;
     
+    // Add default Norwegian 4m band model
+    RadioModelSpec norwegian_4m;
+    norwegian_4m.modelName = "Norwegian 4m Band";
+    norwegian_4m.manufacturer = "Norwegian Amateur Radio";
+    norwegian_4m.country = "Norway";
+    norwegian_4m.alliance = "ITU Region 1";
+    norwegian_4m.era = "Modern";
+    norwegian_4m.usage = "Amateur Radio 4m Band";
+    norwegian_4m.frequencyStartMHz = 69.9;
+    norwegian_4m.frequencyEndMHz = 70.5;
+    norwegian_4m.channelSpacingKHz = 12.5;
+    norwegian_4m.calculateTotalChannels();
+    norwegian_4m.portablePowerWatts = 100.0;
+    norwegian_4m.vehiclePowerWatts = 100.0;
+    norwegian_4m.encryptionCapable = false;
+    norwegian_4m.gpsCapable = false;
+    norwegian_4m.dataCapable = true;
+    norwegian_4m.networkCapable = false;
+    norwegian_4m.advancedEncryption = false;
+    norwegian_4m.supportedModes = {"CW", "SSB", "FM", "Digital"};
+    radioModels["Norwegian 4m Band"] = norwegian_4m;
+    
+    // Add default 2200m band model
+    RadioModelSpec band_2200m;
+    band_2200m.modelName = "2200m Band";
+    band_2200m.manufacturer = "International Amateur Radio";
+    band_2200m.country = "International";
+    band_2200m.alliance = "ITU";
+    band_2200m.era = "Modern";
+    band_2200m.usage = "Amateur Radio 2200m Band";
+    band_2200m.frequencyStartMHz = 0.1357;
+    band_2200m.frequencyEndMHz = 0.1378;
+    band_2200m.channelSpacingKHz = 0.1;
+    band_2200m.calculateTotalChannels();
+    band_2200m.portablePowerWatts = 1500.0;
+    band_2200m.vehiclePowerWatts = 1500.0;
+    band_2200m.encryptionCapable = false;
+    band_2200m.gpsCapable = false;
+    band_2200m.dataCapable = true;
+    band_2200m.networkCapable = false;
+    band_2200m.advancedEncryption = false;
+    band_2200m.supportedModes = {"CW", "Digital"};
+    radioModels["2200m Band"] = band_2200m;
+    
+    // Add default 630m band model
+    RadioModelSpec band_630m;
+    band_630m.modelName = "630m Band";
+    band_630m.manufacturer = "International Amateur Radio";
+    band_630m.country = "International";
+    band_630m.alliance = "ITU";
+    band_630m.era = "Modern";
+    band_630m.usage = "Amateur Radio 630m Band";
+    band_630m.frequencyStartMHz = 0.472;
+    band_630m.frequencyEndMHz = 0.479;
+    band_630m.channelSpacingKHz = 0.1;
+    band_630m.calculateTotalChannels();
+    band_630m.portablePowerWatts = 1500.0;
+    band_630m.vehiclePowerWatts = 1500.0;
+    band_630m.encryptionCapable = false;
+    band_630m.gpsCapable = false;
+    band_630m.dataCapable = true;
+    band_630m.networkCapable = false;
+    band_630m.advancedEncryption = false;
+    band_630m.supportedModes = {"CW", "Digital"};
+    radioModels["630m Band"] = band_630m;
+    
     // Add default NATO VHF models
     RadioModelSpec an_prc77;
     an_prc77.modelName = "AN/PRC-77";

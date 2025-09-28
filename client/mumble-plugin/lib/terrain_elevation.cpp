@@ -30,6 +30,7 @@
 // #include <curl/curl.h>  // CURL not available, using alternative implementation
 
 // Helper function for CURL downloads
+// This function is used when CURL is available, but may be unused in current build
 static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     size_t total_size = size * nmemb;
     std::ofstream* file = static_cast<std::ofstream*>(userp);
@@ -662,14 +663,51 @@ std::string FGCom_ASTERGDEMLoader::constructDownloadURL(const std::string& tile_
 }
 
 bool FGCom_ASTERGDEMLoader::downloadFile(const std::string& url, const std::string& filepath) {
-    // Simplified download implementation without CURL dependency
-    // In a real implementation, you would use a proper HTTP client library
+    // Implement HTTP download using system wget/curl command
+    // This provides a robust download mechanism without requiring CURL library
     
-    setLastError("Download functionality requires CURL library - not implemented in this build");
-    return false;
+    std::string command;
+    std::string temp_file = filepath + ".tmp";
     
-    // TODO: Implement proper HTTP download using available libraries
-    // For now, return false to indicate download is not available
+    // Try wget first, then curl as fallback
+    command = "wget --timeout=30 --tries=3 --user-agent='FGCom-mumble/1.0' -O '" + temp_file + "' '" + url + "' 2>/dev/null";
+    int result = system(command.c_str());
+    
+    if (result != 0) {
+        // Try curl as fallback
+        command = "curl --connect-timeout 30 --max-time 300 --user-agent 'FGCom-mumble/1.0' -o '" + temp_file + "' '" + url + "' 2>/dev/null";
+        result = system(command.c_str());
+    }
+    
+    if (result != 0) {
+        setLastError("Failed to download file: " + url + " (wget/curl failed)");
+        return false;
+    }
+    
+    // Check if file was downloaded and has content
+    std::ifstream file(temp_file, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        setLastError("Downloaded file could not be opened: " + temp_file);
+        return false;
+    }
+    
+    std::streamsize size = file.tellg();
+    file.close();
+    
+    if (size <= 0) {
+        setLastError("Downloaded file is empty: " + temp_file);
+        std::remove(temp_file.c_str());
+        return false;
+    }
+    
+    // Move temp file to final location
+    if (std::rename(temp_file.c_str(), filepath.c_str()) != 0) {
+        setLastError("Failed to move downloaded file to final location: " + filepath);
+        std::remove(temp_file.c_str());
+        return false;
+    }
+    
+    return true;
 }
 
 void FGCom_ASTERGDEMLoader::logError(const std::string& error) const {

@@ -58,4 +58,28 @@ bool fgcom_radio_isOperable(fgcom_radio r);
  */
 void fgcom_updateClientComment();
 
+/*
+ * Initialize Mumble plugin configuration interface
+ * 
+ * This function integrates with Mumble's plugin configuration system
+ * It provides a standardized way to configure plugin settings through Mumble's UI
+ */
+void initializeMumblePluginConfig();
+
+/*
+ * Handle configuration changes from Mumble's UI
+ * 
+ * This function is called when configuration values change through Mumble's UI
+ * @param key Configuration key that changed
+ * @param value New configuration value
+ */
+void handleConfigurationChange(const std::string& key, const std::string& value);
+
+/*
+ * Apply configuration changes to running systems
+ * 
+ * This function updates the running plugin systems with new configuration values
+ */
+void applyConfigurationChanges();
+
 #endif
