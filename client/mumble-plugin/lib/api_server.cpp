@@ -194,6 +194,7 @@ void FGCom_APIServer::setupEndpoints() {
                 {"band_segments", "/api/v1/band-segments"},
                 {"radio_models", "/api/v1/radio-models"},
                 {"preset_channels", "/api/v1/preset-channels"},
+                {"gpu_resource_limiting", "/api/v1/gpu-resource"},
                 {"terrain_elevation", "/api/v1/terrain/elevation"},
                 {"config", "/api/v1/config"},
                 {"stats", "/api/v1/stats"}
@@ -443,6 +444,49 @@ void FGCom_APIServer::setupEndpoints() {
         
         server->Get("/api/v1/preset-channels/statistics", [this](const httplib::Request& req, httplib::Response& res) {
             handlePresetChannelStatisticsRequest(req, res);
+        });
+    }
+    
+    // GPU Resource Limiting API endpoints (read-only)
+    if (isFeatureEnabled("gpu_resource_limiting")) {
+        server->Get("/api/v1/gpu-resource/status", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceStatusRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/usage", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceUsageRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/configuration", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceConfigurationRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/limits", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceLimitsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/statistics", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceStatisticsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/monitoring", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceMonitoringRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/alerts", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceAlertsRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/game-detection", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceGameDetectionRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/adaptive", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceAdaptiveRequest(req, res);
+        });
+        
+        server->Get("/api/v1/gpu-resource/export", [this](const httplib::Request& req, httplib::Response& res) {
+            handleGPUResourceExportRequest(req, res);
         });
     }
     
@@ -2633,6 +2677,427 @@ void FGCom_APIServer::handlePresetChannelStatisticsRequest(const httplib::Reques
             {"presetsByModulation", {
                 {"FM", 5},
                 {"AM", 0}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+
+// GPU Resource Limiting API implementations (read-only)
+void FGCom_APIServer::handleGPUResourceStatusRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource status retrieved successfully";
+        
+        // Mock GPU resource status data
+        response["data"] = {
+            {"gpu_available", true},
+            {"current_usage_percentage", 25.5},
+            {"current_memory_usage_mb", 128.0},
+            {"usage_limit_percentage", 30},
+            {"memory_limit_mb", 256},
+            {"is_throttled", false},
+            {"is_blocked", false},
+            {"adaptive_usage_enabled", true},
+            {"game_detected", false},
+            {"monitoring_enabled", true},
+            {"gpu_priority_level", 3},
+            {"enforcement_strictness", 3}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceUsageRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource usage retrieved successfully";
+        
+        // Mock GPU usage data
+        response["data"] = {
+            {"current_usage", {
+                {"percentage", 25.5},
+                {"memory_mb", 128.0},
+                {"timestamp", std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::system_clock::now().time_since_epoch()).count()}
+            }},
+            {"limits", {
+                {"usage_percentage_limit", 30},
+                {"memory_limit_mb", 256},
+                {"adaptive_enabled", true}
+            }},
+            {"status", {
+                {"throttled", false},
+                {"blocked", false},
+                {"monitoring_active", true}
+            }},
+            {"system_load", {
+                {"cpu_usage", 45.2},
+                {"memory_usage", 67.8},
+                {"game_detected", false},
+                {"high_load", false},
+                {"low_battery", false}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceConfigurationRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource configuration retrieved successfully";
+        
+        // Mock GPU configuration data
+        response["data"] = {
+            {"resource_limiting", {
+                {"enabled", true},
+                {"usage_percentage_limit", 30},
+                {"memory_limit_mb", 256},
+                {"priority_level", 3}
+            }},
+            {"adaptive_usage", {
+                {"enabled", true},
+                {"min_percentage", 10},
+                {"max_percentage", 50},
+                {"game_detection_reduction", 50},
+                {"high_load_reduction", 30},
+                {"low_battery_reduction", 40}
+            }},
+            {"monitoring", {
+                {"enabled", true},
+                {"check_interval_ms", 1000},
+                {"enforcement_strictness", 3}
+            }},
+            {"logging", {
+                {"enabled", false},
+                {"log_file", "gpu_usage.log"}
+            }},
+            {"statistics", {
+                {"enabled", true},
+                {"collection_interval", 60}
+            }},
+            {"alerts", {
+                {"enabled", true},
+                {"threshold_percentage", 80},
+                {"cooldown_seconds", 300}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceLimitsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource limits retrieved successfully";
+        
+        // Mock GPU limits data
+        response["data"] = {
+            {"current_limits", {
+                {"usage_percentage", 30},
+                {"memory_mb", 256},
+                {"priority_level", 3}
+            }},
+            {"adaptive_limits", {
+                {"min_percentage", 10},
+                {"max_percentage", 50},
+                {"calculated_limit", 25.5}
+            }},
+            {"reductions", {
+                {"game_detection", 50},
+                {"high_load", 30},
+                {"low_battery", 40}
+            }},
+            {"enforcement", {
+                {"strictness_level", 3},
+                {"throttle_threshold", 24.0},
+                {"block_threshold", 30.0}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceStatisticsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource statistics retrieved successfully";
+        
+        // Mock GPU statistics data
+        response["data"] = {
+            {"usage_statistics", {
+                {"current_usage_percentage", 25.5},
+                {"average_usage_percentage", 22.3},
+                {"peak_usage_percentage", 45.2},
+                {"current_memory_mb", 128.0},
+                {"peak_memory_mb", 200.0}
+            }},
+            {"operation_statistics", {
+                {"total_operations", 1250},
+                {"throttled_operations", 45},
+                {"blocked_operations", 12},
+                {"successful_operations", 1193}
+            }},
+            {"time_statistics", {
+                {"total_compute_time_ms", 12500.0},
+                {"average_compute_time_ms", 10.0},
+                {"peak_compute_time_ms", 50.0},
+                {"monitoring_duration_seconds", 3600}
+            }},
+            {"system_statistics", {
+                {"game_detection_count", 5},
+                {"high_load_detection_count", 2},
+                {"low_battery_detection_count", 0},
+                {"alert_triggered_count", 1}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceMonitoringRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource monitoring status retrieved successfully";
+        
+        // Mock GPU monitoring data
+        response["data"] = {
+            {"monitoring_status", {
+                {"enabled", true},
+                {"active", true},
+                {"check_interval_ms", 1000},
+                {"last_check", std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::system_clock::now().time_since_epoch()).count()}
+            }},
+            {"enforcement_status", {
+                {"strictness_level", 3},
+                {"throttling_active", false},
+                {"blocking_active", false},
+                {"adaptive_enforcement", true}
+            }},
+            {"system_detection", {
+                {"game_detected", false},
+                {"high_load_detected", false},
+                {"low_battery_detected", false},
+                {"gpu_available", true}
+            }},
+            {"performance_metrics", {
+                {"monitoring_overhead_ms", 0.5},
+                {"enforcement_delay_ms", 1.2},
+                {"detection_accuracy", 95.5}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceAlertsRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource alerts retrieved successfully";
+        
+        // Mock GPU alerts data
+        response["data"] = {
+            {"alert_configuration", {
+                {"enabled", true},
+                {"threshold_percentage", 80},
+                {"cooldown_seconds", 300},
+                {"last_alert_time", 0}
+            }},
+            {"current_alerts", {
+                {"active_alerts", 0},
+                {"alert_history", {
+                    {"timestamp", 1640995200},
+                    {"type", "high_usage"},
+                    {"value", 85.2},
+                    {"threshold", 80.0}
+                }}
+            }},
+            {"alert_statistics", {
+                {"total_alerts", 3},
+                {"high_usage_alerts", 2},
+                {"memory_alerts", 1},
+                {"throttling_alerts", 0}
+            }},
+            {"alert_actions", {
+                {"auto_throttle", true},
+                {"auto_block", false},
+                {"notification_sent", true}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceGameDetectionRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource game detection status retrieved successfully";
+        
+        // Mock game detection data
+        response["data"] = {
+            {"detection_status", {
+                {"game_detected", false},
+                {"detection_method", "process_and_window"},
+                {"last_detection_time", 0},
+                {"detection_confidence", 0.0}
+            }},
+            {"known_games", {
+                {"processes", {
+                    "FlightGear.exe", "fgfs.exe", "X-Plane.exe", "x-plane.exe",
+                    "MicrosoftFlightSimulator.exe", "DCS.exe", "dcs.exe",
+                    "arma3.exe", "Arma3.exe", "Squad.exe", "squad.exe"
+                }},
+                {"windows", {
+                    "FlightGear", "X-Plane", "Microsoft Flight Simulator",
+                    "DCS World", "Arma 3", "Squad", "Mumble", "TeamSpeak"
+                }}
+            }},
+            {"detection_statistics", {
+                {"total_detections", 15},
+                {"flight_sim_detections", 8},
+                {"military_sim_detections", 4},
+                {"communication_detections", 3}
+            }},
+            {"priority_settings", {
+                {"game_priority_enabled", true},
+                {"priority_reduction_percentage", 50},
+                {"priority_level", 1}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceAdaptiveRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource adaptive settings retrieved successfully";
+        
+        // Mock adaptive settings data
+        response["data"] = {
+            {"adaptive_configuration", {
+                {"enabled", true},
+                {"min_percentage", 10},
+                {"max_percentage", 50},
+                {"base_percentage", 30}
+            }},
+            {"current_adaptive_limit", {
+                {"calculated_limit", 25.5},
+                {"base_limit", 30.0},
+                {"applied_reductions", {
+                    {"game_detection", 0},
+                    {"high_load", 0},
+                    {"low_battery", 0}
+                }},
+                {"total_reduction", 4.5}
+            }},
+            {"adaptive_factors", {
+                {"system_load_factor", 1.0},
+                {"game_detection_factor", 1.0},
+                {"battery_factor", 1.0},
+                {"time_factor", 1.0}
+            }},
+            {"adaptive_history", {
+                {"recent_limits", {25.5, 22.0, 28.0, 30.0, 15.0}},
+                {"recent_factors", {0.85, 0.73, 0.93, 1.0, 0.5}},
+                {"adaptation_count", 45}
+            }}
+        };
+        
+        res.set_content(createSuccessResponse(response.dump()), "application/json");
+        
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_content(createErrorResponse("Internal server error: " + std::string(e.what())), "application/json");
+    }
+}
+
+void FGCom_APIServer::handleGPUResourceExportRequest(const httplib::Request& req, httplib::Response& res) {
+    try {
+        std::string format = req.get_param_value("format", "json");
+        std::string filename = req.get_param_value("filename", "gpu_resource_export");
+        
+        nlohmann::json response;
+        response["success"] = true;
+        response["message"] = "GPU resource export completed successfully";
+        
+        // Mock export data
+        response["data"] = {
+            {"export_info", {
+                {"format", format},
+                {"filename", filename},
+                {"timestamp", std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::system_clock::now().time_since_epoch()).count()},
+                {"export_size_bytes", 2048}
+            }},
+            {"exported_data", {
+                {"configuration", "GPU resource limiting configuration"},
+                {"statistics", "Usage statistics and performance metrics"},
+                {"monitoring_data", "Real-time monitoring information"},
+                {"alert_history", "Alert and notification history"}
+            }},
+            {"export_status", {
+                {"success", true},
+                {"file_created", true},
+                {"data_exported", true},
+                {"export_duration_ms", 150}
             }}
         };
         

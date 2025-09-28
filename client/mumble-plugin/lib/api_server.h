@@ -410,6 +410,18 @@ public:
     void handlePresetChannelInactiveRequest(const httplib::Request& req, httplib::Response& res);
     void handlePresetChannelStatisticsRequest(const httplib::Request& req, httplib::Response& res);
     
+    // GPU Resource Limiting API endpoints (read-only)
+    void handleGPUResourceStatusRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceUsageRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceConfigurationRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceLimitsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceStatisticsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceMonitoringRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceAlertsRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceGameDetectionRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceAdaptiveRequest(const httplib::Request& req, httplib::Response& res);
+    void handleGPUResourceExportRequest(const httplib::Request& req, httplib::Response& res);
+    
     // Configuration endpoints
     void handleConfigRequest(const httplib::Request& req, httplib::Response& res);
     void handleConfigUpdateRequest(const httplib::Request& req, httplib::Response& res);
