@@ -1,11 +1,13 @@
- FGCom-mumble - a flightsim radio simulation framework based on mumble
 
+
+ FGCom-mumble - a flightsim radio simulation framework based on mumble
+ 
 =====================================================================
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
 This project aims to provide a mumble-based modular radio simulation for flight simulators. The project started mainly as a successor for the asterisk-based FGCom implementation.
 
-([-> deutsche Version](config/README-de_DE.md)) | [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5)
+([-> deutsche Version](server/Readme.server-de_DE.md)) | [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5)
 
 ### The main goals are:
 - Provide communication with geographic and channel separation
@@ -39,11 +41,11 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Server Administration**: Linux/Windows server management experience
 - **Technical Configuration**: 625+ configuration options across 17 categories
 - **Network Setup**: UDP port configuration, firewall rules, channel management
-- **Radio Knowledge**: Understanding of amateur radio frequencies and propagation
+- **Radio Knowledge**: Understanding of radio frequencies and propagation
 - **Complex Installation**: Multi-step process with dependencies and manual configuration
 
 **Supported Platforms:**
-- **FlightGear**: Native integration (recommended for beginners)
+- **FlightGear**: Native integration (requires technical knowledge)
 - **Microsoft Flight Simulator 2020**: Via RadioGUI with SimConnect (requires technical setup)
 - **Other Games**: Manual integration through Mumble voice chat (no automatic detection)
 
@@ -75,7 +77,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Noise Floor Calculation**: [Advanced atmospheric noise modeling with environment-specific calculations, distance-based noise falloff, and manual position setting via GPS or Maidenhead locators](docs/NOISE_FLOOR_DISTANCE_GUIDE.md) - Distance-based noise falloff and environment detection
 - **AGC & Squelch System**: [Advanced Automatic Gain Control and Squelch functionality with configurable presets](docs/TECHNICAL_DOCUMENTATION.md#agc-squelch) - AGC and squelch system configuration and usage
 - **Radio Era Classification**: [Comprehensive radio technology classification system for SDR and traditional radios](docs/RADIO_ERA_CLASSIFICATION.md) - Historical radio technology classification and performance modeling
-- **User-Friendly Documentation**: [Simple user guide for non-technical users and gamers](docs/USER_GUIDE_SIMPLE.md) - Easy-to-follow guide for beginners
+- **Technical Documentation**: [Technical user guide for administrators and developers](docs/TECHNICAL_USER_GUIDE.md) - Comprehensive guide for technical users
 
 ### Latest Updates (v2.1+):
 - **Complete Antenna Pattern Integration**: [All 52 available radiation pattern files now loaded and mapped](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) - Antenna pattern integration and management
@@ -90,7 +92,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Advanced API**: [Complete RESTful API with work unit distribution and security endpoints](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
 - **Vehicle Geometry Creation**: [Complete guide for creating vehicle geometry and ground planes](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) - Vehicle geometry creation and ground plane modeling
 - **Coding Standards**: [Strict architectural and design standards implementation](docs/CODING_STANDARDS.md) - Coding standards and architectural guidelines
-- **Zero Tolerance Quality**: [Comprehensive code inspection ensuring no race conditions, memory leaks, or security vulnerabilities](docs/QUALITY_ASSURANCE.md) - Quality assurance and code inspection
+- **Zero Tolerance Quality**: [Comprehensive code inspection ensuring no race conditions, memory leaks, or security vulnerabilities](docs/reports/CRITICAL_CODE_INSPECTION_REPORT.md) - Quality assurance and code inspection
 - **Enhanced Documentation**: [Updated and consolidated documentation structure](docs/README.md) - Documentation structure and organization
 
 ### Latest Updates (v2.4+):
@@ -108,47 +110,47 @@ Documentation
 =============
 The documentation is split up into relevant parts:
 
-- Readme.md (*this file*): General overview and client documentation ([deutsche Version](config/README-de_DE.md))
-- [Readme.architecture.md](config/Readme.architecture.md) Details about the components that make up the system
+- Readme.md (*this file*): General overview and client documentation ([deutsche Version](server/Readme.server-de_DE.md))
 - [client/mumble-plugin/plugin.spec.md](client/mumble-plugin/plugin.spec.md) Technical details on plugin design and its input/output data formats
 - [client/radioGUI/Readme.RadioGUI.md](client/radioGUI/Readme.RadioGUI.md) Documentation for the Radio GUI client
 - [client/fgfs-addon/Readme.md](client/fgfs-addon/Readme.md) Documentation for the Flightgear integration addon
 - [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
-- [SECURITY.md](config/SECURITY.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
+- [SECURITY.md](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
 
 ### User Documentation:
 - **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** **Comprehensive setup guide for administrators and technical users** - Honest assessment of complexity and detailed setup instructions
-- **[User Guide](docs/USER_GUIDE_SIMPLE.md)** **Realistic overview** - Understanding what FGCom-mumble is and its actual capabilities
+- **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** **Technical overview** - Understanding what FGCom-mumble is and its actual capabilities
+- **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** **Comprehensive guide for game developers and modders** - Technical integration requirements, data exchange protocols, and implementation examples
 
 ### Advanced Features Documentation:
 - [API Reference Complete](docs/API_REFERENCE_COMPLETE.md) Complete RESTful API and WebSocket documentation
 - [Work Unit Distribution API](docs/WORK_UNIT_DISTRIBUTION_API.md) Distributed computing and work unit management
 - [Security API Documentation](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security implementation
-- [Quick Start Guide](docs/QUICK_START_GUIDE.md) Get started quickly with the system
+- [Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md) Comprehensive setup instructions for administrators
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) Consolidated technical documentation
 - [Vehicle Geometry Creation Guide](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) Complete guide for creating vehicle geometry
 - [Amateur Radio Terminology](docs/AMATEUR_RADIO_TERMINOLOGY.md) Comprehensive amateur radio terminology and Q-codes reference
 - [Coding Standards](docs/CODING_STANDARDS.md) Strict architectural and design standards
 - [Radio Era Classification](docs/RADIO_ERA_CLASSIFICATION.md) Comprehensive radio technology classification system
 - [BFO/SDR Compatibility](docs/BFO_SDR_COMPATIBILITY_ASSESSMENT.md) Beat Frequency Oscillator and Software Defined Radio compatibility
-- [Threading Architecture](docs/THREADING_ARCHITECTURE_DOCUMENTATION.md) Multi-threaded system documentation
-- [NEC Modeling Guide](docs/NEC_MODELING_DOCUMENTATION.md) Antenna modeling and calculation guide
+- [Threading Architecture](docs/TECHNICAL_DOCUMENTATION.md#threading-architecture) Multi-threaded system documentation
+- [NEC Modeling Guide](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Antenna modeling and calculation guide
 - [VHF/UHF Antenna Specifications](docs/ANTENNA_HEIGHT_SPECIFICATIONS.md) Professional antenna height and performance
-- [New Antennas Summary](docs/NEW_ANTENNAS_SUMMARY.md) Complete overview of all new VHF/UHF antennas
-- [Propagation Physics](docs/PROPAGATION_PHYSICS_DOCUMENTATION.md) Physics-based radio wave propagation modeling
-- [Vehicle Dynamics API](docs/VEHICLE_DYNAMICS_API.md) Vehicle tracking and antenna orientation API
-- [Vehicle Dynamics Examples](docs/VEHICLE_DYNAMICS_EXAMPLES.md) Practical examples for vehicle dynamics integration
+- [New Antennas Summary](docs/2M_YAGI_ANTENNA_SUMMARY.md) Complete overview of all new VHF/UHF antennas
+- [Propagation Physics](docs/TECHNICAL_DOCUMENTATION.md#propagation-physics) Physics-based radio wave propagation modeling
+- [Vehicle Dynamics API](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) Vehicle tracking and antenna orientation API
+- [Vehicle Dynamics Examples](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) Practical examples for vehicle dynamics integration
 - [Historical Maritime Bands](docs/HISTORICAL_MARITIME_BANDS.md) Configuration and usage of historical maritime HF frequency bands
-- [Realistic Antenna Examples](docs/REALISTIC_ANTENNA_EXAMPLES.md) Realistic antenna configurations for various vehicle types
+- [Realistic Antenna Examples](docs/2M_YAGI_ANTENNA_SUMMARY.md) Realistic antenna configurations for various vehicle types
 - [Frequency Offset Documentation](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) Audio processing and frequency offset simulation
 - [VHF/UHF Pattern Integration](docs/VHF_UHF_PATTERN_INTEGRATION.md) VHF/UHF antenna pattern integration documentation
 
 ### Antenna Pattern Creation Documentation:
-- [Creating Radiation Patterns Guide](docs/CREATING_RADIATION_PATTERNS_GUIDE.md) Complete guide for creating radiation pattern files
-- [EZNEC Workflow Guide](docs/EZNEC_WORKFLOW_GUIDE.md) Step-by-step EZNEC workflow for pattern creation
-- [Antenna Modeling Tools](docs/ANTENNA_MODELING_TOOLS.md) Tools and software for antenna modeling
-- [Radiation Pattern Examples](docs/RADIATION_PATTERN_EXAMPLES.md) Practical examples for different vehicle types
+- [Creating Radiation Patterns Guide](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Complete guide for creating radiation pattern files
+- [EZNEC Workflow Guide](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Step-by-step EZNEC workflow for pattern creation
+- [Antenna Modeling Tools](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Tools and software for antenna modeling
+- [Radiation Pattern Examples](docs/2M_YAGI_ANTENNA_SUMMARY.md) Practical examples for different vehicle types
 - [2M Yagi Antenna Summary](docs/2M_YAGI_ANTENNA_SUMMARY.md) Professional 2m Yagi antenna specifications
 
 ### Frequency and Band Documentation:
@@ -156,7 +158,7 @@ The documentation is split up into relevant parts:
 - [Military VHF/UHF](docs/military-vhf-uhf.md) Military VHF/UHF frequency bands and protocols
 - [Civil HF Frequencies](docs/CIVIL_HF_freqs.md) Civil HF frequency allocations and usage
 - [Known Military Bands](docs/KNOWN_MILITARY_BANDS_AND_FREQS.md) Military frequency bands and protocols
-- [Vehicle Frequency Analysis](docs/VEHICLE_FREQUENCY_ANALYSIS.md) Frequency analysis for different vehicle types
+- [Vehicle Frequency Analysis](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) Frequency analysis for different vehicle types
 
 
 

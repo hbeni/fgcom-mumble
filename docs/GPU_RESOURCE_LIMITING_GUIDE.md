@@ -170,17 +170,19 @@ max_gpu_usage_percentage = 25
 ## Game Detection
 
 ### Supported Games
-The system automatically detects popular flight simulators and games:
+The system can detect running processes for GPU resource management:
 
-**Flight Simulators:**
-- FlightGear (fgfs.exe, FlightGear.exe)
-- X-Plane (x-plane.exe, X-Plane.exe)
-- Microsoft Flight Simulator (MicrosoftFlightSimulator.exe)
-- DCS World (dcs.exe, DCS.exe)
+**Flight Simulators (with native integration):**
+- FlightGear (fgfs.exe, FlightGear.exe) - Native FGCom-mumble support
+- Microsoft Flight Simulator (MicrosoftFlightSimulator.exe) - Via RadioGUI
 
-**Military Simulations:**
-- Arma 3 (arma3.exe, Arma3.exe)
-- Squad (squad.exe, Squad.exe)
+**Other Games (process detection only):**
+- X-Plane (x-plane.exe, X-Plane.exe) - Process detection only, no integration
+- DCS World (dcs.exe, DCS.exe) - Process detection only, no integration
+- Arma 3 (arma3.exe, Arma3.exe) - Process detection only, no integration
+- Squad (squad.exe, Squad.exe) - Process detection only, no integration
+
+**Note**: Process detection does not mean game integration. Only FlightGear has native FGCom-mumble integration.
 
 **Communication Software:**
 - Mumble (mumble.exe, Mumble.exe)

@@ -1,4 +1,4 @@
-# FGCom-mumble: Simple User Guide
+# FGCom-mumble: Technical User Guide
 
 **What is FGCom-mumble?**  
 **Who can use it?**  
@@ -10,7 +10,7 @@
 
 FGCom-mumble is a **realistic radio communication simulator** that works with flight simulators and games. Think of it as a **virtual walkie-talkie system** that makes your gaming experience much more realistic and fun!
 
-### **In Simple Terms:**
+### **Technical Overview:**
 - **It's like having real radios in your game**
 - **You can talk to other players using realistic radio procedures**
 - **It simulates real-world radio limitations and effects**
@@ -200,16 +200,16 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ---
 
-## **Getting Started is Easy!**
+## **Getting Started Requires Technical Knowledge!**
 
 ### **Step 1: Download**
 - **Get FGCom-mumble** from the official website
 - **Install it** (just like any other program)
-- **No complex setup required!**
+- **Complex technical setup required!**
 
 ### **Step 2: Connect to Your Game**
 - **Launch your favorite game**
-- **FGCom-mumble automatically detects** your game
+- **FGCom-mumble requires manual configuration** for each game
 - **Choose your radio type**
 - **Start playing!**
 
@@ -272,8 +272,8 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ### **What You DON'T Need**
 - **No programming skills**
-- **No technical knowledge**
-- **No complex setup**
+- **Technical knowledge required**
+- **Complex setup required**
 - **No expensive hardware**
 
 ---
@@ -310,17 +310,17 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ### **Download FGCom-mumble Today!**
 - **Free to use**
-- **Easy installation**
-- **Works with popular games**
-- **No technical knowledge required**
+- **Complex installation**
+- **Limited game support** (FlightGear native, others manual)
+- **Technical knowledge required**
 
 
 
-- **Easy-to-follow tutorials**
+- **Technical tutorials**
 - **Step-by-step instructions**
 
-### **No Technical Jargon**
-- **Simple explanations**
+### **Technical Documentation**
+- **Complex explanations**
 
 
 ---
