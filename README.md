@@ -100,7 +100,9 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Preset Channel Management**: [Advanced preset channel system for military radios with 99 presets support](docs/PRESET_CHANNEL_API_DOCUMENTATION.md) - Preset channel configuration and read-only API access
 - **Military Radio Equipment**: [Complete implementation of AN/PRC-152, AN/PRC-77, AN/PRC-148, R-105, R-107, R-123 Magnolia and more](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#radio-model-configuration) - Military radio specifications and channel management
 - **Configuration-Based System**: [All radio models and presets defined in JSON configuration files](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#configuration-files) - Server-side configuration management *(Note: Radio encryption simulation is not yet implemented)*
+- **Missing Implementation**: Radio technical data specifications have not been implemented, and there are currently no antenna radiation patterns created for handheld or portable radio sets
 - **GPU Resource Limiting**: [Intelligent GPU resource management for Client-Only and Hybrid modes with game detection and adaptive limits](docs/GPU_RESOURCE_LIMITING_GUIDE.md) - GPU resource management and performance optimization
+- **Terrain and Environmental API**: [Production-ready C++ implementation with comprehensive error handling, thread safety, and performance optimization](client/mumble-plugin/lib/terrain_environmental_api.h) - Advanced terrain data processing with strict quality standards
 
 **Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
@@ -122,6 +124,8 @@ The documentation is split up into relevant parts:
 - **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** **Comprehensive setup guide for administrators and technical users** - Honest assessment of complexity and detailed setup instructions
 - **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** **Technical overview** - Understanding what FGCom-mumble is and its actual capabilities
 - **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** **Comprehensive guide for game developers and modders** - Technical integration requirements, data exchange protocols, and implementation examples
+- **[Terrain and Environmental Data API](docs/TERRAIN_ENVIRONMENTAL_DATA_API.md)** **Critical terrain and environmental data requirements** - Line of sight, altitude, weather, and noise floor data that games must provide
+- **[Game Terrain Integration Guide](docs/GAME_TERRAIN_INTEGRATION_GUIDE.md)** **Detailed terrain integration instructions** - Step-by-step guide for implementing terrain and environmental data in games
 
 ### Advanced Features Documentation:
 - [API Reference Complete](docs/API_REFERENCE_COMPLETE.md) Complete RESTful API and WebSocket documentation
