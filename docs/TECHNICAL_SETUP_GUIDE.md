@@ -1,351 +1,569 @@
-# FGCom-mumble Technical Setup Guide
+# Technical Setup Guide
 
 ## Overview
 
-This guide provides honest, comprehensive setup instructions for FGCom-mumble. **This system requires significant technical knowledge and server administration skills.**
+This guide provides comprehensive setup instructions for the FGCom-mumble distributed work unit system. **This is a complex system requiring significant technical expertise.** You'll learn how to set up the server, register clients, and start processing work units.
+
+**⚠️ Important**: This is NOT a "quick start" system. Setup requires 2-4 hours for experienced administrators and 1-2 days for full configuration.
+
+## Table of Contents
+
+1. [Prerequisites](#prerequisites)
+2. [Server Setup](#server-setup)
+3. [Client Setup](#client-setup)
+4. [Basic Usage](#basic-usage)
+5. [Advanced Configuration](#advanced-configuration)
+6. [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
-### **Technical Requirements**
-- **Server Administration**: Linux/Windows server management experience
-- **Network Configuration**: Understanding of UDP/TCP ports and firewall configuration
-- **Radio Knowledge**: Basic understanding of amateur radio frequencies and propagation
-- **System Administration**: Command line interface and configuration file management
+### System Requirements
 
-### **System Requirements**
-- **Operating System**: Linux (recommended), Windows, or macOS
+- **Operating System**: Linux, macOS, or Windows
 - **CPU**: Multi-core processor (4+ cores recommended)
 - **Memory**: 4GB RAM minimum, 8GB+ recommended
-- **Network**: Stable internet connection with configurable ports
-- **Storage**: 2GB+ for installation and data
+- **GPU**: Optional but recommended for acceleration
+- **Network**: Stable internet connection
 
-### **Software Dependencies**
-- **Mumble Server**: >= v1.4.0 (Murmur)
-- **Mumble Client**: Latest version
-- **C++ Compiler**: GCC 7+ or Clang 5+ (for building from source)
+### Software Dependencies
+
+- **C++ Compiler**: GCC 7+ or Clang 5+
 - **OpenSSL**: 1.1.1+ for security features
 - **CMake**: 3.10+ for building
-- **LuaJIT**: 5.1 interpreter (for server bots)
-- **Python**: 3.6+ (for client examples)
+- **Python**: 3.6+ for client examples
+- **Node.js**: 14+ for JavaScript examples
 
 ## Server Setup
 
-### **Step 1: Install Mumble Server**
+### 1. Clone the Repository
 
-**Linux (Ubuntu/Debian):**
 ```bash
+git clone https://github.com/Supermagnum/fgcom-mumble.git
+cd fgcom-mumble
+```
+
+### 2. Build the Server
+
+```bash
+# Install dependencies
 sudo apt-get update
-sudo apt-get install mumble-server
-sudo systemctl enable mumble-server
-sudo systemctl start mumble-server
+sudo apt-get install build-essential cmake libssl-dev
+
+# Build the project
+mkdir build
+cd build
+cmake ..
+make -j$(nproc)
 ```
 
-**Linux (CentOS/RHEL):**
+### 3. Configure the Server
+
+Create a configuration file:
+
 ```bash
-sudo yum install mumble-server
-sudo systemctl enable mumble-server
-sudo systemctl start mumble-server
+cp config/fgcom-mumble.conf.example fgcom-mumble.conf
 ```
 
-**Windows:**
-- Download Mumble server from official website
-- Install and configure as Windows service
-- Configure firewall rules for ports 64738 (TCP/UDP)
+Edit the configuration:
 
-### **Step 2: Configure Mumble Server**
-
-**Edit server configuration:**
-```bash
-sudo nano /etc/mumble-server.ini
-```
-
-**Required settings:**
 ```ini
-# Server settings
-host=0.0.0.0
-port=64738
-users=100
-maxbandwidth=72000000
-welcometext="Welcome to FGCom-mumble server"
+[server]
+host = 0.0.0.0
+port = 8080
+ssl_enabled = true
+certificate_path = /etc/ssl/certs/server.crt
+private_key_path = /etc/ssl/private/server.key
 
-# Security settings
-serverpassword=
-allowping=true
-opusthreshold=100
-channelnestinglimit=10
-defaultchannel=fgcom-mumble
-rememberchannel=true
+[security]
+level = medium
+encryption_enabled = true
+signature_validation_enabled = true
+rate_limiting_enabled = true
+monitoring_enabled = true
+
+[work_units]
+max_concurrent_units = 10
+max_queue_size = 1000
+unit_timeout_ms = 30000
+enable_retry = true
+max_retries = 3
 ```
 
-### **Step 3: Create FGCom-mumble Channels**
+### 4. Start the Server
 
-**Channel Structure:**
-- Create channel: `fgcom-mumble`
-- Create subchannels for different airspaces
-- Set appropriate permissions for each channel
-
-### **Step 4: Install Server Bots (Optional but Recommended)**
-
-**Install LuaJIT:**
 ```bash
-sudo apt-get install luajit lua5.1 lua-bitop
+# Start the server
+./fgcom-mumble-server --config fgcom-mumble.conf
+
+# Or run in background
+nohup ./fgcom-mumble-server --config fgcom-mumble.conf > server.log 2>&1 &
 ```
 
-**Install Lua Mumble support:**
-```bash
-git clone https://github.com/bkacjios/lua-mumble.git
-cd lua-mumble
-make
-sudo cp mumble.so /usr/lib/x86_64-linux-gnu/lua/5.1/
-```
+### 5. Verify Server is Running
 
-**Start bot manager:**
 ```bash
-./fgcom-botmanager.sh
+# Check server health
+curl http://localhost:8080/health
+
+# Expected response:
+{
+  "status": "healthy",
+  "timestamp": 1703123456789,
+  "uptime_seconds": 3600,
+  "version": "1.4.1"
+}
 ```
 
 ## Client Setup
 
-### **Step 1: Install Mumble Client**
+### 1. Register a Client
 
-**Download and install Mumble client from official website**
-
-### **Step 2: Install FGCom-mumble Plugin**
-
-**Method 1: GUI Installation (Recommended)**
-1. Start Mumble
-2. Go to Configure → Settings → Plugins
-3. Click "Install plugin"
-4. Select the `.mumble_plugin` file
-5. Activate the FGCom-mumble plugin
-
-**Method 2: Manual Installation**
-1. Extract the `.mumble_plugin` file (rename to .zip)
-2. Copy the appropriate library to Mumble's plugins folder:
-   - Linux: `fgcom-mumble.so`
-   - Windows: `fgcom-mumble.dll`
-   - macOS: `fgcom-mumble-macOS.bundle`
-
-### **Step 3: Configure Plugin**
-
-**Create configuration file:**
 ```bash
-# Linux
-nano ~/.fgcom-mumble.ini
-
-# Windows
-notepad %USERPROFILE%\fgcom-mumble.ini
+# Register a new client
+curl -X POST "http://localhost:8080/api/v1/security/register" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "client_id": "client_001",
+       "auth_method": "api_key",
+       "security_level": "medium",
+       "capabilities": {
+         "max_memory_mb": 2048,
+         "supports_gpu": true,
+         "network_bandwidth_mbps": 100.0,
+         "processing_latency_ms": 50.0
+       }
+     }'
 ```
 
-**Basic configuration:**
-```ini
-[general]
-# UDP port for communication
-udp_port = 16661
-
-# Channel name pattern (must start with fgcom-mumble)
-channel_pattern = fgcom-mumble
-
-# Audio effects
-enable_audio_effects = true
-enable_noise_reduction = true
-
-# Debug settings
-debug_level = 1
-enable_udp_logging = true
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "registered": true,
+    "client_id": "client_001",
+    "api_key": "ak_1234567890abcdef",
+    "security_level": "medium",
+    "auth_method": "api_key"
+  }
+}
 ```
 
-### **Step 4: Connect to Server**
+### 2. Authenticate the Client
 
-1. **Connect to Mumble server**
-2. **Join channel starting with `fgcom-mumble`**
-3. **Configure radio settings** (frequencies, power, location)
-4. **Test communication** with other users
-
-## Game Integration
-
-### **FlightGear (Native Support)**
-
-**Installation:**
-1. Download FGCom-mumble addon
-2. Add to FlightGear launcher
-3. Activate addon
-4. Configure radio settings in-game
-
-**Usage:**
-- Default keys: Space (COM1), Shift+Space (COM2), Alt+Space (COM3), Ctrl+Space (Intercom)
-- Automatic frequency detection from aircraft radios
-- Real-time position and altitude tracking
-
-### **Microsoft Flight Simulator 2020 (RadioGUI)**
-
-**Setup:**
-1. Install RadioGUI (Java application)
-2. Configure SimConnect connection
-3. Set up SimConnect.xml file
-4. Connect RadioGUI to Mumble server
-
-**SimConnect Configuration:**
-```xml
-<SimConnect.Comm>
-  <Descr>Global IP Port</Descr>
-  <Disabled>False</Disabled>
-  <Protocol>IPv4</Protocol>
-  <Scope>global</Scope>
-  <Address>127.0.0.1</Address>
-  <MaxClients>64</MaxClients>
-  <Port>7421</Port>
-  <MaxRecvSize>4096</MaxRecvSize>
-  <DisableNagle>False</DisableNagle>
-</SimConnect.Comm>
+```bash
+# Authenticate with the server
+curl -X POST "http://localhost:8080/api/v1/security/authenticate" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "client_id": "client_001",
+       "auth_data": "ak_1234567890abcdef",
+       "auth_method": "api_key"
+     }'
 ```
 
-### **Other Games (Manual Integration)**
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "authenticated": true,
+    "session_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "client_id": "client_001",
+    "auth_method": "api_key"
+  }
+}
+```
 
-**For games without native support:**
-1. Run Mumble alongside your game
-2. Manually set radio frequencies
-3. Coordinate with other players
-4. Use external voice chat for communication
+## Basic Usage
+
+### 1. Check Server Status
+
+```bash
+# Get work unit status
+curl "http://localhost:8080/api/v1/work-units/status"
+
+# Get security status
+curl "http://localhost:8080/api/v1/security/status"
+
+# Get GPU status
+curl "http://localhost:8080/api/v1/gpu-status"
+```
+
+### 2. Calculate Propagation
+
+```bash
+# Single propagation calculation
+curl -X POST "http://localhost:8080/api/v1/propagation" \
+     -H "Content-Type: application/json" \
+     -d '{
+       "lat1": 40.7128,
+       "lon1": -74.0060,
+       "alt1": 100.0,
+       "lat2": 40.7589,
+       "lon2": -73.9851,
+       "alt2": 200.0,
+       "frequency_mhz": 14.175,
+       "tx_power_watts": 100.0,
+       "include_solar_effects": true
+     }'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "signal_quality": 0.85,
+    "signal_strength_db": -12.5,
+    "distance_km": 8.2,
+    "bearing_deg": 45.3,
+    "elevation_angle_deg": 2.1,
+    "propagation_mode": "skywave"
+  }
+}
+```
+
+### 3. Python Client Example
+
+Create a simple Python client:
+
+```python
+import requests
+import json
+import time
+
+class FGComClient:
+    def __init__(self, server_url, client_id, api_key):
+        self.server_url = server_url
+        self.client_id = client_id
+        self.api_key = api_key
+        self.session_token = None
+        
+    def authenticate(self):
+        """Authenticate with the server"""
+        response = requests.post(f"{self.server_url}/api/v1/security/authenticate", 
+                               json={
+                                   "client_id": self.client_id,
+                                   "auth_data": self.api_key,
+                                   "auth_method": "api_key"
+                               })
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data["success"]:
+                self.session_token = data["data"]["session_token"]
+                return True
+        return False
+    
+    def get_server_status(self):
+        """Get server work unit status"""
+        response = requests.get(f"{self.server_url}/api/v1/work-units/status")
+        return response.json()
+    
+    def calculate_propagation(self, lat1, lon1, alt1, lat2, lon2, alt2, 
+                            frequency_mhz, tx_power_watts):
+        """Calculate propagation between two points"""
+        data = {
+            "lat1": lat1,
+            "lon1": lon1,
+            "alt1": alt1,
+            "lat2": lat2,
+            "lon2": lon2,
+            "alt2": alt2,
+            "frequency_mhz": frequency_mhz,
+            "tx_power_watts": tx_power_watts,
+            "include_solar_effects": True
+        }
+        
+        response = requests.post(f"{self.server_url}/api/v1/propagation", 
+                               json=data)
+        return response.json()
+    
+    def run(self):
+        """Main client loop"""
+        print("FGCom Client Starting...")
+        
+        # Authenticate
+        if not self.authenticate():
+            print("Authentication failed!")
+            return
+        
+        print("Authentication successful!")
+        
+        # Main loop
+        while True:
+            try:
+                # Get server status
+                status = self.get_server_status()
+                print(f"Server status: {status['data']['pending_units']} pending, "
+                      f"{status['data']['processing_units']} processing")
+                
+                # Calculate propagation
+                result = self.calculate_propagation(
+                    lat1=40.7128, lon1=-74.0060, alt1=100.0,
+                    lat2=40.7589, lon2=-73.9851, alt2=200.0,
+                    frequency_mhz=14.175, tx_power_watts=100.0
+                )
+                
+                if result["success"]:
+                    print(f"Signal quality: {result['data']['signal_quality']:.2f}")
+                    print(f"Signal strength: {result['data']['signal_strength_db']:.1f} dB")
+                    print(f"Distance: {result['data']['distance_km']:.1f} km")
+                
+                # Wait before next calculation
+                time.sleep(5)
+                
+            except KeyboardInterrupt:
+                print("\nStopping client...")
+                break
+            except Exception as e:
+                print(f"Error: {e}")
+                time.sleep(10)
+
+# Usage
+if __name__ == "__main__":
+    client = FGComClient("http://localhost:8080", "client_001", "ak_1234567890abcdef")
+    client.run()
+```
+
+### 4. C++ Client Example
+
+Create a simple C++ client:
+
+```cpp
+#include "client_work_unit_coordinator.h"
+#include <iostream>
+#include <thread>
+#include <chrono>
+
+int main() {
+    std::cout << "FGCom C++ Client Starting..." << std::endl;
+    
+    // Initialize client coordinator
+    auto& coordinator = FGCom_ClientWorkUnitCoordinator::getInstance();
+    
+    if (!coordinator.initialize("http://localhost:8080", "client_001")) {
+        std::cerr << "Failed to initialize client coordinator" << std::endl;
+        return 1;
+    }
+    
+    // Set client capabilities
+    ClientWorkUnitCapability capability;
+    capability.client_id = "client_001";
+    capability.supported_types = {
+        WorkUnitType::PROPAGATION_GRID,
+        WorkUnitType::ANTENNA_PATTERN
+    };
+    capability.max_memory_mb = 2048;
+    capability.supports_gpu = true;
+    capability.supports_double_precision = true;
+    capability.network_bandwidth_mbps = 100.0;
+    capability.processing_latency_ms = 50.0;
+    capability.is_online = true;
+    
+    coordinator.setClientCapability(capability);
+    coordinator.enableAutoWorkUnitRequests(true);
+    
+    std::cout << "Client initialized successfully" << std::endl;
+    
+    // Main loop
+    while (true) {
+        try {
+            // Get current status
+            auto stats = coordinator.getStatistics();
+            auto assigned_units = coordinator.getAssignedWorkUnits();
+            auto processing_units = coordinator.getProcessingWorkUnits();
+            
+            std::cout << "Status: " << assigned_units.size() << " assigned, " 
+                      << processing_units.size() << " processing" << std::endl;
+            
+            // Print statistics
+            for (const auto& stat : stats) {
+                std::cout << "  " << stat.first << ": " << stat.second << std::endl;
+            }
+            
+            // Sleep for a bit
+            std::this_thread::sleep_for(std::chrono::seconds(10));
+            
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+        }
+    }
+    
+    // Shutdown
+    coordinator.shutdown();
+    std::cout << "Client shutdown complete" << std::endl;
+    
+    return 0;
+}
+```
 
 ## Advanced Configuration
 
-### **Server Configuration (625+ Options)**
+### 1. High Security Setup
 
-**Main configuration file:**
-```bash
-cp configs/fgcom-mumble.conf.example fgcom-mumble.conf
-nano fgcom-mumble.conf
+For production environments with high security requirements:
+
+```ini
+[security]
+level = high
+encryption_enabled = true
+signature_validation_enabled = true
+rate_limiting_enabled = true
+monitoring_enabled = true
+multi_factor_auth = true
+
+[work_units]
+max_concurrent_units = 20
+max_queue_size = 2000
+unit_timeout_ms = 60000
+enable_retry = true
+max_retries = 5
+retry_delay_ms = 2000
 ```
 
-**Key configuration sections:**
-- **Amateur Radio**: 60+ options for band plans, power limits, ITU regions
-- **Terrain Elevation**: 40+ options for elevation data sources
-- **Solar Data**: 20+ options for NOAA/SWPC integration
-- **Propagation**: 30+ options for radio wave modeling
-- **Antenna System**: 40+ options for antenna patterns
-- **API Server**: 20+ options for RESTful API
-- **Audio Processing**: 15+ options for audio effects
-- **Logging**: 15+ options for debug and monitoring
-- **Performance**: 20+ options for threading and caching
-- **GPU Resource Limiting**: 25+ options for GPU management
+### 2. GPU Acceleration Setup
 
-### **Radio Configuration**
+Enable GPU acceleration for better performance:
 
-**Frequency Setup:**
-- Manual frequency entry (MHz)
-- Band compliance checking
-- Power limit validation
-- Mode validation (CW vs SSB)
+```ini
+[gpu]
+enabled = true
+cuda_enabled = true
+opencl_enabled = true
+max_memory_mb = 8192
+utilization_threshold = 80.0
+temperature_threshold = 85.0
+```
 
-**Location Setup:**
-- Latitude/longitude coordinates
-- Altitude above sea level
-- Antenna height
-- Ground system configuration
+### 3. Load Balancing Setup
 
-### **Network Configuration**
+Configure load balancing for multiple clients:
 
-**UDP Ports:**
-- Default: 16661 (configurable)
-- Firewall configuration required
-- Port forwarding for external access
+```ini
+[load_balancing]
+enabled = true
+algorithm = weighted_round_robin
+health_check_interval = 30
+failover_threshold = 3
+```
 
-**Channel Management:**
-- Channel naming convention
-- Permission settings
-- User management
+### 4. Monitoring Setup
+
+Enable comprehensive monitoring:
+
+```ini
+[monitoring]
+enabled = true
+log_level = INFO
+metrics_enabled = true
+alerting_enabled = true
+dashboard_enabled = true
+```
 
 ## Troubleshooting
 
-### **Common Issues**
+### Common Issues
 
-**Plugin not loading:**
-- Check Mumble version compatibility
-- Verify plugin file integrity
-- Check file permissions
+1. **Server won't start**
+   - Check if port 8080 is available
+   - Verify SSL certificates are valid
+   - Check configuration file syntax
 
-**Connection issues:**
-- Verify server configuration
-- Check firewall settings
-- Test UDP port connectivity
+2. **Client authentication fails**
+   - Verify API key is correct
+   - Check client ID matches registration
+   - Ensure server is running
 
-**Audio problems:**
-- Check audio device configuration
-- Verify PTT settings
-- Test microphone levels
+3. **Work units not processing**
+   - Check client capabilities
+   - Verify network connectivity
+   - Check server logs for errors
 
-**Game integration issues:**
-- Verify game-specific setup
-- Check SimConnect configuration (MSFS)
-- Test FlightGear addon installation
+4. **Rate limit exceeded**
+   - Reduce request frequency
+   - Check rate limit configuration
+   - Contact administrator for limit increases
 
-### **Debug Information**
+### Debug Commands
 
-**Enable debug logging:**
-```ini
-[logging]
-enable_file_logging = true
-log_level = debug
-enable_udp_logging = true
-enable_propagation_logging = true
-```
-
-**Check logs:**
 ```bash
-# Linux
-tail -f /var/log/fgcom-mumble/fgcom-mumble.log
+# Check server health
+curl http://localhost:8080/health
 
-# Windows
-type %USERPROFILE%\fgcom-mumble.log
+# Check API info
+curl http://localhost:8080/api/info
+
+# Check work unit status
+curl http://localhost:8080/api/v1/work-units/status
+
+# Check security status
+curl http://localhost:8080/api/v1/security/status
+
+# Check server logs
+tail -f server.log
+
+# Check system resources
+htop
+nvidia-smi  # If using GPU
 ```
 
-## Security Considerations
+### Log Analysis
 
-### **Server Security**
-- Use strong passwords
-- Enable SSL/TLS encryption
-- Configure firewall rules
-- Regular security updates
+```bash
+# Check for errors
+grep "ERROR" server.log
 
-### **Network Security**
-- Use VPN for remote access
-- Encrypt sensitive data
-- Monitor for abuse
-- Implement rate limiting
+# Check for authentication issues
+grep "AUTH" server.log
 
-## Performance Optimization
+# Check for rate limiting
+grep "RATE_LIMIT" server.log
 
-### **Server Performance**
-- Configure thread pools
-- Enable caching
-- Monitor resource usage
-- Optimize database queries
+# Check for security events
+grep "SECURITY" server.log
+```
 
-### **Client Performance**
-- Adjust audio quality settings
-- Configure GPU acceleration
-- Monitor memory usage
-- Optimize network settings
+### Performance Monitoring
 
-## Support and Resources
+```bash
+# Monitor CPU usage
+top -p $(pgrep fgcom-mumble-server)
 
-### **Documentation**
-- [API Reference](API_REFERENCE_COMPLETE.md)
-- [Technical Documentation](TECHNICAL_DOCUMENTATION.md)
-- [Amateur Radio Terminology](AMATEUR_RADIO_TERMINOLOGY.md)
-- [GPU Resource Limiting Guide](GPU_RESOURCE_LIMITING_GUIDE.md)
+# Monitor memory usage
+ps aux | grep fgcom-mumble-server
 
-### **Community Support**
-- GitHub Issues: Report bugs and request features
-- Documentation: Comprehensive technical guides
-- Examples: Code samples and configuration templates
+# Monitor network connections
+netstat -an | grep 8080
 
-### **Professional Support**
-- For enterprise deployments
-- Custom configuration assistance
-- Training and consulting services
+# Monitor disk I/O
+iostat -x 1
+```
 
----
+## Next Steps
 
-**Important Note**: FGCom-mumble is a complex system requiring significant technical expertise. This is not a "plug and play" solution. Users should have server administration experience and understanding of radio communication principles before attempting installation.
+1. **Read the full documentation**:
+   - [Work Unit Distribution API](WORK_UNIT_DISTRIBUTION_API.md)
+   - [Security API Documentation](SECURITY_API_DOCUMENTATION.md)
+   - [Complete API Reference](API_REFERENCE_COMPLETE.md)
+
+2. **Explore advanced features**:
+   - GPU acceleration
+   - Load balancing
+   - Security monitoring
+   - Custom work unit types
+
+3. **Join the community**:
+   - GitHub Issues: https://github.com/Supermagnum/fgcom-mumble/issues
+   - Discussions: https://github.com/Supermagnum/fgcom-mumble/discussions
+
+4. **Contribute**:
+   - Submit bug reports
+   - Suggest new features
+   - Submit pull requests
+
+## Conclusion
+
+You now have a working FGCom-mumble distributed work unit system! The system provides secure, scalable distributed computing for radio propagation calculations with comprehensive monitoring and management capabilities.

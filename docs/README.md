@@ -6,19 +6,20 @@ FGCom-mumble is a distributed radio propagation calculation system that enables 
 
 ## Table of Contents
 
-1. [Quick Start Guide](QUICK_START_GUIDE.md) - Get started quickly
-2. [API Reference](API_REFERENCE_COMPLETE.md) - Complete API documentation
-3. [Work Unit Distribution](WORK_UNIT_DISTRIBUTION_API.md) - Distributed computing features
-4. [Security Guide](SECURITY_API_DOCUMENTATION.md) - Security implementation
-5. [User Guide](USER_GUIDE_SIMPLE.md) - User documentation
-6. [Noise Floor Distance Guide](NOISE_FLOOR_DISTANCE_GUIDE.md) - Distance-based noise falloff
-7. [Environment Detection Guide](ENVIRONMENT_DETECTION_GUIDE.md) - Environment detection methods
-8. [GPU Acceleration Guide](GPU_ACCELERATION_GUIDE.md) - GPU acceleration modes and configuration
-9. [Technical Documentation](#technical-documentation) - Technical details
+1. [Technical Setup Guide](TECHNICAL_SETUP_GUIDE.md) - Comprehensive setup instructions
+2. [Game Developer Integration Guide](GAME_DEVELOPER_INTEGRATION_GUIDE.md) - Integration guide for game developers and modders
+3. [API Reference](API_REFERENCE_COMPLETE.md) - Complete API documentation
+4. [Work Unit Distribution](WORK_UNIT_DISTRIBUTION_API.md) - Distributed computing features
+5. [Security Guide](SECURITY_API_DOCUMENTATION.md) - Security implementation
+6. [Technical User Guide](TECHNICAL_USER_GUIDE.md) - Technical user documentation
+7. [Noise Floor Distance Guide](NOISE_FLOOR_DISTANCE_GUIDE.md) - Distance-based noise falloff
+8. [Environment Detection Guide](ENVIRONMENT_DETECTION_GUIDE.md) - Environment detection methods
+9. [GPU Acceleration Guide](GPU_ACCELERATION_GUIDE.md) - GPU acceleration modes and configuration
+10. [Technical Documentation](#technical-documentation) - Technical details
 
-## Quick Start
+## Technical Setup
 
-1. **Server Setup**: Follow the [Quick Start Guide](QUICK_START_GUIDE.md)
+1. **Server Setup**: Follow the [Technical Setup Guide](TECHNICAL_SETUP_GUIDE.md)
 2. **Client Registration**: Register clients with the security system
 3. **Work Unit Processing**: Start processing distributed calculations
 4. **Monitoring**: Monitor system performance and security
