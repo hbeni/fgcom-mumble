@@ -22,15 +22,35 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - Modularity, so individual components can be easily updated and extended with new features
 - Good and complete documentation
 
-### **Perfect for Gamers and Non-Technical Users!**
-- **Easy Setup**: No technical knowledge required - just install and play!
-- **Game Compatibility**: Works with popular games like Microsoft Flight Simulator, X-Plane, DCS World, Arma 3, Squad, and many more
-- **Realistic Communication**: Experience authentic radio procedures used by real pilots, soldiers, and emergency responders
-- **Educational Value**: Learn real radio communication skills while having fun
-- **Community Support**: Join a friendly community of aviation and military simulation enthusiasts
-- **Free to Use**: No cost, no subscriptions, just download and start communicating!
+### **Realistic Radio Communication Simulator**
+- **Technical Setup Required**: Server administration and technical configuration needed
+- **Primary Support**: FlightGear (native) and Microsoft Flight Simulator 2020 (via RadioGUI)
+- **Realistic Communication**: Experience authentic radio procedures used by real pilots and operators
+- **Educational Value**: Learn real radio communication skills and propagation physics
+- **Community Support**: Join a community of aviation and radio simulation enthusiasts
+- **Free to Use**: Open source with comprehensive documentation
 
-**[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** - Perfect for beginners and non-technical users!
+**[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Comprehensive setup guide for administrators and technical users
+
+## ⚠️ **Important: Technical Complexity Assessment**
+
+**FGCom-mumble is NOT a simple "plug and play" system.** It requires:
+
+- **Server Administration**: Linux/Windows server management experience
+- **Technical Configuration**: 625+ configuration options across 17 categories
+- **Network Setup**: UDP port configuration, firewall rules, channel management
+- **Radio Knowledge**: Understanding of amateur radio frequencies and propagation
+- **Complex Installation**: Multi-step process with dependencies and manual configuration
+
+**Supported Platforms:**
+- **FlightGear**: Native integration (recommended for beginners)
+- **Microsoft Flight Simulator 2020**: Via RadioGUI with SimConnect (requires technical setup)
+- **Other Games**: Manual integration through Mumble voice chat (no automatic detection)
+
+**Realistic Setup Time:**
+- **Basic Setup**: 2-4 hours for experienced administrators
+- **Advanced Configuration**: 1-2 days for full feature setup
+- **Troubleshooting**: Additional time for configuration issues
 
 ### New Advanced Features (v2.0+):
 - **Multi-threaded Architecture**: [7 specialized background threads for optimal performance](docs/TECHNICAL_DOCUMENTATION.md#threading-architecture) - Learn how the threading system works and what each thread does
@@ -98,7 +118,8 @@ The documentation is split up into relevant parts:
 - [SECURITY.md](config/SECURITY.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
 
 ### User Documentation:
-- **[Simple User Guide](docs/USER_GUIDE_SIMPLE.md)** **Perfect for non-technical users and gamers!** Easy-to-understand guide explaining what FGCom-mumble is, what it can do, and how to use it with popular games and flight simulators.
+- **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** **Comprehensive setup guide for administrators and technical users** - Honest assessment of complexity and detailed setup instructions
+- **[User Guide](docs/USER_GUIDE_SIMPLE.md)** **Realistic overview** - Understanding what FGCom-mumble is and its actual capabilities
 
 ### Advanced Features Documentation:
 - [API Reference Complete](docs/API_REFERENCE_COMPLETE.md) Complete RESTful API and WebSocket documentation

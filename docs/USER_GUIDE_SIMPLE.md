@@ -27,11 +27,11 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 - **Role-Playing Games** (for realistic communication)
 - **Anyone who wants realistic radio communication in games**
 
-### **No Technical Knowledge Required!**
-- **Easy to install and use**
-- **Works with popular games**
-- **No programming skills needed**
-- **Just plug and play!**
+### **Technical Knowledge Required!**
+- **Server administration skills needed**
+- **Manual configuration required**
+- **Understanding of radio frequencies and propagation**
+- **Complex setup process with multiple steps**
 
 ---
 
@@ -89,50 +89,39 @@ FGCom-mumble is a **realistic radio communication simulator** that works with fl
 
 ---
 
-## **Popular Games That Work With FGCom-mumble**
+## **Supported Platforms and Games**
 
-### **Flight Simulators**
-- **Microsoft Flight Simulator 2020**
-- **X-Plane 11/12**
-- **Prepar3D**
-- **DCS World**
-- **IL-2 Sturmovik**
+### **Native Integration (Full Support)**
+- **FlightGear** - Complete native integration with addon
+- **Microsoft Flight Simulator 2020** - Via RadioGUI with SimConnect (requires manual setup)
 
-### **Military Simulations**
-- **Arma 3**
-- **Squad**
-- **Hell Let Loose**
-- **Post Scriptum**
-- **Rising Storm 2: Vietnam**
+### **Manual Integration (External Voice Chat)**
+- **Any game that can run alongside Mumble voice chat**
+- **Requires manual coordination between players**
+- **No automatic game detection or integration**
 
-### **Racing Games**
-- **Assetto Corsa**
-- **iRacing**
-- **Project CARS**
-- **F1 2023**
-- **Gran Turismo** (with mods)
-
-### **Other Games**
-- **DayZ** (survival)
-- **Rust** (survival)
-- **Escape from Tarkov** (tactical)
-- **Any game with voice chat!**
+### **Technical Requirements**
+- **Server Administration**: Mumble server setup and management
+- **Technical Configuration**: Manual frequency setup and radio configuration
+- **Network Setup**: UDP port configuration and channel management
+- **Radio Knowledge**: Understanding of amateur radio frequencies and procedures
 
 ---
 
 ## **How Does It Work?**
 
-### **Simple Setup Process**
-1. **Download and install** FGCom-mumble
-2. **Connect to your game** (automatic detection)
-3. **Choose your radio type** (handheld, vehicle, base station)
-4. **Start talking!** (just like a real radio)
-
-### **No Complex Configuration Needed**
-- **Automatic game detection**
-- **Pre-configured radio settings**
-- **Easy frequency selection**
-- **One-click setup**
+### **Complex Setup Process**
+1. **Install Mumble server** (requires server administration)
+2. **Install Mumble client** and FGCom-mumble plugin
+3. **Configure server channels** (channels starting with `fgcom-mumble`)
+4. **Manual frequency setup** for each radio
+5. **Configure PTT settings** and location data
+6. **Join appropriate channels** and coordinate with other players
+### **Complex Configuration Required**
+- **Manual game integration** (no automatic detection)
+- **Manual radio configuration** (frequencies, power, location)
+- **Technical frequency setup** (requires radio knowledge)
+- **Multi-step installation** and configuration process
 
 ---
 
