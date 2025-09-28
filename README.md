@@ -98,7 +98,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 ### Latest Updates (v2.4+):
 - **Radio Model Configuration**: [Comprehensive radio model system with NATO and Soviet/Warsaw Pact equipment support](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md) - Server-side radio model configuration and management
 - **Preset Channel Management**: [Advanced preset channel system for military radios with 99 presets support](docs/PRESET_CHANNEL_API_DOCUMENTATION.md) - Preset channel configuration and read-only API access
-- **Military Radio Equipment**: [Complete implementation of AN/PRC-152, AN/PRC-77, AN/PRC-148, R-105, R-107, R-123 Magnolia and more](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#radio-model-configuration) - Military radio specifications and channel management
+- **Military Radio Equipment**: [Implementation of AN/PRC-152, AN/PRC-77, AN/PRC-148, R-105, R-107, R-123 Magnolia and more](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#radio-model-configuration) - Military radio specifications and channel management
 - **Configuration-Based System**: [All radio models and presets defined in JSON configuration files](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#configuration-files) - Server-side configuration management *(Note: Radio encryption simulation is not yet implemented)*
 - **Missing Implementation**: Radio technical data specifications have not been implemented, and there are currently no antenna radiation patterns created for handheld or portable radio sets
 - **GPU Resource Limiting**: [Intelligent GPU resource management for Client-Only and Hybrid modes with game detection and adaptive limits](docs/GPU_RESOURCE_LIMITING_GUIDE.md) - GPU resource management and performance optimization
