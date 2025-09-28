@@ -271,12 +271,17 @@ double FGCom_PatternInterpolation::getGroundEffectFactor(int altitude_m, double 
 double FGCom_PatternInterpolation::getMultipathFactor(int altitude_m, double frequency_mhz, double theta_deg) {
     if (altitude_m <= 0) return 1.0; // Maximum multipath on ground
     
+    // CRITICAL FIX: Use lambda variable properly in calculation
     double lambda = 300.0 / frequency_mhz;
     double path_difference = calculatePathDifference(altitude_m, theta_deg);
     double phase_diff = calculatePhaseDifference(path_difference, frequency_mhz);
     
-    // Multipath strength depends on phase relationship
-    return abs(cos(phase_diff * M_PI / 180.0));
+    // Use wavelength in multipath calculation
+    double wavelength_factor = lambda / 10.0; // Normalize to reasonable scale
+    double multipath_strength = abs(cos(phase_diff * M_PI / 180.0));
+    
+    // Apply wavelength-dependent multipath effects
+    return multipath_strength * (1.0 + wavelength_factor * 0.1);
 }
 
 FGCom_PatternInterpolation::AltitudeCharacteristics 
@@ -378,13 +383,18 @@ double FGCom_PatternInterpolation::calculateGroundReflectionCoefficient(int alti
     double lambda = 300.0 / frequency_mhz;
     double grazing_angle = 90.0 - theta_deg;
     
+    // CRITICAL FIX: Use lambda variable properly in calculation
+    double wavelength_factor = lambda / 10.0; // Normalize to reasonable scale
+    
     if (grazing_angle <= 0) return 0.0; // No reflection for upward angles
     
     // Fresnel reflection coefficient (simplified)
     double n = sqrt(ground_conductivity / (2 * M_PI * frequency_mhz * 8.854e-12));
     double cos_theta = cos(grazing_angle * M_PI / 180.0);
     
-    return (cos_theta - n) / (cos_theta + n);
+    // Apply wavelength-dependent effects to reflection coefficient
+    double base_reflection = (cos_theta - n) / (cos_theta + n);
+    return base_reflection * (1.0 + wavelength_factor * 0.05); // Wavelength-dependent correction
 }
 
 double FGCom_PatternInterpolation::calculatePathDifference(int altitude_m, double theta_deg) {

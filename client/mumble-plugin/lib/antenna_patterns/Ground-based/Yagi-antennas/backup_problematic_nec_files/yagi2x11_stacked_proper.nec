@@ -1,0 +1,95 @@
+CM 2-Meter Stacked Yagi Array - 144 MHz
+CM Two 11-element Yagis stacked at lambda/2 spacing
+CM Height: 10 meters above ground
+CM Feed: Single feedpoint with power divider
+CM Designed for EME operation
+CE
+SY freq=144        'Operating frequency in MHz
+SY lambda=300/freq 'Wavelength in meters
+SY halfwave=lambda/2 'Half wavelength for stacking
+SY height=10       'Height above ground in meters
+SY boomlen=3       'Boom length in meters
+SY el_dia=0.006    'Element diameter (6mm)
+SY boom_dia=0.025  'Boom diameter (25mm)
+GE 0
+'
+' LOWER YAGI ANTENNA (Y = -halfwave/2)
+'
+' Reflector
+GW 1 1 -boomlen/2 -halfwave/2 height -boomlen/2 -halfwave/2 height el_dia
+GW 2 1 boomlen/2 -halfwave/2 height boomlen/2 -halfwave/2 height el_dia
+GW 3 1 -boomlen/2 -halfwave/2 height boomlen/2 -halfwave/2 height el_dia
+'
+' Driven Element (Lower antenna)
+GW 4 11 -0.52 -halfwave/2 height 0.52 -halfwave/2 height el_dia
+'
+' Directors (Lower antenna)
+GW 5 1 -0.65 -halfwave/2+0.25 height 0.65 -halfwave/2+0.25 height el_dia
+GW 6 1 -0.62 -halfwave/2+0.45 height 0.62 -halfwave/2+0.45 height el_dia
+GW 7 1 -0.60 -halfwave/2+0.65 height 0.60 -halfwave/2+0.65 height el_dia
+GW 8 1 -0.58 -halfwave/2+0.85 height 0.58 -halfwave/2+0.85 height el_dia
+GW 9 1 -0.56 -halfwave/2+1.05 height 0.56 -halfwave/2+1.05 height el_dia
+GW 10 1 -0.54 -halfwave/2+1.25 height 0.54 -halfwave/2+1.25 height el_dia
+GW 11 1 -0.52 -halfwave/2+1.45 height 0.52 -halfwave/2+1.45 height el_dia
+GW 12 1 -0.50 -halfwave/2+1.65 height 0.50 -halfwave/2+1.65 height el_dia
+GW 13 1 -0.48 -halfwave/2+1.85 height 0.48 -halfwave/2+1.85 height el_dia
+'
+' Boom (Lower antenna)
+GW 14 30 -boomlen/2 -halfwave/2 height boomlen/2 -halfwave/2 height boom_dia
+'
+' UPPER YAGI ANTENNA (Y = +halfwave/2)
+'
+' Reflector (Upper antenna)
+GW 21 1 -boomlen/2 halfwave/2 height -boomlen/2 halfwave/2 height el_dia
+GW 22 1 boomlen/2 halfwave/2 height boomlen/2 halfwave/2 height el_dia
+GW 23 1 -boomlen/2 halfwave/2 height boomlen/2 halfwave/2 height el_dia
+'
+' Driven Element (Upper antenna)
+GW 24 11 -0.52 halfwave/2 height 0.52 halfwave/2 height el_dia
+'
+' Directors (Upper antenna)
+GW 25 1 -0.65 halfwave/2+0.3 height 0.65 halfwave/2+0.3 height el_dia
+GW 26 1 -0.62 halfwave/2+0.5 height 0.62 halfwave/2+0.5 height el_dia
+GW 27 1 -0.60 halfwave/2+0.7 height 0.60 halfwave/2+0.7 height el_dia
+GW 28 1 -0.58 halfwave/2+0.9 height 0.58 halfwave/2+0.9 height el_dia
+GW 29 1 -0.56 halfwave/2+1.1 height 0.56 halfwave/2+1.1 height el_dia
+GW 30 1 -0.54 halfwave/2+1.3 height 0.54 halfwave/2+1.3 height el_dia
+GW 31 1 -0.52 halfwave/2+1.5 height 0.52 halfwave/2+1.5 height el_dia
+GW 32 1 -0.50 halfwave/2+1.7 height 0.50 halfwave/2+1.7 height el_dia
+GW 33 1 -0.48 halfwave/2+1.9 height 0.48 halfwave/2+1.9 height el_dia
+'
+' Boom (Upper antenna)
+GW 34 30 -boomlen/2 halfwave/2 height boomlen/2 halfwave/2 height boom_dia
+'
+' POWER DISTRIBUTION NETWORK
+' 
+' Vertical connecting wire between driven elements (short power divider)
+GW 40 5 0 -halfwave/2 height 0 halfwave/2 height 0.004
+'
+' Connect booms to ground for mechanical support
+GW 41 1 0 -halfwave/2 height 0 -halfwave/2 0 boom_dia
+GW 42 1 0 halfwave/2 height 0 halfwave/2 0 boom_dia
+'
+' Ground connection point
+GW 43 1 0 -0.1 0 0 0.1 0 boom_dia
+'
+GE 1
+'
+' GROUND PARAMETERS
+' Medium conductivity ground (typical)
+GN 2 0 0 0 13 0.005
+'
+' FREQUENCY
+FR 0 1 0 0 freq 0
+'
+' EXCITATION - Single feedpoint at center of connecting wire
+EX 0 40 3 0 1.0 0.0
+'
+' RADIATION PATTERN
+' Az pattern at elevation = 10 degrees
+RP 0 37 73 1000 10 0 5 5
+'
+' NEAR FIELD - Optional
+' NE 0 10 10 1 0 0 2.0 0 0 2.0 0 0 4.0
+'
+EN

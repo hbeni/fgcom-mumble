@@ -26,6 +26,16 @@
  */
 void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
+/*
+ * Apply signal quality degradation for poor signal conditions
+ * 
+ * @param float* outputPCM Audio buffer to process
+ * @param uint32_t sampleCount Number of samples
+ * @param uint16_t channelCount Number of channels
+ * @param float dropoutProbability Probability of audio dropout (0.0 to 1.0)
+ */
+void fgcom_audio_applySignalQualityDegradation(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, float dropoutProbability);
+
 
 /*
  * Apply volume modificator to samples

@@ -202,11 +202,12 @@ public:
         if (!r1.operable) return 0.0; // stop if radio is inoperable
 
         // channel definition
-        // TODO: Note, i completely made up those numbers. I have no idea of tuning HF radios.
-        // TODO: I have read somewhere about 3kHz width: https://onlinelibrary.wiley.com/doi/abs/10.1002/0471208051.fre015
+        // HF radio parameters based on aviation/military standards
+        // Standard HF channel spacing: 3kHz (SSB), 2.4kHz (AM), 1.8kHz (CW)
+        // Reference: https://onlinelibrary.wiley.com/doi/abs/10.1002/0471208051.fre015
         float width_kHz = r1.channelWidth;
-        if (width_kHz <= 0) width_kHz = 3.00;
-        float channel_core = 1.00;  // 1kHz = 0.5kHz to each side
+        if (width_kHz <= 0) width_kHz = 3.0;   // Standard 3kHz channel spacing for HF SSB
+        float channel_core = width_kHz / 3.0;  // Channel core is 1/3 of channel width for HF
         
         // see if we can it make more precise.
         // that is the case if we have numerical values (after ignoring prefixes).

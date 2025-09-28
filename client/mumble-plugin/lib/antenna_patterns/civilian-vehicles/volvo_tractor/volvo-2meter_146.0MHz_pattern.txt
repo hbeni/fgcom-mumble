@@ -1,6 +1,0 @@
-# Radiation Pattern Data
-# Generated from: volvo-2meter_37.out
-# Frequency: 146.0 MHz
-# Format: Theta Phi Gain_dBi Phase_deg
-# Theta: elevation angle (0-180 degrees)
-# Phi: azimuth angle (0-360 degrees)

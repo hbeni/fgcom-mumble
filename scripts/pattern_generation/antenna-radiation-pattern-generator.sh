@@ -228,10 +228,11 @@ is_yagi_6m_and_above() {
     # Check if it's a Yagi antenna
     if [[ "$path_lower" == *"yagi"* ]] || [[ "$filename_lower" == *"yagi"* ]]; then
         # Check if it's 6 meters and above (include 2m/144MHz and 70cm/432MHz as they are above 6m)
-        if [[ "$path_lower" == *"yagi_6m"* ]] || [[ "$path_lower" == *"yagi_10m"* ]] || \
+        if [[ "$path_lower" == *"yagi_4m"* ]] || [[ "$path_lower" == *"4m_yagi"* ]] || [[ "$path_lower" == *"yagi_6m"* ]] || [[ "$path_lower" == *"yagi_10m"* ]] || \
            [[ "$path_lower" == *"yagi_15m"* ]] || [[ "$path_lower" == *"yagi_20m"* ]] || \
            [[ "$path_lower" == *"yagi_30m"* ]] || [[ "$path_lower" == *"yagi_40m"* ]] || \
-           [[ "$path_lower" == *"yagi_144mhz"* ]] || [[ "$path_lower" == *"yagi_70cm"* ]]; then
+           [[ "$path_lower" == *"yagi_144mhz"* ]] || [[ "$path_lower" == *"yagi_2x-stack_144mhz"* ]] || \
+           [[ "$path_lower" == *"yagi_70cm"* ]]; then
             log_debug "Detected Yagi 6m+ antenna: $file_path"
             return 0
         fi
@@ -248,30 +249,61 @@ get_vehicle_name() {
     basename "$dir_name"
 }
 
-# Safe NEC2 simulation with short filenames
+# NEC2 EXTERNAL TOOL INTERFACE
+# This function provides a safe interface to the NEC2 electromagnetic simulation tool
+# NEC2 is a numerical electromagnetic code that calculates antenna radiation patterns
+# 
+# NEC2 FILE FORMAT REQUIREMENTS:
+# - Input files must have .nec extension
+# - Output files must have .out extension  
+# - File paths must be short (8.3 format) for maximum compatibility
+# - NEC2 expects specific command format: nec2c -i input.nec -o output.out
+#
+# NEC2 COMMAND LINE INTERFACE:
+# nec2c -i <input_file> -o <output_file>
+#   -i: Input NEC file (antenna geometry)
+#   -o: Output file (radiation pattern data)
+#   Returns: 0 on success, non-zero on failure
+#
+# NEC2 OUTPUT FORMAT:
+# The output file contains radiation pattern data in NEC2 format:
+# - Header with antenna information
+# - Radiation pattern data (gain vs angle)
+# - Frequency and power information
+# - Error messages if simulation fails
 run_nec_simulation_safe() {
-    local input_nec="$1"
-    local output_file="$2"
+    local input_nec="$1"    # Input NEC file path
+    local output_file="$2"  # Output file path
     
-    # Create very short temporary filenames (8.3 format for maximum compatibility)  
+    # NEC2 FILENAME LENGTH LIMITATION WORKAROUND:
+    # NEC2 has issues with long filenames, so we create short temporary files
+    # This ensures maximum compatibility across different systems and NEC2 versions
     local temp_dir="${TMPDIR:-/tmp}"
-    local short_input="$temp_dir/n$$.nec"
-    local short_output="$temp_dir/n$$.out"
+    local unique_id="$$_$(date +%s%N)_${BASHPID:-$$}_$RANDOM"
+    local short_input="$temp_dir/n${unique_id}.nec"   # Short input filename
+    local short_output="$temp_dir/n${unique_id}.out"  # Short output filename
     
     log_debug "nec2c workaround: $input_nec -> $short_input"
     
-    # Copy input to short filename
+    # FILE COPY OPERATION:
+    # Copy input file to short filename for NEC2 compatibility
+    # This step is critical - NEC2 may fail with long or complex filenames
     if ! cp "$input_nec" "$short_input"; then
         log_error "Failed to copy to temporary file: $short_input"
         return 1
     fi
     
-    # Run nec2c with short filenames
+    # NEC2 EXECUTION:
+    # Run the NEC2 electromagnetic simulation with short filenames
+    # NEC2 calculates antenna radiation patterns using numerical methods
     local nec_result=1
-    if nec2c -i "$short_input" -o "$short_output" 2>/dev/null; then
-        # Verify output file was created and has content
+    if nec2c -i "$short_input" -o "$short_output" 2>&1; then
+        # OUTPUT VERIFICATION:
+        # Verify that NEC2 produced valid output with content
+        # Empty output files indicate simulation failure
         if [ -f "$short_output" ] && [ -s "$short_output" ]; then
-            # Copy result back to desired location
+            # COPY RESULT:
+            # Copy the simulation result back to the desired output location
             if cp "$short_output" "$output_file"; then
                 nec_result=0
                 log_debug "nec2c completed successfully"
@@ -285,8 +317,10 @@ run_nec_simulation_safe() {
         log_debug "nec2c execution failed"
     fi
     
-    # Always cleanup temporary files
-    rm -f "$short_input" "$short_output" 2>/dev/null
+    # DEBUGGING SUPPORT:
+    # Keep temporary files for debugging NEC2 issues
+    # Remove the comment below to clean up temporary files
+    # rm -f "$short_input" "$short_output" 2>/dev/null
     
     return $nec_result
 }
@@ -336,70 +370,109 @@ modify_nec_for_attitude() {
     cos_pitch=$(echo "scale=6; c($pitch_rad)" | bc -l)
     sin_pitch=$(echo "scale=6; s($pitch_rad)" | bc -l)
     
-    # Apply coordinate transformations using Python for reliable trigonometry
+    # COORDINATE TRANSFORMATION SYSTEM:
+    # This Python script performs 3D coordinate transformations for antenna orientation
+    # It handles aircraft attitude (pitch/roll) and altitude adjustments for NEC2 files
+    # 
+    # TRANSFORMATION ORDER:
+    # 1. Altitude offset (add height above ground)
+    # 2. Pitch rotation (nose up/down around Y axis)  
+    # 3. Roll rotation (wing up/down around X axis)
+    # 
+    # This matches standard aircraft attitude conventions and ensures proper
+    # antenna orientation for different vehicle attitudes and altitudes.
     python3 -c "
 import sys
 import math
 
-# Read pre-calculated trigonometric values from command line
-alt_offset = $altitude_wavelengths
-freq = $frequency
-cos_roll = $cos_roll
-sin_roll = $sin_roll
-cos_pitch = $cos_pitch
-sin_pitch = $sin_pitch
+# COORDINATE TRANSFORMATION PARAMETERS:
+# These values are pre-calculated using bc for maximum precision
+# They represent the trigonometric functions needed for 3D rotations
+alt_offset = $altitude_wavelengths  # Altitude in wavelengths (for NEC2 scaling)
+freq = $frequency                   # Frequency in MHz (for reference)
+cos_roll = $cos_roll               # Cosine of roll angle (rotation around X axis)
+sin_roll = $sin_roll               # Sine of roll angle (rotation around X axis)  
+cos_pitch = $cos_pitch             # Cosine of pitch angle (rotation around Y axis)
+sin_pitch = $sin_pitch             # Sine of pitch angle (rotation around Y axis)
 
+# FIXED INSTALLATION DETECTION:
 # Check if this is a fixed installation (no rotation needed)
+# Fixed installations have roll=0° and pitch=0° (cos=1, sin=0)
+# This optimization skips expensive 3D transformations for ground stations
 is_fixed_installation = (abs(cos_roll - 1.0) < 0.001 and abs(sin_roll) < 0.001 and 
                         abs(cos_pitch - 1.0) < 0.001 and abs(sin_pitch) < 0.001)
 
+# NEC2 FILE PROCESSING:
+# Process each line of the NEC2 file and transform geometry as needed
 with open('$output_nec', 'r') as f:
     for line in f:
         line = line.strip()
         if line.startswith('GW'):
-            # Wire geometry command - GW tag# segments# x1 y1 z1 x2 y2 z2 radius
+            # CRITICAL: NEC2 GW FORMAT REQUIREMENTS
+            # The GW (wire geometry) format is exactly: GW tag# segments# x1 y1 z1 x2 y2 z2 radius
+            # Do NOT add extra fields or the coordinate parsing will be shifted!
+            # This format is position-sensitive - any deviation breaks NEC2 geometry parsing
+            # The NEC2 parser expects exactly 9 fields: GW + 8 parameters
             parts = line.split()
-            if len(parts) >= 10:
+            if len(parts) >= 9:  # Must have exactly 9 fields (GW + 8 parameters)
                 try:
-                    tag = int(parts[1])
-                    segments = int(parts[2])
-                    x1 = float(parts[4])
-                    y1 = float(parts[5])
-                    z1 = float(parts[6])
-                    x2 = float(parts[7])
-                    y2 = float(parts[8])
-                    z2 = float(parts[9])
-                    radius = float(parts[10])
+                    # PARSE NEC2 GW LINE:
+                    # Extract all wire geometry parameters from the GW line
+                    tag = int(parts[1])        # Wire tag number (unique identifier)
+                    segments = int(parts[2])   # Number of segments (affects accuracy)
+                    x1 = float(parts[3])       # Start point X coordinate (meters)
+                    y1 = float(parts[4])       # Start point Y coordinate (meters)
+                    z1 = float(parts[5])       # Start point Z coordinate (meters)
+                    x2 = float(parts[6])      # End point X coordinate (meters)
+                    y2 = float(parts[7])      # End point Y coordinate (meters)
+                    z2 = float(parts[8])      # End point Z coordinate (meters)
+                    radius = float(parts[9])  # Wire radius (meters)
                     
                     if is_fixed_installation:
-                        # No transformation - just add altitude offset to Z coordinates
-                        new_z1 = z1 + alt_offset
-                        new_z2 = z2 + alt_offset
-                        print(f'GW {tag} {segments} 0 {x1:.6f} {y1:.6f} {new_z1:.6f} {x2:.6f} {y2:.6f} {new_z2:.6f} {radius:.6f}')
+                        # FIXED INSTALLATION PATH:
+                        # No rotation needed - just add altitude offset to Z coordinates
+                        # This is much faster and avoids unnecessary calculations
+                        new_z1 = z1 + alt_offset  # Add altitude to start point
+                        new_z2 = z2 + alt_offset  # Add altitude to end point
+                        # OUTPUT: GW tag segments x1 y1 z1 x2 y2 z2 radius (9 fields exactly)
+                        print(f'GW {tag} {segments} {x1:.6f} {y1:.6f} {new_z1:.6f} {x2:.6f} {y2:.6f} {new_z2:.6f} {radius:.6f}')
                     else:
-                        # Apply full 3D rotation transformations
-                        # First add altitude offset
-                        z1_alt = z1 + alt_offset
-                        z2_alt = z2 + alt_offset
+                        # 3D COORDINATE TRANSFORMATION PATH:
+                        # Apply full 3D rotation transformations for moving vehicles
+                        # Transformations are applied in order: altitude → pitch → roll
+                        # This matches aircraft attitude conventions (pitch then roll)
                         
-                        # Apply pitch rotation (rotation around Y axis)
+                        # STEP 1: ALTITUDE OFFSET
+                        # Add altitude offset to Z coordinates (height above ground)
+                        z1_alt = z1 + alt_offset  # Start point with altitude
+                        z2_alt = z2 + alt_offset  # End point with altitude
+                        
+                        # STEP 2: PITCH ROTATION (rotation around Y axis)
+                        # This rotates the antenna up/down (nose up/down)
+                        # Pitch affects X and Z coordinates (forward/backward and up/down)
                         new_x1 = x1 * cos_pitch + z1_alt * sin_pitch
                         new_z1_temp = -x1 * sin_pitch + z1_alt * cos_pitch
                         new_x2 = x2 * cos_pitch + z2_alt * sin_pitch
                         new_z2_temp = -x2 * sin_pitch + z2_alt * cos_pitch
 
-                        # Apply roll rotation (rotation around X axis)
+                        # STEP 3: ROLL ROTATION (rotation around X axis)
+                        # This rotates the antenna left/right (wing up/down)
+                        # Roll affects Y and Z coordinates (left/right and up/down)
                         new_y1 = y1 * cos_roll - new_z1_temp * sin_roll
                         new_z1 = y1 * sin_roll + new_z1_temp * cos_roll
                         new_y2 = y2 * cos_roll - new_z2_temp * sin_roll
                         new_z2 = y2 * sin_roll + new_z2_temp * cos_roll
 
-                        print(f'GW {tag} {segments} 0 {new_x1:.6f} {new_y1:.6f} {new_z1:.6f} {new_x2:.6f} {new_y2:.6f} {new_z2:.6f} {radius:.6f}')
+                        # OUTPUT: GW tag segments x1 y1 z1 x2 y2 z2 radius (9 fields exactly)
+                        # Any deviation from this format breaks NEC2 geometry parsing!
+                        print(f'GW {tag} {segments} {new_x1:.6f} {new_y1:.6f} {new_z1:.6f} {new_x2:.6f} {new_y2:.6f} {new_z2:.6f} {radius:.6f}')
                 except (ValueError, IndexError):
-                    # Malformed GW line - pass through unchanged
+                    # ERROR HANDLING: Malformed GW line - pass through unchanged
+                    # This prevents the script from crashing on invalid geometry
                     print(line)
             else:
-                # Malformed GW line - pass through unchanged
+                # ERROR HANDLING: Malformed GW line - pass through unchanged
+                # This ensures all lines are processed even if some are invalid
                 print(line)
         elif line.startswith('FR'):
             # Frequency command - update with specified frequency

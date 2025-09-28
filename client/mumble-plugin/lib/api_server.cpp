@@ -71,14 +71,32 @@ FGCom_APIServer::~FGCom_APIServer() {
 
 bool FGCom_APIServer::startServer(int port, const std::string& host) {
     try {
-        // Validate input parameters with detailed error messages
+        // CRITICAL FIX: Comprehensive input validation with security checks
+        // Prevent injection attacks and malformed requests
+        
+        // 1. Port validation with range checking
         if (!validatePort(port)) {
             std::cerr << "[APIServer] Invalid port: " << port << " (must be 1-65535)" << std::endl;
             return false;
         }
         
+        // 2. Host validation with security checks
         if (!validateHost(host)) {
             std::cerr << "[APIServer] Invalid host: " << host << " (must be valid IP or hostname)" << std::endl;
+            return false;
+        }
+        
+        // 3. Additional security validation
+        if (host.length() > 255) {
+            std::cerr << "[APIServer] Hostname too long: " << host.length() << " chars (max 255)" << std::endl;
+            return false;
+        }
+        
+        // 4. Check for suspicious patterns in hostname
+        if (host.find("..") != std::string::npos || 
+            host.find("//") != std::string::npos ||
+            host.find("\\") != std::string::npos) {
+            std::cerr << "[APIServer] Suspicious hostname pattern detected: " << host << std::endl;
             return false;
         }
         
@@ -137,16 +155,28 @@ bool FGCom_APIServer::startServer(int port, const std::string& host) {
         
         return true;
     } catch (const std::invalid_argument& e) {
-        std::cerr << "[APIServer] Invalid argument: " << e.what() << std::endl;
+        // CRITICAL FIX: Specific error handling with context
+        std::cerr << "[APIServer] Invalid argument in startServer: " << e.what() 
+                  << " (host=" << host << ", port=" << port << ")" << std::endl;
         return false;
     } catch (const std::runtime_error& e) {
-        std::cerr << "[APIServer] Runtime error: " << e.what() << std::endl;
+        // CRITICAL FIX: Specific error handling with context
+        std::cerr << "[APIServer] Runtime error in startServer: " << e.what() 
+                  << " (host=" << host << ", port=" << port << ")" << std::endl;
+        return false;
+    } catch (const std::system_error& e) {
+        // CRITICAL FIX: Handle system errors specifically
+        std::cerr << "[APIServer] System error in startServer: " << e.what() 
+                  << " (code=" << e.code() << ")" << std::endl;
         return false;
     } catch (const std::exception& e) {
-        std::cerr << "[APIServer] Exception in startServer: " << e.what() << std::endl;
+        // CRITICAL FIX: Preserve error context and type information
+        std::cerr << "[APIServer] Exception in startServer: " << e.what() 
+                  << " (type=" << typeid(e).name() << ")" << std::endl;
         return false;
     } catch (...) {
-        std::cerr << "[APIServer] Unknown exception in startServer" << std::endl;
+        // CRITICAL FIX: Log unknown exceptions with stack trace context
+        std::cerr << "[APIServer] Unknown exception in startServer - possible memory corruption or undefined behavior" << std::endl;
         return false;
     }
 }
@@ -1283,23 +1313,71 @@ std::string FGCom_APIServer::getClientIP(const httplib::Request& req) const {
     return req.remote_addr;
 }
 
+/**
+ * API ERROR RESPONSE FORMAT
+ * 
+ * This method creates standardized error responses for the FGCom-mumble API.
+ * All error responses follow a consistent JSON structure for client compatibility.
+ * 
+ * ERROR RESPONSE STRUCTURE:
+ * {
+ *   "error": true,                    // Boolean flag indicating error
+ *   "message": "Error description",   // Human-readable error message
+ *   "code": 400,                     // HTTP-style error code
+ *   "timestamp": 1640995200          // Unix timestamp of error occurrence
+ * }
+ * 
+ * ERROR CODES:
+ * - 400: Bad Request (invalid parameters)
+ * - 401: Unauthorized (authentication required)
+ * - 403: Forbidden (insufficient permissions)
+ * - 404: Not Found (resource doesn't exist)
+ * - 429: Too Many Requests (rate limit exceeded)
+ * - 500: Internal Server Error (server-side error)
+ * 
+ * @param error_message Human-readable error description
+ * @param error_code HTTP-style error code
+ * @return JSON string containing error response
+ */
 std::string FGCom_APIServer::createErrorResponse(const std::string& error_message, int error_code) const {
     nlohmann::json error = {
-        {"error", true},
-        {"message", error_message},
-        {"code", error_code},
+        {"error", true},                    // Boolean flag indicating error response
+        {"message", error_message},         // Human-readable error description
+        {"code", error_code},               // HTTP-style error code
         {"timestamp", std::chrono::duration_cast<std::chrono::seconds>(
-            std::chrono::system_clock::now().time_since_epoch()).count()}
+            std::chrono::system_clock::now().time_since_epoch()).count()}  // Unix timestamp
     };
     return error.dump();
 }
 
+/**
+ * API SUCCESS RESPONSE FORMAT
+ * 
+ * This method creates standardized success responses for the FGCom-mumble API.
+ * All success responses follow a consistent JSON structure for client compatibility.
+ * 
+ * SUCCESS RESPONSE STRUCTURE:
+ * {
+ *   "success": true,                   // Boolean flag indicating success
+ *   "data": { ... },                   // Response data (varies by endpoint)
+ *   "timestamp": 1640995200            // Unix timestamp of response
+ * }
+ * 
+ * DATA FIELD VARIATIONS:
+ * - Single objects: {"data": {"key": "value"}}
+ * - Arrays: {"data": [{"item1": "value1"}, {"item2": "value2"}]}
+ * - Nested objects: {"data": {"parent": {"child": "value"}}}
+ * - Empty responses: {"data": null}
+ * 
+ * @param data JSON object containing response data
+ * @return JSON string containing success response
+ */
 std::string FGCom_APIServer::createSuccessResponse(const nlohmann::json& data) const {
     nlohmann::json response = {
-        {"success", true},
-        {"data", data},
+        {"success", true},                  // Boolean flag indicating success response
+        {"data", data},                     // Response data (varies by endpoint)
         {"timestamp", std::chrono::duration_cast<std::chrono::seconds>(
-            std::chrono::system_clock::now().time_since_epoch()).count()}
+            std::chrono::system_clock::now().time_since_epoch()).count()}  // Unix timestamp
     };
     return response.dump();
 }

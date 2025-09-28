@@ -44,7 +44,8 @@
 void fgcom_gc_clean_lcl() {
     std::chrono::milliseconds lcl_timeout(FGCOM_GARBAGECOLLECT_TIMEOUT_LCL);
     
-    fgcom_localcfg_mtx.lock();
+    // CRITICAL FIX: Use RAII lock guard for exception safety
+    std::lock_guard<std::mutex> lock(fgcom_localcfg_mtx);
 
     pluginDbg("[GC] LCL searching for stale local state..."); 
     std::vector<int> staleIIDs;
@@ -71,7 +72,7 @@ void fgcom_gc_clean_lcl() {
         pluginDbg("[GC] LCL  clean iid="+std::to_string(elem));
     }
     
-    fgcom_localcfg_mtx.unlock();
+    // Mutex automatically unlocked by RAII lock guard
     
     // update client comment if we removed identities
     if (!staleIIDs.empty()) fgcom_updateClientComment();

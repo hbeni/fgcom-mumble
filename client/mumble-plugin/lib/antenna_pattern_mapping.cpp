@@ -130,6 +130,19 @@ void FGCom_AntennaPatternMapping::initializeVHFPatterns() {
         144.5, "ground_station", "yagi"
     );
     
+    // 4m band patterns (70MHz) - Ground-based Yagi with pitch variations
+    vhf_patterns["ground_station"][70.15] = AntennaPatternInfo(
+        "yagi_4m_70mhz",
+        "antenna_patterns/Ground-based/4m_band/patterns/70.15mhz/4m_yagi_0m_roll_0_pitch_0_70.15MHz.txt",
+        70.15, "ground_station", "yagi"
+    );
+    
+    vhf_patterns["ground_station"][70.0] = AntennaPatternInfo(
+        "yagi_4m_70mhz",
+        "antenna_patterns/Ground-based/4m_band/patterns/70.15mhz/4m_yagi_0m_roll_0_pitch_0_70.15MHz.txt",
+        70.0, "ground_station", "yagi"
+    );
+    
     // Ground-based UHF patterns (10m height)
     uhf_patterns["ground_station"][432.0] = AntennaPatternInfo(
         "yagi_70cm",

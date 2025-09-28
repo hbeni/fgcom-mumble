@@ -1,702 +1,545 @@
-# Work Unit Distribution API Documentation
+# Work Unit Distribution API
 
 ## Overview
 
-The Work Unit Distribution API enables distributed processing of propagation calculations across multiple clients. This system allows clients to participate in distributed computing by processing work units and contributing their computational resources.
+The Work Unit Distribution API provides distributed computing capabilities for FGCom-mumble, enabling efficient processing of radio propagation calculations, antenna pattern generation, and terrain analysis across multiple compute nodes.
 
-## Table of Contents
+## Base URL
 
-1. [Authentication](#authentication)
-2. [Work Unit Management](#work-unit-management)
-3. [Client Coordination](#client-coordination)
-4. [Security Features](#security-features)
-5. [API Endpoints](#api-endpoints)
-6. [Usage Examples](#usage-examples)
-7. [Error Handling](#error-handling)
-8. [Best Practices](#best-practices)
+- **Development**: `http://localhost:8080/api/v1/work-units`
+- **Production**: `https://fgcom-mumble.example.com/api/v1/work-units`
 
 ## Authentication
 
-### Client Registration
+All endpoints require authentication:
 
-Before participating in work unit distribution, clients must register with the server.
-
-**Endpoint:** `POST /api/v1/security/register`
-
-**Request Body:**
-```json
-{
-  "client_id": "client_001",
-  "auth_method": "api_key",
-  "security_level": "medium",
-  "capabilities": {
-    "max_memory_mb": 2048,
-    "supports_gpu": true,
-    "network_bandwidth_mbps": 100.0,
-    "processing_latency_ms": 50.0
-  }
-}
+```http
+Authorization: Bearer your_jwt_token_here
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "registered": true,
-    "client_id": "client_001",
-    "api_key": "ak_1234567890abcdef",
-    "security_level": "medium",
-    "auth_method": "api_key"
-  }
-}
-```
+## Work Unit Types
 
-### Client Authentication
+### Radio Propagation Calculations
+- **Type**: `radio_propagation`
+- **Description**: Calculate radio wave propagation between two points
+- **Input**: Frequency, power, antenna characteristics, terrain data
+- **Output**: Signal strength, path loss, propagation mode
 
-**Endpoint:** `POST /api/v1/security/authenticate`
+### Antenna Pattern Generation
+- **Type**: `antenna_pattern`
+- **Description**: Generate radiation patterns for antenna models
+- **Input**: EZNEC model files, frequency, elevation angles
+- **Output**: Radiation pattern data files
 
-**Request Body:**
-```json
-{
-  "client_id": "client_001",
-  "auth_data": "ak_1234567890abcdef",
-  "auth_method": "api_key"
-}
-```
+### Terrain Analysis
+- **Type**: `terrain_analysis`
+- **Description**: Analyze terrain for line-of-sight calculations
+- **Input**: Geographic coordinates, elevation data
+- **Output**: Line-of-sight results, elevation profiles
 
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "authenticated": true,
-    "session_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "client_id": "client_001",
-    "auth_method": "api_key"
-  }
-}
-```
-
-## Work Unit Management
-
-### Work Unit Types
-
-The system supports several types of work units:
-
-- **PROPAGATION_GRID** - Grid-based propagation calculations
-- **ANTENNA_PATTERN** - Antenna pattern calculations
-- **FREQUENCY_OFFSET** - Frequency offset processing
-- **AUDIO_PROCESSING** - Audio signal processing
-- **BATCH_QSO** - Batch QSO calculations
-- **SOLAR_EFFECTS** - Solar effects processing
-- **LIGHTNING_EFFECTS** - Lightning effects processing
-
-### Creating Work Units
-
-Work units are created by the server and distributed to clients based on their capabilities and current load.
-
-**Example Work Unit:**
-```json
-{
-  "unit_id": "unit_1703123456789_abc123",
-  "type": "PROPAGATION_GRID",
-  "priority": "MEDIUM",
-  "status": "PENDING",
-  "input_data": [40.7128, -74.0060, 100.0, 40.7589, -73.9851, 200.0],
-  "parameters": {
-    "frequency_mhz": 14.175,
-    "tx_power_watts": 100.0,
-    "propagation_model": "ITU-R"
-  },
-  "max_processing_time_ms": 30000,
-  "memory_requirement_mb": 512,
-  "requires_gpu": true,
-  "requires_double_precision": true
-}
-```
-
-## Client Coordination
-
-### Client Capabilities
-
-Clients report their capabilities to the server:
-
-```json
-{
-  "client_id": "client_001",
-  "supported_types": ["PROPAGATION_GRID", "ANTENNA_PATTERN"],
-  "max_concurrent_units": {
-    "PROPAGATION_GRID": 2,
-    "ANTENNA_PATTERN": 1
-  },
-  "processing_speed_multiplier": {
-    "PROPAGATION_GRID": 1.0,
-    "ANTENNA_PATTERN": 0.8
-  },
-  "max_memory_mb": 2048,
-  "supports_gpu": true,
-  "supports_double_precision": true,
-  "network_bandwidth_mbps": 100.0,
-  "processing_latency_ms": 50.0
-}
-```
-
-### Work Unit Processing
-
-Clients process work units using their local resources:
-
-1. **Receive work unit** from server
-2. **Validate work unit** integrity and authorization
-3. **Process work unit** using local GPU/CPU
-4. **Submit results** back to server
-5. **Receive confirmation** and next work unit
-
-## Security Features
-
-### Digital Signatures
-
-All work units are digitally signed to ensure integrity:
-
-```json
-{
-  "work_unit": { /* work unit data */ },
-  "digital_signature": "signature_abc123...",
-  "integrity_hash": "sha256_hash_...",
-  "signature_time": "2023-12-21T10:30:00Z",
-  "signer_client_id": "client_001",
-  "required_security_level": "MEDIUM"
-}
-```
-
-### Encryption
-
-Work units can be encrypted for sensitive data:
-
-```json
-{
-  "work_unit": { /* work unit data */ },
-  "is_encrypted": true,
-  "encrypted_data": "encrypted_work_unit_data...",
-  "encryption_key_id": "key_123"
-}
-```
-
-### Rate Limiting
-
-Clients are subject to rate limits to prevent abuse:
-
-- **Work unit requests**: 10 per minute
-- **Result submissions**: 20 per minute
-- **Heartbeat**: 60 per minute
+### EME Calculations
+- **Type**: `eme_calculation`
+- **Description**: Earth-Moon-Earth communication calculations
+- **Input**: Moon position, frequency, antenna parameters
+- **Output**: EME parameters, delay calculations, Doppler shifts
 
 ## API Endpoints
 
-### Server Status
+### Submit Work Unit
 
-**GET /api/v1/work-units/status**
+#### POST /work-units/submit
+Submit a new work unit for processing.
 
-Returns overall work unit distributor status.
-
-**Response:**
+**Request:**
 ```json
 {
-  "success": true,
-  "data": {
-    "distributor_enabled": true,
-    "pending_units": 5,
-    "processing_units": 2,
-    "completed_units": 1250,
-    "failed_units": 12,
-    "available_clients": 3,
-    "status_report": "Work Unit Distributor Status:\n  Enabled: Yes\n  Workers Running: Yes\n  Pending Units: 5\n  Processing Units: 2\n  Completed Units: 1250\n  Failed Units: 12\n  Total Created: 1267\n  Total Completed: 1250\n  Total Failed: 12\n  Distribution Efficiency: 98.7%"
-  }
-}
-```
-
-### Queue Status
-
-**GET /api/v1/work-units/queue**
-
-Returns current queue state.
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "pending_units": ["unit_001", "unit_002"],
-    "processing_units": ["unit_003"],
-    "completed_units": ["unit_004", "unit_005"],
-    "failed_units": ["unit_006"],
-    "queue_sizes": {
-      "pending": 2,
-      "processing": 1,
-      "completed": 2,
-      "failed": 1
-    }
-  }
-}
-```
-
-### Client Information
-
-**GET /api/v1/work-units/clients**
-
-Returns available clients and their capabilities.
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": {
-    "available_clients": ["client_001", "client_002", "client_003"],
-    "client_count": 3,
-    "performance_metrics": {
-      "client_001_efficiency": 95.5,
-      "client_001_avg_processing_time": 1250.0,
-      "client_001_active_units": 1,
-      "client_001_memory_usage": 512,
-      "client_001_cpu_utilization": 45.0,
-      "client_001_gpu_utilization": 78.0
-    }
-  }
-}
-```
-
-### Statistics
-
-**GET /api/v1/work-units/statistics**
-
-Returns detailed statistics about work unit processing.
-
-**Response:**
-```json
-{
-  "success": true,
-  "total_units_created": 1267,
-  "total_units_completed": 1250,
-  "total_units_failed": 12,
-  "total_units_timeout": 5,
-  "average_processing_time_ms": 1250.0,
-  "average_queue_wait_time_ms": 150.0,
-  "distribution_efficiency_percent": 98.7,
-  "current_queue_sizes": {
-    "pending": 2,
-    "processing": 1,
-    "completed": 1250,
-    "failed": 12
+  "work_unit_type": "radio_propagation",
+  "priority": "high",
+  "parameters": {
+    "frequency_mhz": 144.5,
+    "transmit_power_watts": 1000.0,
+    "transmit_position": {
+      "latitude": 40.6892,
+      "longitude": -74.0445,
+      "altitude": 1000.0
+    },
+    "receive_position": {
+      "latitude": 40.7000,
+      "longitude": -74.0500,
+      "altitude": 2000.0
+    },
+    "antenna_gain_dbi": 14.8,
+    "terrain_data_required": true
   },
-  "work_unit_types": {
-    "PROPAGATION_GRID": 800,
-    "ANTENNA_PATTERN": 300,
-    "FREQUENCY_OFFSET": 100,
-    "AUDIO_PROCESSING": 67
-  },
-  "client_performance": {
-    "client_001_efficiency": 95.5,
-    "client_002_efficiency": 92.3,
-    "client_003_efficiency": 88.7
-  }
+  "callback_url": "https://client.example.com/callback",
+  "timeout_seconds": 300
 }
 ```
-
-### Configuration
-
-**GET /api/v1/work-units/config**
-
-Returns server configuration and requirements.
 
 **Response:**
 ```json
 {
   "success": true,
-  "data": {
-    "distribution_enabled": true,
-    "acceleration_mode": "hybrid",
-    "max_concurrent_units": 10,
-    "max_queue_size": 1000,
-    "unit_timeout_ms": 30000,
-    "enable_retry": true,
-    "max_retries": 3,
-    "retry_delay_ms": 1000,
-    "supported_work_unit_types": [
-      "PROPAGATION_GRID",
-      "ANTENNA_PATTERN",
-      "FREQUENCY_OFFSET",
-      "AUDIO_PROCESSING",
-      "BATCH_QSO",
-      "SOLAR_EFFECTS",
-      "LIGHTNING_EFFECTS"
-    ],
-    "client_requirements": {
-      "min_memory_mb": 512,
-      "min_network_bandwidth_mbps": 10.0,
-      "max_processing_latency_ms": 5000.0,
-      "supported_frameworks": ["CUDA", "OpenCL", "Metal"]
+  "work_unit_id": "wu_789",
+  "status": "queued",
+  "estimated_completion_time": "2024-01-15T10:35:00Z",
+  "queue_position": 3,
+  "created_at": "2024-01-15T10:30:00Z"
+}
+```
+
+### Get Work Unit Status
+
+#### GET /work-units/{work_unit_id}
+Get current status of a work unit.
+
+**Response:**
+```json
+{
+  "work_unit_id": "wu_789",
+  "status": "processing",
+  "progress_percent": 45.0,
+  "current_operation": "calculating_propagation_loss",
+  "estimated_remaining_seconds": 120,
+  "assigned_node": "node_003",
+  "created_at": "2024-01-15T10:30:00Z",
+  "started_at": "2024-01-15T10:32:00Z",
+  "updated_at": "2024-01-15T10:33:00Z"
+}
+```
+
+### Get Work Unit Results
+
+#### GET /work-units/{work_unit_id}/results
+Get results of a completed work unit.
+
+**Response:**
+```json
+{
+  "work_unit_id": "wu_789",
+  "status": "completed",
+  "results": {
+    "signal_strength_dbw": -85.2,
+    "path_loss_db": 187.3,
+    "propagation_mode": "line_of_sight",
+    "terrain_clearance_m": 15.3,
+    "atmospheric_effects": {
+      "refraction_correction": 0.1,
+      "attenuation_db": 0.05
+    },
+    "frequency_offset_hz": 0.0,
+    "doppler_shift_hz": 0.0
+  },
+  "processing_time_seconds": 45.2,
+  "completed_at": "2024-01-15T10:35:00Z"
+}
+```
+
+### List Work Units
+
+#### GET /work-units
+List work units with filtering and pagination.
+
+**Query Parameters:**
+- `status` (optional): Filter by status (queued, processing, completed, failed)
+- `work_unit_type` (optional): Filter by work unit type
+- `priority` (optional): Filter by priority (low, normal, high, urgent)
+- `page` (optional): Page number (default: 1)
+- `per_page` (optional): Items per page (default: 50)
+
+**Response:**
+```json
+{
+  "work_units": [
+    {
+      "work_unit_id": "wu_789",
+      "work_unit_type": "radio_propagation",
+      "status": "completed",
+      "priority": "high",
+      "created_at": "2024-01-15T10:30:00Z",
+      "completed_at": "2024-01-15T10:35:00Z",
+      "processing_time_seconds": 45.2
+    },
+    {
+      "work_unit_id": "wu_790",
+      "work_unit_type": "antenna_pattern",
+      "status": "processing",
+      "priority": "normal",
+      "created_at": "2024-01-15T10:31:00Z",
+      "completed_at": null,
+      "processing_time_seconds": null
     }
+  ],
+  "total_work_units": 2,
+  "page": 1,
+  "per_page": 50,
+  "total_pages": 1
+}
+```
+
+### Cancel Work Unit
+
+#### DELETE /work-units/{work_unit_id}
+Cancel a queued or processing work unit.
+
+**Response:**
+```json
+{
+  "success": true,
+  "work_unit_id": "wu_789",
+  "status": "cancelled",
+  "cancelled_at": "2024-01-15T10:33:00Z"
+}
+```
+
+## Compute Node Management
+
+### Register Compute Node
+
+#### POST /compute-nodes/register
+Register a new compute node in the cluster.
+
+**Request:**
+```json
+{
+  "node_id": "node_003",
+  "capabilities": [
+    "radio_propagation",
+    "antenna_pattern",
+    "terrain_analysis"
+  ],
+  "performance_metrics": {
+    "cpu_cores": 8,
+    "memory_gb": 32,
+    "processing_power": 1000.0,
+    "network_bandwidth_mbps": 1000
+  },
+  "location": {
+    "datacenter": "us-east-1",
+    "region": "North America"
   }
 }
 ```
 
-## Usage Examples
-
-### Python Client Example
-
-```python
-import requests
-import json
-import time
-
-class WorkUnitClient:
-    def __init__(self, server_url, client_id, api_key):
-        self.server_url = server_url
-        self.client_id = client_id
-        self.api_key = api_key
-        self.session_token = None
-        
-    def authenticate(self):
-        """Authenticate with the server"""
-        response = requests.post(f"{self.server_url}/api/v1/security/authenticate", 
-                               json={
-                                   "client_id": self.client_id,
-                                   "auth_data": self.api_key,
-                                   "auth_method": "api_key"
-                               })
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data["success"]:
-                self.session_token = data["data"]["session_token"]
-                return True
-        return False
-    
-    def get_server_status(self):
-        """Get server work unit status"""
-        response = requests.get(f"{self.server_url}/api/v1/work-units/status")
-        return response.json()
-    
-    def process_work_units(self):
-        """Main processing loop"""
-        while True:
-            try:
-                # Get server status
-                status = self.get_server_status()
-                print(f"Server status: {status['data']['pending_units']} pending, "
-                      f"{status['data']['processing_units']} processing")
-                
-                # Simulate work unit processing
-                time.sleep(5)
-                
-            except KeyboardInterrupt:
-                print("Stopping client...")
-                break
-            except Exception as e:
-                print(f"Error: {e}")
-                time.sleep(10)
-
-# Usage
-client = WorkUnitClient("http://localhost:8080", "client_001", "ak_1234567890abcdef")
-if client.authenticate():
-    client.process_work_units()
-```
-
-### C++ Client Example
-
-```cpp
-#include "client_work_unit_coordinator.h"
-#include <iostream>
-#include <thread>
-#include <chrono>
-
-class ExampleWorkUnitClient {
-private:
-    FGCom_ClientWorkUnitCoordinator& coordinator;
-    std::string server_url;
-    std::string client_id;
-    
-public:
-    ExampleWorkUnitClient(const std::string& server_url, const std::string& client_id)
-        : coordinator(FGCom_ClientWorkUnitCoordinator::getInstance())
-        , server_url(server_url)
-        , client_id(client_id) {}
-    
-    bool initialize() {
-        // Initialize the coordinator
-        if (!coordinator.initialize(server_url, client_id)) {
-            std::cerr << "Failed to initialize work unit coordinator" << std::endl;
-            return false;
-        }
-        
-        // Set client capabilities
-        ClientWorkUnitCapability capability;
-        capability.client_id = client_id;
-        capability.supported_types = {
-            WorkUnitType::PROPAGATION_GRID,
-            WorkUnitType::ANTENNA_PATTERN
-        };
-        capability.max_memory_mb = 2048;
-        capability.supports_gpu = true;
-        capability.supports_double_precision = true;
-        capability.network_bandwidth_mbps = 100.0;
-        capability.processing_latency_ms = 50.0;
-        capability.is_online = true;
-        
-        coordinator.setClientCapability(capability);
-        coordinator.enableAutoWorkUnitRequests(true);
-        
-        std::cout << "Client initialized successfully" << std::endl;
-        return true;
-    }
-    
-    void run() {
-        std::cout << "Client running - participating in distributed processing" << std::endl;
-        
-        while (true) {
-            // Get current status
-            auto stats = coordinator.getStatistics();
-            auto assigned_units = coordinator.getAssignedWorkUnits();
-            auto processing_units = coordinator.getProcessingWorkUnits();
-            
-            std::cout << "Status: " << assigned_units.size() << " assigned, " 
-                      << processing_units.size() << " processing" << std::endl;
-            
-            // Print statistics
-            for (const auto& stat : stats) {
-                std::cout << "  " << stat.first << ": " << stat.second << std::endl;
-            }
-            
-            // Sleep for a bit
-            std::this_thread::sleep_for(std::chrono::seconds(10));
-        }
-    }
-    
-    void shutdown() {
-        coordinator.shutdown();
-        std::cout << "Client shutdown complete" << std::endl;
-    }
-};
-
-int main() {
-    std::cout << "FGCom Work Unit Distribution Client Example" << std::endl;
-    
-    // Create client
-    ExampleWorkUnitClient client("http://localhost:8080", "client_001");
-    
-    // Initialize
-    if (!client.initialize()) {
-        std::cerr << "Failed to initialize client" << std::endl;
-        return 1;
-    }
-    
-    // Run client
-    try {
-        client.run();
-    } catch (const std::exception& e) {
-        std::cerr << "Client error: " << e.what() << std::endl;
-    }
-    
-    // Shutdown
-    client.shutdown();
-    
-    return 0;
+**Response:**
+```json
+{
+  "success": true,
+  "node_id": "node_003",
+  "status": "active",
+  "assigned_work_units": 0,
+  "max_concurrent_work_units": 4,
+  "registered_at": "2024-01-15T10:30:00Z"
 }
 ```
 
-### JavaScript/Node.js Client Example
+### Get Compute Node Status
 
-```javascript
-const axios = require('axios');
+#### GET /compute-nodes/{node_id}
+Get status of a compute node.
 
-class WorkUnitClient {
-    constructor(serverUrl, clientId, apiKey) {
-        this.serverUrl = serverUrl;
-        this.clientId = clientId;
-        this.apiKey = apiKey;
-        this.sessionToken = null;
-    }
-    
-    async authenticate() {
-        try {
-            const response = await axios.post(`${this.serverUrl}/api/v1/security/authenticate`, {
-                client_id: this.clientId,
-                auth_data: this.apiKey,
-                auth_method: 'api_key'
-            });
-            
-            if (response.data.success) {
-                this.sessionToken = response.data.data.session_token;
-                return true;
-            }
-        } catch (error) {
-            console.error('Authentication failed:', error.message);
-        }
-        return false;
-    }
-    
-    async getServerStatus() {
-        try {
-            const response = await axios.get(`${this.serverUrl}/api/v1/work-units/status`);
-            return response.data;
-        } catch (error) {
-            console.error('Failed to get server status:', error.message);
-            return null;
-        }
-    }
-    
-    async getWorkUnitConfig() {
-        try {
-            const response = await axios.get(`${this.serverUrl}/api/v1/work-units/config`);
-            return response.data;
-        } catch (error) {
-            console.error('Failed to get work unit config:', error.message);
-            return null;
-        }
-    }
-    
-    async processWorkUnits() {
-        console.log('Starting work unit processing...');
-        
-        while (true) {
-            try {
-                const status = await this.getServerStatus();
-                if (status) {
-                    console.log(`Server status: ${status.data.pending_units} pending, ` +
-                               `${status.data.processing_units} processing`);
-                }
-                
-                // Simulate work unit processing
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                
-            } catch (error) {
-                console.error('Error in processing loop:', error.message);
-                await new Promise(resolve => setTimeout(resolve, 10000));
-            }
-        }
-    }
+**Response:**
+```json
+{
+  "node_id": "node_003",
+  "status": "active",
+  "capabilities": [
+    "radio_propagation",
+    "antenna_pattern",
+    "terrain_analysis"
+  ],
+  "current_load": {
+    "cpu_usage_percent": 45.2,
+    "memory_usage_percent": 67.8,
+    "active_work_units": 2,
+    "queue_length": 5
+  },
+  "performance_metrics": {
+    "average_processing_time_seconds": 42.3,
+    "throughput_work_units_per_hour": 85.2,
+    "success_rate_percent": 98.5
+  },
+  "last_heartbeat": "2024-01-15T10:30:00Z"
 }
+```
 
-// Usage
-async function main() {
-    const client = new WorkUnitClient('http://localhost:8080', 'client_001', 'ak_1234567890abcdef');
-    
-    if (await client.authenticate()) {
-        console.log('Authentication successful');
-        await client.processWorkUnits();
-    } else {
-        console.log('Authentication failed');
+### List Compute Nodes
+
+#### GET /compute-nodes
+List all compute nodes in the cluster.
+
+**Response:**
+```json
+{
+  "compute_nodes": [
+    {
+      "node_id": "node_001",
+      "status": "active",
+      "capabilities": ["radio_propagation", "antenna_pattern"],
+      "current_load": {
+        "cpu_usage_percent": 25.0,
+        "memory_usage_percent": 45.0,
+        "active_work_units": 1
+      },
+      "performance_metrics": {
+        "average_processing_time_seconds": 38.5,
+        "throughput_work_units_per_hour": 95.0
+      }
+    },
+    {
+      "node_id": "node_002",
+      "status": "maintenance",
+      "capabilities": ["terrain_analysis", "eme_calculation"],
+      "current_load": {
+        "cpu_usage_percent": 0.0,
+        "memory_usage_percent": 5.0,
+        "active_work_units": 0
+      },
+      "performance_metrics": {
+        "average_processing_time_seconds": 52.1,
+        "throughput_work_units_per_hour": 68.5
+      }
     }
+  ],
+  "total_nodes": 2,
+  "active_nodes": 1,
+  "total_processing_capacity": 1000.0
 }
+```
 
-main().catch(console.error);
+## Work Unit Processing
+
+### Radio Propagation Work Unit
+
+**Input Parameters:**
+```json
+{
+  "frequency_mhz": 144.5,
+  "transmit_power_watts": 1000.0,
+  "transmit_antenna": {
+    "gain_dbi": 14.8,
+    "height_m": 10.0,
+    "pattern_file": "yagi_144mhz.ez"
+  },
+  "receive_antenna": {
+    "gain_dbi": 2.15,
+    "height_m": 1000.0,
+    "pattern_file": "dipole_144mhz.ez"
+  },
+  "transmit_position": {
+    "latitude": 40.6892,
+    "longitude": -74.0445,
+    "altitude": 10.0
+  },
+  "receive_position": {
+    "latitude": 40.7000,
+    "longitude": -74.0500,
+    "altitude": 1000.0
+  },
+  "environmental_conditions": {
+    "temperature_celsius": 22.5,
+    "humidity_percent": 65.0,
+    "pressure_hpa": 1013.25
+  }
+}
+```
+
+**Output Results:**
+```json
+{
+  "signal_strength_dbw": -85.2,
+  "path_loss_db": 187.3,
+  "propagation_mode": "line_of_sight",
+  "terrain_clearance_m": 15.3,
+  "atmospheric_effects": {
+    "refraction_correction": 0.1,
+    "attenuation_db": 0.05
+  },
+  "frequency_offset_hz": 0.0,
+  "doppler_shift_hz": 0.0,
+  "communication_range_km": 45.2,
+  "signal_quality": 0.87
+}
+```
+
+### Antenna Pattern Work Unit
+
+**Input Parameters:**
+```json
+{
+  "eznec_model_file": "yagi_144mhz.ez",
+  "frequency_mhz": 144.5,
+  "elevation_angles": [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90],
+  "azimuth_angles": [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350],
+  "output_format": "nec2",
+  "include_ground_effects": true,
+  "ground_conductivity": 0.005,
+  "ground_permittivity": 13.0
+}
+```
+
+**Output Results:**
+```json
+{
+  "pattern_file": "yagi_144mhz_pattern.nec",
+  "gain_max_dbi": 14.8,
+  "beamwidth_azimuth_deg": 30.0,
+  "beamwidth_elevation_deg": 35.0,
+  "front_to_back_ratio_db": 27.0,
+  "side_lobe_level_db": -15.0,
+  "impedance_ohms": 50.0,
+  "swr": 1.2,
+  "pattern_points": 684,
+  "processing_time_seconds": 45.2
+}
+```
+
+### Terrain Analysis Work Unit
+
+**Input Parameters:**
+```json
+{
+  "start_position": {
+    "latitude": 40.6892,
+    "longitude": -74.0445,
+    "altitude": 10.0
+  },
+  "end_position": {
+    "latitude": 40.7000,
+    "longitude": -74.0500,
+    "altitude": 1000.0
+  },
+  "terrain_data_source": "ASTER_GDEM",
+  "resolution_meters": 30,
+  "analysis_type": "line_of_sight",
+  "fresnel_zone_clearance": true,
+  "frequency_mhz": 144.5
+}
+```
+
+**Output Results:**
+```json
+{
+  "line_of_sight": true,
+  "distance_km": 1.2,
+  "elevation_angle_deg": 4.7,
+  "azimuth_angle_deg": 45.0,
+  "terrain_clearance_m": 15.3,
+  "fresnel_zone_clearance": true,
+  "terrain_profile": [
+    {"distance_km": 0.0, "altitude_m": 10.0},
+    {"distance_km": 0.2, "altitude_m": 25.3},
+    {"distance_km": 0.4, "altitude_m": 45.7},
+    {"distance_km": 0.6, "altitude_m": 67.2},
+    {"distance_km": 0.8, "altitude_m": 89.1},
+    {"distance_km": 1.0, "altitude_m": 112.5},
+    {"distance_km": 1.2, "altitude_m": 1000.0}
+  ],
+  "obstacles": [],
+  "analysis_time_seconds": 12.3
+}
 ```
 
 ## Error Handling
 
-### Common Error Responses
+### Work Unit Errors
 
-**Rate Limit Exceeded (429):**
 ```json
 {
   "success": false,
-  "error": "Rate limit exceeded",
-  "error_code": 429
+  "error": {
+    "code": "WORK_UNIT_FAILED",
+    "message": "Radio propagation calculation failed",
+    "details": {
+      "work_unit_id": "wu_789",
+      "failure_reason": "Invalid frequency range",
+      "error_log": "Frequency 999.9 MHz is not supported for VHF calculations"
+    },
+    "timestamp": "2024-01-15T10:35:00Z"
+  }
 }
 ```
 
-**Authentication Failed (401):**
+### Common Error Codes
+
+| Code | Description | HTTP Status |
+|------|-------------|-------------|
+| `INVALID_WORK_UNIT_TYPE` | Unsupported work unit type | 400 |
+| `INVALID_PARAMETERS` | Invalid input parameters | 400 |
+| `WORK_UNIT_NOT_FOUND` | Work unit ID not found | 404 |
+| `WORK_UNIT_FAILED` | Work unit processing failed | 500 |
+| `COMPUTE_NODE_UNAVAILABLE` | No compute nodes available | 503 |
+| `PROCESSING_TIMEOUT` | Work unit processing timeout | 504 |
+
+## WebSocket Real-Time Updates
+
+### Work Unit Status Updates
+
 ```json
 {
-  "success": false,
-  "error": "Authentication failed",
-  "error_code": 401
+  "type": "work_unit_status",
+  "work_unit_id": "wu_789",
+  "status": "processing",
+  "progress_percent": 45.0,
+  "current_operation": "calculating_propagation_loss",
+  "estimated_remaining_seconds": 120,
+  "timestamp": "2024-01-15T10:33:00Z"
 }
 ```
 
-**Invalid Request (400):**
+### Compute Node Status Updates
+
 ```json
 {
-  "success": false,
-  "error": "Missing required fields: client_id, auth_data",
-  "error_code": 400
+  "type": "compute_node_status",
+  "node_id": "node_003",
+  "status": "active",
+  "current_load": {
+    "cpu_usage_percent": 45.2,
+    "memory_usage_percent": 67.8,
+    "active_work_units": 2
+  },
+  "timestamp": "2024-01-15T10:33:00Z"
 }
 ```
 
-**Server Error (500):**
+## Performance Monitoring
+
+### Get System Performance
+
+#### GET /work-units/performance
+Get overall system performance metrics.
+
+**Response:**
 ```json
 {
-  "success": false,
-  "error": "Internal server error",
-  "error_code": 500
+  "system_metrics": {
+    "total_work_units_processed": 15420,
+    "average_processing_time_seconds": 42.3,
+    "throughput_work_units_per_hour": 125.5,
+    "success_rate_percent": 98.5,
+    "queue_length": 12,
+    "active_compute_nodes": 5
+  },
+  "work_unit_type_metrics": {
+    "radio_propagation": {
+      "processed": 8542,
+      "average_time_seconds": 38.5,
+      "success_rate_percent": 99.2
+    },
+    "antenna_pattern": {
+      "processed": 3241,
+      "average_time_seconds": 52.1,
+      "success_rate_percent": 97.8
+    },
+    "terrain_analysis": {
+      "processed": 2637,
+      "average_time_seconds": 28.7,
+      "success_rate_percent": 98.9
+    }
+  },
+  "timestamp": "2024-01-15T10:33:00Z"
 }
 ```
 
-### Error Handling Best Practices
-
-1. **Always check response status codes**
-2. **Implement exponential backoff for retries**
-3. **Log errors for debugging**
-4. **Handle network timeouts gracefully**
-5. **Validate all input data**
-
-## Best Practices
-
-### Client Implementation
-
-1. **Resource Management**
-   - Monitor CPU and memory usage
-   - Implement proper cleanup
-   - Use connection pooling
-
-2. **Error Handling**
-   - Implement retry logic with backoff
-   - Handle network failures gracefully
-   - Log errors for debugging
-
-3. **Security**
-   - Store API keys securely
-   - Use HTTPS for all communications
-   - Validate all server responses
-
-4. **Performance**
-   - Use asynchronous processing
-   - Implement proper caching
-   - Monitor processing times
-
-### Server Configuration
-
-1. **Rate Limiting**
-   - Set appropriate limits for your use case
-   - Monitor rate limit violations
-   - Adjust limits based on client behavior
-
-2. **Security**
-   - Enable all security features
-   - Monitor security events
-   - Regularly update certificates
-
-3. **Monitoring**
-   - Monitor system performance
-   - Track work unit processing times
-   - Alert on security violations
-
-### Deployment
-
-1. **Production Setup**
-   - Use Let's Encrypt certificates
-   - Configure proper firewall rules
-   - Set up monitoring and alerting
-
-2. **Scaling**
-   - Monitor client capacity
-   - Add more clients as needed
-   - Balance load across clients
-
-3. **Maintenance**
-   - Regular security updates
-   - Monitor system health
-   - Backup configuration data
-
-## Conclusion
-
-The Work Unit Distribution API provides a robust, secure, and scalable solution for distributed propagation calculations. By following the documentation and best practices, you can implement clients that effectively contribute to the distributed computing network while maintaining security and performance.
+This comprehensive Work Unit Distribution API provides distributed computing capabilities for FGCom-mumble's complex radio propagation and antenna modeling calculations.

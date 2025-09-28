@@ -6,22 +6,22 @@ The GPU Resource Limiting system provides intelligent GPU resource management fo
 
 ## Key Features
 
-### 🎮 **Game Performance Protection**
+### **Game Performance Protection**
 - **Automatic Game Detection**: Detects running flight simulators and other games
 - **Priority Management**: Automatically reduces GPU usage when games are detected
 - **Adaptive Resource Allocation**: Dynamically adjusts GPU usage based on system load
 
-### ⚙️ **Configurable Resource Limits**
+### **Configurable Resource Limits**
 - **Usage Percentage Limits**: Set maximum GPU usage (0-100%)
 - **Memory Limits**: Control GPU memory usage in MB
 - **Priority Levels**: Adjust GPU priority relative to game rendering
 
-### 📊 **Intelligent Monitoring**
+### **Intelligent Monitoring**
 - **Real-time Monitoring**: Continuous GPU usage tracking
 - **System Load Detection**: Monitors CPU, memory, and battery status
 - **Adaptive Enforcement**: Automatically adjusts limits based on system conditions
 
-### 🔧 **Advanced Configuration**
+### **Advanced Configuration**
 - **Client-Only Mode**: Full GPU resource limiting for standalone clients
 - **Hybrid Mode**: Balanced resource sharing between server and client
 - **Server Mode**: Minimal GPU usage (server-side calculations)

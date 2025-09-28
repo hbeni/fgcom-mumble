@@ -18,7 +18,7 @@ enum class AGCMode {
 
 // AGC configuration structure
 struct AGCConfig {
-    AGCMode mode = AGCMode::MEDIUM;
+    AGCMode mode = AGCMode::SLOW;
     float threshold_db = -60.0f;        // AGC threshold in dB
     float max_gain_db = 40.0f;          // Maximum gain in dB
     float min_gain_db = -20.0f;         // Minimum gain in dB

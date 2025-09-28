@@ -1,242 +1,299 @@
-# Amateur Radio Terminology Guide
+# Amateur Radio Terminology
 
-This document provides a comprehensive reference for amateur radio terminology used in FGCom-mumble and the broader amateur radio community.
+## Overview
 
-## Q-Codes (Q-Signals)
+This comprehensive guide covers amateur radio terminology, Q-codes, and communication procedures used in amateur radio operations.
 
-Q-codes are standardized three-letter codes used in amateur radio communication for efficiency and clarity.
+## Q-Codes
 
-### Common Q-Codes
+### General Q-Codes
 
-| Code | Question | Answer/Statement |
-|------|----------|------------------|
-| **QSO** | - | A two-way communication between amateur radio operators |
-| **QSL** | - | Confirmation of receipt of a transmission; QSL card exchange |
-| **QRM** | - | Man-made interference |
-| **QRN** | - | Natural interference (static, atmospheric noise) |
-| **QRP** | - | Low power operation (typically 5 watts or less) |
-| **QRO** | - | High power operation |
-| **QTH** | - | Location or address |
-| **QSY** | - | Change frequency |
-| **QSB** | - | Signal fading |
-| **QRZ** | Who is calling me? | - |
-| **QRL** | Are you busy? | I am busy |
+| Q-Code | Question | Answer/Statement |
+|--------|----------|-----------------|
+| **QRA** | What is the name of your station? | The name of my station is... |
+| **QRB** | How far are you from my station? | I am ___ km from your station. |
+| **QRG** | Will you tell me my exact frequency? | Your exact frequency is ___ kHz. |
+| **QRH** | Does my frequency vary? | Your frequency varies. |
+| **QRI** | How is the tone of my transmission? | The tone of your transmission is... |
+| **QRJ** | Are you receiving me badly? | I am receiving you badly. |
 | **QRK** | What is the intelligibility of my signals? | The intelligibility of your signals is... |
+| **QRL** | Are you busy? | I am busy. |
+| **QRM** | Is my transmission being interfered with? | Your transmission is being interfered with. |
+| **QRN** | Are you troubled by static? | I am troubled by static. |
+| **QRO** | Shall I increase power? | Increase power. |
+| **QRP** | Shall I decrease power? | Decrease power. |
+| **QRQ** | Shall I send faster? | Send faster. |
+| **QRS** | Shall I send more slowly? | Send more slowly. |
+| **QRT** | Shall I stop sending? | Stop sending. |
+| **QRU** | Have you anything for me? | I have nothing for you. |
+| **QRV** | Are you ready? | I am ready. |
+| **QRW** | Shall I inform ___ that you are calling? | Please inform ___ that I am calling. |
+| **QRX** | When will you call me again? | I will call you again at ___ hours. |
+| **QRY** | What is my turn? | Your turn is number ___. |
+| **QRZ** | Who is calling me? | You are being called by ___. |
 | **QSA** | What is the strength of my signals? | The strength of your signals is... |
-| **QSL?** | Do you acknowledge receipt? | I acknowledge receipt |
+| **QSB** | Are my signals fading? | Your signals are fading. |
+| **QSD** | Is my keying defective? | Your keying is defective. |
+| **QSG** | Shall I send ___ messages at a time? | Send ___ messages at a time. |
+| **QSK** | Can you hear me between your signals? | I can hear you between my signals. |
+| **QSL** | Can you acknowledge receipt? | I am acknowledging receipt. |
+| **QSM** | Shall I repeat the last message? | Repeat the last message. |
+| **QSN** | Did you hear me on ___ kHz? | I heard you on ___ kHz. |
+| **QSO** | Can you communicate with ___? | I can communicate with ___. |
+| **QSP** | Will you relay to ___? | I will relay to ___. |
+| **QSR** | Do you want me to repeat my call? | Please repeat your call. |
+| **QSS** | What working frequency will you use? | I will use ___ kHz. |
+| **QSU** | Shall I send on this frequency? | Send on this frequency. |
+| **QSV** | Shall I send a series of V's? | Send a series of V's. |
+| **QSW** | Will you send on this frequency? | I will send on this frequency. |
+| **QSX** | Will you listen to ___ on ___ kHz? | I will listen to ___ on ___ kHz. |
+| **QSY** | Shall I change to transmission on another frequency? | Change to transmission on another frequency. |
+| **QSZ** | Shall I send each word twice? | Send each word twice. |
+| **QTA** | Shall I cancel message number ___? | Cancel message number ___. |
+| **QTC** | How many messages have you to send? | I have ___ messages to send. |
+| **QTH** | What is your location? | My location is ___. |
+| **QTR** | What is the correct time? | The correct time is ___. |
+| **QTS** | Will you send your call sign? | I will send my call sign. |
+| **QTU** | What are the hours during which your station is open? | My station is open from ___ to ___. |
+| **QTV** | Shall I stand guard for you? | Please stand guard for me. |
+| **QTX** | Will you keep your station open? | I will keep my station open. |
+| **QUA** | Have you news of ___? | I have news of ___. |
+| **QUC** | What is the number of the last message you received? | The number of the last message I received is ___. |
+| **QUD** | Have you received the urgency signal? | I have received the urgency signal. |
+| **QUE** | Can you speak in ___? | I can speak in ___. |
+| **QUF** | Have you received the distress signal? | I have received the distress signal. |
+
+### Aviation Q-Codes
+
+| Q-Code | Question | Answer/Statement |
+|--------|----------|-----------------|
+| **QAF** | Are you flying? | I am flying. |
+| **QAG** | Will you arrange for ___? | I will arrange for ___. |
+| **QAH** | What is your height? | My height is ___ feet. |
+| **QAI** | What is your approximate position? | My approximate position is ___. |
+| **QAJ** | What is your altitude? | My altitude is ___ feet. |
+| **QAK** | Do you have any navigation warnings? | I have navigation warnings. |
+| **QAL** | Are you going to land? | I am going to land. |
+| **QAM** | What is the latest weather? | The latest weather is ___. |
+| **QAN** | What is the surface wind direction and speed? | The surface wind direction and speed is ___. |
+| **QAO** | What is your estimated time of arrival? | My estimated time of arrival is ___. |
+| **QAP** | Shall I listen for you on ___ kHz? | Please listen for me on ___ kHz. |
+| **QAQ** | Are you flying in cloud? | I am flying in cloud. |
+| **QAR** | Are you flying in clear weather? | I am flying in clear weather. |
+| **QAS** | Shall I change to ___ kHz? | Change to ___ kHz. |
+| **QAT** | What is your destination? | My destination is ___. |
+| **QAU** | Where did you depart from? | I departed from ___. |
+| **QAV** | Are you available for a distress call? | I am available for a distress call. |
+| **QAW** | I am ready to copy your message. | I am ready to copy your message. |
+| **QAX** | I have a message for you. | I have a message for you. |
+| **QAY** | Will you keep a continuous watch? | I will keep a continuous watch. |
+| **QAZ** | Are you experiencing any difficulties? | I am experiencing difficulties. |
 
 ## Social Terms
 
-### Operator Designations
-- **OM**: Old Man - refers to a male amateur radio operator
-- **YL**: Young Lady - refers to a female amateur radio operator
-- **Elmer**: An experienced operator who mentors newcomers
-- **DXer**: An operator who specializes in long-distance contacts
+### Common Social Terms
 
-### Communication Types
-- **Ragchew**: A long, informal conversation between operators
-- **DX**: Long-distance communication, typically between countries
-- **CQ**: A general call to all stations, inviting any operator to respond
-- **Net**: A scheduled on-air meeting of operators with a common interest
+| Term | Meaning | Usage |
+|------|---------|-------|
+| **73** | Best regards | Sign-off |
+| **88** | Love and kisses | Sign-off (romantic) |
+| **CQ** | Calling any station | General call |
+| **DX** | Long distance | Distant station |
+| **QRZ** | Who is calling me? | Response to call |
+| **QSL** | I acknowledge receipt | Confirmation |
+| **QSO** | Conversation | Radio contact |
+| **QTH** | Location | Station location |
+| **QSY** | Change frequency | Frequency change |
+| **QSB** | Fading | Signal fading |
+| **QSL Card** | Confirmation card | Paper confirmation |
+| **Elmer** | Mentor | Experienced operator |
+| **Ragchew** | Long conversation | Extended chat |
+| **APRS** | Automatic Packet Reporting System | Position reporting |
 
-## Sign-offs and Greetings
+### Signal Reports
 
-### Common Sign-offs
-- **73**: Best regards; friendly sign-off between operators
-- **88**: Love and kisses; sign-off typically used between close friends or family
-- **72**: Best regards (alternative to 73)
-- **55**: Best regards (alternative to 73)
+| Report | Meaning | Description |
+|--------|---------|-------------|
+| **RST** | Readability, Strength, Tone | Signal quality report |
+| **R1** | Unreadable | Cannot understand |
+| **R2** | Barely readable | Occasional words |
+| **R3** | Readable with difficulty | Most words understood |
+| **R4** | Readable | Easy to understand |
+| **R5** | Perfectly readable | Clear and strong |
+| **S1** | Faint signals | Barely perceptible |
+| **S2** | Very weak signals | Very weak |
+| **S3** | Weak signals | Weak |
+| **S4** | Fair signals | Fair |
+| **S5** | Good signals | Good |
+| **S6** | Moderately strong signals | Moderately strong |
+| **S7** | Strong signals | Strong |
+| **S8** | Very strong signals | Very strong |
+| **S9** | Extremely strong signals | Extremely strong |
+| **S9+** | Stronger than S9 | Over S9 |
 
-### Greetings
-- **Good morning/afternoon/evening**: Time-appropriate greetings
-- **How do you copy?**: How well can you hear me?
-- **Loud and clear**: Signal is strong and readable
-- **Five by nine**: Signal report (5/9 = excellent readability and strength)
+### Operating Modes
 
-## Signal Reports
+| Mode | Description | Usage |
+|------|-------------|-------|
+| **CW** | Continuous Wave (Morse Code) | Telegraphy |
+| **SSB** | Single Sideband | Voice |
+| **AM** | Amplitude Modulation | Voice |
+| **FM** | Frequency Modulation | Voice |
+| **RTTY** | Radio Teletype | Digital |
+| **PSK31** | Phase Shift Keying | Digital |
+| **JT65** | Weak Signal Mode | Digital |
+| **FT8** | Fast Fourier Transform | Digital |
+| **APRS** | Automatic Packet Reporting System | Digital |
+| **SSTV** | Slow Scan Television | Image |
 
-### RST System
-The RST system is used to report signal quality:
+### Equipment Terms
 
-**R** - Readability (1-5)
-- 1: Unreadable
-- 2: Barely readable, occasional words distinguishable
-- 3: Readable with considerable difficulty
-- 4: Readable with practically no difficulty
-- 5: Perfectly readable
-
-**S** - Signal Strength (1-9)
-- 1: Faint signals, barely perceptible
-- 2: Very weak signals
-- 3: Weak signals
-- 4: Fair signals
-- 5: Fairly good signals
-- 6: Good signals
-- 7: Moderately strong signals
-- 8: Strong signals
-- 9: Extremely strong signals
-
-**T** - Tone (1-9, for CW only)
-- 1: Very rough, broad signals
-- 2: Very rough, broad signals
-- 3: Rough, broad signals
-- 4: Rough, broad signals
-- 5: Musically modulated
-- 6: Musically modulated
-- 7: Near DC, smooth
-- 8: Near DC, smooth
-- 9: Perfect tone, no trace of ripple or modulation
-
-### Common Signal Reports
-- **5 by 9**: Perfect readability, very strong signal
-- **3 by 7**: Readable with difficulty, moderately strong signal
-- **Loud and clear**: Strong, readable signal
-- **Weak but readable**: Signal is weak but understandable
-
-## Operating Modes
-
-### Voice Modes
-- **SSB**: Single Sideband (USB/LSB)
-- **AM**: Amplitude Modulation
-- **FM**: Frequency Modulation
-- **CW**: Continuous Wave (Morse code)
-
-### Digital Modes
-- **SSTV**: Slow Scan Television
-- **RTTY**: Radio Teletype
-- **PSK31**: Phase Shift Keying, 31 baud
-- **FT8**: Digital mode for weak signal communication
-- **JT65**: Digital mode for weak signal communication
-
-## Equipment and Technical Terms
-
-### Power Levels
-- **QRP**: Low power (5 watts or less)
-- **QRPp**: Very low power (1 watt or less)
-- **QRO**: High power operation
-- **Full legal limit**: Maximum power allowed by license
-
-### Antenna Terms
-- **Beam**: Directional antenna (Yagi, quad, etc.)
-- **Omni**: Omnidirectional antenna
-- **Dipole**: Basic antenna design
-- **Vertical**: Vertically polarized antenna
-- **Horizontal**: Horizontally polarized antenna
+| Term | Description | Usage |
+|------|-------------|-------|
+| **Rig** | Radio Transceiver | Equipment |
+| **Antenna** | Radiating element | Equipment |
+| **Transceiver** | Transmitter and receiver | Equipment |
+| **Amplifier** | Power amplifier | Equipment |
+| **Tuner** | Antenna tuner | Equipment |
+| **SWR** | Standing Wave Ratio | Measurement |
+| **VSWR** | Voltage Standing Wave Ratio | Measurement |
+| **Feedline** | Transmission line | Equipment |
+| **Balun** | Balanced to unbalanced | Equipment |
+| **Dipole** | Half-wave antenna | Antenna type |
+| **Yagi** | Directional antenna | Antenna type |
+| **Vertical** | Vertical antenna | Antenna type |
+| **Loop** | Loop antenna | Antenna type |
 
 ### Propagation Terms
-- **Skip**: Radio waves bouncing off the ionosphere
-- **Ground wave**: Radio waves following the Earth's surface
-- **Tropospheric ducting**: Radio waves trapped in the troposphere
-- **Sporadic E**: Irregular ionospheric propagation
-- **Aurora**: Northern/southern lights affecting propagation
 
-## Operating Procedures
+| Term | Description | Usage |
+|------|-------------|-------|
+| **Propagation** | Radio wave travel | Signal path |
+| **Skip** | Signal reflection | Ionospheric |
+| **Ducting** | Tropospheric ducting | Atmospheric |
+| **Scatter** | Signal scattering | Atmospheric |
+| **Fading** | Signal variation | Atmospheric |
+| **QSB** | Fading | Signal variation |
+| **QRN** | Static | Noise |
+| **QRM** | Interference | Man-made noise |
+| **QRO** | High power | Power level |
+| **QRP** | Low power | Power level |
+| **QTH** | Location | Station position |
+| **QSY** | Change frequency | Frequency change |
 
-### Making a Contact
-1. **Listen first**: Check if frequency is in use
-2. **Call CQ**: General call for any station
-3. **Respond to CQ**: Answer someone else's call
-4. **Exchange information**: Callsign, location, signal report
-5. **Sign off**: Use 73 or 88
+### Operating Procedures
 
-### Frequency Management
-- **Calling frequency**: Standard frequency for making initial contact
-- **Working frequency**: Frequency where the actual conversation takes place
-- **QSY**: Move to a different frequency
-- **Split operation**: Transmit on one frequency, receive on another
+| Procedure | Description | Usage |
+|-----------|-------------|-------|
+| **CQ** | General call | Calling any station |
+| **CQ DX** | Calling distant stations | DX operation |
+| **CQ Contest** | Contest call | Contest operation |
+| **QRZ** | Who is calling? | Response to call |
+| **QSL** | Confirmation | Receipt confirmation |
+| **QSO** | Conversation | Radio contact |
+| **QTH** | Location | Station location |
+| **QSY** | Change frequency | Frequency change |
+| **QSB** | Fading | Signal fading |
+| **QRN** | Static | Noise |
+| **QRM** | Interference | Man-made noise |
 
-## Emergency and Public Service
+### Digital Communication
 
-### Emergency Communications
-- **ARES**: Amateur Radio Emergency Service
-- **RACES**: Radio Amateur Civil Emergency Service
-- **Skywarn**: Weather spotting and reporting
-- **Emergency traffic**: Priority communications during emergencies
+| Term | Description | Usage |
+|------|-------------|-------|
+| **APRS** | Automatic Packet Reporting System | Position reporting |
+| **RTTY** | Radio Teletype | Digital mode |
+| **PSK31** | Phase Shift Keying | Digital mode |
+| **JT65** | Weak Signal Mode | Digital mode |
+| **FT8** | Fast Fourier Transform | Digital mode |
+| **SSTV** | Slow Scan Television | Image mode |
+| **Packet** | Packet radio | Digital mode |
+| **Pactor** | Packet radio protocol | Digital mode |
+| **Winlink** | Email over radio | Digital mode |
+| **D-STAR** | Digital voice | Digital mode |
+| **DMR** | Digital Mobile Radio | Digital mode |
+| **Fusion** | Digital voice | Digital mode |
 
-### Public Service Events
-- **Event communications**: Supporting public events with radio communications
-- **Race support**: Communications for running, cycling, or other events
-- **Parade support**: Communications for parades and public gatherings
+### Contest and Awards
 
-## Digital Communication
+| Term | Description | Usage |
+|------|-------------|-------|
+| **Contest** | Competitive operation | Competition |
+| **DX** | Long distance | Distant station |
+| **DXCC** | DX Century Club | Award |
+| **WAS** | Worked All States | Award |
+| **WAC** | Worked All Continents | Award |
+| **VUCC** | VHF/UHF Century Club | Award |
+| **Grid Square** | Maidenhead locator | Location |
+| **Multiplier** | Contest scoring | Competition |
+| **QSO Points** | Contest scoring | Competition |
+| **Claimed Score** | Contest score | Competition |
+| **Certificate** | Award certificate | Recognition |
 
-### Packet Radio
-- **BBS**: Bulletin Board System
-- **Node**: Packet radio relay station
-- **Digipeater**: Digital repeater
-- **APRS**: Automatic Packet Reporting System
+### Common Phrases
 
-### Internet Integration
-- **Echolink**: Internet-based amateur radio linking
-- **IRLP**: Internet Radio Linking Project
-- **D-STAR**: Digital voice and data protocol
-- **DMR**: Digital Mobile Radio
-
-## Contest and Awards
-
-### Contesting
-- **Contest**: Competitive amateur radio operating event
-- **Multiplier**: Station that increases your contest score
-- **Exchange**: Information exchanged during contest contacts
-- **Log**: Record of contacts made
-
-### Awards
-- **DXCC**: DX Century Club (100+ countries confirmed)
-- **WAS**: Worked All States
-- **WAC**: Worked All Continents
-- **VUCC**: VHF/UHF Century Club
-
-## Common Phrases and Expressions
-
-### Operating Phrases
-- **"This is"**: Used before stating your callsign
-- **"Over"**: End of transmission, expecting response
-- **"Out"**: End of transmission, no response expected
-- **"Stand by"**: Wait, I need a moment
-- **"Go ahead"**: You may transmit
-- **"Roger"**: Message received and understood
-- **"Copy"**: I understand
-- **"Say again"**: Please repeat
-- **"QSL?"**: Do you confirm receipt?
-
-### Technical Expressions
-- **"Running"**: Transmitting continuously
-- **"Listening"**: Monitoring frequency for calls
-- **"QRM"**: Experiencing interference
-- **"QRN"**: Experiencing static/noise
-- **"QSB"**: Signal fading
-- **"QRP"**: Low power operation
-- **"QRO"**: High power operation
+| Phrase | Meaning | Usage |
+|--------|---------|-------|
+| **73** | Best regards | Sign-off |
+| **88** | Love and kisses | Sign-off (romantic) |
+| **CQ** | Calling any station | General call |
+| **DX** | Long distance | Distant station |
+| **QRZ** | Who is calling me? | Response to call |
+| **QSL** | I acknowledge receipt | Confirmation |
+| **QSO** | Conversation | Radio contact |
+| **QTH** | Location | Station location |
+| **QSY** | Change frequency | Frequency change |
+| **QSB** | Fading | Signal fading |
+| **QSL Card** | Confirmation card | Paper confirmation |
+| **Elmer** | Mentor | Experienced operator |
+| **Ragchew** | Long conversation | Extended chat |
+| **APRS** | Automatic Packet Reporting System | Position reporting |
 
 ## FGCom-mumble Integration
 
-In FGCom-mumble, these terms are used in:
-- **Radio simulation**: Realistic amateur radio communication
-- **Frequency management**: Proper amateur radio band usage
-- **Signal reporting**: RST system for signal quality
-- **Operating procedures**: Standard amateur radio protocols
-- **Emergency communications**: ARES/RACES simulation
-- **Contest simulation**: Competitive operating scenarios
+### Q-Code Implementation
+```json
+{
+  "q_codes": {
+    "QRA": "What is the name of your station?",
+    "QRB": "How far are you from my station?",
+    "QRG": "Will you tell me my exact frequency?",
+    "QRH": "Does my frequency vary?",
+    "QRI": "How is the tone of my transmission?",
+    "QRJ": "Are you receiving me badly?",
+    "QRK": "What is the intelligibility of my signals?",
+    "QRL": "Are you busy?",
+    "QRM": "Is my transmission being interfered with?",
+    "QRN": "Are you troubled by static?"
+  }
+}
+```
 
-## Learning Resources
+### Signal Report Implementation
+```json
+{
+  "signal_reports": {
+    "readability": {
+      "R1": "Unreadable",
+      "R2": "Barely readable",
+      "R3": "Readable with difficulty",
+      "R4": "Readable",
+      "R5": "Perfectly readable"
+    },
+    "strength": {
+      "S1": "Faint signals",
+      "S2": "Very weak signals",
+      "S3": "Weak signals",
+      "S4": "Fair signals",
+      "S5": "Good signals",
+      "S6": "Moderately strong signals",
+      "S7": "Strong signals",
+      "S8": "Very strong signals",
+      "S9": "Extremely strong signals",
+      "S9+": "Stronger than S9"
+    }
+  }
+}
+```
 
-### Books
-- **ARRL Handbook**: Comprehensive amateur radio reference
-- **ARRL Operating Manual**: Operating procedures and techniques
-- **FCC Part 97**: Amateur radio regulations
-
-### Online Resources
-- **ARRL.org**: American Radio Relay League
-- **QRZ.com**: Amateur radio database and resources
-- **eHam.net**: Amateur radio community and forums
-
-### Practice
-- **Local clubs**: Join amateur radio clubs for mentoring
-- **Elmering**: Find an experienced operator to guide you
-- **On-air practice**: Regular operating to improve skills
-- **Contest participation**: Improve operating skills through competition
-
----
-
-*This terminology guide is designed to help users understand amateur radio communication in FGCom-mumble and the broader amateur radio community. For more information, see the [Amateur Radio Support Documentation](BAND_SEGMENTS_API_DOCUMENTATION.md) and [Technical Documentation](TECHNICAL_DOCUMENTATION.md).*
-
+This comprehensive amateur radio terminology guide provides all the essential terms, Q-codes, and procedures used in amateur radio operations and their integration with FGCom-mumble.

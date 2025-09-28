@@ -323,10 +323,10 @@ int main() {
     TestFramework::printResults();
     
     if (TestFramework::tests_failed == 0) {
-        std::cout << "\n🎉 ALL TESTS PASSED! Soviet VHF equipment implementation is working correctly." << std::endl;
+        std::cout << "\nALL TESTS PASSED! Soviet VHF equipment implementation is working correctly." << std::endl;
         return 0;
     } else {
-        std::cout << "\n❌ Some tests failed. Please review the implementation." << std::endl;
+        std::cout << "\nSome tests failed. Please review the implementation." << std::endl;
         return 1;
     }
 }

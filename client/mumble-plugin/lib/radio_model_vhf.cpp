@@ -311,7 +311,14 @@ protected:
         // Now tune down the signal according to calculated noise volume level, then add noise
         fgcom_audio_applyVolume(signalVolume, outputPCM, sampleCount, channelCount);
         fgcom_audio_addNoise(noiseVolume, outputPCM, sampleCount, channelCount);
-        // TODO: we may clip some random samples from the signal on low quality
+        
+        // Apply signal quality degradation for poor signal conditions
+        // This simulates real-world VHF radio behavior where poor signal quality
+        // causes audio dropouts and distortion
+        if (signalVolume < 0.3) {  // Poor signal threshold
+            float dropoutProbability = (0.3 - signalVolume) * 0.5;  // 0-15% dropout rate
+            fgcom_audio_applySignalQualityDegradation(outputPCM, sampleCount, channelCount, dropoutProbability);
+        }
 
 
         /*
