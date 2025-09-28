@@ -239,3 +239,4 @@ In FGCom-mumble, these terms are used in:
 ---
 
 *This terminology guide is designed to help users understand amateur radio communication in FGCom-mumble and the broader amateur radio community. For more information, see the [Amateur Radio Support Documentation](BAND_SEGMENTS_API_DOCUMENTATION.md) and [Technical Documentation](TECHNICAL_DOCUMENTATION.md).*
+

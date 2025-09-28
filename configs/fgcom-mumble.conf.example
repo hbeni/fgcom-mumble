@@ -496,6 +496,75 @@ gpu_memory_limit = 512
 enable_gpu_propagation = false
 enable_gpu_antenna_patterns = false
 
+# GPU Resource Limiting (Client-Only and Hybrid modes)
+# =============================================================================
+[gpu_resource_limiting]
+# Enable GPU resource limiting for client-side calculations
+enable_gpu_resource_limiting = true
+
+# GPU usage percentage limit (0-100)
+# Set to 0 to disable GPU usage, 100 for full usage
+gpu_usage_percentage_limit = 30
+
+# GPU memory usage limit in MB
+gpu_memory_limit_mb = 256
+
+# GPU priority levels (1-10, where 10 is highest priority)
+# Lower values give more priority to game rendering
+gpu_priority_level = 3
+
+# Enable adaptive GPU usage based on system load
+enable_adaptive_gpu_usage = true
+
+# Minimum GPU usage percentage (when adaptive is enabled)
+min_gpu_usage_percentage = 10
+
+# Maximum GPU usage percentage (when adaptive is enabled)
+max_gpu_usage_percentage = 50
+
+# GPU usage reduction when game is detected as running
+# Percentage reduction when game is detected (0-100)
+game_detection_reduction = 50
+
+# GPU usage reduction during high system load
+# Percentage reduction when system load is high (0-100)
+high_load_reduction = 30
+
+# GPU usage reduction during low battery (laptops)
+# Percentage reduction when battery is low (0-100)
+low_battery_reduction = 40
+
+# Enable GPU usage monitoring and enforcement
+enable_gpu_monitoring = true
+
+# GPU usage check interval in milliseconds
+gpu_check_interval_ms = 1000
+
+# GPU usage enforcement strictness (1-5)
+# 1 = lenient, 5 = strict enforcement
+enforcement_strictness = 3
+
+# Enable GPU usage logging
+enable_gpu_usage_logging = false
+
+# GPU usage log file
+gpu_usage_log_file = gpu_usage.log
+
+# GPU usage statistics collection
+enable_gpu_statistics = true
+
+# GPU statistics collection interval in seconds
+gpu_statistics_interval = 60
+
+# GPU usage alerts
+enable_gpu_alerts = true
+
+# GPU usage alert threshold percentage
+gpu_alert_threshold = 80
+
+# GPU usage alert cooldown in seconds
+gpu_alert_cooldown = 300
+
 # =============================================================================
 # FEATURE FLAGS
 # =============================================================================
