@@ -54,57 +54,8 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Advanced Configuration**: 1-2 days for full feature setup
 - **Troubleshooting**: Additional time for configuration issues
 
-### New Advanced Features (v2.0+):
-- **Multi-threaded Architecture**: [7 specialized background threads for optimal performance](docs/TECHNICAL_DOCUMENTATION.md#threading-architecture) - Learn how the threading system works and what each thread does
-- **GPU Acceleration**: [Configurable GPU acceleration for complex calculations (client/server/hybrid modes)](docs/GPU_ACCELERATION_GUIDE.md) - Understand GPU modes, performance benefits, and configuration options
-- **Feature Toggle System**: [107 configurable features across 17 categories for runtime customization](docs/TECHNICAL_DOCUMENTATION.md#feature-toggle-system) - Runtime feature management and configuration
-- **Advanced Debugging**: [Comprehensive logging, profiling, and memory tracking system](docs/TECHNICAL_DOCUMENTATION.md#debugging-system) - Debugging and monitoring capabilities
-- **RESTful API**: [Complete HTTP API with WebSocket real-time updates for external integration](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
-- **Amateur Radio Support**: [Full amateur radio band coverage with ITU region compliance](docs/BAND_SEGMENTS_API_DOCUMENTATION.md) - Amateur radio band segments and power limits
-- **Amateur Radio Modes**: [Complete guide to CW, LSB, USB, NFM, and AM modes used by radio amateurs](docs/AMATEUR_RADIO_MODES_DOCUMENTATION.md) - Standard amateur radio mode implementation
-- **Feature Toggle API Control**: [Comprehensive guide to API endpoint and data source control](docs/FEATURE_TOGGLE_API_CONTROL.md) - Control API access and external data sources
-- **Amateur Radio Terminology**: [Comprehensive guide to Q-codes, operating procedures, and amateur radio communication](docs/AMATEUR_RADIO_TERMINOLOGY.md) - Complete amateur radio terminology reference
-- **Aviation & Maritime HF**: [Dedicated HF communication models for aviation and maritime operations](docs/aviation-VHF-civil.md) - Aviation and maritime HF communication
-- **Antenna Pattern Library**: [Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow](docs/PATTERN_FILE_STANDARDS.md) - **Realistic 3D antenna radiation patterns that model how antennas actually radiate electromagnetic energy in different directions. These patterns are essential for authentic radio communication simulation, showing how directional antennas (like Yagi beams) have high gain in one direction and low gain in others, while omnidirectional antennas radiate equally in all horizontal directions. The system includes patterns for aircraft (affected by attitude and altitude), ground vehicles (affected by vehicle body and ground plane), and maritime platforms (affected by ship structure). This provides physics-based signal quality calculations where antenna gain directly affects communication range and quality, making the radio simulation educationally valuable and realistic.**
-- **STL-to-NEC Converter**: [Cross-platform tool for converting STL files to EZ and NEC formats for electromagnetic simulation](https://github.com/Supermagnum/stl-to-nec) - Convert 3D vehicle models to antenna simulation files
-- **VHF/UHF Antenna Support**: [Professional-grade 2m (144-145 MHz) and 70cm (430-440 MHz) Yagi antennas with 10m height modeling](docs/2M_YAGI_ANTENNA_SUMMARY.md) - VHF/UHF antenna specifications and usage
-- **Physics-Based Propagation**: [Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction](docs/TECHNICAL_DOCUMENTATION.md#propagation-physics) - Radio propagation physics and modeling
-- **Solar Data Integration**: [Real-time NOAA/SWPC solar data for accurate propagation modeling](docs/TECHNICAL_DOCUMENTATION.md#solar-data) - Solar data integration and usage
-- **Vehicle Dynamics API**: [Complete vehicle position, attitude, and antenna orientation tracking](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) - Vehicle dynamics and tracking system
-- **Power Management**: [Advanced transmit power control](docs/TECHNICAL_DOCUMENTATION.md#power-management) - Power control and efficiency features
-- **Frequency Offset Simulation**: [Realistic audio effects including Doppler shift and "Donald Duck" effect](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) - Audio effects and frequency processing
-- **Lightning Data Integration**: [Real-time atmospheric noise simulation from lightning strikes](docs/TECHNICAL_DOCUMENTATION.md#lightning-data) - Lightning data and noise simulation
-- **Weather Data Integration**: [Atmospheric condition effects on radio propagation](docs/TECHNICAL_DOCUMENTATION.md#weather-data) - Weather effects on radio propagation
-- **Security Features**: [TLS/SSL encryption, certificate-based authentication, token authorization, and secure client integration](docs/SECURITY_API_DOCUMENTATION.md) - Comprehensive security implementation guide *(Note: Radio encryption simulation is not yet implemented)*
-- **Noise Floor Calculation**: [Advanced atmospheric noise modeling with environment-specific calculations, distance-based noise falloff, and manual position setting via GPS or Maidenhead locators](docs/NOISE_FLOOR_DISTANCE_GUIDE.md) - Distance-based noise falloff and environment detection
-- **AGC & Squelch System**: [Advanced Automatic Gain Control and Squelch functionality with configurable presets](docs/TECHNICAL_DOCUMENTATION.md#agc-squelch) - AGC and squelch system configuration and usage
-- **Radio Era Classification**: [Comprehensive radio technology classification system for SDR and traditional radios](docs/RADIO_ERA_CLASSIFICATION.md) - Historical radio technology classification and performance modeling
-- **Technical Documentation**: [Technical user guide for administrators and developers](docs/TECHNICAL_USER_GUIDE.md) - Comprehensive guide for technical users
-
-### Latest Updates (v2.1+):
-- **Complete Antenna Pattern Integration**: [All 52 available radiation pattern files now loaded and mapped](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) - Antenna pattern integration and management
-- **Historical Maritime Support**: [Added coastal stations and HF ship antennas with toggle functionality](docs/HISTORICAL_MARITIME_BANDS.md) - Historical maritime HF frequency bands and coastal stations
-- **Dynamic Pattern Loading**: [Replaced hardcoded paths with intelligent pattern discovery system](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) - Dynamic antenna pattern loading system
-- **Enhanced Vehicle Support**: [Added support for boats, ships, military vehicles, and amateur radio operators](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) - Vehicle support and dynamics tracking
-- **Organized Documentation**: [Restructured documentation with proper file organization](docs/README.md) - Documentation structure and organization
-
-### Latest Updates (v2.3+):
-- **Work Unit Distribution**: [Distributed computing system for GPU acceleration across multiple clients](docs/WORK_UNIT_DISTRIBUTION_API.md) - Learn about distributed computing and work unit management
-- **Comprehensive Security**: [Multi-layer security with authentication, encryption, and threat detection](docs/SECURITY_API_DOCUMENTATION.md) - Security implementation and configuration *(Note: Radio encryption simulation is not yet implemented)*
-- **Advanced API**: [Complete RESTful API with work unit distribution and security endpoints](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
-- **Vehicle Geometry Creation**: [Complete guide for creating vehicle geometry and ground planes](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) - Vehicle geometry creation and ground plane modeling
-- **Coding Standards**: [Strict architectural and design standards implementation](docs/CODING_STANDARDS.md) - Coding standards and architectural guidelines
-- **Zero Tolerance Quality**: [Comprehensive code inspection ensuring no race conditions, memory leaks, or security vulnerabilities](docs/reports/CRITICAL_CODE_INSPECTION_REPORT.md) - Quality assurance and code inspection
-- **Enhanced Documentation**: [Updated and consolidated documentation structure](docs/README.md) - Documentation structure and organization
-
-### Latest Updates (v2.4+):
-- **Radio Model Configuration**: [Comprehensive radio model system with NATO and Soviet/Warsaw Pact equipment support](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md) - Server-side radio model configuration and management
-- **Preset Channel Management**: [Advanced preset channel system for military radios with 99 presets support](docs/PRESET_CHANNEL_API_DOCUMENTATION.md) - Preset channel configuration and read-only API access
-- **Military Radio Equipment**: [Implementation of AN/PRC-152, AN/PRC-77, AN/PRC-148, R-105, R-107, R-123 Magnolia and more](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#radio-model-configuration) - Military radio specifications and channel management
-- **Configuration-Based System**: [All radio models and presets defined in JSON configuration files](docs/SERVER_SIDE_CONFIGURATION_GUIDE.md#configuration-files) - Server-side configuration management *(Note: Radio encryption simulation is not yet implemented)*
-- **Missing Implementation**: Radio technical data specifications have not been implemented, and there are currently no antenna radiation patterns created for handheld or portable radio sets
-- **GPU Resource Limiting**: [Intelligent GPU resource management for Client-Only and Hybrid modes with game detection and adaptive limits](docs/GPU_RESOURCE_LIMITING_GUIDE.md) - GPU resource management and performance optimization
-- **Terrain and Environmental API**: [Production-ready C++ implementation with comprehensive error handling, thread safety, and performance optimization](client/mumble-plugin/lib/terrain_environmental_api.h) - Advanced terrain data processing with strict quality standards
+### **Advanced Features**
+See [Advanced Features Documentation](docs/ADVANCED_FEATURES.md) for a comprehensive overview of all advanced features and capabilities organized by version and update cycle.
 
 **Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
