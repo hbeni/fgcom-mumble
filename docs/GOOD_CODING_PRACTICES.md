@@ -132,7 +132,6 @@
 - Losing references to allocated objects
 - Circular references preventing garbage collection
 - Event listeners not removed on component unmount
-- Unreleased DOM references
 - Unclosed file handles, database connections, or network sockets
 - Timer/interval functions not cleared
 
@@ -281,7 +280,7 @@
 
 ---
 
-## **MANDATORY PRE-COMMIT CHECKLIST**
+## **MANDATORY PRE-COMMIT CHECKLIST!**
 
 ### **Before Any Code Push:**
 
