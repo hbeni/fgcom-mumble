@@ -104,18 +104,29 @@ Note: Enter country code (3-letter ISO code) or full country name
 EOF
 }
 
-# Get NASA Earthdata credentials
+# Get NASA Earthdata credentials from environment variables
 get_credentials() {
     if [[ -z "$NASA_USERNAME" || -z "$NASA_PASSWORD" ]]; then
-        info "NASA Earthdata credentials not found in environment variables."
+        error "NASA Earthdata credentials not found in environment variables."
         echo
-        echo "Please provide your NASA Earthdata credentials:"
+        echo "SECURITY REQUIREMENT: All credentials must be provided via environment variables."
+        echo "Set the following environment variables before running this script:"
+        echo "  export NASA_USERNAME='your_username'"
+        echo "  export NASA_PASSWORD='your_password'"
+        echo
         echo "You can get a free account at: https://urs.earthdata.nasa.gov/"
         echo
-        read -p "Enter NASA Earthdata username: " NASA_USERNAME
-        read -s -p "Enter NASA Earthdata password: " NASA_PASSWORD
-        echo
+        echo "For security reasons, this script does not accept interactive password input."
+        echo "Use environment variables or a secure credential manager."
+        exit 1
     fi
+    
+    # Validate credentials are not empty
+    if [[ -z "$NASA_USERNAME" || -z "$NASA_PASSWORD" ]]; then
+        error "NASA credentials cannot be empty. Please set NASA_USERNAME and NASA_PASSWORD environment variables."
+    fi
+    
+    info "Using NASA Earthdata credentials from environment variables."
 }
 
 # Download ASTER GDEM data for specific region

@@ -56,11 +56,20 @@ python3 aster_gdem_advanced.py --region CAN --max-tiles 10
 python3 aster_gdem_advanced.py --info USA
 ```
 
-### Environment Variables
-Set credentials as environment variables to avoid entering them each time:
+### Environment Variables (REQUIRED)
+**SECURITY REQUIREMENT**: All credentials must be provided via environment variables. Interactive password input is disabled for security reasons.
+
+Set credentials as environment variables:
 ```bash
 export NASA_USERNAME="your_username"
 export NASA_PASSWORD="your_password"
+```
+
+**Security Best Practices:**
+- Never hardcode credentials in scripts
+- Use environment variables or secure credential managers
+- Consider using `.env` files with proper permissions (600)
+- Use credential managers like `keyring` for production environments
 ```
 
 ## Available Regions
