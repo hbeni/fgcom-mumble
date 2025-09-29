@@ -23,6 +23,8 @@
 #include "antenna_ground_system.h"
 #include "antenna_pattern_mapping.h"
 #include "propagation_physics.h"
+#include "atmospheric_ducting.h"
+#include "enhanced_multipath.h"
 
 /**
  * A VHF based radio model for the FGCom-mumble plugin
@@ -36,6 +38,14 @@ private:
     std::unique_ptr<FGCom_AntennaGroundSystem> antenna_system;
     bool patterns_initialized;
     
+    // Atmospheric ducting system
+    std::unique_ptr<FGCom_AtmosphericDucting> atmospheric_ducting;
+    bool ducting_initialized;
+    
+    // Enhanced multipath system
+    std::unique_ptr<FGCom_EnhancedMultipath> enhanced_multipath;
+    bool multipath_initialized;
+    
     // Initialize antenna patterns for VHF frequencies
     void initializePatterns() {
         if (patterns_initialized) return;
@@ -47,6 +57,31 @@ private:
         loadVHFAntennaPatterns();
         
         patterns_initialized = true;
+    }
+    
+    // Initialize atmospheric ducting system
+    void initializeDucting() {
+        if (ducting_initialized) return;
+        
+        atmospheric_ducting = std::make_unique<FGCom_AtmosphericDucting>();
+        atmospheric_ducting->setMinimumDuctingStrength(0.3f);
+        atmospheric_ducting->setDuctingHeightRange(50.0f, 2000.0f);
+        atmospheric_ducting->setTemperatureInversionThreshold(0.5f);
+        
+        ducting_initialized = true;
+    }
+    
+    // Initialize enhanced multipath system
+    void initializeMultipath() {
+        if (multipath_initialized) return;
+        
+        enhanced_multipath = std::make_unique<FGCom_EnhancedMultipath>();
+        enhanced_multipath->setTerrainRoughness(1.0f);
+        enhanced_multipath->setBuildingDensity(0.1f);
+        enhanced_multipath->setVegetationDensity(0.2f);
+        enhanced_multipath->setVehicleDensity(0.05f);
+        
+        multipath_initialized = true;
     }
     
     // Load VHF antenna patterns for various vehicles
@@ -393,6 +428,71 @@ public:
         } catch (const std::exception& e) {
             // If antenna pattern lookup fails, continue with basic signal calculation
             // This ensures backward compatibility
+        }
+        
+        // NEW: Apply atmospheric ducting effects
+        try {
+            initializeDucting();
+            
+            // Analyze ducting conditions
+            DuctingConditions ducting = atmospheric_ducting->analyzeDuctingConditions(
+                (lat1 + lat2) / 2.0, (lon1 + lon2) / 2.0, 0.0, 2000.0);
+            
+            if (ducting.ducting_present) {
+                // Calculate ducting effects
+                DuctingCalculationParams ducting_params;
+                ducting_params.frequency_hz = frequency_mhz * 1e6f;
+                ducting_params.distance_km = dist;
+                ducting_params.tx_altitude_m = alt1;
+                ducting_params.rx_altitude_m = alt2;
+                ducting_params.tx_power_watts = power;
+                ducting_params.enable_temperature_inversion = true;
+                ducting_params.enable_humidity_effects = true;
+                ducting_params.enable_wind_shear = true;
+                ducting_params.minimum_ducting_strength = 0.3f;
+                
+                float ducting_enhancement = atmospheric_ducting->calculateDuctingEffects(ducting, ducting_params);
+                ss *= ducting_enhancement;
+                
+                // Ensure signal quality doesn't exceed 1.0
+                if (ss > 1.0) ss = 1.0;
+            }
+        } catch (const std::exception& e) {
+            // If ducting calculation fails, continue with basic signal calculation
+        }
+        
+        // NEW: Apply enhanced multipath effects
+        try {
+            initializeMultipath();
+            
+            // Set up multipath calculation parameters
+            MultipathCalculationParams multipath_params;
+            multipath_params.frequency_hz = frequency_mhz * 1e6f;
+            multipath_params.bandwidth_hz = 25e3f; // 25 kHz VHF channel
+            multipath_params.distance_km = dist;
+            multipath_params.tx_altitude_m = alt1;
+            multipath_params.rx_altitude_m = alt2;
+            multipath_params.tx_power_watts = power;
+            multipath_params.enable_ground_reflection = true;
+            multipath_params.enable_building_scattering = true;
+            multipath_params.enable_vegetation_effects = true;
+            multipath_params.enable_vehicle_scattering = true;
+            multipath_params.terrain_roughness_m = 1.0f;
+            multipath_params.building_density = 0.1f;
+            multipath_params.vegetation_density = 0.2f;
+            multipath_params.vehicle_density = 0.05f;
+            
+            // Analyze multipath channel
+            MultipathChannel channel = enhanced_multipath->analyzeMultipathChannel(multipath_params);
+            
+            // Calculate signal quality with multipath effects
+            float multipath_quality = enhanced_multipath->calculateSignalQuality(channel, 0.0f);
+            ss *= multipath_quality;
+            
+            // Ensure signal quality doesn't exceed 1.0
+            if (ss > 1.0) ss = 1.0;
+        } catch (const std::exception& e) {
+            // If multipath calculation fails, continue with basic signal calculation
         }
         
         // when distance is near the radio horizon, we smoothly cut off the signal, so it doesn't drop sharply to 0

@@ -1,4 +1,0 @@
-Pitch: 45°, cos: 0.707107, sin: 0.707107
-is_fixed_installation: False
-Parsed parts: ['GW', '1', '1', '-0.72', '-0.521', '10', '0.72', '-0.521', '10', '0.006']
-ERROR: list index out of range - GW    1    1 -0.72 -0.521    10  0.72 -0.521    10 0.006

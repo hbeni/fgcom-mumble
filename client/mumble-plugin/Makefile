@@ -9,7 +9,7 @@ SSLFLAGS+=-I./lib/openssl/include/ -L./lib/openssl/ -lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32
 # Note on flags: -D_WIN32 is needed by httplib on Windows
 
-lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/agc_squelch.o lib/agc_squelch_api.o lib/ctcss_system.o lib/terrain_elevation.o lib/preset_channel_api.o lib/soviet_vhf_equipment.o lib/nato_vhf_equipment.o lib/preset_channel_config_loader.o lib/radio_model_config_loader.o lib/gpu_resource_limiting.o lib/terrain_state_machine.o lib/terrain_data_access.o lib/terrain_cache.o lib/terrain_statistics.o lib/terrain_environmental_api.o lib/radio_config.o
+lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/agc_squelch.o lib/agc_squelch_api.o lib/ctcss_system.o lib/terrain_elevation.o lib/preset_channel_api.o lib/soviet_vhf_equipment.o lib/nato_vhf_equipment.o lib/preset_channel_config_loader.o lib/radio_model_config_loader.o lib/gpu_resource_limiting.o lib/terrain_state_machine.o lib/terrain_data_access.o lib/terrain_cache.o lib/terrain_statistics.o lib/terrain_environmental_api.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o
 
 # Notice: Special calls
 #
@@ -64,8 +64,8 @@ libs:  $(lib_OBJS)
 
 # Compile testing tools
 tools: libs
-	$(CC) -o test/geotest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o test/geotest.cpp $(CFLAGS)
-	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o test/frqtest.cpp $(CFLAGS)
+	$(CC) -o test/geotest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o test/geotest.cpp $(CFLAGS)
+	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o test/frqtest.cpp $(CFLAGS)
 	$(CC) -o test/updater-test test/updater-test.cpp $(CFLAGS)
 	
 

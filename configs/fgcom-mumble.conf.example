@@ -280,7 +280,8 @@ cors_origin = *
 enable_rate_limiting = true
 
 # Rate limit: requests per minute per IP
-rate_limit_requests_per_minute = 100
+# Increased for UHF/GHz support (200-500 Hz = 12,000-30,000 req/min)
+rate_limit_requests_per_minute = 50000
 
 # Enable API key authentication
 enable_api_key_auth = false

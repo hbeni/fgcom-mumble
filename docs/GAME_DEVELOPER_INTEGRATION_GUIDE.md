@@ -472,11 +472,195 @@ VehicleDynamicsResponse GetVehicleStatus(const std::string& vehicle_id) {
 - **Attitude Updates**: 10-20 Hz for aircraft, 1-5 Hz for ground vehicles
 - **Antenna Updates**: 1-5 Hz for manual control, 10-20 Hz for auto-tracking
 
+#### **Frequency Band Analysis and Update Requirements**
+
+The update frequency requirements vary significantly based on the radio frequency band being simulated. The following analysis provides guidance for optimal simulation fidelity:
+
+**HF (3-30 MHz) - Excellent**
+- **Wavelength**: 10-100 meters
+- **18m spacing**: Much smaller than wavelength (0.18-1.8 wavelengths)
+- **Fresnel zone**: Well resolved at all distances
+- **Update frequency**: 1-5 Hz sufficient
+- **Effects captured**: Ionospheric propagation, ground wave, sky wave
+- **Simulation quality**: More than sufficient for realistic HF communication
+
+**VHF (30-300 MHz) - Good to Excellent**
+- **Wavelength**: 1-10 meters
+- **18m spacing**: 1.8-18 wavelengths apart
+- **First Fresnel zone**: ~100-300m radius
+- **Update frequency**: 5-10 Hz recommended
+- **Effects captured**: Line-of-sight, tropospheric scatter, ducting
+- **Simulation quality**: Adequate for most applications, excellent for ground-based systems
+
+**UHF (300-3000 MHz) - Marginal to Good**
+- **Wavelength**: 0.1-1 meters
+- **18m spacing**: 18-180 wavelengths apart
+- **Update frequency**: 10-20 Hz required
+- **Potential issues**: 
+  - Missing rapid fading patterns
+  - May miss some multipath effects
+  - Limited small-scale fading simulation
+- **Recommendations**: 
+  - Increase update frequency to 20-50 Hz for critical applications
+  - Implement additional multipath modeling
+  - Use smaller terrain grid spacing
+
+**Microwave (>3 GHz) - Requires High Update Rates**
+- **Wavelength**: <0.1 meters
+- **Current 18m spacing**: >180 wavelengths apart (inadequate)
+- **Target spacing**: 1-3 wavelengths (0.1-0.3m at 3 GHz)
+- **Update frequency**: 200-500 Hz required
+- **Critical issues**: 
+  - Missing fast fading effects
+  - Inadequate scattering simulation
+  - Limited atmospheric effects modeling
+- **Target Update Rate Analysis (3 GHz example)**:
+  - **Wavelength**: 0.1 meters (10 cm)
+  - **Current spacing**: 18m = 180λ (inadequate)
+  - **Target spacing**: 1-3 wavelengths = 0.1-0.3m
+  - **Aircraft speed**: 700 knots = 360 m/s
+  - **Theoretical ideal**: 360 ÷ 0.2 = 1,800 Hz
+  - **Practical simulation**: 200-500 Hz (1.8-0.72m effective spacing)
+- **Recommendations**:
+  - Use 200-500 Hz update frequencies
+  - Implement advanced multipath algorithms
+  - Add atmospheric turbulence modeling
+  - Use sub-wavelength terrain resolution
+  - Consider adaptive update rates based on vehicle speed
+
+#### **Optimized Update Frequencies by Application**
+
+**Aviation Communication (VHF)**
+- **Update frequency**: 10-20 Hz
+- **Critical for**: Approach/departure, tower communication
+- **Effects**: Doppler shift, multipath, atmospheric ducting
+  - **Doppler Shift**: ✅ Fully implemented with relativistic corrections
+  - **Multipath**: ✅ Enhanced implementation with complex scenarios
+  - **Atmospheric Ducting**: ✅ Newly implemented with weather integration
+
+**Maritime Communication (HF/VHF)**
+- **Update frequency**: 5-10 Hz
+- **Critical for**: Long-range HF, coastal VHF
+- **Effects**: Ionospheric propagation, sea reflection, atmospheric noise
+
+**Military/Tactical (UHF/Microwave)**
+- **Update frequency**: 20-50 Hz
+- **Critical for**: Secure communication, data links
+- **Effects**: Fast fading, multipath, jamming resistance
+
+**Satellite Communication (Microwave)**
+- **Update frequency**: 200-500 Hz
+- **Critical for**: Tracking, signal quality
+- **Effects**: Atmospheric scintillation, rain fade, tropospheric effects
+- **Spacing requirements**: 1-3 wavelengths (0.1-0.3m at 3 GHz)
+
+**General Microwave Propagation (3-10 GHz)**
+- **Update frequency**: 300 Hz recommended
+- **Spacing**: 1.2m = 12λ at 3 GHz
+- **Captures**: Major multipath components
+- **Computational load**: Reasonable for most systems
+- **Critical for**: Military communications, data links, radar systems
+
+#### **Microwave Frequency Detailed Analysis**
+
+**Target Update Rate Requirements:**
+- **Target Update Rate**: 200-500 Hz
+- **Reasoning**: At 3 GHz, wavelength = 0.1 meters (10 cm)
+- **Current spacing**: 18m = 180λ (inadequate for fast fading)
+- **Target spacing**: 1-3 wavelengths = 0.1-0.3m
+
+**Speed-Based Calculations:**
+- **Aircraft speed**: 700 knots = 360 m/s
+- **For 0.2m spacing**: 360 ÷ 0.2 = 1,800 Hz (theoretical ideal)
+- **For practical simulation**: 200-500 Hz (1.8-0.72m effective spacing)
+
+**Specific Recommendations by Application:**
+
+**General Microwave Propagation (3-10 GHz):**
+- **Update rate**: 300 Hz
+- **Spacing**: 1.2m = 12λ at 3 GHz
+- **Captures**: Major multipath components
+- **Computational load**: Reasonable for most systems
+
+**High-Speed Applications (Military/Tactical):**
+- **Update rate**: 500 Hz
+- **Spacing**: 0.72m = 7.2λ at 3 GHz
+- **Captures**: Fast fading, rapid multipath changes
+- **Computational load**: High, requires optimization
+
+**Satellite/Tracking Applications:**
+- **Update rate**: 200-300 Hz
+- **Spacing**: 1.2-1.8m = 12-18λ at 3 GHz
+- **Captures**: Atmospheric scintillation, orbital dynamics
+- **Computational load**: Moderate
+
+#### **API Rate Limiting Configuration**
+
+**CRITICAL**: The default API rate limiting (100 requests/minute) will **block UHF/GHz updates**. The system has been updated with frequency-band-specific rate limits:
+
+**Updated Rate Limits:**
+- **General API**: 50,000 requests/minute (833 Hz)
+- **UHF (300 MHz+)**: 60,000 requests/minute (1000 Hz)
+- **GHz (1 GHz+)**: 120,000 requests/minute (2000 Hz)
+- **3 GHz+**: 300,000 requests/minute (5000 Hz)
+
+**Configuration Files Updated:**
+- `client/mumble-plugin/lib/fgcom_config.h`: Default rate limit increased to 50,000
+- `configs/fgcom-mumble.conf.example`: Updated with new rate limits
+- `configs/fgcom-mumble.conf.minimal`: Updated with new rate limits
+
+**For Game Developers:**
+- **UHF applications**: Use `checkFrequencyBandRateLimit()` for frequency-aware rate limiting
+- **GHz applications**: Automatic higher rate limits for frequencies ≥ 1 GHz
+- **3 GHz+ applications**: Maximum rate limit of 300,000 requests/minute
+
+#### **Advanced Radio Propagation Effects**
+
+**Doppler Shift Implementation:**
+- **Status**: ✅ Fully implemented
+- **Location**: `client/mumble-plugin/lib/frequency_offset.cpp`
+- **Features**:
+  - Relativistic corrections for high-speed vehicles
+  - Atmospheric refraction factor (1.0003)
+  - Real-time audio processing integration
+  - Configurable parameters for different scenarios
+- **Usage**: Automatically applied based on relative velocity and carrier frequency
+
+**Enhanced Multipath Implementation:**
+- **Status**: ✅ Fully implemented
+- **Location**: `client/mumble-plugin/lib/enhanced_multipath.cpp`
+- **Features**:
+  - Complex multipath component modeling
+  - Ground reflection, building scattering, vegetation effects
+  - Vehicle scattering and interference
+  - Fading statistics and channel prediction
+  - Wideband and fast fading detection
+- **Usage**: Integrated into VHF radio model with configurable parameters
+
+**Atmospheric Ducting Implementation:**
+- **Status**: ✅ Newly implemented
+- **Location**: `client/mumble-plugin/lib/atmospheric_ducting.cpp`
+- **Features**:
+  - Temperature inversion detection
+  - Humidity gradient analysis
+  - Wind shear effects
+  - Ducting height and thickness calculation
+  - Weather data integration
+  - Signal enhancement calculation
+- **Usage**: Automatically analyzes atmospheric conditions and applies ducting effects
+
+**Integration with Radio Models:**
+- **VHF Model**: Enhanced with all three effects
+- **UHF Model**: Ready for integration
+- **HF Model**: Doppler shift and multipath support
+- **Configuration**: Automatic initialization with sensible defaults
+
 #### **Network Optimization**
 - Use batch updates when possible
 - Implement connection pooling
 - Handle network failures gracefully
 - Use compression for large data sets
+- **Use frequency-band-specific rate limiting for UHF/GHz applications**
 
 #### **Memory Management**
 - Cache frequently accessed data
@@ -1113,6 +1297,783 @@ public:
 - MIL-STD-188-110A/B Appendix B waveform documentation
 - Linear Predictive Coding research papers
 - QPSK OFDM modulation theory papers
+
+## Weather Data API
+
+### **Weather Data Integration**
+
+The Weather Data API provides atmospheric condition effects on radio propagation. This system fetches weather data from multiple sources and uses it to simulate realistic atmospheric effects that affect radio communication across different frequency bands.
+
+### **Weather API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/weather-data`
+
+#### **Get Current Weather Conditions**
+```http
+GET /api/v1/weather-data/current
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "weather_conditions": {
+    "temperature_celsius": 20.0,
+    "humidity_percent": 50.0,
+    "pressure_hpa": 1013.25,
+    "wind_speed_ms": 5.0,
+    "wind_direction_deg": 180.0,
+    "precipitation_mmh": 0.0,
+    "dew_point_celsius": 10.0,
+    "visibility_km": 10.0,
+    "cloud_cover_percent": 30.0,
+    "uv_index": 5.0,
+    "air_quality_index": 50.0,
+    "pollen_count": 25.0,
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### **Get Weather Effects by Frequency**
+```http
+GET /api/v1/weather-data/frequency-effects?frequency_band=VHF&frequency_hz=100000000
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "frequency_effects": {
+    "frequency_band": "VHF",
+    "frequency_hz": 100000000.0,
+    "weather_effects": {
+      "temperature_effects_db": 0.5,
+      "humidity_effects_db": 1.2,
+      "pressure_effects_db": 0.3,
+      "precipitation_effects_db": 0.0,
+      "wind_effects_db": 0.2,
+      "total_effects_db": 2.2
+    },
+    "propagation_effects": {
+      "line_of_sight": 2.2,
+      "tropospheric_scatter": 3.5,
+      "ducting": 0.8
+    },
+    "atmospheric_conditions": {
+      "refraction_index": 1.0003,
+      "ducting_height_m": 1000.0,
+      "absorption_coefficient": 0.001
+    },
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+### **Game Integration Examples**
+
+#### **1. Weather Effects on Radio Communication**
+```cpp
+// C++ weather integration example
+class WeatherRadioEffects {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/weather-data";
+    
+public:
+    // Get weather effects on radio communication
+    float getWeatherEffects(float frequency_hz, float distance_km) {
+        // Get current weather conditions
+        auto weather_response = sendAPIRequest("GET", "/current", {});
+        auto weather = weather_response["weather_conditions"];
+        
+        // Calculate weather effects
+        float temperature_effect = calculateTemperatureEffect(frequency_hz, weather["temperature_celsius"]);
+        float humidity_effect = calculateHumidityEffect(frequency_hz, weather["humidity_percent"]);
+        float pressure_effect = calculatePressureEffect(frequency_hz, weather["pressure_hpa"]);
+        float precipitation_effect = calculatePrecipitationEffect(frequency_hz, weather["precipitation_mmh"]);
+        
+        return temperature_effect + humidity_effect + pressure_effect + precipitation_effect;
+    }
+    
+    // Calculate temperature effects on radio propagation
+    float calculateTemperatureEffect(float frequency_hz, float temperature_celsius) {
+        if (frequency_hz < 1000000.0f) { // VLF/LF
+            return (temperature_celsius - 20.0f) * 0.001f;
+        } else if (frequency_hz < 100000000.0f) { // MF/HF
+            return (temperature_celsius - 20.0f) * 0.005f;
+        } else if (frequency_hz < 1000000000.0f) { // VHF/UHF
+            return (temperature_celsius - 20.0f) * 0.01f;
+        } else { // SHF/EHF
+            return (temperature_celsius - 20.0f) * 0.02f;
+        }
+    }
+    
+    // Calculate humidity effects on radio propagation
+    float calculateHumidityEffect(float frequency_hz, float humidity_percent) {
+        if (frequency_hz < 1000000.0f) { // VLF/LF
+            return (humidity_percent - 50.0f) * 0.002f;
+        } else if (frequency_hz < 100000000.0f) { // MF/HF
+            return (humidity_percent - 50.0f) * 0.01f;
+        } else if (frequency_hz < 1000000000.0f) { // VHF/UHF
+            return (humidity_percent - 50.0f) * 0.02f;
+        } else { // SHF/EHF
+            return (humidity_percent - 50.0f) * 0.05f;
+        }
+    }
+    
+    // Calculate precipitation effects (rain, drizzle, etc.)
+    float calculatePrecipitationEffect(float frequency_hz, float precipitation_mmh) {
+        if (precipitation_mmh > 0.0f) {
+            // Rain effects on radio propagation
+            if (frequency_hz < 1000000.0f) { // VLF/LF
+                return precipitation_mmh * 0.001f;
+            } else if (frequency_hz < 100000000.0f) { // MF/HF
+                return precipitation_mmh * 0.005f;
+            } else if (frequency_hz < 1000000000.0f) { // VHF/UHF
+                return precipitation_mmh * 0.01f;
+            } else { // SHF/EHF
+                return precipitation_mmh * 0.02f;
+            }
+        }
+        return 0.0f;
+    }
+};
+```
+
+#### **2. Rain and Drizzle Effects**
+```cpp
+// Specific weather condition effects
+class PrecipitationEffects {
+public:
+    // Calculate rain effects on radio communication
+    float calculateRainEffects(float frequency_hz, float rain_intensity_mmh) {
+        float rain_attenuation = 0.0f;
+        
+        if (rain_intensity_mmh > 0.0f) {
+            // Rain attenuation formula
+            float frequency_ghz = frequency_hz / 1000000000.0f;
+            rain_attenuation = rain_intensity_mmh * (0.032 * pow(frequency_ghz, 0.5) + 0.001 * pow(frequency_ghz, 2.0));
+        }
+        
+        return rain_attenuation;
+    }
+    
+    // Calculate drizzle effects (lighter precipitation)
+    float calculateDrizzleEffects(float frequency_hz, float drizzle_intensity_mmh) {
+        float drizzle_attenuation = 0.0f;
+        
+        if (drizzle_intensity_mmh > 0.0f) {
+            // Drizzle has less effect than rain
+            float frequency_ghz = frequency_hz / 1000000000.0f;
+            drizzle_attenuation = drizzle_intensity_mmh * (0.016 * pow(frequency_ghz, 0.5) + 0.0005 * pow(frequency_ghz, 2.0));
+        }
+        
+        return drizzle_attenuation;
+    }
+    
+    // Calculate moisture effects on radio propagation
+    float calculateMoistureEffects(float frequency_hz, float humidity_percent, float temperature_celsius) {
+        // Calculate atmospheric moisture effects
+        float moisture_factor = humidity_percent / 100.0f;
+        float temperature_factor = (temperature_celsius - 20.0f) / 20.0f;
+        
+        float moisture_effect = 0.0f;
+        if (frequency_hz > 1000000000.0f) { // SHF/EHF bands
+            moisture_effect = moisture_factor * temperature_factor * 0.1f;
+        }
+        
+        return moisture_effect;
+    }
+};
+```
+
+## Solar Data API
+
+### **Solar Data Integration**
+
+The Solar Data API provides real-time NOAA/SWPC solar data for accurate propagation modeling. This system fetches solar activity data from multiple sources and uses it to calculate realistic radio propagation conditions.
+
+### **Solar Data API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/solar-data`
+
+#### **Get Current Solar Data**
+```http
+GET /api/v1/solar-data/current
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "solar_data": {
+    "timestamp": "2024-01-15T10:30:00Z",
+    "solar_flux": 150.2,
+    "sunspot_number": 45,
+    "k_index": 2,
+    "a_index": 8,
+    "ap_index": 12,
+    "solar_wind": {
+      "speed": 450.5,
+      "density": 5.2,
+      "temperature": 100000.0
+    },
+    "geomagnetic_field": {
+      "bx": 2.1,
+      "by": -1.5,
+      "bz": -3.2,
+      "total_strength": 4.8
+    },
+    "calculated_parameters": {
+      "muf": 25.5,
+      "luf": 3.2,
+      "critical_frequency": 8.5,
+      "propagation_quality": 0.85
+    },
+    "magnetic_field": "quiet",
+    "propagation_conditions": "good",
+    "data_source": "noaa_swpc",
+    "data_valid": true
+  }
+}
+```
+
+#### **Get Solar Data History**
+```http
+GET /api/v1/solar-data/history?start_date=2024-01-01T00:00:00Z&end_date=2024-01-15T23:59:59Z&data_points=100
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "solar_history": {
+    "start_date": "2024-01-01T00:00:00Z",
+    "end_date": "2024-01-15T23:59:59Z",
+    "data_points": 100,
+    "data": [
+      {
+        "timestamp": "2024-01-01T00:00:00Z",
+        "solar_flux": 145.2,
+        "sunspot_number": 42,
+        "k_index": 1,
+        "a_index": 5,
+        "propagation_quality": 0.82
+      }
+    ]
+  }
+}
+```
+
+### **Game Integration Examples**
+
+#### **1. Solar Effects on Radio Propagation**
+```cpp
+// C++ solar data integration example
+class SolarRadioEffects {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/solar-data";
+    
+public:
+    // Get solar effects on radio propagation
+    float getSolarEffects(float frequency_hz, float latitude, float longitude) {
+        // Get current solar data
+        auto solar_response = sendAPIRequest("GET", "/current", {});
+        auto solar_data = solar_response["solar_data"];
+        
+        // Calculate solar effects
+        float solar_flux_effect = calculateSolarFluxEffect(frequency_hz, solar_data["solar_flux"]);
+        float geomagnetic_effect = calculateGeomagneticEffect(frequency_hz, solar_data["k_index"]);
+        float latitude_effect = calculateLatitudeEffect(frequency_hz, latitude);
+        
+        return solar_flux_effect + geomagnetic_effect + latitude_effect;
+    }
+    
+    // Calculate solar flux effects on HF propagation
+    float calculateSolarFluxEffect(float frequency_hz, float solar_flux) {
+        if (frequency_hz >= 3000000.0f && frequency_hz <= 30000000.0f) { // HF band
+            // Solar flux affects HF propagation
+            float flux_factor = (solar_flux - 70.0f) / 100.0f;
+            return flux_factor * 2.0f; // dB effect
+        }
+        return 0.0f;
+    }
+    
+    // Calculate geomagnetic effects
+    float calculateGeomagneticEffect(float frequency_hz, float k_index) {
+        if (frequency_hz >= 3000000.0f && frequency_hz <= 30000000.0f) { // HF band
+            // K-index affects HF propagation
+            if (k_index > 5.0f) {
+                return -(k_index - 5.0f) * 3.0f; // Negative effect on propagation
+            }
+        }
+        return 0.0f;
+    }
+    
+    // Calculate latitude-dependent effects
+    float calculateLatitudeEffect(float frequency_hz, float latitude) {
+        if (frequency_hz >= 3000000.0f && frequency_hz <= 30000000.0f) { // HF band
+            // Latitude affects ionospheric propagation
+            float lat_factor = (90.0f - abs(latitude)) / 90.0f;
+            return lat_factor * 1.5f; // dB effect
+        }
+        return 0.0f;
+    }
+};
+```
+
+#### **2. Solar Activity Monitoring**
+```cpp
+// Solar activity monitoring for game integration
+class SolarActivityMonitor {
+private:
+    float last_solar_flux;
+    float last_k_index;
+    std::chrono::system_clock::time_point last_update;
+    
+public:
+    // Monitor solar activity changes
+    bool hasSolarActivityChanged() {
+        auto current_response = sendAPIRequest("GET", "/current", {});
+        auto current_data = current_response["solar_data"];
+        
+        float current_solar_flux = current_data["solar_flux"];
+        float current_k_index = current_data["k_index"];
+        
+        bool changed = (abs(current_solar_flux - last_solar_flux) > 5.0f) ||
+                      (abs(current_k_index - last_k_index) > 1.0f);
+        
+        if (changed) {
+            last_solar_flux = current_solar_flux;
+            last_k_index = current_k_index;
+            last_update = std::chrono::system_clock::now();
+        }
+        
+        return changed;
+    }
+    
+    // Get propagation forecast
+    std::string getPropagationForecast() {
+        auto current_response = sendAPIRequest("GET", "/current", {});
+        auto current_data = current_response["solar_data"];
+        
+        float solar_flux = current_data["solar_flux"];
+        float k_index = current_data["k_index"];
+        
+        if (solar_flux > 150.0f && k_index < 3.0f) {
+            return "excellent";
+        } else if (solar_flux > 100.0f && k_index < 5.0f) {
+            return "good";
+        } else if (solar_flux > 70.0f && k_index < 7.0f) {
+            return "fair";
+        } else {
+            return "poor";
+        }
+    }
+};
+```
+
+## AGC & Squelch API
+
+### **AGC & Squelch System Integration**
+
+The AGC & Squelch API provides advanced Automatic Gain Control and Squelch functionality with configurable presets. This system ensures optimal audio quality and communication reliability by automatically adjusting gain levels and managing signal thresholds.
+
+### **AGC & Squelch API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/agc-squelch`
+
+#### **Get AGC Status**
+```http
+GET /api/v1/agc-squelch/agc/status
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "agc_status": {
+    "enabled": true,
+    "mode": "automatic",
+    "current_gain_db": 15.2,
+    "target_gain_db": 15.0,
+    "max_gain_db": 30.0,
+    "min_gain_db": 0.0,
+    "target_level_db": -20.0,
+    "threshold_db": -80.0,
+    "attack_time_ms": 10.0,
+    "release_time_ms": 100.0,
+    "efficiency_percent": 85.2,
+    "agc_active": true,
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### **Get Squelch Status**
+```http
+GET /api/v1/agc-squelch/squelch/status
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "squelch_status": {
+    "enabled": true,
+    "type": "signal",
+    "threshold_db": -85.0,
+    "hysteresis_db": 3.0,
+    "attack_time_ms": 5.0,
+    "release_time_ms": 50.0,
+    "signal_strength_db": -82.0,
+    "noise_floor_db": -95.0,
+    "signal_to_noise_ratio_db": 13.0,
+    "squelch_open": true,
+    "tone_squelch_enabled": false,
+    "digital_squelch_enabled": false,
+    "efficiency_percent": 92.5,
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### **Set AGC Parameters**
+```http
+POST /api/v1/agc-squelch/agc/configure
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "mode": "automatic",
+  "target_level_db": -20.0,
+  "threshold_db": -80.0,
+  "attack_time_ms": 10.0,
+  "release_time_ms": 100.0,
+  "max_gain_db": 30.0,
+  "min_gain_db": 0.0
+}
+```
+
+#### **Set Squelch Parameters**
+```http
+POST /api/v1/agc-squelch/squelch/configure
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "type": "signal",
+  "threshold_db": -85.0,
+  "hysteresis_db": 3.0,
+  "attack_time_ms": 5.0,
+  "release_time_ms": 50.0
+}
+```
+
+### **CTCSS (Continuous Tone-Coded Squelch System) Integration**
+
+#### **Enable CTCSS Tone Squelch**
+```http
+POST /api/v1/agc-squelch/squelch/tone-squelch
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "enabled": true,
+  "tone_frequency_hz": 100.0,
+  "tone_tolerance_hz": 2.0,
+  "tone_filter_bandwidth_hz": 10.0
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "CTCSS tone squelch enabled",
+  "tone_frequency_hz": 100.0,
+  "tone_detected": false,
+  "tone_strength_db": 0.0,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+#### **Available CTCSS Tones**
+```json
+{
+  "success": true,
+  "ctcss_tones": [
+    {"frequency": 67.0, "description": "CTCSS 67.0 Hz"},
+    {"frequency": 69.3, "description": "CTCSS 69.3 Hz"},
+    {"frequency": 71.9, "description": "CTCSS 71.9 Hz"},
+    {"frequency": 74.4, "description": "CTCSS 74.4 Hz"},
+    {"frequency": 77.0, "description": "CTCSS 77.0 Hz"},
+    {"frequency": 79.7, "description": "CTCSS 79.7 Hz"},
+    {"frequency": 82.5, "description": "CTCSS 82.5 Hz"},
+    {"frequency": 85.4, "description": "CTCSS 85.4 Hz"},
+    {"frequency": 88.5, "description": "CTCSS 88.5 Hz"},
+    {"frequency": 91.5, "description": "CTCSS 91.5 Hz"},
+    {"frequency": 94.8, "description": "CTCSS 94.8 Hz"},
+    {"frequency": 97.4, "description": "CTCSS 97.4 Hz"},
+    {"frequency": 100.0, "description": "CTCSS 100.0 Hz"},
+    {"frequency": 103.5, "description": "CTCSS 103.5 Hz"},
+    {"frequency": 107.2, "description": "CTCSS 107.2 Hz"},
+    {"frequency": 110.9, "description": "CTCSS 110.9 Hz"},
+    {"frequency": 114.8, "description": "CTCSS 114.8 Hz"},
+    {"frequency": 118.8, "description": "CTCSS 118.8 Hz"},
+    {"frequency": 123.0, "description": "CTCSS 123.0 Hz"},
+    {"frequency": 127.3, "description": "CTCSS 127.3 Hz"},
+    {"frequency": 131.8, "description": "CTCSS 131.8 Hz"},
+    {"frequency": 136.5, "description": "CTCSS 136.5 Hz"},
+    {"frequency": 141.3, "description": "CTCSS 141.3 Hz"},
+    {"frequency": 146.2, "description": "CTCSS 146.2 Hz"},
+    {"frequency": 151.4, "description": "CTCSS 151.4 Hz"},
+    {"frequency": 156.7, "description": "CTCSS 156.7 Hz"},
+    {"frequency": 162.2, "description": "CTCSS 162.2 Hz"},
+    {"frequency": 167.9, "description": "CTCSS 167.9 Hz"},
+    {"frequency": 173.8, "description": "CTCSS 173.8 Hz"},
+    {"frequency": 179.9, "description": "CTCSS 179.9 Hz"},
+    {"frequency": 186.2, "description": "CTCSS 186.2 Hz"},
+    {"frequency": 192.8, "description": "CTCSS 192.8 Hz"},
+    {"frequency": 203.5, "description": "CTCSS 203.5 Hz"},
+    {"frequency": 210.7, "description": "CTCSS 210.7 Hz"},
+    {"frequency": 218.1, "description": "CTCSS 218.1 Hz"},
+    {"frequency": 225.7, "description": "CTCSS 225.7 Hz"},
+    {"frequency": 233.6, "description": "CTCSS 233.6 Hz"},
+    {"frequency": 241.8, "description": "CTCSS 241.8 Hz"},
+    {"frequency": 250.3, "description": "CTCSS 250.3 Hz"}
+  ]
+}
+```
+
+### **Game Integration Examples**
+
+#### **1. AGC & Squelch Integration**
+```cpp
+// C++ AGC & Squelch integration example
+class AGC_Squelch_Integration {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/agc-squelch";
+    
+public:
+    // Configure AGC for optimal audio quality
+    bool configureAGC(float target_level_db, float threshold_db, 
+                      float attack_time_ms, float release_time_ms) {
+        nlohmann::json request = {
+            {"mode", "automatic"},
+            {"target_level_db", target_level_db},
+            {"threshold_db", threshold_db},
+            {"attack_time_ms", attack_time_ms},
+            {"release_time_ms", release_time_ms},
+            {"max_gain_db", 30.0},
+            {"min_gain_db", 0.0}
+        };
+        
+        auto response = sendAPIRequest("POST", "/agc/configure", request);
+        return response["success"];
+    }
+    
+    // Configure squelch for noise reduction
+    bool configureSquelch(float threshold_db, float hysteresis_db,
+                         float attack_time_ms, float release_time_ms) {
+        nlohmann::json request = {
+            {"type", "signal"},
+            {"threshold_db", threshold_db},
+            {"hysteresis_db", hysteresis_db},
+            {"attack_time_ms", attack_time_ms},
+            {"release_time_ms", release_time_ms}
+        };
+        
+        auto response = sendAPIRequest("POST", "/squelch/configure", request);
+        return response["success"];
+    }
+    
+    // Get current AGC status
+    AGCStatus getAGCStatus() {
+        auto response = sendAPIRequest("GET", "/agc/status", {});
+        AGCStatus status;
+        
+        if (response["success"]) {
+            auto agc_data = response["agc_status"];
+            status.enabled = agc_data["enabled"];
+            status.mode = agc_data["mode"];
+            status.current_gain_db = agc_data["current_gain_db"];
+            status.efficiency_percent = agc_data["efficiency_percent"];
+            status.agc_active = agc_data["agc_active"];
+        }
+        
+        return status;
+    }
+    
+    // Get current squelch status
+    SquelchStatus getSquelchStatus() {
+        auto response = sendAPIRequest("GET", "/squelch/status", {});
+        SquelchStatus status;
+        
+        if (response["success"]) {
+            auto squelch_data = response["squelch_status"];
+            status.enabled = squelch_data["enabled"];
+            status.type = squelch_data["type"];
+            status.threshold_db = squelch_data["threshold_db"];
+            status.squelch_open = squelch_data["squelch_open"];
+            status.signal_strength_db = squelch_data["signal_strength_db"];
+            status.efficiency_percent = squelch_data["efficiency_percent"];
+        }
+        
+        return status;
+    }
+};
+```
+
+#### **2. CTCSS Tone Squelch Integration**
+```cpp
+// CTCSS tone squelch integration
+class CTCSS_Integration {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/agc-squelch";
+    
+public:
+    // Enable CTCSS tone squelch
+    bool enableCTCSS(float tone_frequency_hz, float tolerance_hz) {
+        nlohmann::json request = {
+            {"enabled", true},
+            {"tone_frequency_hz", tone_frequency_hz},
+            {"tone_tolerance_hz", tolerance_hz},
+            {"tone_filter_bandwidth_hz", 10.0}
+        };
+        
+        auto response = sendAPIRequest("POST", "/squelch/tone-squelch", request);
+        return response["success"];
+    }
+    
+    // Disable CTCSS tone squelch
+    bool disableCTCSS() {
+        nlohmann::json request = {
+            {"enabled", false}
+        };
+        
+        auto response = sendAPIRequest("POST", "/squelch/tone-squelch", request);
+        return response["success"];
+    }
+    
+    // Check if CTCSS tone is detected
+    bool isCTCSToneDetected() {
+        auto response = sendAPIRequest("GET", "/squelch/status", {});
+        
+        if (response["success"]) {
+            auto squelch_data = response["squelch_status"];
+            return squelch_data["tone_detected"];
+        }
+        
+        return false;
+    }
+    
+    // Get available CTCSS tones
+    std::vector<float> getAvailableCTCSTones() {
+        auto response = sendAPIRequest("GET", "/squelch/ctcss-tones", {});
+        std::vector<float> tones;
+        
+        if (response["success"]) {
+            auto tones_data = response["ctcss_tones"];
+            for (const auto& tone : tones_data) {
+                tones.push_back(tone["frequency"]);
+            }
+        }
+        
+        return tones;
+    }
+    
+    // Set CTCSS tone for specific frequency
+    bool setCTCSTone(float tone_frequency_hz) {
+        // Validate tone frequency
+        auto available_tones = getAvailableCTCSTones();
+        bool valid_tone = false;
+        
+        for (float tone : available_tones) {
+            if (abs(tone - tone_frequency_hz) < 0.1f) {
+                valid_tone = true;
+                break;
+            }
+        }
+        
+        if (!valid_tone) {
+            return false;
+        }
+        
+        return enableCTCSS(tone_frequency_hz, 2.0f);
+    }
+};
+```
+
+#### **3. Audio Quality Monitoring**
+```cpp
+// Audio quality monitoring for game integration
+class AudioQualityMonitor {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/agc-squelch";
+    
+public:
+    // Monitor audio quality
+    AudioQuality getAudioQuality() {
+        auto agc_response = sendAPIRequest("GET", "/agc/status", {});
+        auto squelch_response = sendAPIRequest("GET", "/squelch/status", {});
+        
+        AudioQuality quality;
+        
+        if (agc_response["success"] && squelch_response["success"]) {
+            auto agc_data = agc_response["agc_status"];
+            auto squelch_data = squelch_response["squelch_status"];
+            
+            quality.agc_efficiency = agc_data["efficiency_percent"];
+            quality.squelch_efficiency = squelch_data["efficiency_percent"];
+            quality.signal_strength = squelch_data["signal_strength_db"];
+            quality.noise_floor = squelch_data["noise_floor_db"];
+            quality.signal_to_noise_ratio = squelch_data["signal_to_noise_ratio_db"];
+            quality.overall_quality = (quality.agc_efficiency + quality.squelch_efficiency) / 200.0f;
+        }
+        
+        return quality;
+    }
+    
+    // Check if audio quality is optimal
+    bool isAudioQualityOptimal() {
+        AudioQuality quality = getAudioQuality();
+        
+        return quality.overall_quality > 0.8f && 
+               quality.signal_to_noise_ratio > 10.0f &&
+               quality.agc_efficiency > 80.0f &&
+               quality.squelch_efficiency > 80.0f;
+    }
+    
+    // Get audio quality recommendations
+    std::string getAudioQualityRecommendations() {
+        AudioQuality quality = getAudioQuality();
+        
+        if (quality.overall_quality < 0.6f) {
+            return "Poor audio quality. Check signal strength and noise levels.";
+        } else if (quality.overall_quality < 0.8f) {
+            return "Fair audio quality. Consider adjusting AGC or squelch settings.";
+        } else {
+            return "Good audio quality. System is operating optimally.";
+        }
+    }
+};
+```
 
 ## FGCom-mumble Data Output
 

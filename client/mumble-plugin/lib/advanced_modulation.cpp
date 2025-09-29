@@ -224,38 +224,59 @@ double FGCom_AdvancedModulation::calculateChannelSpacing(const std::string& mode
 }
 
 bool FGCom_AdvancedModulation::validateModulationMode(const std::string& mode) {
-    std::vector<std::string> valid_modes = {"DSB", "ISB", "VSB", "NFM"};
+    std::vector<std::string> valid_modes = {"CW", "LSB", "USB", "NFM", "AM", "DSB", "ISB", "VSB"};
     return std::find(valid_modes.begin(), valid_modes.end(), mode) != valid_modes.end();
 }
 
 std::vector<std::string> FGCom_AdvancedModulation::getSupportedModes() {
-    return {"DSB", "ISB", "VSB", "NFM"};
+    return {"CW", "LSB", "USB", "NFM", "AM", "DSB", "ISB", "VSB"};
 }
 
 // Signal processing functions
 double FGCom_AdvancedModulation::calculateModulationIndex(const std::string& mode, double frequency_khz) {
+    // Amateur radio modes
+    if (mode == "CW") return 1.0; // Full modulation for CW
+    if (mode == "LSB") return 1.0; // Full modulation for LSB
+    if (mode == "USB") return 1.0; // Full modulation for USB
+    if (mode == "NFM") return 0.9; // FM modulation index
+    if (mode == "AM") return 0.8; // AM modulation index
+    
+    // Advanced modulation modes
     if (mode == "DSB") return 1.0; // Full modulation
     if (mode == "ISB") return 1.0; // Full modulation
     if (mode == "VSB") return 0.8; // Reduced modulation due to vestigial
-    if (mode == "NFM") return 0.9; // FM modulation index
     
     return 1.0;
 }
 
 double FGCom_AdvancedModulation::calculateSidebandSuppression(const std::string& mode) {
+    // Amateur radio modes
+    if (mode == "CW") return 0.0; // No sideband suppression for CW
+    if (mode == "LSB") return 40.0; // 40 dB upper sideband suppression
+    if (mode == "USB") return 40.0; // 40 dB lower sideband suppression
+    if (mode == "NFM") return 0.0; // No sideband suppression for FM
+    if (mode == "AM") return 0.0; // No sideband suppression for AM
+    
+    // Advanced modulation modes
     if (mode == "DSB") return 0.0; // No sideband suppression
     if (mode == "ISB") return 0.0; // No sideband suppression
     if (mode == "VSB") return 20.0; // 20 dB vestigial suppression
-    if (mode == "NFM") return 0.0; // No sideband suppression for FM
     
     return 0.0;
 }
 
 double FGCom_AdvancedModulation::calculateCarrierSuppression(const std::string& mode) {
+    // Amateur radio modes
+    if (mode == "CW") return 0.0; // No carrier suppression for CW
+    if (mode == "LSB") return 40.0; // 40 dB carrier suppression for LSB
+    if (mode == "USB") return 40.0; // 40 dB carrier suppression for USB
+    if (mode == "NFM") return 0.0; // No carrier suppression for FM
+    if (mode == "AM") return 0.0; // No carrier suppression for AM
+    
+    // Advanced modulation modes
     if (mode == "DSB") return 40.0; // 40 dB carrier suppression
     if (mode == "ISB") return 40.0; // 40 dB carrier suppression
     if (mode == "VSB") return 0.0; // No carrier suppression
-    if (mode == "NFM") return 0.0; // No carrier suppression for FM
     
     return 0.0;
 }

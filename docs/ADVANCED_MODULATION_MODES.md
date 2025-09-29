@@ -6,16 +6,175 @@ This document describes the implementation of advanced modulation modes in FGCom
 
 ## Overview
 
-FGCom-mumble now supports four additional modulation modes beyond the standard SSB, CW, AM, and FM:
+FGCom-mumble now supports the standard amateur radio modes plus additional advanced modulation modes:
 
+**Standard Amateur Radio Modes:**
+- **CW** (Continuous Wave - Morse Code)
+- **LSB** (Lower Sideband)
+- **USB** (Upper Sideband)
+- **NFM** (Narrow FM)
+- **AM** (Amplitude Modulation)
+
+**Advanced Modulation Modes:**
 - **DSB** (Double Sideband)
 - **ISB** (Independent Sideband) 
 - **VSB** (Vestigial Sideband)
-- **NFM** (Narrow FM)
 
 ## Modulation Mode Details
 
-### 1. DSB (Double Sideband)
+### Standard Amateur Radio Modes
+
+#### CW (Continuous Wave - Morse Code)
+
+**Technical Characteristics:**
+- **Bandwidth**: 150 Hz (typical)
+- **Carrier**: Present (on/off keying)
+- **Efficiency**: 100% power efficiency
+- **Channel Spacing**: 500 Hz
+
+**Applications:**
+- Amateur radio telegraphy
+- Emergency communications
+- Long-distance contacts
+- Contest operations
+
+**Frequency Ranges:**
+- HF: 1.8-30 MHz (all bands)
+- VHF: 50-54 MHz, 144-148 MHz
+- UHF: 430-450 MHz
+
+**Advantages:**
+- Maximum range capability
+- Excellent signal-to-noise ratio
+- Simple equipment requirements
+- Works in poor conditions
+
+**Disadvantages:**
+- Requires Morse code knowledge
+- Slower than voice communication
+- Limited to text messages
+
+#### LSB (Lower Sideband)
+
+**Technical Characteristics:**
+- **Bandwidth**: 3 kHz
+- **Carrier**: Suppressed (40 dB)
+- **Sideband**: Lower sideband only
+- **Efficiency**: 75% power efficiency
+- **Channel Spacing**: 3 kHz
+
+**Applications:**
+- HF amateur radio voice
+- 160m, 80m, 40m bands
+- Long-distance voice communication
+
+**Frequency Ranges:**
+- HF: 1.8-7.3 MHz (160m, 80m, 40m bands)
+
+**Advantages:**
+- Standard for HF voice
+- Good range capability
+- Efficient power usage
+- Clear audio quality
+
+**Disadvantages:**
+- Limited to HF bands
+- Requires SSB equipment
+- More complex than AM
+
+#### USB (Upper Sideband)
+
+**Technical Characteristics:**
+- **Bandwidth**: 3 kHz
+- **Carrier**: Suppressed (40 dB)
+- **Sideband**: Upper sideband only
+- **Efficiency**: 75% power efficiency
+- **Channel Spacing**: 3 kHz
+
+**Applications:**
+- HF amateur radio voice
+- 20m, 15m, 10m, 6m bands
+- VHF amateur radio
+- Long-distance voice communication
+
+**Frequency Ranges:**
+- HF: 14-54 MHz (20m, 15m, 10m, 6m bands)
+- VHF: 144-148 MHz (2m band)
+
+**Advantages:**
+- Standard for higher HF bands
+- Good range capability
+- Efficient power usage
+- Clear audio quality
+
+**Disadvantages:**
+- Limited to specific bands
+- Requires SSB equipment
+- More complex than AM
+
+#### NFM (Narrow Frequency Modulation)
+
+**Technical Characteristics:**
+- **Bandwidth**: 12.5 kHz
+- **Carrier**: Present
+- **Modulation**: Frequency modulation
+- **Efficiency**: 90% power efficiency
+- **Channel Spacing**: 12.5 kHz
+
+**Applications:**
+- VHF/UHF amateur radio
+- Repeater operations
+- Local communications
+- Emergency communications
+
+**Frequency Ranges:**
+- VHF: 144-148 MHz (2m band)
+- UHF: 430-450 MHz (70cm band)
+
+**Advantages:**
+- Excellent audio quality
+- Good for local communications
+- Simple to use
+- Works well with repeaters
+
+**Disadvantages:**
+- Limited range (line of sight)
+- Requires VHF/UHF equipment
+- Higher power consumption
+
+#### AM (Amplitude Modulation)
+
+**Technical Characteristics:**
+- **Bandwidth**: 6 kHz
+- **Carrier**: Present
+- **Modulation**: Amplitude modulation
+- **Efficiency**: 50% power efficiency
+- **Channel Spacing**: 6 kHz
+
+**Applications:**
+- HF amateur radio
+- Emergency communications
+- Historical compatibility
+- Educational purposes
+
+**Frequency Ranges:**
+- HF: 1.8-30 MHz (all bands)
+
+**Advantages:**
+- Simple equipment
+- Compatible with old radios
+- Good for emergency use
+- Easy to understand
+
+**Disadvantages:**
+- Lower power efficiency
+- Wider bandwidth
+- Limited modern usage
+- More susceptible to noise
+
+### Advanced Modulation Modes
+
+#### 1. DSB (Double Sideband)
 
 **Technical Characteristics:**
 - **Bandwidth**: 6 kHz

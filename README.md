@@ -61,6 +61,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Advanced Debugging**: [Comprehensive logging, profiling, and memory tracking system](docs/TECHNICAL_DOCUMENTATION.md#debugging-system) - Debugging and monitoring capabilities
 - **RESTful API**: [Complete HTTP API with WebSocket real-time updates for external integration](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
 - **Amateur Radio Support**: [Full amateur radio band coverage with ITU region compliance](docs/BAND_SEGMENTS_API_DOCUMENTATION.md) - Amateur radio band segments and power limits
+- **Amateur Radio Modes**: [Complete guide to CW, LSB, USB, NFM, and AM modes used by radio amateurs](docs/AMATEUR_RADIO_MODES_DOCUMENTATION.md) - Standard amateur radio mode implementation
 - **Amateur Radio Terminology**: [Comprehensive guide to Q-codes, operating procedures, and amateur radio communication](docs/AMATEUR_RADIO_TERMINOLOGY.md) - Complete amateur radio terminology reference
 - **Aviation & Maritime HF**: [Dedicated HF communication models for aviation and maritime operations](docs/aviation-VHF-civil.md) - Aviation and maritime HF communication
 - **Antenna Pattern Library**: [Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow](docs/PATTERN_FILE_STANDARDS.md) - **Realistic 3D antenna radiation patterns that model how antennas actually radiate electromagnetic energy in different directions. These patterns are essential for authentic radio communication simulation, showing how directional antennas (like Yagi beams) have high gain in one direction and low gain in others, while omnidirectional antennas radiate equally in all horizontal directions. The system includes patterns for aircraft (affected by attitude and altitude), ground vehicles (affected by vehicle body and ground plane), and maritime platforms (affected by ship structure). This provides physics-based signal quality calculations where antenna gain directly affects communication range and quality, making the radio simulation educationally valuable and realistic.**
@@ -134,6 +135,7 @@ The documentation is split up into relevant parts:
 - [Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md) Comprehensive setup instructions for administrators
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) Consolidated technical documentation
 - [Vehicle Geometry Creation Guide](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) Complete guide for creating vehicle geometry
+- [Amateur Radio Modes](docs/AMATEUR_RADIO_MODES_DOCUMENTATION.md) Complete guide to CW, LSB, USB, NFM, and AM modes
 - [Amateur Radio Terminology](docs/AMATEUR_RADIO_TERMINOLOGY.md) Comprehensive amateur radio terminology and Q-codes reference
 - [Coding Standards](docs/CODING_STANDARDS.md) Strict architectural and design standards
 - [Radio Era Classification](docs/RADIO_ERA_CLASSIFICATION.md) Comprehensive radio technology classification system

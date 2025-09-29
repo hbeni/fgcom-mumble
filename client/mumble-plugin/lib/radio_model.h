@@ -88,7 +88,7 @@ struct fgcom_radio {
 // Amateur radio extension with band-specific characteristics
 struct fgcom_amateur_radio : public fgcom_radio {
     std::string band;           // "160m", "80m", "40m", "20m", etc.
-    std::string mode;           // "CW", "SSB", "AM", "DSB", "ISB", "VSB"
+    std::string mode;           // "CW", "LSB", "USB", "NFM", "AM"
     std::string grid_locator;   // Maidenhead grid square
     float power_watts;          // Transmit power (50W-1000W)
     bool is_amateur;            // Amateur radio flag
@@ -96,7 +96,7 @@ struct fgcom_amateur_radio : public fgcom_radio {
     
     fgcom_amateur_radio() : fgcom_radio() {
         band = "";
-        mode = "SSB";
+        mode = "USB";
         grid_locator = "";
         power_watts = 100.0;
         is_amateur = false;
