@@ -534,7 +534,7 @@ The update frequency requirements vary significantly based on the radio frequenc
 - **Update frequency**: 10-20 Hz
 - **Critical for**: Approach/departure, tower communication
 - **Effects**: Doppler shift, multipath, atmospheric ducting
-  - **Doppler Shift**:  Fully implemented with relativistic corrections
+  - **Doppler Shift**: Fully implemented with relativistic corrections
   - **Multipath**:  Enhanced implementation with complex scenarios
   - **Atmospheric Ducting**:  Newly implemented with weather integration
 
