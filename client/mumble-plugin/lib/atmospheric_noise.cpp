@@ -1,7 +1,11 @@
 #include "atmospheric_noise.h"
 #include "threading_types.h"
+#ifdef ENABLE_OPENINFRAMAP
+#include "openinframap_data_source.h"
+#endif
 #include <cmath>
 #include <algorithm>
+#include <functional>
 #include <chrono>
 
 // Singleton instance
@@ -111,6 +115,18 @@ float FGCom_AtmosphericNoise::calculateNoiseFloor(double lat, double lon, float 
     
     if (config.enable_industrial_analysis) {
         noise_floor += calculateIndustrialNoise(lat, lon, freq_mhz);
+    }
+    
+    if (config.enable_ev_charging_analysis) {
+        noise_floor += calculateEVChargingNoise(lat, lon, freq_mhz);
+    }
+    
+    if (config.enable_substation_analysis) {
+        noise_floor += calculateSubstationNoise(lat, lon, freq_mhz);
+    }
+    
+    if (config.enable_power_station_analysis) {
+        noise_floor += calculatePowerStationNoise(lat, lon, freq_mhz);
     }
     
     return noise_floor;
@@ -1035,6 +1051,328 @@ float FGCom_AtmosphericNoise::calculateIndustrialNoise(double lat, double lon, f
     return industrial_noise;
 }
 
+float FGCom_AtmosphericNoise::calculateEVChargingNoise(double lat, double lon, float freq_mhz) {
+    // EV Charging Station noise calculation
+    // This implements noise from electric vehicle charging stations based on distance, power, and type
+    
+    std::lock_guard<std::mutex> ev_lock(ev_stations_mutex);
+    float ev_charging_noise = 0.0f;
+    
+    // Find nearby EV charging stations
+    std::vector<EVChargingStation> nearby_stations = getNearbyEVChargingStations(lat, lon, 10.0f);
+    
+    for (const auto& station : nearby_stations) {
+        if (!station.is_active) continue;
+        
+        // Calculate distance to station
+        float distance_km = calculateDistance(lat, lon, station.latitude, station.longitude);
+        
+        // Base noise from charging station based on power and type
+        float station_noise = 0.0f;
+        
+        switch (station.charging_type) {
+            case EVChargingType::AC_LEVEL1:
+                station_noise = 1.0f;  // Low noise from Level 1 charging
+                break;
+            case EVChargingType::AC_LEVEL2:
+                station_noise = 2.0f;  // Medium noise from Level 2 charging
+                break;
+            case EVChargingType::DC_FAST:
+                station_noise = 4.0f;  // High noise from DC fast charging
+                break;
+            case EVChargingType::DC_ULTRA_FAST:
+                station_noise = 6.0f;  // Very high noise from ultra-fast charging
+                break;
+        }
+        
+        // Scale by power level
+        station_noise *= (station.power_kw / 50.0f);  // Normalize to 50kW baseline
+        
+        // Distance decay (1/r² for point sources)
+        if (distance_km < 0.5f) {
+            station_noise += 8.0f / (distance_km + 0.1f);  // Very close charging stations
+        } else if (distance_km < 2.0f) {
+            station_noise += 4.0f / (distance_km + 0.1f);  // Medium distance charging stations
+        } else if (distance_km < 5.0f) {
+            station_noise += 2.0f / (distance_km + 0.1f);  // Distant charging stations
+        }
+        
+        // Apply station-specific noise factor
+        station_noise *= station.noise_factor;
+        
+        // Time of day factor (more charging during day and evening)
+        float time_factor = 1.0f;
+        if (current_time_of_day == TimeOfDay::DAY) {
+            time_factor = 1.2f;  // 20% increase during day
+        } else if (current_time_of_day == TimeOfDay::DUSK_DAWN) {
+            time_factor = 1.4f;  // 40% increase during evening (peak charging time)
+        } else if (current_time_of_day == TimeOfDay::NIGHT) {
+            time_factor = 0.6f;  // 40% decrease at night
+        }
+        
+        // Frequency-dependent EV charging noise
+        float freq_factor = 1.0f;
+        if (freq_mhz < 2.0f) {
+            freq_factor = 1.3f;  // Higher noise at lower frequencies (switching harmonics)
+        } else if (freq_mhz < 10.0f) {
+            freq_factor = 1.1f;  // Medium noise in HF band
+        } else if (freq_mhz < 30.0f) {
+            freq_factor = 1.0f;  // Normal noise
+        } else {
+            freq_factor = 0.8f;  // Lower noise at higher frequencies
+        }
+        
+        // Weather effects on EV charging noise
+        float weather_factor = 1.0f;
+        if (weather.has_precipitation) {
+            weather_factor = 1.05f;  // Slight increase in wet conditions
+        }
+        if (weather.has_thunderstorms) {
+            weather_factor = 1.1f;  // Increase during storm conditions
+        }
+        
+        // Total station noise
+        station_noise = station_noise * time_factor * freq_factor * weather_factor;
+        
+        // Add to total EV charging noise
+        ev_charging_noise += station_noise;
+    }
+    
+    // If no nearby stations, add background EV charging noise based on area
+    if (nearby_stations.empty()) {
+        // Simulate background EV charging activity based on location
+        float background_activity = 0.0f;
+        
+        // Urban areas have more EV charging activity
+        if (lat > 40.7 && lat < 40.8 && lon > -74.1 && lon < -73.9) {
+            background_activity = 0.8f;  // High activity in Manhattan
+        } else if (lat > 40.6 && lat < 40.8 && lon > -74.2 && lon < -73.8) {
+            background_activity = 0.6f;  // Medium activity in NYC metro
+        } else if (lat > 40.0 && lat < 41.0 && lon > -74.5 && lon < -73.5) {
+            background_activity = 0.3f;  // Low activity in suburbs
+        } else {
+            background_activity = 0.1f;  // Very low activity in rural areas
+        }
+        
+        // Background noise from distant EV charging stations
+        ev_charging_noise += background_activity * 2.0f;  // 2 dB max from background activity
+    }
+    
+    return ev_charging_noise;
+}
+
+float FGCom_AtmosphericNoise::calculateSubstationNoise(double lat, double lon, float freq_mhz) {
+    // Substation noise calculation
+    // This implements noise from electrical substations based on voltage level, capacity, and geometry
+    
+    std::lock_guard<std::mutex> substation_lock(substations_mutex);
+    float substation_noise = 0.0f;
+    
+    // Find nearby substations
+    std::vector<Substation> nearby_substations = getNearbySubstations(lat, lon, 20.0f);
+    
+    for (const auto& substation : nearby_substations) {
+        if (!substation.is_active) continue;
+        
+        // Calculate distance to substation (considering geometry)
+        float distance_km = calculateDistanceToGeometry(lat, lon, substation);
+        
+        // Base noise from substation based on voltage and capacity
+        float station_noise = 0.0f;
+        
+        switch (substation.substation_type) {
+            case SubstationType::TRANSMISSION:
+                station_noise = 3.0f + (substation.voltage_kv / 100.0f);  // Higher voltage = more noise
+                break;
+            case SubstationType::DISTRIBUTION:
+                station_noise = 2.0f + (substation.voltage_kv / 50.0f);   // Medium voltage noise
+                break;
+            case SubstationType::SWITCHING:
+                station_noise = 1.5f;  // Lower noise from switching only
+                break;
+            case SubstationType::CONVERTER:
+                station_noise = 4.0f;  // High noise from AC/DC conversion
+                break;
+            case SubstationType::INDUSTRIAL:
+                station_noise = 2.5f;  // Industrial substation noise
+                break;
+            case SubstationType::RAILWAY:
+                station_noise = 3.5f;  // Railway electrification noise
+                break;
+        }
+        
+        // Scale by capacity (MVA)
+        station_noise *= (substation.capacity_mva / 100.0f);  // Normalize to 100 MVA baseline
+        
+        // Distance decay (1/r² for point sources, modified for geometry)
+        if (distance_km < 1.0f) {
+            station_noise += 12.0f / (distance_km + 0.1f);  // Very close substations
+        } else if (distance_km < 5.0f) {
+            station_noise += 6.0f / (distance_km + 0.1f);  // Medium distance substations
+        } else if (distance_km < 10.0f) {
+            station_noise += 3.0f / (distance_km + 0.1f);  // Distant substations
+        }
+        
+        // Fencing effect (fenced substations have slightly higher noise due to containment)
+        if (substation.is_fenced) {
+            station_noise *= 1.1f;  // 10% increase for fenced substations
+        }
+        
+        // Apply substation-specific noise factor
+        station_noise *= substation.noise_factor;
+        
+        // Time of day factor (more activity during day)
+        float time_factor = 1.0f;
+        if (current_time_of_day == TimeOfDay::DAY) {
+            time_factor = 1.3f;  // 30% increase during day
+        } else if (current_time_of_day == TimeOfDay::DUSK_DAWN) {
+            time_factor = 1.1f;  // 10% increase during transition
+        } else if (current_time_of_day == TimeOfDay::NIGHT) {
+            time_factor = 0.8f;  // 20% decrease at night
+        }
+        
+        // Frequency-dependent substation noise (50/60 Hz harmonics)
+        float freq_factor = 1.0f;
+        if (freq_mhz < 1.0f) {
+            freq_factor = 1.5f;  // Higher noise at very low frequencies
+        } else if (freq_mhz < 10.0f) {
+            freq_factor = 1.2f;  // Medium noise in HF band
+        } else if (freq_mhz < 30.0f) {
+            freq_factor = 1.0f;  // Normal noise
+        } else {
+            freq_factor = 0.7f;  // Lower noise at higher frequencies
+        }
+        
+        // Weather effects on substation noise
+        float weather_factor = 1.0f;
+        if (weather.has_precipitation) {
+            weather_factor = 1.2f;  // Wet conditions increase noise
+        }
+        if (weather.has_thunderstorms) {
+            weather_factor = 1.3f;  // Storm conditions increase noise
+        }
+        
+        // Total station noise
+        station_noise = station_noise * time_factor * freq_factor * weather_factor;
+        
+        // Add to total substation noise
+        substation_noise += station_noise;
+    }
+    
+    return substation_noise;
+}
+
+float FGCom_AtmosphericNoise::calculatePowerStationNoise(double lat, double lon, float freq_mhz) {
+    // Power station noise calculation
+    // This implements noise from power stations with 2MW+ capacity threshold
+    
+    std::lock_guard<std::mutex> power_lock(power_stations_mutex);
+    float power_station_noise = 0.0f;
+    
+    // Find nearby power stations (only those with 2MW+ capacity)
+    std::vector<PowerStation> nearby_stations = getNearbyPowerStations(lat, lon, 50.0f);
+    
+    for (const auto& station : nearby_stations) {
+        if (!station.is_active) continue;
+        
+        // Only consider stations with 2MW+ peak rated output capacity
+        if (station.capacity_mw < 2.0f) continue;
+        
+        // Calculate distance to power station (considering geometry)
+        float distance_km = calculateDistanceToGeometry(lat, lon, station);
+        
+        // Base noise from power station based on type and capacity
+        float station_noise = 0.0f;
+        
+        switch (station.station_type) {
+            case PowerStationType::THERMAL:
+                station_noise = 5.0f + (station.capacity_mw / 100.0f);  // High noise from thermal plants
+                break;
+            case PowerStationType::NUCLEAR:
+                station_noise = 6.0f + (station.capacity_mw / 100.0f);  // Very high noise from nuclear plants
+                break;
+            case PowerStationType::HYDROELECTRIC:
+                station_noise = 3.0f + (station.capacity_mw / 200.0f);  // Medium noise from hydro plants
+                break;
+            case PowerStationType::WIND:
+                station_noise = 2.0f + (station.capacity_mw / 300.0f);  // Lower noise from wind farms
+                break;
+            case PowerStationType::SOLAR:
+                station_noise = 1.5f + (station.capacity_mw / 400.0f);  // Low noise from solar farms
+                break;
+            case PowerStationType::GEOTHERMAL:
+                station_noise = 4.0f + (station.capacity_mw / 150.0f);  // High noise from geothermal
+                break;
+            case PowerStationType::BIOMASS:
+                station_noise = 4.5f + (station.capacity_mw / 120.0f);  // High noise from biomass
+                break;
+            case PowerStationType::PUMPED_STORAGE:
+                station_noise = 3.5f + (station.capacity_mw / 180.0f);  // Medium-high noise from pumped storage
+                break;
+        }
+        
+        // Scale by current output vs capacity
+        float output_factor = station.current_output_mw / station.capacity_mw;
+        station_noise *= (0.5f + 0.5f * output_factor);  // Noise scales with output
+        
+        // Distance decay (1/r² for point sources, modified for geometry)
+        if (distance_km < 2.0f) {
+            station_noise += 15.0f / (distance_km + 0.1f);  // Very close power stations
+        } else if (distance_km < 10.0f) {
+            station_noise += 8.0f / (distance_km + 0.1f);  // Medium distance power stations
+        } else if (distance_km < 25.0f) {
+            station_noise += 4.0f / (distance_km + 0.1f);  // Distant power stations
+        }
+        
+        // Fencing effect (fenced power stations have slightly higher noise)
+        if (station.is_fenced) {
+            station_noise *= 1.05f;  // 5% increase for fenced power stations
+        }
+        
+        // Apply station-specific noise factor
+        station_noise *= station.noise_factor;
+        
+        // Time of day factor (more activity during day)
+        float time_factor = 1.0f;
+        if (current_time_of_day == TimeOfDay::DAY) {
+            time_factor = 1.2f;  // 20% increase during day
+        } else if (current_time_of_day == TimeOfDay::DUSK_DAWN) {
+            time_factor = 1.1f;  // 10% increase during transition
+        } else if (current_time_of_day == TimeOfDay::NIGHT) {
+            time_factor = 0.9f;  // 10% decrease at night
+        }
+        
+        // Frequency-dependent power station noise
+        float freq_factor = 1.0f;
+        if (freq_mhz < 1.0f) {
+            freq_factor = 1.4f;  // Higher noise at very low frequencies
+        } else if (freq_mhz < 10.0f) {
+            freq_factor = 1.1f;  // Medium noise in HF band
+        } else if (freq_mhz < 30.0f) {
+            freq_factor = 1.0f;  // Normal noise
+        } else {
+            freq_factor = 0.8f;  // Lower noise at higher frequencies
+        }
+        
+        // Weather effects on power station noise
+        float weather_factor = 1.0f;
+        if (weather.has_precipitation) {
+            weather_factor = 1.15f;  // Wet conditions increase noise
+        }
+        if (weather.has_thunderstorms) {
+            weather_factor = 1.25f;  // Storm conditions increase noise
+        }
+        
+        // Total station noise
+        station_noise = station_noise * time_factor * freq_factor * weather_factor;
+        
+        // Add to total power station noise
+        power_station_noise += station_noise;
+    }
+    
+    return power_station_noise;
+}
+
 // Configuration management methods
 void FGCom_AtmosphericNoise::resetToDefaults() {
     std::lock_guard<std::mutex> config_lock(config_mutex);
@@ -1073,6 +1411,14 @@ void FGCom_AtmosphericNoise::enableSpecificFeature(const std::string& feature_na
         config.enable_traffic_analysis = enable;
     } else if (feature_name == "industrial_analysis" || feature_name == "industrial-analysis") {
         config.enable_industrial_analysis = enable;
+    } else if (feature_name == "ev_charging_analysis" || feature_name == "ev-charging-analysis") {
+        config.enable_ev_charging_analysis = enable;
+    } else if (feature_name == "substation_analysis" || feature_name == "substation-analysis") {
+        config.enable_substation_analysis = enable;
+    } else if (feature_name == "power_station_analysis" || feature_name == "power-station-analysis") {
+        config.enable_power_station_analysis = enable;
+    } else if (feature_name == "openinframap_integration" || feature_name == "openinframap-integration") {
+        config.enable_openinframap_integration = enable;
     }
 }
 
@@ -1173,4 +1519,260 @@ float FGCom_AtmosphericNoise::calculateNoiseFloorForUserPosition(float freq_mhz,
     }
     
     return calculateNoiseFloor(user_latitude, user_longitude, freq_mhz, env_type);
+}
+
+// EV Charging Station management methods
+void FGCom_AtmosphericNoise::addEVChargingStation(const EVChargingStation& station) {
+    std::lock_guard<std::mutex> ev_lock(ev_stations_mutex);
+    
+    // Check if station already exists
+    auto it = std::find_if(ev_charging_stations.begin(), ev_charging_stations.end(),
+        [&station](const EVChargingStation& s) { return s.station_id == station.station_id; });
+    
+    if (it != ev_charging_stations.end()) {
+        // Update existing station
+        *it = station;
+    } else {
+        // Add new station
+        ev_charging_stations.push_back(station);
+    }
+}
+
+void FGCom_AtmosphericNoise::removeEVChargingStation(const std::string& station_id) {
+    std::lock_guard<std::mutex> ev_lock(ev_stations_mutex);
+    
+    ev_charging_stations.erase(
+        std::remove_if(ev_charging_stations.begin(), ev_charging_stations.end(),
+            [&station_id](const EVChargingStation& s) { return s.station_id == station_id; }),
+        ev_charging_stations.end());
+}
+
+void FGCom_AtmosphericNoise::updateEVChargingStation(const std::string& station_id, const EVChargingStation& station) {
+    std::lock_guard<std::mutex> ev_lock(ev_stations_mutex);
+    
+    auto it = std::find_if(ev_charging_stations.begin(), ev_charging_stations.end(),
+        [&station_id](const EVChargingStation& s) { return s.station_id == station_id; });
+    
+    if (it != ev_charging_stations.end()) {
+        *it = station;
+    }
+}
+
+std::vector<EVChargingStation> FGCom_AtmosphericNoise::getNearbyEVChargingStations(double lat, double lon, float radius_km) {
+    std::lock_guard<std::mutex> ev_lock(ev_stations_mutex);
+    std::vector<EVChargingStation> nearby_stations;
+    
+    for (const auto& station : ev_charging_stations) {
+        float distance = calculateDistance(lat, lon, station.latitude, station.longitude);
+        if (distance <= radius_km) {
+            nearby_stations.push_back(station);
+        }
+    }
+    
+    return nearby_stations;
+}
+
+void FGCom_AtmosphericNoise::clearEVChargingStations() {
+    std::lock_guard<std::mutex> ev_lock(ev_stations_mutex);
+    ev_charging_stations.clear();
+}
+
+size_t FGCom_AtmosphericNoise::getEVChargingStationCount() const {
+    std::lock_guard<std::mutex> ev_lock(ev_stations_mutex);
+    return ev_charging_stations.size();
+}
+
+// Substation management methods
+void FGCom_AtmosphericNoise::addSubstation(const Substation& substation) {
+    std::lock_guard<std::mutex> substation_lock(substations_mutex);
+    
+    // Check if substation already exists
+    auto it = std::find_if(substations.begin(), substations.end(),
+        [&substation](const Substation& s) { return s.substation_id == substation.substation_id; });
+    
+    if (it != substations.end()) {
+        // Update existing substation
+        *it = substation;
+    } else {
+        // Add new substation
+        substations.push_back(substation);
+    }
+}
+
+void FGCom_AtmosphericNoise::removeSubstation(const std::string& substation_id) {
+    std::lock_guard<std::mutex> substation_lock(substations_mutex);
+    
+    substations.erase(
+        std::remove_if(substations.begin(), substations.end(),
+            [&substation_id](const Substation& s) { return s.substation_id == substation_id; }),
+        substations.end());
+}
+
+void FGCom_AtmosphericNoise::updateSubstation(const std::string& substation_id, const Substation& substation) {
+    std::lock_guard<std::mutex> substation_lock(substations_mutex);
+    
+    auto it = std::find_if(substations.begin(), substations.end(),
+        [&substation_id](const Substation& s) { return s.substation_id == substation_id; });
+    
+    if (it != substations.end()) {
+        *it = substation;
+    }
+}
+
+std::vector<Substation> FGCom_AtmosphericNoise::getNearbySubstations(double lat, double lon, float radius_km) {
+    std::lock_guard<std::mutex> substation_lock(substations_mutex);
+    std::vector<Substation> nearby_substations;
+    
+    for (const auto& substation : substations) {
+        float distance = calculateDistance(lat, lon, substation.latitude, substation.longitude);
+        if (distance <= radius_km) {
+            nearby_substations.push_back(substation);
+        }
+    }
+    
+    return nearby_substations;
+}
+
+void FGCom_AtmosphericNoise::clearSubstations() {
+    std::lock_guard<std::mutex> substation_lock(substations_mutex);
+    substations.clear();
+}
+
+size_t FGCom_AtmosphericNoise::getSubstationCount() const {
+    std::lock_guard<std::mutex> substation_lock(substations_mutex);
+    return substations.size();
+}
+
+// Power station management methods
+void FGCom_AtmosphericNoise::addPowerStation(const PowerStation& station) {
+    std::lock_guard<std::mutex> power_lock(power_stations_mutex);
+    
+    // Check if power station already exists
+    auto it = std::find_if(power_stations.begin(), power_stations.end(),
+        [&station](const PowerStation& s) { return s.station_id == station.station_id; });
+    
+    if (it != power_stations.end()) {
+        // Update existing power station
+        *it = station;
+    } else {
+        // Add new power station
+        power_stations.push_back(station);
+    }
+}
+
+void FGCom_AtmosphericNoise::removePowerStation(const std::string& station_id) {
+    std::lock_guard<std::mutex> power_lock(power_stations_mutex);
+    
+    power_stations.erase(
+        std::remove_if(power_stations.begin(), power_stations.end(),
+            [&station_id](const PowerStation& s) { return s.station_id == station_id; }),
+        power_stations.end());
+}
+
+void FGCom_AtmosphericNoise::updatePowerStation(const std::string& station_id, const PowerStation& station) {
+    std::lock_guard<std::mutex> power_lock(power_stations_mutex);
+    
+    auto it = std::find_if(power_stations.begin(), power_stations.end(),
+        [&station_id](const PowerStation& s) { return s.station_id == station_id; });
+    
+    if (it != power_stations.end()) {
+        *it = station;
+    }
+}
+
+std::vector<PowerStation> FGCom_AtmosphericNoise::getNearbyPowerStations(double lat, double lon, float radius_km) {
+    std::lock_guard<std::mutex> power_lock(power_stations_mutex);
+    std::vector<PowerStation> nearby_stations;
+    
+    for (const auto& station : power_stations) {
+        float distance = calculateDistance(lat, lon, station.latitude, station.longitude);
+        if (distance <= radius_km) {
+            nearby_stations.push_back(station);
+        }
+    }
+    
+    return nearby_stations;
+}
+
+void FGCom_AtmosphericNoise::clearPowerStations() {
+    std::lock_guard<std::mutex> power_lock(power_stations_mutex);
+    power_stations.clear();
+}
+
+size_t FGCom_AtmosphericNoise::getPowerStationCount() const {
+    std::lock_guard<std::mutex> power_lock(power_stations_mutex);
+    return power_stations.size();
+}
+
+// Helper function to calculate distance to geometry (point, polygon, multipolygon)
+float FGCom_AtmosphericNoise::calculateDistanceToGeometry(double lat, double lon, const Substation& substation) {
+    // For now, use simple point distance calculation
+    // TODO: Implement proper polygon and multipolygon distance calculation
+    return calculateDistance(lat, lon, substation.latitude, substation.longitude);
+}
+
+float FGCom_AtmosphericNoise::calculateDistanceToGeometry(double lat, double lon, const PowerStation& station) {
+    // For now, use simple point distance calculation
+    // TODO: Implement proper polygon and multipolygon distance calculation
+    return calculateDistance(lat, lon, station.latitude, station.longitude);
+}
+
+// Open Infrastructure Map integration methods
+void FGCom_AtmosphericNoise::enableOpenInfraMapIntegration(bool enable) {
+    std::lock_guard<std::mutex> lock(openinframap_mutex);
+    enable_openinframap_integration = enable;
+}
+
+bool FGCom_AtmosphericNoise::isOpenInfraMapIntegrationEnabled() const {
+    std::lock_guard<std::mutex> lock(openinframap_mutex);
+    return enable_openinframap_integration;
+}
+
+void FGCom_AtmosphericNoise::updateFromOpenInfraMap(double lat, double lon, float radius_km) {
+    if (!enable_openinframap_integration) {
+        return;
+    }
+    
+#ifdef ENABLE_OPENINFRAMAP
+    // Get Open Infrastructure Map data source
+    auto& data_source = FGCom_OpenInfraMapDataSource::getInstance();
+    
+    // Fetch substation data
+    if (config.enable_substation_analysis) {
+        auto substations = data_source.getSubstations(lat, lon, radius_km);
+        for (const auto& substation : substations) {
+            addSubstation(substation);
+        }
+    }
+    
+    // Fetch power station data
+    if (config.enable_power_station_analysis) {
+        auto power_stations = data_source.getPowerStations(lat, lon, radius_km);
+        for (const auto& station : power_stations) {
+            addPowerStation(station);
+        }
+    }
+#else
+    // OpenInfraMap integration not compiled in
+    (void)lat; (void)lon; (void)radius_km; // Suppress unused parameter warnings
+#endif
+}
+
+void FGCom_AtmosphericNoise::setOpenInfraMapUpdateCallback(std::function<void()> callback) {
+    // This would be implemented to set up callbacks for Open Infrastructure Map updates
+    // For now, it's a placeholder
+    (void)callback;
+}
+
+std::string FGCom_AtmosphericNoise::getOpenInfraMapStatus() const {
+    if (!enable_openinframap_integration) {
+        return "Open Infrastructure Map integration is disabled";
+    }
+    
+#ifdef ENABLE_OPENINFRAMAP
+    auto& data_source = FGCom_OpenInfraMapDataSource::getInstance();
+    return data_source.getStatusString();
+#else
+    return "OpenInfraMap integration not compiled in";
+#endif
 }

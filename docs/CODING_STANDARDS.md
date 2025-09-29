@@ -27,6 +27,7 @@ Clear interfaces between components
 Self-documenting variable and function names
 Consistent formatting and style
 Logical code organization
+No emojis in documentation, config files or code files.
 
 ### Error Handling
 

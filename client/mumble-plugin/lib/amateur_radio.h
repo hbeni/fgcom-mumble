@@ -24,25 +24,32 @@
 #include "radio_model.h"
 
 // Band segment structure for amateur radio frequency allocations
+// CRITICAL: This structure must match the CSV format exactly: Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
+// Any deviation will cause CSV parsing to fail or assign wrong values to fields!
+// The CSV file contains 280+ frequency allocations with country-specific regulations
 struct fgcom_band_segment {
-    std::string band;           // "160m", "80m", "40m", etc.
-    std::string mode;           // "CW", "LSB", "USB", "NFM", "AM"
-    float start_freq;           // Start frequency in kHz
-    float end_freq;             // End frequency in kHz
-    int itu_region;             // ITU Region (1, 2, 3)
-    float power_limit;          // Power limit in Watts
-    std::string countries;      // Countries/regions for this allocation
-    std::string notes;          // Additional notes/restrictions
+    std::string band;           // Amateur radio band designation (e.g., "160m", "80m", "40m", "20m", "15m", "10m", "6m", "2m", "70cm")
+    std::string mode;           // Operating mode (e.g., "CW", "SSB", "Digital", "EME", "MS") - must match CSV exactly
+    float start_freq;           // Start frequency in kHz (e.g., 1810.0 for 160m CW) - CRITICAL: Must be < end_freq
+    float end_freq;             // End frequency in kHz (e.g., 1838.0 for 160m CW) - CRITICAL: Must be > start_freq
+    int itu_region;             // ITU Region (1=Europe/Africa, 2=Americas, 3=Asia-Pacific) - CRITICAL: Must be 1, 2, or 3
+    std::string countries;      // Countries/regions for this allocation (e.g., "UK", "USA", "Germany") - used for country-specific validation
+    std::string license_class;  // License class required (e.g., "Full", "Intermediate", "Foundation", "Extra", "Advanced", "General") - determines access rights
+    float power_limit;          // Power limit in Watts (e.g., 1000.0, 400.0, 1500.0) - CRITICAL: Must be positive, used for power validation
+    std::string notes;          // Additional notes/restrictions (e.g., "CW only below 1840 kHz", "Limited to 5 channels") - provides context for restrictions
     
     fgcom_band_segment() {
-        band = "";
-        mode = "";
-        start_freq = 0.0;
-        end_freq = 0.0;
-        itu_region = 1;
-        power_limit = 400.0;
-        countries = "";
-        notes = "";
+        // Initialize with safe default values to prevent undefined behavior
+        // CRITICAL: These defaults must be valid to prevent validation errors
+        band = "";              // Empty string indicates no band assigned
+        mode = "";              // Empty string indicates no mode assigned
+        start_freq = 0.0;       // Zero frequency indicates invalid allocation
+        end_freq = 0.0;         // Zero frequency indicates invalid allocation
+        itu_region = 1;         // Default to Region 1 (Europe/Africa) - most restrictive
+        countries = "";          // Empty string indicates no country assigned
+        license_class = "";     // Empty string indicates no license class assigned
+        power_limit = 400.0;    // Default 400W power limit (common for intermediate licenses)
+        notes = "";             // Empty string indicates no restrictions
     }
 };
 
@@ -120,16 +127,29 @@ private:
     static bool initialized;
     
 public:
-    // Initialize amateur radio data
+    // Initialize amateur radio data from CSV file
+    // CRITICAL: Must be called before any other operations to load band segments
+    // Returns true if initialization successful, false if CSV file cannot be loaded
+    // This loads 280+ frequency allocations from radio_amateur_band_segments.csv
     static bool initialize();
     
-    // Load band segments from CSV file
+    // Load band segments from CSV file with comprehensive validation
+    // CRITICAL: CSV format must be exactly: Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
+    // Any deviation will cause parsing to fail or assign wrong values to fields!
+    // Returns true if CSV loaded successfully, false if file cannot be opened or parsed
     static bool loadBandSegments(const std::string& csv_file);
     
-    // Auto-detect ITU region based on coordinates
+    // Auto-detect ITU region based on geographic coordinates
+    // CRITICAL: Returns 1, 2, or 3 - any other value indicates invalid coordinates
+    // Region 1: Europe, Africa, Middle East, former USSR (longitude 40°E to 180°E)
+    // Region 2: Americas (longitude 180°W to 20°W)
+    // Region 3: Asia-Pacific (longitude 40°E to 180°E, excluding Region 1)
     static int detectITURegion(double lat, double lon);
     
-    // Validate frequency and mode for amateur radio
+    // Validate frequency and mode for amateur radio compliance
+    // CRITICAL: Returns true only if frequency is within valid amateur band for given mode and region
+    // This prevents out-of-band operation and ensures regulatory compliance
+    // Returns false if frequency is not in amateur bands or mode is not allowed
     static bool validateAmateurFrequency(const std::string& frequency, const std::string& mode, int itu_region);
     
     // Enhanced frequency validation with detailed results
@@ -152,6 +172,18 @@ public:
     
     // Validate power level against band limits
     static bool validatePowerLevel(float frequency_khz, int itu_region, const std::string& mode, float power_watts);
+    
+    // Get license class requirements for a frequency and region
+    static std::string getRequiredLicenseClass(float frequency_khz, int itu_region, const std::string& mode);
+    
+    // Get country-specific allocations
+    static std::vector<fgcom_band_segment> getCountryAllocations(const std::string& country, int itu_region);
+    
+    // Check if a license class can operate on a frequency
+    static bool canLicenseClassOperate(float frequency_khz, int itu_region, const std::string& mode, const std::string& license_class);
+    
+    // Get all available bands for a license class and region
+    static std::vector<std::string> getAvailableBands(const std::string& license_class, int itu_region);
     
     // Validate channel spacing (3kHz SSB, 500Hz CW)
     static bool validateChannelSpacing(float frequency_khz, const std::string& mode);

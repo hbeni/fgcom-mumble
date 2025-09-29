@@ -202,4 +202,59 @@ float predictPolarNoise(float atmospheric_activity, float solar_activity, float 
            human_activity_effect + seasonal_effect + auroral_effect;
 }
 
+float predictEVChargingNoise(float charging_activity, float time_of_day_factor, float weather_factor) {
+    // EV Charging Station noise prediction based on charging activity and environmental factors
+    float base_ev_noise = -120.0f;  // S3-S5 baseline for EV charging areas
+    
+    // Charging activity level (0.0 = no charging, 1.0 = full charging activity)
+    float activity_effect = charging_activity * 8.0f;  // Up to 8 dB from high charging activity
+    
+    // Time of day effects (more charging during day and evening)
+    float time_effect = time_of_day_factor * 4.0f;  // Up to 4 dB variation by time of day
+    
+    // Weather effects (wet conditions can increase noise)
+    float weather_effect = (weather_factor - 1.0f) * 2.0f;  // Weather-related noise variation
+    
+    return base_ev_noise + activity_effect + time_effect + weather_effect;
+}
+
+float predictSubstationNoise(float voltage_level, float capacity_mva, float time_of_day_factor, float weather_factor) {
+    // Substation noise prediction based on voltage level, capacity, and environmental factors
+    float base_substation_noise = -110.0f;  // S4-S6 baseline for substations
+    
+    // Voltage level effect (higher voltage = more noise)
+    float voltage_effect = (voltage_level / 100.0f) * 3.0f;  // Up to 3 dB from high voltage
+    
+    // Capacity effect (larger substations = more noise)
+    float capacity_effect = (capacity_mva / 100.0f) * 2.0f;  // Up to 2 dB from large capacity
+    
+    // Time of day effects (more activity during day)
+    float time_effect = (time_of_day_factor - 1.0f) * 2.0f;  // Time-related noise variation
+    
+    // Weather effects (wet conditions increase noise)
+    float weather_effect = (weather_factor - 1.0f) * 1.5f;  // Weather-related noise variation
+    
+    return base_substation_noise + voltage_effect + capacity_effect + time_effect + weather_effect;
+}
+
+float predictPowerStationNoise(float capacity_mw, float output_mw, float time_of_day_factor, float weather_factor) {
+    // Power station noise prediction based on capacity, output, and environmental factors
+    float base_power_noise = -105.0f;  // S5-S7 baseline for power stations
+    
+    // Capacity effect (larger power stations = more noise)
+    float capacity_effect = (capacity_mw / 100.0f) * 4.0f;  // Up to 4 dB from large capacity
+    
+    // Output effect (higher output = more noise)
+    float output_factor = output_mw / capacity_mw;
+    float output_effect = output_factor * 2.0f;  // Up to 2 dB from high output
+    
+    // Time of day effects (more activity during day)
+    float time_effect = (time_of_day_factor - 1.0f) * 1.5f;  // Time-related noise variation
+    
+    // Weather effects (wet conditions increase noise)
+    float weather_effect = (weather_factor - 1.0f) * 2.0f;  // Weather-related noise variation
+    
+    return base_power_noise + capacity_effect + output_effect + time_effect + weather_effect;
+}
+
 } // namespace NoiseFloorUtils
