@@ -312,6 +312,29 @@ public:
     void handleSolarDataHistoryRequest(const httplib::Request& req, httplib::Response& res);
     void handleSolarDataForecastRequest(const httplib::Request& req, httplib::Response& res);
     
+    // Solar data submission endpoints for games
+    void handleSolarDataSubmissionRequest(const httplib::Request& req, httplib::Response& res);
+    void handleSolarDataBatchSubmissionRequest(const httplib::Request& req, httplib::Response& res);
+    void handleSolarDataUpdateRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Weather data endpoints
+    void handleWeatherDataRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWeatherDataHistoryRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWeatherDataForecastRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Weather data submission endpoints for games
+    void handleWeatherDataSubmissionRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWeatherDataBatchSubmissionRequest(const httplib::Request& req, httplib::Response& res);
+    void handleWeatherDataUpdateRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Lightning data endpoints
+    void handleLightningDataRequest(const httplib::Request& req, httplib::Response& res);
+    void handleLightningStrikesRequest(const httplib::Request& req, httplib::Response& res);
+    
+    // Lightning data submission endpoints for games
+    void handleLightningDataSubmissionRequest(const httplib::Request& req, httplib::Response& res);
+    void handleLightningDataBatchSubmissionRequest(const httplib::Request& req, httplib::Response& res);
+    
     // Band status endpoints
     void handleBandStatusRequest(const httplib::Request& req, httplib::Response& res);
     void handleBandStatusAllRequest(const httplib::Request& req, httplib::Response& res);

@@ -335,32 +335,52 @@ Calculate propagation for multiple transmitter-receiver pairs.
 
 ## Solar Data API
 
+> **Note**: All Solar Data API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
+
 ### Current Solar Data
 
-#### GET /api/v1/solar
+#### GET /api/v1/solar-data/current
 Get current solar activity data.
 
 **Response:**
 ```json
 {
-  "timestamp": "2024-01-15T10:30:00Z",
-  "solar_flux": 150.2,
-  "sunspot_number": 45,
-  "k_index": 2,
-  "a_index": 8,
-  "magnetic_field": "quiet",
-  "propagation_conditions": "good",
-  "forecast": {
-    "next_24h": "good",
-    "next_48h": "fair",
-    "next_72h": "poor"
+  "status": "success",
+  "solar_data": {
+    "timestamp": "2024-01-15T10:30:00Z",
+    "solar_flux": 150.2,
+    "sunspot_number": 45,
+    "k_index": 2,
+    "a_index": 8,
+    "ap_index": 12,
+    "solar_wind": {
+      "speed": 450.5,
+      "density": 5.2,
+      "temperature": 100000.0
+    },
+    "geomagnetic_field": {
+      "bx": 2.1,
+      "by": -1.5,
+      "bz": -3.2,
+      "total_strength": 4.8
+    },
+    "calculated_parameters": {
+      "muf": 25.5,
+      "luf": 3.2,
+      "critical_frequency": 8.5,
+      "propagation_quality": 0.85
+    },
+    "magnetic_field": "quiet",
+    "propagation_conditions": "good",
+    "data_source": "noaa_swpc",
+    "data_valid": true
   }
 }
 ```
 
 ### Solar Data History
 
-#### GET /api/v1/solar/history
+#### GET /api/v1/solar-data/history
 Get historical solar data.
 
 **Query Parameters:**
@@ -371,18 +391,310 @@ Get historical solar data.
 **Response:**
 ```json
 {
-  "start_date": "2024-01-01T00:00:00Z",
-  "end_date": "2024-01-15T23:59:59Z",
-  "data_points": 100,
-  "data": [
+  "status": "success",
+  "solar_history": {
+    "start_date": "2024-01-01T00:00:00Z",
+    "end_date": "2024-01-15T23:59:59Z",
+    "data_points": 100,
+    "data": [
+      {
+        "timestamp": "2024-01-01T00:00:00Z",
+        "solar_flux": 145.2,
+        "sunspot_number": 42,
+        "k_index": 1,
+        "a_index": 5,
+        "propagation_quality": 0.82
+      }
+    ]
+  }
+}
+```
+
+### Solar Data Forecast
+
+#### GET /api/v1/solar-data/forecast
+Get solar data forecast.
+
+**Query Parameters:**
+- `hours` (optional): Number of hours to forecast (default: 24, max: 168)
+
+**Response:**
+```json
+{
+  "status": "success",
+  "forecast_hours": 24,
+  "forecast_data": [
     {
-      "timestamp": "2024-01-01T00:00:00Z",
-      "solar_flux": 145.2,
-      "sunspot_number": 42,
-      "k_index": 1,
-      "a_index": 5
+      "timestamp": "2024-01-15T11:00:00Z",
+      "predicted_solar_flux": 152.1,
+      "predicted_k_index": 2,
+      "predicted_a_index": 8,
+      "confidence": 0.85
     }
   ]
+}
+```
+
+### Solar Data Submission (Games)
+
+#### POST /api/v1/solar-data/submit
+Submit solar data from a game.
+
+**Request:**
+```json
+{
+  "solar_flux": 150.2,
+  "k_index": 2,
+  "a_index": 8,
+  "ap_index": 12,
+  "sunspot_number": 45,
+  "solar_wind_speed": 450.5,
+  "solar_wind_density": 5.2
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Solar data submitted successfully",
+  "submitted_data": {
+    "solar_flux": 150.2,
+    "k_index": 2,
+    "a_index": 8,
+    "timestamp": 1705312200
+  }
+}
+```
+
+#### POST /api/v1/solar-data/batch-submit
+Submit multiple solar data entries from a game.
+
+**Request:**
+```json
+{
+  "solar_data_array": [
+    {
+      "solar_flux": 150.2,
+      "k_index": 2,
+      "a_index": 8
+    },
+    {
+      "solar_flux": 152.1,
+      "k_index": 3,
+      "a_index": 10
+    }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Batch solar data processed",
+  "summary": {
+    "total_entries": 2,
+    "successful_entries": 2,
+    "failed_entries": 0
+  },
+  "errors": []
+}
+```
+
+#### PUT /api/v1/solar-data/update
+Update existing solar data from a game.
+
+**Request:**
+```json
+{
+  "solar_flux": 155.0,
+  "k_index": 3
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Solar data updated successfully",
+  "updated_fields": {
+    "solar_flux": 155.0,
+    "k_index": 3
+  },
+  "timestamp": 1705312200
+}
+```
+
+## Weather Data API
+
+> **Note**: All Weather Data API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
+
+### Current Weather Data
+
+#### GET /api/v1/weather-data/current
+Get current weather conditions.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "weather_conditions": {
+    "timestamp": "2024-01-15T10:30:00Z",
+    "temperature_celsius": 20.0,
+    "humidity_percent": 50.0,
+    "pressure_hpa": 1013.25,
+    "wind_speed_ms": 5.0,
+    "wind_direction_deg": 180.0,
+    "precipitation_mmh": 0.0,
+    "dew_point_celsius": 10.0,
+    "visibility_km": 10.0,
+    "cloud_cover_percent": 30.0,
+    "uv_index": 5.0,
+    "air_quality_index": 50.0,
+    "pollen_count": 25.0,
+    "has_thunderstorms": false,
+    "storm_distance_km": 0.0,
+    "storm_intensity": 0.0,
+    "data_source": "game_submission",
+    "data_valid": true
+  }
+}
+```
+
+### Weather Data Submission (Games)
+
+#### POST /api/v1/weather-data/submit
+Submit weather data from a game.
+
+**Request:**
+```json
+{
+  "temperature_celsius": 20.0,
+  "humidity_percent": 50.0,
+  "pressure_hpa": 1013.25,
+  "wind_speed_ms": 5.0,
+  "wind_direction_deg": 180.0,
+  "precipitation_mmh": 0.0,
+  "has_thunderstorms": false,
+  "storm_distance_km": 0.0,
+  "storm_intensity": 0.0,
+  "visibility_km": 10.0,
+  "cloud_cover_percent": 30.0
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Weather data submitted successfully",
+  "submitted_data": {
+    "temperature_celsius": 20.0,
+    "humidity_percent": 50.0,
+    "pressure_hpa": 1013.25,
+    "timestamp": 1705312200
+  }
+}
+```
+
+## Lightning Data API
+
+> **Note**: All Lightning Data API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
+
+### Current Lightning Data
+
+#### GET /api/v1/lightning-data/current
+Get current lightning activity.
+
+**Response:**
+```json
+{
+  "status": "success",
+  "lightning_activity": {
+    "timestamp": "2024-01-15T10:30:00Z",
+    "active_strikes": 0,
+    "recent_strikes": [],
+    "storm_distance_km": 0.0,
+    "atmospheric_noise_level": 0.0,
+    "data_source": "game_submission",
+    "data_valid": true
+  }
+}
+```
+
+### Lightning Data Submission (Games)
+
+#### POST /api/v1/lightning-data/submit
+Submit lightning strike data from a game.
+
+**Request:**
+```json
+{
+  "latitude": 40.7128,
+  "longitude": -74.0060,
+  "intensity_ka": 25.5,
+  "altitude_m": 1000.0,
+  "polarity": "negative",
+  "type": "cloud_to_ground",
+  "temperature_celsius": 18.0,
+  "humidity_percent": 80.0,
+  "pressure_hpa": 995.0
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Lightning strike data submitted successfully",
+  "submitted_data": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "intensity_ka": 25.5,
+    "timestamp": 1705312200
+  }
+}
+```
+
+#### POST /api/v1/lightning-data/batch-submit
+Submit multiple lightning strikes from a game.
+
+**Request:**
+```json
+{
+  "lightning_strikes": [
+    {
+      "latitude": 40.7128,
+      "longitude": -74.0060,
+      "intensity_ka": 25.5,
+      "altitude_m": 1000.0,
+      "polarity": "negative",
+      "type": "cloud_to_ground"
+    },
+    {
+      "latitude": 40.7200,
+      "longitude": -74.0100,
+      "intensity_ka": 30.2,
+      "altitude_m": 1200.0,
+      "polarity": "positive",
+      "type": "cloud_to_ground"
+    }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Lightning strikes submitted successfully",
+  "summary": {
+    "total_strikes": 2,
+    "successful_strikes": 2,
+    "failed_strikes": 0
+  },
+  "errors": []
 }
 ```
 

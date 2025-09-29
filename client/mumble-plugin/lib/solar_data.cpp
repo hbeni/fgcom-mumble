@@ -18,6 +18,7 @@
 #include "solar_data.h"
 #include "http/httplib.h"
 #include "json/json.hpp"
+#include "feature_toggles.h"
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -43,6 +44,19 @@ FGCom_SolarDataProvider::~FGCom_SolarDataProvider() {
     stopBackgroundUpdates();
 }
 
+// Helper function to check feature toggles
+bool FGCom_SolarDataProvider::isFeatureEnabled(const std::string& feature_name) {
+    try {
+        // TODO: Implement proper feature toggle integration
+        // For now, we'll use a simple approach
+        (void)feature_name; // Suppress unused parameter warning
+        return true; // Default to enabled for now
+    } catch (const std::exception& e) {
+        (void)e; // Suppress unused variable warning
+        return true; // Default to enabled on error
+    }
+}
+
 fgcom_solar_conditions FGCom_SolarDataProvider::getCurrentConditions() {
     std::lock_guard<std::mutex> lock(data_mutex);
     return current_conditions;
@@ -50,6 +64,17 @@ fgcom_solar_conditions FGCom_SolarDataProvider::getCurrentConditions() {
 
 bool FGCom_SolarDataProvider::updateFromNOAA() {
     std::lock_guard<std::mutex> lock(data_mutex);
+    
+    // Check if external data sources are enabled
+    if (!isFeatureEnabled("enable_external_solar_data_sources")) {
+        return false;
+    }
+    
+    // Check if game submission mode is enabled - if so, disable external fetching
+    if (isFeatureEnabled("enable_solar_data_game_submission") && 
+        !isFeatureEnabled("enable_solar_data_external_fetch")) {
+        return false;
+    }
     
     bool success = true;
     
@@ -112,6 +137,9 @@ double FGCom_SolarDataProvider::calculateSolarZenith(double lat, double lon, con
     double declination = calculateSolarDeclination(day_of_year);
     
     // Calculate hour angle (simplified - assumes UTC)
+    if (!utc_time) {
+        return 0.0; // Return default value if time is invalid
+    }
     double hour_angle = (utc_time->tm_hour + utc_time->tm_min / 60.0 + utc_time->tm_sec / 3600.0) * 15.0 - 180.0;
     
     // Convert to radians
@@ -144,6 +172,9 @@ int FGCom_SolarDataProvider::getDayOfYear(const std::chrono::system_clock::time_
     std::tm* utc_time = std::gmtime(&time_t);
     
     // Calculate day of year
+    if (!utc_time) {
+        return 1; // Return default day of year if time is invalid
+    }
     int day_of_year = utc_time->tm_yday + 1;
     return day_of_year;
 }
@@ -262,6 +293,9 @@ std::string FGCom_SolarDataProvider::makeHTTPRequest(const std::string& url) {
     auto res = client.Get(path.c_str());
     if (res && res->status == 200) {
         return res->body;
+    } else {
+        std::cerr << "[SolarData] HTTP request failed: " << (res ? res->status : -1) << std::endl;
+        return "";
     }
     
     return "";

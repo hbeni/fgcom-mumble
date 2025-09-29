@@ -62,6 +62,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **RESTful API**: [Complete HTTP API with WebSocket real-time updates for external integration](docs/API_REFERENCE_COMPLETE.md) - Complete API documentation with examples
 - **Amateur Radio Support**: [Full amateur radio band coverage with ITU region compliance](docs/BAND_SEGMENTS_API_DOCUMENTATION.md) - Amateur radio band segments and power limits
 - **Amateur Radio Modes**: [Complete guide to CW, LSB, USB, NFM, and AM modes used by radio amateurs](docs/AMATEUR_RADIO_MODES_DOCUMENTATION.md) - Standard amateur radio mode implementation
+- **Feature Toggle API Control**: [Comprehensive guide to API endpoint and data source control](docs/FEATURE_TOGGLE_API_CONTROL.md) - Control API access and external data sources
 - **Amateur Radio Terminology**: [Comprehensive guide to Q-codes, operating procedures, and amateur radio communication](docs/AMATEUR_RADIO_TERMINOLOGY.md) - Complete amateur radio terminology reference
 - **Aviation & Maritime HF**: [Dedicated HF communication models for aviation and maritime operations](docs/aviation-VHF-civil.md) - Aviation and maritime HF communication
 - **Antenna Pattern Library**: [Comprehensive EZNEC-based antenna patterns for all vehicle types with automated generation workflow](docs/PATTERN_FILE_STANDARDS.md) - **Realistic 3D antenna radiation patterns that model how antennas actually radiate electromagnetic energy in different directions. These patterns are essential for authentic radio communication simulation, showing how directional antennas (like Yagi beams) have high gain in one direction and low gain in others, while omnidirectional antennas radiate equally in all horizontal directions. The system includes patterns for aircraft (affected by attitude and altitude), ground vehicles (affected by vehicle body and ground plane), and maritime platforms (affected by ship structure). This provides physics-based signal quality calculations where antenna gain directly affects communication range and quality, making the radio simulation educationally valuable and realistic.**
@@ -813,4 +814,28 @@ This CSV file contains detailed information about:
 - Special Norwegian allocations (1000W for EME/MS operations on 2m, 70cm, 23cm bands)
 
 **Modifying Band Segments**: Edit the local CSV file to update frequency allocations, power limits, and regional restrictions. Changes take effect after plugin restart without recompilation.
-- Power limits and restrictions
+
+## Project Reports
+
+For comprehensive project status, testing results, and quality assurance documentation, see the following reports:
+
+### Status Reports
+- [Current Status Report](docs/reports/CURRENT_STATUS_REPORT.md) - Latest project status and recent improvements
+- [Final Status Report](docs/reports/FINAL_STATUS_REPORT.md) - Final project status summary
+
+### Quality Assurance Reports
+- [Critical Code Inspection Report](docs/reports/CRITICAL_CODE_INSPECTION_REPORT.md) - Critical issues found and resolved
+- [Code Review Report](docs/reports/CODE_REVIEW_REPORT.md) - Comprehensive code review for quality and architecture
+- [Static Analysis Report](docs/reports/STATIC_ANALYSIS_REPORT.md) - Static code analysis results
+
+### Testing Reports
+- [Comprehensive Test Report](docs/reports/TEST_REPORT_COMPREHENSIVE.md) - Complete testing results and validation
+
+### Documentation Reports
+- [Code Documentation Audit Report](docs/reports/CODE_DOCUMENTATION_AUDIT_REPORT.md) - Documentation audit for self-documenting code standards
+- [Self-Documenting Code Audit Report](docs/reports/SELF_DOCUMENTING_CODE_AUDIT_REPORT.md) - Self-documenting code audit for comment quality
+
+### Reports Index
+- [Reports Index](docs/reports/REPORTS_INDEX.md) - Complete index of all project reports
+
+All reports are dated September 29, 2024, and reflect the current production-ready status of the FGCom-mumble project.
