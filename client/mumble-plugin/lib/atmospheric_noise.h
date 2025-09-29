@@ -7,9 +7,96 @@
 #include <mutex>
 #include <atomic>
 #include <memory>
+#include <functional>
 
 // Forward declarations
 struct LightningStrike;
+
+// EV Charging Station types
+enum class EVChargingType {
+    AC_LEVEL1,      // 1.4-1.9 kW (120V, 12-16A)
+    AC_LEVEL2,      // 3.3-19.2 kW (240V, 13-80A)
+    DC_FAST,        // 50-350 kW (400V+ DC)
+    DC_ULTRA_FAST   // 350+ kW (800V+ DC)
+};
+
+// EV Charging Station data structure
+struct EVChargingStation {
+    double latitude;
+    double longitude;
+    float power_kw;
+    EVChargingType charging_type;
+    bool is_active;
+    std::string operator_name;
+    std::string station_id;
+    float noise_factor;  // Station-specific noise multiplier
+    std::chrono::system_clock::time_point last_updated;
+};
+
+// Substation types
+enum class SubstationType {
+    TRANSMISSION,      // High voltage transmission substations
+    DISTRIBUTION,      // Medium voltage distribution substations
+    SWITCHING,         // Switching substations (no transformation)
+    CONVERTER,         // AC/DC converter substations
+    INDUSTRIAL,        // Industrial facility substations
+    RAILWAY            // Railway electrification substations
+};
+
+// Power station types
+enum class PowerStationType {
+    THERMAL,           // Coal, gas, oil-fired power plants
+    NUCLEAR,           // Nuclear power plants
+    HYDROELECTRIC,     // Hydroelectric power plants
+    WIND,              // Wind farms
+    SOLAR,             // Solar photovoltaic farms
+    GEOTHERMAL,        // Geothermal power plants
+    BIOMASS,           // Biomass power plants
+    PUMPED_STORAGE     // Pumped storage hydroelectric
+};
+
+// Geometry types for complex shapes
+enum class GeometryType {
+    POINT,             // Single coordinate point
+    POLYGON,           // Simple polygon
+    MULTIPOLYGON,      // Multiple polygons
+    LINESTRING,        // Line geometry
+    MULTILINESTRING    // Multiple lines
+};
+
+// Substation data structure
+struct Substation {
+    double latitude;
+    double longitude;
+    SubstationType substation_type;
+    float voltage_kv;           // Primary voltage level
+    float capacity_mva;        // Substation capacity in MVA
+    bool is_fenced;            // Whether substation is fenced
+    GeometryType geometry_type;
+    std::vector<std::vector<std::pair<double, double>>> polygons;  // Multipolygon coordinates
+    bool is_active;
+    std::string operator_name;
+    std::string substation_id;
+    float noise_factor;        // Substation-specific noise multiplier
+    std::chrono::system_clock::time_point last_updated;
+};
+
+// Power station data structure
+struct PowerStation {
+    double latitude;
+    double longitude;
+    PowerStationType station_type;
+    float capacity_mw;         // Peak rated output capacity in MW
+    float current_output_mw;   // Current power output in MW
+    bool is_fenced;           // Whether power station is fenced
+    GeometryType geometry_type;
+    std::vector<std::vector<std::pair<double, double>>> polygons;  // Multipolygon coordinates
+    bool is_active;
+    std::string operator_name;
+    std::string station_id;
+    float noise_factor;       // Station-specific noise multiplier
+    std::chrono::system_clock::time_point last_updated;
+};
 
 // Environment types for noise floor calculation
 enum class EnvironmentType {
@@ -61,6 +148,22 @@ private:
     std::vector<LightningStrike> recent_strikes;
     mutable std::mutex strikes_mutex;
     
+    // EV Charging Station data
+    std::vector<EVChargingStation> ev_charging_stations;
+    mutable std::mutex ev_stations_mutex;
+    
+    // Substation data
+    std::vector<Substation> substations;
+    mutable std::mutex substations_mutex;
+    
+    // Power station data
+    std::vector<PowerStation> power_stations;
+    mutable std::mutex power_stations_mutex;
+    
+    // Open Infrastructure Map integration
+    bool enable_openinframap_integration = false;
+    mutable std::mutex openinframap_mutex;
+    
     // Solar activity data
     float solar_flux_index;
     float k_index;
@@ -82,6 +185,10 @@ private:
         bool enable_power_line_analysis = false; // Power line noise analysis
         bool enable_traffic_analysis = false;    // Traffic noise analysis
         bool enable_industrial_analysis = false; // Industrial area analysis
+        bool enable_ev_charging_analysis = false; // EV charging station analysis
+        bool enable_substation_analysis = false; // Substation noise analysis
+        bool enable_power_station_analysis = false; // Power station noise analysis
+        bool enable_openinframap_integration = false; // Open Infrastructure Map integration
     };
     
     NoiseConfig config;
@@ -177,11 +284,47 @@ public:
     float calculatePowerLineNoise(double lat, double lon, float freq_mhz);
     float calculateTrafficNoise(double lat, double lon, float freq_mhz);
     float calculateIndustrialNoise(double lat, double lon, float freq_mhz);
+    float calculateEVChargingNoise(double lat, double lon, float freq_mhz);
+    float calculateSubstationNoise(double lat, double lon, float freq_mhz);
+    float calculatePowerStationNoise(double lat, double lon, float freq_mhz);
+    
+    // EV Charging Station management
+    void addEVChargingStation(const EVChargingStation& station);
+    void removeEVChargingStation(const std::string& station_id);
+    void updateEVChargingStation(const std::string& station_id, const EVChargingStation& station);
+    std::vector<EVChargingStation> getNearbyEVChargingStations(double lat, double lon, float radius_km = 10.0f);
+    void clearEVChargingStations();
+    size_t getEVChargingStationCount() const;
+    
+    // Substation management
+    void addSubstation(const Substation& substation);
+    void removeSubstation(const std::string& substation_id);
+    void updateSubstation(const std::string& substation_id, const Substation& substation);
+    std::vector<Substation> getNearbySubstations(double lat, double lon, float radius_km = 20.0f);
+    void clearSubstations();
+    size_t getSubstationCount() const;
+    
+    // Power station management
+    void addPowerStation(const PowerStation& station);
+    void removePowerStation(const std::string& station_id);
+    void updatePowerStation(const std::string& station_id, const PowerStation& station);
+    std::vector<PowerStation> getNearbyPowerStations(double lat, double lon, float radius_km = 50.0f);
+    void clearPowerStations();
+    size_t getPowerStationCount() const;
+    
+    // Open Infrastructure Map integration
+    void enableOpenInfraMapIntegration(bool enable);
+    bool isOpenInfraMapIntegrationEnabled() const;
+    void updateFromOpenInfraMap(double lat, double lon, float radius_km = 50.0f);
+    void setOpenInfraMapUpdateCallback(std::function<void()> callback);
+    std::string getOpenInfraMapStatus() const;
     
 private:
     // Internal helper methods
     void initializeNoiseSystem();
     float calculateDistance(double lat1, double lon1, double lat2, double lon2);
+    float calculateDistanceToGeometry(double lat, double lon, const Substation& substation);
+    float calculateDistanceToGeometry(double lat, double lon, const PowerStation& station);
     TimeOfDay determineTimeOfDay();
     EnvironmentType determineEnvironmentType(double lat, double lon);
     
@@ -231,6 +374,9 @@ namespace NoiseFloorUtils {
     float predictOceanNoise(float atmospheric_activity, float solar_activity, float laptop_noise_factor);
     float predictDesertNoise(float atmospheric_activity, float solar_activity, float temperature_factor);
     float predictPolarNoise(float atmospheric_activity, float solar_activity, float auroral_activity, float seasonal_factor);
+    float predictEVChargingNoise(float charging_activity, float time_of_day_factor, float weather_factor);
+    float predictSubstationNoise(float voltage_level, float capacity_mva, float time_of_day_factor, float weather_factor);
+    float predictPowerStationNoise(float capacity_mw, float output_mw, float time_of_day_factor, float weather_factor);
 }
 
 #endif // FGCOM_ATMOSPHERIC_NOISE_H

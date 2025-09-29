@@ -18,10 +18,10 @@
 #include "amateur_radio.h"
 #include <fstream>
 #include <sstream>
+#include <set>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include <set>
 #include <cctype>
 
 // Static member definitions
@@ -140,13 +140,17 @@ bool FGCom_AmateurRadio::initialize() {
     band4m.dx_capable = false; // Regional band
     band_characteristics["4m"] = band4m;
     
-    // Load band segments from CSV
-    std::string csv_path = "../../configs/band_segments.csv";
+    // Load band segments from CSV file with comprehensive amateur radio data
+    // CRITICAL: Path must point to radio_amateur_band_segments.csv (not band_segments.csv)
+    // This file contains 280+ frequency allocations with country-specific regulations
+    // CSV format must be exactly: Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
+    std::string csv_path = "../../configs/radio_amateur_band_segments.csv";
     
-    // Try to get path from configuration if available
-    // This would be integrated with the main config system in practice
+    // Load CSV file with validation - CRITICAL: Must succeed or amateur radio validation will fail
+    // This loads all amateur radio band segments for global frequency validation
     if (!loadBandSegments(csv_path)) {
-        std::cerr << "Failed to load band segments from: " << csv_path << std::endl;
+        std::cerr << "CRITICAL ERROR: Failed to load amateur radio band segments from: " << csv_path << std::endl;
+        std::cerr << "Amateur radio frequency validation will not work without this data!" << std::endl;
         return false;
     }
     
@@ -157,54 +161,76 @@ bool FGCom_AmateurRadio::initialize() {
 }
 
 bool FGCom_AmateurRadio::loadBandSegments(const std::string& csv_file) {
+    // CRITICAL: Open CSV file for amateur radio band segment data
+    // This file contains 280+ frequency allocations with country-specific regulations
+    // File format must be exactly: Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
     std::ifstream file(csv_file);
     if (!file.is_open()) {
-        std::cerr << "Cannot open band segments file: " << csv_file << std::endl;
+        std::cerr << "CRITICAL ERROR: Cannot open amateur radio band segments file: " << csv_file << std::endl;
+        std::cerr << "Amateur radio frequency validation will not work without this data!" << std::endl;
         return false;
     }
     
+    // Clear existing band segments to prevent data corruption
+    // CRITICAL: Must clear before loading to prevent duplicate entries
     band_segments.clear();
     std::string line;
     bool first_line = true;
     
     while (std::getline(file, line)) {
+        // CRITICAL: Skip header row to prevent parsing header as data
+        // Header format: Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
         if (first_line) {
             first_line = false;
-            continue; // Skip header
+            continue; // Skip header row - CRITICAL: Must skip or header will be parsed as data
         }
         
+        // Skip empty lines to prevent parsing errors
         if (line.empty()) continue;
         
         // Parse CSV line with proper handling of quoted fields
+        // CRITICAL: Must handle quoted fields correctly or parsing will fail
+        // CSV format supports quoted fields with commas inside (e.g., "CW only below 1840 kHz")
         std::vector<std::string> fields;
         std::string current_field;
         bool in_quotes = false;
         
+        // Parse each character in the CSV line
+        // CRITICAL: Must handle quoted fields correctly or data will be corrupted
         for (size_t i = 0; i < line.length(); i++) {
             char c = line[i];
             
+            // Handle quoted fields - CRITICAL: Must track quote state correctly
             if (c == '"') {
-                in_quotes = !in_quotes;
+                in_quotes = !in_quotes;  // Toggle quote state
             } else if (c == ',' && !in_quotes) {
+                // Field separator found outside quotes - CRITICAL: Only split on commas outside quotes
                 fields.push_back(current_field);
                 current_field.clear();
             } else {
+                // Add character to current field - CRITICAL: Must preserve all characters
                 current_field += c;
             }
         }
-        fields.push_back(current_field); // Add the last field
+        fields.push_back(current_field); // Add the last field - CRITICAL: Must add final field
         
-        if (fields.size() >= 8) {
+        // CRITICAL: Must have exactly 9 fields or parsing will fail
+        // CSV format: Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
+        if (fields.size() >= 9) {
             fgcom_band_segment segment;
-            segment.band = fields[0];
-            segment.mode = fields[1];
-            segment.start_freq = std::stof(fields[2]);
-            segment.end_freq = std::stof(fields[3]);
-            segment.itu_region = std::stoi(fields[4]);
-            segment.power_limit = std::stof(fields[5]);
-            segment.countries = fields[6];
-            segment.notes = fields[7];
             
+            // Parse each field with validation - CRITICAL: Field order must match CSV format exactly
+            segment.band = fields[0];                    // Band designation (e.g., "160m", "80m")
+            segment.mode = fields[1];                    // Operating mode (e.g., "CW", "SSB")
+            segment.start_freq = std::stof(fields[2]);   // Start frequency in kHz - CRITICAL: Must be numeric
+            segment.end_freq = std::stof(fields[3]);     // End frequency in kHz - CRITICAL: Must be numeric
+            segment.itu_region = std::stoi(fields[4]);   // ITU Region (1,2,3) - CRITICAL: Must be 1, 2, or 3
+            segment.countries = fields[5];               // Country/region (e.g., "UK", "USA")
+            segment.license_class = fields[6];          // License class (e.g., "Full", "Intermediate")
+            segment.power_limit = std::stof(fields[7]); // Power limit in Watts - CRITICAL: Must be positive
+            segment.notes = fields[8];                  // Additional notes/restrictions
+            
+            // Add segment to collection - CRITICAL: Must add to enable frequency validation
             band_segments.push_back(segment);
         }
     }
@@ -244,6 +270,71 @@ bool FGCom_AmateurRadio::validateAmateurFrequency(const std::string& frequency, 
     }
     
     return false;
+}
+
+std::string FGCom_AmateurRadio::getRequiredLicenseClass(float frequency_khz, int itu_region, const std::string& mode) {
+    if (!initialized) initialize();
+    
+    for (const auto& segment : band_segments) {
+        if (segment.itu_region == itu_region && 
+            segment.mode == mode &&
+            frequency_khz >= segment.start_freq && 
+            frequency_khz <= segment.end_freq) {
+            return segment.license_class;
+        }
+    }
+    
+    return "Unknown";
+}
+
+std::vector<fgcom_band_segment> FGCom_AmateurRadio::getCountryAllocations(const std::string& country, int itu_region) {
+    if (!initialized) initialize();
+    
+    std::vector<fgcom_band_segment> country_allocations;
+    
+    for (const auto& segment : band_segments) {
+        if (segment.itu_region == itu_region && 
+            segment.countries.find(country) != std::string::npos) {
+            country_allocations.push_back(segment);
+        }
+    }
+    
+    return country_allocations;
+}
+
+bool FGCom_AmateurRadio::canLicenseClassOperate(float frequency_khz, int itu_region, const std::string& mode, const std::string& license_class) {
+    if (!initialized) initialize();
+    
+    for (const auto& segment : band_segments) {
+        if (segment.itu_region == itu_region && 
+            segment.mode == mode &&
+            frequency_khz >= segment.start_freq && 
+            frequency_khz <= segment.end_freq) {
+            return segment.license_class == license_class;
+        }
+    }
+    
+    return false;
+}
+
+std::vector<std::string> FGCom_AmateurRadio::getAvailableBands(const std::string& license_class, int itu_region) {
+    if (!initialized) initialize();
+    
+    std::vector<std::string> available_bands;
+    std::set<std::string> unique_bands;
+    
+    for (const auto& segment : band_segments) {
+        if (segment.itu_region == itu_region && 
+            segment.license_class == license_class) {
+            unique_bands.insert(segment.band);
+        }
+    }
+    
+    for (const auto& band : unique_bands) {
+        available_bands.push_back(band);
+    }
+    
+    return available_bands;
 }
 
 fgcom_band_segment FGCom_AmateurRadio::getBandSegment(float frequency_khz, int itu_region) {

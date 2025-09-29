@@ -393,6 +393,551 @@ bool AddAntenna(const std::string& vehicle_id,
 }
 ```
 
+#### **4. Multiple Antenna Management for Complex Vehicles**
+
+**Example: Leopard Tank with Multiple Fixed Antennas**
+
+> **Note**: Most military vehicles like the Leopard tank have **fixed antennas** that do not rotate independently. The antenna orientations are relative to the vehicle's heading and change automatically when the vehicle turns. Only vehicles with **mobile radar systems** (like surface-to-air missile systems, radar vehicles, or ground stations) have rotatable antennas. For vehicles with **rotatable antennas**, use the rotation APIs instead.
+
+```cpp
+// Complete Leopard Tank integration with multiple antennas
+class LeopardTankIntegration {
+private:
+    std::string vehicle_id = "leopard_tank_001";
+    std::string api_base_url = "http://localhost:8080/api/v1/vehicle-dynamics";
+    
+public:
+    // Register Leopard tank with multiple antennas
+    bool RegisterLeopardTank() {
+        // Register the vehicle
+        nlohmann::json vehicle_request = {
+            {"vehicle_id", vehicle_id},
+            {"vehicle_type", "ground_vehicle"},
+            {"vehicle_name", "Leopard_1_Tank"},
+            {"initial_position", {
+                {"latitude", 40.7128},
+                {"longitude", -74.0060},
+                {"altitude", 100.0}
+            }},
+            {"initial_attitude", {
+                {"heading", 0.0},
+                {"pitch", 0.0},
+                {"roll", 0.0}
+            }}
+        };
+        
+        auto response = SendAPIRequest("POST", "/register", vehicle_request);
+        if (!response["success"]) {
+            return false;
+        }
+        
+        // Add main radio antenna (VHF) - Primary communication (fixed)
+        AddAntenna("main_vhf_antenna", "whip", 0.0f, 0.0f, 0.0f, false);
+        
+        // Add secondary radio antenna (UHF) - Tactical communication (fixed)
+        AddAntenna("secondary_uhf_antenna", "whip", 0.0f, 0.0f, 0.0f, false);
+        
+        // Add command antenna (HF) - Long-range communication (fixed)
+        AddAntenna("command_hf_antenna", "whip", 0.0f, 0.0f, 0.0f, false);
+        
+        // Add tactical antenna (VHF) - Squad communication (fixed)
+        AddAntenna("tactical_vhf_antenna", "whip", 0.0f, 0.0f, 0.0f, false);
+        
+        return true;
+    }
+    
+    // Add individual antenna with full configuration
+    bool AddAntenna(const std::string& antenna_id,
+                   const std::string& antenna_type,
+                   float azimuth, float elevation,
+                   float rotation_speed, bool auto_tracking) {
+        
+        nlohmann::json antenna = {
+            {"antenna_id", antenna_id},
+            {"antenna_type", antenna_type},
+            {"azimuth", azimuth},
+            {"elevation", elevation},
+            {"rotation_speed", rotation_speed},
+            {"auto_tracking_enabled", auto_tracking}
+        };
+        
+        auto response = SendAPIRequest("POST", "/" + vehicle_id + "/antennas", antenna);
+        return response["success"];
+    }
+    
+    // Update tank position and attitude (affects all antennas)
+    bool UpdateTankPosition(double lat, double lon, double alt, 
+                           float heading, float pitch, float roll) {
+        // Update vehicle position
+        nlohmann::json position = {
+            {"latitude", lat},
+            {"longitude", lon},
+            {"altitude", alt},
+            {"timestamp", GetCurrentTimestamp()}
+        };
+        auto pos_response = SendAPIRequest("PUT", "/" + vehicle_id + "/position", position);
+        
+        // Update vehicle attitude (automatically updates all antenna orientations)
+        nlohmann::json attitude = {
+            {"heading", heading},
+            {"pitch", pitch},
+            {"roll", roll},
+            {"timestamp", GetCurrentTimestamp()}
+        };
+        auto att_response = SendAPIRequest("PUT", "/" + vehicle_id + "/attitude", attitude);
+        
+        return pos_response["success"] && att_response["success"];
+    }
+    
+    // Update antenna orientation (for fixed antennas, this updates the vehicle-relative orientation)
+    bool UpdateAntennaOrientation(const std::string& antenna_id,
+                                 float azimuth, float elevation) {
+        
+        nlohmann::json orientation_update = {
+            {"antenna_id", antenna_id},
+            {"azimuth", azimuth},
+            {"elevation", elevation},
+            {"timestamp", GetCurrentTimestamp()}
+        };
+        
+        auto response = SendAPIRequest("PUT", 
+            "/" + vehicle_id + "/antennas/" + antenna_id, 
+            orientation_update);
+        return response["success"];
+    }
+    
+    // Get all antennas for the tank (PULL operation)
+    std::vector<AntennaInfo> GetAllAntennas() {
+        auto response = SendAPIRequest("GET", "/" + vehicle_id + "/antennas", {});
+        std::vector<AntennaInfo> antennas;
+        
+        if (response["success"]) {
+            for (const auto& antenna : response["antennas"]) {
+                AntennaInfo info;
+                info.antenna_id = antenna["antenna_id"];
+                info.antenna_type = antenna["antenna_type"];
+                info.azimuth = antenna["azimuth"];
+                info.elevation = antenna["elevation"];
+                info.rotation_speed = antenna["rotation_speed"];
+                info.is_auto_tracking = antenna["auto_tracking_enabled"];
+                info.timestamp = antenna["timestamp"];
+                antennas.push_back(info);
+            }
+        }
+        
+        return antennas;
+    }
+    
+    // Get specific antenna status (PULL operation)
+    AntennaInfo GetAntennaStatus(const std::string& antenna_id) {
+        auto response = SendAPIRequest("GET", 
+            "/" + vehicle_id + "/antennas/" + antenna_id, {});
+        
+        AntennaInfo info;
+        if (response["success"]) {
+            auto antenna = response["antenna"];
+            info.antenna_id = antenna["antenna_id"];
+            info.antenna_type = antenna["antenna_type"];
+            info.azimuth = antenna["azimuth"];
+            info.elevation = antenna["elevation"];
+            info.rotation_speed = antenna["rotation_speed"];
+            info.is_auto_tracking = antenna["auto_tracking_enabled"];
+            info.timestamp = antenna["timestamp"];
+        }
+        
+        return info;
+    }
+    
+    // Update specific antenna (PUSH operation)
+    bool UpdateAntenna(const std::string& antenna_id,
+                      float azimuth, float elevation,
+                      bool auto_tracking = false) {
+        
+        nlohmann::json antenna_update = {
+            {"antenna_id", antenna_id},
+            {"azimuth", azimuth},
+            {"elevation", elevation},
+            {"auto_tracking_enabled", auto_tracking},
+            {"timestamp", GetCurrentTimestamp()}
+        };
+        
+        auto response = SendAPIRequest("PUT", 
+            "/" + vehicle_id + "/antennas/" + antenna_id, 
+            antenna_update);
+        return response["success"];
+    }
+    
+    // Remove specific antenna
+    bool RemoveAntenna(const std::string& antenna_id) {
+        auto response = SendAPIRequest("DELETE", 
+            "/" + vehicle_id + "/antennas/" + antenna_id, {});
+        return response["success"];
+    }
+    
+    // Enable auto-tracking for specific antenna
+    bool EnableAutoTracking(const std::string& antenna_id, 
+                           const std::string& target_vehicle_id) {
+        nlohmann::json request = {
+            {"target_vehicle_id", target_vehicle_id},
+            {"tracking_mode", "continuous"}
+        };
+        
+        auto response = SendAPIRequest("POST", 
+            "/" + vehicle_id + "/antennas/" + antenna_id + "/auto-tracking", 
+            request);
+        return response["success"];
+    }
+    
+    // Disable auto-tracking for specific antenna
+    bool DisableAutoTracking(const std::string& antenna_id) {
+        auto response = SendAPIRequest("DELETE", 
+            "/" + vehicle_id + "/antennas/" + antenna_id + "/auto-tracking", {});
+        return response["success"];
+    }
+    
+    // Get antenna rotation status
+    AntennaRotationStatus GetAntennaRotationStatus(const std::string& antenna_id) {
+        auto response = SendAPIRequest("GET", 
+            "/" + vehicle_id + "/antennas/" + antenna_id + "/rotation-status", {});
+        
+        AntennaRotationStatus status;
+        if (response["success"]) {
+            status.is_rotating = response["is_rotating"];
+            status.current_azimuth = response["current_azimuth"];
+            status.current_elevation = response["current_elevation"];
+            status.target_azimuth = response["target_azimuth"];
+            status.target_elevation = response["target_elevation"];
+            status.estimated_arrival_time = response["estimated_arrival_time"];
+        }
+        
+        return status;
+    }
+    
+    // Tank-specific operations (fixed antennas - orientation relative to vehicle)
+    void SetMainAntennaOrientation(float azimuth, float elevation) {
+        UpdateAntennaOrientation("main_vhf_antenna", azimuth, elevation);
+    }
+    
+    void SetSecondaryAntennaOrientation(float azimuth, float elevation) {
+        UpdateAntennaOrientation("secondary_uhf_antenna", azimuth, elevation);
+    }
+    
+    void SetCommandAntennaOrientation(float azimuth, float elevation) {
+        UpdateAntennaOrientation("command_hf_antenna", azimuth, elevation);
+    }
+    
+    void SetTacticalAntennaOrientation(float azimuth, float elevation) {
+        UpdateAntennaOrientation("tactical_vhf_antenna", azimuth, elevation);
+    }
+    
+    // Get complete vehicle dynamics (PULL operation)
+    VehicleDynamicsInfo GetVehicleDynamics() {
+        auto response = SendAPIRequest("GET", "/" + vehicle_id, {});
+        
+        VehicleDynamicsInfo dynamics;
+        if (response["success"]) {
+            auto data = response["dynamics"];
+            dynamics.vehicle_id = data["vehicle_id"];
+            dynamics.vehicle_type = data["vehicle_type"];
+            dynamics.status = data["status"];
+            
+            // Position
+            auto pos = data["position"];
+            dynamics.latitude = pos["latitude"];
+            dynamics.longitude = pos["longitude"];
+            dynamics.altitude = pos["altitude"];
+            
+            // Attitude
+            auto att = data["attitude"];
+            dynamics.heading = att["heading"];
+            dynamics.pitch = att["pitch"];
+            dynamics.roll = att["roll"];
+            
+            // Antennas
+            for (const auto& antenna : data["antennas"]) {
+                AntennaInfo info;
+                info.antenna_id = antenna["antenna_id"];
+                info.antenna_type = antenna["antenna_type"];
+                info.azimuth = antenna["azimuth"];
+                info.elevation = antenna["elevation"];
+                info.rotation_speed = antenna["rotation_speed"];
+                info.is_auto_tracking = antenna["auto_tracking_enabled"];
+                dynamics.antennas.push_back(info);
+            }
+        }
+        
+        return dynamics;
+    }
+    
+    // Update complete vehicle dynamics (PUSH operation)
+    bool UpdateVehicleDynamics(const VehicleDynamicsInfo& dynamics) {
+        nlohmann::json request = {
+            {"vehicle_id", dynamics.vehicle_id},
+            {"vehicle_type", dynamics.vehicle_type},
+            {"status", dynamics.status},
+            {"position", {
+                {"latitude", dynamics.latitude},
+                {"longitude", dynamics.longitude},
+                {"altitude", dynamics.altitude}
+            }},
+            {"attitude", {
+                {"heading", dynamics.heading},
+                {"pitch", dynamics.pitch},
+                {"roll", dynamics.roll}
+            }},
+            {"antennas", nlohmann::json::array()}
+        };
+        
+        // Add all antennas
+        for (const auto& antenna : dynamics.antennas) {
+            nlohmann::json antenna_json = {
+                {"antenna_id", antenna.antenna_id},
+                {"antenna_type", antenna.antenna_type},
+                {"azimuth", antenna.azimuth},
+                {"elevation", antenna.elevation},
+                {"rotation_speed", antenna.rotation_speed},
+                {"auto_tracking_enabled", antenna.is_auto_tracking}
+            };
+            request["antennas"].push_back(antenna_json);
+        }
+        
+        auto response = SendAPIRequest("PUT", "/" + vehicle_id + "/dynamics", request);
+        return response["success"];
+    }
+};
+
+// Supporting data structures
+struct AntennaInfo {
+    std::string antenna_id;
+    std::string antenna_type;
+    float azimuth;
+    float elevation;
+    float rotation_speed;
+    bool is_auto_tracking;
+    std::string timestamp;
+};
+
+struct AntennaRotationStatus {
+    bool is_rotating;
+    float current_azimuth;
+    float current_elevation;
+    float target_azimuth;
+    float target_elevation;
+    float estimated_arrival_time;
+};
+
+struct VehicleDynamicsInfo {
+    std::string vehicle_id;
+    std::string vehicle_type;
+    std::string status;
+    double latitude;
+    double longitude;
+    double altitude;
+    float heading;
+    float pitch;
+    float roll;
+    std::vector<AntennaInfo> antennas;
+};
+```
+
+#### **5. Example: Surface-to-Air Missile System with Rotatable Antennas**
+
+```cpp
+// Surface-to-Air Missile (SAM) system with rotatable radar antennas
+class SAMSystemIntegration {
+private:
+    std::string vehicle_id = "sam_system_001";
+    std::string api_base_url = "http://localhost:8080/api/v1/vehicle-dynamics";
+    
+public:
+    // Register SAM system with rotatable radar antennas
+    bool RegisterSAMSystem() {
+        // Register the vehicle
+        nlohmann::json vehicle_request = {
+            {"vehicle_id", vehicle_id},
+            {"vehicle_type", "ground_vehicle"},
+            {"vehicle_name", "Patriot_SAM_System"},
+            {"initial_position", {
+                {"latitude", 40.7128},
+                {"longitude", -74.0060},
+                {"altitude", 100.0}
+            }},
+            {"initial_attitude", {
+                {"heading", 0.0},
+                {"pitch", 0.0},
+                {"roll", 0.0}
+            }}
+        };
+        
+        auto response = SendAPIRequest("POST", "/register", vehicle_request);
+        if (!response["success"]) {
+            return false;
+        }
+        
+        // Add search radar antenna (rotatable)
+        AddAntenna("search_radar", "yagi", 0.0f, 0.0f, 30.0f, false);
+        
+        // Add tracking radar antenna (rotatable)
+        AddAntenna("tracking_radar", "yagi", 0.0f, 0.0f, 45.0f, false);
+        
+        // Add communication antenna (fixed)
+        AddAntenna("comm_antenna", "whip", 0.0f, 0.0f, 0.0f, false);
+        
+        return true;
+    }
+    
+    // Rotate search radar to scan area
+    bool RotateSearchRadar(float target_azimuth, float target_elevation) {
+        nlohmann::json rotation_request = {
+            {"target_azimuth", target_azimuth},
+            {"target_elevation", target_elevation},
+            {"immediate", false},
+            {"rotation_mode", "absolute"}
+        };
+        
+        auto response = SendAPIRequest("POST", 
+            "/" + vehicle_id + "/antennas/search_radar/rotate", 
+            rotation_request);
+        return response["success"];
+    }
+    
+    // Rotate tracking radar to follow target
+    bool RotateTrackingRadar(float target_azimuth, float target_elevation) {
+        nlohmann::json rotation_request = {
+            {"target_azimuth", target_azimuth},
+            {"target_elevation", target_elevation},
+            {"immediate", false},
+            {"rotation_mode", "absolute"}
+        };
+        
+        auto response = SendAPIRequest("POST", 
+            "/" + vehicle_id + "/antennas/tracking_radar/rotate", 
+            rotation_request);
+        return response["success"];
+    }
+    
+    // Enable auto-tracking on tracking radar
+    bool EnableTargetTracking(const std::string& target_vehicle_id) {
+        nlohmann::json request = {
+            {"target_vehicle_id", target_vehicle_id},
+            {"tracking_mode", "continuous"}
+        };
+        
+        auto response = SendAPIRequest("POST", 
+            "/" + vehicle_id + "/antennas/tracking_radar/auto-tracking", 
+            request);
+        return response["success"];
+    }
+    
+    // Get radar rotation status
+    AntennaRotationStatus GetRadarStatus(const std::string& radar_type) {
+        auto response = SendAPIRequest("GET", 
+            "/" + vehicle_id + "/antennas/" + radar_type + "/rotation-status", {});
+        
+        AntennaRotationStatus status;
+        if (response["success"]) {
+            status.is_rotating = response["is_rotating"];
+            status.current_azimuth = response["current_azimuth"];
+            status.current_elevation = response["current_elevation"];
+            status.target_azimuth = response["target_azimuth"];
+            status.target_elevation = response["target_elevation"];
+            status.estimated_arrival_time = response["estimated_arrival_time"];
+        }
+        
+        return status;
+    }
+    
+    // SAM system operations
+    void ScanArea(float start_azimuth, float end_azimuth, float elevation) {
+        RotateSearchRadar(start_azimuth, elevation);
+        // In real implementation, would sweep from start_azimuth to end_azimuth
+    }
+    
+    void TrackTarget(float target_azimuth, float target_elevation) {
+        RotateTrackingRadar(target_azimuth, target_elevation);
+    }
+    
+    void EnableAutoTrack(const std::string& target_id) {
+        EnableTargetTracking(target_id);
+    }
+};
+```
+
+#### **6. Usage Example for SAM System**
+
+```cpp
+// Game integration example for SAM system
+void GameSAMSystemExample() {
+    SAMSystemIntegration sam;
+    
+    // Register SAM system with rotatable radar antennas
+    if (!sam.RegisterSAMSystem()) {
+        std::cerr << "Failed to register SAM system" << std::endl;
+        return;
+    }
+    
+    // Update SAM system position
+    sam.UpdateTankPosition(40.7128, -74.0060, 100.0, 0.0f, 0.0f, 0.0f);
+    
+    // Scan area for targets
+    sam.ScanArea(0.0f, 360.0f, 10.0f);
+    
+    // Track specific target
+    sam.TrackTarget(45.0f, 15.0f);
+    
+    // Enable auto-tracking on enemy aircraft
+    sam.EnableAutoTrack("enemy_aircraft_001");
+    
+    // Get radar status
+    auto search_status = sam.GetRadarStatus("search_radar");
+    auto tracking_status = sam.GetRadarStatus("tracking_radar");
+    
+    std::cout << "Search radar rotating: " << search_status.is_rotating << std::endl;
+    std::cout << "Tracking radar rotating: " << tracking_status.is_rotating << std::endl;
+}
+```
+
+#### **7. Usage Example for Leopard Tank**
+
+```cpp
+// Game integration example
+void GameLeopardTankExample() {
+    LeopardTankIntegration tank;
+    
+    // Register tank with multiple antennas
+    if (!tank.RegisterLeopardTank()) {
+        std::cerr << "Failed to register Leopard tank" << std::endl;
+        return;
+    }
+    
+    // Update tank position and attitude
+    tank.UpdateTankPosition(40.7128, -74.0060, 100.0, 45.0f, 0.0f, 0.0f);
+    
+    // Set fixed antenna orientations (relative to vehicle)
+    tank.SetMainAntennaOrientation(0.0f, 0.0f);      // Forward-facing
+    tank.SetSecondaryAntennaOrientation(90.0f, 0.0f); // Right-facing
+    tank.SetCommandAntennaOrientation(180.0f, 0.0f);  // Rear-facing
+    tank.SetTacticalAntennaOrientation(270.0f, 0.0f); // Left-facing
+    
+    // Get all antenna statuses (PULL operation)
+    auto antennas = tank.GetAllAntennas();
+    for (const auto& antenna : antennas) {
+        std::cout << "Antenna " << antenna.antenna_id 
+                  << " at azimuth " << antenna.azimuth 
+                  << " elevation " << antenna.elevation << std::endl;
+    }
+    
+    // Update specific antenna orientation (PUSH operation)
+    tank.UpdateAntenna("main_vhf_antenna", 0.0f, 0.0f, false);
+    
+    // Get complete vehicle dynamics (PULL operation)
+    auto dynamics = tank.GetVehicleDynamics();
+    std::cout << "Tank " << dynamics.vehicle_id 
+              << " has " << dynamics.antennas.size() 
+              << " antennas" << std::endl;
+}
+```
+
 #### **4. Antenna Auto-Tracking**
 ```cpp
 // Enable antenna auto-tracking
@@ -1723,6 +2268,574 @@ Content-Type: application/json
 > **Note**: All Lightning Data API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
 
 The Lightning Data API provides real-time atmospheric noise simulation from lightning strikes. This system processes lightning data to simulate realistic atmospheric noise that affects radio communication quality.
+
+## Substation and Power Plant API
+
+### **Substation and Power Plant Data Integration**
+
+> **Note**: All Substation and Power Plant API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
+
+The Substation and Power Plant API provides real-time electrical infrastructure data for enhanced noise floor calculations. This system integrates with Open Infrastructure Map data source to provide comprehensive electrical infrastructure information including substations, power stations, and transmission lines.
+
+### **Substation API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/substation-data`
+
+#### **Get Current Substation Data**
+```http
+GET /api/v1/substation-data/current?latitude=40.7128&longitude=-74.0060&radius_km=50.0
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "substation_data": {
+    "substations": [
+      {
+        "substation_id": "substation_001",
+        "substation_type": "transmission",
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "voltage_kv": 345.0,
+        "capacity_mva": 500.0,
+        "is_fenced": true,
+        "operator_name": "ConEd",
+        "noise_factor": 1.0,
+        "is_active": true,
+        "last_updated": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total_count": 1,
+    "search_radius_km": 50.0,
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### **Submit Substation Data from Game**
+```http
+POST /api/v1/substation-data/submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "substation_id": "game_substation_001",
+  "substation_type": "distribution",
+  "latitude": 40.7128,
+  "longitude": -74.0060,
+  "voltage_kv": 12.0,
+  "capacity_mva": 50.0,
+  "is_fenced": false,
+  "operator_name": "Game Utility",
+  "noise_factor": 1.2,
+  "is_active": true,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Substation data submitted successfully",
+  "data_id": "substation_20240115_103000",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+#### **Submit Batch Substation Data**
+```http
+POST /api/v1/substation-data/batch-submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "substation_data_array": [
+    {
+      "substation_id": "game_substation_001",
+      "substation_type": "distribution",
+      "latitude": 40.7128,
+      "longitude": -74.0060,
+      "voltage_kv": 12.0,
+      "capacity_mva": 50.0,
+      "timestamp": "2024-01-15T10:30:00Z"
+    },
+    {
+      "substation_id": "game_substation_002",
+      "substation_type": "transmission",
+      "latitude": 40.7200,
+      "longitude": -74.0100,
+      "voltage_kv": 345.0,
+      "capacity_mva": 500.0,
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### **Update Substation Data**
+```http
+PUT /api/v1/substation-data/update
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "substation_id": "game_substation_001",
+  "voltage_kv": 13.8,
+  "capacity_mva": 75.0,
+  "is_active": true,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+### **Power Plant API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/power-plant-data`
+
+#### **Get Current Power Plant Data**
+```http
+GET /api/v1/power-plant-data/current?latitude=40.7128&longitude=-74.0060&radius_km=50.0
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "power_plant_data": {
+    "power_plants": [
+      {
+        "station_id": "power_plant_001",
+        "station_type": "thermal",
+        "latitude": 40.7128,
+        "longitude": -74.0060,
+        "capacity_mw": 1000.0,
+        "current_output_mw": 850.0,
+        "is_fenced": true,
+        "operator_name": "PSEG",
+        "noise_factor": 1.0,
+        "is_active": true,
+        "last_updated": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total_count": 1,
+    "search_radius_km": 50.0,
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### **Submit Power Plant Data from Game**
+```http
+POST /api/v1/power-plant-data/submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "station_id": "game_power_plant_001",
+  "station_type": "nuclear",
+  "latitude": 40.7128,
+  "longitude": -74.0060,
+  "capacity_mw": 2000.0,
+  "current_output_mw": 1800.0,
+  "is_fenced": true,
+  "operator_name": "Game Power Corp",
+  "noise_factor": 1.5,
+  "is_active": true,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Power plant data submitted successfully",
+  "data_id": "power_plant_20240115_103000",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+#### **Submit Batch Power Plant Data**
+```http
+POST /api/v1/power-plant-data/batch-submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "power_plant_data_array": [
+    {
+      "station_id": "game_power_plant_001",
+      "station_type": "thermal",
+      "latitude": 40.7128,
+      "longitude": -74.0060,
+      "capacity_mw": 1000.0,
+      "current_output_mw": 850.0,
+      "timestamp": "2024-01-15T10:30:00Z"
+    },
+    {
+      "station_id": "game_power_plant_002",
+      "station_type": "wind",
+      "latitude": 40.7200,
+      "longitude": -74.0100,
+      "capacity_mw": 500.0,
+      "current_output_mw": 300.0,
+      "timestamp": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+```
+
+#### **Update Power Plant Data**
+```http
+PUT /api/v1/power-plant-data/update
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "station_id": "game_power_plant_001",
+  "current_output_mw": 900.0,
+  "is_active": true,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+### **Game Integration Examples**
+
+#### **1. Substation Data Integration**
+```cpp
+// C++ substation data integration example
+class SubstationDataIntegration {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/substation-data";
+    
+public:
+    // Submit substation data from game
+    bool submitSubstationData(const std::string& substation_id,
+                             const std::string& substation_type,
+                             double latitude, double longitude,
+                             float voltage_kv, float capacity_mva,
+                             bool is_fenced, const std::string& operator_name) {
+        nlohmann::json request_data = {
+            {"substation_id", substation_id},
+            {"substation_type", substation_type},
+            {"latitude", latitude},
+            {"longitude", longitude},
+            {"voltage_kv", voltage_kv},
+            {"capacity_mva", capacity_mva},
+            {"is_fenced", is_fenced},
+            {"operator_name", operator_name},
+            {"noise_factor", 1.0f},
+            {"is_active", true}
+        };
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Post("/api/v1/substation-data/submit", 
+                               request_data.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            return response["success"];
+        }
+        return false;
+    }
+    
+    // Submit batch substation data
+    bool submitBatchSubstationData(const std::vector<SubstationData>& data_array) {
+        nlohmann::json request_data;
+        nlohmann::json substation_array = nlohmann::json::array();
+        
+        for (const auto& data : data_array) {
+            nlohmann::json entry = {
+                {"substation_id", data.substation_id},
+                {"substation_type", data.substation_type},
+                {"latitude", data.latitude},
+                {"longitude", data.longitude},
+                {"voltage_kv", data.voltage_kv},
+                {"capacity_mva", data.capacity_mva},
+                {"is_fenced", data.is_fenced},
+                {"operator_name", data.operator_name}
+            };
+            substation_array.push_back(entry);
+        }
+        
+        request_data["substation_data_array"] = substation_array;
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Post("/api/v1/substation-data/batch-submit", 
+                               request_data.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            return response["success"];
+        }
+        return false;
+    }
+    
+    // Get nearby substations
+    std::vector<SubstationData> getNearbySubstations(double latitude, double longitude, 
+                                                    float radius_km = 50.0f) {
+        std::stringstream url;
+        url << "/api/v1/substation-data/current?latitude=" << latitude 
+            << "&longitude=" << longitude << "&radius_km=" << radius_km;
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Get(url.str().c_str());
+        
+        std::vector<SubstationData> substations;
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            if (response["success"]) {
+                auto substation_data = response["substation_data"];
+                for (const auto& substation : substation_data["substations"]) {
+                    SubstationData data;
+                    data.substation_id = substation["substation_id"];
+                    data.substation_type = substation["substation_type"];
+                    data.latitude = substation["latitude"];
+                    data.longitude = substation["longitude"];
+                    data.voltage_kv = substation["voltage_kv"];
+                    data.capacity_mva = substation["capacity_mva"];
+                    data.is_fenced = substation["is_fenced"];
+                    data.operator_name = substation["operator_name"];
+                    substations.push_back(data);
+                }
+            }
+        }
+        
+        return substations;
+    }
+};
+```
+
+#### **2. Power Plant Data Integration**
+```cpp
+// C++ power plant data integration example
+class PowerPlantDataIntegration {
+private:
+    std::string api_base_url = "http://localhost:8080/api/v1/power-plant-data";
+    
+public:
+    // Submit power plant data from game
+    bool submitPowerPlantData(const std::string& station_id,
+                             const std::string& station_type,
+                             double latitude, double longitude,
+                             float capacity_mw, float current_output_mw,
+                             bool is_fenced, const std::string& operator_name) {
+        nlohmann::json request_data = {
+            {"station_id", station_id},
+            {"station_type", station_type},
+            {"latitude", latitude},
+            {"longitude", longitude},
+            {"capacity_mw", capacity_mw},
+            {"current_output_mw", current_output_mw},
+            {"is_fenced", is_fenced},
+            {"operator_name", operator_name},
+            {"noise_factor", 1.0f},
+            {"is_active", true}
+        };
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Post("/api/v1/power-plant-data/submit", 
+                               request_data.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            return response["success"];
+        }
+        return false;
+    }
+    
+    // Submit batch power plant data
+    bool submitBatchPowerPlantData(const std::vector<PowerPlantData>& data_array) {
+        nlohmann::json request_data;
+        nlohmann::json power_plant_array = nlohmann::json::array();
+        
+        for (const auto& data : data_array) {
+            nlohmann::json entry = {
+                {"station_id", data.station_id},
+                {"station_type", data.station_type},
+                {"latitude", data.latitude},
+                {"longitude", data.longitude},
+                {"capacity_mw", data.capacity_mw},
+                {"current_output_mw", data.current_output_mw},
+                {"is_fenced", data.is_fenced},
+                {"operator_name", data.operator_name}
+            };
+            power_plant_array.push_back(entry);
+        }
+        
+        request_data["power_plant_data_array"] = power_plant_array;
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Post("/api/v1/power-plant-data/batch-submit", 
+                               request_data.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            return response["success"];
+        }
+        return false;
+    }
+    
+    // Get nearby power plants
+    std::vector<PowerPlantData> getNearbyPowerPlants(double latitude, double longitude, 
+                                                    float radius_km = 50.0f) {
+        std::stringstream url;
+        url << "/api/v1/power-plant-data/current?latitude=" << latitude 
+            << "&longitude=" << longitude << "&radius_km=" << radius_km;
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Get(url.str().c_str());
+        
+        std::vector<PowerPlantData> power_plants;
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            if (response["success"]) {
+                auto power_plant_data = response["power_plant_data"];
+                for (const auto& plant : power_plant_data["power_plants"]) {
+                    PowerPlantData data;
+                    data.station_id = plant["station_id"];
+                    data.station_type = plant["station_type"];
+                    data.latitude = plant["latitude"];
+                    data.longitude = plant["longitude"];
+                    data.capacity_mw = plant["capacity_mw"];
+                    data.current_output_mw = plant["current_output_mw"];
+                    data.is_fenced = plant["is_fenced"];
+                    data.operator_name = plant["operator_name"];
+                    power_plants.push_back(data);
+                }
+            }
+        }
+        
+        return power_plants;
+    }
+};
+```
+
+#### **3. Electrical Infrastructure Noise Effects**
+```cpp
+// Electrical infrastructure noise effects integration
+class ElectricalInfrastructureNoise {
+private:
+    SubstationDataIntegration substation_integration;
+    PowerPlantDataIntegration power_plant_integration;
+    
+public:
+    // Calculate electrical infrastructure noise effects
+    float calculateElectricalNoiseEffects(double latitude, double longitude, 
+                                         float frequency_hz, float distance_km) {
+        float total_noise_effect = 0.0f;
+        
+        // Get nearby substations
+        auto substations = substation_integration.getNearbySubstations(latitude, longitude, 50.0f);
+        for (const auto& substation : substations) {
+            float substation_noise = calculateSubstationNoise(substation, frequency_hz, distance_km);
+            total_noise_effect += substation_noise;
+        }
+        
+        // Get nearby power plants
+        auto power_plants = power_plant_integration.getNearbyPowerPlants(latitude, longitude, 50.0f);
+        for (const auto& plant : power_plants) {
+            float plant_noise = calculatePowerPlantNoise(plant, frequency_hz, distance_km);
+            total_noise_effect += plant_noise;
+        }
+        
+        return total_noise_effect;
+    }
+    
+    // Calculate substation noise contribution
+    float calculateSubstationNoise(const SubstationData& substation, 
+                                   float frequency_hz, float distance_km) {
+        float base_noise = 0.0f;
+        
+        // Voltage-based noise calculation
+        if (substation.voltage_kv > 100.0f) {
+            base_noise = 10.0f; // High voltage substations
+        } else if (substation.voltage_kv > 50.0f) {
+            base_noise = 5.0f;  // Medium voltage substations
+        } else {
+            base_noise = 2.0f;  // Low voltage substations
+        }
+        
+        // Distance attenuation
+        float distance_effect = 20.0f * log10(distance_km + 1.0f);
+        
+        // Fencing effect
+        float fencing_effect = substation.is_fenced ? -3.0f : 0.0f;
+        
+        // Frequency-dependent effects
+        float frequency_effect = 0.0f;
+        if (frequency_hz < 1000000.0f) { // VLF/LF
+            frequency_effect = 2.0f;
+        } else if (frequency_hz < 100000000.0f) { // MF/HF
+            frequency_effect = 1.0f;
+        } else if (frequency_hz < 1000000000.0f) { // VHF/UHF
+            frequency_effect = 0.5f;
+        }
+        
+        return base_noise - distance_effect + fencing_effect + frequency_effect;
+    }
+    
+    // Calculate power plant noise contribution
+    float calculatePowerPlantNoise(const PowerPlantData& plant, 
+                                  float frequency_hz, float distance_km) {
+        float base_noise = 0.0f;
+        
+        // Capacity-based noise calculation
+        if (plant.capacity_mw > 1000.0f) {
+            base_noise = 15.0f; // Large power plants
+        } else if (plant.capacity_mw > 100.0f) {
+            base_noise = 10.0f; // Medium power plants
+        } else {
+            base_noise = 5.0f;  // Small power plants
+        }
+        
+        // Output level effect
+        float output_factor = plant.current_output_mw / plant.capacity_mw;
+        base_noise *= output_factor;
+        
+        // Distance attenuation
+        float distance_effect = 20.0f * log10(distance_km + 1.0f);
+        
+        // Fencing effect
+        float fencing_effect = plant.is_fenced ? -5.0f : 0.0f;
+        
+        // Frequency-dependent effects
+        float frequency_effect = 0.0f;
+        if (frequency_hz < 1000000.0f) { // VLF/LF
+            frequency_effect = 3.0f;
+        } else if (frequency_hz < 100000000.0f) { // MF/HF
+            frequency_effect = 2.0f;
+        } else if (frequency_hz < 1000000000.0f) { // VHF/UHF
+            frequency_effect = 1.0f;
+        }
+        
+        return base_noise - distance_effect + fencing_effect + frequency_effect;
+    }
+};
+```
 
 ### **Lightning Data API Endpoints**
 
