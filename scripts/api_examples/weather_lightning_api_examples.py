@@ -112,7 +112,7 @@ class WeatherLightningAPIClient:
 
 def simulate_thunderstorm():
     """Simulate a thunderstorm with lightning strikes and weather effects"""
-    print("🌩️  Simulating Thunderstorm...")
+    print("Simulating Thunderstorm...")
     
     client = WeatherLightningAPIClient()
     
@@ -132,7 +132,7 @@ def simulate_thunderstorm():
     )
     
     if weather_result:
-        print(f"✅ Weather data submitted: {weather_result['message']}")
+        print(f"SUCCESS: Weather data submitted: {weather_result['message']}")
     
     # Simulate multiple lightning strikes
     strikes = []
@@ -153,13 +153,13 @@ def simulate_thunderstorm():
     # Submit batch lightning strikes
     lightning_result = client.submit_batch_lightning_strikes(strikes)
     if lightning_result:
-        print(f"✅ Lightning strikes submitted: {lightning_result['message']}")
+        print(f"SUCCESS: Lightning strikes submitted: {lightning_result['message']}")
     
     return weather_result, lightning_result
 
 def simulate_rain_effects():
     """Simulate rain effects on radio propagation"""
-    print("🌧️  Simulating Rain Effects...")
+    print("Simulating Rain Effects...")
     
     client = WeatherLightningAPIClient()
     
@@ -178,13 +178,13 @@ def simulate_rain_effects():
     )
     
     if weather_result:
-        print(f"✅ Rain weather data submitted: {weather_result['message']}")
+        print(f"SUCCESS: Rain weather data submitted: {weather_result['message']}")
     
     return weather_result
 
 def simulate_clear_weather():
     """Simulate clear weather conditions"""
-    print("☀️  Simulating Clear Weather...")
+    print("Simulating Clear Weather...")
     
     client = WeatherLightningAPIClient()
     
@@ -203,13 +203,13 @@ def simulate_clear_weather():
     )
     
     if weather_result:
-        print(f"✅ Clear weather data submitted: {weather_result['message']}")
+        print(f"SUCCESS: Clear weather data submitted: {weather_result['message']}")
     
     return weather_result
 
 def simulate_lightning_storm_sequence():
     """Simulate a complete lightning storm sequence"""
-    print("⚡ Simulating Lightning Storm Sequence...")
+    print("Simulating Lightning Storm Sequence...")
     
     client = WeatherLightningAPIClient()
     
@@ -337,9 +337,9 @@ def main():
     )
     
     if strike_result:
-        print(f"✅ Lightning strike submitted: {strike_result['message']}")
+        print(f"SUCCESS: Lightning strike submitted: {strike_result['message']}")
     
-    print("\n🌩️  Weather & Lightning API examples completed!")
+    print("\nWeather & Lightning API examples completed!")
     print("\nThese examples demonstrate how games can:")
     print("- Submit realistic weather conditions (temperature, humidity, pressure, rain)")
     print("- Submit lightning strike data with location and intensity")

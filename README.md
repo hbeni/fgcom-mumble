@@ -766,6 +766,36 @@ This CSV file contains detailed information about:
 
 **Modifying Band Segments**: Edit the local CSV file to update frequency allocations, power limits, and regional restrictions. Changes take effect after plugin restart without recompilation.
 
+## Utilities and Tools
+
+### **Advanced Utilities**
+Essential tools for terrain data processing, antenna pattern conversion, and advanced configuration:
+
+- **[ASTER GDEM Advanced Processing](scripts/utilities/aster_gdem_advanced.py)** - Advanced terrain data processing with Python
+- **[ASTER GDEM Downloader](scripts/utilities/aster_gdem_downloader.sh)** - Automated ASTER terrain data download
+- **[ASTER Downloader Documentation](scripts/utilities/README_ASTER_DOWNLOADER.md)** - Complete guide for ASTER data acquisition
+- **[Pattern Extraction Advanced](scripts/utilities/extract_pattern_advanced.sh)** - Advanced antenna pattern extraction tools
+- **[EZ to NEC Converter](scripts/utilities/ez2nec_converter.py)** - Convert EZ format files to NEC format
+- **[EZNEC to NEC Converter](scripts/utilities/eznec2nec.sh)** - EZNEC format conversion script
+- **[ASTER Requirements](scripts/utilities/requirements_aster.txt)** - Python dependencies for ASTER tools
+
+### **Utility Categories**
+
+**Terrain Data Processing:**
+- ASTER GDEM download and processing
+- Advanced terrain elevation calculations
+- Geographic data format conversion
+
+**Antenna Pattern Tools:**
+- EZ/NEC format conversion
+- Pattern extraction and analysis
+- Electromagnetic simulation preparation
+
+**Data Processing:**
+- Advanced pattern extraction
+- Format conversion utilities
+- Automated processing workflows
+
 ## Project Reports
 
 For comprehensive project status, testing results, and quality assurance documentation, see the following reports:

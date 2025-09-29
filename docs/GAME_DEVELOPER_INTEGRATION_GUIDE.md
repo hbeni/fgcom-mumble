@@ -1571,6 +1571,244 @@ Authorization: Bearer your_jwt_token_here
 }
 ```
 
+#### **Submit Solar Data from Game**
+```http
+POST /api/v1/solar-data/submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "solar_flux": 150.2,
+  "k_index": 2,
+  "a_index": 8,
+  "sunspot_number": 45,
+  "ap_index": 12,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Solar data submitted successfully",
+  "data_id": "solar_20240115_103000",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+#### **Submit Batch Solar Data**
+```http
+POST /api/v1/solar-data/batch-submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "solar_data_array": [
+    {
+      "solar_flux": 150.2,
+      "k_index": 2,
+      "a_index": 8,
+      "timestamp": "2024-01-15T10:30:00Z"
+    },
+    {
+      "solar_flux": 148.5,
+      "k_index": 3,
+      "a_index": 10,
+      "timestamp": "2024-01-15T11:00:00Z"
+    }
+  ]
+}
+```
+
+#### **Update Solar Data**
+```http
+PUT /api/v1/solar-data/update
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "solar_flux": 152.1,
+  "k_index": 1,
+  "a_index": 6,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Weather Data API
+
+### **Weather Data Integration**
+
+> **Note**: All Weather Data API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
+
+The Weather Data API provides atmospheric condition effects on radio propagation. This system fetches weather data from multiple sources and uses it to simulate realistic atmospheric effects that affect radio communication across different frequency bands.
+
+### **Weather Data API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/weather-data`
+
+#### **Get Current Weather Conditions**
+```http
+GET /api/v1/weather-data/current
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "weather_conditions": {
+    "temperature_celsius": 20.0,
+    "humidity_percent": 50.0,
+    "pressure_hpa": 1013.25,
+    "wind_speed_ms": 5.0,
+    "wind_direction_deg": 180.0,
+    "precipitation_mmh": 0.0,
+    "dew_point_celsius": 10.0,
+    "visibility_km": 10.0,
+    "cloud_cover_percent": 30.0,
+    "uv_index": 5.0,
+    "air_quality_index": 50.0,
+    "pollen_count": 25.0,
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### **Submit Weather Data from Game**
+```http
+POST /api/v1/weather-data/submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "temperature_celsius": 22.5,
+  "humidity_percent": 65.0,
+  "pressure_hpa": 1015.2,
+  "wind_speed_ms": 8.5,
+  "wind_direction_deg": 270.0,
+  "precipitation_mmh": 2.5,
+  "visibility_km": 8.0,
+  "cloud_cover_percent": 75.0,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Weather data submitted successfully",
+  "data_id": "weather_20240115_103000",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## Lightning Data API
+
+### **Lightning Data Integration**
+
+> **Note**: All Lightning Data API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
+
+The Lightning Data API provides real-time atmospheric noise simulation from lightning strikes. This system processes lightning data to simulate realistic atmospheric noise that affects radio communication quality.
+
+### **Lightning Data API Endpoints**
+
+**Base URL**: `http://localhost:8080/api/v1/lightning-data`
+
+#### **Get Current Lightning Data**
+```http
+GET /api/v1/lightning-data/current
+Authorization: Bearer your_jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "lightning_data": {
+    "total_strikes": 1250,
+    "strikes_per_minute": 15.2,
+    "average_distance_km": 25.5,
+    "noise_level_db": -45.2,
+    "atmospheric_noise": {
+      "vlf_noise_db": -52.1,
+      "lf_noise_db": -48.3,
+      "mf_noise_db": -45.2,
+      "hf_noise_db": -42.8
+    },
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+#### **Submit Lightning Data from Game**
+```http
+POST /api/v1/lightning-data/submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "strikes_count": 25,
+  "average_distance_km": 15.5,
+  "intensity_level": "moderate",
+  "noise_contribution_db": -38.5,
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Lightning data submitted successfully",
+  "data_id": "lightning_20240115_103000",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+#### **Submit Batch Lightning Data**
+```http
+POST /api/v1/lightning-data/batch-submit
+Authorization: Bearer your_jwt_token_here
+Content-Type: application/json
+```
+
+**Request:**
+```json
+{
+  "lightning_data_array": [
+    {
+      "strikes_count": 25,
+      "average_distance_km": 15.5,
+      "intensity_level": "moderate",
+      "timestamp": "2024-01-15T10:30:00Z"
+    },
+    {
+      "strikes_count": 18,
+      "average_distance_km": 22.3,
+      "intensity_level": "light",
+      "timestamp": "2024-01-15T11:00:00Z"
+    }
+  ]
+}
+```
+
 ### **Game Integration Examples**
 
 #### **1. Solar Effects on Radio Propagation**

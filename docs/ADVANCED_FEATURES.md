@@ -45,7 +45,14 @@ Professional-grade 2m (144-145 MHz) and 70cm (430-440 MHz) Yagi antennas with 10
 Advanced radio wave propagation modeling with atmospheric effects, tropospheric ducting, and terrain obstruction - Radio propagation physics and modeling
 
 ### **Solar Data Integration**
-Real-time NOAA/SWPC solar data for accurate propagation modeling - Solar data integration and usage
+Real-time NOAA/SWPC solar data for accurate propagation modeling with **game data submission capabilities** - Solar data integration and usage
+
+**Data Submission Features:**
+- **POST /api/v1/solar-data/submit** - Submit single solar data point from game
+- **POST /api/v1/solar-data/batch-submit** - Submit multiple solar data points
+- **PUT /api/v1/solar-data/update** - Update existing solar data
+- **Feature Toggle Control** - Enable/disable external data sources when game submission is active
+- **Real-time Integration** - Games can push solar flux, K-index, A-index data directly to the system
 
 ### **Vehicle Dynamics API**
 Complete vehicle position, attitude, and antenna orientation tracking - Vehicle dynamics and tracking system
