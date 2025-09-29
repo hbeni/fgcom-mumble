@@ -39,7 +39,8 @@ host = 0.0.0.0
 enable_websocket = true
 enable_cors = true
 enable_rate_limiting = true
-rate_limit_requests_per_minute = 100
+# Increased for UHF/GHz support (200-500 Hz = 12,000-30,000 req/min)
+rate_limit_requests_per_minute = 50000
 
 [non_amateur_hf]
 enable_aviation_hf = true

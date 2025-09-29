@@ -142,7 +142,7 @@ struct APIServerConfig {
     bool enable_cors = true;
     std::string cors_origin = "*";
     bool enable_rate_limiting = true;
-    int rate_limit_requests_per_minute = 100;
+    int rate_limit_requests_per_minute = 50000;  // Increased for UHF/GHz support
     bool enable_api_key_auth = false;
     std::string api_key = "";
     bool enable_ssl = false;

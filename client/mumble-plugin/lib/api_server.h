@@ -290,6 +290,7 @@ public:
     
     // Rate limiting
     bool checkRateLimit(const std::string& client_ip);
+    bool checkFrequencyBandRateLimit(const std::string& client_ip, float frequency_hz);
     void setRateLimit(int requests_per_minute);
     
     // WebSocket management

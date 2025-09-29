@@ -136,9 +136,10 @@ This comprehensive guide covers amateur radio terminology, Q-codes, and communic
 | Mode | Description | Usage |
 |------|-------------|-------|
 | **CW** | Continuous Wave (Morse Code) | Telegraphy |
-| **SSB** | Single Sideband | Voice |
-| **AM** | Amplitude Modulation | Voice |
-| **FM** | Frequency Modulation | Voice |
+| **LSB** | Lower Sideband | Voice (HF bands) |
+| **USB** | Upper Sideband | Voice (HF/VHF bands) |
+| **NFM** | Narrow Frequency Modulation | Voice (VHF/UHF bands) |
+| **AM** | Amplitude Modulation | Voice (HF bands) |
 | **RTTY** | Radio Teletype | Digital |
 | **PSK31** | Phase Shift Keying | Digital |
 | **JT65** | Weak Signal Mode | Digital |

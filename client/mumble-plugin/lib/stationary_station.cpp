@@ -44,7 +44,7 @@ bool FGCom_StationaryStationManager::initialize() {
     };
     
     supported_modes[StationaryStationType::AMATEUR] = {
-        "SSB", "CW", "AM", "FM", "NFM", "DSB", "ISB", "VSB"
+        "CW", "LSB", "USB", "NFM", "AM"
     };
     
     // Initialize advanced modulation system
