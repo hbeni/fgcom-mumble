@@ -85,6 +85,9 @@ public:
     bool isDataValid();
     void setFallbackConditions();
     
+    // Feature toggle helper
+    bool isFeatureEnabled(const std::string& feature_name);
+    
     // Propagation effects
     float getSolarFluxEffect(float frequency_mhz);
     float getGeomagneticEffect(float k_index);

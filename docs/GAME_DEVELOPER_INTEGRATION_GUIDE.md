@@ -534,9 +534,9 @@ The update frequency requirements vary significantly based on the radio frequenc
 - **Update frequency**: 10-20 Hz
 - **Critical for**: Approach/departure, tower communication
 - **Effects**: Doppler shift, multipath, atmospheric ducting
-  - **Doppler Shift**: ✅ Fully implemented with relativistic corrections
-  - **Multipath**: ✅ Enhanced implementation with complex scenarios
-  - **Atmospheric Ducting**: ✅ Newly implemented with weather integration
+  - **Doppler Shift**:  Fully implemented with relativistic corrections
+  - **Multipath**:  Enhanced implementation with complex scenarios
+  - **Atmospheric Ducting**:  Newly implemented with weather integration
 
 **Maritime Communication (HF/VHF)**
 - **Update frequency**: 5-10 Hz
@@ -617,7 +617,7 @@ The update frequency requirements vary significantly based on the radio frequenc
 #### **Advanced Radio Propagation Effects**
 
 **Doppler Shift Implementation:**
-- **Status**: ✅ Fully implemented
+- **Status**:  Fully implemented
 - **Location**: `client/mumble-plugin/lib/frequency_offset.cpp`
 - **Features**:
   - Relativistic corrections for high-speed vehicles
@@ -627,7 +627,7 @@ The update frequency requirements vary significantly based on the radio frequenc
 - **Usage**: Automatically applied based on relative velocity and carrier frequency
 
 **Enhanced Multipath Implementation:**
-- **Status**: ✅ Fully implemented
+- **Status**:  Fully implemented
 - **Location**: `client/mumble-plugin/lib/enhanced_multipath.cpp`
 - **Features**:
   - Complex multipath component modeling
@@ -638,7 +638,7 @@ The update frequency requirements vary significantly based on the radio frequenc
 - **Usage**: Integrated into VHF radio model with configurable parameters
 
 **Atmospheric Ducting Implementation:**
-- **Status**: ✅ Newly implemented
+- **Status**:  Newly implemented
 - **Location**: `client/mumble-plugin/lib/atmospheric_ducting.cpp`
 - **Features**:
   - Temperature inversion detection
@@ -1302,6 +1302,8 @@ public:
 
 ### **Weather Data Integration**
 
+> **Note**: All Weather Data API endpoints are controlled by feature toggles. See [Feature Toggle API Control](FEATURE_TOGGLE_API_CONTROL.md) for configuration details.
+
 The Weather Data API provides atmospheric condition effects on radio propagation. This system fetches weather data from multiple sources and uses it to simulate realistic atmospheric effects that affect radio communication across different frequency bands.
 
 ### **Weather API Endpoints**
@@ -1579,6 +1581,90 @@ private:
     std::string api_base_url = "http://localhost:8080/api/v1/solar-data";
     
 public:
+    // Submit solar data from game
+    bool submitSolarData(float solar_flux, int k_index, int a_index) {
+        nlohmann::json request_data = {
+            {"solar_flux", solar_flux},
+            {"k_index", k_index},
+            {"a_index", a_index}
+        };
+        
+        // Make HTTP POST request
+        httplib::Client client("localhost", 8080);
+        auto res = client.Post("/api/v1/solar-data/submit", 
+                               request_data.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            return response["status"] == "success";
+        }
+        return false;
+    }
+    
+    // Submit batch solar data
+    bool submitBatchSolarData(const std::vector<SolarData>& data_array) {
+        nlohmann::json request_data;
+        nlohmann::json solar_array = nlohmann::json::array();
+        
+        for (const auto& data : data_array) {
+            nlohmann::json entry = {
+                {"solar_flux", data.solar_flux},
+                {"k_index", data.k_index},
+                {"a_index", data.a_index}
+            };
+            solar_array.push_back(entry);
+        }
+        
+        request_data["solar_data_array"] = solar_array;
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Post("/api/v1/solar-data/batch-submit", 
+                               request_data.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            return response["status"] == "success";
+        }
+        return false;
+    }
+    
+    // Update solar data
+    bool updateSolarData(float solar_flux, int k_index) {
+        nlohmann::json request_data = {
+            {"solar_flux", solar_flux},
+            {"k_index", k_index}
+        };
+        
+        httplib::Client client("localhost", 8080);
+        auto res = client.Put("/api/v1/solar-data/update", 
+                              request_data.dump(), "application/json");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            return response["status"] == "success";
+        }
+        return false;
+    }
+    
+    // Get current solar data
+    SolarData getCurrentSolarData() {
+        httplib::Client client("localhost", 8080);
+        auto res = client.Get("/api/v1/solar-data/current");
+        
+        if (res && res->status == 200) {
+            auto response = nlohmann::json::parse(res->body);
+            if (response["status"] == "success") {
+                auto solar_data = response["solar_data"];
+                return SolarData{
+                    solar_data["solar_flux"],
+                    solar_data["k_index"],
+                    solar_data["a_index"]
+                };
+            }
+        }
+        return SolarData{0, 0, 0}; // Default values
+    }
+    
     // Get solar effects on radio propagation
     float getSolarEffects(float frequency_hz, float latitude, float longitude) {
         // Get current solar data

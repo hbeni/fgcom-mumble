@@ -17,7 +17,7 @@ This report presents the results of static analysis performed on the FGCom-mumbl
 
 ## Analysis Results
 
-### 📊 Summary Statistics
+###  Summary Statistics
 
 - **Total Issues Found**: 9
 - **Error Level**: 0
@@ -117,7 +117,7 @@ inline const char *mumble_errorMessage(int16_t errorCode) {
 
 ## Detailed Analysis
 
-### 🔍 Radio Model Analysis
+###  Radio Model Analysis
 
 **File**: `radio_model.cpp`
 **Issues Found**: 0 critical, 0 warnings, 0 performance issues
@@ -133,7 +133,7 @@ inline const char *mumble_errorMessage(int16_t errorCode) {
 - Consider adding more input validation for edge cases
 - Implement logging for debugging frequency parsing issues
 
-### 🔍 Audio Processing Analysis
+###  Audio Processing Analysis
 
 **File**: `audio.cpp`
 **Issues Found**: 0 critical, 0 warnings, 0 performance issues
@@ -149,7 +149,7 @@ inline const char *mumble_errorMessage(int16_t errorCode) {
 - Consider SIMD optimizations for high-performance audio processing
 - Add audio quality metrics for monitoring
 
-### 🔍 Network Communication Analysis
+###  Network Communication Analysis
 
 **File**: `io_plugin.cpp`
 **Issues Found**: 0 critical, 0 warnings, 0 performance issues
@@ -167,7 +167,7 @@ inline const char *mumble_errorMessage(int16_t errorCode) {
 
 ## Code Quality Metrics
 
-### 📈 Quality Scores
+###  Quality Scores
 
 | Metric | Score | Status |
 |--------|-------|--------|
@@ -199,7 +199,7 @@ inline const char *mumble_errorMessage(int16_t errorCode) {
 
 ## Security Analysis
 
-### 🔒 Security Findings
+###  Security Findings
 
 #### **No Security Vulnerabilities Found**
 - No buffer overflows detected
@@ -216,7 +216,7 @@ inline const char *mumble_errorMessage(int16_t errorCode) {
 
 ## Performance Analysis
 
-### ⚡ Performance Findings
+###  Performance Findings
 
 #### **Good Performance Characteristics**
 - Efficient algorithms for audio processing

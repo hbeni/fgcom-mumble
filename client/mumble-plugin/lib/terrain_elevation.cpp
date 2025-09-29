@@ -31,7 +31,7 @@
 
 // Helper function for CURL downloads
 // This function is used when CURL is available, but may be unused in current build
-static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+[[maybe_unused]] static size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     size_t total_size = size * nmemb;
     std::ofstream* file = static_cast<std::ofstream*>(userp);
     file->write(static_cast<char*>(contents), total_size);

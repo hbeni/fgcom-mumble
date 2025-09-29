@@ -1,5 +1,5 @@
 FGCom-mumble - a flightsim radio simulation framework based on mumble
-Version: 1.3.0 (35cba64 2025-09-27)
+Version: 1.3.0 (3d35b97 2025-09-29)
 ===================================================================== 
 
 This is the server side documentation for the FGCom-mumble implementation.
