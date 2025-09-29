@@ -296,7 +296,7 @@ std::string FGCom_SolarDataProvider::makeHTTPRequest(const std::string& url) {
     } else {
         std::cerr << "[SolarData] HTTP request failed: " << (res ? res->status : -1) << std::endl;
         return "";
-    }
+e    }
     
     return "";
 }
