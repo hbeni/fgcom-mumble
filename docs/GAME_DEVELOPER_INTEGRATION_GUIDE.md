@@ -534,9 +534,9 @@ The update frequency requirements vary significantly based on the radio frequenc
 - **Update frequency**: 10-20 Hz
 - **Critical for**: Approach/departure, tower communication
 - **Effects**: Doppler shift, multipath, atmospheric ducting
-  - **Doppler Shift**: ✅ Fully implemented with relativistic corrections
-  - **Multipath**: ✅ Enhanced implementation with complex scenarios
-  - **Atmospheric Ducting**: ✅ Newly implemented with weather integration
+  - **Doppler Shift**: Fully implemented with relativistic corrections
+  - **Multipath**:  Enhanced implementation with complex scenarios
+  - **Atmospheric Ducting**:  Newly implemented with weather integration
 
 **Maritime Communication (HF/VHF)**
 - **Update frequency**: 5-10 Hz
@@ -617,7 +617,7 @@ The update frequency requirements vary significantly based on the radio frequenc
 #### **Advanced Radio Propagation Effects**
 
 **Doppler Shift Implementation:**
-- **Status**: ✅ Fully implemented
+- **Status**:  Fully implemented
 - **Location**: `client/mumble-plugin/lib/frequency_offset.cpp`
 - **Features**:
   - Relativistic corrections for high-speed vehicles
@@ -627,7 +627,7 @@ The update frequency requirements vary significantly based on the radio frequenc
 - **Usage**: Automatically applied based on relative velocity and carrier frequency
 
 **Enhanced Multipath Implementation:**
-- **Status**: ✅ Fully implemented
+- **Status**:  Fully implemented
 - **Location**: `client/mumble-plugin/lib/enhanced_multipath.cpp`
 - **Features**:
   - Complex multipath component modeling
@@ -638,7 +638,7 @@ The update frequency requirements vary significantly based on the radio frequenc
 - **Usage**: Integrated into VHF radio model with configurable parameters
 
 **Atmospheric Ducting Implementation:**
-- **Status**: ✅ Newly implemented
+- **Status**:  Newly implemented
 - **Location**: `client/mumble-plugin/lib/atmospheric_ducting.cpp`
 - **Features**:
   - Temperature inversion detection
