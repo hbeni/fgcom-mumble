@@ -76,7 +76,7 @@ See [Advanced Features Documentation](docs/ADVANCED_FEATURES.md) for a comprehen
 - Support role-based permissions for different user types
 - Enhance overall system security and accountability
 
-This enhancement would transform FGCom-mumble from a technical tool into a production-ready system suitable for enterprise and educational environments.
+This enhancement would transform FGCom-mumble from a technical tool into a production-ready system suitable for entertainment and educational environments.
 
 Documentation
 =============
