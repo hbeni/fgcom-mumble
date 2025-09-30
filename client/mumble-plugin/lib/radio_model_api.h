@@ -99,7 +99,6 @@ public:
     static APIResponse generateModelID(const RadioModelInfo& modelInfo);
     static APIResponse formatModelSummary(const std::string& modelName);
     static APIResponse formatModelComparison(const std::string& model1, const std::string& model2);
-    static APIResponse getModelRecommendations(const std::string& criteria);
     
     // Configuration Management API
     static APIResponse setConfigPath(const std::string& path);

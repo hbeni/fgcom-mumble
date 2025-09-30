@@ -27,6 +27,9 @@
 #ifndef FGCOM_RADIOMODEL_H
 #define FGCOM_RADIOMODEL_H
 
+// Forward declarations
+class FGCom_radiowaveModel_VHF;
+
 
 #define EARTH_RADIUS_CONST 3.57  // earth radius factor constant for m/km
 #define EARTH_RADIUS_AVG   6371  // earth radius constant in km

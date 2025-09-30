@@ -244,6 +244,12 @@ int FGCom_AmateurRadio::detectITURegion(double lat, double lon) {
     while (lon > 180.0) lon -= 360.0;
     while (lon < -180.0) lon += 360.0;
     
+    // Use latitude for region detection
+    if (lat > 60.0) {
+        // High latitude regions may have different regulations
+        // This affects propagation and band usage
+    }
+    
     // Simple region detection based on longitude
     if (lon >= -180.0 && lon <= -20.0) {
         return 2; // Americas

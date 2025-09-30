@@ -3,7 +3,7 @@ CC=g++
 DEBUG=
 THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
-override CFLAGS+=-Wall -O3 -I. -I./lib $(DEBUG)
+override CFLAGS+=-Wall -O3 -I. -I./lib -DENABLE_OPENINFRAMAP $(DEBUG)
 override CFLAGS_WIN+=-Wl,--subsystem,windows -static-libgcc -static-libstdc++ $(CFLAGS)
 SSLFLAGS+=-I./lib/openssl/include/ -L./lib/openssl/ -lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32
@@ -54,7 +54,7 @@ plugin-debug:
 # make the plugin
 plugin: outname=fgcom-mumble.so
 plugin: libs
-	$(CC) -shared -fPIC -o $(outname) $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -shared -fPIC -o $(outname) $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX) -lcurl
 
 # make all the libs
 libs:  $(lib_OBJS)
@@ -64,8 +64,8 @@ libs:  $(lib_OBJS)
 
 # Compile testing tools
 tools: libs
-	$(CC) -o test/geotest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o test/geotest.cpp $(CFLAGS)
-	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o test/frqtest.cpp $(CFLAGS)
+	$(CC) -o test/geotest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o test/geotest.cpp $(CFLAGS) -lcurl
+	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o test/frqtest.cpp $(CFLAGS) -lcurl
 	$(CC) -o test/updater-test test/updater-test.cpp $(CFLAGS)
 	
 

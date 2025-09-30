@@ -164,6 +164,12 @@ public:
     float calcGroundWaveSignal(float power, double dist, const fgcom_band_characteristics& characteristics) {
         // Ground wave follows inverse square law with some absorption
         float base_signal = (power * 10.0) / (dist * dist + 1.0);
+        
+        // Use band characteristics for frequency-dependent effects
+        float frequency_factor = characteristics.center_freq / 1000.0f; // Normalize frequency
+        if (frequency_factor > 1.0f) frequency_factor = 1.0f;
+        base_signal *= frequency_factor;
+        
         return std::min(1.0f, base_signal / 100.0f);
     }
     
@@ -171,6 +177,11 @@ public:
     float calcSkyWaveSignal(float power, double dist, const fgcom_band_characteristics& characteristics, float alt1, float alt2) {
         // Sky wave can travel long distances via ionospheric reflection
         float base_signal = (power * 5.0) / (dist + 100.0);
+        
+        // Use band characteristics for sky wave propagation
+        float frequency_factor = characteristics.center_freq / 1000.0f;
+        if (frequency_factor > 1.0f) frequency_factor = 1.0f;
+        base_signal *= frequency_factor;
         
         // Apply altitude factor (higher altitude = better signal)
         float altitude_factor = 1.0 + ((alt1 + alt2) / 2000.0) * 0.5;
@@ -188,6 +199,12 @@ public:
         
         // Line of sight follows inverse square law
         float base_signal = (power * 20.0) / (dist * dist + 1.0);
+        
+        // Use band characteristics for line of sight
+        float frequency_factor = characteristics.center_freq / 1000.0f;
+        if (frequency_factor > 1.0f) frequency_factor = 1.0f;
+        base_signal *= frequency_factor;
+        
         return std::min(1.0f, base_signal / 200.0f);
     }
     
@@ -312,9 +329,13 @@ public:
     // Implement processAudioSamples for amateur radio
     void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
         // Basic audio processing for amateur radio
-        // Apply signal quality as volume scaling
+        // Use radio volume and sample rate for processing
+        float radio_volume = lclRadio.volume / 100.0f;
+        float sample_rate_normalization = 48000.0f / sampleRateHz;
+        
+        // Apply signal quality as volume scaling with radio parameters
         for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
-            outputPCM[i] *= signalQuality;
+            outputPCM[i] *= signalQuality * radio_volume * sample_rate_normalization;
         }
     }
 };

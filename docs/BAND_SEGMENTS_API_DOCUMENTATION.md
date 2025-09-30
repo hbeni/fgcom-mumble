@@ -361,11 +361,11 @@ curl "http://localhost:8080/api/v1/band-segments/frequency-validation?frequency=
 
 The API reads from the `configs/band_segments.csv` file which contains:
 
-- **Band**: Amateur radio band (160m, 80m, 60m, 40m, 30m, 20m, 17m, 15m, 12m, 10m, 6m, 2m, 70cm, 23cm)
-- **Mode**: Operating mode (CW, SSB, AM, DSB, ISB, VSB, NFM, EME, MS)
+- **Band**: Amateur radio band (160m, 80m, 60m, 40m, 30m, 20m, 17m, 15m, 12m, 10m, 6m, 4m, 2m, 70cm, 23cm)
+- **Mode**: Operating mode (CW, SSB, AM, DSB, ISB, VSB, NFM, EME, MS, Omni)
 - **StartFreq/EndFreq**: Frequency range in kHz
 - **Region**: ITU region (1, 2, 3)
-- **PowerLimit**: Maximum power in watts (including special allocations like 1000W for EME/MS in Norway)
+- **PowerLimit**: Maximum power in watts (including special allocations like 1000W for EME/MS, 300W for omnidirectional on 2m/70cm, 100W for omnidirectional on 4m in Norway)
 - **Countries**: Country-specific restrictions
 - **Notes**: Additional operating notes
 

@@ -1397,6 +1397,7 @@ void initializeMumblePluginConfig() {
 
 // Configuration change handler
 // This function is called when configuration values change through Mumble's UI
+
 void handleConfigurationChange(const std::string& key, const std::string& value) {
     pluginLog("[CFG] Configuration changed: " + key + " = " + value);
     

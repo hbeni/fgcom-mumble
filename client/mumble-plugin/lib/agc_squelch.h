@@ -186,7 +186,7 @@ private:
     void updateAGC(float input_level_db, float sample_rate_hz);
     void updateSquelch(float input_level_db, float sample_rate_hz);
     bool detectTone(float* samples, size_t sample_count, float sample_rate_hz);
-    float calculateRMS(float* samples, size_t sample_count);
+    float calculateRMS(const float* samples, size_t sample_count);
     float calculatePeak(float* samples, size_t sample_count);
     void applyGain(float* samples, size_t sample_count, float gain_db);
     void applySquelch(float* samples, size_t sample_count, bool squelch_open);

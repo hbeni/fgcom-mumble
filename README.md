@@ -91,7 +91,7 @@ The system reads from `configs/radio_amateur_band_segments.csv` which contains o
 ### For Developers
 1. **[Compilation Guide](docs/COMPILATION_GUIDE.md)** - Build from source code
 2. **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** - Integrate with your game or simulator
-3. **[API Documentation](docs/API_DOCUMENTATION.md)** - Use the RESTful API and WebSocket interfaces
+3. **[API Documentation](docs/API_REFERENCE_COMPLETE.md)** - Use the RESTful API and WebSocket interfaces
 4. **[Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)** - Deep technical details
 
 ### For Administrators
@@ -128,7 +128,7 @@ The documentation is split up into relevant parts:
 - [client/fgfs-addon/Readme.md](client/fgfs-addon/Readme.md) Documentation for the Flightgear integration addon
 - [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
 - [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
-- [SECURITY.md](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
+- [Security Documentation](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
 - [GOOD_CODING_PRACTICES.md](docs/GOOD_CODING_PRACTICES.md) **STRICT coding standards and quality requirements** - Mandatory rules for all development work
 
 ### User Documentation:
@@ -214,11 +214,47 @@ If you want to request a feature or report a bug, you can do so on the issuetrac
 
 **See [Compilation Guide](docs/COMPILATION_GUIDE.md) for complete compilation and build instructions.**
 
+### **Testing Framework Compilation**
+The comprehensive testing framework can be compiled and executed as follows:
+
+```bash
+# AGC/Squelch Module Tests
+cd test/agc_squelch_tests
+g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_agc_squelch_main.cpp test_agc_config.cpp test_thread_safety.cpp -o agc_squelch_tests
+
+# Integration Tests
+cd test/integration_tests
+g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_integration_main.cpp -o integration_tests
+
+# Status Page Module Tests
+cd test/status_page_module_tests
+g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_status_page_main.cpp -o status_page_tests
+
+# Error Handling Tests
+cd test/error_handling_tests
+g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_error_handling_main.cpp -o error_handling_tests
+
+# Performance Tests
+cd test/performance_tests
+g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_performance_main.cpp -o performance_tests
+```
+
+**All test files compile successfully and adhere to strict quality standards including thread safety, error handling, memory management, and input validation.**
+
 ## Band Segments Reference
 
 **See [Band Segments Reference](docs/BAND_SEGMENTS_REFERENCE.md) for complete information about frequency allocations, band segments, and regulatory compliance.**
 
 ## Utilities and Tools
+
+### **API Testing Tool**
+Comprehensive testing framework for all FGCom-mumble APIs:
+
+- **[Comprehensive API Tester](scripts/api_testing/comprehensive_api_tester.py)** - Complete API testing tool for all endpoints
+  - **Requirements**: Must be run against a compiled and running FGCom-mumble server
+  - **Coverage**: Tests all API endpoints including authentication, solar data, weather, band segments, radio models, AGC/Squelch, antenna patterns, and vehicle dynamics
+  - **Usage**: `python3 scripts/api_testing/comprehensive_api_tester.py --base-url http://localhost:8080`
+  - **Features**: Automated testing, detailed reporting, error detection, and performance metrics
 
 ### **Advanced Utilities**
 Essential tools for terrain data processing, antenna pattern conversion, and advanced configuration:
@@ -254,6 +290,69 @@ Essential tools for terrain data processing, antenna pattern conversion, and adv
 - Open Infrastructure Map integration
 - Atmospheric noise calculation
 - Environmental noise analysis
+
+## Testing Framework
+
+FGCom-mumble includes a comprehensive testing framework with strict quality standards and comprehensive test coverage:
+
+### **Test Suite Overview**
+The project includes multiple test suites covering all critical components:
+
+#### **AGC/Squelch Module Tests** (`test/agc_squelch_tests/`)
+- **`test_agc_squelch_main.cpp`** - Main test framework with thread-safe fixtures and comprehensive validation
+- **`test_agc_config.cpp`** - AGC configuration testing with proper bounds checking and error handling
+- **`test_thread_safety.cpp`** - Thread safety testing with concurrent operations and race condition detection
+- **`test_singleton.cpp`** - Singleton pattern testing with thread-safe access validation
+- **Features**: Thread-safe access methods, comprehensive input validation, proper error handling, atomic operations
+
+#### **Integration Tests** (`test/integration_tests/`)
+- **`test_integration_main.cpp`** - End-to-end integration testing with mock components
+- **Features**: Mock client/server testing, audio processing validation, connection testing
+
+#### **Status Page Module Tests** (`test/status_page_module_tests/`)
+- **`test_status_page_main.cpp`** - Status page rendering and data processing tests
+- **Features**: HTML rendering validation, data processing tests, WebSocket testing
+
+#### **Error Handling Tests** (`test/error_handling_tests/`)
+- **`test_error_handling_main.cpp`** - Comprehensive error handling and recovery testing
+- **Features**: Exception handling, resource management, error propagation testing
+
+#### **Performance Tests** (`test/performance_tests/`)
+- **`test_performance_main.cpp`** - Performance and latency testing
+- **Features**: Audio encoding/decoding performance, network transmission testing, propagation calculation testing
+
+### **Test Quality Standards**
+All tests adhere to strict quality standards:
+- ✅ **Thread Safety**: All operations are properly synchronized with mutex protection
+- ✅ **Error Handling**: Comprehensive try-catch blocks with proper exception propagation
+- ✅ **Memory Management**: RAII principles with proper resource cleanup
+- ✅ **Input Validation**: All inputs validated with bounds checking and sanitization
+- ✅ **Race Condition Prevention**: Atomic operations and proper synchronization
+- ✅ **Resource Management**: Exception-safe destructors and cleanup
+- ✅ **Code Quality**: Clean separation of concerns and maintainable structure
+
+### **Test Execution**
+```bash
+# Compile individual test suites
+cd test/agc_squelch_tests
+g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_agc_squelch_main.cpp test_agc_config.cpp test_thread_safety.cpp -o agc_squelch_tests
+
+# Run tests with sanitizers
+cd test/agc_squelch_tests
+make test_with_sanitizers
+
+# Run tests with coverage
+cd test/agc_squelch_tests
+make test_with_coverage
+```
+
+### **Test Coverage**
+- **Unit Tests**: Individual component testing with mock objects
+- **Integration Tests**: End-to-end system testing
+- **Thread Safety Tests**: Concurrent operation validation
+- **Performance Tests**: Latency and throughput measurement
+- **Error Handling Tests**: Exception and error recovery testing
+- **Memory Safety Tests**: Memory leak detection and resource management
 
 ## Project Reports
 
