@@ -71,3 +71,4 @@ void FGCom_radiowaveModel_MaritimeHF::processAudioSamples(fgcom_radio lclRadio, 
     fgcom_audio_filter(300, 3000, outputPCM, sampleCount, channelCount, sampleRateHz);
     fgcom_audio_applyVolume(lclRadio.volume, outputPCM, sampleCount, channelCount);
 }
+d!
