@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <functional>
 #include <chrono>
+#include <iostream>
 
 // Singleton instance
 std::unique_ptr<FGCom_AtmosphericNoise> FGCom_AtmosphericNoise::instance = nullptr;
@@ -1754,14 +1755,17 @@ void FGCom_AtmosphericNoise::updateFromOpenInfraMap(double lat, double lon, floa
     }
 #else
     // OpenInfraMap integration not compiled in
-    (void)lat; (void)lon; (void)radius_km; // Suppress unused parameter warnings
+    // Log the request for future implementation
+    std::cout << "[AtmosphericNoise] OpenInfraMap integration requested for lat=" << lat 
+              << ", lon=" << lon << ", radius=" << radius_km << "km (not compiled)" << std::endl;
 #endif
 }
 
 void FGCom_AtmosphericNoise::setOpenInfraMapUpdateCallback(std::function<void()> callback) {
     // This would be implemented to set up callbacks for Open Infrastructure Map updates
-    // For now, it's a placeholder
-    (void)callback;
+    // For now, it's a placeholder - store the callback for future use
+    openinframap_callback = callback;
+    std::cout << "[AtmosphericNoise] OpenInfraMap callback registered (not implemented)" << std::endl;
 }
 
 std::string FGCom_AtmosphericNoise::getOpenInfraMapStatus() const {

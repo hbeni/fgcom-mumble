@@ -28,13 +28,13 @@
 #include "radio_config.h"
 
 // include concrete implementations
-#include "radio_model_vhf.cpp"
-#include "radio_model_hf.cpp"
-#include "radio_model_uhf.cpp"
-#include "radio_model_string.cpp"
-#include "radio_model_amateur.cpp"
-#include "non_amateur_hf.cpp"
-#include "advanced_modulation.cpp"
+#include "radio_model_vhf.h"
+#include "radio_model_hf.h"
+#include "radio_model_uhf.h"
+#include "radio_model_string.h"
+#include "radio_model_amateur.h"
+#include "non_amateur_hf.h"
+#include "advanced_modulation.h"
 
 
 /*

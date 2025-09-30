@@ -71,6 +71,11 @@ protected:
     float calcSkywavePropagation(double distance, const fgcom_solar_conditions& solar, double solar_zenith) {
         float skywave_factor = 0.7; // Base skywave efficiency
         
+        // Distance-based attenuation for skywave propagation
+        float distance_factor = 1.0f - (distance / 10000.0f); // Reduce efficiency with distance
+        if (distance_factor < 0.1f) distance_factor = 0.1f;
+        skywave_factor *= distance_factor;
+        
         // Solar flux effect on ionosphere
         float sfi_effect = (solar.sfi - 70.0) / 100.0 * 0.3;
         skywave_factor += sfi_effect;
@@ -93,6 +98,15 @@ protected:
     // Calculate line-of-sight propagation effects
     float calcLineOfSightPropagation(double distance, const fgcom_solar_conditions& solar, double solar_zenith) {
         float los_factor = 1.0; // Base line-of-sight efficiency
+        
+        // Distance-based attenuation for line-of-sight
+        float distance_attenuation = 1.0f - (distance / 5000.0f); // LOS degrades with distance
+        if (distance_attenuation < 0.2f) distance_attenuation = 0.2f;
+        los_factor *= distance_attenuation;
+        
+        // Solar zenith angle affects atmospheric conditions
+        float zenith_effect = 1.0f - (solar_zenith / 90.0f) * 0.2f; // Better conditions at lower zenith
+        los_factor *= zenith_effect;
         
         // Solar flux has minimal effect on line-of-sight
         float sfi_effect = (solar.sfi - 70.0) / 100.0 * 0.1;
@@ -237,8 +251,18 @@ public:
      */
     void processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
         // Audio processing is like VHF characteristics for now
-        std::unique_ptr<FGCom_radiowaveModel_VHF> vhf_radio = std::make_unique<FGCom_radiowaveModel_VHF>();
-        vhf_radio->processAudioSamples(lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+        // TODO: Fix VHF class usage - temporarily commented out
+        // std::unique_ptr<FGCom_radiowaveModel_VHF> vhf_radio = std::make_unique<FGCom_radiowaveModel_VHF>();
+        // vhf_radio->processAudioSamples(lclRadio, signalQuality, outputPCM, sampleCount, channelCount, sampleRateHz);
+        
+        // Use radio parameters for audio processing
+        float volume_factor = lclRadio.volume / 100.0f; // Use radio volume
+        float sample_rate_factor = 48000.0f / sampleRateHz; // Normalize to 48kHz reference
+        
+        // Basic audio processing with radio-specific adjustments
+        for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
+            outputPCM[i] *= signalQuality * volume_factor * sample_rate_factor;
+        }
     }
 };
 

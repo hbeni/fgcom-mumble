@@ -20,7 +20,10 @@ This CSV file contains detailed information about:
 - **Channel Spacing Requirements**: Required spacing between channels
 - **Power Limits**: Maximum power allowed per band and region
 - **Country-Specific Restrictions**: National regulations and limitations
-- **Special Norwegian Allocations**: 1000W for EME/MS operations on 2m, 70cm, 23cm bands
+- **Special Norwegian Allocations**: 
+  - EME/MS operations: 1000W on 2m, 70cm bands
+  - Omnidirectional antennas: 300W on 2m/70cm, 100W on 4m
+  - Single radiateur class (Special) for all operations
 
 ## Frequency Bands Covered
 
@@ -37,6 +40,7 @@ This CSV file contains detailed information about:
 
 ### VHF Bands
 - **6m**: 50.0-54.0 MHz
+- **4m**: 70.0 MHz (Norway-specific)
 - **2m**: 144.0-148.0 MHz
 - **1.25m**: 222.0-225.0 MHz
 
@@ -61,6 +65,9 @@ This CSV file contains detailed information about:
 - **NFM**: Narrow Frequency Modulation
 - **AM**: Amplitude Modulation
 - **DSB**: Double Sideband
+- **EME**: Earth-Moon-Earth operations
+- **MS**: Meteor Scatter operations
+- **Omni**: Omnidirectional antenna operations
 - **ISB**: Independent Sideband
 - **VSB**: Vestigial Sideband
 

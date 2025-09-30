@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+8bb947dcbf64025e4b72ecff920405a3 CMakeFiles/run_all_tests
+70b428ab683233c9755c8cc46a1e96f2 CMakeFiles/run_basic_tests
+56c6fa924552f6f9af7fc4b17268a76f CMakeFiles/run_coverage_tests
+2dff9e9e60f2bd2b93a432e38782b04f CMakeFiles/run_sanitizer_tests

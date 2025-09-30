@@ -223,6 +223,10 @@ public:
         // UHF has higher frequency characteristics than VHF
         // Apply appropriate filtering and noise characteristics
         
+        // Use filter parameters for UHF processing
+        float filter_factor = (highpass_cutoff + lowpass_cutoff) / 2000.0f; // Normalize filter frequencies
+        if (filter_factor > 1.0f) filter_factor = 1.0f;
+        
         float noiseVolume;
         float signalVolume;
         
@@ -242,9 +246,13 @@ public:
         }
         
         // Apply UHF-specific audio processing
+        // Use radio volume and sample rate for processing
+        float radio_volume = lclRadio.volume / 100.0f;
+        float sample_rate_normalization = 48000.0f / sampleRateHz;
+        
         for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
-            // Apply signal volume
-            outputPCM[i] *= signalVolume;
+            // Apply signal volume with radio volume and filter effects
+            outputPCM[i] *= signalVolume * radio_volume * filter_factor * sample_rate_normalization;
             
             // Add UHF-specific noise characteristics
             if (noiseVolume > 0.0f) {

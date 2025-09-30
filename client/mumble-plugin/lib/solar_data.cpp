@@ -49,10 +49,10 @@ bool FGCom_SolarDataProvider::isFeatureEnabled(const std::string& feature_name) 
     try {
         // TODO: Implement proper feature toggle integration
         // For now, we'll use a simple approach
-        (void)feature_name; // Suppress unused parameter warning
+        std::cout << "[SolarData] Feature toggle requested for: " << feature_name << " (defaulting to enabled)" << std::endl;
         return true; // Default to enabled for now
     } catch (const std::exception& e) {
-        (void)e; // Suppress unused variable warning
+        std::cout << "[SolarData] Feature toggle error for " << feature_name << ": " << e.what() << " (defaulting to enabled)" << std::endl;
         return true; // Default to enabled on error
     }
 }

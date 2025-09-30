@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <curl/curl.h>
-#include "lib/json/json.hpp"
+#include "json/json.hpp"
 #include <filesystem>
 
 // Static member initialization

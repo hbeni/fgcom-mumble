@@ -21,6 +21,9 @@
 #ifndef FGCOM_MUMBLE_H
 #define FGCOM_MUMBLE_H
 
+#include <string>
+#include "lib/radio_model.h"
+
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 1
 #define FGCOM_VERSION_MINOR 1

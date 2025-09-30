@@ -795,12 +795,26 @@ std::vector<std::string> FGCom_NonAmateurHF::getMWARARegions() {
 
 float FGCom_NonAmateurHF::getUSBBandwidth(float frequency_khz) {
     // USB bandwidth is typically 3kHz for aviation HF
-    return 3.0;
+    // Adjust bandwidth based on frequency
+    float base_bandwidth = 3.0f;
+    if (frequency_khz > 10000.0f) {
+        base_bandwidth = 3.5f; // Slightly wider for higher frequencies
+    } else if (frequency_khz < 3000.0f) {
+        base_bandwidth = 2.5f; // Narrower for lower frequencies
+    }
+    return base_bandwidth;
 }
 
 float FGCom_NonAmateurHF::getSSBBandwidth(float frequency_khz) {
     // SSB bandwidth is typically 3kHz
-    return 3.0;
+    // Adjust bandwidth based on frequency
+    float base_bandwidth = 3.0f;
+    if (frequency_khz > 10000.0f) {
+        base_bandwidth = 3.5f; // Slightly wider for higher frequencies
+    } else if (frequency_khz < 3000.0f) {
+        base_bandwidth = 2.5f; // Narrower for lower frequencies
+    }
+    return base_bandwidth;
 }
 
 std::string FGCom_NonAmateurHF::getModulationType(float frequency_khz) {
@@ -897,7 +911,13 @@ float FGCom_radiowaveModel_AviationHF::calculateWhipAntennaEfficiency(float freq
 }
 
 float FGCom_radiowaveModel_AviationHF::calculateHighAltitudePropagation(double distance_km, float frequency_khz) {
-    return FGCom_NonAmateurHF::calculateHighAltitudeEffects(aircraft_altitude_ft, distance_km);
+    // Use frequency for propagation calculation
+    float frequency_factor = frequency_khz / 10000.0f; // Normalize frequency
+    if (frequency_factor > 1.0f) frequency_factor = 1.0f;
+    if (frequency_factor < 0.1f) frequency_factor = 0.1f;
+    
+    float base_effect = FGCom_NonAmateurHF::calculateHighAltitudeEffects(aircraft_altitude_ft, distance_km);
+    return base_effect * frequency_factor;
 }
 
 float FGCom_radiowaveModel_AviationHF::calculateUSBModulationEffects(float frequency_khz) {
@@ -1001,7 +1021,13 @@ float FGCom_radiowaveModel_MaritimeHF::getFrqMatch(fgcom_radio r1, fgcom_radio r
 }
 
 float FGCom_radiowaveModel_MaritimeHF::calculateSeaPathPropagation(double distance_km, float frequency_khz) {
-    return FGCom_NonAmateurHF::calculateSeaPathEffects(distance_km, 0.0); // Assume sea level
+    // Use frequency for maritime propagation calculation
+    float frequency_factor = frequency_khz / 10000.0f; // Normalize frequency
+    if (frequency_factor > 1.0f) frequency_factor = 1.0f;
+    if (frequency_factor < 0.1f) frequency_factor = 0.1f;
+    
+    float base_effect = FGCom_NonAmateurHF::calculateSeaPathEffects(distance_km, 0.0); // Assume sea level
+    return base_effect * frequency_factor;
 }
 
 float FGCom_radiowaveModel_MaritimeHF::calculateMaritimeChannelEffects(int channel_number) {
@@ -1048,17 +1074,25 @@ float FGCom_radiowaveModel_MaritimeHF::calculateDuplexOperationEffects(bool is_d
 // Implement processAudioSamples for AviationHF
 void FGCom_radiowaveModel_AviationHF::processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
     // Basic audio processing for aviation HF
-    // Apply signal quality as volume scaling
+    // Use radio volume and sample rate for processing
+    float radio_volume = lclRadio.volume / 100.0f;
+    float sample_rate_normalization = 48000.0f / sampleRateHz;
+    
+    // Apply signal quality as volume scaling with radio parameters
     for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
-        outputPCM[i] *= signalQuality;
+        outputPCM[i] *= signalQuality * radio_volume * sample_rate_normalization;
     }
 }
 
 // Implement processAudioSamples for MaritimeHF
 void FGCom_radiowaveModel_MaritimeHF::processAudioSamples(fgcom_radio lclRadio, float signalQuality, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
     // Basic audio processing for maritime HF
-    // Apply signal quality as volume scaling
+    // Use radio volume and sample rate for processing
+    float radio_volume = lclRadio.volume / 100.0f;
+    float sample_rate_normalization = 48000.0f / sampleRateHz;
+    
+    // Apply signal quality as volume scaling with radio parameters
     for (uint32_t i = 0; i < sampleCount * channelCount; i++) {
-        outputPCM[i] *= signalQuality;
+        outputPCM[i] *= signalQuality * radio_volume * sample_rate_normalization;
     }
 }

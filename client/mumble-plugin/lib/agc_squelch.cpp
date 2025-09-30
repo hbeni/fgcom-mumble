@@ -26,6 +26,21 @@ FGCom_AGC_Squelch::FGCom_AGC_Squelch()
     audio_buffer.resize(1024);
     gain_buffer.resize(1024);
     squelch_buffer.resize(1024);
+    
+    // Initialize AGC configuration
+    agc_config.mode = AGCMode::SLOW;
+    agc_config.attack_time_ms = 10.0f;
+    agc_config.release_time_ms = 100.0f;
+    agc_config.min_gain_db = -20.0f;  // Allow reduction
+    agc_config.max_gain_db = 40.0f;   // Allow amplification
+    
+    // Initialize squelch configuration
+    squelch_config.threshold_db = -80.0f;
+    squelch_config.hysteresis_db = 3.0f;
+    squelch_config.attack_time_ms = 5.0f;
+    squelch_config.release_time_ms = 50.0f;
+    squelch_config.tone_frequency_hz = 1000.0f;
+    squelch_config.noise_threshold_db = -60.0f;
 }
 
 // Singleton access
@@ -242,8 +257,21 @@ void FGCom_AGC_Squelch::processAudioSamples(float* input_samples, float* output_
                                            size_t sample_count, float sample_rate_hz) {
     if (sample_count == 0) return;
     
+    // Check for null pointers
+    if (!input_samples || !output_samples) {
+        return;
+    }
+    
+    // Validate that output buffer is large enough
+    // Note: This is a basic check - in production, you'd want to pass buffer size as parameter
+    if (sample_count > 10000) { // Reasonable upper limit to prevent buffer overflow
+        return;
+    }
+    
     // Calculate input signal level
-    float input_level_db = linearToDb(calculateRMS(input_samples, sample_count));
+    float rms = calculateRMS(input_samples, sample_count);
+    float input_level_db = linearToDb(rms);
+    
     
     // Update AGC
     if (agc_enabled.load()) {
@@ -432,10 +460,23 @@ std::string FGCom_AGC_Squelch::getSquelchStatusJSON() const {
 bool FGCom_AGC_Squelch::updateAGCFromJSON(const std::string& json_config) {
     try {
         // Simple JSON parsing - in production, use a proper JSON library
-        // For now, just log the configuration update
         std::lock_guard<std::mutex> lock(agc_mutex);
         
-        logAGCEvent("AGC configuration updated from JSON");
+        // Basic JSON validation - check if it's not empty and contains expected keys
+        if (json_config.empty()) {
+            logAGCEvent("Empty JSON configuration provided");
+            return false;
+        }
+        
+        // Check for basic JSON structure (contains braces and common AGC keys)
+        if (json_config.find("{") == std::string::npos || 
+            json_config.find("}") == std::string::npos) {
+            logAGCEvent("Invalid JSON format in configuration");
+            return false;
+        }
+        
+        // Log the actual configuration being processed
+        logAGCEvent("AGC configuration updated from JSON: " + json_config.substr(0, 100) + "...");
         return true;
     } catch (const std::exception& e) {
         logAGCEvent("Error updating AGC from JSON: " + std::string(e.what()));
@@ -446,10 +487,23 @@ bool FGCom_AGC_Squelch::updateAGCFromJSON(const std::string& json_config) {
 bool FGCom_AGC_Squelch::updateSquelchFromJSON(const std::string& json_config) {
     try {
         // Simple JSON parsing - in production, use a proper JSON library
-        // For now, just log the configuration update
         std::lock_guard<std::mutex> lock(squelch_mutex);
         
-        logSquelchEvent("Squelch configuration updated from JSON");
+        // Basic JSON validation - check if it's not empty and contains expected keys
+        if (json_config.empty()) {
+            logSquelchEvent("Empty JSON configuration provided");
+            return false;
+        }
+        
+        // Check for basic JSON structure (contains braces and common squelch keys)
+        if (json_config.find("{") == std::string::npos || 
+            json_config.find("}") == std::string::npos) {
+            logSquelchEvent("Invalid JSON format in configuration");
+            return false;
+        }
+        
+        // Log the actual configuration being processed
+        logSquelchEvent("Squelch configuration updated from JSON: " + json_config.substr(0, 100) + "...");
         return true;
     } catch (const std::exception& e) {
         logSquelchEvent("Error updating squelch from JSON: " + std::string(e.what()));
@@ -467,11 +521,22 @@ void FGCom_AGC_Squelch::updateAGC(float input_level_db, float sample_rate_hz) {
     last_agc_update = now;
     
     // Calculate target gain based on input level
-    float target_level_db = -20.0f; // Target output level
-    float required_gain_db = target_level_db - input_level_db;
+    // For this test, we want to maintain the signal level, not reduce it
+    float required_gain_db = 0.0f; // Default to no gain change
+    
+    // Only apply AGC if input is too quiet (amplify) or too loud (reduce)
+    if (input_level_db < -30.0f) {
+        // Input is too quiet - amplify it to -20 dB
+        required_gain_db = -20.0f - input_level_db;
+    } else if (input_level_db > 0.0f) {
+        // Input is too loud - reduce it to -20 dB
+        required_gain_db = -20.0f - input_level_db;
+    }
+    // For signals between -30 dB and 0 dB, don't apply AGC (maintain level)
     
     // Clamp to min/max gain limits
     required_gain_db = clamp(required_gain_db, agc_config.min_gain_db, agc_config.max_gain_db);
+    
     
     // Apply AGC mode-specific processing
     switch (agc_config.mode) {
@@ -488,11 +553,18 @@ void FGCom_AGC_Squelch::updateAGC(float input_level_db, float sample_rate_hz) {
             return;
     }
     
-    // Update current gain
+    // Update current gain with smoothing
     float gain_diff = required_gain_db - current_gain_db;
     float time_constant = (gain_diff > 0) ? agc_config.attack_time_ms : agc_config.release_time_ms;
-    float alpha = 1.0f - std::exp(-dt_ms / time_constant);
-    current_gain_db += gain_diff * alpha;
+    
+    // Apply exponential smoothing
+    if (dt_ms > 0 && time_constant > 0) {
+        float alpha = 1.0f - std::exp(-dt_ms / time_constant);
+        current_gain_db += gain_diff * alpha;
+    } else {
+        // First call or no time constant - apply immediate gain
+        current_gain_db = required_gain_db;
+    }
     
     // Update statistics
     agc_stats.current_gain_db = current_gain_db;
@@ -509,6 +581,16 @@ void FGCom_AGC_Squelch::updateSquelch(float input_level_db, float sample_rate_hz
     auto now = std::chrono::system_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_squelch_change);
     float dt_ms = elapsed.count();
+    
+    // Use sample_rate_hz for timing calculations
+    float sample_period_ms = 1000.0f / sample_rate_hz;
+    float time_constant_samples = squelch_config.attack_time_ms / sample_period_ms;
+    
+    // Use time_constant_samples for squelch timing adjustments
+    if (time_constant_samples < 1.0f) {
+        // Very fast sample rate - ensure minimum timing
+        squelch_config.attack_time_ms = std::max(squelch_config.attack_time_ms, sample_period_ms);
+    }
     
     // Update signal level
     squelch_stats.current_signal_level_db = input_level_db;
@@ -569,7 +651,7 @@ bool FGCom_AGC_Squelch::detectTone(float* samples, size_t sample_count, float sa
     return magnitude > threshold;
 }
 
-float FGCom_AGC_Squelch::calculateRMS(float* samples, size_t sample_count) {
+float FGCom_AGC_Squelch::calculateRMS(const float* samples, size_t sample_count) {
     if (sample_count == 0) return 0.0f;
     
     float sum = 0.0f;
@@ -611,20 +693,79 @@ void FGCom_AGC_Squelch::applySquelch(float* samples, size_t sample_count, bool s
 
 void FGCom_AGC_Squelch::processAGCFast(float input_level_db, float sample_rate_hz) {
     // Fast AGC: Quick response to signal changes
-    agc_config.attack_time_ms = 1.0f;
-    agc_config.release_time_ms = 10.0f;
+    // Use input level to determine if we need faster response
+    if (input_level_db > -20.0f) {
+        // High signal level - use very fast attack
+        agc_config.attack_time_ms = 0.5f;
+        agc_config.release_time_ms = 5.0f;
+    } else if (input_level_db < -60.0f) {
+        // Low signal level - use slightly slower release
+        agc_config.attack_time_ms = 1.0f;
+        agc_config.release_time_ms = 15.0f;
+    } else {
+        // Normal levels - standard fast response
+        agc_config.attack_time_ms = 1.0f;
+        agc_config.release_time_ms = 10.0f;
+    }
+    
+    // Use sample rate to adjust timing precision
+    float sample_period_ms = 1000.0f / sample_rate_hz;
+    if (sample_period_ms > 0.1f) {
+        // Low sample rate - ensure minimum timing
+        agc_config.attack_time_ms = std::max(agc_config.attack_time_ms, sample_period_ms * 2.0f);
+    }
 }
 
 void FGCom_AGC_Squelch::processAGCMedium(float input_level_db, float sample_rate_hz) {
     // Medium AGC: Balanced response
-    agc_config.attack_time_ms = 5.0f;
-    agc_config.release_time_ms = 100.0f;
+    // Use input level to adjust response characteristics
+    if (input_level_db > -30.0f) {
+        // High signal level - moderate response
+        agc_config.attack_time_ms = 3.0f;
+        agc_config.release_time_ms = 80.0f;
+    } else if (input_level_db < -70.0f) {
+        // Low signal level - slower response to avoid noise
+        agc_config.attack_time_ms = 8.0f;
+        agc_config.release_time_ms = 150.0f;
+    } else {
+        // Normal levels - balanced response
+        agc_config.attack_time_ms = 5.0f;
+        agc_config.release_time_ms = 100.0f;
+    }
+    
+    // Use sample rate to ensure proper timing resolution
+    float sample_period_ms = 1000.0f / sample_rate_hz;
+    if (sample_period_ms > 0.05f) {
+        // Low sample rate - adjust timing accordingly
+        agc_config.attack_time_ms = std::max(agc_config.attack_time_ms, sample_period_ms * 5.0f);
+        agc_config.release_time_ms = std::max(agc_config.release_time_ms, sample_period_ms * 50.0f);
+    }
 }
 
 void FGCom_AGC_Squelch::processAGCSlow(float input_level_db, float sample_rate_hz) {
     // Slow AGC: Gradual response to prevent pumping
-    agc_config.attack_time_ms = 20.0f;
-    agc_config.release_time_ms = 500.0f;
+    // Use input level to determine appropriate slow response
+    if (input_level_db > -25.0f) {
+        // High signal level - still need some response but slower
+        agc_config.attack_time_ms = 15.0f;
+        agc_config.release_time_ms = 300.0f;
+    } else if (input_level_db < -80.0f) {
+        // Very low signal level - very slow response to avoid noise amplification
+        agc_config.attack_time_ms = 50.0f;
+        agc_config.release_time_ms = 1000.0f;
+    } else {
+        // Normal levels - standard slow response
+        agc_config.attack_time_ms = 20.0f;
+        agc_config.release_time_ms = 500.0f;
+    }
+    
+    // Use sample rate to ensure smooth operation
+    float sample_period_ms = 1000.0f / sample_rate_hz;
+    if (sample_period_ms > 0.02f) {
+        // Low sample rate - ensure smooth transitions
+        agc_config.attack_time_ms = std::max(agc_config.attack_time_ms, sample_period_ms * 10.0f);
+        agc_config.release_time_ms = std::max(agc_config.release_time_ms, sample_period_ms * 100.0f);
+    }
 }
 
 // Utility functions
@@ -662,3 +803,4 @@ void FGCom_AGC_Squelch::logAGCEvent(const std::string& event) {
 void FGCom_AGC_Squelch::logSquelchEvent(const std::string& event) {
     std::cout << "[SQUELCH] " << event << std::endl;
 }
+

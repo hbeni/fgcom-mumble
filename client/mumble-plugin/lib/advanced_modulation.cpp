@@ -126,7 +126,16 @@ double FGCom_AdvancedModulation::calculateDSBBandwidth(double frequency_khz) {
 double FGCom_AdvancedModulation::calculateDSBPowerEfficiency(double frequency_khz) {
     // DSB is more efficient than AM but less than SSB
     // Efficiency depends on carrier suppression
-    return 0.75; // 75% efficiency (compared to 50% for AM, 100% for SSB)
+    double base_efficiency = 0.75; // 75% efficiency (compared to 50% for AM, 100% for SSB)
+    
+    // Adjust efficiency based on frequency
+    if (frequency_khz > 10000.0) {
+        base_efficiency *= 1.05; // Slightly better at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_efficiency *= 0.95; // Slightly worse at lower frequencies
+    }
+    
+    return base_efficiency;
 }
 
 // ISB (Independent Sideband) functions
@@ -153,7 +162,16 @@ double FGCom_AdvancedModulation::calculateISBBandwidth(double frequency_khz) {
     if (!initialized) initialize();
     
     // ISB total bandwidth is sum of both sidebands
-    return 6000.0; // 3 kHz upper + 3 kHz lower = 6 kHz total
+    double base_bandwidth = 6000.0; // 3 kHz upper + 3 kHz lower = 6 kHz total
+    
+    // Adjust bandwidth based on frequency
+    if (frequency_khz > 10000.0) {
+        base_bandwidth *= 1.1; // Wider bandwidth at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_bandwidth *= 0.9; // Narrower bandwidth at lower frequencies
+    }
+    
+    return base_bandwidth;
 }
 
 bool FGCom_AdvancedModulation::validateISBConfiguration(const ISBConfig& config) {
@@ -190,14 +208,32 @@ double FGCom_AdvancedModulation::calculateVSBBandwidth(double frequency_khz) {
     if (!initialized) initialize();
     
     // VSB bandwidth is typically 4 kHz
-    return 4000.0;
+    double base_bandwidth = 4000.0;
+    
+    // Adjust bandwidth based on frequency
+    if (frequency_khz > 10000.0) {
+        base_bandwidth *= 1.1; // Wider bandwidth at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_bandwidth *= 0.9; // Narrower bandwidth at lower frequencies
+    }
+    
+    return base_bandwidth;
 }
 
 double FGCom_AdvancedModulation::calculateVSBVestigialWidth(double frequency_khz) {
     if (!initialized) initialize();
     
-    // Vestigial sideband is typically 1 kHz
-    return 1000.0;
+    // Vestigial sideband is typically 1 kHz, but varies with frequency
+    double base_width = 1000.0;
+    
+    // Adjust vestigial width based on frequency
+    if (frequency_khz > 10000.0) {
+        base_width *= 1.1; // Wider vestigial at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_width *= 0.9; // Narrower vestigial at lower frequencies
+    }
+    
+    return base_width;
 }
 
 // General advanced modulation functions
@@ -234,19 +270,26 @@ std::vector<std::string> FGCom_AdvancedModulation::getSupportedModes() {
 
 // Signal processing functions
 double FGCom_AdvancedModulation::calculateModulationIndex(const std::string& mode, double frequency_khz) {
-    // Amateur radio modes
-    if (mode == "CW") return 1.0; // Full modulation for CW
-    if (mode == "LSB") return 1.0; // Full modulation for LSB
-    if (mode == "USB") return 1.0; // Full modulation for USB
-    if (mode == "NFM") return 0.9; // FM modulation index
-    if (mode == "AM") return 0.8; // AM modulation index
+    // Base modulation index by mode
+    double base_index;
+    if (mode == "CW") base_index = 1.0; // Full modulation for CW
+    else if (mode == "LSB") base_index = 1.0; // Full modulation for LSB
+    else if (mode == "USB") base_index = 1.0; // Full modulation for USB
+    else if (mode == "NFM") base_index = 0.9; // FM modulation index
+    else if (mode == "AM") base_index = 0.8; // AM modulation index
+    else if (mode == "DSB") base_index = 1.0; // Full modulation
+    else if (mode == "ISB") base_index = 1.0; // Full modulation
+    else if (mode == "VSB") base_index = 0.8; // Reduced modulation due to vestigial
+    else base_index = 1.0; // Default
     
-    // Advanced modulation modes
-    if (mode == "DSB") return 1.0; // Full modulation
-    if (mode == "ISB") return 1.0; // Full modulation
-    if (mode == "VSB") return 0.8; // Reduced modulation due to vestigial
+    // Adjust modulation index based on frequency
+    if (frequency_khz > 10000.0) {
+        base_index *= 1.05; // Slightly better modulation at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_index *= 0.95; // Slightly worse modulation at lower frequencies
+    }
     
-    return 1.0;
+    return base_index;
 }
 
 double FGCom_AdvancedModulation::calculateSidebandSuppression(const std::string& mode) {
@@ -302,12 +345,22 @@ std::string FGCom_AdvancedModulation::getBandForFrequency(double frequency_khz) 
 
 // Power and efficiency calculations
 double FGCom_AdvancedModulation::calculatePowerEfficiency(const std::string& mode, double frequency_khz) {
-    if (mode == "DSB") return 0.75; // 75% efficiency
-    if (mode == "ISB") return 0.85; // 85% efficiency
-    if (mode == "VSB") return 0.70; // 70% efficiency
-    if (mode == "NFM") return 0.60; // 60% efficiency
+    // Base efficiency by mode
+    double base_efficiency;
+    if (mode == "DSB") base_efficiency = 0.75; // 75% efficiency
+    else if (mode == "ISB") base_efficiency = 0.85; // 85% efficiency
+    else if (mode == "VSB") base_efficiency = 0.70; // 70% efficiency
+    else if (mode == "NFM") base_efficiency = 0.60; // 60% efficiency
+    else base_efficiency = 0.50; // Default AM efficiency
     
-    return 0.50; // Default AM efficiency
+    // Adjust efficiency based on frequency
+    if (frequency_khz > 10000.0) {
+        base_efficiency *= 1.02; // Slightly better efficiency at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_efficiency *= 0.98; // Slightly worse efficiency at lower frequencies
+    }
+    
+    return base_efficiency;
 }
 
 double FGCom_AdvancedModulation::calculateBandwidthEfficiency(const std::string& mode) {
@@ -355,17 +408,36 @@ bool FGCom_DSBProcessor::validateDSBParameters(const DSBConfig& config) {
 // ISB signal processing functions
 double FGCom_ISBProcessor::processISBUpperSignal(double input_signal, const ISBConfig& config) {
     // Process upper sideband independently
-    return input_signal * 0.5; // Half power for upper sideband
+    // Use config parameters for processing
+    double bandwidth_factor = config.upper_bandwidth_hz / 3000.0; // Normalize to 3kHz reference
+    if (bandwidth_factor > 1.0) bandwidth_factor = 1.0;
+    if (bandwidth_factor < 0.1) bandwidth_factor = 0.1;
+    
+    return input_signal * 0.5 * bandwidth_factor; // Half power for upper sideband with bandwidth adjustment
 }
 
 double FGCom_ISBProcessor::processISBLowerSignal(double input_signal, const ISBConfig& config) {
     // Process lower sideband independently
-    return input_signal * 0.5; // Half power for lower sideband
+    // Use config parameters for processing
+    double bandwidth_factor = config.lower_bandwidth_hz / 3000.0; // Normalize to 3kHz reference
+    if (bandwidth_factor > 1.0) bandwidth_factor = 1.0;
+    if (bandwidth_factor < 0.1) bandwidth_factor = 0.1;
+    
+    return input_signal * 0.5 * bandwidth_factor; // Half power for lower sideband with bandwidth adjustment
 }
 
 double FGCom_ISBProcessor::calculateISBInterference(const ISBConfig& config) {
     // Calculate potential interference between sidebands
-    return -30.0; // 30 dB isolation between sidebands
+    // Use config parameters for interference calculation
+    double isolation = -30.0; // Base 30 dB isolation between sidebands
+    
+    // Adjust isolation based on bandwidth ratio
+    double bandwidth_ratio = config.upper_bandwidth_hz / config.lower_bandwidth_hz;
+    if (bandwidth_ratio > 2.0 || bandwidth_ratio < 0.5) {
+        isolation -= 5.0; // Worse isolation with mismatched bandwidths
+    }
+    
+    return isolation;
 }
 
 bool FGCom_ISBProcessor::validateISBParameters(const ISBConfig& config) {
@@ -378,12 +450,28 @@ bool FGCom_ISBProcessor::validateISBParameters(const ISBConfig& config) {
 // VSB signal processing functions
 double FGCom_VSBProcessor::processVSBSignal(double input_signal, const VSBConfig& config) {
     // Process VSB signal with vestigial sideband
-    return input_signal * 0.8; // Reduced power due to vestigial
+    // Use config parameters for processing
+    double vestigial_factor = config.vestigial_bandwidth_hz / 1000.0; // Normalize to 1kHz reference
+    if (vestigial_factor > 1.0) vestigial_factor = 1.0;
+    if (vestigial_factor < 0.1) vestigial_factor = 0.1;
+    
+    return input_signal * 0.8 * vestigial_factor; // Reduced power due to vestigial with width adjustment
 }
 
 double FGCom_VSBProcessor::calculateVSBVestigialSuppression(const VSBConfig& config) {
     // Calculate vestigial sideband suppression
-    return 20.0; // 20 dB suppression
+    // Use config parameters for suppression calculation
+    double base_suppression = 20.0; // Base 20 dB suppression
+    
+    // Adjust suppression based on vestigial width
+    double width_factor = config.vestigial_bandwidth_hz / 1000.0;
+    if (width_factor > 1.0) {
+        base_suppression -= 5.0; // Worse suppression with wider vestigial
+    } else if (width_factor < 0.5) {
+        base_suppression += 5.0; // Better suppression with narrower vestigial
+    }
+    
+    return base_suppression;
 }
 
 double FGCom_VSBProcessor::calculateVSBChannelCapacity(const VSBConfig& config) {
@@ -421,22 +509,45 @@ NFMConfig FGCom_AdvancedModulation::getNFMConfig(const std::string& application)
 double FGCom_AdvancedModulation::calculateNFMBandwidth(double frequency_khz) {
     if (!initialized) initialize();
     
-    // NFM bandwidth is typically 12.5 kHz
-    return 12500.0;
+    // NFM bandwidth is typically 12.5 kHz, but varies with frequency
+    double base_bandwidth = 12500.0;
+    
+    // Adjust bandwidth based on frequency
+    if (frequency_khz > 10000.0) {
+        base_bandwidth *= 1.1; // Wider bandwidth at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_bandwidth *= 0.9; // Narrower bandwidth at lower frequencies
+    }
+    
+    return base_bandwidth;
 }
 
 double FGCom_AdvancedModulation::calculateNFMDeviation(double frequency_khz) {
     if (!initialized) initialize();
     
-    // NFM deviation is typically 2.5 kHz
-    return 2500.0;
+    // NFM deviation is typically 2.5 kHz, but varies with frequency
+    double base_deviation = 2500.0;
+    
+    // Adjust deviation based on frequency
+    if (frequency_khz > 10000.0) {
+        base_deviation *= 1.05; // Slightly higher deviation at higher frequencies
+    } else if (frequency_khz < 3000.0) {
+        base_deviation *= 0.95; // Slightly lower deviation at lower frequencies
+    }
+    
+    return base_deviation;
 }
 
 // NFM signal processing functions
 double FGCom_NFMProcessor::processNFMSignal(double input_signal, const NFMConfig& config) {
     // NFM signal processing simulation
     // In real implementation, this would handle FM demodulation
-    return input_signal * 0.9; // Slight reduction due to FM processing
+    // Use config parameters for processing
+    double deviation_factor = config.deviation_hz / 2500.0; // Normalize to 2.5kHz reference
+    if (deviation_factor > 1.0) deviation_factor = 1.0;
+    if (deviation_factor < 0.1) deviation_factor = 0.1;
+    
+    return input_signal * 0.9 * deviation_factor; // Slight reduction due to FM processing with deviation adjustment
 }
 
 double FGCom_NFMProcessor::calculateNFMSignalToNoiseRatio(double signal_power, double noise_power) {

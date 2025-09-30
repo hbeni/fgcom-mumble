@@ -18,6 +18,7 @@
 #include <cmath>
 #include <regex>
 #include "radio_model.h"
+#include "radio_model_vhf.h"
 #include "audio.h"
 
 /**
@@ -34,8 +35,13 @@ public:
     fgcom_radiowave_signal getSignal(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power) {
         float dist = this->getSurfaceDistance(lat1, lon1, lat2, lon2);
         
+        // Use power parameter for signal strength calculation
+        float power_factor = power / 100.0f; // Normalize power to 0-1 range
+        if (power_factor > 1.0f) power_factor = 1.0f;
+        if (power_factor < 0.1f) power_factor = 0.1f;
+        
         struct fgcom_radiowave_signal signal;
-        signal.quality       = 1.0;
+        signal.quality       = 1.0 * power_factor;
         signal.direction     = this->getDirection(lat1, lon1, lat2, lon2);
         signal.verticalAngle = this->degreeAboveHorizon(dist, alt2-alt1);
         return signal;

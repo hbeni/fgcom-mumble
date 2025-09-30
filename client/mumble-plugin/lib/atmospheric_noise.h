@@ -143,6 +143,9 @@ private:
     std::string user_maidenhead;
     bool user_position_set;
     
+    // OpenInfraMap callback
+    std::function<void()> openinframap_callback;
+    
     // Lightning strike effects
     std::vector<LightningStrike> nearby_strikes;
     std::vector<LightningStrike> recent_strikes;

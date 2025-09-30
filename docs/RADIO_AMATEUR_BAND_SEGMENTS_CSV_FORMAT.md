@@ -27,7 +27,7 @@ Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | **Band** | String | Amateur radio band designation | `160m`, `80m`, `40m`, `20m`, `15m`, `10m`, `6m`, `2m`, `70cm` |
-| **Mode** | String | Operating mode | `CW`, `SSB`, `Digital`, `EME`, `MS` |
+| **Mode** | String | Operating mode | `CW`, `SSB`, `Digital`, `EME`, `MS`, `Omni` |
 | **StartFreq** | Float | Start frequency in kHz | `1810.0`, `7000.0`, `14000.0` |
 | **EndFreq** | Float | End frequency in kHz | `1838.0`, `7200.0`, `14350.0` |
 | **Region** | Integer | ITU Region (1=Europe/Africa, 2=Americas, 3=Asia-Pacific) | `1`, `2`, `3` |
@@ -84,8 +84,44 @@ Band,Mode,StartFreq,EndFreq,Region,Country,LicenseClass,PowerLimit,Notes
 ```csv
 2m,CW,144000,144200,2,USA,Extra,1500,"VHF band, CW only below 144200 kHz"
 2m,CW,144000,144200,2,USA,Technician,1500,"VHF band, CW only below 144200 kHz"
+```
+
+### Norway-Specific Allocations
+```csv
+2m,EME,144000,146000,1,Norway,Special,1000,"EME operations, directional antenna required, logging mandatory"
+2m,MS,144000,146000,1,Norway,Special,1000,"Meteor scatter operations, directional antenna required, logging mandatory"
+2m,Omni,144000,146000,1,Norway,Special,300,"Omnidirectional antenna operations, 300W max"
+70cm,EME,430000,440000,1,Norway,Special,1000,"EME operations, directional antenna required, logging mandatory"
+70cm,MS,430000,440000,1,Norway,Special,1000,"Meteor scatter operations, directional antenna required, logging mandatory"
+70cm,Omni,430000,440000,1,Norway,Special,300,"Omnidirectional antenna operations, 300W max"
+4m,Omni,70000000,70000000,1,Norway,Special,100,"Omnidirectional antenna operations, 100W max"
 2m,SSB,144200,148000,2,USA,Extra,1500,"VHF band, SSB and digital modes"
 ```
+
+## Norway-Specific Regulations
+
+### Power Limits
+Norway has specific power limits for different operating modes and antenna types:
+
+#### EME and Meteor Scatter Operations
+- **Maximum Power**: 1000W
+- **Antenna Requirements**: Directional antenna required
+- **Logging**: Mandatory logging of operations
+- **Bands**: 2m (144-146 MHz), 70cm (430-440 MHz)
+
+#### Omnidirectional Antenna Operations
+- **2m Band**: 300W maximum power
+- **70cm Band**: 300W maximum power  
+- **4m Band**: 100W maximum power
+
+### License Class
+- **Single Radiateur Class**: All Norway entries use "Special" license class
+- **No Multiple Classes**: Unlike other countries, Norway has only one radiateur class
+
+### Mode-Specific Entries
+- **EME**: Earth-Moon-Earth operations
+- **MS**: Meteor Scatter operations
+- **Omni**: Omnidirectional antenna operations
 
 ## Operating Modes
 
