@@ -312,13 +312,6 @@ FGCom_AmateurRadio::loadBandSegments("configs/radio_amateur_band_segments.csv");
 - **WebSocket updates**: Real-time validation
 - **Configuration management**: Dynamic updates
 
-## Future Enhancements
-
-### Planned Features
-- **Dynamic updates**: Real-time regulation changes
-- **Machine learning**: Automatic compliance checking
-- **Multi-language**: International support
-- **Mobile integration**: Smartphone apps
 
 ### Data Expansion
 - **More countries**: Global coverage
