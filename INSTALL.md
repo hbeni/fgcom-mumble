@@ -4,7 +4,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/hbeni/fgcom-mumble.git
+git clone https://github.com/Supermagnum/fgcom-mumble.git
 cd fgcom-mumble
 
 # Fix all issues and install dependencies
