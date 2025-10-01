@@ -355,6 +355,71 @@ If ASTER GDEM is not available, you can use SRTM data:
 - `make agc-squelch` builds AGC and Squelch components
 - `make test-all` runs comprehensive test suite including AGC/Squelch tests
 
+### Headless Server Builds
+- `make build-plugin` builds only the Mumble plugin (headless)
+- `make build-server` builds only server components (headless)
+- `make build-plugin build-server` builds plugin and server without GUI
+- `make build-radioGUI-without-jsimconnect` builds GUI without MSFS2020 integration
+- `make bundle-server` creates server-only release package
+
+## Headless Server Builds
+
+For server administrators who need to build FGCom-mumble without GUI components, several headless build options are available.
+
+### Server-Only Build
+```bash
+# Build only server components (no GUI, no plugin)
+make build-server
+```
+
+### Plugin + Server Build (Headless)
+```bash
+# Build plugin and server without GUI components
+make build-plugin build-server
+```
+
+### Server-Only Package
+```bash
+# Create server-only release package
+make bundle-server
+```
+
+### Disable GUI Components
+```bash
+# Build without RadioGUI (headless)
+make build-plugin build-server build-fgcom-addon
+# Skip: build-radioGUI
+```
+
+### Build Configuration Options
+
+#### Disable JSIMConnect (MSFS2020 Integration)
+```bash
+# Build without MSFS2020 integration
+make build-radioGUI-without-jsimconnect
+
+# Or set environment variable
+make build ENABLE_JSIMCONNECT=false
+```
+
+#### Individual Component Builds
+```bash
+# Build only specific components
+make build-plugin          # Mumble plugin only
+make build-server          # Server components only  
+make build-radioGUI        # Radio GUI only
+make build-fgcom-addon     # FlightGear addon only
+```
+
+### Headless Server Installation
+```bash
+# Build headless server
+make build-plugin build-server
+
+# Install to system
+sudo make install DESTDIR=/usr/local
+```
+
 ## Cross-Compilation
 
 ### Windows Cross-Compilation

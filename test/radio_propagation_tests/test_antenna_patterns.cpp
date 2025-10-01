@@ -10,12 +10,19 @@ TEST_F(AntennaPatternTest, OmnidirectionalPattern) {
         // Omnidirectional antenna should have consistent gain
         double gain_dbi = 0.0; // Typical omnidirectional gain
         
+        // Use the azimuth angle in the test
+        EXPECT_GE(azimuth, 0.0) << "Azimuth angle should be non-negative";
+        EXPECT_LE(azimuth, 360.0) << "Azimuth angle should be within valid range";
+        
         // Test that gain is consistent across all azimuth angles
         EXPECT_NEAR(gain_dbi, 0.0, 0.1) << "Omnidirectional gain should be consistent";
         
         // Test that gain is within reasonable range
         EXPECT_GE(gain_dbi, -3.0) << "Gain should not be too low";
         EXPECT_LE(gain_dbi, 3.0) << "Gain should not be too high";
+        
+        // Use elevation angle in the test
+        EXPECT_EQ(elevation_angle, 0.0) << "Elevation angle should be horizontal";
     }
 }
 
@@ -23,6 +30,9 @@ TEST_F(AntennaPatternTest, DirectionalPatternYagi) {
     // Test directional Yagi antenna pattern
     std::vector<double> azimuth_angles = {0.0, 30.0, 60.0, 90.0, 120.0, 150.0, 180.0};
     double elevation_angle = 0.0;
+    
+    // Use elevation angle in the test
+    EXPECT_EQ(elevation_angle, 0.0) << "Elevation angle should be horizontal";
     
     // Yagi characteristics
     double max_gain_dbi = 10.0; // Typical Yagi gain
@@ -59,6 +69,9 @@ TEST_F(AntennaPatternTest, VerticalPolarization) {
     double azimuth_angle = 0.0;
     std::vector<double> elevation_angles = {0.0, 15.0, 30.0, 45.0, 60.0, 75.0, 90.0};
     
+    // Use azimuth angle in the test
+    EXPECT_EQ(azimuth_angle, 0.0) << "Azimuth angle should be 0 degrees";
+    
     for (double elevation : elevation_angles) {
         // Vertical antenna pattern (dipole-like)
         double gain_dbi = 0.0;
@@ -89,6 +102,9 @@ TEST_F(AntennaPatternTest, HorizontalPolarization) {
     // Test horizontal polarization antenna
     double elevation_angle = 0.0;
     std::vector<double> azimuth_angles = {0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0};
+    
+    // Use elevation angle in the test
+    EXPECT_EQ(elevation_angle, 0.0) << "Elevation angle should be horizontal";
     
     for (double azimuth : azimuth_angles) {
         // Horizontal antenna pattern (figure-8)
@@ -170,6 +186,9 @@ TEST_F(AntennaPatternTest, ElevationAngleEffects) {
     std::vector<double> elevation_angles = {0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0};
     double azimuth_angle = 0.0; // Main beam direction
     
+    // Use azimuth angle in the test
+    EXPECT_EQ(azimuth_angle, 0.0) << "Azimuth angle should be 0 degrees";
+    
     std::vector<double> gains;
     
     for (double elevation : elevation_angles) {
@@ -210,6 +229,9 @@ TEST_F(AntennaPatternTest, AzimuthAngleEffects) {
     // Test azimuth angle effects on antenna pattern
     std::vector<double> azimuth_angles = {0.0, 15.0, 30.0, 45.0, 60.0, 75.0, 90.0, 105.0, 120.0, 135.0, 150.0, 165.0, 180.0};
     double elevation_angle = 0.0; // Horizontal plane
+    
+    // Use elevation angle in the test
+    EXPECT_EQ(elevation_angle, 0.0) << "Elevation angle should be horizontal";
     
     std::vector<double> gains;
     

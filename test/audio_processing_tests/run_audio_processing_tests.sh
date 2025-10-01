@@ -81,7 +81,7 @@ echo -e "${GREEN}Build successful!${NC}"
 print_section "Running Basic Audio Processing Unit Tests"
 
 echo "Running Google Test suite for audio processing..."
-./audio_processing_tests --gtest_output=xml:../$TEST_RESULTS_DIR/audio_processing_basic_tests.xml
+./audio_processing_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_basic_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Basic audio processing tests passed${NC}"
@@ -94,12 +94,12 @@ print_section "Running Static Analysis for Audio Processing"
 
 echo "Running CppCheck on audio processing modules..."
 cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
-    --output-file=../$TEST_RESULTS_DIR/audio_processing_cppcheck.xml \
+    --output-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_cppcheck.xml \
     --suppress=missingIncludeSystem \
     --suppress=unusedFunction \
     --suppress=unmatchedSuppression \
-    ../../client/mumble-plugin/lib/audio.cpp \
-    ../../client/mumble-plugin/lib/agc_squelch.cpp
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed for audio processing${NC}"
@@ -109,9 +109,9 @@ fi
 
 echo "Running Clang-Tidy on audio processing modules..."
 clang-tidy -checks='*' -header-filter='.*' \
-    ../../client/mumble-plugin/lib/audio.cpp \
-    ../../client/mumble-plugin/lib/agc_squelch.cpp \
-    -- -std=c++17 -I../../client/mumble-plugin/lib > ../$TEST_RESULTS_DIR/audio_processing_clang-tidy.txt
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp \
+    -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_clang-tidy.txt
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for audio processing${NC}"
@@ -128,8 +128,8 @@ valgrind --tool=memcheck \
     --show-leak-kinds=all \
     --track-origins=yes \
     --xml=yes \
-    --xml-file=../$TEST_RESULTS_DIR/audio_processing_valgrind.xml \
-    ./audio_processing_tests --gtest_output=xml:../$TEST_RESULTS_DIR/audio_processing_valgrind_tests.xml
+    --xml-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_valgrind.xml \
+    ./audio_processing_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_valgrind_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed for audio processing${NC}"
@@ -141,7 +141,7 @@ fi
 print_section "Running AddressSanitizer Tests for Audio Processing"
 
 echo "Running AddressSanitizer memory error detection on audio processing..."
-./audio_processing_tests_asan --gtest_output=xml:../$TEST_RESULTS_DIR/audio_processing_asan_tests.xml
+./audio_processing_tests_asan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_asan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ AddressSanitizer tests passed for audio processing${NC}"
@@ -153,7 +153,7 @@ fi
 print_section "Running ThreadSanitizer Tests for Audio Processing"
 
 echo "Running ThreadSanitizer race condition detection on audio processing..."
-./audio_processing_tests_tsan --gtest_output=xml:../$TEST_RESULTS_DIR/audio_processing_tsan_tests.xml
+./audio_processing_tests_tsan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_tsan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ ThreadSanitizer tests passed for audio processing${NC}"
@@ -165,12 +165,12 @@ fi
 print_section "Running Code Coverage Analysis for Audio Processing"
 
 echo "Running coverage tests for audio processing..."
-./audio_processing_tests_coverage --gtest_output=xml:../$TEST_RESULTS_DIR/audio_processing_coverage_tests.xml
+./audio_processing_tests_coverage --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_coverage_tests.xml
 
 echo "Generating coverage report for audio processing..."
-lcov --capture --directory . --output-file ../$COVERAGE_DIR/audio_processing_coverage.info
-lcov --remove ../$COVERAGE_DIR/audio_processing_coverage.info '/usr/*' --output-file ../$COVERAGE_DIR/audio_processing_coverage_filtered.info
-genhtml ../$COVERAGE_DIR/audio_processing_coverage_filtered.info --output-directory ../$COVERAGE_DIR/audio_processing_html
+lcov --capture --directory . --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/audio_processing_coverage.info
+lcov --remove /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/audio_processing_coverage.info '/usr/*' --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/audio_processing_coverage_filtered.info
+genhtml /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/audio_processing_coverage_filtered.info --output-directory /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/audio_processing_html
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated for audio processing${NC}"
@@ -183,7 +183,7 @@ fi
 print_section "Running Performance Tests for Audio Processing"
 
 echo "Running performance benchmarks for audio processing..."
-time ./audio_processing_tests --gtest_filter="*Performance*" > ../$TEST_RESULTS_DIR/audio_processing_performance.txt 2>&1
+time ./audio_processing_tests --gtest_filter="*Performance*" > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_performance.txt 2>&1
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for audio processing${NC}"
@@ -197,7 +197,7 @@ print_section "Running Stress Tests for Audio Processing"
 echo "Running stress tests with high load for audio processing..."
 for i in {1..5}; do
     echo "Audio processing stress test iteration $i/5"
-    ./audio_processing_tests --gtest_filter="*Stress*" --gtest_repeat=10 > ../$TEST_RESULTS_DIR/audio_processing_stress_$i.txt 2>&1
+    ./audio_processing_tests --gtest_filter="*Stress*" --gtest_repeat=10 > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_stress_$i.txt 2>&1
 done
 
 echo -e "${GREEN}✓ Stress tests completed for audio processing${NC}"
@@ -205,7 +205,7 @@ echo -e "${GREEN}✓ Stress tests completed for audio processing${NC}"
 # 9. Generate Comprehensive Report
 print_section "Generating Comprehensive Audio Processing Test Report"
 
-cat > ../$TEST_RESULTS_DIR/audio_processing_test_report.html << EOF
+cat > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_test_report.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
@@ -258,7 +258,7 @@ cat > ../$TEST_RESULTS_DIR/audio_processing_test_report.html << EOF
 
     <div class="section">
         <h2>Code Coverage</h2>
-        <p>Coverage report: <a href="../coverage/audio_processing_html/index.html">HTML Coverage Report</a></p>
+        <p>Coverage report: <a href="/home/haaken/github-projects/fgcom-mumble/test/coverage/audio_processing_html/index.html">HTML Coverage Report</a></p>
     </div>
 
     <div class="section">
@@ -272,7 +272,7 @@ cat > ../$TEST_RESULTS_DIR/audio_processing_test_report.html << EOF
 
     <div class="section">
         <h2>Test Execution Log</h2>
-        <pre>$(cat ../$TEST_RESULTS_DIR/audio_processing_performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
+        <pre>$(cat /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/audio_processing_performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
     </div>
 </body>
 </html>

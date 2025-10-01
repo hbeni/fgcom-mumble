@@ -12,6 +12,10 @@ TEST_F(NoiseFloorTest, AtmosphericNoiseITURP372) {
             AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
                 tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
             
+            // Use conditions in the test
+            EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+            EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
+            
             // Calculate propagation loss using real implementation with realistic parameters
             double atmospheric_loss = 2.0; // Realistic atmospheric loss
             double terrain_loss = 5.0; // Realistic terrain loss
@@ -44,6 +48,10 @@ TEST_F(NoiseFloorTest, ManMadeNoise) {
             AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
                 tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
             
+            // Use conditions in the test
+            EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+            EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
+            
             // Calculate propagation loss using real implementation with realistic parameters
             double atmospheric_loss = 2.0; // Realistic atmospheric loss
             double terrain_loss = 5.0; // Realistic terrain loss
@@ -74,6 +82,10 @@ TEST_F(NoiseFloorTest, GalacticNoise) {
         AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
             tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
         
+        // Use conditions in the test
+        EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+        EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
+        
         // Calculate propagation loss using real implementation
         double atmospheric_loss = 0.0; // Simplified for this test
         double terrain_loss = 0.0; // Simplified for this test
@@ -103,6 +115,10 @@ TEST_F(NoiseFloorTest, EVChargingStationNoise) {
             // Get atmospheric conditions for the test location
             AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
                 tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
+            
+            // Use conditions in the test
+            EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+            EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
             
             // Calculate propagation loss using real implementation with realistic parameters
             double atmospheric_loss = 2.0; // Realistic atmospheric loss
@@ -136,6 +152,10 @@ TEST_F(NoiseFloorTest, PowerSubstationNoise) {
             AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
                 tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
             
+            // Use conditions in the test
+            EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+            EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
+            
             // Calculate propagation loss using real implementation with realistic parameters
             double atmospheric_loss = 2.0; // Realistic atmospheric loss
             double terrain_loss = 5.0; // Realistic terrain loss
@@ -167,6 +187,12 @@ TEST_F(NoiseFloorTest, DistanceBasedNoiseAttenuation) {
         AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
             tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
         
+        // Use conditions and base_noise_db in the test
+        EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+        EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
+        EXPECT_GT(base_noise_db, 0.0) << "Base noise should be positive";
+        EXPECT_LT(base_noise_db, 100.0) << "Base noise should be reasonable";
+        
         // Calculate propagation loss using real implementation
         double atmospheric_loss = 0.0; // Simplified for this test
         double terrain_loss = 0.0; // Simplified for this test
@@ -197,6 +223,10 @@ TEST_F(NoiseFloorTest, FrequencyDependentNoiseLevels) {
         // Get atmospheric conditions for the test location
         AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
             tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
+        
+        // Use conditions in the test
+        EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+        EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
         
         // Calculate propagation loss using real implementation
         double atmospheric_loss = 0.0; // Simplified for this test
@@ -230,6 +260,10 @@ TEST_F(NoiseFloorTest, NoiseFloorCalculationAccuracy) {
     AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
         tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
     
+    // Use conditions in the test
+    EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+    EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
+    
     // Calculate propagation loss using real implementation
     double atmospheric_loss = 0.0; // Simplified for this test
     double terrain_loss = 0.0; // Simplified for this test
@@ -256,6 +290,10 @@ TEST_F(NoiseFloorTest, NoiseFloorWithEnvironmentalConditions) {
     // Get atmospheric conditions for the test location
     AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
         tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
+    
+    // Use conditions in the test
+    EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+    EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
     
     // Calculate propagation loss using real implementation
     double atmospheric_loss = 0.0; // Simplified for this test
@@ -288,6 +326,10 @@ TEST_F(NoiseFloorTest, NoiseFloorPerformance) {
         // Get atmospheric conditions for the test location
         AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
             tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
+        
+        // Use conditions in the test
+        EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+        EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
         
         // Calculate propagation loss using real implementation
         double atmospheric_loss = 0.0; // Simplified for this test

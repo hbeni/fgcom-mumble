@@ -234,6 +234,44 @@ clean:
 	# cleanup packaging
 	$(MAKE) -C client/mumble-plugin/ $@
 
+install: build
+	@echo "Installing FGCom-mumble components..."
+	@mkdir -p $(DESTDIR)/usr/lib/mumble/plugins
+	@mkdir -p $(DESTDIR)/usr/share/fgcom-mumble
+	@mkdir -p $(DESTDIR)/usr/bin
+	@mkdir -p $(DESTDIR)/etc/fgcom-mumble
+	# Install mumble plugin
+	@if [ -f client/mumble-plugin/fgcom-mumble.so ]; then \
+		cp client/mumble-plugin/fgcom-mumble.so $(DESTDIR)/usr/lib/mumble/plugins/; \
+		echo "Installed mumble plugin to $(DESTDIR)/usr/lib/mumble/plugins/"; \
+	fi
+	# Install radio GUI
+	@if [ -f client/radioGUI/target/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar ]; then \
+		cp client/radioGUI/target/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed radio GUI to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Install configuration files
+	@if [ -d configs ]; then \
+		cp -r configs/* $(DESTDIR)/etc/fgcom-mumble/; \
+		echo "Installed configuration files to $(DESTDIR)/etc/fgcom-mumble/"; \
+	fi
+	# Install documentation
+	@if [ -d docs ]; then \
+		cp -r docs $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed documentation to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Install server components
+	@if [ -d server ]; then \
+		cp -r server $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed server components to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Install scripts
+	@if [ -d scripts ]; then \
+		cp -r scripts $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed scripts to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	@echo "Installation completed successfully!"
+
 # relay everything else to the mumble-plugin makefile
 .DEFAULT:
 	@echo "target '$@' undefined, using mumble-client makefile instead"

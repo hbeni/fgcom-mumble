@@ -81,7 +81,7 @@ echo -e "${GREEN}Build successful!${NC}"
 print_section "Running Basic Client Plugin Module Unit Tests"
 
 echo "Running Google Test suite for client plugin module..."
-./client_plugin_module_tests --gtest_output=xml:../$TEST_RESULTS_DIR/client_plugin_module_basic_tests.xml
+./client_plugin_module_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_basic_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Basic client plugin module tests passed${NC}"
@@ -94,13 +94,13 @@ print_section "Running Static Analysis for Client Plugin Module"
 
 echo "Running CppCheck on client plugin module..."
 cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
-    --output-file=../$TEST_RESULTS_DIR/client_plugin_module_cppcheck.xml \
+    --output-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_cppcheck.xml \
     --suppress=missingIncludeSystem \
     --suppress=unusedFunction \
     --suppress=unmatchedSuppression \
-    ../../client/mumble-plugin/lib/io_plugin.cpp \
-    ../../client/mumble-plugin/lib/audio.cpp \
-    ../../client/mumble-plugin/lib/vehicle_dynamics.cpp
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed for client plugin module${NC}"
@@ -110,10 +110,10 @@ fi
 
 echo "Running Clang-Tidy on client plugin module..."
 clang-tidy -checks='*' -header-filter='.*' \
-    ../../client/mumble-plugin/lib/io_plugin.cpp \
-    ../../client/mumble-plugin/lib/audio.cpp \
-    ../../client/mumble-plugin/lib/vehicle_dynamics.cpp \
-    -- -std=c++17 -I../../client/mumble-plugin/lib -I../../client/mumble-plugin > ../$TEST_RESULTS_DIR/client_plugin_module_clang-tidy.txt
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp \
+    -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_clang-tidy.txt
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for client plugin module${NC}"
@@ -130,8 +130,8 @@ valgrind --tool=memcheck \
     --show-leak-kinds=all \
     --track-origins=yes \
     --xml=yes \
-    --xml-file=../$TEST_RESULTS_DIR/client_plugin_module_valgrind.xml \
-    ./client_plugin_module_tests --gtest_output=xml:../$TEST_RESULTS_DIR/client_plugin_module_valgrind_tests.xml
+    --xml-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_valgrind.xml \
+    ./client_plugin_module_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_valgrind_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed for client plugin module${NC}"
@@ -143,7 +143,7 @@ fi
 print_section "Running AddressSanitizer Tests for Client Plugin Module"
 
 echo "Running AddressSanitizer memory error detection on client plugin module..."
-./client_plugin_module_tests_asan --gtest_output=xml:../$TEST_RESULTS_DIR/client_plugin_module_asan_tests.xml
+./client_plugin_module_tests_asan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_asan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ AddressSanitizer tests passed for client plugin module${NC}"
@@ -155,7 +155,7 @@ fi
 print_section "Running ThreadSanitizer Tests for Client Plugin Module"
 
 echo "Running ThreadSanitizer race condition detection on client plugin module..."
-./client_plugin_module_tests_tsan --gtest_output=xml:../$TEST_RESULTS_DIR/client_plugin_module_tsan_tests.xml
+./client_plugin_module_tests_tsan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_tsan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ ThreadSanitizer tests passed for client plugin module${NC}"
@@ -167,12 +167,12 @@ fi
 print_section "Running Code Coverage Analysis for Client Plugin Module"
 
 echo "Running coverage tests for client plugin module..."
-./client_plugin_module_tests_coverage --gtest_output=xml:../$TEST_RESULTS_DIR/client_plugin_module_coverage_tests.xml
+./client_plugin_module_tests_coverage --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_coverage_tests.xml
 
 echo "Generating coverage report for client plugin module..."
-lcov --capture --directory . --output-file ../$COVERAGE_DIR/client_plugin_module_coverage.info
-lcov --remove ../$COVERAGE_DIR/client_plugin_module_coverage.info '/usr/*' --output-file ../$COVERAGE_DIR/client_plugin_module_coverage_filtered.info
-genhtml ../$COVERAGE_DIR/client_plugin_module_coverage_filtered.info --output-directory ../$COVERAGE_DIR/client_plugin_module_html
+lcov --capture --directory . --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/client_plugin_module_coverage.info
+lcov --remove /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/client_plugin_module_coverage.info '/usr/*' --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/client_plugin_module_coverage_filtered.info
+genhtml /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/client_plugin_module_coverage_filtered.info --output-directory /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/client_plugin_module_html
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated for client plugin module${NC}"
@@ -185,7 +185,7 @@ fi
 print_section "Running Performance Tests for Client Plugin Module"
 
 echo "Running performance benchmarks for client plugin module..."
-time ./client_plugin_module_tests --gtest_filter="*Performance*" > ../$TEST_RESULTS_DIR/client_plugin_module_performance.txt 2>&1
+time ./client_plugin_module_tests --gtest_filter="*Performance*" > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_performance.txt 2>&1
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for client plugin module${NC}"
@@ -199,7 +199,7 @@ print_section "Running Stress Tests for Client Plugin Module"
 echo "Running stress tests with high load for client plugin module..."
 for i in {1..5}; do
     echo "Client plugin module stress test iteration $i/5"
-    ./client_plugin_module_tests --gtest_filter="*Stress*" --gtest_repeat=10 > ../$TEST_RESULTS_DIR/client_plugin_module_stress_$i.txt 2>&1
+    ./client_plugin_module_tests --gtest_filter="*Stress*" --gtest_repeat=10 > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_stress_$i.txt 2>&1
 done
 
 echo -e "${GREEN}✓ Stress tests completed for client plugin module${NC}"
@@ -207,7 +207,7 @@ echo -e "${GREEN}✓ Stress tests completed for client plugin module${NC}"
 # 9. Generate Comprehensive Report
 print_section "Generating Comprehensive Client Plugin Module Test Report"
 
-cat > ../$TEST_RESULTS_DIR/client_plugin_module_test_report.html << EOF
+cat > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_test_report.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
@@ -260,7 +260,7 @@ cat > ../$TEST_RESULTS_DIR/client_plugin_module_test_report.html << EOF
 
     <div class="section">
         <h2>Code Coverage</h2>
-        <p>Coverage report: <a href="../coverage/client_plugin_module_html/index.html">HTML Coverage Report</a></p>
+        <p>Coverage report: <a href="/home/haaken/github-projects/fgcom-mumble/test/coverage/client_plugin_module_html/index.html">HTML Coverage Report</a></p>
     </div>
 
     <div class="section">
@@ -274,7 +274,7 @@ cat > ../$TEST_RESULTS_DIR/client_plugin_module_test_report.html << EOF
 
     <div class="section">
         <h2>Test Execution Log</h2>
-        <pre>$(cat ../$TEST_RESULTS_DIR/client_plugin_module_performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
+        <pre>$(cat /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
     </div>
 </body>
 </html>

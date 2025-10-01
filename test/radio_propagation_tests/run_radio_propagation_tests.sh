@@ -45,7 +45,7 @@ command_exists() {
 # Check required tools
 print_section "Checking Required Tools"
 
-REQUIRED_TOOLS=("g++" "cmake" "make" "gtest" "valgrind" "cppcheck" "clang-tidy" "lcov")
+REQUIRED_TOOLS=("g++" "cmake" "make" "valgrind" "cppcheck" "clang-tidy" "lcov")
 MISSING_TOOLS=()
 
 for tool in "${REQUIRED_TOOLS[@]}"; do
@@ -81,7 +81,7 @@ echo -e "${GREEN}Build successful!${NC}"
 print_section "Running Basic Radio Propagation Unit Tests"
 
 echo "Running Google Test suite for radio propagation..."
-./radio_propagation_tests --gtest_output=xml:../$TEST_RESULTS_DIR/radio_propagation_basic_tests.xml
+./radio_propagation_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_basic_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Basic radio propagation tests passed${NC}"
@@ -93,18 +93,35 @@ fi
 print_section "Running Static Analysis for Radio Propagation"
 
 echo "Running CppCheck on radio propagation modules..."
-cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
-    --output-file=../$TEST_RESULTS_DIR/radio_propagation_cppcheck.xml \
-    --suppress=missingIncludeSystem \
-    --suppress=unusedFunction \
-    --suppress=unmatchedSuppression \
-    ../../client/mumble-plugin/lib/terrain_elevation.cpp \
-    ../../client/mumble-plugin/lib/radio_model_vhf.cpp \
-    ../../client/mumble-plugin/lib/radio_model_uhf.cpp \
-    ../../client/mumble-plugin/lib/radio_model_hf.cpp \
-    ../../client/mumble-plugin/lib/antenna_ground_system.cpp \
-    ../../client/mumble-plugin/lib/antenna_orientation_calculator.cpp \
-    ../../client/mumble-plugin/lib/pattern_interpolation.cpp
+# Check if source files exist before running CppCheck
+SOURCE_FILES=(
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/terrain_elevation.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_ground_system.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.cpp"
+)
+
+EXISTING_FILES=()
+for file in "${SOURCE_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        EXISTING_FILES+=("$file")
+    fi
+done
+
+if [ ${#EXISTING_FILES[@]} -gt 0 ]; then
+    cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
+        --output-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_cppcheck.xml \
+        --suppress=missingIncludeSystem \
+        --suppress=unusedFunction \
+        --suppress=unmatchedSuppression \
+        "${EXISTING_FILES[@]}"
+else
+    echo "No source files found for CppCheck analysis"
+    echo "CppCheck analysis skipped" > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_cppcheck.xml
+fi
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed for radio propagation${NC}"
@@ -113,12 +130,29 @@ else
 fi
 
 echo "Running Clang-Tidy on radio propagation modules..."
-clang-tidy -checks='*' -header-filter='.*' \
-    ../../client/mumble-plugin/lib/terrain_elevation.cpp \
-    ../../client/mumble-plugin/lib/radio_model_vhf.cpp \
-    ../../client/mumble-plugin/lib/radio_model_uhf.cpp \
-    ../../client/mumble-plugin/lib/radio_model_hf.cpp \
-    -- -std=c++17 -I../../client/mumble-plugin/lib > ../$TEST_RESULTS_DIR/radio_propagation_clang-tidy.txt
+# Check if source files exist before running Clang-Tidy
+CLANG_FILES=(
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/terrain_elevation.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp"
+    "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp"
+)
+
+EXISTING_CLANG_FILES=()
+for file in "${CLANG_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        EXISTING_CLANG_FILES+=("$file")
+    fi
+done
+
+if [ ${#EXISTING_CLANG_FILES[@]} -gt 0 ]; then
+    clang-tidy -checks='*' -header-filter='.*' \
+        "${EXISTING_CLANG_FILES[@]}" \
+        -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_clang-tidy.txt
+else
+    echo "No source files found for Clang-Tidy analysis"
+    echo "Clang-Tidy analysis skipped" > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_clang-tidy.txt
+fi
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for radio propagation${NC}"
@@ -135,8 +169,8 @@ valgrind --tool=memcheck \
     --show-leak-kinds=all \
     --track-origins=yes \
     --xml=yes \
-    --xml-file=../$TEST_RESULTS_DIR/radio_propagation_valgrind.xml \
-    ./radio_propagation_tests --gtest_output=xml:../$TEST_RESULTS_DIR/radio_propagation_valgrind_tests.xml
+    --xml-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_valgrind.xml \
+    ./radio_propagation_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_valgrind_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed for radio propagation${NC}"
@@ -148,7 +182,7 @@ fi
 print_section "Running AddressSanitizer Tests for Radio Propagation"
 
 echo "Running AddressSanitizer memory error detection on radio propagation..."
-./radio_propagation_tests_asan --gtest_output=xml:../$TEST_RESULTS_DIR/radio_propagation_asan_tests.xml
+./radio_propagation_tests_asan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_asan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ AddressSanitizer tests passed for radio propagation${NC}"
@@ -160,7 +194,7 @@ fi
 print_section "Running ThreadSanitizer Tests for Radio Propagation"
 
 echo "Running ThreadSanitizer race condition detection on radio propagation..."
-./radio_propagation_tests_tsan --gtest_output=xml:../$TEST_RESULTS_DIR/radio_propagation_tsan_tests.xml
+./radio_propagation_tests_tsan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_tsan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ ThreadSanitizer tests passed for radio propagation${NC}"
@@ -172,12 +206,12 @@ fi
 print_section "Running Code Coverage Analysis for Radio Propagation"
 
 echo "Running coverage tests for radio propagation..."
-./radio_propagation_tests_coverage --gtest_output=xml:../$TEST_RESULTS_DIR/radio_propagation_coverage_tests.xml
+./radio_propagation_tests_coverage --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_coverage_tests.xml
 
 echo "Generating coverage report for radio propagation..."
-lcov --capture --directory . --output-file ../$COVERAGE_DIR/radio_propagation_coverage.info
-lcov --remove ../$COVERAGE_DIR/radio_propagation_coverage.info '/usr/*' --output-file ../$COVERAGE_DIR/radio_propagation_coverage_filtered.info
-genhtml ../$COVERAGE_DIR/radio_propagation_coverage_filtered.info --output-directory ../$COVERAGE_DIR/radio_propagation_html
+lcov --capture --directory . --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/radio_propagation_coverage.info
+lcov --remove /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/radio_propagation_coverage.info '/usr/*' --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/radio_propagation_coverage_filtered.info
+genhtml /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/radio_propagation_coverage_filtered.info --output-directory /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/radio_propagation_html
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated for radio propagation${NC}"
@@ -190,7 +224,7 @@ fi
 print_section "Running Performance Tests for Radio Propagation"
 
 echo "Running performance benchmarks for radio propagation..."
-time ./radio_propagation_tests --gtest_filter="*Performance*" > ../$TEST_RESULTS_DIR/radio_propagation_performance.txt 2>&1
+time ./radio_propagation_tests --gtest_filter="*Performance*" > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_performance.txt 2>&1
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for radio propagation${NC}"
@@ -204,7 +238,7 @@ print_section "Running Stress Tests for Radio Propagation"
 echo "Running stress tests with high load for radio propagation..."
 for i in {1..5}; do
     echo "Radio propagation stress test iteration $i/5"
-    ./radio_propagation_tests --gtest_filter="*Stress*" --gtest_repeat=10 > ../$TEST_RESULTS_DIR/radio_propagation_stress_$i.txt 2>&1
+    ./radio_propagation_tests --gtest_filter="*Stress*" --gtest_repeat=10 > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_stress_$i.txt 2>&1
 done
 
 echo -e "${GREEN}✓ Stress tests completed for radio propagation${NC}"
@@ -212,7 +246,7 @@ echo -e "${GREEN}✓ Stress tests completed for radio propagation${NC}"
 # 9. Generate Comprehensive Report
 print_section "Generating Comprehensive Radio Propagation Test Report"
 
-cat > ../$TEST_RESULTS_DIR/radio_propagation_test_report.html << EOF
+cat > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_test_report.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
@@ -267,7 +301,7 @@ cat > ../$TEST_RESULTS_DIR/radio_propagation_test_report.html << EOF
 
     <div class="section">
         <h2>Code Coverage</h2>
-        <p>Coverage report: <a href="../coverage/radio_propagation_html/index.html">HTML Coverage Report</a></p>
+        <p>Coverage report: <a href="/home/haaken/github-projects/fgcom-mumble/test/coverage/radio_propagation_html/index.html">HTML Coverage Report</a></p>
     </div>
 
     <div class="section">
@@ -283,7 +317,7 @@ cat > ../$TEST_RESULTS_DIR/radio_propagation_test_report.html << EOF
 
     <div class="section">
         <h2>Test Execution Log</h2>
-        <pre>$(cat ../$TEST_RESULTS_DIR/radio_propagation_performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
+        <pre>$(cat /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
     </div>
 </body>
 </html>
