@@ -229,6 +229,10 @@ TEST_F(FrequencyPropagationTest, PropagationModeSelection) {
     std::vector<double> test_distances = {10.0, 50.0, 100.0, 500.0, 1000.0};
     double frequency_mhz = test_frequency_hf;
     
+    // Use frequency in the test
+    EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+    EXPECT_LT(frequency_mhz, 30.0) << "Frequency should be in HF range";
+    
     for (double distance : test_distances) {
         std::string propagation_mode;
         

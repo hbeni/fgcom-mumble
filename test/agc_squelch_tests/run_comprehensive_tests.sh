@@ -81,7 +81,7 @@ echo -e "${GREEN}Build successful!${NC}"
 print_section "Running Basic Unit Tests"
 
 echo "Running Google Test suite..."
-./agc_squelch_tests --gtest_output=xml:../$TEST_RESULTS_DIR/basic_tests.xml
+./agc_squelch_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/basic_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Basic tests passed${NC}"
@@ -94,12 +94,12 @@ print_section "Running Static Analysis"
 
 echo "Running CppCheck..."
 cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
-    --output-file=../$TEST_RESULTS_DIR/cppcheck.xml \
+    --output-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/cppcheck.xml \
     --suppress=missingIncludeSystem \
     --suppress=unusedFunction \
     --suppress=unmatchedSuppression \
-    ../../client/mumble-plugin/lib/agc_squelch.cpp \
-    ../../client/mumble-plugin/lib/agc_squelch.h
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed${NC}"
@@ -109,8 +109,8 @@ fi
 
 echo "Running Clang-Tidy..."
 clang-tidy -checks='*' -header-filter='.*' \
-    ../../client/mumble-plugin/lib/agc_squelch.cpp \
-    -- -std=c++17 -I../../client/mumble-plugin/lib > ../$TEST_RESULTS_DIR/clang-tidy.txt
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp \
+    -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/clang-tidy.txt
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed${NC}"
@@ -127,8 +127,8 @@ valgrind --tool=memcheck \
     --show-leak-kinds=all \
     --track-origins=yes \
     --xml=yes \
-    --xml-file=../$TEST_RESULTS_DIR/valgrind.xml \
-    ./agc_squelch_tests --gtest_output=xml:../$TEST_RESULTS_DIR/valgrind_tests.xml
+    --xml-file=/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/valgrind.xml \
+    ./agc_squelch_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/valgrind_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed${NC}"
@@ -140,7 +140,7 @@ fi
 print_section "Running AddressSanitizer Tests"
 
 echo "Running AddressSanitizer memory error detection..."
-./agc_squelch_tests_asan --gtest_output=xml:../$TEST_RESULTS_DIR/asan_tests.xml
+./agc_squelch_tests_asan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/asan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ AddressSanitizer tests passed${NC}"
@@ -152,7 +152,7 @@ fi
 print_section "Running ThreadSanitizer Tests"
 
 echo "Running ThreadSanitizer race condition detection..."
-./agc_squelch_tests_tsan --gtest_output=xml:../$TEST_RESULTS_DIR/tsan_tests.xml
+./agc_squelch_tests_tsan --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/tsan_tests.xml
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ ThreadSanitizer tests passed${NC}"
@@ -164,12 +164,12 @@ fi
 print_section "Running Code Coverage Analysis"
 
 echo "Running coverage tests..."
-./agc_squelch_tests_coverage --gtest_output=xml:../$TEST_RESULTS_DIR/coverage_tests.xml
+./agc_squelch_tests_coverage --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/coverage_tests.xml
 
 echo "Generating coverage report..."
-lcov --capture --directory . --output-file ../$COVERAGE_DIR/coverage.info
-lcov --remove ../$COVERAGE_DIR/coverage.info '/usr/*' --output-file ../$COVERAGE_DIR/coverage_filtered.info
-genhtml ../$COVERAGE_DIR/coverage_filtered.info --output-directory ../$COVERAGE_DIR/html
+lcov --capture --directory . --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/coverage.info
+lcov --remove /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/coverage.info '/usr/*' --output-file /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/coverage_filtered.info
+genhtml /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/coverage_filtered.info --output-directory /home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/html
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated${NC}"
@@ -182,7 +182,7 @@ fi
 print_section "Running Performance Tests"
 
 echo "Running performance benchmarks..."
-time ./agc_squelch_tests --gtest_filter="*Performance*" > ../$TEST_RESULTS_DIR/performance.txt 2>&1
+time ./agc_squelch_tests --gtest_filter="*Performance*" > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/performance.txt 2>&1
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed${NC}"
@@ -196,7 +196,7 @@ print_section "Running Stress Tests"
 echo "Running stress tests with high load..."
 for i in {1..5}; do
     echo "Stress test iteration $i/5"
-    ./agc_squelch_tests --gtest_filter="*Stress*" --gtest_repeat=10 > ../$TEST_RESULTS_DIR/stress_$i.txt 2>&1
+    ./agc_squelch_tests --gtest_filter="*Stress*" --gtest_repeat=10 > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/stress_$i.txt 2>&1
 done
 
 echo -e "${GREEN}✓ Stress tests completed${NC}"
@@ -204,7 +204,7 @@ echo -e "${GREEN}✓ Stress tests completed${NC}"
 # 9. Generate Comprehensive Report
 print_section "Generating Comprehensive Test Report"
 
-cat > ../$TEST_RESULTS_DIR/test_report.html << EOF
+cat > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/test_report.html << EOF
 <!DOCTYPE html>
 <html>
 <head>
@@ -255,12 +255,12 @@ cat > ../$TEST_RESULTS_DIR/test_report.html << EOF
 
     <div class="section">
         <h2>Code Coverage</h2>
-        <p>Coverage report: <a href="../coverage/html/index.html">HTML Coverage Report</a></p>
+        <p>Coverage report: <a href="/home/haaken/github-projects/fgcom-mumble/test/coverage/html/index.html">HTML Coverage Report</a></p>
     </div>
 
     <div class="section">
         <h2>Test Execution Log</h2>
-        <pre>$(cat ../$TEST_RESULTS_DIR/performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
+        <pre>$(cat /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/performance.txt 2>/dev/null || echo "Performance test log not available")</pre>
     </div>
 </body>
 </html>

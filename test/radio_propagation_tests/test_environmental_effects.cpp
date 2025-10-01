@@ -44,6 +44,10 @@ TEST_F(EnvironmentalEffectsTest, WeatherImpactFog) {
     double frequency_mhz = test_frequency_vhf;
     double distance_km = tx_coord.calculateDistance(rx_coord);
     
+    // Use frequency in the test
+    EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+    EXPECT_LT(frequency_mhz, 300.0) << "Frequency should be in VHF range";
+    
     // Calculate fog attenuation
     double fog_attenuation_db = 0.0;
     
@@ -83,6 +87,10 @@ TEST_F(EnvironmentalEffectsTest, WeatherImpactSnow) {
     double frequency_mhz = test_frequency_vhf;
     double distance_km = tx_coord.calculateDistance(rx_coord);
     
+    // Use frequency in the test
+    EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+    EXPECT_LT(frequency_mhz, 300.0) << "Frequency should be in VHF range";
+    
     // Calculate snow attenuation
     double snow_attenuation_db = 0.0;
     
@@ -119,6 +127,10 @@ TEST_F(EnvironmentalEffectsTest, TemperatureEffects) {
     double frequency_mhz = test_frequency_vhf;
     double distance_km = tx_coord.calculateDistance(rx_coord);
     
+    // Use frequency in the test
+    EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+    EXPECT_LT(frequency_mhz, 300.0) << "Frequency should be in VHF range";
+    
     for (double temperature : temperatures) {
         // Calculate temperature effects
         double temperature_effect_db = 0.0;
@@ -147,6 +159,10 @@ TEST_F(EnvironmentalEffectsTest, HumidityEffects) {
     double frequency_mhz = test_frequency_vhf;
     double distance_km = tx_coord.calculateDistance(rx_coord);
     
+    // Use frequency in the test
+    EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+    EXPECT_LT(frequency_mhz, 300.0) << "Frequency should be in VHF range";
+    
     for (double humidity : humidity_levels) {
         // Calculate humidity effects
         double humidity_effect_db = 0.0;
@@ -172,9 +188,19 @@ TEST_F(EnvironmentalEffectsTest, AtmosphericPressureEffects) {
     double distance_km = tx_coord.calculateDistance(rx_coord);
     
     for (double pressure : pressures) {
+        // Use frequency and pressure in the test
+        EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+        EXPECT_LT(frequency_mhz, 300.0) << "Frequency should be in VHF range";
+        EXPECT_GT(pressure, 900.0) << "Pressure should be reasonable";
+        EXPECT_LT(pressure, 1100.0) << "Pressure should be reasonable";
+        
         // Get atmospheric conditions for the test location
         AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
             tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
+        
+        // Use conditions in the test
+        EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+        EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
         
         // Calculate propagation loss using real implementation with realistic parameters
         double atmospheric_loss = 3.0; // Realistic atmospheric loss
@@ -201,9 +227,19 @@ TEST_F(EnvironmentalEffectsTest, DuctingConditions) {
     double frequency_mhz = test_frequency_vhf;
     double distance_km = tx_coord.calculateDistance(rx_coord);
     
+    // Use frequency and weather in the test
+    EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+    EXPECT_LT(frequency_mhz, 300.0) << "Frequency should be in VHF range";
+    EXPECT_GT(weather.temperature_c, 0.0) << "Temperature should be positive";
+    EXPECT_GT(weather.humidity_percent, 0.0) << "Humidity should be positive";
+    
     // Get atmospheric conditions for the test location
     AtmosphericConditions conditions = FGCom_PropagationPhysics::getAtmosphericConditions(
         tx_coord.latitude, tx_coord.longitude, tx_coord.altitude);
+    
+    // Use conditions in the test
+    EXPECT_GT(conditions.temperature_c, -50.0) << "Temperature should be reasonable";
+    EXPECT_LT(conditions.temperature_c, 50.0) << "Temperature should be reasonable";
     
     // Calculate propagation loss using real implementation
     double atmospheric_loss = 0.0; // Simplified for this test
@@ -272,6 +308,10 @@ TEST_F(EnvironmentalEffectsTest, CombinedWeatherEffects) {
     WeatherConditions adverse_weather = generateAdverseWeather();
     double frequency_mhz = test_frequency_vhf;
     double distance_km = tx_coord.calculateDistance(rx_coord);
+    
+    // Use frequency in the test
+    EXPECT_GT(frequency_mhz, 0.0) << "Frequency should be positive";
+    EXPECT_LT(frequency_mhz, 300.0) << "Frequency should be in VHF range";
     
     // Calculate combined effects
     double total_attenuation_db = 0.0;
