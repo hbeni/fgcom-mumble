@@ -8,7 +8,7 @@ For most users, run this single command to fix all issues and install everything
 
 ```bash
 # Clone the repository
-git clone https://github.com/hbeni/fgcom-mumble.git
+git clone https://github.com/Supermagnum/fgcom-mumble.git
 cd fgcom-mumble
 
 # Run the master fix script (fixes ALL issues automatically)
@@ -83,7 +83,7 @@ sudo apt-get install -y git build-essential cmake
 ### 2. Clone and Fix
 ```bash
 # Clone the repository
-git clone https://github.com/hbeni/fgcom-mumble.git
+git clone https://github.com/Supermagnum/fgcom-mumble.git
 cd fgcom-mumble
 
 # Run the master fix script

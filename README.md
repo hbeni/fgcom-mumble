@@ -197,6 +197,11 @@ If you want to request a feature or report a bug, you can do so on the issuetrac
 
 **See [Installation Guide](docs/INSTALLATION_GUIDE.md) for complete installation and setup instructions.**
 
+### Quick Fix for Installation Issues
+
+If you encounter installation problems, use the automated fix script:
+- **[Fix Installation Script](scripts/fix_installation.sh)** - Automatically resolves common installation issues
+
 
 
 ## Client Usage
