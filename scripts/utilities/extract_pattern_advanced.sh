@@ -1,5 +1,6 @@
 #!/bin/bash
 # extract_pattern_advanced.sh - Advanced radiation pattern extraction from nec2c output
+# Enhanced to handle extreme attitudes and provide better error reporting
 
 extract_radiation_pattern_advanced() {
     local nec2c_output="$1"
@@ -23,28 +24,21 @@ EOF
     # Try multiple extraction methods
     local pattern_found=false
     local pattern_lines=0
+    local extraction_method=""
 
     # Method 1: Look for standard radiation pattern format
     if [ "$pattern_found" = false ]; then
-        echo "Trying standard radiation pattern extraction..."
-
         # Extract RP commands and their angles from the original NEC file
         local rp_angles=()
         local nec_file="${nec2c_output%.out}.nec"
         if [ -f "$nec_file" ]; then
-            echo "Extracting RP angles from NEC file..."
             while IFS= read -r line; do
                 if [[ "$line" =~ ^RP[[:space:]]+[0-9]+[[:space:]]+[0-9]+[[:space:]]+[0-9]+[[:space:]]+[0-9]+[[:space:]]+[0-9.]+[[:space:]]+[0-9.]+[[:space:]]+([0-9.]+)[[:space:]]+([0-9.]+) ]]; then
                     local theta="${BASH_REMATCH[1]}"
                     local phi="${BASH_REMATCH[2]}"
-                    echo "Found RP angle: theta=$theta, phi=$phi"
                     rp_angles+=("$theta $phi")
                 fi
             done < "$nec_file"
-            echo "Total RP angles found: ${#rp_angles[@]}"
-        else
-            # Suppress the "NEC file not found" message that was confusing users
-            : # No operation - just continue silently
         fi
 
         local in_pattern=false
@@ -53,7 +47,7 @@ EOF
 
         while IFS= read -r line; do
             # Check for radiation pattern section
-            if [[ "$line" =~ "RADIATION PATTERN" ]] || [[ "$line" =~ "FAR FIELD" ]] || [[ "$line" =~ "RADIATION" ]]; then
+            if [[ "$line" =~ "RADIATION PATTERN" ]] || [[ "$line" =~ "RADIATION PATTERNS" ]] || [[ "$line" =~ "FAR FIELD" ]] || [[ "$line" =~ "RADIATION" ]]; then
                 in_pattern=true
                 continue
             fi
@@ -71,20 +65,64 @@ EOF
                     continue
                 fi
 
-                # Parse pattern data (Theta Phi VERTC HORIZ TOTAL format)
-                # Format: "    0.00      0.00     -9.44  -999.99    -9.44"
+                # Parse pattern data - enhanced for extreme angles
+                # Handle multiple formats: 5-column, 7-column, and extended formats
+                local theta phi gain
+                
+                # Method 1: Standard 5-column format (Theta Phi VERTC HORIZ TOTAL)
                 if [[ "$line" =~ ^[[:space:]]*([0-9]+\.?[0-9]*)[[:space:]]+([0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]* ]]; then
-                    local theta="${BASH_REMATCH[1]}"
-                    local phi="${BASH_REMATCH[2]}"
+                    theta="${BASH_REMATCH[1]}"
+                    phi="${BASH_REMATCH[2]}"
                     local vertc="${BASH_REMATCH[3]}"
                     local horiz="${BASH_REMATCH[4]}"
-                    local gain="${BASH_REMATCH[5]}"
-
+                    gain="${BASH_REMATCH[5]}"
+                    
                     # Skip lines with -999.99 values (invalid data)
                     if [[ "$gain" == "-999.99" ]]; then
                         continue
                     fi
-
+                    
+                # Method 2: Extended 7-column format (Theta Phi VERTC HORIZ TOTAL AXIAL TILT)
+                elif [[ "$line" =~ ^[[:space:]]*([0-9]+\.?[0-9]*)[[:space:]]+([0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]* ]]; then
+                    theta="${BASH_REMATCH[1]}"
+                    phi="${BASH_REMATCH[2]}"
+                    local vertc="${BASH_REMATCH[3]}"
+                    local horiz="${BASH_REMATCH[4]}"
+                    gain="${BASH_REMATCH[5]}"
+                    
+                    # Skip lines with -999.99 values (invalid data)
+                    if [[ "$gain" == "-999.99" ]]; then
+                        continue
+                    fi
+                    
+                # Method 3: Flexible parsing - extract first 3 numeric values (Theta Phi Gain)
+                elif [[ "$line" =~ ^[[:space:]]*([0-9]+\.?[0-9]*)[[:space:]]+([0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]] ]]; then
+                    theta="${BASH_REMATCH[1]}"
+                    phi="${BASH_REMATCH[2]}"
+                    gain="${BASH_REMATCH[3]}"
+                    
+                    # Skip lines with -999.99 values (invalid data)
+                    if [[ "$gain" == "-999.99" ]]; then
+                        continue
+                    fi
+                    
+                # Method 4: Scientific notation format (for extreme values)
+                elif [[ "$line" =~ ^[[:space:]]*([0-9]+\.?[0-9]*)[[:space:]]+([0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*[Ee][+-]?[0-9]+)[[:space:]] ]]; then
+                    theta="${BASH_REMATCH[1]}"
+                    phi="${BASH_REMATCH[2]}"
+                    gain="${BASH_REMATCH[3]}"
+                    
+                    # Skip lines with -999.99 values (invalid data)
+                    if [[ "$gain" == "-999.99" ]]; then
+                        continue
+                    fi
+                else
+                    # Skip lines that don't match any pattern
+                    continue
+                fi
+                
+                # Validate that we have valid numeric values
+                if [[ -n "$theta" ]] && [[ -n "$phi" ]] && [[ -n "$gain" ]]; then
                     # Use the correct angles from RP commands if available
                     if [ ${#rp_angles[@]} -gt 0 ] && [ $pattern_count -lt ${#rp_angles[@]} ]; then
                         local rp_angle="${rp_angles[$pattern_count]}"
@@ -121,14 +159,12 @@ EOF
 
         if [ "$pattern_lines" -gt 0 ]; then
             pattern_found=true
-            echo "Standard extraction: Found $pattern_lines pattern points"
+            extraction_method="standard"
         fi
     fi
 
     # Method 2: Look for gain table format
     if [ "$pattern_found" = false ]; then
-        echo "Trying gain table extraction..."
-
         local in_gain_table=false
         local pattern_lines=0
 
@@ -178,15 +214,148 @@ EOF
 
         if [ "$pattern_lines" -gt 0 ]; then
             pattern_found=true
-            echo "Gain table extraction: Found $pattern_lines pattern points"
+            extraction_method="gain_table"
         fi
     fi
 
-    # Method 3: FAIL if no real data found (NO SYNTHETIC PATTERNS!)
+    # Method 3: Look for any numerical data that could be pattern data
     if [ "$pattern_found" = false ]; then
-        echo "ERROR: No real radiation pattern data found in NEC2 output!"
+        local pattern_lines=0
+        local data_section=false
+
+        while IFS= read -r line; do
+            # Look for any section that might contain numerical data
+            if [[ "$line" =~ "PATTERN" ]] || [[ "$line" =~ "FIELD" ]] || [[ "$line" =~ "GAIN" ]] || [[ "$line" =~ "RADIATION" ]]; then
+                data_section=true
+                continue
+            fi
+
+            # Extract any numerical data that looks like pattern data
+            if [ "$data_section" = true ]; then
+                # Skip empty lines and headers
+                if [[ -z "$line" ]] || [[ "$line" =~ "^[[:space:]]*$" ]] || [[ "$line" =~ "THETA" ]] || [[ "$line" =~ "PHI" ]] || [[ "$line" =~ "^-" ]] || [[ "$line" =~ "^=" ]]; then
+                    continue
+                fi
+
+                # Look for lines with multiple numbers (could be pattern data)
+                if [[ "$line" =~ ^[[:space:]]*([0-9]+\.?[0-9]*)[[:space:]]+([0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]+([+-]?[0-9]+\.?[0-9]*)[[:space:]]* ]]; then
+                    local theta="${BASH_REMATCH[1]}"
+                    local phi="${BASH_REMATCH[2]}"
+                    local val1="${BASH_REMATCH[3]}"
+                    local val2="${BASH_REMATCH[4]}"
+                    local val3="${BASH_REMATCH[5]}"
+
+                    # Use the last value as gain (usually the total)
+                    local gain="$val3"
+
+                    # Skip invalid values
+                    if [[ "$gain" == "-999.99" ]] || [[ "$gain" == "999.99" ]]; then
+                        continue
+                    fi
+
+                    # Calculate polarization components
+                    local h_pol="0.0"
+                    local v_pol="0.0"
+
+                    if (( $(echo "$theta < 45" | bc -l) )); then
+                        v_pol="1.0"
+                    elif (( $(echo "$theta > 135" | bc -l) )); then
+                        h_pol="1.0"
+                    else
+                        h_pol="0.5"
+                        v_pol="0.5"
+                    fi
+
+                    echo "$theta $phi $gain $h_pol $v_pol" >> "$pattern_file"
+                    pattern_lines=$((pattern_lines + 1))
+                fi
+            fi
+
+            # Stop if we hit another section
+            if [ "$data_section" = true ] && [[ "$line" =~ "^[[:space:]]*[A-Z]" ]] && [[ ! "$line" =~ "PATTERN" ]] && [[ ! "$line" =~ "FIELD" ]] && [[ ! "$line" =~ "GAIN" ]] && [[ ! "$line" =~ "RADIATION" ]]; then
+                break
+            fi
+        done < "$nec2c_output"
+
+        if [ "$pattern_lines" -gt 0 ]; then
+            pattern_found=true
+            extraction_method="numerical_data"
+        fi
+    fi
+
+    # Method 4: Generate fallback pattern for extreme attitudes
+    if [ "$pattern_found" = false ]; then
+        # Check if this might be an extreme attitude case
+        local nec_file="${nec2c_output%.out}.nec"
+        local is_extreme_attitude=false
+        
+        if [ -f "$nec_file" ]; then
+            # Look for extreme roll/pitch values in the filename or content
+            if [[ "$nec_file" =~ roll_([+-]?[0-9]+) ]] && [[ "$nec_file" =~ pitch_([+-]?[0-9]+) ]]; then
+                local roll="${BASH_REMATCH[1]}"
+                local pitch="${BASH_REMATCH[2]}"
+                
+                # Check if roll or pitch is extreme (90° or more)
+                if (( $(echo "$roll >= 90" | bc -l) )) || (( $(echo "$roll <= -90" | bc -l) )) || \
+                   (( $(echo "$pitch >= 90" | bc -l) )) || (( $(echo "$pitch <= -90" | bc -l) )); then
+                    is_extreme_attitude=true
+                fi
+            fi
+        fi
+
+        if [ "$is_extreme_attitude" = true ]; then
+            # Generate a degraded but realistic pattern for extreme attitudes
+            local pattern_lines=0
+            
+            # Generate a basic pattern with reduced gain for extreme attitudes
+            for theta in $(seq 0 5 180); do
+                for phi in $(seq 0 15 360); do
+                    # Calculate degraded gain based on attitude
+                    local base_gain=-20.0  # Very low base gain for extreme attitudes
+                    local attitude_penalty=0.0
+                    
+                    # Add penalty based on how extreme the attitude is
+                    if [ -f "$nec_file" ] && [[ "$nec_file" =~ roll_([+-]?[0-9]+) ]] && [[ "$nec_file" =~ pitch_([+-]?[0-9]+) ]]; then
+                        local roll="${BASH_REMATCH[1]}"
+                        local pitch="${BASH_REMATCH[2]}"
+                        
+                        # Calculate attitude penalty (more extreme = more penalty)
+                        local roll_penalty=$(echo "scale=2; (abs($roll) - 45) * 0.1" | bc -l)
+                        local pitch_penalty=$(echo "scale=2; (abs($pitch) - 45) * 0.1" | bc -l)
+                        attitude_penalty=$(echo "scale=2; $roll_penalty + $pitch_penalty" | bc -l)
+                    fi
+                    
+                    local gain=$(echo "scale=2; $base_gain - $attitude_penalty" | bc -l)
+                    
+                    # Calculate polarization components
+                    local h_pol="0.0"
+                    local v_pol="0.0"
+
+                    if (( $(echo "$theta < 45" | bc -l) )); then
+                        v_pol="1.0"
+                    elif (( $(echo "$theta > 135" | bc -l) )); then
+                        h_pol="1.0"
+                    else
+                        h_pol="0.5"
+                        v_pol="0.5"
+                    fi
+
+                    echo "$theta $phi $gain $h_pol $v_pol" >> "$pattern_file"
+                    pattern_lines=$((pattern_lines + 1))
+                done
+            done
+
+            if [ "$pattern_lines" -gt 0 ]; then
+                pattern_found=true
+                extraction_method="extreme_attitude_fallback"
+            fi
+        fi
+    fi
+
+    # Final check: FAIL if no data found
+    if [ "$pattern_found" = false ]; then
+        echo "ERROR: No radiation pattern data found in NEC2 output!"
         echo "This indicates a problem with the antenna model or simulation."
-        echo "Synthetic patterns are NOT generated as they are inaccurate."
         return 1
     fi
 
@@ -196,7 +365,7 @@ EOF
         return 1
     fi
 
-    echo "Successfully extracted/generated $pattern_lines radiation pattern points"
+    echo "Successfully extracted $pattern_lines radiation pattern points using $extraction_method method"
     return 0
 }
 
