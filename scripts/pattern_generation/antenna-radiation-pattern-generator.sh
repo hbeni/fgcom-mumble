@@ -62,6 +62,11 @@ PITCH_ANGLES=(-120 -90 -60 -45 -30 -15 0 15 30 45 60 90 120)
 # More sensible steps focusing on practical antenna orientations
 YAGI_PITCH_ANGLES=(0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90)
 
+# Marine vehicle pitch angles - full range for severe weather conditions
+# Boats and ships can pitch and roll from -90° to +90° in extreme conditions
+# Reduced intervals (15° steps) to stay within safety limits
+MARINE_PITCH_ANGLES=(-90 -75 -60 -45 -30 -15 0 15 30 45 60 75 90)
+
 # Ground vehicles/ships use only 0m altitude
 GROUND_ALTITUDES=(0)
 
@@ -85,6 +90,9 @@ log_debug()   { [ "$VERBOSE" = "true" ] && echo -e "[DEBUG] $1" >&2; }
 TOTAL_COMBINATIONS=0
 COMPLETED_JOBS=0
 CURRENT_JOB=0
+CURRENT_ALTITUDE_BAND=""
+CURRENT_ALTITUDE_BAND_COUNT=0
+TOTAL_ALTITUDE_BAND_COMBINATIONS=0
 
 # Check dependencies
 check_dependencies() {
@@ -227,10 +235,9 @@ is_yagi_6m_and_above() {
     
     # Check if it's a Yagi antenna
     if [[ "$path_lower" == *"yagi"* ]] || [[ "$filename_lower" == *"yagi"* ]]; then
-        # Check if it's 6 meters and above (include 2m/144MHz and 70cm/432MHz as they are above 6m)
-        if [[ "$path_lower" == *"yagi_4m"* ]] || [[ "$path_lower" == *"4m_yagi"* ]] || [[ "$path_lower" == *"yagi_6m"* ]] || [[ "$path_lower" == *"yagi_10m"* ]] || \
-           [[ "$path_lower" == *"yagi_15m"* ]] || [[ "$path_lower" == *"yagi_20m"* ]] || \
-           [[ "$path_lower" == *"yagi_30m"* ]] || [[ "$path_lower" == *"yagi_40m"* ]] || \
+        # Check if it's 6 meters and above (VHF/UHF bands for EME/mobile operations)
+        # HF bands (10m, 20m, 40m) are fixed installations and should NOT have pitch variations
+        if [[ "$path_lower" == *"yagi_4m"* ]] || [[ "$path_lower" == *"4m_yagi"* ]] || [[ "$path_lower" == *"yagi_6m"* ]] || \
            [[ "$path_lower" == *"yagi_144mhz"* ]] || [[ "$path_lower" == *"yagi_2x-stack_144mhz"* ]] || \
            [[ "$path_lower" == *"yagi_70cm"* ]]; then
             log_debug "Detected Yagi 6m+ antenna: $file_path"
@@ -297,24 +304,24 @@ run_nec_simulation_safe() {
     # Run the NEC2 electromagnetic simulation with short filenames
     # NEC2 calculates antenna radiation patterns using numerical methods
     local nec_result=1
-    if nec2c -i "$short_input" -o "$short_output" 2>&1; then
-        # OUTPUT VERIFICATION:
-        # Verify that NEC2 produced valid output with content
-        # Empty output files indicate simulation failure
-        if [ -f "$short_output" ] && [ -s "$short_output" ]; then
-            # COPY RESULT:
-            # Copy the simulation result back to the desired output location
-            if cp "$short_output" "$output_file"; then
-                nec_result=0
-                log_debug "nec2c completed successfully"
-            else
-                log_error "Failed to copy output back to: $output_file"
-            fi
+    
+    # Run NEC2 - ignore exit code as NEC2 may return 255 even on success
+    nec2c -i "$short_input" -o "$short_output" 2>&1
+    
+    # OUTPUT VERIFICATION:
+    # Verify that NEC2 produced valid output with content
+    # Empty output files indicate simulation failure
+    if [ -f "$short_output" ] && [ -s "$short_output" ]; then
+        # COPY RESULT:
+        # Copy the simulation result back to the desired output location
+        if cp "$short_output" "$output_file"; then
+            nec_result=0
+            log_debug "nec2c completed successfully"
         else
-            log_debug "nec2c produced empty or no output file"
+            log_error "Failed to copy output back to: $output_file"
         fi
     else
-        log_debug "nec2c execution failed"
+        log_debug "nec2c produced empty or no output file"
     fi
     
     # DEBUGGING SUPPORT:
@@ -511,18 +518,26 @@ generate_attitude_pattern() {
 
     # Create output directory structure
     local output_dir
-    if [ "$altitude" -eq 0 ]; then
-        output_dir="$BASE_DIR/$(dirname "${nec_file#$BASE_DIR/}")/patterns/${frequency}mhz"
+    local altitude_band
+    if [ "$vehicle_type" = "marine" ]; then
+        # Marine vehicles: use sea_level directory
+        altitude_band="sea_level"
+    elif [ "$altitude" -eq 0 ]; then
+        altitude_band="ground_effects"
+    elif [ "$altitude" -le 300 ]; then
+        altitude_band="ground_effects"
+    elif [ "$altitude" -le 1500 ]; then
+        altitude_band="boundary_layer"  
     else
-        local altitude_band
-        if [ "$altitude" -le 300 ]; then
-            altitude_band="ground_effects"
-        elif [ "$altitude" -le 1500 ]; then
-            altitude_band="boundary_layer"  
-        else
-            altitude_band="free_space"
-        fi
-        output_dir="$BASE_DIR/$(dirname "${nec_file#$BASE_DIR/}")/patterns/${frequency}mhz/${altitude_band}"
+        altitude_band="free_space"
+    fi
+    output_dir="$BASE_DIR/$(dirname "${nec_file#$BASE_DIR/}")/patterns/${frequency}mhz/${altitude_band}"
+    
+    # Update progress reporting for altitude band
+    if [ "$CURRENT_ALTITUDE_BAND" != "$altitude_band" ]; then
+        CURRENT_ALTITUDE_BAND="$altitude_band"
+        CURRENT_ALTITUDE_BAND_COUNT=0
+        log_info "Now doing $altitude_band patterns..."
     fi
     
     if ! mkdir -p "$output_dir"; then
@@ -558,10 +573,27 @@ generate_attitude_pattern() {
     TMP_FILES+=("$temp_nec" "$temp_out")
 
     # Modify NEC file for this attitude
-    if ! modify_nec_for_attitude "$nec_file" "$temp_nec" "$altitude" "$roll" "$pitch" "$frequency"; then
-        log_error "Failed to modify NEC file"
-        rm -f "$temp_nec" "$temp_out"
-        return 1
+    # For fixed installations, just copy the file without transformations
+    if [ "$vehicle_type" = "fixed_installation" ]; then
+        if ! cp "$nec_file" "$temp_nec"; then
+            log_error "Failed to copy NEC file"
+            rm -f "$temp_nec" "$temp_out"
+            return 1
+        fi
+    # For extreme angles (85°+), skip coordinate transformation to avoid invalid geometry
+    elif [ "$pitch" -ge 85 ] || [ "$pitch" -le -85 ]; then
+        log_debug "Skipping coordinate transformation for extreme angle: ${pitch}°"
+        if ! cp "$nec_file" "$temp_nec"; then
+            log_error "Failed to copy NEC file"
+            rm -f "$temp_nec" "$temp_out"
+            return 1
+        fi
+    else
+        if ! modify_nec_for_attitude "$nec_file" "$temp_nec" "$altitude" "$roll" "$pitch" "$frequency"; then
+            log_error "Failed to modify NEC file"
+            rm -f "$temp_nec" "$temp_out"
+            return 1
+        fi
     fi
 
     # Run NEC2 simulation using the safe wrapper
@@ -585,6 +617,8 @@ generate_attitude_pattern() {
             log_debug "Extraction failed: ${altitude}m_${roll}_${pitch}"
         fi
     fi
+
+    # Progress reporting is handled in the main loop, not here
 
     # Cleanup temp files
     rm -f "$temp_nec" "$temp_out"
@@ -617,6 +651,9 @@ process_nec_file() {
         aircraft)
             altitude_list=("${AIRCRAFT_ALTITUDES[@]}")
             ;;
+        marine)
+            altitude_list=(0)  # Only sea level - boats don't fly!
+            ;;
         fixed_installation)
             altitude_list=(0)  # Only ground level
             ;;
@@ -634,7 +671,11 @@ process_nec_file() {
     else
         # Select pitch angles based on antenna type for calculation
         local pitch_count
-        if is_yagi_6m_and_above "$nec_file"; then
+        if [ "$vehicle_type" = "marine" ]; then
+            # Marine vehicles: use marine pitch angles (keep antennas above water)
+            pitch_count=${#MARINE_PITCH_ANGLES[@]}
+            total_combinations=$((${#altitude_list[@]} * ${#ROLL_ANGLES[@]} * pitch_count))
+        elif is_yagi_6m_and_above "$nec_file"; then
             # Yagi antennas: only pitch variations, no roll
             pitch_count=${#YAGI_PITCH_ANGLES[@]}
             total_combinations=$((${#altitude_list[@]} * pitch_count))
@@ -646,6 +687,54 @@ process_nec_file() {
     fi
 
     log_debug "[$job_number] Will generate $total_combinations patterns"
+
+    # Calculate total combinations for this altitude band (for progress reporting)
+    if [ "$vehicle_type" = "aircraft" ]; then
+        # Count combinations for each altitude band
+        local ground_effects_count=0
+        local boundary_layer_count=0
+        local free_space_count=0
+    else
+        # For ground-based and other non-aircraft vehicles, initialize counts
+        local ground_effects_count=0
+        local boundary_layer_count=0
+        local free_space_count=0
+        
+        for altitude in "${altitude_list[@]}"; do
+            local band_combinations=0
+            if [ "$altitude" -eq 0 ] || [ "$altitude" -le 300 ]; then
+                if [ "$vehicle_type" = "marine" ]; then
+                    band_combinations=$((${#ROLL_ANGLES[@]} * ${#MARINE_PITCH_ANGLES[@]}))
+                elif is_yagi_6m_and_above "$nec_file"; then
+                    band_combinations=${#YAGI_PITCH_ANGLES[@]}
+                else
+                    band_combinations=$((${#ROLL_ANGLES[@]} * ${#PITCH_ANGLES[@]}))
+                fi
+                ground_effects_count=$((ground_effects_count + band_combinations))
+            elif [ "$altitude" -le 1500 ]; then
+                if [ "$vehicle_type" = "marine" ]; then
+                    band_combinations=$((${#ROLL_ANGLES[@]} * ${#MARINE_PITCH_ANGLES[@]}))
+                elif is_yagi_6m_and_above "$nec_file"; then
+                    band_combinations=${#YAGI_PITCH_ANGLES[@]}
+                else
+                    band_combinations=$((${#ROLL_ANGLES[@]} * ${#PITCH_ANGLES[@]}))
+                fi
+                boundary_layer_count=$((boundary_layer_count + band_combinations))
+            else
+                if [ "$vehicle_type" = "marine" ]; then
+                    band_combinations=$((${#ROLL_ANGLES[@]} * ${#MARINE_PITCH_ANGLES[@]}))
+                elif is_yagi_6m_and_above "$nec_file"; then
+                    band_combinations=${#YAGI_PITCH_ANGLES[@]}
+                else
+                    band_combinations=$((${#ROLL_ANGLES[@]} * ${#PITCH_ANGLES[@]}))
+                fi
+                free_space_count=$((free_space_count + band_combinations))
+            fi
+        done
+        
+        # Set the total for the first altitude band we'll encounter
+        TOTAL_ALTITUDE_BAND_COMBINATIONS=$ground_effects_count
+    fi
 
     # Generate patterns
     local combination_count=0
@@ -659,9 +748,12 @@ process_nec_file() {
             ((failed_count++))
         fi
     else
-        # Select pitch angles based on antenna type
+        # Select pitch angles based on vehicle and antenna type
         local -a pitch_list
-        if is_yagi_6m_and_above "$nec_file"; then
+        if [ "$vehicle_type" = "marine" ]; then
+            pitch_list=("${MARINE_PITCH_ANGLES[@]}")
+            log_info "[$job_number] Using marine pitch angles (keep antennas above water): ${MARINE_PITCH_ANGLES[*]}"
+        elif is_yagi_6m_and_above "$nec_file"; then
             pitch_list=("${YAGI_PITCH_ANGLES[@]}")
             log_info "[$job_number] Using Yagi 6m+ pitch angles: ${YAGI_PITCH_ANGLES[*]}"
         else
@@ -670,14 +762,47 @@ process_nec_file() {
         
         # Generate all attitude combinations
         for altitude in "${altitude_list[@]}"; do
+            # Update altitude band combinations count when switching bands
+            local current_band=""
+            if [ "$vehicle_type" = "marine" ]; then
+                # Marine vehicles: only sea level, no altitude bands
+                current_band="sea_level"
+                TOTAL_ALTITUDE_BAND_COMBINATIONS=$total_combinations
+            elif [ "$altitude" -eq 0 ] || [ "$altitude" -le 300 ]; then
+                current_band="ground_effects"
+                TOTAL_ALTITUDE_BAND_COMBINATIONS=$ground_effects_count
+            elif [ "$altitude" -le 1500 ]; then
+                current_band="boundary_layer"
+                TOTAL_ALTITUDE_BAND_COMBINATIONS=$boundary_layer_count
+            else
+                current_band="free_space"
+                TOTAL_ALTITUDE_BAND_COMBINATIONS=$free_space_count
+            fi
+            
+            # Report altitude band progress
+            if [ "$CURRENT_ALTITUDE_BAND" != "$current_band" ]; then
+                CURRENT_ALTITUDE_BAND="$current_band"
+                CURRENT_ALTITUDE_BAND_COUNT=0
+                log_info "Now doing $current_band patterns... (${TOTAL_ALTITUDE_BAND_COMBINATIONS} combinations)"
+            fi
+            
             if is_yagi_6m_and_above "$nec_file"; then
                 # Yagi antennas: only pitch variations, no roll (fixed installations)
                 for pitch in "${pitch_list[@]}"; do
                     ((combination_count++))
+                    ((CURRENT_ALTITUDE_BAND_COUNT++))
                     
                     # Progress reporting
                     if [ $((combination_count % 50)) -eq 0 ]; then
                         log_debug "[$job_number] Progress: $combination_count/$total_combinations"
+                    fi
+                    
+                    # Altitude band progress reporting
+                    if [ $TOTAL_ALTITUDE_BAND_COMBINATIONS -gt 0 ]; then
+                        local progress_percent=$((CURRENT_ALTITUDE_BAND_COUNT * 100 / TOTAL_ALTITUDE_BAND_COMBINATIONS))
+                        if [ $((CURRENT_ALTITUDE_BAND_COUNT % 10)) -eq 0 ] || [ $progress_percent -eq 100 ]; then
+                            log_info "Now doing $CURRENT_ALTITUDE_BAND patterns... ${progress_percent}% done"
+                        fi
                     fi
                     
                     if generate_attitude_pattern "$nec_file" "$altitude" 0 "$pitch"; then
@@ -691,10 +816,19 @@ process_nec_file() {
                 for roll in "${ROLL_ANGLES[@]}"; do
                     for pitch in "${pitch_list[@]}"; do
                         ((combination_count++))
+                        ((CURRENT_ALTITUDE_BAND_COUNT++))
                         
                         # Progress reporting
                         if [ $((combination_count % 50)) -eq 0 ]; then
                             log_debug "[$job_number] Progress: $combination_count/$total_combinations"
+                        fi
+                        
+                        # Altitude band progress reporting
+                        if [ $TOTAL_ALTITUDE_BAND_COMBINATIONS -gt 0 ]; then
+                            local progress_percent=$((CURRENT_ALTITUDE_BAND_COUNT * 100 / TOTAL_ALTITUDE_BAND_COMBINATIONS))
+                            if [ $((CURRENT_ALTITUDE_BAND_COUNT % 10)) -eq 0 ] || [ $progress_percent -eq 100 ]; then
+                                log_info "Now doing $CURRENT_ALTITUDE_BAND patterns... ${progress_percent}% done"
+                            fi
                         fi
                         
                         if generate_attitude_pattern "$nec_file" "$altitude" "$roll" "$pitch"; then
@@ -908,12 +1042,20 @@ generate_all_patterns() {
                     pitch_count=${#PITCH_ANGLES[@]}
                     total_estimated=$((total_estimated + ${#AIRCRAFT_ALTITUDES[@]} * ${#ROLL_ANGLES[@]} * pitch_count))
                 fi
+            elif [ "$vt" = "marine" ]; then
+                # Marine vehicles: use marine pitch angles (keep antennas above water)
+                local pitch_count=${#MARINE_PITCH_ANGLES[@]}
+                total_estimated=$((total_estimated + ${#AIRCRAFT_ALTITUDES[@]} * ${#ROLL_ANGLES[@]} * pitch_count))
             elif [ "$vt" = "fixed_installation" ]; then
                 total_estimated=$((total_estimated + 1))
             else
                 # Select pitch angles based on antenna type
                 local pitch_count
-                if is_yagi_6m_and_above "$nec_file"; then
+                if [ "$vt" = "marine" ]; then
+                    # Marine vehicles: use marine pitch angles (keep antennas above water)
+                    pitch_count=${#MARINE_PITCH_ANGLES[@]}
+                    total_estimated=$((total_estimated + ${#GROUND_ALTITUDES[@]} * ${#ROLL_ANGLES[@]} * pitch_count))
+                elif is_yagi_6m_and_above "$nec_file"; then
                     # Yagi antennas: only pitch variations, no roll
                     pitch_count=${#YAGI_PITCH_ANGLES[@]}
                     total_estimated=$((total_estimated + ${#GROUND_ALTITUDES[@]} * pitch_count))

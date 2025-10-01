@@ -55,9 +55,9 @@ W030   8.0   0.0  -0.3   8.0   0.0  -3.3   0.008  15
 W031 -2.0   0.0   2.1  -2.0   0.0   2.3   0.1     2
 
 ; VHF COM ANTENNA - PRIMARY ACTIVE ANTENNA (NEW)
-; Top-mounted blade antenna - typical commercial aviation
-; Position: Forward fuselage top for optimal coverage
-W032 -5.0   0.0   1.9  -5.0   0.0   2.4   0.008  10
+; Bottom-mounted blade antenna - military standard mounting
+; Position: Forward fuselage bottom for optimal coverage
+W032 -5.0   0.0   0.1  -5.0   0.0  -0.4   0.008  10
 
 ; SOURCE - Feed only the VHF COM antenna
 SY SRC  W032  5  1
@@ -83,15 +83,16 @@ RP 0 37 73 1000 0 0 5 10 0 0
 ; REALISTIC Boeing 737-800 VHF Configuration with Passive HF Element
 ;
 ; Key Configuration:
-; 1. VHF COM antenna (W032): 0.5m blade on forward fuselage top - ACTIVE
+; 1. VHF COM antenna (W032): 0.5m blade on forward fuselage bottom - ACTIVE
 ; 2. HF probe antenna (W030): 3m belly probe - PASSIVE (no source)
 ; 3. All other antennas: Passive structural elements
 ;
 ; VHF COM Antenna (W032) Details:
-; - Position: Forward fuselage top (-5m, 0, 1.9m to 2.4m)
+; - Position: Forward fuselage bottom (-5m, 0, 0.1m to -0.4m)
 ; - Type: 0.5m blade antenna (quarter-wave at 150 MHz)
 ; - Frequency: 118-137 MHz aviation VHF COM band
 ; - Feed: Center-fed monopole (segment 5 of 10)
+; - Mounting: Bottom-mounted (military standard)
 ; - Impedance: 50Ω system impedance
 ;
 ; Passive HF Antenna Effects on VHF:
