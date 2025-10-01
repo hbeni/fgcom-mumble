@@ -1,5 +1,14 @@
 # Improvements
 
+## Teamspeak Porting
+
+**Porting FGCom-mumble to Teamspeak**
+- **Target Platform**: Teamspeak 3/5 client integration
+- **Benefits**: Alternative voice platform for users who prefer Teamspeak over Mumble
+- **Implementation**: Teamspeak plugin development for radio simulation
+- **Features**: Same radio propagation, frequency management, and realistic communication features
+- **Compatibility**: Maintain feature parity with Mumble version
+
 ## For automatic generation of ATIS recordings:
 
 **Piper - Best for Speed**
