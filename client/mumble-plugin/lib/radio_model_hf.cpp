@@ -1,4 +1,4 @@
-/* 
+ /* 
  * This file is part of the FGCom-mumble distribution (https://github.com/hbeni/fgcom-mumble).
  * Copyright (c) 2020 Benedikt Hallinger
  * 

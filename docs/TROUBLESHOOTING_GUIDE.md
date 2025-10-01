@@ -359,8 +359,8 @@ ping <server>
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) - Technical details
 
 ### Support Resources
-- GitHub Issues: [https://github.com/Supermagnum/fgcom-mumble/issues](https://github.com/Supermagnum/fgcom-mumble/issues)
-- Documentation: [https://github.com/Supermagnum/fgcom-mumble/tree/master/docs](https://github.com/Supermagnum/fgcom-mumble/tree/master/docs)
+- GitHub Issues: [https://github.com/hbeni/fgcom-mumble/issues](https://github.com/hbeni/fgcom-mumble/issues)
+- Documentation: [https://github.com/hbeni/fgcom-mumble/tree/master/docs](https://github.com/hbeni/fgcom-mumble/tree/master/docs)
 - Server Documentation: [server/Readme.server.md](server/Readme.server.md)
 
 ### Reporting Issues
