@@ -21,6 +21,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - Ease of server side installation and operation
 - Standalone nature (no dependency on flightgear)
 - Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
+- **WebRTC browser client support** (planned feature) - Enable web browser access while preserving all existing connection methods
 - Modularity, so individual components can be easily updated and extended with new features
 - Good and complete documentation
 
@@ -133,6 +134,14 @@ The documentation is split up into relevant parts:
 - [Security API Documentation](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security implementation
 - [Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md) Comprehensive setup instructions for administrators
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) Consolidated technical documentation
+
+### WebRTC Browser Client Support (Planned Feature):
+- [WebRTC Implementation Plan](docs/WebRTC_IMPLEMENTATION_PLAN.md) Comprehensive implementation plan for web browser client support
+- [WebRTC Gateway Architecture](docs/WebRTC_GATEWAY_ARCHITECTURE.md) Technical architecture for WebRTC gateway server
+- [WebRTC Protocol Translation](docs/WebRTC_PROTOCOL_TRANSLATION.md) Protocol translation between WebRTC and Mumble
+- [WebRTC Web Interface Design](docs/WebRTC_WEB_INTERFACE_DESIGN.md) Web-based client interface design and mobile optimization
+- [WebRTC Implementation Roadmap](docs/WebRTC_IMPLEMENTATION_ROADMAP.md) 8-month phased implementation roadmap
+- [WebRTC API Tests](test/webrtc_api_tests/README.md) Comprehensive test suite for WebRTC functionality
 - [Vehicle Geometry Creation Guide](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) Complete guide for creating vehicle geometry
 - [Amateur Radio Modes](docs/AMATEUR_RADIO_MODES_DOCUMENTATION.md) Complete guide to CW, LSB, USB, NFM, and AM modes
 - [Amateur Radio Terminology](docs/AMATEUR_RADIO_TERMINOLOGY.md) Comprehensive amateur radio terminology and Q-codes reference
