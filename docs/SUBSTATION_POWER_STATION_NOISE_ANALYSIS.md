@@ -428,20 +428,7 @@ GET /api/features/power-station-analysis/status
 
 ## Future Enhancements
 
-### Planned Features
 
-1. **Real-time Station Data**: Integration with utility company APIs
-2. **Advanced Geometry**: Full polygon and multipolygon distance calculations
-3. **Predictive Modeling**: Forecast station activity based on patterns
-4. **Machine Learning**: Adaptive noise modeling based on real-world data
-5. **Geographic Databases**: Integration with OpenStreetMap infrastructure data
-
-### Research Areas
-
-1. **Harmonic Analysis**: Detailed frequency spectrum analysis for different station types
-2. **Propagation Effects**: How electrical infrastructure noise propagates through terrain
-3. **Mitigation Strategies**: Techniques to reduce electrical infrastructure noise impact
-4. **Standardization**: Industry standards for electrical infrastructure noise measurement
 
 ## Troubleshooting
 
