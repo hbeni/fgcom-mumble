@@ -29,9 +29,21 @@ set(TEST_SOURCES
     # Add missing source files
     ../../client/mumble-plugin/lib/amateur_radio.cpp
     ../../client/mumble-plugin/lib/radio_model.cpp
+    ../../client/mumble-plugin/lib/radio_model_vhf.cpp
+    ../../client/mumble-plugin/lib/radio_model_uhf.cpp
+    ../../client/mumble-plugin/lib/radio_model_amateur.cpp
+    ../../client/mumble-plugin/lib/radio_model_amateur_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_aviation_hf.cpp
+    ../../client/mumble-plugin/lib/radio_model_maritime_hf.cpp
+    ../../client/mumble-plugin/lib/radio_model_string.cpp
+    ../../client/mumble-plugin/lib/radio_model_string_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_hf.cpp
+    ../../client/mumble-plugin/lib/radio_model_hf_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_uhf_impl.cpp
+    ../../client/mumble-plugin/lib/non_amateur_hf.cpp
     ../../client/mumble-plugin/lib/solar_data.cpp
     ../../client/mumble-plugin/lib/radio_config.cpp
-    ../../client/mumble-plugin/lib/audio.cpp
+    ../../client/mumble-plugin/lib/audio_modern.cpp
     ../../client/mumble-plugin/lib/frequency_offset.cpp
     ../../client/mumble-plugin/lib/antenna_pattern_mapping.cpp
     ../../client/mumble-plugin/lib/propagation_physics.cpp

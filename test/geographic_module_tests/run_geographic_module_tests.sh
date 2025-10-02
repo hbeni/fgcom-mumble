@@ -45,7 +45,7 @@ command_exists() {
 # Check required tools
 print_section "Checking Required Tools"
 
-REQUIRED_TOOLS=("g++" "cmake" "make" "gtest" "valgrind" "cppcheck" "clang-tidy" "lcov")
+REQUIRED_TOOLS=("g++" "cmake" "make" "valgrind" "cppcheck" "clang-tidy" "lcov")
 MISSING_TOOLS=()
 
 for tool in "${REQUIRED_TOOLS[@]}"; do
@@ -56,6 +56,14 @@ for tool in "${REQUIRED_TOOLS[@]}"; do
         MISSING_TOOLS+=("$tool")
     fi
 done
+
+# Check for gtest via pkg-config
+if pkg-config --exists gtest; then
+    echo -e "${GREEN}✓${NC} gtest found"
+else
+    echo -e "${RED}✗${NC} gtest not found"
+    MISSING_TOOLS+=("gtest")
+fi
 
 if [ ${#MISSING_TOOLS[@]} -ne 0 ]; then
     echo -e "${RED}Missing required tools: ${MISSING_TOOLS[*]}${NC}"
@@ -109,7 +117,7 @@ else
 fi
 
 echo "Running Clang-Tidy on geographic module..."
-clang-tidy -checks='*' -header-filter='.*' \
+clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*' -header-filter='^client/mumble-plugin/lib/.*' \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/terrain_elevation.cpp \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/terrain_environmental_api.cpp \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp \

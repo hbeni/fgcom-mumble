@@ -65,16 +65,6 @@ CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/network_module
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target test
-test:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
-	/usr/bin/ctest --force-new-ctest-process $(ARGS)
-.PHONY : test
-
-# Special rule for the target test
-test/fast: test
-.PHONY : test/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "No interactive CMake dialog available..."
@@ -177,58 +167,6 @@ network_module_tests_coverage: cmake_check_build_system
 network_module_tests_coverage/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/build
 .PHONY : network_module_tests_coverage/fast
-
-#=============================================================================
-# Target rules for targets named run_network_module_basic_tests
-
-# Build rule for target.
-run_network_module_basic_tests: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 run_network_module_basic_tests
-.PHONY : run_network_module_basic_tests
-
-# fast build rule for target.
-run_network_module_basic_tests/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_network_module_basic_tests.dir/build.make CMakeFiles/run_network_module_basic_tests.dir/build
-.PHONY : run_network_module_basic_tests/fast
-
-#=============================================================================
-# Target rules for targets named run_network_module_sanitizer_tests
-
-# Build rule for target.
-run_network_module_sanitizer_tests: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 run_network_module_sanitizer_tests
-.PHONY : run_network_module_sanitizer_tests
-
-# fast build rule for target.
-run_network_module_sanitizer_tests/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_network_module_sanitizer_tests.dir/build.make CMakeFiles/run_network_module_sanitizer_tests.dir/build
-.PHONY : run_network_module_sanitizer_tests/fast
-
-#=============================================================================
-# Target rules for targets named run_network_module_coverage_tests
-
-# Build rule for target.
-run_network_module_coverage_tests: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 run_network_module_coverage_tests
-.PHONY : run_network_module_coverage_tests
-
-# fast build rule for target.
-run_network_module_coverage_tests/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_network_module_coverage_tests.dir/build.make CMakeFiles/run_network_module_coverage_tests.dir/build
-.PHONY : run_network_module_coverage_tests/fast
-
-#=============================================================================
-# Target rules for targets named run_network_module_all_tests
-
-# Build rule for target.
-run_network_module_all_tests: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 run_network_module_all_tests
-.PHONY : run_network_module_all_tests
-
-# fast build rule for target.
-run_network_module_all_tests/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_network_module_all_tests.dir/build.make CMakeFiles/run_network_module_all_tests.dir/build
-.PHONY : run_network_module_all_tests/fast
 
 home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp.o
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.o
@@ -362,38 +300,38 @@ home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_du
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.s
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.s
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o
 
 # target to build an object file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests.dir/build.make CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_asan.dir/build.make CMakeFiles/network_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_tsan.dir/build.make CMakeFiles/network_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests.dir/build.make CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_asan.dir/build.make CMakeFiles/network_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_tsan.dir/build.make CMakeFiles/network_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i
 
 # target to preprocess a source file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests.dir/build.make CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_asan.dir/build.make CMakeFiles/network_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_tsan.dir/build.make CMakeFiles/network_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests.dir/build.make CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_asan.dir/build.make CMakeFiles/network_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_tsan.dir/build.make CMakeFiles/network_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s
 
 # target to generate assembly for a file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests.dir/build.make CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_asan.dir/build.make CMakeFiles/network_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_tsan.dir/build.make CMakeFiles/network_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests.dir/build.make CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_asan.dir/build.make CMakeFiles/network_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_tsan.dir/build.make CMakeFiles/network_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/network_module_tests_coverage.dir/build.make CMakeFiles/network_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
 
 home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.cpp.o
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o
@@ -1360,11 +1298,6 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... test"
-	@echo "... run_network_module_all_tests"
-	@echo "... run_network_module_basic_tests"
-	@echo "... run_network_module_coverage_tests"
-	@echo "... run_network_module_sanitizer_tests"
 	@echo "... network_module_tests"
 	@echo "... network_module_tests_asan"
 	@echo "... network_module_tests_coverage"
@@ -1381,9 +1314,9 @@ help:
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.s"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.s"

@@ -31,8 +31,46 @@ public:
     }
     
     void TestBody() override {
-        // Basic audio quality test
-        EXPECT_TRUE(true);
+        // REAL audio quality test
+        WebRTCTestFramework::initialize();
+        
+        // Test audio stream quality
+        bool audioStarted = WebRTCTestFramework::startAudioStream();
+        EXPECT_TRUE(audioStarted) << "Audio stream start failed";
+        
+        // Test audio quality metrics
+        auto audioQuality = WebRTCTestFramework::measureAudioQuality();
+        EXPECT_TRUE(audioQuality.isValid) << "Audio quality measurement failed";
+        
+        // Test signal-to-noise ratio
+        EXPECT_GT(audioQuality.signalToNoiseRatio, 20.0) 
+            << "Signal-to-noise ratio too low: " << audioQuality.signalToNoiseRatio << " dB";
+        
+        // Test latency requirements
+        EXPECT_LT(audioQuality.latency, 100.0) 
+            << "Audio latency too high: " << audioQuality.latency << " ms";
+        
+        // Test jitter tolerance
+        EXPECT_LT(audioQuality.jitter, 20.0) 
+            << "Audio jitter too high: " << audioQuality.jitter << " ms";
+        
+        // Test packet loss tolerance
+        EXPECT_LT(audioQuality.packetLoss, 1.0) 
+            << "Packet loss too high: " << audioQuality.packetLoss << "%";
+        
+        // Test bandwidth efficiency
+        EXPECT_GT(audioQuality.bandwidth, 0.0) 
+            << "Bandwidth measurement failed";
+        EXPECT_LT(audioQuality.bandwidth, 128000.0) 
+            << "Bandwidth usage too high: " << audioQuality.bandwidth << " bps";
+        
+        // Test audio level monitoring
+        double audioLevel = WebRTCTestFramework::getAudioLevel();
+        EXPECT_GE(audioLevel, 0.0) << "Audio level should be non-negative";
+        EXPECT_LE(audioLevel, 100.0) << "Audio level should not exceed 100%";
+        
+        WebRTCTestFramework::stopAudioStream();
+        WebRTCTestFramework::cleanup();
     }
 };
 

@@ -61,7 +61,7 @@ private:
     std::string assessOrientationQuality(float gain_adjustment_db, float azimuth_offset, float elevation_offset);
     
     // Antenna-specific calculations
-    float calculateYagiOrientationEffect(const fgcom_antenna_pattern_characteristics& characteristics,
+    fgcom_antenna_orientation_result calculateYagiOrientationEffect(const fgcom_antenna_pattern_characteristics& characteristics,
                                        float azimuth_offset, float elevation_offset);
     float calculateDipoleOrientationEffect(const fgcom_vehicle_attitude& vehicle_attitude,
                                          const fgcom_antenna_orientation& antenna_orientation);

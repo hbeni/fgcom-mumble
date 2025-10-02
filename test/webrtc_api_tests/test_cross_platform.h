@@ -31,8 +31,46 @@ public:
     }
     
     void TestBody() override {
-        // Basic cross-platform test
-        EXPECT_TRUE(true);
+        // REAL cross-platform test
+        WebRTCTestFramework::initialize();
+        
+        // Test cross-platform connection
+        bool crossPlatformConnected = WebRTCTestFramework::establishConnection("test://crossplatform");
+        EXPECT_TRUE(crossPlatformConnected) << "Cross-platform connection failed";
+        
+        // Test cross-platform audio
+        bool audioStarted = WebRTCTestFramework::startAudioStream();
+        EXPECT_TRUE(audioStarted) << "Cross-platform audio failed";
+        
+        // Test cross-platform data transmission
+        auto testData = WebRTCTestFramework::createTestRadioData();
+        bool dataSent = WebRTCTestFramework::sendRadioData(testData);
+        EXPECT_TRUE(dataSent) << "Cross-platform data transmission failed";
+        
+        // Test cross-platform protocol compatibility
+        std::string udpData = WebRTCTestFramework::jsonToUDP(testData);
+        EXPECT_FALSE(udpData.empty()) << "Cross-platform protocol translation failed";
+        
+        auto convertedData = WebRTCTestFramework::udpToJSON(udpData);
+        EXPECT_EQ(convertedData.callsign, testData.callsign) 
+            << "Cross-platform round-trip conversion failed";
+        
+        // Test cross-platform performance
+        auto audioQuality = WebRTCTestFramework::measureAudioQuality();
+        EXPECT_TRUE(audioQuality.isValid) << "Cross-platform audio quality failed";
+        
+        double latency = WebRTCTestFramework::measureLatency();
+        EXPECT_LT(latency, 300.0) << "Cross-platform latency too high: " << latency << "ms";
+        
+        // Test cross-platform cleanup
+        WebRTCTestFramework::stopAudioStream();
+        WebRTCTestFramework::closeConnection();
+        
+        auto finalState = WebRTCTestFramework::getConnectionState();
+        EXPECT_EQ(finalState, WebRTCConnectionState::DISCONNECTED) 
+            << "Cross-platform cleanup failed";
+        
+        WebRTCTestFramework::cleanup();
     }
 };
 

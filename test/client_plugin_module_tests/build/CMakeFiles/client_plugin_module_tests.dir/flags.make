@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/../../client/mumble-plugin -I/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests
 
-CXX_FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic -O2 -g -DGTEST_HAS_PTHREAD=1
+CXX_FLAGS = -g -std=gnu++17 -Wall -Wextra -Wpedantic -O2 -g -DGTEST_HAS_PTHREAD=1
 

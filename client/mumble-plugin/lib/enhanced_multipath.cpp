@@ -115,6 +115,7 @@ std::vector<MultipathComponent> FGCom_EnhancedMultipath::generateMultipathCompon
 
 // Generate direct path
 MultipathComponent FGCom_EnhancedMultipath::generateDirectPath(const MultipathCalculationParams& params) {
+    (void)params; // Suppress unused parameter warning
     MultipathComponent component;
     component.amplitude = 1.0f;
     component.phase = 0.0f;
@@ -514,8 +515,10 @@ namespace EnhancedMultipathUtils {
     }
     
     // Calculate ground reflection coefficient
-    float calculateGroundReflectionCoefficient(float frequency_hz, float grazing_angle_deg, 
-                                             float ground_permittivity, float ground_conductivity) {
+    float calculateGroundReflectionCoefficient(float frequency_hz, float grazing_angle_deg,
+                                              float ground_permittivity, float ground_conductivity) {
+        (void)frequency_hz; // Suppress unused parameter warning
+        (void)ground_conductivity; // Suppress unused parameter warning
         float angle_rad = grazing_angle_deg * M_PI / 180.0f;
         float n = std::sqrt(ground_permittivity);
         float reflection_coeff = (std::sin(angle_rad) - n) / (std::sin(angle_rad) + n);
@@ -524,18 +527,21 @@ namespace EnhancedMultipathUtils {
     
     // Calculate building scattering
     float calculateBuildingScattering(float frequency_hz, float building_density, float distance_km) {
+        (void)frequency_hz; // Suppress unused parameter warning
         float scattering_loss = 20.0f * std::log10(1.0f + building_density * distance_km);
         return scattering_loss;
     }
     
     // Calculate vegetation attenuation
     float calculateVegetationAttenuation(float frequency_hz, float vegetation_density, float path_length_km) {
+        (void)frequency_hz; // Suppress unused parameter warning
         float attenuation_db = vegetation_density * path_length_km * 0.1f;
         return attenuation_db;
     }
     
     // Calculate vehicle scattering
     float calculateVehicleScattering(float frequency_hz, float vehicle_density, float distance_km) {
+        (void)frequency_hz; // Suppress unused parameter warning
         float scattering_loss = 10.0f * std::log10(1.0f + vehicle_density * distance_km);
         return scattering_loss;
     }

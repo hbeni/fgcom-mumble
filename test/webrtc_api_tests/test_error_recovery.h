@@ -31,8 +31,47 @@ public:
     }
     
     void TestBody() override {
-        // Basic error recovery test
-        EXPECT_TRUE(true);
+        // REAL error recovery test
+        WebRTCTestFramework::initialize();
+        
+        // Test connection establishment
+        bool connectionEstablished = WebRTCTestFramework::establishConnection("test://errorrecovery");
+        EXPECT_TRUE(connectionEstablished) << "Initial connection failed";
+        
+        // Test audio stream
+        bool audioStarted = WebRTCTestFramework::startAudioStream();
+        EXPECT_TRUE(audioStarted) << "Audio stream start failed";
+        
+        // Test error simulation
+        WebRTCTestFramework::simulateNetworkError();
+        
+        // Test connection recovery
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        bool reconnected = WebRTCTestFramework::establishConnection("test://errorrecovery");
+        EXPECT_TRUE(reconnected) << "Connection recovery failed";
+        
+        // Test audio recovery
+        bool audioRecovered = WebRTCTestFramework::startAudioStream();
+        EXPECT_TRUE(audioRecovered) << "Audio recovery failed";
+        
+        // Test data transmission after recovery
+        auto testData = WebRTCTestFramework::createTestRadioData();
+        bool dataSent = WebRTCTestFramework::sendRadioData(testData);
+        EXPECT_TRUE(dataSent) << "Data transmission after recovery failed";
+        
+        // Test performance after recovery
+        auto audioQuality = WebRTCTestFramework::measureAudioQuality();
+        EXPECT_TRUE(audioQuality.isValid) << "Audio quality after recovery failed";
+        
+        // Test final cleanup
+        WebRTCTestFramework::stopAudioStream();
+        WebRTCTestFramework::closeConnection();
+        
+        auto finalState = WebRTCTestFramework::getConnectionState();
+        EXPECT_EQ(finalState, WebRTCConnectionState::DISCONNECTED) 
+            << "Final cleanup failed";
+        
+        WebRTCTestFramework::cleanup();
     }
 };
 

@@ -362,38 +362,38 @@ home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_du
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_coverage.dir/build.make CMakeFiles/client_plugin_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.s
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.s
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o
 
 # target to build an object file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests.dir/build.make CMakeFiles/client_plugin_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_asan.dir/build.make CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_tsan.dir/build.make CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_coverage.dir/build.make CMakeFiles/client_plugin_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests.dir/build.make CMakeFiles/client_plugin_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_asan.dir/build.make CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_tsan.dir/build.make CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_coverage.dir/build.make CMakeFiles/client_plugin_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i
 
 # target to preprocess a source file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests.dir/build.make CMakeFiles/client_plugin_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_asan.dir/build.make CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_tsan.dir/build.make CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_coverage.dir/build.make CMakeFiles/client_plugin_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests.dir/build.make CMakeFiles/client_plugin_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_asan.dir/build.make CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_tsan.dir/build.make CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_coverage.dir/build.make CMakeFiles/client_plugin_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s
 
 # target to generate assembly for a file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests.dir/build.make CMakeFiles/client_plugin_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_asan.dir/build.make CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_tsan.dir/build.make CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_coverage.dir/build.make CMakeFiles/client_plugin_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests.dir/build.make CMakeFiles/client_plugin_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_asan.dir/build.make CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_tsan.dir/build.make CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/client_plugin_module_tests_coverage.dir/build.make CMakeFiles/client_plugin_module_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
 
 home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.cpp.o
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o
@@ -1282,9 +1282,9 @@ help:
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.s"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.s"

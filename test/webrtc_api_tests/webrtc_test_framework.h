@@ -94,12 +94,21 @@ public:
     static bool establishConnection(const std::string& serverUrl);
     static void closeConnection();
     static WebRTCConnectionState getConnectionState();
+    static bool handleIceCandidates();
+    static bool createDataChannel();
+    static bool completeSignaling();
     
     // Audio testing
     static bool startAudioStream();
     static void stopAudioStream();
     static AudioQualityMetrics measureAudioQuality();
     static bool validateAudioQuality(const AudioQualityMetrics& metrics);
+    static bool testAudioCodec();
+    static double getAudioLevel();
+    static bool testAudioProcessing();
+    static bool testEchoCancellation();
+    static bool testNoiseSuppression();
+    static bool testAutomaticGainControl();
     
     // Data transmission testing
     static bool sendRadioData(const RadioData& data);
@@ -107,9 +116,9 @@ public:
     static bool validateRadioData(const RadioData& data);
     
     // Protocol translation testing
-    static std::string jsonToUDP(const std::string& jsonData);
-    static std::string udpToJSON(const std::string& udpData);
-    static bool validateProtocolTranslation(const std::string& input, const std::string& output);
+    static std::string jsonToUDP(const RadioData& data);
+    static RadioData udpToJSON(const std::string& udpData);
+    static bool validateProtocolTranslation(const RadioData& original, const std::string& udpData);
     
     // Performance testing
     static double measureLatency();
@@ -221,16 +230,16 @@ protected:
         WebRTCTestFramework::cleanup();
     }
     
-    std::string translateJSONToUDP(const std::string& jsonData) {
-        return WebRTCTestFramework::jsonToUDP(jsonData);
+    std::string translateJSONToUDP(const RadioData& data) {
+        return WebRTCTestFramework::jsonToUDP(data);
     }
     
-    std::string translateUDPToJSON(const std::string& udpData) {
+    RadioData translateUDPToJSON(const std::string& udpData) {
         return WebRTCTestFramework::udpToJSON(udpData);
     }
     
-    bool validateTranslation(const std::string& input, const std::string& output) {
-        return WebRTCTestFramework::validateProtocolTranslation(input, output);
+    bool validateTranslation(const RadioData& original, const std::string& udpData) {
+        return WebRTCTestFramework::validateProtocolTranslation(original, udpData);
     }
 };
 

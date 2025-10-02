@@ -284,6 +284,8 @@ fgcom_radiowave_signal FGCom_radiowaveModel_VHF::getSignal(double lat1, double l
     if (ss > 0.0f) {
         double theta_deg = degreeAboveHorizon(dist, alt2-alt1);  // Elevation angle
         double phi_deg = getDirection(lat1, lon1, lat2, lon2);   // Azimuth angle
+        (void)theta_deg; // Suppress unused variable warning
+        (void)phi_deg; // Suppress unused variable warning
         
         // Apply atmospheric ducting effects if initialized
         if (!ducting_initialized) {
@@ -338,6 +340,7 @@ fgcom_radiowave_signal FGCom_radiowaveModel_VHF::getSignal(double lat1, double l
 
 float FGCom_radiowaveModel_VHF::calcPowerDistance(float power_watts, double distance_km, 
                                   double altitude_m, double frequency_mhz) {
+    (void)altitude_m; // Suppress unused parameter warning
     // VHF propagation model with power and distance calculation
     if (power_watts <= 0.0 || distance_km <= 0.0) {
         return 0.0f;

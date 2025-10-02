@@ -299,7 +299,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/errno.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl.h \
-  /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -327,9 +326,7 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sigaction.h \
   /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
@@ -345,7 +342,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
   /usr/include/x86_64-linux-gnu/bits/stat.h \
@@ -354,15 +350,8 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -411,14 +400,10 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
@@ -667,20 +652,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -718,8 +696,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -944,20 +920,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -995,8 +964,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -1204,20 +1171,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -1255,8 +1215,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -1281,45 +1239,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
-CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Param.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.cpp \
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/PluginComponents_v_1_0_x.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/noise/phil_burk_19990905_patest_pink.c \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Bessel.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Butterworth.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Cascade.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevI.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevII.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Common.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Custom.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Elliptic.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Layout.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Legendre.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/MathSupplement.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Params.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/PoleFilter.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/SmoothedFilter.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Types.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Utilities.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
-  /usr/include/assert.h \
   /usr/include/c++/13/algorithm \
   /usr/include/c++/13/array \
   /usr/include/c++/13/backward/auto_ptr.h \
@@ -1339,7 +1265,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/c++/13/bits/char_traits.h \
   /usr/include/c++/13/bits/charconv.h \
   /usr/include/c++/13/bits/chrono.h \
-  /usr/include/c++/13/bits/codecvt.h \
   /usr/include/c++/13/bits/concept_check.h \
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
@@ -1359,11 +1284,8 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/c++/13/bits/istream.tcc \
   /usr/include/c++/13/bits/locale_classes.h \
   /usr/include/c++/13/bits/locale_classes.tcc \
-  /usr/include/c++/13/bits/locale_conv.h \
   /usr/include/c++/13/bits/locale_facets.h \
   /usr/include/c++/13/bits/locale_facets.tcc \
-  /usr/include/c++/13/bits/locale_facets_nonio.h \
-  /usr/include/c++/13/bits/locale_facets_nonio.tcc \
   /usr/include/c++/13/bits/localefwd.h \
   /usr/include/c++/13/bits/memory_resource.h \
   /usr/include/c++/13/bits/memoryfwd.h \
@@ -1377,7 +1299,8 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/c++/13/bits/postypes.h \
   /usr/include/c++/13/bits/predefined_ops.h \
   /usr/include/c++/13/bits/ptr_traits.h \
-  /usr/include/c++/13/bits/quoted_string.h \
+  /usr/include/c++/13/bits/random.h \
+  /usr/include/c++/13/bits/random.tcc \
   /usr/include/c++/13/bits/range_access.h \
   /usr/include/c++/13/bits/refwrap.h \
   /usr/include/c++/13/bits/requires_hosted.h \
@@ -1398,6 +1321,7 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/c++/13/bits/stl_iterator.h \
   /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
+  /usr/include/c++/13/bits/stl_numeric.h \
   /usr/include/c++/13/bits/stl_pair.h \
   /usr/include/c++/13/bits/stl_raw_storage_iter.h \
   /usr/include/c++/13/bits/stl_tempbuf.h \
@@ -1415,10 +1339,8 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/c++/13/bits/uses_allocator_args.h \
   /usr/include/c++/13/bits/utility.h \
   /usr/include/c++/13/bits/vector.tcc \
-  /usr/include/c++/13/cassert \
   /usr/include/c++/13/cctype \
   /usr/include/c++/13/cerrno \
-  /usr/include/c++/13/cfloat \
   /usr/include/c++/13/chrono \
   /usr/include/c++/13/clocale \
   /usr/include/c++/13/cmath \
@@ -1428,7 +1350,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/c++/13/cstdint \
   /usr/include/c++/13/cstdio \
   /usr/include/c++/13/cstdlib \
-  /usr/include/c++/13/cstring \
   /usr/include/c++/13/ctime \
   /usr/include/c++/13/cwchar \
   /usr/include/c++/13/cwctype \
@@ -1444,26 +1365,24 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/c++/13/ext/type_traits.h \
   /usr/include/c++/13/functional \
   /usr/include/c++/13/initializer_list \
-  /usr/include/c++/13/iomanip \
   /usr/include/c++/13/ios \
   /usr/include/c++/13/iosfwd \
-  /usr/include/c++/13/iostream \
   /usr/include/c++/13/istream \
   /usr/include/c++/13/limits \
-  /usr/include/c++/13/locale \
-  /usr/include/c++/13/math.h \
   /usr/include/c++/13/memory \
   /usr/include/c++/13/mutex \
   /usr/include/c++/13/new \
+  /usr/include/c++/13/numeric \
   /usr/include/c++/13/ostream \
   /usr/include/c++/13/pstl/execution_defs.h \
   /usr/include/c++/13/pstl/glue_algorithm_defs.h \
   /usr/include/c++/13/pstl/glue_memory_defs.h \
+  /usr/include/c++/13/pstl/glue_numeric_defs.h \
   /usr/include/c++/13/pstl/pstl_config.h \
+  /usr/include/c++/13/random \
   /usr/include/c++/13/ratio \
   /usr/include/c++/13/sstream \
   /usr/include/c++/13/stdexcept \
-  /usr/include/c++/13/stdlib.h \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
   /usr/include/c++/13/string_view \
@@ -1490,7 +1409,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/errno.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
-  /usr/include/libintl.h \
   /usr/include/linux/errno.h \
   /usr/include/locale.h \
   /usr/include/math.h \
@@ -1500,8 +1418,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
-  /usr/include/string.h \
-  /usr/include/strings.h \
   /usr/include/time.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
@@ -1530,22 +1446,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -1583,8 +1490,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -1597,16 +1502,14 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
-  /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/opt_random.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
-  /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
   /usr/include/x86_64-linux-gnu/sys/cdefs.h \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
-  /usr/lib/gcc/x86_64-linux-gnu/13/include/float.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
@@ -1797,20 +1700,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -1848,8 +1744,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -2074,20 +1968,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -2125,8 +2012,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -2383,22 +2268,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -2433,14 +2309,10 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -2714,26 +2586,16 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -2770,14 +2632,339 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
+  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/c++allocator.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/c++locale.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/cpu_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_base.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
+  /usr/include/x86_64-linux-gnu/sys/socket.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_UDPServer.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_UDPServer.cpp \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/globalVars.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_UDPClient.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_UDPServer.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/MumbleAPI_v_1_0_x.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/MumblePlugin_v_1_0_x.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/PluginComponents_v_1_0_x.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.h \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.h \
+  /usr/include/alloca.h \
+  /usr/include/arpa/inet.h \
+  /usr/include/asm-generic/bitsperlong.h \
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/asm-generic/posix_types.h \
+  /usr/include/asm-generic/socket.h \
+  /usr/include/asm-generic/sockios.h \
+  /usr/include/c++/13/algorithm \
+  /usr/include/c++/13/backward/binders.h \
+  /usr/include/c++/13/bit \
+  /usr/include/c++/13/bits/algorithmfwd.h \
+  /usr/include/c++/13/bits/alloc_traits.h \
+  /usr/include/c++/13/bits/allocated_ptr.h \
+  /usr/include/c++/13/bits/allocator.h \
+  /usr/include/c++/13/bits/basic_ios.h \
+  /usr/include/c++/13/bits/basic_ios.tcc \
+  /usr/include/c++/13/bits/basic_string.h \
+  /usr/include/c++/13/bits/basic_string.tcc \
+  /usr/include/c++/13/bits/char_traits.h \
+  /usr/include/c++/13/bits/charconv.h \
+  /usr/include/c++/13/bits/chrono.h \
+  /usr/include/c++/13/bits/codecvt.h \
+  /usr/include/c++/13/bits/concept_check.h \
+  /usr/include/c++/13/bits/cpp_type_traits.h \
+  /usr/include/c++/13/bits/cxxabi_forced.h \
+  /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/deque.tcc \
+  /usr/include/c++/13/bits/erase_if.h \
+  /usr/include/c++/13/bits/exception.h \
+  /usr/include/c++/13/bits/exception_defines.h \
+  /usr/include/c++/13/bits/exception_ptr.h \
+  /usr/include/c++/13/bits/functexcept.h \
+  /usr/include/c++/13/bits/functional_hash.h \
+  /usr/include/c++/13/bits/hash_bytes.h \
+  /usr/include/c++/13/bits/invoke.h \
+  /usr/include/c++/13/bits/ios_base.h \
+  /usr/include/c++/13/bits/istream.tcc \
+  /usr/include/c++/13/bits/locale_classes.h \
+  /usr/include/c++/13/bits/locale_classes.tcc \
+  /usr/include/c++/13/bits/locale_conv.h \
+  /usr/include/c++/13/bits/locale_facets.h \
+  /usr/include/c++/13/bits/locale_facets.tcc \
+  /usr/include/c++/13/bits/locale_facets_nonio.h \
+  /usr/include/c++/13/bits/locale_facets_nonio.tcc \
+  /usr/include/c++/13/bits/localefwd.h \
+  /usr/include/c++/13/bits/memory_resource.h \
+  /usr/include/c++/13/bits/memoryfwd.h \
+  /usr/include/c++/13/bits/move.h \
+  /usr/include/c++/13/bits/nested_exception.h \
+  /usr/include/c++/13/bits/new_allocator.h \
+  /usr/include/c++/13/bits/node_handle.h \
+  /usr/include/c++/13/bits/ostream.tcc \
+  /usr/include/c++/13/bits/ostream_insert.h \
+  /usr/include/c++/13/bits/parse_numbers.h \
+  /usr/include/c++/13/bits/postypes.h \
+  /usr/include/c++/13/bits/predefined_ops.h \
+  /usr/include/c++/13/bits/ptr_traits.h \
+  /usr/include/c++/13/bits/range_access.h \
+  /usr/include/c++/13/bits/refwrap.h \
+  /usr/include/c++/13/bits/regex.h \
+  /usr/include/c++/13/bits/regex.tcc \
+  /usr/include/c++/13/bits/regex_automaton.h \
+  /usr/include/c++/13/bits/regex_automaton.tcc \
+  /usr/include/c++/13/bits/regex_compiler.h \
+  /usr/include/c++/13/bits/regex_compiler.tcc \
+  /usr/include/c++/13/bits/regex_constants.h \
+  /usr/include/c++/13/bits/regex_error.h \
+  /usr/include/c++/13/bits/regex_executor.h \
+  /usr/include/c++/13/bits/regex_executor.tcc \
+  /usr/include/c++/13/bits/regex_scanner.h \
+  /usr/include/c++/13/bits/regex_scanner.tcc \
+  /usr/include/c++/13/bits/requires_hosted.h \
+  /usr/include/c++/13/bits/shared_ptr.h \
+  /usr/include/c++/13/bits/shared_ptr_base.h \
+  /usr/include/c++/13/bits/specfun.h \
+  /usr/include/c++/13/bits/sstream.tcc \
+  /usr/include/c++/13/bits/std_abs.h \
+  /usr/include/c++/13/bits/std_function.h \
+  /usr/include/c++/13/bits/std_mutex.h \
+  /usr/include/c++/13/bits/std_thread.h \
+  /usr/include/c++/13/bits/stl_algo.h \
+  /usr/include/c++/13/bits/stl_algobase.h \
+  /usr/include/c++/13/bits/stl_bvector.h \
+  /usr/include/c++/13/bits/stl_construct.h \
+  /usr/include/c++/13/bits/stl_deque.h \
+  /usr/include/c++/13/bits/stl_function.h \
+  /usr/include/c++/13/bits/stl_heap.h \
+  /usr/include/c++/13/bits/stl_iterator.h \
+  /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/13/bits/stl_iterator_base_types.h \
+  /usr/include/c++/13/bits/stl_map.h \
+  /usr/include/c++/13/bits/stl_multimap.h \
+  /usr/include/c++/13/bits/stl_multiset.h \
+  /usr/include/c++/13/bits/stl_pair.h \
+  /usr/include/c++/13/bits/stl_set.h \
+  /usr/include/c++/13/bits/stl_stack.h \
+  /usr/include/c++/13/bits/stl_tempbuf.h \
+  /usr/include/c++/13/bits/stl_tree.h \
+  /usr/include/c++/13/bits/stl_uninitialized.h \
+  /usr/include/c++/13/bits/stl_vector.h \
+  /usr/include/c++/13/bits/streambuf.tcc \
+  /usr/include/c++/13/bits/streambuf_iterator.h \
+  /usr/include/c++/13/bits/string_view.tcc \
+  /usr/include/c++/13/bits/stringfwd.h \
+  /usr/include/c++/13/bits/this_thread_sleep.h \
+  /usr/include/c++/13/bits/uniform_int_dist.h \
+  /usr/include/c++/13/bits/unique_lock.h \
+  /usr/include/c++/13/bits/unique_ptr.h \
+  /usr/include/c++/13/bits/uses_allocator.h \
+  /usr/include/c++/13/bits/uses_allocator_args.h \
+  /usr/include/c++/13/bits/utility.h \
+  /usr/include/c++/13/bits/vector.tcc \
+  /usr/include/c++/13/bitset \
+  /usr/include/c++/13/cctype \
+  /usr/include/c++/13/cerrno \
+  /usr/include/c++/13/clocale \
+  /usr/include/c++/13/cmath \
+  /usr/include/c++/13/cstddef \
+  /usr/include/c++/13/cstdint \
+  /usr/include/c++/13/cstdio \
+  /usr/include/c++/13/cstdlib \
+  /usr/include/c++/13/cstring \
+  /usr/include/c++/13/ctime \
+  /usr/include/c++/13/cwchar \
+  /usr/include/c++/13/cwctype \
+  /usr/include/c++/13/debug/assertions.h \
+  /usr/include/c++/13/debug/debug.h \
+  /usr/include/c++/13/deque \
+  /usr/include/c++/13/exception \
+  /usr/include/c++/13/ext/aligned_buffer.h \
+  /usr/include/c++/13/ext/alloc_traits.h \
+  /usr/include/c++/13/ext/atomicity.h \
+  /usr/include/c++/13/ext/concurrence.h \
+  /usr/include/c++/13/ext/numeric_traits.h \
+  /usr/include/c++/13/ext/string_conversions.h \
+  /usr/include/c++/13/ext/type_traits.h \
+  /usr/include/c++/13/initializer_list \
+  /usr/include/c++/13/ios \
+  /usr/include/c++/13/iosfwd \
+  /usr/include/c++/13/iostream \
+  /usr/include/c++/13/istream \
+  /usr/include/c++/13/limits \
+  /usr/include/c++/13/locale \
+  /usr/include/c++/13/map \
+  /usr/include/c++/13/math.h \
+  /usr/include/c++/13/mutex \
+  /usr/include/c++/13/new \
+  /usr/include/c++/13/ostream \
+  /usr/include/c++/13/pstl/execution_defs.h \
+  /usr/include/c++/13/pstl/glue_algorithm_defs.h \
+  /usr/include/c++/13/pstl/pstl_config.h \
+  /usr/include/c++/13/ratio \
+  /usr/include/c++/13/regex \
+  /usr/include/c++/13/set \
+  /usr/include/c++/13/sstream \
+  /usr/include/c++/13/stack \
+  /usr/include/c++/13/stdexcept \
+  /usr/include/c++/13/stdlib.h \
+  /usr/include/c++/13/streambuf \
+  /usr/include/c++/13/string \
+  /usr/include/c++/13/string_view \
+  /usr/include/c++/13/system_error \
+  /usr/include/c++/13/thread \
+  /usr/include/c++/13/tr1/bessel_function.tcc \
+  /usr/include/c++/13/tr1/beta_function.tcc \
+  /usr/include/c++/13/tr1/ell_integral.tcc \
+  /usr/include/c++/13/tr1/exp_integral.tcc \
+  /usr/include/c++/13/tr1/gamma.tcc \
+  /usr/include/c++/13/tr1/hypergeometric.tcc \
+  /usr/include/c++/13/tr1/legendre_function.tcc \
+  /usr/include/c++/13/tr1/modified_bessel_func.tcc \
+  /usr/include/c++/13/tr1/poly_hermite.tcc \
+  /usr/include/c++/13/tr1/poly_laguerre.tcc \
+  /usr/include/c++/13/tr1/riemann_zeta.tcc \
+  /usr/include/c++/13/tr1/special_function_util.h \
+  /usr/include/c++/13/tuple \
+  /usr/include/c++/13/type_traits \
+  /usr/include/c++/13/typeinfo \
+  /usr/include/c++/13/vector \
+  /usr/include/ctype.h \
+  /usr/include/endian.h \
+  /usr/include/errno.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/libintl.h \
+  /usr/include/linux/close_range.h \
+  /usr/include/linux/errno.h \
+  /usr/include/linux/posix_types.h \
+  /usr/include/linux/stddef.h \
+  /usr/include/locale.h \
+  /usr/include/math.h \
+  /usr/include/netinet/in.h \
+  /usr/include/pthread.h \
+  /usr/include/sched.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/time.h \
+  /usr/include/unistd.h \
+  /usr/include/wchar.h \
+  /usr/include/wctype.h \
+  /usr/include/x86_64-linux-gnu/asm/bitsperlong.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/x86_64-linux-gnu/asm/posix_types.h \
+  /usr/include/x86_64-linux-gnu/asm/posix_types_64.h \
+  /usr/include/x86_64-linux-gnu/asm/socket.h \
+  /usr/include/x86_64-linux-gnu/asm/sockios.h \
+  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/confname.h \
+  /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
+  /usr/include/x86_64-linux-gnu/bits/environments.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/x86_64-linux-gnu/bits/in.h \
+  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+  /usr/include/x86_64-linux-gnu/bits/locale.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/x86_64-linux-gnu/bits/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+  /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
+  /usr/include/x86_64-linux-gnu/bits/socket.h \
+  /usr/include/x86_64-linux-gnu/bits/socket_type.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
+  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/timex.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+  /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -3058,26 +3245,16 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -3114,14 +3291,10 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -3354,20 +3527,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -3405,8 +3571,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -3634,20 +3798,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -3686,8 +3843,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
@@ -3931,20 +4086,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -3982,8 +4130,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -4136,17 +4282,10 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -4178,8 +4317,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/c++allocator.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
@@ -4193,6 +4330,234 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/sys/types.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
+
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_config.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_config.cpp \
+  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_config.h \
+  /usr/include/alloca.h \
+  /usr/include/asm-generic/errno-base.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/c++/13/algorithm \
+  /usr/include/c++/13/backward/auto_ptr.h \
+  /usr/include/c++/13/backward/binders.h \
+  /usr/include/c++/13/bit \
+  /usr/include/c++/13/bits/algorithmfwd.h \
+  /usr/include/c++/13/bits/align.h \
+  /usr/include/c++/13/bits/alloc_traits.h \
+  /usr/include/c++/13/bits/allocated_ptr.h \
+  /usr/include/c++/13/bits/allocator.h \
+  /usr/include/c++/13/bits/atomic_base.h \
+  /usr/include/c++/13/bits/atomic_lockfree_defines.h \
+  /usr/include/c++/13/bits/basic_ios.h \
+  /usr/include/c++/13/bits/basic_ios.tcc \
+  /usr/include/c++/13/bits/basic_string.h \
+  /usr/include/c++/13/bits/basic_string.tcc \
+  /usr/include/c++/13/bits/char_traits.h \
+  /usr/include/c++/13/bits/charconv.h \
+  /usr/include/c++/13/bits/codecvt.h \
+  /usr/include/c++/13/bits/concept_check.h \
+  /usr/include/c++/13/bits/cpp_type_traits.h \
+  /usr/include/c++/13/bits/cxxabi_forced.h \
+  /usr/include/c++/13/bits/cxxabi_init_exception.h \
+  /usr/include/c++/13/bits/erase_if.h \
+  /usr/include/c++/13/bits/exception.h \
+  /usr/include/c++/13/bits/exception_defines.h \
+  /usr/include/c++/13/bits/exception_ptr.h \
+  /usr/include/c++/13/bits/fstream.tcc \
+  /usr/include/c++/13/bits/functexcept.h \
+  /usr/include/c++/13/bits/functional_hash.h \
+  /usr/include/c++/13/bits/hash_bytes.h \
+  /usr/include/c++/13/bits/invoke.h \
+  /usr/include/c++/13/bits/ios_base.h \
+  /usr/include/c++/13/bits/istream.tcc \
+  /usr/include/c++/13/bits/locale_classes.h \
+  /usr/include/c++/13/bits/locale_classes.tcc \
+  /usr/include/c++/13/bits/locale_facets.h \
+  /usr/include/c++/13/bits/locale_facets.tcc \
+  /usr/include/c++/13/bits/localefwd.h \
+  /usr/include/c++/13/bits/memory_resource.h \
+  /usr/include/c++/13/bits/memoryfwd.h \
+  /usr/include/c++/13/bits/move.h \
+  /usr/include/c++/13/bits/nested_exception.h \
+  /usr/include/c++/13/bits/new_allocator.h \
+  /usr/include/c++/13/bits/node_handle.h \
+  /usr/include/c++/13/bits/ostream.tcc \
+  /usr/include/c++/13/bits/ostream_insert.h \
+  /usr/include/c++/13/bits/postypes.h \
+  /usr/include/c++/13/bits/predefined_ops.h \
+  /usr/include/c++/13/bits/ptr_traits.h \
+  /usr/include/c++/13/bits/range_access.h \
+  /usr/include/c++/13/bits/refwrap.h \
+  /usr/include/c++/13/bits/requires_hosted.h \
+  /usr/include/c++/13/bits/shared_ptr.h \
+  /usr/include/c++/13/bits/shared_ptr_atomic.h \
+  /usr/include/c++/13/bits/shared_ptr_base.h \
+  /usr/include/c++/13/bits/sstream.tcc \
+  /usr/include/c++/13/bits/std_abs.h \
+  /usr/include/c++/13/bits/stl_algo.h \
+  /usr/include/c++/13/bits/stl_algobase.h \
+  /usr/include/c++/13/bits/stl_construct.h \
+  /usr/include/c++/13/bits/stl_function.h \
+  /usr/include/c++/13/bits/stl_heap.h \
+  /usr/include/c++/13/bits/stl_iterator.h \
+  /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/13/bits/stl_iterator_base_types.h \
+  /usr/include/c++/13/bits/stl_map.h \
+  /usr/include/c++/13/bits/stl_multimap.h \
+  /usr/include/c++/13/bits/stl_pair.h \
+  /usr/include/c++/13/bits/stl_raw_storage_iter.h \
+  /usr/include/c++/13/bits/stl_tempbuf.h \
+  /usr/include/c++/13/bits/stl_tree.h \
+  /usr/include/c++/13/bits/stl_uninitialized.h \
+  /usr/include/c++/13/bits/streambuf.tcc \
+  /usr/include/c++/13/bits/streambuf_iterator.h \
+  /usr/include/c++/13/bits/string_view.tcc \
+  /usr/include/c++/13/bits/stringfwd.h \
+  /usr/include/c++/13/bits/uniform_int_dist.h \
+  /usr/include/c++/13/bits/unique_ptr.h \
+  /usr/include/c++/13/bits/uses_allocator.h \
+  /usr/include/c++/13/bits/uses_allocator_args.h \
+  /usr/include/c++/13/bits/utility.h \
+  /usr/include/c++/13/cctype \
+  /usr/include/c++/13/cerrno \
+  /usr/include/c++/13/clocale \
+  /usr/include/c++/13/cstddef \
+  /usr/include/c++/13/cstdio \
+  /usr/include/c++/13/cstdlib \
+  /usr/include/c++/13/cwchar \
+  /usr/include/c++/13/cwctype \
+  /usr/include/c++/13/debug/assertions.h \
+  /usr/include/c++/13/debug/debug.h \
+  /usr/include/c++/13/exception \
+  /usr/include/c++/13/ext/aligned_buffer.h \
+  /usr/include/c++/13/ext/alloc_traits.h \
+  /usr/include/c++/13/ext/atomicity.h \
+  /usr/include/c++/13/ext/concurrence.h \
+  /usr/include/c++/13/ext/numeric_traits.h \
+  /usr/include/c++/13/ext/string_conversions.h \
+  /usr/include/c++/13/ext/type_traits.h \
+  /usr/include/c++/13/fstream \
+  /usr/include/c++/13/initializer_list \
+  /usr/include/c++/13/ios \
+  /usr/include/c++/13/iosfwd \
+  /usr/include/c++/13/iostream \
+  /usr/include/c++/13/istream \
+  /usr/include/c++/13/map \
+  /usr/include/c++/13/memory \
+  /usr/include/c++/13/new \
+  /usr/include/c++/13/ostream \
+  /usr/include/c++/13/pstl/execution_defs.h \
+  /usr/include/c++/13/pstl/glue_algorithm_defs.h \
+  /usr/include/c++/13/pstl/glue_memory_defs.h \
+  /usr/include/c++/13/pstl/pstl_config.h \
+  /usr/include/c++/13/sstream \
+  /usr/include/c++/13/stdexcept \
+  /usr/include/c++/13/streambuf \
+  /usr/include/c++/13/string \
+  /usr/include/c++/13/string_view \
+  /usr/include/c++/13/system_error \
+  /usr/include/c++/13/tuple \
+  /usr/include/c++/13/type_traits \
+  /usr/include/c++/13/typeinfo \
+  /usr/include/ctype.h \
+  /usr/include/endian.h \
+  /usr/include/errno.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/linux/errno.h \
+  /usr/include/locale.h \
+  /usr/include/pthread.h \
+  /usr/include/sched.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/time.h \
+  /usr/include/wchar.h \
+  /usr/include/wctype.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
+  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
+  /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/locale.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
+  /usr/include/x86_64-linux-gnu/bits/sched.h \
+  /usr/include/x86_64-linux-gnu/bits/select.h \
+  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
+  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
+  /usr/include/x86_64-linux-gnu/bits/time.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/timex.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
+  /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/basic_file.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/c++allocator.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/c++io.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/c++locale.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/cpu_defines.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_base.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/include/x86_64-linux-gnu/sys/select.h \
+  /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
+  /usr/include/x86_64-linux-gnu/sys/types.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
 CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cpp \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/advanced_modulation.h \
@@ -4447,20 +4812,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -4498,8 +4856,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -4764,20 +5120,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -4815,8 +5164,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -5082,20 +5429,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -5133,8 +5473,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -5397,20 +5735,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -5448,8 +5779,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -5714,20 +6043,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -5765,8 +6087,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -6032,20 +6352,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -6083,8 +6396,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -6347,20 +6658,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -6398,8 +6702,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -6666,20 +6968,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -6717,8 +7012,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -6986,20 +7279,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -7037,8 +7323,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -7302,20 +7586,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -7353,8 +7630,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -7619,20 +7894,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -7670,8 +7938,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -7938,20 +8204,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -7989,8 +8248,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -8241,20 +8498,13 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
@@ -8292,8 +8542,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
@@ -8620,7 +8868,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/errno.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl.h \
-  /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -8648,9 +8895,7 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sigaction.h \
   /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
@@ -8666,7 +8911,6 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
   /usr/include/x86_64-linux-gnu/bits/stat.h \
@@ -8675,15 +8919,8 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -8732,14 +8969,10 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
@@ -9091,7 +9324,6 @@ CMakeFiles/network_module_tests.dir/test_network_module_main.cpp.o: /home/haaken
   /usr/include/x86_64-linux-gnu/bits/errno.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl.h \
-  /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -9111,7 +9343,6 @@ CMakeFiles/network_module_tests.dir/test_network_module_main.cpp.o: /home/haaken
   /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
   /usr/include/x86_64-linux-gnu/bits/poll.h \
-  /usr/include/x86_64-linux-gnu/bits/poll2.h \
   /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
@@ -9119,9 +9350,7 @@ CMakeFiles/network_module_tests.dir/test_network_module_main.cpp.o: /home/haaken
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sigaction.h \
   /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
@@ -9137,7 +9366,6 @@ CMakeFiles/network_module_tests.dir/test_network_module_main.cpp.o: /home/haaken
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
   /usr/include/x86_64-linux-gnu/bits/stat.h \
@@ -9146,15 +9374,8 @@ CMakeFiles/network_module_tests.dir/test_network_module_main.cpp.o: /home/haaken
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -9203,14 +9424,10 @@ CMakeFiles/network_module_tests.dir/test_network_module_main.cpp.o: /home/haaken
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
@@ -9258,7 +9475,7 @@ CMakeFiles/network_module_tests.dir/test_rest_api.cpp.o: /home/haaken/github-pro
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/MumblePlugin_v_1_0_x.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/PluginComponents_v_1_0_x.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.h \
-  /home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.cpp \
+  /home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.h \
   /usr/include/alloca.h \
   /usr/include/arpa/inet.h \
   /usr/include/asm-generic/bitsperlong.h \
@@ -9566,7 +9783,6 @@ CMakeFiles/network_module_tests.dir/test_rest_api.cpp.o: /home/haaken/github-pro
   /usr/include/x86_64-linux-gnu/bits/errno.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl.h \
-  /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -9586,7 +9802,6 @@ CMakeFiles/network_module_tests.dir/test_rest_api.cpp.o: /home/haaken/github-pro
   /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
   /usr/include/x86_64-linux-gnu/bits/poll.h \
-  /usr/include/x86_64-linux-gnu/bits/poll2.h \
   /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
@@ -9594,9 +9809,7 @@ CMakeFiles/network_module_tests.dir/test_rest_api.cpp.o: /home/haaken/github-pro
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sigaction.h \
   /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
@@ -9612,7 +9825,6 @@ CMakeFiles/network_module_tests.dir/test_rest_api.cpp.o: /home/haaken/github-pro
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
   /usr/include/x86_64-linux-gnu/bits/stat.h \
@@ -9621,15 +9833,8 @@ CMakeFiles/network_module_tests.dir/test_rest_api.cpp.o: /home/haaken/github-pro
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -9678,14 +9883,10 @@ CMakeFiles/network_module_tests.dir/test_rest_api.cpp.o: /home/haaken/github-pro
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
@@ -9733,7 +9934,7 @@ CMakeFiles/network_module_tests.dir/test_udp_protocol.cpp.o: /home/haaken/github
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/MumblePlugin_v_1_0_x.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/PluginComponents_v_1_0_x.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.h \
-  /home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.cpp \
+  /home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.h \
   /usr/include/alloca.h \
   /usr/include/arpa/inet.h \
   /usr/include/asm-generic/bitsperlong.h \
@@ -10041,7 +10242,6 @@ CMakeFiles/network_module_tests.dir/test_udp_protocol.cpp.o: /home/haaken/github
   /usr/include/x86_64-linux-gnu/bits/errno.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl.h \
-  /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -10061,7 +10261,6 @@ CMakeFiles/network_module_tests.dir/test_udp_protocol.cpp.o: /home/haaken/github
   /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
   /usr/include/x86_64-linux-gnu/bits/poll.h \
-  /usr/include/x86_64-linux-gnu/bits/poll2.h \
   /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
@@ -10069,9 +10268,7 @@ CMakeFiles/network_module_tests.dir/test_udp_protocol.cpp.o: /home/haaken/github
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sigaction.h \
   /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
@@ -10087,7 +10284,6 @@ CMakeFiles/network_module_tests.dir/test_udp_protocol.cpp.o: /home/haaken/github
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
   /usr/include/x86_64-linux-gnu/bits/stat.h \
@@ -10096,15 +10292,8 @@ CMakeFiles/network_module_tests.dir/test_udp_protocol.cpp.o: /home/haaken/github
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -10153,14 +10342,10 @@ CMakeFiles/network_module_tests.dir/test_udp_protocol.cpp.o: /home/haaken/github
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
@@ -10208,7 +10393,7 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/MumblePlugin_v_1_0_x.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/PluginComponents_v_1_0_x.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.h \
-  /home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.cpp \
+  /home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.h \
   /usr/include/alloca.h \
   /usr/include/arpa/inet.h \
   /usr/include/asm-generic/bitsperlong.h \
@@ -10516,7 +10701,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
   /usr/include/x86_64-linux-gnu/bits/errno.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
   /usr/include/x86_64-linux-gnu/bits/fcntl.h \
-  /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -10536,7 +10720,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
   /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
   /usr/include/x86_64-linux-gnu/bits/poll.h \
-  /usr/include/x86_64-linux-gnu/bits/poll2.h \
   /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
   /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
@@ -10544,9 +10727,7 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
   /usr/include/x86_64-linux-gnu/bits/sched.h \
-  /usr/include/x86_64-linux-gnu/bits/select-decl.h \
   /usr/include/x86_64-linux-gnu/bits/select.h \
-  /usr/include/x86_64-linux-gnu/bits/select2.h \
   /usr/include/x86_64-linux-gnu/bits/setjmp.h \
   /usr/include/x86_64-linux-gnu/bits/sigaction.h \
   /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
@@ -10562,7 +10743,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
   /usr/include/x86_64-linux-gnu/bits/socket.h \
-  /usr/include/x86_64-linux-gnu/bits/socket2.h \
   /usr/include/x86_64-linux-gnu/bits/socket_type.h \
   /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
   /usr/include/x86_64-linux-gnu/bits/stat.h \
@@ -10571,15 +10751,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
   /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
-  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
-  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
   /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
   /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
@@ -10628,14 +10801,10 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
   /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/unistd.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2-decl.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar2.h \
   /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
   /usr/include/x86_64-linux-gnu/bits/wordsize.h \
   /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
@@ -10680,6 +10849,10 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_udp_protocol.cpp:
 
+/usr/lib/gcc/x86_64-linux-gnu/13/include/float.h:
+
+/usr/include/x86_64-linux-gnu/sys/wait.h:
+
 /usr/include/x86_64-linux-gnu/c++/13/bits/cxxabi_tweaks.h:
 
 /usr/include/x86_64-linux-gnu/bits/poll.h:
@@ -10690,66 +10863,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/gtest/internal/gtest-port.h:
 
-/usr/include/gtest/internal/gtest-internal.h:
-
-/usr/include/gtest/internal/gtest-death-test-internal.h:
-
-/usr/include/gtest/internal/custom/gtest-port.h:
-
-/usr/include/gtest/gtest_prod.h:
-
-/usr/include/gtest/gtest.h:
-
-/usr/include/gtest/gtest-typed-test.h:
-
-/usr/include/gtest/gtest-assertion-result.h:
-
-/usr/include/gmock/internal/gmock-internal-utils.h:
-
-/usr/include/gmock/internal/custom/gmock-matchers.h:
-
-/usr/include/gmock/internal/custom/gmock-generated-actions.h:
-
-/usr/include/gmock/gmock.h:
-
-/usr/include/gmock/gmock-spec-builders.h:
-
-/usr/include/gmock/gmock-nice-strict.h:
-
-/usr/include/gmock/gmock-more-matchers.h:
-
-/usr/include/gmock/gmock-more-actions.h:
-
-/usr/include/gmock/gmock-function-mocker.h:
-
-/usr/include/gmock/gmock-cardinalities.h:
-
-/usr/include/c++/13/optional:
-
-/usr/include/c++/13/cxxabi.h:
-
-/usr/include/c++/13/any:
-
-/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.cpp:
-
-/usr/include/c++/13/iterator:
-
-/usr/include/c++/13/forward_list:
-
-/usr/include/c++/13/bits/valarray_before.h:
-
-/usr/include/c++/13/bits/valarray_array.tcc:
-
-/usr/include/c++/13/bits/valarray_array.h:
-
-/usr/include/c++/13/bits/valarray_after.h:
-
-/usr/include/c++/13/bits/stream_iterator.h:
-
-/usr/include/c++/13/bits/slice_array.h:
-
-/usr/include/c++/13/bits/mask_array.h:
-
 /usr/include/linux/types.h:
 
 /usr/include/linux/stat.h:
@@ -10757,8 +10870,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/gtest/internal/gtest-param-util.h:
 
 /usr/include/linux/param.h:
-
-/usr/include/x86_64-linux-gnu/bits/socket2.h:
 
 /usr/include/linux/limits.h:
 
@@ -10768,19 +10879,11 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/13/include/float.h:
+/usr/include/ctype.h:
 
 /usr/include/c++/13/vector:
 
 /usr/include/c++/13/bits/regex_executor.h:
-
-/usr/include/ctype.h:
-
-/usr/include/c++/13/cfloat:
-
-/usr/include/gmock/gmock-matchers.h:
-
-/usr/include/c++/13/tr1/modified_bessel_func.tcc:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/limits.h:
 
@@ -10818,6 +10921,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/bits/regex_automaton.h:
 
+/usr/include/c++/13/bits/mask_array.h:
+
 /usr/include/c++/13/random:
 
 /usr/include/c++/13/bits/random.tcc:
@@ -10832,16 +10937,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/istream:
 
-/usr/include/gtest/gtest-message.h:
-
-/usr/include/c++/13/bits/regex_scanner.tcc:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.h:
-
-/usr/include/gtest/gtest-death-test.h:
-
-/usr/include/c++/13/functional:
-
 /usr/include/c++/13/ext/string_conversions.h:
 
 /usr/include/c++/13/ext/numeric_traits.h:
@@ -10851,6 +10946,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
 
 /usr/include/x86_64-linux-gnu/bits/in.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
 
 /usr/include/c++/13/pstl/glue_algorithm_defs.h:
 
@@ -10868,7 +10965,7 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/cmath:
 
-/usr/include/x86_64-linux-gnu/bits/select2.h:
+/usr/include/gmock/gmock-function-mocker.h:
 
 /usr/include/c++/13/climits:
 
@@ -10884,6 +10981,10 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/bits/vector.tcc:
 
+/usr/include/c++/13/optional:
+
+/usr/include/c++/13/bits/unordered_set.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h:
 
 /usr/include/c++/13/mutex:
@@ -10892,15 +10993,7 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.h:
 
-/usr/include/gtest/internal/gtest-filepath.h:
-
-/usr/include/c++/13/tr1/exp_integral.tcc:
-
-/usr/include/c++/13/math.h:
-
-/usr/include/gmock/internal/gmock-port.h:
-
-/usr/include/c++/13/bits/string_view.tcc:
+/usr/include/gmock/internal/custom/gmock-matchers.h:
 
 /usr/include/c++/13/ostream:
 
@@ -10915,6 +11008,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/endian.h:
 
 /usr/include/stdint.h:
+
+/usr/include/c++/13/bits/streambuf.tcc:
 
 /usr/include/c++/13/bits/specfun.h:
 
@@ -10933,6 +11028,10 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/c++/13/cerrno:
 
 /usr/include/c++/13/bits/stringfwd.h:
+
+/usr/include/c++/13/initializer_list:
+
+/usr/include/c++/13/bits/stl_stack.h:
 
 /usr/include/c++/13/bits/stl_set.h:
 
@@ -10954,8 +11053,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/bits/ptr_traits.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdio2-decl.h:
-
 /usr/include/c++/13/bits/localefwd.h:
 
 /usr/include/c++/13/typeinfo:
@@ -10968,15 +11065,19 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/streambuf:
 
+/usr/include/c++/13/bits/valarray_after.h:
+
 /usr/include/c++/13/bits/exception.h:
+
+/usr/include/c++/13/tr1/modified_bessel_func.tcc:
+
+/usr/include/gmock/gmock-matchers.h:
 
 /usr/include/c++/13/atomic:
 
 /usr/include/linux/stddef.h:
 
 /usr/include/c++/13/pstl/execution_defs.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Params.h:
 
 /usr/include/c++/13/bits/basic_ios.tcc:
 
@@ -10992,23 +11093,15 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/bits/stl_pair.h:
 
-/usr/include/c++/13/valarray:
-
-/usr/include/x86_64-linux-gnu/bits/errno.h:
-
 /usr/include/x86_64-linux-gnu/bits/signum-arch.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.h:
+/usr/include/c++/13/bits/valarray_array.h:
 
 /usr/include/gtest/internal/gtest-port-arch.h:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.h:
-
-/usr/include/c++/13/variant:
-
-/usr/include/c++/13/bits/atomic_base.h:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.cpp:
 
@@ -11042,10 +11135,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/arpa/nameser.h:
 
-/usr/include/x86_64-linux-gnu/sys/wait.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/PoleFilter.h:
-
 /usr/include/c++/13/backward/binders.h:
 
 /usr/include/c++/13/bits/regex.h:
@@ -11074,6 +11163,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
+/usr/include/gmock/gmock-more-actions.h:
+
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.h:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp:
@@ -11083,6 +11174,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/c++/13/bits/char_traits.h:
 
 /usr/include/c++/13/bits/std_function.h:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.h:
 
@@ -11104,6 +11197,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/alloca.h:
 
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp:
+
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
 /usr/include/asm-generic/socket.h:
@@ -11114,11 +11209,15 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/cstddef:
 
+/usr/include/gmock/internal/gmock-internal-utils.h:
+
 /usr/include/c++/13/bits/stl_algo.h:
 
 /usr/include/c++/13/bits/alloc_traits.h:
 
 /usr/include/c++/13/bits/concept_check.h:
+
+/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.h:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/MumblePlugin_v_1_0_x.h:
 
@@ -11127,10 +11226,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp:
 
 /usr/include/asm-generic/posix_types.h:
-
-/usr/include/gtest/internal/custom/gtest-printers.h:
-
-/usr/include/c++/13/bits/stl_iterator_base_types.h:
 
 /usr/include/stdio.h:
 
@@ -11141,8 +11236,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
 /usr/include/c++/13/bits/deque.tcc:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Legendre.h:
 
 /usr/include/x86_64-linux-gnu/bits/posix_opt.h:
 
@@ -11176,6 +11269,10 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
 
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/advanced_modulation.h:
+
+/usr/include/asm-generic/param.h:
+
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h:
@@ -11185,8 +11282,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/asm-generic/errno-base.h:
 
 /usr/include/c++/13/bits/stl_iterator_base_funcs.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.h:
 
 /usr/include/c++/13/bits/fstream.tcc:
 
@@ -11210,21 +11305,21 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/bits/ios_base.h:
 
+/usr/include/c++/13/iterator:
+
 /usr/include/c++/13/bits/hashtable.h:
 
 /usr/include/poll.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
 
-/usr/include/gtest/gtest-printers.h:
-
 /usr/include/c++/13/stdexcept:
+
+/usr/include/gtest/gtest-printers.h:
 
 /usr/include/c++/13/clocale:
 
 /usr/include/c++/13/bits/locale_classes.h:
-
-/usr/include/x86_64-linux-gnu/bits/fcntl2.h:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
@@ -11233,8 +11328,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/c++/13/bits/locale_facets_nonio.h:
 
 /usr/include/x86_64-linux-gnu/bits/confname.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp:
 
 /usr/include/c++/13/utility:
 
@@ -11264,13 +11357,7 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
 
-/usr/include/gmock/gmock-actions.h:
-
-/usr/include/c++/13/bits/parse_numbers.h:
-
 /usr/include/linux/errno.h:
-
-/usr/include/x86_64-linux-gnu/bits/wchar2-decl.h:
 
 /usr/include/c++/13/bits/std_abs.h:
 
@@ -11280,13 +11367,15 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.h:
-
 /usr/include/c++/13/tr1/special_function_util.h:
 
 /usr/include/c++/13/tr1/poly_laguerre.tcc:
 
+/usr/include/c++/13/cxxabi.h:
+
 /usr/include/c++/13/bits/basic_string.h:
+
+/usr/include/c++/13/bits/regex.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
@@ -11310,19 +11399,19 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/bits/quoted_string.h:
 
-/usr/include/c++/13/bits/unordered_set.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:
-
 /usr/include/c++/13/iomanip:
 
 /usr/include/strings.h:
+
+/usr/include/c++/13/bits/uses_allocator.h:
 
 /usr/include/c++/13/bits/stl_multiset.h:
 
 /usr/include/arpa/nameser_compat.h:
 
 /usr/include/c++/13/bits/postypes.h:
+
+/usr/include/gmock/gmock.h:
 
 /usr/include/c++/13/bits/stl_tempbuf.h:
 
@@ -11337,6 +11426,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/limits.h:
 
 /usr/include/c++/13/cstdlib:
+
+/usr/include/gmock/gmock-spec-builders.h:
 
 /usr/include/c++/13/bits/requires_hosted.h:
 
@@ -11362,10 +11453,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/cstdint:
 
-/usr/include/c++/13/bits/uses_allocator.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Elliptic.h:
-
 /usr/include/c++/13/iostream:
 
 /usr/include/asm-generic/errno.h:
@@ -11373,6 +11460,10 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/c++/13/numeric:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
+
+/usr/include/c++/13/tr1/beta_function.tcc:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp:
 
 /usr/include/locale.h:
 
@@ -11397,8 +11488,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_UDPClient.h:
 
 /usr/include/rpc/netdb.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Param.cpp:
 
 /usr/include/netdb.h:
 
@@ -11440,15 +11529,11 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.h:
-
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.cpp:
 
 /usr/include/x86_64-linux-gnu/asm/errno.h:
 
@@ -11462,15 +11547,13 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/fp-logb.h:
 
-/usr/include/x86_64-linux-gnu/bits/wchar2.h:
+/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_rest_api.cpp:
+
+/usr/include/c++/13/bits/stl_vector.h:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/advanced_modulation.h:
-
-/usr/include/asm-generic/param.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevII.h:
 
 /usr/include/c++/13/ext/alloc_traits.h:
 
@@ -11500,10 +11583,6 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
-/usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h:
-
-/usr/include/x86_64-linux-gnu/bits/select-decl.h:
-
 /usr/include/x86_64-linux-gnu/bits/time.h:
 
 /usr/include/arpa/inet.h:
@@ -11511,6 +11590,12 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 /usr/include/x86_64-linux-gnu/bits/sigaction.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h:
+
+/usr/include/c++/13/tr1/exp_integral.tcc:
+
+/usr/include/c++/13/math.h:
+
+/usr/include/gtest/internal/gtest-filepath.h:
 
 /usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h:
 
@@ -11558,45 +11643,13 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdio.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Layout.h:
-
-/usr/include/c++/13/bits/forward_list.h:
-
 /usr/include/c++/13/bits/locale_conv.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
 /usr/include/x86_64-linux-gnu/bits/timex.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.cpp:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
-
-/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_rest_api.cpp:
-
-/usr/include/c++/13/bits/stl_vector.h:
-
-/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib.h:
-
-/usr/include/c++/13/initializer_list:
-
-/usr/include/c++/13/bits/stl_stack.h:
-
-/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
-
-/usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Utilities.h:
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_config.cpp:
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
 
@@ -11614,19 +11667,21 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
 
-/usr/include/gtest/gtest-test-part.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
-
 /usr/include/c++/13/cstdio:
 
 /usr/include/math.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_UDPServer.cpp:
+
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
 
 /usr/include/c++/13/bits/list.tcc:
 
@@ -11664,6 +11719,14 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_statx_timestamp.h:
 
+/usr/include/c++/13/bits/regex_scanner.tcc:
+
+/usr/include/gtest/gtest-message.h:
+
+/usr/include/c++/13/bits/string_view.tcc:
+
+/usr/include/gmock/internal/gmock-port.h:
+
 /usr/include/regex.h:
 
 /usr/include/x86_64-linux-gnu/bits/typesizes.h:
@@ -11672,15 +11735,7 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
-/usr/include/c++/13/bits/streambuf.tcc:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Bessel.h:
-
-/usr/include/x86_64-linux-gnu/bits/unistd-decl.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/SmoothedFilter.h:
-
-/usr/include/x86_64-linux-gnu/bits/unistd.h:
+/usr/include/c++/13/bits/stream_iterator.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
@@ -11720,21 +11775,23 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/include/c++/13/bits/forward_list.tcc:
 
+/usr/include/gmock/gmock-cardinalities.h:
+
 /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_base.h:
 
-/usr/include/gtest/gtest-param-test.h:
+/usr/include/c++/13/any:
+
+/usr/include/c++/13/cstring:
+
+/usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp:
 
 /usr/include/c++/13/bits/predefined_ops.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/noise/phil_burk_19990905_patest_pink.c:
-
 /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h:
 
-/usr/include/c++/13/cstring:
-
-/usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h:
+/usr/include/gtest/gtest-param-test.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
@@ -11766,55 +11823,9 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp:
-
-/usr/include/c++/13/bits/regex.tcc:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.cpp:
-
-/usr/include/c++/13/tr1/beta_function.tcc:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.cpp:
-
-/usr/include/gtest/gtest_pred_impl.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Butterworth.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Cascade.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevI.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Common.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Custom.h:
-
-/usr/include/x86_64-linux-gnu/bits/poll2.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp:
-
-/usr/include/c++/13/bits/stl_construct.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp:
-
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/amateur_radio.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/MathSupplement.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Types.h:
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.h:
 
 /usr/include/c++/13/complex:
 
@@ -11828,6 +11839,8 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp:
 
+/usr/include/c++/13/bits/valarray_before.h:
+
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf_impl.cpp:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.h:
@@ -11840,7 +11853,79 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.h:
 
-/usr/include/gtest/gtest-matchers.h:
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_config.h:
+
+/usr/include/gtest/gtest_prod.h:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp:
+
+/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/test_network_module_main.cpp:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp:
+
+/usr/include/c++/13/stack:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp:
+
+/usr/include/c++/13/bits/stl_construct.h:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp:
+
+/usr/include/c++/13/bits/istream.tcc:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/feature_toggles.h:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/json/json.hpp:
+
+/usr/include/c++/13/bits/forward_list.h:
+
+/usr/include/c++/13/functional:
+
+/usr/include/gtest/gtest-death-test.h:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp:
+
+/usr/include/c++/13/bits/gslice.h:
+
+/usr/include/c++/13/bits/indirect_array.h:
+
+/usr/include/c++/13/bits/slice_array.h:
+
+/usr/include/c++/13/bits/valarray_array.tcc:
+
+/usr/include/c++/13/forward_list:
+
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
+/usr/include/c++/13/valarray:
+
+/usr/include/c++/13/bits/atomic_base.h:
+
+/usr/include/c++/13/variant:
+
+/usr/include/c++/13/bits/parse_numbers.h:
+
+/usr/include/gmock/gmock-actions.h:
+
+/usr/include/gmock/gmock-more-matchers.h:
+
+/usr/include/gmock/gmock-nice-strict.h:
+
+/usr/include/gmock/internal/custom/gmock-generated-actions.h:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.h:
+
+/usr/include/gmock/internal/gmock-pp.h:
+
+/usr/include/gtest/gtest-assertion-result.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
 
@@ -11852,32 +11937,26 @@ CMakeFiles/network_module_tests.dir/test_websocket.cpp.o: /home/haaken/github-pr
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cpp:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_config.h:
+/usr/include/gtest/gtest-matchers.h:
 
-/usr/include/gmock/internal/gmock-pp.h:
+/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.h:
+/usr/include/gtest/gtest-test-part.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp:
+/usr/include/gtest/internal/gtest-internal.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp:
+/usr/include/gtest/gtest-typed-test.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp:
+/usr/include/gtest/gtest.h:
 
-/usr/include/c++/13/stack:
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp:
+/usr/include/gtest/gtest_pred_impl.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp:
+/usr/include/gtest/internal/custom/gtest-port.h:
 
-/usr/include/c++/13/bits/istream.tcc:
+/usr/include/c++/13/bits/stl_iterator_base_types.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/feature_toggles.h:
+/usr/include/gtest/internal/custom/gtest-printers.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/json/json.hpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp:
-
-/usr/include/c++/13/bits/gslice.h:
-
-/usr/include/c++/13/bits/indirect_array.h:
+/usr/include/gtest/internal/gtest-death-test-internal.h:

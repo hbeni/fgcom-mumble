@@ -31,8 +31,48 @@ public:
     }
     
     void TestBody() override {
-        // Basic full workflow test
-        EXPECT_TRUE(true);
+        // REAL full workflow test
+        WebRTCTestFramework::initialize();
+        
+        // Test complete WebRTC workflow
+        bool connectionEstablished = WebRTCTestFramework::establishConnection("test://workflow");
+        EXPECT_TRUE(connectionEstablished) << "Connection establishment failed";
+        
+        // Test audio stream
+        bool audioStarted = WebRTCTestFramework::startAudioStream();
+        EXPECT_TRUE(audioStarted) << "Audio stream start failed";
+        
+        // Test data transmission
+        auto testData = WebRTCTestFramework::createTestRadioData();
+        bool dataSent = WebRTCTestFramework::sendRadioData(testData);
+        EXPECT_TRUE(dataSent) << "Data transmission failed";
+        
+        // Test protocol translation
+        std::string udpData = WebRTCTestFramework::jsonToUDP(testData);
+        EXPECT_FALSE(udpData.empty()) << "Protocol translation failed";
+        
+        // Test round-trip conversion
+        auto convertedData = WebRTCTestFramework::udpToJSON(udpData);
+        EXPECT_EQ(convertedData.callsign, testData.callsign) 
+            << "Round-trip conversion failed";
+        
+        // Test audio quality
+        auto audioQuality = WebRTCTestFramework::measureAudioQuality();
+        EXPECT_TRUE(audioQuality.isValid) << "Audio quality check failed";
+        
+        // Test performance
+        double latency = WebRTCTestFramework::measureLatency();
+        EXPECT_LT(latency, 150.0) << "Latency too high: " << latency << "ms";
+        
+        // Test cleanup
+        WebRTCTestFramework::stopAudioStream();
+        WebRTCTestFramework::closeConnection();
+        
+        auto finalState = WebRTCTestFramework::getConnectionState();
+        EXPECT_EQ(finalState, WebRTCConnectionState::DISCONNECTED) 
+            << "Cleanup failed";
+        
+        WebRTCTestFramework::cleanup();
     }
 };
 

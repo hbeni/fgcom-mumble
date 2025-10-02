@@ -362,38 +362,38 @@ home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_du
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.s
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.s
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o
 
 # target to build an object file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i
 
 # target to preprocess a source file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s
 
 # target to generate assembly for a file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
 
 home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.cpp.o
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o
@@ -460,6 +460,39 @@ home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offs
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.cpp.s
 
 home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.cpp.o
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.o
@@ -625,6 +658,369 @@ home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cp
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cpp.s
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cpp.s
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.o
+
+# target to build an object file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.o
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.o
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.i
+
+# target to preprocess a source file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.i
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.i
+
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.s
+
+# target to generate assembly for a file
+home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests.dir/build.make CMakeFiles/frequency_management_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_asan.dir/build.make CMakeFiles/frequency_management_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_tsan.dir/build.make CMakeFiles/frequency_management_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/frequency_management_tests_coverage.dir/build.make CMakeFiles/frequency_management_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.s
+.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.cpp.s
 
 home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp.o
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.o
@@ -886,15 +1282,18 @@ help:
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.s"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.i"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/enhanced_multipath.s"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/non_amateur_hf.s"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.s"
@@ -910,6 +1309,39 @@ help:
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_aviation_hf.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_hf_impl.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_maritime_hf.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.s"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.o"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.i"
+	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_vhf.s"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.s"

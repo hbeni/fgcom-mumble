@@ -391,19 +391,19 @@ CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/cli
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp -o CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.s
 
-CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: CMakeFiles/network_module_tests.dir/flags.make
-CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp
-CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: CMakeFiles/network_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o -MF CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o.d -o CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o -c /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: CMakeFiles/network_module_tests.dir/flags.make
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: CMakeFiles/network_module_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o -MF CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o.d -o CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o -c /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp
 
-CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp > CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp > CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
 
-CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp -o CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
+CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp -o CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
 
 CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o: CMakeFiles/network_module_tests.dir/flags.make
 CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp
@@ -570,7 +570,7 @@ network_module_tests_OBJECTS = \
 "CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o" \
 "CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o" \
 "CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o" \
-"CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o" \
+"CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o" \
 "CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o" \
 "CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.cpp.o" \
 "CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.o" \
@@ -608,7 +608,7 @@ network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-pro
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_string_impl.cpp.o
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_amateur_impl.cpp.o
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model_uhf_impl.cpp.o
-network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
+network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.cpp.o
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.o
@@ -620,7 +620,6 @@ network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-pro
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp.o
 network_module_tests: CMakeFiles/network_module_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/garbage_collector.cpp.o
 network_module_tests: CMakeFiles/network_module_tests.dir/build.make
-network_module_tests: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 network_module_tests: /usr/lib/x86_64-linux-gnu/libgtest.a
 network_module_tests: CMakeFiles/network_module_tests.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Linking CXX executable network_module_tests"

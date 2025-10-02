@@ -139,19 +139,19 @@ CMakeFiles/audio_processing_tests.dir/test_sample_rate_conversion.cpp.s: cmake_f
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/audio_processing_tests.dir/test_sample_rate_conversion.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_sample_rate_conversion.cpp -o CMakeFiles/audio_processing_tests.dir/test_sample_rate_conversion.cpp.s
 
-CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: CMakeFiles/audio_processing_tests.dir/flags.make
-CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp
-CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: CMakeFiles/audio_processing_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o -MF CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o.d -o CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o -c /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp
+CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: CMakeFiles/audio_processing_tests.dir/flags.make
+CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp
+CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: CMakeFiles/audio_processing_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o -MF CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o.d -o CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o -c /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp
 
-CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp > CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
+CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp > CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
 
-CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp -o CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
+CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp -o CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
 
 CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: CMakeFiles/audio_processing_tests.dir/flags.make
 CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp
@@ -188,7 +188,7 @@ audio_processing_tests_OBJECTS = \
 "CMakeFiles/audio_processing_tests.dir/test_codec.cpp.o" \
 "CMakeFiles/audio_processing_tests.dir/test_audio_effects.cpp.o" \
 "CMakeFiles/audio_processing_tests.dir/test_sample_rate_conversion.cpp.o" \
-"CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o" \
+"CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o" \
 "CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o" \
 "CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o"
 
@@ -200,7 +200,7 @@ audio_processing_tests: CMakeFiles/audio_processing_tests.dir/test_audio_process
 audio_processing_tests: CMakeFiles/audio_processing_tests.dir/test_codec.cpp.o
 audio_processing_tests: CMakeFiles/audio_processing_tests.dir/test_audio_effects.cpp.o
 audio_processing_tests: CMakeFiles/audio_processing_tests.dir/test_sample_rate_conversion.cpp.o
-audio_processing_tests: CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
+audio_processing_tests: CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
 audio_processing_tests: CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
 audio_processing_tests: CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
 audio_processing_tests: CMakeFiles/audio_processing_tests.dir/build.make

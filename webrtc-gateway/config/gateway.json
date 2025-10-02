@@ -1,0 +1,79 @@
+{
+  "server": {
+    "port": 3000,
+    "host": "0.0.0.0",
+    "cors": {
+      "origin": "*",
+      "credentials": true
+    }
+  },
+  "mumble": {
+    "host": "localhost",
+    "port": 64738,
+    "udpPort": 16661,
+    "timeout": 30000,
+    "reconnectAttempts": 5,
+    "reconnectDelay": 1000
+  },
+  "audio": {
+    "sampleRate": 48000,
+    "channels": 1,
+    "bitrate": 64000,
+    "codec": "opus",
+    "quality": "medium",
+    "echoCancellation": true,
+    "noiseSuppression": true,
+    "autoGainControl": true
+  },
+  "webrtc": {
+    "iceServers": [
+      {
+        "urls": "stun:stun.l.google.com:19302"
+      },
+      {
+        "urls": "stun:stun1.l.google.com:19302"
+      }
+    ],
+    "iceTransportPolicy": "all",
+    "bundlePolicy": "balanced",
+    "rtcpMuxPolicy": "require"
+  },
+  "auth": {
+    "secret": "fgcom-webrtc-secret-key-change-in-production",
+    "sessionSecret": "fgcom-session-secret-change-in-production",
+    "tokenExpiry": "24h",
+    "bcryptRounds": 10
+  },
+  "logging": {
+    "level": "info",
+    "file": "logs/gateway.log",
+    "maxSize": "10MB",
+    "maxFiles": 5
+  },
+  "security": {
+    "rateLimit": {
+      "windowMs": 900000,
+      "max": 100
+    },
+    "helmet": {
+      "contentSecurityPolicy": {
+        "directives": {
+          "defaultSrc": ["'self'"],
+          "scriptSrc": ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+          "styleSrc": ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+          "connectSrc": ["'self'", "ws:", "wss:"],
+          "mediaSrc": ["'self'", "blob:"]
+        }
+      }
+    }
+  },
+  "features": {
+    "authentication": true,
+    "registration": true,
+    "audioProcessing": true,
+    "protocolTranslation": true,
+    "heartbeat": true,
+    "compression": true,
+    "cors": true
+  }
+}

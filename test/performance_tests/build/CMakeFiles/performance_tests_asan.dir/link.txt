@@ -1,0 +1,1 @@
+/usr/bin/c++ -fsanitize=address -fno-omit-frame-pointer -g CMakeFiles/performance_tests_asan.dir/test_performance_main.cpp.o CMakeFiles/performance_tests_asan.dir/test_latency.cpp.o CMakeFiles/performance_tests_asan.dir/test_throughput.cpp.o -o performance_tests_asan  -lgmock -lgtest -lm -lpthread /usr/lib/x86_64-linux-gnu/libgtest.a 

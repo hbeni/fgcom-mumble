@@ -371,6 +371,7 @@ void FGCom_PowerManager::updateSWR(float swr_ratio) {
 }
 
 bool FGCom_PowerManager::checkSWRLimits(int power_watts) const {
+    (void)power_watts; // Suppress unused parameter warning
     std::lock_guard<std::mutex> lock(power_mutex);
     
     auto it = antenna_efficiency_data.find(current_antenna_type);
@@ -657,6 +658,9 @@ float FGCom_PowerManager::calculatePowerConsumption(int power_watts, const std::
 
 // Integration with existing radio models
 float FGCom_PowerManager::getEffectiveRadiatedPower(int tx_power_watts, const std::string& antenna_type, float azimuth_deg, float elevation_deg, float frequency_mhz) const {
+    (void)azimuth_deg; // Suppress unused parameter warning
+    (void)elevation_deg; // Suppress unused parameter warning
+    (void)frequency_mhz; // Suppress unused parameter warning
     // This would integrate with the existing antenna_ground_system.cpp
     // For now, return a simplified calculation
     float efficiency = calculatePowerEfficiency(tx_power_watts, antenna_type);
@@ -845,6 +849,7 @@ namespace PowerManagementUtils {
     }
     
     float calculateAntennaEfficiency(float power_watts, float swr, float temperature_celsius) {
+        (void)power_watts; // Suppress unused parameter warning
         // Simple efficiency model based on SWR and temperature
         float swr_efficiency = 1.0f / (1.0f + (swr - 1.0f) * 0.1f);
         float temp_efficiency = 1.0f - (temperature_celsius - 25.0f) * 0.001f;
@@ -852,6 +857,7 @@ namespace PowerManagementUtils {
     }
     
     float calculateSystemEfficiency(float tx_power_watts, float antenna_efficiency, float feedline_loss_db, float connector_loss_db) {
+        (void)tx_power_watts; // Suppress unused parameter warning
         float total_loss_db = feedline_loss_db + connector_loss_db;
         float loss_factor = pow(10.0f, -total_loss_db / 10.0f);
         return antenna_efficiency * loss_factor;

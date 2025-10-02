@@ -1,4 +1,4 @@
-#include "test_network_module_main.cpp"
+#include "test_network_module_main.h"
 
 // 5.3 RESTful API Tests
 TEST_F(RESTfulAPITest, GETEndpointResponses) {

@@ -15,6 +15,13 @@
 #include <functional>
 #include <unordered_set>
 #include <future>
+#include <map>
+#include <openssl/evp.h>
+#include <openssl/rsa.h>
+#include <openssl/pem.h>
+#include <openssl/rand.h>
+#include <openssl/sha.h>
+#include <openssl/obj_mac.h>
 // Secure OpenSSL wrapper to prevent direct usage
 namespace SecureOpenSSL {
     class OpenSSLInitializer {
@@ -101,6 +108,7 @@ struct ReputationData {
 
 // Client security profile - composed of focused components
 struct ClientSecurityProfile {
+    std::string client_id;
     AuthenticationData auth_data;
     RateLimitingData rate_data;
     ReputationData reputation_data;
@@ -108,6 +116,14 @@ struct ClientSecurityProfile {
     bool is_trusted;
     bool is_blocked;
     std::vector<std::string> allowed_work_unit_types;
+    // Additional fields used in the code
+    AuthenticationMethod auth_method;
+    std::string certificate_fingerprint;
+    int failed_auth_attempts;
+    std::chrono::system_clock::time_point last_failed_auth;
+    std::chrono::system_clock::time_point last_auth;
+    std::map<std::string, int> current_usage;
+    double reputation_score;
 };
 
 // Work unit security wrapper
@@ -212,6 +228,10 @@ private:
                          const std::string& description, SecurityLevel severity);
     
 public:
+    // Constructor and destructor
+    FGCom_WorkUnitSecurityManager();
+    ~FGCom_WorkUnitSecurityManager();
+    
     // Singleton access
     static FGCom_WorkUnitSecurityManager& getInstance();
     static void destroyInstance();
@@ -324,7 +344,7 @@ class FGCom_CryptographicUtils {
 public:
     // Key generation
     static EVP_PKEY* generateRSAKeyPair(int key_size = 2048);
-    static EVP_PKEY* generateECKeyPair(int curve = NID_secp256r1);
+    static EVP_PKEY* generateECKeyPair(int curve = 415); // NID_secp256r1 = 415
     static std::string exportPublicKeyPEM(EVP_PKEY* public_key);
     static std::string exportPrivateKeyPEM(EVP_PKEY* private_key);
     static EVP_PKEY* importPublicKeyPEM(const std::string& pem_data);

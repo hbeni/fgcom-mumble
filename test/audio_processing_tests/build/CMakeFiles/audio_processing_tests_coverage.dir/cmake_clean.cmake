@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o"
   "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o.d"
-  "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o"
-  "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o.d"
+  "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o"
+  "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o.d"
   "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o"
   "CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o.d"
   "CMakeFiles/audio_processing_tests_coverage.dir/main.cpp.o"

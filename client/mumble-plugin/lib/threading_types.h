@@ -80,21 +80,7 @@ struct WeatherConditions {
     }
 };
 
-struct AntennaPattern {
-    std::string pattern_id;
-    std::string antenna_type;
-    float frequency_mhz;
-    std::vector<float> theta_angles;
-    std::vector<float> phi_angles;
-    std::vector<float> gain_values;
-    std::vector<float> phase_values;
-    std::chrono::system_clock::time_point last_updated;
-    bool is_valid;
-    
-    AntennaPattern() : frequency_mhz(0.0f), is_valid(false) {
-        last_updated = std::chrono::system_clock::now();
-    }
-};
+// AntennaPattern is defined in antenna_ground_system.h
 
 // Forward declaration for solar conditions
 struct fgcom_solar_conditions;

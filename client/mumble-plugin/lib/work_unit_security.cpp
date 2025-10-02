@@ -53,7 +53,7 @@ FGCom_WorkUnitSecurityManager::FGCom_WorkUnitSecurityManager()
     
     // Initialize OpenSSL
     OpenSSL_add_all_algorithms();
-    ERR_load_crypto_strings();
+    // ERR_load_crypto_strings(); // Deprecated in OpenSSL 3.0+
 }
 
 // Initialization
@@ -814,8 +814,8 @@ std::string FGCom_CryptographicUtils::calculateSHA256(const std::string& data) {
 }
 
 std::string FGCom_CryptographicUtils::calculateWorkUnitHash(const WorkUnit& work_unit) {
-    std::string data = work_unit.unit_id + std::to_string(work_unit.type) + 
-                      std::to_string(work_unit.priority);
+    std::string data = work_unit.unit_id + std::to_string(static_cast<int>(work_unit.type)) + 
+                      std::to_string(static_cast<int>(work_unit.priority));
     
     for (double value : work_unit.input_data) {
         data += std::to_string(value);

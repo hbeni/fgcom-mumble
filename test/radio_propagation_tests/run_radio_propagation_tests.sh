@@ -146,7 +146,7 @@ for file in "${CLANG_FILES[@]}"; do
 done
 
 if [ ${#EXISTING_CLANG_FILES[@]} -gt 0 ]; then
-    clang-tidy -checks='*' -header-filter='.*' \
+    clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*' -header-filter='^client/mumble-plugin/lib/.*' \
         "${EXISTING_CLANG_FILES[@]}" \
         -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/radio_propagation_clang-tidy.txt
 else

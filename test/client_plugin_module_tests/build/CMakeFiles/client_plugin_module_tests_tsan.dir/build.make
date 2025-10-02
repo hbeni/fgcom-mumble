@@ -377,19 +377,19 @@ CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp -o CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp.s
 
-CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: CMakeFiles/client_plugin_module_tests_tsan.dir/flags.make
-CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp
-CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: CMakeFiles/client_plugin_module_tests_tsan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o -MF CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o.d -o CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o -c /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp
+CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: CMakeFiles/client_plugin_module_tests_tsan.dir/flags.make
+CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp
+CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: CMakeFiles/client_plugin_module_tests_tsan.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building CXX object CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o -MF CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o.d -o CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o -c /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp
 
-CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp > CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.i
+CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp > CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
 
-CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp -o CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.s
+CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp -o CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
 
 CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o: CMakeFiles/client_plugin_module_tests_tsan.dir/flags.make
 CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp
@@ -527,7 +527,7 @@ client_plugin_module_tests_tsan_OBJECTS = \
 "CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/garbage_collector.cpp.o" \
 "CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp.o" \
 "CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp.o" \
-"CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o" \
+"CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o" \
 "CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o" \
 "CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.cpp.o" \
 "CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.o" \
@@ -562,7 +562,7 @@ client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/
 client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/garbage_collector.cpp.o
 client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp.o
 client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp.o
-client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o
+client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
 client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_pattern_mapping.cpp.o
 client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/pattern_interpolation.cpp.o
 client_plugin_module_tests_tsan: CMakeFiles/client_plugin_module_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/atmospheric_ducting.cpp.o

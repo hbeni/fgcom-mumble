@@ -423,11 +423,20 @@ std::string FGCom_AntennaOrientationCalculator::assessOrientationQuality(
     }
 }
 
-float FGCom_AntennaOrientationCalculator::calculateYagiOrientationEffect(
+fgcom_antenna_orientation_result FGCom_AntennaOrientationCalculator::calculateYagiOrientationEffect(
     const fgcom_antenna_pattern_characteristics& characteristics,
     float azimuth_offset, float elevation_offset) {
     
-    return calculateGainAdjustment(characteristics, azimuth_offset, elevation_offset);
+    fgcom_antenna_orientation_result result;
+    result.effective_azimuth_deg = azimuth_offset;
+    result.effective_elevation_deg = elevation_offset;
+    result.gain_adjustment_db = calculateGainAdjustment(characteristics, azimuth_offset, elevation_offset);
+    result.polarization_angle_deg = 0.0f; // Will be calculated later
+    result.is_optimal_orientation = (std::abs(azimuth_offset) < 5.0f && std::abs(elevation_offset) < 5.0f);
+    result.orientation_quality = assessOrientationQuality(result.gain_adjustment_db, azimuth_offset, elevation_offset);
+    result.timestamp = std::chrono::system_clock::now();
+    
+    return result;
 }
 
 float FGCom_AntennaOrientationCalculator::calculateDipoleOrientationEffect(

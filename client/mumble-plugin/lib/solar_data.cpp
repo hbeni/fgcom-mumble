@@ -126,6 +126,7 @@ void FGCom_SolarDataProvider::stopBackgroundUpdates() {
 }
 
 double FGCom_SolarDataProvider::calculateSolarZenith(double lat, double lon, const std::chrono::system_clock::time_point& time) {
+    (void)lon; // Suppress unused parameter warning
     // Convert time to UTC
     std::time_t time_t = std::chrono::system_clock::to_time_t(time);
     std::tm* utc_time = std::gmtime(&time_t);
@@ -195,6 +196,7 @@ void FGCom_SolarDataProvider::setFallbackConditions() {
 }
 
 float FGCom_SolarDataProvider::getSolarFluxEffect(float frequency_mhz) {
+    (void)frequency_mhz; // Suppress unused parameter warning
     // Solar flux effect on HF propagation
     // Higher SFI generally improves HF propagation
     float sfi_factor = (current_conditions.sfi - 70.0) / 100.0; // Normalize around 70
@@ -366,6 +368,7 @@ float FGCom_SolarPropagation::calculateSolarEffect(const fgcom_solar_conditions&
                                                   float frequency_mhz, 
                                                   double distance_km,
                                                   double solar_zenith) {
+    (void)distance_km; // Suppress unused parameter warning
     float effect = 1.0;
     
     // Solar flux effect
@@ -421,6 +424,7 @@ float FGCom_SolarPropagation::calculateFOT(const fgcom_solar_conditions& conditi
 float FGCom_SolarPropagation::calculateLUF(const fgcom_solar_conditions& conditions, 
                                           double distance_km,
                                           double solar_zenith) {
+    (void)distance_km; // Suppress unused parameter warning
     // LUF calculation (simplified)
     float base_luf = 3.0; // Base LUF in MHz
     

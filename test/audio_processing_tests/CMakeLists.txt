@@ -25,7 +25,7 @@ set(TEST_SOURCES
     test_codec.cpp
     test_audio_effects.cpp
     test_sample_rate_conversion.cpp
-    ../../client/mumble-plugin/lib/audio.cpp
+    ../../client/mumble-plugin/lib/audio_modern.cpp
     ../../client/mumble-plugin/lib/agc_squelch.cpp
     ../../client/mumble-plugin/lib/frequency_offset.cpp
 )

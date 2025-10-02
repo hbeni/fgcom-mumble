@@ -229,6 +229,7 @@ double FGCom_PatternInterpolation::getBilinearInterpolatedGain(const std::string
 
 const FGCom_AltitudePattern* FGCom_PatternInterpolation::getPatternAtAltitude(
     const std::string& antenna_name, int altitude_m, double frequency_mhz) {
+    (void)frequency_mhz; // Suppress unused parameter warning
     
     auto antenna_it = antenna_patterns.find(antenna_name);
     if (antenna_it == antenna_patterns.end()) {
@@ -379,6 +380,7 @@ double FGCom_PatternInterpolation::calculateGroundReflectionCoefficient(int alti
                                                                         double frequency_mhz,
                                                                         double theta_deg, 
                                                                         double ground_conductivity) {
+    (void)altitude_m; // Suppress unused parameter warning
     // Simplified ground reflection coefficient calculation
     double lambda = 300.0 / frequency_mhz;
     double grazing_angle = 90.0 - theta_deg;

@@ -36,7 +36,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/share/cmake-3.28/Modules/FindGTest.cmake"
   "/usr/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake"
   "/usr/share/cmake-3.28/Modules/FindPackageMessage.cmake"
-  "/usr/share/cmake-3.28/Modules/FindPkgConfig.cmake"
   "/usr/share/cmake-3.28/Modules/FindThreads.cmake"
   "/usr/share/cmake-3.28/Modules/GoogleTest.cmake"
   "/usr/share/cmake-3.28/Modules/Internal/CheckSourceCompiles.cmake"
@@ -65,8 +64,4 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/network_module_tests_asan.dir/DependInfo.cmake"
   "CMakeFiles/network_module_tests_tsan.dir/DependInfo.cmake"
   "CMakeFiles/network_module_tests_coverage.dir/DependInfo.cmake"
-  "CMakeFiles/run_network_module_basic_tests.dir/DependInfo.cmake"
-  "CMakeFiles/run_network_module_sanitizer_tests.dir/DependInfo.cmake"
-  "CMakeFiles/run_network_module_coverage_tests.dir/DependInfo.cmake"
-  "CMakeFiles/run_network_module_all_tests.dir/DependInfo.cmake"
   )

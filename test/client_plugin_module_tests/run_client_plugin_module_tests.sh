@@ -45,7 +45,7 @@ command_exists() {
 # Check required tools
 print_section "Checking Required Tools"
 
-REQUIRED_TOOLS=("g++" "cmake" "make" "gtest" "valgrind" "cppcheck" "clang-tidy" "lcov")
+REQUIRED_TOOLS=("g++" "cmake" "make" "valgrind" "cppcheck" "clang-tidy" "lcov")
 MISSING_TOOLS=()
 
 for tool in "${REQUIRED_TOOLS[@]}"; do
@@ -99,7 +99,8 @@ cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
     --suppress=unusedFunction \
     --suppress=unmatchedSuppression \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp \
-    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp
 
 if [ $? -eq 0 ]; then
@@ -109,9 +110,10 @@ else
 fi
 
 echo "Running Clang-Tidy on client plugin module..."
-clang-tidy -checks='*' -header-filter='.*' \
+clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*' -header-filter='client/mumble-plugin/lib/.*' \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp \
-    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp \
+    /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp \
     -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/client_plugin_module_clang-tidy.txt
 

@@ -133,6 +133,8 @@ float FGCom_AtmosphericDucting::calculateDuctingEffects(const DuctingConditions&
 // Generate atmospheric profile
 std::vector<DuctingAtmosphericConditions> FGCom_AtmosphericDucting::generateAtmosphericProfile(
     double latitude, double longitude, double start_altitude, double end_altitude, int steps) {
+    (void)latitude; // Suppress unused parameter warning
+    (void)longitude; // Suppress unused parameter warning
     
     std::vector<DuctingAtmosphericConditions> profile;
     profile.reserve(steps);
@@ -326,8 +328,11 @@ void FGCom_AtmosphericDucting::setWeatherCacheEnabled(bool enabled, float timeou
 }
 
 // Predict ducting conditions
-bool FGCom_AtmosphericDucting::predictDuctingConditions(double latitude, double longitude, 
-                                                       const std::chrono::system_clock::time_point& time) {
+bool FGCom_AtmosphericDucting::predictDuctingConditions(double latitude, double longitude,
+                                                        const std::chrono::system_clock::time_point& time) {
+    (void)latitude; // Suppress unused parameter warning
+    (void)longitude; // Suppress unused parameter warning
+    (void)time; // Suppress unused parameter warning
     // Simple prediction based on historical data
     // In a real implementation, this would use weather forecasting models
     

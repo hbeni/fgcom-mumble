@@ -52,6 +52,11 @@ public:
   struct Array
   {
     Array (int max, complex_t* values)
+        : m_max (max)
+        , m_values (values)
+    {
+        (void)max; // Suppress unused parameter warning
+        (void)values; // Suppress unused parameter warning
      // : m_max (max)
      // , m_values (values)
     {
