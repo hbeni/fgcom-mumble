@@ -91,105 +91,67 @@
         <error id="uselessCallsSubstr" severity="performance" msg="Ineffective call of function &apos;substr&apos; because a prefix of the string is assigned to itself. Use resize() or pop_back() instead." verbose="Ineffective call of function &apos;substr&apos; because a prefix of the string is assigned to itself. Use resize() or pop_back() instead." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp">
             <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp" line="582" column="43"/>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="43" column="0"/>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;SovietVHFProcessor&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;SovietVHFProcessor&apos; has a constructor with 1 argument that is not explicit. Such, so called &quot;Converting constructors&quot;, should in general be explicit for type safety reasons as that prevents unintended implicit conversions." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="236" column="5"/>
+            <symbol>SovietVHFProcessor</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Biquad.h&quot; not found." verbose="Include file: &quot;DspFilters/Biquad.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="45" column="0"/>
+        <error id="duplicateAssignExpression" severity="style" msg="Same expression used in consecutive assignments of &apos;b2&apos; and &apos;a0_val&apos;." verbose="Finding variables &apos;b2&apos; and &apos;a0_val&apos; that are assigned the same expression is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="155" column="11"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="156" column="11"/>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Cascade.h&quot; not found." verbose="Include file: &quot;DspFilters/Cascade.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="46" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b1&apos; shadows outer variable" verbose="Local variable &apos;b1&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="88" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="23" info="Shadowed declaration"/>
+            <symbol>b1</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Filter.h&quot; not found." verbose="Include file: &quot;DspFilters/Filter.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="47" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b2&apos; shadows outer variable" verbose="Local variable &apos;b2&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="89" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="27" info="Shadowed declaration"/>
+            <symbol>b2</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/PoleFilter.h&quot; not found." verbose="Include file: &quot;DspFilters/PoleFilter.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="48" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b1&apos; shadows outer variable" verbose="Local variable &apos;b1&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="104" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="23" info="Shadowed declaration"/>
+            <symbol>b1</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/SmoothedFilter.h&quot; not found." verbose="Include file: &quot;DspFilters/SmoothedFilter.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="49" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b2&apos; shadows outer variable" verbose="Local variable &apos;b2&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="105" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="27" info="Shadowed declaration"/>
+            <symbol>b2</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/State.h&quot; not found." verbose="Include file: &quot;DspFilters/State.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="50" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b1&apos; shadows outer variable" verbose="Local variable &apos;b1&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="122" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="23" info="Shadowed declaration"/>
+            <symbol>b1</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Utilities.h&quot; not found." verbose="Include file: &quot;DspFilters/Utilities.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="51" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b2&apos; shadows outer variable" verbose="Local variable &apos;b2&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="123" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="27" info="Shadowed declaration"/>
+            <symbol>b2</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Bessel.h&quot; not found." verbose="Include file: &quot;DspFilters/Bessel.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="53" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b1&apos; shadows outer variable" verbose="Local variable &apos;b1&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="138" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="23" info="Shadowed declaration"/>
+            <symbol>b1</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Butterworth.h&quot; not found." verbose="Include file: &quot;DspFilters/Butterworth.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="54" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b2&apos; shadows outer variable" verbose="Local variable &apos;b2&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="139" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="27" info="Shadowed declaration"/>
+            <symbol>b2</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/ChebyshevI.h&quot; not found." verbose="Include file: &quot;DspFilters/ChebyshevI.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="55" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b1&apos; shadows outer variable" verbose="Local variable &apos;b1&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="154" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="23" info="Shadowed declaration"/>
+            <symbol>b1</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/ChebyshevII.h&quot; not found." verbose="Include file: &quot;DspFilters/ChebyshevII.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="56" column="0"/>
+        <error id="shadowVariable" severity="style" msg="Local variable &apos;b2&apos; shadows outer variable" verbose="Local variable &apos;b2&apos; shadows outer variable" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="155" column="11" info="Shadow variable"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.h" line="53" column="27" info="Shadowed declaration"/>
+            <symbol>b2</symbol>
         </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Custom.h&quot; not found." verbose="Include file: &quot;DspFilters/Custom.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="57" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Elliptic.h&quot; not found." verbose="Include file: &quot;DspFilters/Elliptic.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="58" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Legendre.h&quot; not found." verbose="Include file: &quot;DspFilters/Legendre.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="59" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/RBJ.h&quot; not found." verbose="Include file: &quot;DspFilters/RBJ.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h" line="60" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Param.cpp" line="36" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Design.h&quot; not found." verbose="Include file: &quot;DspFilters/Design.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Param.cpp" line="37" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.cpp" line="36" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Design.h&quot; not found." verbose="Include file: &quot;DspFilters/Design.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.cpp" line="37" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.cpp" line="36" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Filter.h&quot; not found." verbose="Include file: &quot;DspFilters/Filter.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.cpp" line="37" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.cpp" line="36" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/State.h&quot; not found." verbose="Include file: &quot;DspFilters/State.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.cpp" line="37" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.cpp" line="36" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/RootFinder.h&quot; not found." verbose="Include file: &quot;DspFilters/RootFinder.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.cpp" line="37" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp" line="36" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/RBJ.h&quot; not found." verbose="Include file: &quot;DspFilters/RBJ.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp" line="37" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Common.h&quot; not found." verbose="Include file: &quot;DspFilters/Common.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.cpp" line="36" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/MathSupplement.h&quot; not found." verbose="Include file: &quot;DspFilters/MathSupplement.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.cpp" line="37" column="0"/>
-        </error>
-        <error id="missingInclude" severity="information" msg="Include file: &quot;DspFilters/Biquad.h&quot; not found." verbose="Include file: &quot;DspFilters/Biquad.h&quot; not found.">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.cpp" line="38" column="0"/>
-        </error>
-        <error id="duplicateAssignExpression" severity="style" msg="Same expression used in consecutive assignments of &apos;b2&apos; and &apos;a0&apos;." verbose="Finding variables &apos;b2&apos; and &apos;a0&apos; that are assigned the same expression is suspicious and might indicate a cut and paste or logic error. Please examine this code carefully to determine if it is correct." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp" line="198" column="10"/>
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp" line="199" column="10"/>
-        </error>
-        <error id="truncLongCastAssignment" severity="style" msg="int result is assigned to long variable. If the variable is long to avoid loss of information, then you have loss of information." verbose="int result is assigned to long variable. If the variable is long to avoid loss of information, then there is loss of information. To avoid loss of information you must cast a calculation operand to long, for example &apos;l = a * b;&apos; =&gt; &apos;l = (long)a * b;&apos;." cwe="197" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/noise/phil_burk_19990905_patest_pink.c" line="65" column="7"/>
+        <error id="unreadVariable" severity="style" msg="Variable &apos;alpha&apos; is assigned a value that is never used." verbose="Variable &apos;alpha&apos; is assigned a value that is never used." cwe="563" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_professional.cpp" line="63" column="17"/>
+            <symbol>alpha</symbol>
         </error>
         <error id="useInitializationList" severity="performance" msg="Variable &apos;timestamp&apos; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&apos;t explicitly write them to the initialization list. You could avoid assigning &apos;timestamp&apos; a value by passing the value to the constructor in the initialization list." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp">
             <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.h" line="22" column="9"/>

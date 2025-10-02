@@ -65,8 +65,8 @@ FGCom_APIServer::FGCom_APIServer()
     : server_running(false), 
       server_port(8080), 
       server_host("localhost"),
-      total_requests(0),
-      rate_limit_requests_per_minute(50000) {
+      rate_limit_requests_per_minute(50000),
+      total_requests(0) {
     server = std::make_unique<httplib::Server>();
     // Initialize mutex for thread safety
     server_state_mutex = std::make_unique<std::mutex>();
@@ -138,6 +138,11 @@ bool FGCom_APIServer::startServer(int port, const std::string& host) {
             return false;
         }
         
+    } catch (const std::system_error& e) {
+        // CRITICAL FIX: Handle system errors specifically (most specific first)
+        std::cerr << "[APIServer] System error in startServer: " << e.what() 
+                  << " (code=" << e.code() << ")" << std::endl;
+        return false;
     } catch (const std::invalid_argument& e) {
         // CRITICAL FIX: Handle invalid arguments specifically
         std::cerr << "[APIServer] Invalid argument in startServer: " << e.what() << std::endl;
@@ -145,11 +150,6 @@ bool FGCom_APIServer::startServer(int port, const std::string& host) {
     } catch (const std::runtime_error& e) {
         // CRITICAL FIX: Handle runtime errors specifically
         std::cerr << "[APIServer] Runtime error in startServer: " << e.what() << std::endl;
-        return false;
-    } catch (const std::system_error& e) {
-        // CRITICAL FIX: Handle system errors specifically
-        std::cerr << "[APIServer] System error in startServer: " << e.what() 
-                  << " (code=" << e.code() << ")" << std::endl;
         return false;
     } catch (const std::exception& e) {
         // CRITICAL FIX: Preserve error context and type information
@@ -316,7 +316,9 @@ void FGCom_APIServer::setupErrorHandling() {
 void FGCom_APIServer::serverThreadFunction() {
     try {
         server_running.store(true);
-        if (!server->listen(server_host.c_str(), server_port)) {
+        // Store host string to ensure c_str() remains valid during the call
+        std::string host_copy = server_host;
+        if (!server->listen(host_copy.c_str(), server_port)) {
             std::cerr << "[APIServer] Failed to start server on " << server_host << ":" << server_port << std::endl;
             server_running.store(false);
         }

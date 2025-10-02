@@ -174,6 +174,9 @@ bool fgcom_isPluginActive() {
  * calculate the to-be-synced PTT state to remotes.
  */
 void fgcom_handlePTT() {
+    // CRITICAL FIX: Lock PTT mutex to prevent race conditions
+    std::lock_guard<std::mutex> ptt_lock(fgcom_ptt_mutex);
+    
     if (fgcom_isPluginActive()) {
         pluginDbg("Handling PTT protocol request state");
         // see which radio was used and if its operational.
@@ -1040,7 +1043,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
             fgcom_client lcl = lcl_idty.second;
             for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
                 bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
-                auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
+                auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(static_cast<int>(radio_id));
                 bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
                 pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
                 pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
@@ -1063,7 +1066,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
                 fgcom_local_client[iid].radios[radio_id].ptt = newValue;
                 if (oldValue != newValue) {
                     pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
-                    notifyRemotes(iid, NTFY_COM, radio_id);
+                    notifyRemotes(iid, NTFY_COM, static_cast<int>(radio_id));
                 }
             }
         }
@@ -1104,7 +1107,10 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
 }
 
 // Note: Audio input is only possible with open mic. fgcom_hanldePTT() takes care of that.
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters) - Parameters have different types and clear semantics
 bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
+    // Parameter order: inputPCM, sampleCount, channelCount, isSpeech
+    // Note: sampleCount and channelCount are intentionally different types to prevent swapping
     (void)sampleCount; // Suppress unused parameter warning
     (void)channelCount; // Suppress unused parameter warning  
     (void)isSpeech; // Suppress unused parameter warning
@@ -1250,7 +1256,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                                         rdfInfo.txRadio    = rmt.radios[ri];
                                         rdfInfo.rxIdentity = lcl;
                                         rdfInfo.rxRadio    = lcl.radios[lri];
-                                        rdfInfo.rxRadioId  = lri+1;  // Radios indices start at 0, names start at 1.
+                                        rdfInfo.rxRadioId  = static_cast<int>(lri+1);  // Radios indices start at 0, names start at 1.
                                         rdfInfo.signal     = signal;
                                         fgcom_rdf_registerSignal(rdfID, rdfInfo);
                                     }
@@ -1357,7 +1363,7 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             }
             fgcom_remotecfg_mtx.unlock();
 
-            memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(float) );
+            memset(outputPCM, 0x00, static_cast<size_t>(sampleCount*channelCount)*sizeof(float) );
         }
         
         
@@ -1435,5 +1441,6 @@ void applyConfigurationChanges() {
 
 #ifndef NO_UPDATER
 // updater in separate file
+// NOLINTNEXTLINE(bugprone-suspicious-include) - Intentional inclusion for implementation-only code
 #include "updater.cpp"
 #endif

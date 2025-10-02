@@ -63,3 +63,4 @@ public:
 } // namespace FGComNoiseFloor
 
 #endif // NOISE_FLOOR_H
+

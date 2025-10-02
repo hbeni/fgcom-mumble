@@ -279,7 +279,7 @@ double FGCom_PatternInterpolation::getMultipathFactor(int altitude_m, double fre
     
     // Use wavelength in multipath calculation
     double wavelength_factor = lambda / 10.0; // Normalize to reasonable scale
-    double multipath_strength = abs(cos(phase_diff * M_PI / 180.0));
+    double multipath_strength = std::abs(cos(phase_diff * M_PI / 180.0));
     
     // Apply wavelength-dependent multipath effects
     return multipath_strength * (1.0 + wavelength_factor * 0.1);
@@ -622,7 +622,7 @@ namespace FGCom_AltitudeUtils {
         double lambda = 300.0 / frequency_mhz;
         double phase_diff = (path_diff / lambda) * 360.0;
         
-        return 20.0 * log10(abs(cos(phase_diff * M_PI / 180.0)) + 0.001);
+        return 20.0 * log10(std::abs(cos(phase_diff * M_PI / 180.0)) + 0.001);
     }
 }
 

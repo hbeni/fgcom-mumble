@@ -239,3 +239,4 @@ echo -e "${GREEN}✓${NC} Memory analysis completed"
 echo -e "${GREEN}✓${NC} Coverage analysis completed"
 
 echo -e "\n${BLUE}OpenStreetMap infrastructure test results saved to: $TEST_RESULTS_DIR${NC}"
+

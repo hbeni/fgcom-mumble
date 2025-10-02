@@ -268,10 +268,13 @@ void FGCom_AGC_Squelch::processAudioSamples(float* input_samples, float* output_
         return;
     }
     
+    // CRITICAL FIX: Lock both mutexes to prevent race conditions during audio processing
+    std::lock_guard<std::mutex> agc_lock(agc_mutex);
+    std::lock_guard<std::mutex> squelch_lock(squelch_mutex);
+    
     // Calculate input signal level
     float rms = calculateRMS(input_samples, sample_count);
     float input_level_db = linearToDb(rms);
-    
     
     // Update AGC
     if (agc_enabled.load()) {

@@ -40,3 +40,4 @@ public:
 } // namespace FGComBandSegments
 
 #endif // BAND_SEGMENTS_H
+

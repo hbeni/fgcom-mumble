@@ -47,12 +47,43 @@ void FGCom_ThreadManager::destroyInstance() {
     }
 }
 
+/**
+ * Start all configured threads with proper error handling and synchronization
+ * 
+ * This method orchestrates the startup of multiple specialized threads that handle
+ * different aspects of the FGCom system. Each thread has specific responsibilities:
+ * 
+ * Thread Responsibilities:
+ * - solar_data: Processes solar activity data for radio propagation
+ * - propagation: Calculates radio wave propagation models
+ * - api_server: Handles HTTP API requests and responses
+ * - gpu_compute: Manages GPU-accelerated computations
+ * - lightning_data: Processes lightning strike data
+ * - weather_data: Handles meteorological data processing
+ * - antenna_pattern: Manages antenna radiation pattern calculations
+ * 
+ * Thread Safety Considerations:
+ * - All thread operations are protected by thread_mutex
+ * - Thread startup is atomic - either all succeed or none start
+ * - Each thread has independent shutdown flags to prevent race conditions
+ * - Thread lifecycle is managed through RAII patterns
+ * 
+ * Error Handling:
+ * - If any thread fails to start, the entire operation is considered failed
+ * - Failed threads are logged with specific error messages
+ * - Thread state is tracked for debugging and monitoring
+ * 
+ * @return true if all threads started successfully, false otherwise
+ */
 bool FGCom_ThreadManager::startAllThreads() {
+    // Critical: Acquire exclusive lock to prevent race conditions during startup
+    // This ensures no other thread can modify thread state during initialization
     std::lock_guard<std::mutex> lock(thread_mutex);
     
     bool all_started = true;
     
-    // Start solar data thread
+    // Start solar data processing thread
+    // This thread handles solar activity data which affects radio propagation
     if (config.enable_solar_data_thread) {
         if (startThread("solar_data")) {
             logThreadEvent("solar_data", "Thread started successfully");

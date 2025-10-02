@@ -46,7 +46,7 @@ struct fgcom_config {
     bool        autoJoinChannel;
     std::string autoJoinChannelPW;
     
-    fgcom_config()  {
+    fgcom_config() noexcept {
         allowHearingNonPluginUsers = false;
         radioAudioEffects = true;
         specialChannel    = "^fgcom-mumble.*";

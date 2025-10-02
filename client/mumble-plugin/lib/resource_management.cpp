@@ -10,7 +10,7 @@
 ThreadRAII::ThreadRAII(std::function<void()> thread_function, std::function<void()> cleanup)
     : should_stop_(false), cleanup_function_(cleanup) {
     if (thread_function) {
-        thread_ = std::thread([this, thread_function]() {
+        thread_ = std::thread([thread_function]() {
             try {
                 thread_function();
             } catch (const std::exception& e) {
@@ -22,11 +22,39 @@ ThreadRAII::ThreadRAII(std::function<void()> thread_function, std::function<void
     }
 }
 
+/**
+ * ThreadRAII Destructor - Ensures proper thread cleanup
+ * 
+ * This destructor implements the RAII (Resource Acquisition Is Initialization)
+ * pattern for thread management. It ensures that threads are properly
+ * terminated and resources are cleaned up even if exceptions occur.
+ * 
+ * Thread Cleanup Process:
+ * 1. Signal thread to stop via should_stop_ flag
+ * 2. Wait for thread to complete via join() (blocks until thread finishes)
+ * 3. Execute custom cleanup function if provided
+ * 4. Handle any exceptions during cleanup gracefully
+ * 
+ * Thread Safety Notes:
+ * - join() is called only if thread is joinable (not already joined/detached)
+ * - Cleanup function is executed in the destructor thread context
+ * - Exceptions in cleanup are caught and logged, preventing termination
+ * 
+ * Critical: This destructor must not throw exceptions to maintain
+ * RAII guarantees and prevent undefined behavior.
+ */
 ThreadRAII::~ThreadRAII() {
+    // Signal thread to stop gracefully
     stop();
+    
+    // Wait for thread to complete execution
+    // join() blocks until the thread function returns
     if (thread_.joinable()) {
         thread_.join();
     }
+    
+    // Execute custom cleanup function if provided
+    // This allows for thread-specific resource cleanup
     if (cleanup_function_) {
         try {
             cleanup_function_();
@@ -38,23 +66,64 @@ ThreadRAII::~ThreadRAII() {
     }
 }
 
+/**
+ * ThreadRAII Move Constructor
+ * 
+ * Transfers ownership of thread resources from another ThreadRAII object.
+ * This is essential for efficient thread management in containers and
+ * when passing thread objects between functions.
+ * 
+ * Move Semantics:
+ * - Transfers thread ownership without copying (threads cannot be copied)
+ * - Transfers atomic stop flag state
+ * - Transfers cleanup function ownership
+ * - Leaves source object in valid but empty state
+ * 
+ * Thread Safety:
+ * - Atomic load of should_stop_ flag ensures thread-safe state transfer
+ * - Source object's stop flag is reset to prevent accidental termination
+ * - No thread operations are performed during move (thread continues running)
+ */
 ThreadRAII::ThreadRAII(ThreadRAII&& other) noexcept
     : thread_(std::move(other.thread_)), should_stop_(other.should_stop_.load()),
       cleanup_function_(std::move(other.cleanup_function_)) {
     other.should_stop_ = false;
 }
 
+/**
+ * ThreadRAII Move Assignment Operator
+ * 
+ * Transfers ownership of thread resources from another ThreadRAII object.
+ * This operator ensures proper cleanup of existing resources before
+ * transferring new ones.
+ * 
+ * Resource Management:
+ * 1. Stop current thread gracefully
+ * 2. Wait for current thread to complete (join)
+ * 3. Transfer new thread ownership
+ * 4. Transfer stop flag and cleanup function
+ * 5. Reset source object to safe state
+ * 
+ * Thread Safety:
+ * - Self-assignment is handled to prevent undefined behavior
+ * - Current thread is properly terminated before transfer
+ * - Atomic operations ensure thread-safe state transfer
+ * - Exception safety is guaranteed (noexcept)
+ */
 ThreadRAII& ThreadRAII::operator=(ThreadRAII&& other) noexcept {
     if (this != &other) {
+        // Stop current thread gracefully
         stop();
         if (thread_.joinable()) {
             thread_.join();
         }
         
+        // Transfer new thread resources
         thread_ = std::move(other.thread_);
         should_stop_ = other.should_stop_.load();
         cleanup_function_ = std::move(other.cleanup_function_);
         
+        // Reset source object to safe state
         other.should_stop_ = false;
     }
     return *this;
@@ -229,7 +298,7 @@ std::unique_ptr<T> ResourcePool<T>::acquire(std::chrono::milliseconds timeout) {
     
     if (resource) {
         in_use_resources_.push_back(std::move(resource));
-        return std::move(in_use_resources_.back());
+        return in_use_resources_.back(); // Remove std::move to allow RVO
     }
     
     return nullptr;

@@ -22,3 +22,4 @@ echo "📋 Changes made:"
 echo "   - Replaced -checks='*' with focused checks"
 echo "   - Replaced -header-filter='.*' with project-specific filter"
 echo "   - This will reduce warnings from hundreds of thousands to manageable levels"
+

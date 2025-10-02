@@ -17,6 +17,8 @@
 #include <algorithm>
 #include <random>
 #include <chrono>
+#include <mutex>
+#include <atomic>
 
 namespace FGComAudio {
 
@@ -185,6 +187,10 @@ private:
     float currentDistance;
     float currentVolume;
     float currentNoiseLevel;
+
+    // CRITICAL FIX: Thread safety for concurrent audio processing
+    mutable std::mutex audio_processing_mutex;
+    std::atomic<bool> processing_active{false};
 
     // Helper functions
     void applyRadioEffects(float* samples, uint32_t sampleCount, uint16_t channelCount);

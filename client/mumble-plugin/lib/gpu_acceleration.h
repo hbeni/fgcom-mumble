@@ -50,3 +50,4 @@ public:
 } // namespace FGComGPU
 
 #endif // GPU_ACCELERATION_H
+

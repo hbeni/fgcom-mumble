@@ -408,6 +408,12 @@ ProfessionalAudioEngine::ProfessionalAudioEngine()
 }
 
 void ProfessionalAudioEngine::processAudio(float* samples, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRate) {
+    // CRITICAL FIX: Lock audio processing to prevent race conditions
+    std::lock_guard<std::mutex> lock(audio_processing_mutex);
+    
+    // Set processing active flag atomically
+    processing_active.store(true);
+    
     // Apply radio-specific filtering using IIR1 filters (much more appropriate for radio)
     for (uint32_t i = 0; i < sampleCount * channelCount; ++i) {
         samples[i] = radioHighPassFilter.process(samples[i]);
@@ -432,6 +438,9 @@ void ProfessionalAudioEngine::processAudio(float* samples, uint32_t sampleCount,
     
     // Apply signal quality degradation
     applySignalQualityDegradation(samples, sampleCount, channelCount);
+    
+    // Clear processing active flag
+    processing_active.store(false);
 }
 
 void ProfessionalAudioEngine::setHighPassFilter(float cutoffHz, float sampleRate) {
