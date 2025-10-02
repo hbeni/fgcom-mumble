@@ -6,9 +6,7 @@
 // Global instance
 std::unique_ptr<FGCom_AntennaOrientationCalculator> g_antenna_orientation_calculator = nullptr;
 
-// Constants
-const double DEG_TO_RAD = M_PI / 180.0;
-const double RAD_TO_DEG = 180.0 / M_PI;
+// Constants removed - not used in this implementation
 
 FGCom_AntennaOrientationCalculator::FGCom_AntennaOrientationCalculator() {
     // Constructor

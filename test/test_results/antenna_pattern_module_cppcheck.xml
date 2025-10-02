@@ -104,14 +104,14 @@
             <symbol>timestamp</symbol>
         </error>
         <error id="knownConditionTrueFalse" severity="style" msg="Return value &apos;g_antenna_orientation_calculator-&gt;initialize()&apos; is always true" verbose="Return value &apos;g_antenna_orientation_calculator-&gt;initialize()&apos; is always true" cwe="571" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="472" column="56" info="Return value &apos;g_antenna_orientation_calculator-&gt;initialize()&apos; is always true"/>
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="472" column="56" info="Calling function &apos;initialize&apos; returns 1"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="479" column="56" info="Return value &apos;g_antenna_orientation_calculator-&gt;initialize()&apos; is always true"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="479" column="56" info="Calling function &apos;initialize&apos; returns 1"/>
         </error>
         <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="140" column="17"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="138" column="17"/>
         </error>
         <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="329" column="15"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_orientation_calculator.cpp" line="327" column="15"/>
         </error>
         <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_AntennaConfig::splitString&apos;" verbose="Unused private function: &apos;FGCom_AntennaConfig::splitString&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_ground_system.cpp">
             <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_ground_system.h" line="228" column="37"/>

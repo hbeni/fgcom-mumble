@@ -12,8 +12,8 @@
   <line>Command: ./client_plugin_module_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/test_results/client_plugin_module_valgrind_tests.xml</line>
 </preamble>
 
-<pid>62252</pid>
-<ppid>61937</ppid>
+<pid>40467</pid>
+<ppid>39808</ppid>
 <tool>memcheck</tool>
 
 <args>
@@ -34,13 +34,13 @@
 
 <status>
   <state>RUNNING</state>
-  <time>00:00:00:00.063 </time>
+  <time>00:00:00:00.075 </time>
 </status>
 
 
 <status>
   <state>FINISHED</state>
-  <time>00:00:00:00.815 </time>
+  <time>00:00:00:00.783 </time>
 </status>
 
 <errorcounts>

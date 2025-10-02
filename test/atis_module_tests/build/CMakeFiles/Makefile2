@@ -218,8 +218,8 @@ CMakeFiles/run_atis_module_basic_tests.dir/clean:
 # Target rules for target CMakeFiles/run_atis_module_sanitizer_tests.dir
 
 # All Build rule for target.
-CMakeFiles/run_atis_module_sanitizer_tests.dir/all: CMakeFiles/atis_module_tests_asan.dir/all
 CMakeFiles/run_atis_module_sanitizer_tests.dir/all: CMakeFiles/atis_module_tests_tsan.dir/all
+CMakeFiles/run_atis_module_sanitizer_tests.dir/all: CMakeFiles/atis_module_tests_asan.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_atis_module_sanitizer_tests.dir/build.make CMakeFiles/run_atis_module_sanitizer_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_atis_module_sanitizer_tests.dir/build.make CMakeFiles/run_atis_module_sanitizer_tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=28 "Built target run_atis_module_sanitizer_tests"
@@ -271,10 +271,10 @@ CMakeFiles/run_atis_module_coverage_tests.dir/clean:
 # Target rules for target CMakeFiles/run_atis_module_all_tests.dir
 
 # All Build rule for target.
+CMakeFiles/run_atis_module_all_tests.dir/all: CMakeFiles/atis_module_tests_tsan.dir/all
 CMakeFiles/run_atis_module_all_tests.dir/all: CMakeFiles/atis_module_tests_coverage.dir/all
 CMakeFiles/run_atis_module_all_tests.dir/all: CMakeFiles/atis_module_tests.dir/all
 CMakeFiles/run_atis_module_all_tests.dir/all: CMakeFiles/atis_module_tests_asan.dir/all
-CMakeFiles/run_atis_module_all_tests.dir/all: CMakeFiles/atis_module_tests_tsan.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_atis_module_all_tests.dir/build.make CMakeFiles/run_atis_module_all_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_atis_module_all_tests.dir/build.make CMakeFiles/run_atis_module_all_tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=25 "Built target run_atis_module_all_tests"

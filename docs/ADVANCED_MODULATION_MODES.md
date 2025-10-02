@@ -587,6 +587,6 @@ For technical support and questions about advanced modulation modes:
 
 ---
 
-**Last Updated**: September 27, 2024  
+**Last Updated**: January 27, 2025  
 **Version**: FGCom-mumble v2.3+  
 **Author**: FGCom-mumble Development Team

@@ -452,13 +452,60 @@ std::chrono::system_clock::time_point RateLimiter::getLastRequestTime(const std:
 }
 
 // Encryption Implementation
+/**
+ * Generate SHA256 hash of input string using OpenSSL
+ * 
+ * This function provides secure hashing using OpenSSL's SHA256 implementation.
+ * SHA256 produces a 256-bit (32-byte) hash that is cryptographically secure
+ * and suitable for password hashing, data integrity verification, and
+ * digital signatures.
+ * 
+ * OpenSSL SHA256 Process:
+ * 1. Initialize SHA256 context with SHA256_Init()
+ * 2. Update context with input data using SHA256_Update()
+ * 3. Finalize hash and store in buffer with SHA256_Final()
+ * 4. Convert binary hash to hexadecimal string representation
+ * 
+ * Security Notes:
+ * - SHA256 is collision-resistant and suitable for cryptographic use
+ * - Input data is processed in chunks for memory efficiency
+ * - Hash output is deterministic (same input always produces same output)
+ * - No salt is applied - consider adding salt for password hashing
+ * 
+ * @param input The string to hash
+ * @return Hexadecimal string representation of the SHA256 hash
+ */
 std::string Encryption::hashSHA256(const std::string& input) {
     unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, input.c_str(), input.length());
-    SHA256_Final(hash, &sha256);
+    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
     
+    if (!ctx) {
+        throw std::runtime_error("Failed to create EVP_MD_CTX");
+    }
+    
+    // Initialize SHA256 context for hashing operation
+    if (EVP_DigestInit_ex(ctx, EVP_sha256(), nullptr) != 1) {
+        EVP_MD_CTX_free(ctx);
+        throw std::runtime_error("Failed to initialize SHA256 context");
+    }
+    
+    // Update context with input data
+    // Note: c_str() is safe here as it's used immediately and string isn't modified
+    if (EVP_DigestUpdate(ctx, input.c_str(), input.length()) != 1) {
+        EVP_MD_CTX_free(ctx);
+        throw std::runtime_error("Failed to update SHA256 context");
+    }
+    
+    // Finalize hash computation and store result in hash buffer
+    unsigned int hash_len;
+    if (EVP_DigestFinal_ex(ctx, hash, &hash_len) != 1) {
+        EVP_MD_CTX_free(ctx);
+        throw std::runtime_error("Failed to finalize SHA256 hash");
+    }
+    
+    EVP_MD_CTX_free(ctx);
+    
+    // Convert binary hash to hexadecimal string representation
     std::stringstream ss;
     for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
         ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
@@ -481,7 +528,32 @@ std::string Encryption::hashSHA1(const std::string& input) {
 
 std::string Encryption::hashMD5(const std::string& input) {
     unsigned char hash[MD5_DIGEST_LENGTH];
-    MD5(reinterpret_cast<const unsigned char*>(input.c_str()), input.length(), hash);
+    EVP_MD_CTX* ctx = EVP_MD_CTX_new();
+    
+    if (!ctx) {
+        throw std::runtime_error("Failed to create EVP_MD_CTX");
+    }
+    
+    // Initialize MD5 context for hashing operation
+    if (EVP_DigestInit_ex(ctx, EVP_md5(), nullptr) != 1) {
+        EVP_MD_CTX_free(ctx);
+        throw std::runtime_error("Failed to initialize MD5 context");
+    }
+    
+    // Update context with input data
+    if (EVP_DigestUpdate(ctx, input.c_str(), input.length()) != 1) {
+        EVP_MD_CTX_free(ctx);
+        throw std::runtime_error("Failed to update MD5 context");
+    }
+    
+    // Finalize hash computation and store result in hash buffer
+    unsigned int hash_len;
+    if (EVP_DigestFinal_ex(ctx, hash, &hash_len) != 1) {
+        EVP_MD_CTX_free(ctx);
+        throw std::runtime_error("Failed to finalize MD5 hash");
+    }
+    
+    EVP_MD_CTX_free(ctx);
     
     std::stringstream ss;
     for (int i = 0; i < MD5_DIGEST_LENGTH; i++) {

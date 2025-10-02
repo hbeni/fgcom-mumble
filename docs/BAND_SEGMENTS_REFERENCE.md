@@ -278,7 +278,7 @@ The band segments database is accessible through the API:
 
 ## Related Documentation
 
-- [API Documentation](docs/API_DOCUMENTATION.md) - API reference for band segments
-- [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) - Technical details
-- [Installation Guide](docs/INSTALLATION_GUIDE.md) - Installation and setup
-- [Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md) - Client usage and compatibility
+- [API Documentation](API_DOCUMENTATION_REVIEW_COMPLETE.md) - API reference for band segments
+- [Technical Documentation](TECHNICAL_DOCUMENTATION.md) - Technical details
+- [Installation Guide](INSTALLATION_GUIDE.md) - Installation and setup
+- [Client Usage Guide](CLIENT_USAGE_GUIDE.md) - Client usage and compatibility

@@ -147,6 +147,8 @@ bool fgcom_radio_updateOperable(fgcom_radio &r);
  */
 class FGCom_radiowaveModel {
 public:
+    // Virtual destructor for proper cleanup of derived classes
+    virtual ~FGCom_radiowaveModel() = default;
          
     /*********************************************/
     /* Model dependendant methods, need to be    */

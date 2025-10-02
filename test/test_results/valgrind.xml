@@ -12,8 +12,8 @@
   <line>Command: ./agc_squelch_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/test_results/valgrind_tests.xml</line>
 </preamble>
 
-<pid>92251</pid>
-<ppid>92127</ppid>
+<pid>38170</pid>
+<ppid>37955</ppid>
 <tool>memcheck</tool>
 
 <args>
@@ -34,13 +34,13 @@
 
 <status>
   <state>RUNNING</state>
-  <time>00:00:00:00.057 </time>
+  <time>00:00:00:00.054 </time>
 </status>
 
 
 <status>
   <state>FINISHED</state>
-  <time>00:00:00:02.710 </time>
+  <time>00:00:00:02.611 </time>
 </status>
 
 <errorcounts>

@@ -353,10 +353,10 @@ ping <server>
 ## Getting Help
 
 ### Documentation
-- [Installation Guide](docs/INSTALLATION_GUIDE.md) - Installation and setup
-- [Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md) - Client usage and compatibility
-- [Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md) - Special features
-- [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) - Technical details
+- [Installation Guide](INSTALLATION_GUIDE.md) - Installation and setup
+- [Client Usage Guide](CLIENT_USAGE_GUIDE.md) - Client usage and compatibility
+- [Special Frequencies Guide](SPECIAL_FREQUENCIES_GUIDE.md) - Special features
+- [Technical Documentation](TECHNICAL_DOCUMENTATION.md) - Technical details
 
 ### Support Resources
 - GitHub Issues: [https://github.com/Supermagnum/fgcom-mumble/issues](https://github.com/Supermagnum/fgcom-mumble/issues)

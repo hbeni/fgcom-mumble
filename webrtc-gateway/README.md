@@ -289,3 +289,4 @@ MIT License - See LICENSE file for details.
 **This is a complete, working implementation of WebRTC support for FGCom-mumble!** 🎉
 
 The gateway enables web browser clients to connect to FGCom-mumble servers while preserving all existing connection methods (Mumble clients, RadioGUI, FlightGear addons, etc.).
+

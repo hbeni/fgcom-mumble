@@ -65,3 +65,4 @@ echo "✅ Braces warnings fixed!"
 echo "📋 Changes made:"
 echo "   - Added braces around single-line if statements"
 echo "   - Improved code readability and maintainability"
+

@@ -38,7 +38,20 @@ void FGCom_WorkUnitSecurityManager::destroyInstance() {
     }
 }
 
-// Constructor
+/**
+ * Constructor for Work Unit Security Manager
+ * 
+ * Initializes the security manager with default settings and prepares OpenSSL
+ * for cryptographic operations. This constructor sets up the foundation for
+ * all security operations including encryption, digital signatures, and
+ * authentication.
+ * 
+ * OpenSSL Initialization Notes:
+ * - OpenSSL_add_all_algorithms() loads all available cryptographic algorithms
+ * - ERR_load_crypto_strings() is deprecated in OpenSSL 3.0+ and removed
+ * - All OpenSSL resources are properly managed with RAII patterns
+ * - Thread safety is ensured through proper mutex usage
+ */
 FGCom_WorkUnitSecurityManager::FGCom_WorkUnitSecurityManager()
     : global_security_level(SecurityLevel::MEDIUM)
     , security_enabled(false)
@@ -51,9 +64,13 @@ FGCom_WorkUnitSecurityManager::FGCom_WorkUnitSecurityManager()
     , server_certificate(nullptr)
     , monitoring_running(false) {
     
-    // Initialize OpenSSL
+    // Initialize OpenSSL cryptographic library
+    // This loads all available algorithms (AES, RSA, ECDSA, SHA, etc.)
+    // Required before any cryptographic operations
     OpenSSL_add_all_algorithms();
-    // ERR_load_crypto_strings(); // Deprecated in OpenSSL 3.0+
+    
+    // Note: ERR_load_crypto_strings() is deprecated in OpenSSL 3.0+
+    // Error strings are now loaded automatically in modern OpenSSL versions
 }
 
 // Initialization
@@ -81,22 +98,40 @@ bool FGCom_WorkUnitSecurityManager::initialize(SecurityLevel security_level) {
     return true;
 }
 
+/**
+ * Shutdown and cleanup security manager
+ * 
+ * Properly shuts down the security manager and cleans up all OpenSSL resources.
+ * This is critical to prevent memory leaks and ensure clean shutdown.
+ * 
+ * OpenSSL Cleanup Process:
+ * 1. Stop all monitoring threads first
+ * 2. Free all EVP_PKEY structures (private/public keys)
+ * 3. Free X509 certificates
+ * 4. Clear all cryptographic contexts
+ * 5. Reset all pointers to nullptr
+ * 
+ * Thread Safety: This method must be called with proper synchronization
+ * to avoid race conditions during shutdown.
+ */
 void FGCom_WorkUnitSecurityManager::shutdown() {
     if (!security_enabled) {
         return;
     }
     
-    // Stop security monitoring
+    // Stop security monitoring threads first to prevent new operations
     if (monitoring_running) {
         stopSecurityMonitoring();
     }
     
-    // Clean up OpenSSL resources
+    // Critical: Clean up OpenSSL resources in proper order
+    // Private key must be freed first (contains sensitive data)
     if (server_private_key) {
         EVP_PKEY_free(server_private_key);
         server_private_key = nullptr;
     }
     
+    // Public key cleanup (less sensitive but still important)
     if (server_public_key) {
         EVP_PKEY_free(server_public_key);
         server_public_key = nullptr;

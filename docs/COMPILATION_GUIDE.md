@@ -573,6 +573,6 @@ export LDFLAGS="-static"
 ## Next Steps
 
 After successful compilation:
-1. See [Installation Guide](docs/INSTALLATION_GUIDE.md) for installation
-2. See [Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md) for usage
-3. See [Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md) if you encounter issues
+1. See [Installation Guide](INSTALLATION_GUIDE.md) for installation
+2. See [Client Usage Guide](CLIENT_USAGE_GUIDE.md) for usage
+3. See [Troubleshooting Guide](TROUBLESHOOTING_GUIDE.md) if you encounter issues
