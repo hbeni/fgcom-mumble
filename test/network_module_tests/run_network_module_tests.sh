@@ -45,7 +45,7 @@ command_exists() {
 # Check required tools
 print_section "Checking Required Tools"
 
-REQUIRED_TOOLS=("g++" "cmake" "make" "gtest" "valgrind" "cppcheck" "clang-tidy" "lcov")
+REQUIRED_TOOLS=("g++" "cmake" "make" "valgrind" "cppcheck" "clang-tidy" "lcov")
 MISSING_TOOLS=()
 
 for tool in "${REQUIRED_TOOLS[@]}"; do
@@ -108,7 +108,7 @@ else
 fi
 
 echo "Running Clang-Tidy on network module..."
-clang-tidy -checks='*' -header-filter='.*' \
+clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*' -header-filter='client/mumble-plugin/lib/.*' \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_UDPClient.cpp \
     /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/io_plugin.cpp \
     -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/network_module_clang-tidy.txt

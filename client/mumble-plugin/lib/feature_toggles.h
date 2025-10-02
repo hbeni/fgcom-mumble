@@ -207,7 +207,7 @@ private:
     
     std::map<FeatureToggle, FeatureToggleConfig> feature_configs;
     std::map<FeatureToggle, std::atomic<bool>> feature_states;
-    std::mutex config_mutex;
+    mutable std::mutex config_mutex;
     
     // Performance tracking
     std::map<FeatureToggle, std::atomic<uint64_t>> feature_usage_counts;

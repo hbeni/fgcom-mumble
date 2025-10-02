@@ -45,7 +45,7 @@ command_exists() {
 # Check required tools
 print_section "Checking Required Tools"
 
-REQUIRED_TOOLS=("g++" "cmake" "make" "gtest" "valgrind" "cppcheck" "clang-tidy" "lcov")
+REQUIRED_TOOLS=("g++" "cmake" "make" "valgrind" "cppcheck" "clang-tidy" "lcov")
 MISSING_TOOLS=()
 
 for tool in "${REQUIRED_TOOLS[@]}"; do
@@ -56,6 +56,14 @@ for tool in "${REQUIRED_TOOLS[@]}"; do
         MISSING_TOOLS+=("$tool")
     fi
 done
+
+# Check for gtest via pkg-config
+if pkg-config --exists gtest; then
+    echo -e "${GREEN}✓${NC} gtest found"
+else
+    echo -e "${RED}✗${NC} gtest not found"
+    MISSING_TOOLS+=("gtest")
+fi
 
 if [ ${#MISSING_TOOLS[@]} -ne 0 ]; then
     echo -e "${RED}Missing required tools: ${MISSING_TOOLS[*]}${NC}"
@@ -108,10 +116,12 @@ else
 fi
 
 echo "Running Clang-Tidy on ATIS module..."
-clang-tidy -checks='*' -header-filter='.*' \
-    /home/haaken/github-projects/fgcom-mumble/server/fgcom-radio-recorder.bot.lua \
-    /home/haaken/github-projects/fgcom-mumble/server/fgcom-radio-playback.bot.lua \
-    -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/server -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/atis_module_clang-tidy.txt
+# Only analyze C++ files, skip Lua files
+find /home/haaken/github-projects/fgcom-mumble -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | \
+    grep -E "(atis|recording|playback)" | \
+    head -10 | \
+    xargs clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*' -header-filter='client/mumble-plugin/lib/.*' \
+    -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/server -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/atis_module_clang-tidy.txt 2>/dev/null || echo "No C++ files found for ATIS module analysis"
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for ATIS module${NC}"

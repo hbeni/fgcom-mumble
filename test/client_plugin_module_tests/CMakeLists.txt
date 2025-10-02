@@ -43,7 +43,7 @@ set(TEST_SOURCES
     ../../client/mumble-plugin/lib/garbage_collector.cpp
     ../../client/mumble-plugin/lib/solar_data.cpp
     ../../client/mumble-plugin/lib/shared_data.cpp
-    ../../client/mumble-plugin/lib/audio.cpp
+    ../../client/mumble-plugin/lib/audio_modern.cpp
     ../../client/mumble-plugin/lib/antenna_pattern_mapping.cpp
     ../../client/mumble-plugin/lib/pattern_interpolation.cpp
     ../../client/mumble-plugin/lib/atmospheric_ducting.cpp

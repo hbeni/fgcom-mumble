@@ -31,8 +31,39 @@ public:
     }
     
     void TestBody() override {
-        // Basic mobile compatibility test
-        EXPECT_TRUE(true);
+        // REAL mobile compatibility test
+        WebRTCTestFramework::initialize();
+        
+        // Test mobile connection establishment
+        bool mobileConnected = WebRTCTestFramework::establishConnection("test://mobile");
+        EXPECT_TRUE(mobileConnected) << "Mobile connection failed";
+        
+        // Test mobile audio constraints
+        bool audioStarted = WebRTCTestFramework::startAudioStream();
+        EXPECT_TRUE(audioStarted) << "Mobile audio stream failed";
+        
+        // Test mobile performance
+        auto startTime = std::chrono::high_resolution_clock::now();
+        auto testData = WebRTCTestFramework::createTestRadioData();
+        bool dataSent = WebRTCTestFramework::sendRadioData(testData);
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto mobileTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
+        
+        EXPECT_TRUE(dataSent) << "Mobile data transmission failed";
+        EXPECT_LT(mobileTime.count(), 500) << "Mobile performance too slow: " << mobileTime.count() << "ms";
+        
+        // Test mobile audio quality
+        auto audioQuality = WebRTCTestFramework::measureAudioQuality();
+        EXPECT_TRUE(audioQuality.isValid) << "Mobile audio quality failed";
+        EXPECT_LT(audioQuality.latency, 200.0) << "Mobile latency too high: " << audioQuality.latency << "ms";
+        
+        // Test mobile bandwidth efficiency
+        double bandwidth = WebRTCTestFramework::measureBandwidth();
+        EXPECT_GT(bandwidth, 0.0) << "Mobile bandwidth measurement failed";
+        EXPECT_LT(bandwidth, 256000.0) << "Mobile bandwidth usage too high: " << bandwidth << " bps";
+        
+        WebRTCTestFramework::stopAudioStream();
+        WebRTCTestFramework::cleanup();
     }
 };
 

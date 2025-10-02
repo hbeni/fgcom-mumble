@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="21" failures="1" disabled="0" errors="0" time="41.011" timestamp="2025-10-02T03:42:47.286" name="AllTests">
+  <testsuite name="RecordingTest" tests="7" failures="1" disabled="0" skipped="0" errors="0" time="33.761" timestamp="2025-10-02T03:42:47.316">
+    <testcase name="VoiceRecordingStartStop" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp" line="4" status="run" result="completed" time="0.28" timestamp="2025-10-02T03:42:47.318" classname="RecordingTest" />
+    <testcase name="RecordingDurationLimits" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp" line="31" status="run" result="completed" time="25.856" timestamp="2025-10-02T03:42:47.600" classname="RecordingTest" />
+    <testcase name="AudioQualityVerification" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp" line="86" status="run" result="completed" time="0.538" timestamp="2025-10-02T03:43:13.457" classname="RecordingTest" />
+    <testcase name="FileFormatCorrectness" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp" line="141" status="run" result="completed" time="0.237" timestamp="2025-10-02T03:43:13.996" classname="RecordingTest" />
+    <testcase name="StorageManagement" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp" line="196" status="run" result="completed" time="2.192" timestamp="2025-10-02T03:43:14.233" classname="RecordingTest" />
+    <testcase name="RecordingPerformance" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp" line="246" status="run" result="completed" time="4.362" timestamp="2025-10-02T03:43:16.426" classname="RecordingTest">
+      <failure message="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp:271&#x0A;Expected: (time_per_recording) &lt; (1000.0), actual: 43267.6 vs 1000&#x0A;Recording too slow: 43267.599999999999 microseconds&#x0A;" type=""><![CDATA[/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp:271
+Expected: (time_per_recording) < (1000.0), actual: 43267.6 vs 1000
+Recording too slow: 43267.599999999999 microseconds
+]]></failure>
+    </testcase>
+    <testcase name="RecordingAccuracy" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp" line="281" status="run" result="completed" time="0.287" timestamp="2025-10-02T03:43:20.790" classname="RecordingTest" />
+  </testsuite>
+  <testsuite name="PlaybackTest" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="7.093" timestamp="2025-10-02T03:43:21.081">
+    <testcase name="PlaybackOnDemand" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp" line="4" status="run" result="completed" time="0.223" timestamp="2025-10-02T03:43:21.081" classname="PlaybackTest" />
+    <testcase name="LoopPlayback" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp" line="38" status="run" result="completed" time="0.209" timestamp="2025-10-02T03:43:21.305" classname="PlaybackTest" />
+    <testcase name="MultipleSimultaneousPlaybacks" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp" line="77" status="run" result="completed" time="0.864" timestamp="2025-10-02T03:43:21.515" classname="PlaybackTest" />
+    <testcase name="PlaybackInterruption" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp" line="131" status="run" result="completed" time="0.463" timestamp="2025-10-02T03:43:22.382" classname="PlaybackTest" />
+    <testcase name="AudioSyncWithTransmission" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp" line="176" status="run" result="completed" time="0.491" timestamp="2025-10-02T03:43:22.845" classname="PlaybackTest" />
+    <testcase name="PlaybackPerformance" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp" line="228" status="run" result="completed" time="4.508" timestamp="2025-10-02T03:43:23.336" classname="PlaybackTest" />
+    <testcase name="PlaybackAccuracy" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp" line="269" status="run" result="completed" time="0.328" timestamp="2025-10-02T03:43:27.845" classname="PlaybackTest" />
+  </testsuite>
+  <testsuite name="ATISContentTest" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0.124" timestamp="2025-10-02T03:43:28.174">
+    <testcase name="AirportCodeParsing" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp" line="4" status="run" result="completed" time="0.004" timestamp="2025-10-02T03:43:28.174" classname="ATISContentTest" />
+    <testcase name="WeatherInformationFormatting" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp" line="43" status="run" result="completed" time="0.004" timestamp="2025-10-02T03:43:28.179" classname="ATISContentTest" />
+    <testcase name="RunwayInformation" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp" line="77" status="run" result="completed" time="0.004" timestamp="2025-10-02T03:43:28.183" classname="ATISContentTest" />
+    <testcase name="TimeDateStamping" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp" line="110" status="run" result="completed" time="0.009" timestamp="2025-10-02T03:43:28.188" classname="ATISContentTest" />
+    <testcase name="PhoneticAlphabetConversion" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp" line="165" status="run" result="completed" time="0.012" timestamp="2025-10-02T03:43:28.198" classname="ATISContentTest" />
+    <testcase name="ATISContentPerformance" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp" line="211" status="run" result="completed" time="0.081" timestamp="2025-10-02T03:43:28.210" classname="ATISContentTest" />
+    <testcase name="ATISContentAccuracy" file="/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp" line="242" status="run" result="completed" time="0.006" timestamp="2025-10-02T03:43:28.292" classname="ATISContentTest" />
+  </testsuite>
+</testsuites>

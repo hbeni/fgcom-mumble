@@ -111,6 +111,7 @@ void pluginLog(T log) {
 }
 
 void pluginDbg(std::string log) {
+    (void)log; // Suppress unused parameter warning
 #ifdef DEBUG
     // only log if we build in debug mode
     fgcom_log_openFile();
@@ -312,7 +313,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             } else {
                 // Notify all users;
                 // remove local id from that array to prevent sending updates to ourselves
-                mumble_userid_t exclusiveUserIDs[userCount-1];
+                std::vector<mumble_userid_t> exclusiveUserIDs(userCount-1);
                 int o = 0;
                 for(size_t i=0; i<userCount; i++) {
                     if (userIDs[i] != lcl.mumid) {
@@ -324,7 +325,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                     }
                 }
             
-                int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
+                int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs.data(), userCount-1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
                 if (send_res != MUMBLE_STATUS_OK) {
                     pluginDbg("  message sent ERROR: "+std::to_string(send_res));
                 } else {
@@ -399,7 +400,7 @@ void notifyRemotesCombined(int iid, mumble_userid_t tgtUser) {
         }
     } else {
         // Send to all users
-        mumble_userid_t exclusiveUserIDs[userCount-1];
+        std::vector<mumble_userid_t> exclusiveUserIDs(userCount-1);
         int o = 0;
         for(size_t i=0; i<userCount; i++) {
             if (userIDs[i] != lcl.mumid) {
@@ -411,7 +412,7 @@ void notifyRemotesCombined(int iid, mumble_userid_t tgtUser) {
             }
         }
     
-        int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs, userCount-1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
+        int send_res = mumAPI.sendData(ownPluginID, activeConnection, exclusiveUserIDs.data(), userCount-1, reinterpret_cast<const uint8_t *>(message.c_str()), strlen(message.c_str()), dataID.c_str());
         if (send_res != MUMBLE_STATUS_OK) {
             pluginDbg("  message sent ERROR: "+std::to_string(send_res));
         } else {

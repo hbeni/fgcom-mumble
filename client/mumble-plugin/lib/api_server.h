@@ -269,6 +269,9 @@ private:
     std::atomic<long> total_websocket_connections;
     std::chrono::system_clock::time_point server_start_time;
     
+    // Server state mutex
+    std::unique_ptr<std::mutex> server_state_mutex;
+    
     // Vehicle dynamics manager
     std::unique_ptr<FGCom_VehicleDynamicsManager> vehicle_dynamics_manager;
     

@@ -22,7 +22,7 @@ CMAKE_AR:FILEPATH=/usr/bin/ar
 
 //Choose the type of build, options are: None Debug Release RelWithDebInfo
 // MinSizeRel ...
-CMAKE_BUILD_TYPE:STRING=
+CMAKE_BUILD_TYPE:STRING=Debug
 
 //Enable/Disable color output during build.
 CMAKE_COLOR_MAKEFILE:BOOL=ON
@@ -227,18 +227,6 @@ Network_Module_Tests_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 Network_Module_Tests_SOURCE_DIR:STATIC=/home/haaken/github-projects/fgcom-mumble/test/network_module_tests
 
-//Arguments to supply to pkg-config
-PKG_CONFIG_ARGN:STRING=
-
-//pkg-config executable
-PKG_CONFIG_EXECUTABLE:FILEPATH=/usr/bin/pkg-config
-
-//Path to a library.
-pkgcfg_lib_GMOCK_gmock:FILEPATH=/usr/lib/x86_64-linux-gnu/libgmock.a
-
-//Path to a library.
-pkgcfg_lib_GMOCK_gtest:FILEPATH=/usr/lib/x86_64-linux-gnu/libgtest.a
-
 
 ########################
 # INTERNAL cache entries
@@ -393,56 +381,8 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding GTest
 FIND_PACKAGE_MESSAGE_DETAILS_GTest:INTERNAL=[/usr/lib/x86_64-linux-gnu/cmake/GTest/GTestConfig.cmake][c ][v1.14.0()]
-//Details about finding PkgConfig
-FIND_PACKAGE_MESSAGE_DETAILS_PkgConfig:INTERNAL=[/usr/bin/pkg-config][v1.8.1()]
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
-GMOCK_CFLAGS:INTERNAL=-I/usr/include;-DGTEST_HAS_PTHREAD=1
-GMOCK_CFLAGS_I:INTERNAL=
-GMOCK_CFLAGS_OTHER:INTERNAL=-DGTEST_HAS_PTHREAD=1
-GMOCK_FOUND:INTERNAL=1
-GMOCK_INCLUDEDIR:INTERNAL=/usr/include
-GMOCK_INCLUDE_DIRS:INTERNAL=/usr/include
-GMOCK_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lgmock;-lgtest
-GMOCK_LDFLAGS_OTHER:INTERNAL=
-GMOCK_LIBDIR:INTERNAL=/usr/lib/x86_64-linux-gnu
-GMOCK_LIBRARIES:INTERNAL=gmock;gtest
-GMOCK_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
-GMOCK_LIBS:INTERNAL=
-GMOCK_LIBS_L:INTERNAL=
-GMOCK_LIBS_OTHER:INTERNAL=
-GMOCK_LIBS_PATHS:INTERNAL=
-GMOCK_MODULE_NAME:INTERNAL=gmock
-GMOCK_PREFIX:INTERNAL=
-GMOCK_STATIC_CFLAGS:INTERNAL=-I/usr/include;-DGTEST_HAS_PTHREAD=1
-GMOCK_STATIC_CFLAGS_I:INTERNAL=
-GMOCK_STATIC_CFLAGS_OTHER:INTERNAL=-DGTEST_HAS_PTHREAD=1
-GMOCK_STATIC_INCLUDE_DIRS:INTERNAL=/usr/include
-GMOCK_STATIC_LDFLAGS:INTERNAL=-L/usr/lib/x86_64-linux-gnu;-lgmock;-lgtest
-GMOCK_STATIC_LDFLAGS_OTHER:INTERNAL=
-GMOCK_STATIC_LIBDIR:INTERNAL=
-GMOCK_STATIC_LIBRARIES:INTERNAL=gmock;gtest
-GMOCK_STATIC_LIBRARY_DIRS:INTERNAL=/usr/lib/x86_64-linux-gnu
-GMOCK_STATIC_LIBS:INTERNAL=
-GMOCK_STATIC_LIBS_L:INTERNAL=
-GMOCK_STATIC_LIBS_OTHER:INTERNAL=
-GMOCK_STATIC_LIBS_PATHS:INTERNAL=
-GMOCK_VERSION:INTERNAL=1.14.0
-GMOCK_gmock_INCLUDEDIR:INTERNAL=
-GMOCK_gmock_LIBDIR:INTERNAL=
-GMOCK_gmock_PREFIX:INTERNAL=
-GMOCK_gmock_VERSION:INTERNAL=
-//ADVANCED property for variable: PKG_CONFIG_ARGN
-PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
-PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
-__pkg_config_arguments_GMOCK:INTERNAL=REQUIRED;gmock
-__pkg_config_checked_GMOCK:INTERNAL=1
-//ADVANCED property for variable: pkgcfg_lib_GMOCK_gmock
-pkgcfg_lib_GMOCK_gmock-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: pkgcfg_lib_GMOCK_gtest
-pkgcfg_lib_GMOCK_gtest-ADVANCED:INTERNAL=1
-prefix_result:INTERNAL=/usr/lib/x86_64-linux-gnu
 

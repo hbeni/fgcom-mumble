@@ -257,45 +257,13 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
-CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Param.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.cpp \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.cpp \
+CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.h \
   /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/mumble/PluginComponents_v_1_0_x.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/noise/phil_burk_19990905_patest_pink.c \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Bessel.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Butterworth.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Cascade.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevI.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevII.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Common.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Custom.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Elliptic.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Layout.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Legendre.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/MathSupplement.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Params.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/PoleFilter.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/SmoothedFilter.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Types.h \
-  /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Utilities.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/errno-base.h \
   /usr/include/asm-generic/errno.h \
-  /usr/include/assert.h \
   /usr/include/c++/13/algorithm \
   /usr/include/c++/13/array \
   /usr/include/c++/13/backward/auto_ptr.h \
@@ -315,7 +283,6 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/c++/13/bits/char_traits.h \
   /usr/include/c++/13/bits/charconv.h \
   /usr/include/c++/13/bits/chrono.h \
-  /usr/include/c++/13/bits/codecvt.h \
   /usr/include/c++/13/bits/concept_check.h \
   /usr/include/c++/13/bits/cpp_type_traits.h \
   /usr/include/c++/13/bits/cxxabi_forced.h \
@@ -335,11 +302,8 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/c++/13/bits/istream.tcc \
   /usr/include/c++/13/bits/locale_classes.h \
   /usr/include/c++/13/bits/locale_classes.tcc \
-  /usr/include/c++/13/bits/locale_conv.h \
   /usr/include/c++/13/bits/locale_facets.h \
   /usr/include/c++/13/bits/locale_facets.tcc \
-  /usr/include/c++/13/bits/locale_facets_nonio.h \
-  /usr/include/c++/13/bits/locale_facets_nonio.tcc \
   /usr/include/c++/13/bits/localefwd.h \
   /usr/include/c++/13/bits/memory_resource.h \
   /usr/include/c++/13/bits/memoryfwd.h \
@@ -353,7 +317,8 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/c++/13/bits/postypes.h \
   /usr/include/c++/13/bits/predefined_ops.h \
   /usr/include/c++/13/bits/ptr_traits.h \
-  /usr/include/c++/13/bits/quoted_string.h \
+  /usr/include/c++/13/bits/random.h \
+  /usr/include/c++/13/bits/random.tcc \
   /usr/include/c++/13/bits/range_access.h \
   /usr/include/c++/13/bits/refwrap.h \
   /usr/include/c++/13/bits/requires_hosted.h \
@@ -374,6 +339,7 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/c++/13/bits/stl_iterator.h \
   /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/13/bits/stl_iterator_base_types.h \
+  /usr/include/c++/13/bits/stl_numeric.h \
   /usr/include/c++/13/bits/stl_pair.h \
   /usr/include/c++/13/bits/stl_raw_storage_iter.h \
   /usr/include/c++/13/bits/stl_tempbuf.h \
@@ -391,10 +357,8 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/c++/13/bits/uses_allocator_args.h \
   /usr/include/c++/13/bits/utility.h \
   /usr/include/c++/13/bits/vector.tcc \
-  /usr/include/c++/13/cassert \
   /usr/include/c++/13/cctype \
   /usr/include/c++/13/cerrno \
-  /usr/include/c++/13/cfloat \
   /usr/include/c++/13/chrono \
   /usr/include/c++/13/clocale \
   /usr/include/c++/13/cmath \
@@ -404,7 +368,6 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/c++/13/cstdint \
   /usr/include/c++/13/cstdio \
   /usr/include/c++/13/cstdlib \
-  /usr/include/c++/13/cstring \
   /usr/include/c++/13/ctime \
   /usr/include/c++/13/cwchar \
   /usr/include/c++/13/cwctype \
@@ -420,26 +383,24 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/c++/13/ext/type_traits.h \
   /usr/include/c++/13/functional \
   /usr/include/c++/13/initializer_list \
-  /usr/include/c++/13/iomanip \
   /usr/include/c++/13/ios \
   /usr/include/c++/13/iosfwd \
-  /usr/include/c++/13/iostream \
   /usr/include/c++/13/istream \
   /usr/include/c++/13/limits \
-  /usr/include/c++/13/locale \
-  /usr/include/c++/13/math.h \
   /usr/include/c++/13/memory \
   /usr/include/c++/13/mutex \
   /usr/include/c++/13/new \
+  /usr/include/c++/13/numeric \
   /usr/include/c++/13/ostream \
   /usr/include/c++/13/pstl/execution_defs.h \
   /usr/include/c++/13/pstl/glue_algorithm_defs.h \
   /usr/include/c++/13/pstl/glue_memory_defs.h \
+  /usr/include/c++/13/pstl/glue_numeric_defs.h \
   /usr/include/c++/13/pstl/pstl_config.h \
+  /usr/include/c++/13/random \
   /usr/include/c++/13/ratio \
   /usr/include/c++/13/sstream \
   /usr/include/c++/13/stdexcept \
-  /usr/include/c++/13/stdlib.h \
   /usr/include/c++/13/streambuf \
   /usr/include/c++/13/string \
   /usr/include/c++/13/string_view \
@@ -466,7 +427,6 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/errno.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
-  /usr/include/libintl.h \
   /usr/include/linux/errno.h \
   /usr/include/locale.h \
   /usr/include/math.h \
@@ -476,8 +436,6 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/stdint.h \
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
-  /usr/include/string.h \
-  /usr/include/strings.h \
   /usr/include/time.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \
@@ -562,16 +520,14 @@ CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mum
   /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
-  /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h \
+  /usr/include/x86_64-linux-gnu/c++/13/bits/opt_random.h \
   /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
-  /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
   /usr/include/x86_64-linux-gnu/sys/cdefs.h \
   /usr/include/x86_64-linux-gnu/sys/select.h \
   /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
   /usr/include/x86_64-linux-gnu/sys/types.h \
-  /usr/lib/gcc/x86_64-linux-gnu/13/include/float.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdbool.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
@@ -2887,16 +2843,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/gmock/gmock-actions.h:
 
-/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
-
-/usr/include/c++/13/pstl/glue_numeric_defs.h:
-
-/usr/include/c++/13/bits/stl_numeric.h:
-
-/usr/include/c++/13/random:
-
-/usr/include/c++/13/bits/random.tcc:
-
 /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_fixtures.h:
 
 /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_audio_effects.cpp:
@@ -2913,7 +2859,11 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/x86_64-linux-gnu/bits/types/stack_t.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/idtype_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h:
 
@@ -2946,6 +2896,8 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/include/x86_64-linux-gnu/asm/types.h:
 
 /usr/include/x86_64-linux-gnu/asm/bitsperlong.h:
+
+/usr/include/string.h:
 
 /usr/include/regex.h:
 
@@ -2989,19 +2941,23 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/gtest/gtest-test-part.h:
 
-/usr/include/c++/13/bits/random.h:
-
-/usr/include/gtest/gtest-printers.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/struct_statx_timestamp.h:
 
 /usr/include/gtest/gtest-message.h:
 
 /usr/include/gtest/gtest-matchers.h:
 
+/usr/include/gtest/gtest-death-test.h:
+
 /usr/include/gtest/gtest-assertion-result.h:
 
 /usr/include/c++/13/variant:
+
+/usr/include/c++/13/stdlib.h:
+
+/usr/include/x86_64-linux-gnu/bits/uio_lim.h:
+
+/usr/include/c++/13/bits/stream_iterator.h:
 
 /usr/include/c++/13/bits/stl_multiset.h:
 
@@ -3011,43 +2967,71 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/c++/13/bits/stl_map.h:
 
+/usr/include/assert.h:
+
+/usr/include/asm-generic/posix_types.h:
+
+/usr/include/asm-generic/int-ll64.h:
+
 /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/main.cpp:
-
-/usr/include/x86_64-linux-gnu/c++/13/bits/basic_file.h:
-
-/usr/include/c++/13/thread:
-
-/usr/include/c++/13/fstream:
-
-/usr/include/c++/13/bits/this_thread_sleep.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h:
 
-/usr/include/string.h:
+/usr/include/x86_64-linux-gnu/c++/13/bits/basic_file.h:
 
-/usr/include/c++/13/stdlib.h:
+/usr/include/libintl.h:
+
+/usr/include/c++/13/thread:
 
 /usr/include/c++/13/locale:
 
-/usr/include/signal.h:
-
 /usr/include/strings.h:
+
+/usr/include/signal.h:
 
 /usr/include/c++/13/iomanip:
 
-/usr/include/c++/13/functional:
+/usr/include/c++/13/fstream:
 
-/usr/include/c++/13/cstring:
+/usr/include/c++/13/bits/this_thread_sleep.h:
+
+/usr/include/c++/13/bits/quoted_string.h:
+
+/usr/include/c++/13/bits/locale_facets_nonio.tcc:
+
+/usr/include/x86_64-linux-gnu/bits/confname.h:
+
+/usr/include/c++/13/bits/locale_facets_nonio.h:
+
+/usr/include/c++/13/bits/fstream.tcc:
+
+/usr/include/c++/13/bits/stl_tree.h:
+
+/usr/include/c++/13/bits/codecvt.h:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/include/c++/13/pstl/glue_numeric_defs.h:
+
+/usr/include/c++/13/functional:
 
 /usr/include/c++/13/complex:
 
 /usr/include/c++/13/bits/unordered_map.h:
 
-/usr/include/c++/13/bits/quoted_string.h:
+/usr/include/c++/13/bits/stl_numeric.h:
 
-/usr/include/c++/13/bits/locale_facets_nonio.tcc:
+/usr/include/c++/13/random:
+
+/usr/include/c++/13/bits/random.tcc:
+
+/usr/include/gtest/gtest-printers.h:
+
+/usr/include/c++/13/bits/random.h:
 
 /usr/include/c++/13/bits/hashtable_policy.h:
 
@@ -3057,63 +3041,7 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/c++/13/bits/enable_special_members.h:
 
-/usr/include/c++/13/bits/stl_tree.h:
-
-/usr/include/c++/13/bits/codecvt.h:
-
 /usr/include/c++/13/array:
-
-/usr/include/assert.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Utilities.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Types.h:
-
-/usr/include/asm-generic/int-ll64.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/SmoothedFilter.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/PoleFilter.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/MathSupplement.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Legendre.h:
-
-/usr/include/gtest/gtest-death-test.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Layout.h:
-
-/usr/include/asm-generic/posix_types.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Custom.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Common.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevI.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/idtype_t.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Cascade.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Butterworth.h:
-
-/usr/include/libintl.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.h:
-
-/usr/include/x86_64-linux-gnu/bits/uio_lim.h:
-
-/usr/include/c++/13/bits/stream_iterator.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Bessel.h:
-
-/usr/include/c++/13/bits/fstream.tcc:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/noise/phil_burk_19990905_patest_pink.c:
 
 /usr/include/x86_64-linux-gnu/bits/statx.h:
 
@@ -3124,26 +3052,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_audio_processing_main.cpp:
 
 /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RootFinder.cpp:
-
-/usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Param.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Dsp.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Design.cpp:
 
 /usr/include/c++/13/pstl/pstl_config.h:
 
@@ -3170,8 +3078,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/include/c++/13/cwctype:
 
 /usr/include/c++/13/mutex:
-
-/usr/include/c++/13/math.h:
 
 /usr/include/c++/13/bits/unique_lock.h:
 
@@ -3232,8 +3138,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/include/c++/13/cerrno:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-least.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Elliptic.h:
 
 /usr/include/c++/13/cstdint:
 
@@ -3301,8 +3205,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/c++/13/bits/functexcept.h:
 
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/ChebyshevII.h:
-
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
 /usr/include/c++/13/bits/stl_bvector.h:
@@ -3350,8 +3252,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/lib/gcc/x86_64-linux-gnu/13/include/syslimits.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Filter.h:
 
 /usr/include/c++/13/bits/atomic_lockfree_defines.h:
 
@@ -3421,8 +3321,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/c++/13/bits/predefined_ops.h:
 
-/usr/include/alloca.h:
-
 /usr/include/c++/13/bits/basic_string.tcc:
 
 /usr/include/c++/13/bits/allocated_ptr.h:
@@ -3474,8 +3372,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/include/c++/13/ext/alloc_traits.h:
 
 /usr/include/c++/13/new:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/State.h:
 
 /usr/include/c++/13/ios:
 
@@ -3587,10 +3483,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/stdc-predef.h:
 
-/usr/include/c++/13/cfloat:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Params.h:
-
 /usr/include/c++/13/bits/nested_exception.h:
 
 /usr/include/c++/13/tuple:
@@ -3638,8 +3530,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/include/x86_64-linux-gnu/asm/posix_types_64.h:
 
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/RBJ.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
@@ -3689,6 +3579,10 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/timex.h:
+
 /usr/include/gmock/gmock-cardinalities.h:
 
 /usr/include/x86_64-linux-gnu/c++/13/bits/cpu_defines.h:
@@ -3704,12 +3598,6 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/timex.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/DspFilters/Biquad.cpp:
 
 /usr/include/c++/13/bits/charconv.h:
 
@@ -3728,6 +3616,10 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
+
+/usr/include/alloca.h:
+
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp:
 
 /usr/include/asm-generic/errno.h:
 
@@ -3775,16 +3667,12 @@ CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o: /h
 
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
-/usr/include/c++/13/numeric:
-
 /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:
+
+/usr/include/c++/13/numeric:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h:
 
-/usr/include/x86_64-linux-gnu/bits/confname.h:
-
-/usr/include/c++/13/bits/locale_facets_nonio.h:
-
-/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp:
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.h:

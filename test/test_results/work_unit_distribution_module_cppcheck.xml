@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="2">
+    <cppcheck version="2.13.0"/>
+    <errors>
+        <error id="noConstructor" severity="style" msg="The class &apos;FGCom_WorkUnitDistributor&apos; does not declare a constructor although it has private member variables which likely require initialization." verbose="The class &apos;FGCom_WorkUnitDistributor&apos; does not declare a constructor although it has private member variables which likely require initialization. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.h" line="210" column="1"/>
+            <symbol>FGCom_WorkUnitDistributor</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_WorkUnitDistributor::workerThreadFunction&apos;" verbose="Unused private function: &apos;FGCom_WorkUnitDistributor::workerThreadFunction&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.h" line="232" column="10"/>
+            <symbol>FGCom_WorkUnitDistributor::workerThreadFunction</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_WorkUnitDistributor::processCompletedWorkUnit&apos;" verbose="Unused private function: &apos;FGCom_WorkUnitDistributor::processCompletedWorkUnit&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.h" line="236" column="10"/>
+            <symbol>FGCom_WorkUnitDistributor::processCompletedWorkUnit</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_WorkUnitDistributor::handleWorkUnitTimeout&apos;" verbose="Unused private function: &apos;FGCom_WorkUnitDistributor::handleWorkUnitTimeout&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.h" line="237" column="10"/>
+            <symbol>FGCom_WorkUnitDistributor::handleWorkUnitTimeout</symbol>
+        </error>
+        <error id="useInitializationList" severity="performance" msg="Variable &apos;timestamp&apos; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&apos;t explicitly write them to the initialization list. You could avoid assigning &apos;timestamp&apos; a value by passing the value to the constructor in the initialization list." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/gpu_types.h" line="52" column="9"/>
+            <symbol>timestamp</symbol>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &apos;unit&apos; can be declared as reference to const" verbose="Variable &apos;unit&apos; can be declared as reference to const" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp" line="351" column="15" info="Variable &apos;unit&apos; can be declared as reference to const"/>
+            <symbol>unit</symbol>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &apos;unit&apos; can be declared as reference to const" verbose="Variable &apos;unit&apos; can be declared as reference to const" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp" line="816" column="19" info="Variable &apos;unit&apos; can be declared as reference to const"/>
+            <symbol>unit</symbol>
+        </error>
+        <error id="uninitvar" severity="error" msg="Uninitialized variable: unit.result_size_bytes" verbose="Uninitialized variable: unit.result_size_bytes" cwe="457" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp" line="189" column="27"/>
+            <symbol>unit</symbol>
+        </error>
+        <error id="uninitStructMember" severity="error" msg="Uninitialized struct member: unit.result_size_bytes" verbose="Uninitialized struct member: unit.result_size_bytes" cwe="457" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_distributor.cpp" line="189" column="27"/>
+            <symbol>unit.result_size_bytes</symbol>
+        </error>
+        <error id="noConstructor" severity="style" msg="The class &apos;FGCom_ClientWorkUnitCoordinator&apos; does not declare a constructor although it has private member variables which likely require initialization." verbose="The class &apos;FGCom_ClientWorkUnitCoordinator&apos; does not declare a constructor although it has private member variables which likely require initialization. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.h" line="24" column="1"/>
+            <symbol>FGCom_ClientWorkUnitCoordinator</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_ClientWorkUnitCoordinator::updateClientCapabilities&apos;" verbose="Unused private function: &apos;FGCom_ClientWorkUnitCoordinator::updateClientCapabilities&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.h" line="73" column="10"/>
+            <symbol>FGCom_ClientWorkUnitCoordinator::updateClientCapabilities</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_ClientWorkUnitCoordinator::handleWorkUnitTimeout&apos;" verbose="Unused private function: &apos;FGCom_ClientWorkUnitCoordinator::handleWorkUnitTimeout&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.h" line="74" column="10"/>
+            <symbol>FGCom_ClientWorkUnitCoordinator::handleWorkUnitTimeout</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_ClientServerCommunicator::makeHTTPRequest&apos;" verbose="Unused private function: &apos;FGCom_ClientServerCommunicator::makeHTTPRequest&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.h" line="199" column="17"/>
+            <symbol>FGCom_ClientServerCommunicator::makeHTTPRequest</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_ClientServerCommunicator::parseJSONResponse&apos;" verbose="Unused private function: &apos;FGCom_ClientServerCommunicator::parseJSONResponse&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.h" line="200" column="20"/>
+            <symbol>FGCom_ClientServerCommunicator::parseJSONResponse</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_ClientServerCommunicator::handleHTTPError&apos;" verbose="Unused private function: &apos;FGCom_ClientServerCommunicator::handleHTTPError&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.h" line="201" column="10"/>
+            <symbol>FGCom_ClientServerCommunicator::handleHTTPError</symbol>
+        </error>
+        <error id="useInitializationList" severity="performance" msg="Variable &apos;last_heartbeat&apos; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&apos;t explicitly write them to the initialization list. You could avoid assigning &apos;last_heartbeat&apos; a value by passing the value to the constructor in the initialization list." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="615" column="5"/>
+            <symbol>last_heartbeat</symbol>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="207" column="24"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="218" column="26"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="529" column="17"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="544" column="17"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::accumulate algorithm instead of a raw loop." verbose="Consider using std::accumulate algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="570" column="20"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="587" column="17"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/client_work_unit_coordinator.cpp" line="602" column="17"/>
+        </error>
+        <error id="noConstructor" severity="style" msg="The class &apos;FGCom_WorkUnitSecurityManager&apos; does not declare a constructor although it has private member variables which likely require initialization." verbose="The class &apos;FGCom_WorkUnitSecurityManager&apos; does not declare a constructor although it has private member variables which likely require initialization. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.h" line="155" column="1"/>
+            <symbol>FGCom_WorkUnitSecurityManager</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_WorkUnitSecurityManager::processSecurityEvent&apos;" verbose="Unused private function: &apos;FGCom_WorkUnitSecurityManager::processSecurityEvent&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.h" line="201" column="10"/>
+            <symbol>FGCom_WorkUnitSecurityManager::processSecurityEvent</symbol>
+        </error>
+        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_WorkUnitSecurityManager::updateClientReputation&apos;" verbose="Unused private function: &apos;FGCom_WorkUnitSecurityManager::updateClientReputation&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.h" line="210" column="10"/>
+            <symbol>FGCom_WorkUnitSecurityManager::updateClientReputation</symbol>
+        </error>
+        <error id="noExplicitConstructor" severity="style" msg="Class &apos;FGCom_SecurityEventLogger&apos; has a constructor with 1 argument that is not explicit." verbose="Class &apos;FGCom_SecurityEventLogger&apos; has a constructor with 1 argument that is not explicit. Such, so called &quot;Converting constructors&quot;, should in general be explicit for type safety reasons as that prevents unintended implicit conversions." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.h" line="381" column="5"/>
+            <symbol>FGCom_SecurityEventLogger</symbol>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;!verifyDigitalSignature(secure_work_unit)&apos; is always false" verbose="Condition &apos;!verifyDigitalSignature(secure_work_unit)&apos; is always false" cwe="570" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="338" column="41" info="Condition &apos;!verifyDigitalSignature(secure_work_unit)&apos; is always false"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="338" column="64" info="Calling function &apos;verifyDigitalSignature&apos; returns 1"/>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;!verifyDigitalSignature(secure_work_unit)&apos; is always false" verbose="Condition &apos;!verifyDigitalSignature(secure_work_unit)&apos; is always false" cwe="570" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="352" column="41" info="Condition &apos;!verifyDigitalSignature(secure_work_unit)&apos; is always false"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="352" column="64" info="Calling function &apos;verifyDigitalSignature&apos; returns 1"/>
+        </error>
+        <error id="knownConditionTrueFalse" severity="style" msg="Condition &apos;!validateWorkUnitSignature(secure_work_unit)&apos; is always false" verbose="Condition &apos;!validateWorkUnitSignature(secure_work_unit)&apos; is always false" cwe="570" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="905" column="9" info="Condition &apos;!validateWorkUnitSignature(secure_work_unit)&apos; is always false"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="905" column="35" info="Calling function &apos;validateWorkUnitSignature&apos; returns 1"/>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &apos;profile&apos; can be declared as reference to const" verbose="Variable &apos;profile&apos; can be declared as reference to const" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="240" column="28" info="Variable &apos;profile&apos; can be declared as reference to const"/>
+            <symbol>profile</symbol>
+        </error>
+        <error id="constVariableReference" severity="style" msg="Variable &apos;profile&apos; can be declared as reference to const" verbose="Variable &apos;profile&apos; can be declared as reference to const" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="382" column="28" info="Variable &apos;profile&apos; can be declared as reference to const"/>
+            <symbol>profile</symbol>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::copy_if algorithm instead of a raw loop." verbose="Consider using std::copy_if algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="508" column="28"/>
+        </error>
+        <error id="useStlAlgorithm" severity="style" msg="Consider using std::copy_if algorithm instead of a raw loop." verbose="Consider using std::copy_if algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp">
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/work_unit_security.cpp" line="521" column="26"/>
+        </error>
+        <error id="checkersReport" severity="information" msg="Active checkers: 161/592 (use --checkers-report=&lt;filename&gt; to see details)" verbose="Active checkers: 161/592 (use --checkers-report=&lt;filename&gt; to see details)"/>
+    </errors>
+</results>

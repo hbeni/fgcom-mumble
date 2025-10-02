@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FGCom-mumble WebRTC Client</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="FGCom-mumble WebRTC Client - Connect to FGCom-mumble servers via web browser">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <img src="images/fgcom-logo.png" alt="FGCom-mumble" class="logo-img">
+                    <h1>FGCom-mumble WebRTC Client</h1>
+                </div>
+                <div class="header-controls">
+                    <div class="connection-status" id="connectionStatus">
+                        <span class="status-indicator offline"></span>
+                        <span class="status-text">Disconnected</span>
+                    </div>
+                    <button id="settingsBtn" class="btn btn-secondary">Settings</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Login Form -->
+                <div id="loginForm" class="login-form">
+                    <div class="form-container">
+                        <h2>Login to FGCom-mumble</h2>
+                        <form id="loginFormElement">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" name="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                        <div class="form-footer">
+                            <p>Don't have an account? <a href="#" id="registerLink">Register here</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="registerForm" class="register-form" style="display: none;">
+                    <div class="form-container">
+                        <h2>Register for FGCom-mumble</h2>
+                        <form id="registerFormElement">
+                            <div class="form-group">
+                                <label for="regUsername">Username</label>
+                                <input type="text" id="regUsername" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="regEmail">Email</label>
+                                <input type="email" id="regEmail" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="regPassword">Password</label>
+                                <input type="password" id="regPassword" name="password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </form>
+                        <div class="form-footer">
+                            <p>Already have an account? <a href="#" id="loginLink">Login here</a></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Interface -->
+                <div id="mainInterface" class="main-interface" style="display: none;">
+                    <!-- Radio Controls -->
+                    <section class="radio-controls">
+                        <h2>Radio Controls</h2>
+                        <div class="radio-panel">
+                            <div class="radio-channel">
+                                <label>Channel 1</label>
+                                <div class="channel-controls">
+                                    <input type="number" id="freq1" placeholder="Frequency (MHz)" step="0.001" min="0" max="10000">
+                                    <input type="number" id="power1" placeholder="Power (W)" min="0" max="1000" value="25">
+                                    <input type="number" id="volume1" placeholder="Volume" min="0" max="100" value="50">
+                                    <input type="number" id="squelch1" placeholder="Squelch" min="0" max="100" value="30">
+                                    <button id="ptt1" class="btn btn-ptt">PTT</button>
+                                </div>
+                            </div>
+                            
+                            <div class="radio-channel">
+                                <label>Channel 2</label>
+                                <div class="channel-controls">
+                                    <input type="number" id="freq2" placeholder="Frequency (MHz)" step="0.001" min="0" max="10000">
+                                    <input type="number" id="power2" placeholder="Power (W)" min="0" max="1000" value="25">
+                                    <input type="number" id="volume2" placeholder="Volume" min="0" max="100" value="50">
+                                    <input type="number" id="squelch2" placeholder="Squelch" min="0" max="100" value="30">
+                                    <button id="ptt2" class="btn btn-ptt">PTT</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Position Controls -->
+                    <section class="position-controls">
+                        <h2>Position</h2>
+                        <div class="position-panel">
+                            <div class="form-group">
+                                <label for="callsign">Callsign</label>
+                                <input type="text" id="callsign" placeholder="Enter your callsign" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="latitude">Latitude</label>
+                                <input type="number" id="latitude" placeholder="Latitude" step="0.000001" min="-90" max="90" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="longitude">Longitude</label>
+                                <input type="number" id="longitude" placeholder="Longitude" step="0.000001" min="-180" max="180" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="altitude">Altitude (ft)</label>
+                                <input type="number" id="altitude" placeholder="Altitude" min="0" max="100000" value="3000">
+                            </div>
+                            <button id="updatePosition" class="btn btn-primary">Update Position</button>
+                        </div>
+                    </section>
+
+                    <!-- Map -->
+                    <section class="map-section">
+                        <h2>Map</h2>
+                        <div id="map" class="map-container">
+                            <div class="map-placeholder">
+                                <p>Map will be displayed here</p>
+                                <p>Integration with OpenStreetMap coming soon</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Audio Controls -->
+                    <section class="audio-controls">
+                        <h2>Audio</h2>
+                        <div class="audio-panel">
+                            <div class="form-group">
+                                <label for="inputDevice">Input Device</label>
+                                <select id="inputDevice">
+                                    <option value="">Select microphone...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="outputDevice">Output Device</label>
+                                <select id="outputDevice">
+                                    <option value="">Select speaker...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="audioLevel">Audio Level</label>
+                                <input type="range" id="audioLevel" min="0" max="100" value="50">
+                                <span id="audioLevelValue">50%</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 FGCom-mumble WebRTC Client. All rights reserved.</p>
+                <p>Version 1.0.0 | <a href="#" id="helpLink">Help</a> | <a href="#" id="aboutLink">About</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/webrtc-client.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

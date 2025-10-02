@@ -42,7 +42,7 @@ namespace Security {
     private:
         std::map<std::string, std::string> user_credentials_;
         std::map<std::string, std::chrono::system_clock::time_point> session_tokens_;
-        std::mutex auth_mutex_;
+        mutable std::mutex auth_mutex_;
         std::atomic<bool> enabled_;
         
     public:
@@ -80,7 +80,7 @@ namespace Security {
         };
         
         std::map<std::string, RateLimitEntry> rate_limits_;
-        std::mutex rate_limit_mutex_;
+        mutable std::mutex rate_limit_mutex_;
         int max_requests_per_minute_;
         int max_requests_per_hour_;
         int max_requests_per_day_;
@@ -187,7 +187,7 @@ namespace Security {
         };
         
         std::vector<SecurityEvent> security_events_;
-        std::mutex monitor_mutex_;
+        mutable std::mutex monitor_mutex_;
         std::atomic<bool> enabled_;
         size_t max_events_;
         
@@ -225,7 +225,7 @@ namespace Security {
     class SecurityConfig {
     private:
         std::map<std::string, std::string> config_values_;
-        std::mutex config_mutex_;
+        mutable std::mutex config_mutex_;
         
     public:
         SecurityConfig();
@@ -271,7 +271,7 @@ namespace Security {
         std::unique_ptr<RateLimiter> rate_limiter_;
         std::unique_ptr<SecurityMonitor> security_monitor_;
         std::unique_ptr<SecurityConfig> security_config_;
-        std::mutex manager_mutex_;
+        mutable std::mutex manager_mutex_;
         std::atomic<bool> initialized_;
         
     public:

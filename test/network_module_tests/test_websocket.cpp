@@ -1,4 +1,4 @@
-#include "test_network_module_main.cpp"
+#include "test_network_module_main.h"
 
 // 5.2 WebSocket Tests
 TEST_F(WebSocketTest, ConnectionEstablishment) {

@@ -35,14 +35,15 @@
 #include <openssl/rand.h>
 #include <openssl/evp.h>
 #include <uuid/uuid.h>
-#include <nlohmann/json.hpp>
-#include <httplib.h>
+#include "json/json.hpp"
+#include "http/httplib.h"
 #include "radio_model.h"
 #include "solar_data.h"
 #include "vehicle_dynamics.h"
 #include "power_management.h"
 #include "agc_squelch_api.h"
 #include "frequency_offset.h"
+#include "threading_types.h"
 #include "weather_data.h"
 #include "lightning_data.h"
 #include "noise_floor.h"
@@ -325,20 +326,20 @@ void FGCom_APIServer::serverThreadFunction() {
     }
 }
 
-std::string FGCom_APIServer::createErrorResponse(const std::string& message) {
+std::string FGCom_APIServer::createErrorResponse(const std::string& error_message, int error_code) const {
     nlohmann::json response = {
         {"status", "error"},
-        {"message", message},
+        {"message", error_message},
         {"timestamp", std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch()).count()}
     };
     return response.dump();
 }
 
-std::string FGCom_APIServer::createSuccessResponse(const std::string& data) {
+std::string FGCom_APIServer::createSuccessResponse(const nlohmann::json& data) const {
     nlohmann::json response = {
         {"status", "success"},
-        {"data", nlohmann::json::parse(data)},
+        {"data", data},
         {"timestamp", std::chrono::duration_cast<std::chrono::seconds>(
             std::chrono::system_clock::now().time_since_epoch()).count()}
     };
@@ -351,13 +352,13 @@ bool FGCom_APIServer::checkRateLimit(const std::string& client_ip) {
     auto minute_ago = now - std::chrono::minutes(1);
     
     // Remove old entries
-    rate_limit_map.erase(
-        std::remove_if(rate_limit_map.begin(), rate_limit_map.end(),
-            [&minute_ago](const auto& entry) {
-                return entry.second < minute_ago;
-            }),
-        rate_limit_map.end()
-    );
+    for (auto it = rate_limit_map.begin(); it != rate_limit_map.end();) {
+        if (it->second < minute_ago) {
+            it = rate_limit_map.erase(it);
+        } else {
+            ++it;
+        }
+    }
     
     // Count requests in the last minute
     int request_count = 0;
@@ -371,7 +372,7 @@ bool FGCom_APIServer::checkRateLimit(const std::string& client_ip) {
         return false;
     }
     
-    rate_limit_map.push_back({client_ip, now});
+    rate_limit_map[client_ip] = now;
     return true;
 }
 
@@ -409,15 +410,15 @@ bool FGCom_APIServer::checkFrequencyBandRateLimit(const std::string& client_ip, 
         return false;
     }
     
-    rate_limit_map.push_back({client_ip, now});
+    rate_limit_map[client_ip] = now;
     return true;
 }
 
-std::string FGCom_APIServer::getClientIP(const httplib::Request& req) {
+std::string FGCom_APIServer::getClientIP(const httplib::Request& req) const {
     return req.remote_addr;
 }
 
-bool FGCom_APIServer::isFeatureEnabled(const std::string& feature) {
+bool FGCom_APIServer::isFeatureEnabled(const std::string& feature) const {
     // Simple feature flag implementation
     return true; // For now, all features are enabled
 }
@@ -512,13 +513,9 @@ void FGCom_APIServer::handleSolarDataSubmissionRequest(const httplib::Request& r
         solar_data.sfi = solar_flux;
         solar_data.k_index = k_index;
         solar_data.a_index = a_index;
-        solar_data.ap_index = request_data.value("ap_index", a_index);
-        solar_data.sunspot_number = request_data.value("sunspot_number", 0);
-        solar_data.solar_wind_speed = request_data.value("solar_wind_speed", 400.0);
-        solar_data.solar_wind_density = request_data.value("solar_wind_density", 5.0);
+        // ap_index is not available in fgcom_solar_conditions struct
+        // Using a_index instead
         solar_data.timestamp = std::chrono::system_clock::now();
-        solar_data.data_source = "game_submission";
-        solar_data.data_valid = true;
         
         // Update solar data provider (this would need to be implemented in the solar data provider)
         // For now, we'll just acknowledge the submission
@@ -801,7 +798,7 @@ void FGCom_APIServer::handleSolarDataHistoryRequest(const httplib::Request& req,
         // Parse query parameters
         std::string start_date = req.get_param_value("start_date");
         std::string end_date = req.get_param_value("end_date");
-        int data_points = std::stoi(req.get_param_value("data_points", "100"));
+        int data_points = std::stoi(req.get_param_value("data_points", 3));
         
         // Validate parameters
         if (start_date.empty() || end_date.empty()) {
@@ -861,7 +858,7 @@ void FGCom_APIServer::handleSolarDataForecastRequest(const httplib::Request& req
         }
         
         // Parse query parameters
-        int hours = std::stoi(req.get_param_value("hours", "24"));
+        int hours = std::stoi(req.get_param_value("hours", 2));
         
         // Validate parameters
         if (hours < 1 || hours > 168) { // Max 1 week
@@ -910,30 +907,27 @@ void FGCom_APIServer::handleWeatherDataRequest(const httplib::Request& req, http
         }
         
         // Mock weather data response
-        nlohmann::json response = {
-            {"status", "success"},
-            {"weather_conditions": {
-                {"timestamp", std::chrono::duration_cast<std::chrono::seconds>(
-                    std::chrono::system_clock::now().time_since_epoch()).count()},
-                {"temperature_celsius", 20.0},
-                {"humidity_percent", 50.0},
-                {"pressure_hpa", 1013.25},
-                {"wind_speed_ms", 5.0},
-                {"wind_direction_deg", 180.0},
-                {"precipitation_mmh", 0.0},
-                {"dew_point_celsius", 10.0},
-                {"visibility_km", 10.0},
-                {"cloud_cover_percent", 30.0},
-                {"uv_index", 5.0},
-                {"air_quality_index", 50.0},
-                {"pollen_count", 25.0},
-                {"has_thunderstorms", false},
-                {"storm_distance_km", 0.0},
-                {"storm_intensity", 0.0},
-                {"data_source", "game_submission"},
-                {"data_valid", true}
-            }}
-        };
+        nlohmann::json response;
+        response["status"] = "success";
+        response["weather_conditions"]["timestamp"] = std::chrono::duration_cast<std::chrono::seconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+        response["weather_conditions"]["temperature_celsius"] = 20.0;
+        response["weather_conditions"]["humidity_percent"] = 50.0;
+        response["weather_conditions"]["pressure_hpa"] = 1013.25;
+        response["weather_conditions"]["wind_speed_ms"] = 5.0;
+        response["weather_conditions"]["wind_direction_deg"] = 180.0;
+        response["weather_conditions"]["precipitation_mmh"] = 0.0;
+        response["weather_conditions"]["dew_point_celsius"] = 10.0;
+        response["weather_conditions"]["visibility_km"] = 10.0;
+        response["weather_conditions"]["cloud_cover_percent"] = 30.0;
+        response["weather_conditions"]["uv_index"] = 5.0;
+        response["weather_conditions"]["air_quality_index"] = 50.0;
+        response["weather_conditions"]["pollen_count"] = 25.0;
+        response["weather_conditions"]["has_thunderstorms"] = false;
+        response["weather_conditions"]["storm_distance_km"] = 0.0;
+        response["weather_conditions"]["storm_intensity"] = 0.0;
+        response["weather_conditions"]["data_source"] = "game_submission";
+        response["weather_conditions"]["data_valid"] = true;
         
         res.set_content(response.dump(), "application/json");
         

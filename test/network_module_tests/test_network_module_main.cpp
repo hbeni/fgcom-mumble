@@ -32,10 +32,10 @@
 class Network_Module_Test : public ::testing::Test {
 protected:
     void SetUp() override {
-        // Initialize test parameters
-        test_udp_port = 16661;
-        test_websocket_port = 8080;
-        test_rest_port = 8081;
+        // Initialize test parameters with dynamic ports to avoid conflicts
+        test_udp_port = 16661 + (getpid() % 1000);  // Use process ID to avoid conflicts
+        test_websocket_port = 8080 + (getpid() % 1000);
+        test_rest_port = 8081 + (getpid() % 1000);
         
         // Test packet sizes
         test_packet_size_small = 64;    // 64 bytes
@@ -138,14 +138,27 @@ protected:
         return sock;
     }
     
-    // Helper to bind socket to port
+    // Helper to bind socket to port with retry
     bool bindSocket(int sock, int port) {
         struct sockaddr_in addr;
         addr.sin_family = AF_INET;
         addr.sin_addr.s_addr = INADDR_ANY;
         addr.sin_port = htons(port);
         
-        return bind(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0;
+        // Try to bind to the specified port
+        if (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0) {
+            return true;
+        }
+        
+        // If binding fails, try alternative ports
+        for (int i = 1; i <= 10; ++i) {
+            addr.sin_port = htons(port + i);
+            if (bind(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     // Helper to send UDP packet
@@ -254,5 +267,11 @@ protected:
         Network_Module_Test::SetUp();
     }
 };
+
+// Main function for running tests
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
 
 

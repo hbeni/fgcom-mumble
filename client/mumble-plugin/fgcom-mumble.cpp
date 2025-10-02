@@ -1105,6 +1105,9 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
 
 // Note: Audio input is only possible with open mic. fgcom_hanldePTT() takes care of that.
 bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
+    (void)sampleCount; // Suppress unused parameter warning
+    (void)channelCount; // Suppress unused parameter warning  
+    (void)isSpeech; // Suppress unused parameter warning
 	//pluginLog() << "Audio input with " << channelCount << " channels and " << sampleCount << " samples per channel encountered. IsSpeech: "
 	//	<< isSpeech << std::endl;
     /*pluginDbg("  plugin active="+std::to_string(fgcom_isPluginActive()));

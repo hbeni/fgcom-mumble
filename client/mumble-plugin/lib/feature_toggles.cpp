@@ -181,7 +181,7 @@ bool FGCom_FeatureToggleManager::loadConfigFromFile(const std::string& config_fi
                 // Parse feature toggle settings
                 if (current_section == "features") {
                     try {
-                        FeatureToggle feature = stringToFeatureToggle(key);
+                        FeatureToggle feature = FeatureToggleUtils::stringToFeatureToggle(key);
                         bool enabled = (value == "true" || value == "1" || value == "yes");
                         feature_states[feature] = enabled;
                     } catch (const std::exception& e) {
@@ -212,13 +212,13 @@ bool FGCom_FeatureToggleManager::saveConfigToFile(const std::string& config_file
             return false;
         }
         
-        file << "[features]" << std::endl;
+        file << "[features]" << '\n';
         
         std::lock_guard<std::mutex> lock(config_mutex);
         for (const auto& pair : feature_states) {
-            std::string feature_name = featureToggleToString(pair.first);
+            std::string feature_name = FeatureToggleUtils::featureToggleToString(pair.first);
             bool enabled = pair.second.load();
-            file << feature_name << "=" << (enabled ? "true" : "false") << std::endl;
+            file << feature_name << "=" << (enabled ? "true" : "false") << '\n';
         }
         
         return true;
@@ -379,7 +379,7 @@ void FGCom_FeatureToggleManager::updateDependentFeatures(FeatureToggle feature, 
 void FGCom_FeatureToggleManager::logFeatureChange(FeatureToggle feature, bool enabled, const std::string& reason) {
     try {
         std::lock_guard<std::mutex> lock(history_mutex);
-        std::string log_entry = "Feature " + featureToggleToString(feature) + 
+        std::string log_entry = "Feature " + FeatureToggleUtils::featureToggleToString(feature) + 
                                " " + (enabled ? "enabled" : "disabled") + 
                                " - " + reason;
         toggle_history.push_back(log_entry);

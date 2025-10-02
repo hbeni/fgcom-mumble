@@ -117,9 +117,15 @@ std::unique_ptr<FGCom_radiowaveModel> FGCom_radiowaveModel::selectModel(std::str
         // HF: 0-30 MHz (long-range, sky wave propagation)
         // VHF: 30-300 MHz (line-of-sight, ground wave propagation)  
         // UHF: 300+ MHz (line-of-sight, very short range)
-        if (frq_num <=  30.0)                    return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_HF());
-        if (frq_num >  30.0 && frq_num <= 300.0) return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
-        if (frq_num > 300.0)                     return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_UHF());
+        if (frq_num <=  30.0) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_HF());
+        }
+        if (frq_num >  30.0 && frq_num <= 300.0) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
+        }
+        if (frq_num > 300.0) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_UHF());
+        }
         
         // FALLBACK: Use VHF model for any unhandled frequency
         // VHF model provides line-of-sight propagation which is safe for most cases
@@ -203,8 +209,12 @@ double FGCom_radiowaveModel::degreeAboveHorizon(double surfacedist, double hah) 
     double distM = surfacedist * 1000; // in m because hah is also in m
     double hypo  = sqrt( pow(distM, 2) + pow(hah, 2) ); 
     
-    if (hah == 0)  return 0; // in case of horizontal alignment
-    if (hypo == 0) return (hah >=0)? 90: -90; // in case the tgt point lies directly above/below
+    if (hah == 0) {
+        return 0; // in case of horizontal alignment
+    }
+    if (hypo == 0) {
+        return (hah >=0)? 90: -90; // in case the tgt point lies directly above/below
+    }
     double sinA = hah / hypo;
     double angle = (sinA != 0)? asin(sinA) * (180.0 / M_PI) : 0;
     return angle;
@@ -216,17 +226,27 @@ double FGCom_radiowaveModel::getDirection(double lat1, double lon1, double lat2,
     // earth (wgs84 cells are only regularly shaped near the equator: size depends on location)
     double dLat = FGCom_radiowaveModel::getSurfaceDistance(lat1, lon1, lat2, lon1); // y distance in km
     double dLon = FGCom_radiowaveModel::getSurfaceDistance(lat1, lon1, lat1, lon2); // x distance in km
-    if (lat2 < lat1) dLat *= -1; // apply sign (down is negative vector)
-    if (lon2 < lon1) dLon *= -1; // apply sign (left is negative vector)
+    if (lat2 < lat1) {
+        dLat *= -1; // apply sign (down is negative vector)
+    }
+    if (lon2 < lon1) {
+        dLon *= -1; // apply sign (left is negative vector)
+    }
 
     double brng = atan2(dLat, dLon) * (180.0 / M_PI);  // 0°=east, 90°=north, etc; lat=y, lon=x
     brng = 360 - brng; // count degrees clockwise
     brng += 90; // atan returns with east=0°, so we need to rotate right (atan counts counter-clockwise)
     
     // normalize values from -180/+180 to range 0/360
-    if (brng < 360) brng += 360;
-    if (brng > 360) brng -= 360;
-    if (brng == 360) brng = 0;
+    if (brng < 360) {
+        brng += 360;
+    }
+    if (brng > 360) {
+        brng -= 360;
+    }
+    if (brng == 360) {
+        brng = 0;
+    }
 
     return brng;
 }
@@ -283,8 +303,12 @@ double FGCom_radiowaveModel::getSurfaceDistance(double lat1, double lon1,
 float FGCom_radiowaveModel::getChannelAlignment(float frq1_real, float frq2_real, float width_kHz, float core_kHz) {
     // PARAMETER VALIDATION:
     // Channel width and core must be positive values for valid calculation
-    if (width_kHz < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: width_kHz not defined!";
-    if (core_kHz  < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: core_kHz not defined!";
+    if (width_kHz < 0) {
+        throw "FGCom_radiowaveModel::getFrqMatch() calling error: width_kHz not defined!";
+    }
+    if (core_kHz  < 0) {
+        throw "FGCom_radiowaveModel::getFrqMatch() calling error: core_kHz not defined!";
+    }
     
     // LOCALE SETTING:
     // Ensure decimal points are always "." not "," for consistent parsing
@@ -324,8 +348,12 @@ float FGCom_radiowaveModel::getChannelAlignment(float frq1_real, float frq2_real
     
     // BOUNDS CHECKING:
     // Ensure result is within valid range [0.0, 1.0]
-    if (filter > 1.0) filter = 1.0;
-    if (filter < 0.0) filter = 0.0;
+    if (filter > 1.0) {
+        filter = 1.0;
+    }
+    if (filter < 0.0) {
+        filter = 0.0;
+    }
 
     return filter;
 }
