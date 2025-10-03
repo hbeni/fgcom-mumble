@@ -120,6 +120,24 @@ public:
         return debug_count;
     }
     
+    virtual size_t getTotalLogSize() {
+        std::lock_guard<std::mutex> lock(log_mutex);
+        size_t total_size = 0;
+        for (const auto& log : error_logs) {
+            total_size += log.message.length();
+        }
+        for (const auto& log : warning_logs) {
+            total_size += log.message.length();
+        }
+        for (const auto& log : info_logs) {
+            total_size += log.message.length();
+        }
+        for (const auto& log : debug_logs) {
+            total_size += log.message.length();
+        }
+        return total_size;
+    }
+    
     virtual void clearLogs() {
         std::lock_guard<std::mutex> lock(log_mutex);
         error_logs.clear();
@@ -282,8 +300,11 @@ public:
         if (is_running) {
             return false;
         }
+        // Simulate server startup delay
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         is_running = true;
         process_id = 12345;
+        crashed = false;
         return true;
     }
     
@@ -357,9 +378,10 @@ public:
         }
         
         // Check for corruption (simplified)
-        for (size_t i = 0; i < data.size(); ++i) {
-            if (data[i] == 0xFF && i > 0 && data[i-1] == 0xFF) {
-                return false; // Corrupted data
+        // Look for consecutive 0xFF bytes which indicate corruption
+        for (size_t i = 0; i < data.size() - 1; ++i) {
+            if (data[i] == 0xFF && data[i + 1] == 0xFF) {
+                return false; // Corrupted data (consecutive 0xFF bytes indicate corruption)
             }
         }
         
@@ -407,14 +429,29 @@ public:
     
     virtual std::vector<uint8_t> corruptData(const std::vector<uint8_t>& data) {
         std::vector<uint8_t> corrupted_data = data;
-        if (!corrupted_data.empty()) {
-            // Corrupt random bytes
+        if (!corrupted_data.empty() && corrupted_data.size() > 1) {
+            // Corrupt data by creating consecutive 0xFF bytes (which validateData will detect)
             for (size_t i = 0; i < corrupted_data.size() / 10; ++i) {
-                size_t index = rand() % corrupted_data.size();
+                size_t index = rand() % (corrupted_data.size() - 1);
                 corrupted_data[index] = 0xFF;
+                corrupted_data[index + 1] = 0xFF; // Create consecutive 0xFF for detection
             }
         }
         return corrupted_data;
+    }
+    
+    virtual std::vector<uint8_t> repairData(const std::vector<uint8_t>& corrupted_data) {
+        std::vector<uint8_t> repaired_data = corrupted_data;
+        if (!repaired_data.empty()) {
+            // Repair data by replacing consecutive 0xFF with original pattern
+            for (size_t i = 0; i < repaired_data.size() - 1; ++i) {
+                if (repaired_data[i] == 0xFF && repaired_data[i + 1] == 0xFF) {
+                    repaired_data[i] = 0x00; // Replace with safe value
+                    repaired_data[i + 1] = 0x00;
+                }
+            }
+        }
+        return repaired_data;
     }
     
     virtual std::vector<float> corruptAudioData(const std::vector<float>& audio_data) {
@@ -474,6 +511,11 @@ public:
         return current_memory_usage;
     }
     
+    virtual bool enableDegradedMode() {
+        // Enable degraded mode when memory usage is high
+        return current_memory_usage > max_memory_limit * 0.8;
+    }
+    
     virtual size_t getMaxMemoryLimit() {
         return max_memory_limit;
     }
@@ -483,7 +525,7 @@ public:
     }
     
     virtual bool isMemoryAvailable(size_t size_bytes) {
-        return (current_memory_usage + size_bytes) <= max_memory_limit;
+        return (current_memory_usage + size_bytes) < max_memory_limit;
     }
     
     virtual void simulateMemoryExhaustion() {

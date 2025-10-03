@@ -54,7 +54,7 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build
+CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build

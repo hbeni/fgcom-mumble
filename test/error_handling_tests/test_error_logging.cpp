@@ -118,6 +118,10 @@ TEST_F(ErrorLoggingTest, LogFileSizeLimits) {
     int error_count = mock_error_logger->getErrorCount();
     EXPECT_EQ(error_count, num_logs) << "Error count should match number of log entries";
     
+    // Test that log size is within limits (use the max_log_size variable)
+    size_t total_log_size = mock_error_logger->getTotalLogSize();
+    EXPECT_LT(total_log_size, max_log_size) << "Total log size should be within limits";
+    
     // Test log size estimation
     std::vector<std::string> error_logs = mock_error_logger->getErrorLogs();
     size_t estimated_size = 0;
@@ -184,6 +188,10 @@ TEST_F(ErrorLoggingTest, SensitiveDataNotLogged) {
     // Test that sensitive data is not in logs
     for (const auto& log : error_logs) {
         for (const auto& sensitive : sensitive_data) {
+            // Debug: print the log content to see what's actually being logged
+            if (log.find(sensitive) != std::string::npos) {
+                std::cout << "DEBUG: Found sensitive data '" << sensitive << "' in log: '" << log << "'" << std::endl;
+            }
             EXPECT_EQ(log.find(sensitive), std::string::npos) << "Sensitive data should not be in logs: " << sensitive;
         }
     }

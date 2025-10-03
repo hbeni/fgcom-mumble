@@ -271,10 +271,10 @@ CMakeFiles/run_antenna_pattern_module_coverage_tests.dir/clean:
 # Target rules for target CMakeFiles/run_antenna_pattern_module_all_tests.dir
 
 # All Build rule for target.
-CMakeFiles/run_antenna_pattern_module_all_tests.dir/all: CMakeFiles/antenna_pattern_module_tests_coverage.dir/all
-CMakeFiles/run_antenna_pattern_module_all_tests.dir/all: CMakeFiles/antenna_pattern_module_tests.dir/all
 CMakeFiles/run_antenna_pattern_module_all_tests.dir/all: CMakeFiles/antenna_pattern_module_tests_asan.dir/all
 CMakeFiles/run_antenna_pattern_module_all_tests.dir/all: CMakeFiles/antenna_pattern_module_tests_tsan.dir/all
+CMakeFiles/run_antenna_pattern_module_all_tests.dir/all: CMakeFiles/antenna_pattern_module_tests_coverage.dir/all
+CMakeFiles/run_antenna_pattern_module_all_tests.dir/all: CMakeFiles/antenna_pattern_module_tests.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_antenna_pattern_module_all_tests.dir/build.make CMakeFiles/run_antenna_pattern_module_all_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_antenna_pattern_module_all_tests.dir/build.make CMakeFiles/run_antenna_pattern_module_all_tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=25 "Built target run_antenna_pattern_module_all_tests"

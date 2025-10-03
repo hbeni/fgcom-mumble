@@ -2,7 +2,7 @@
 
 This is the **actual working implementation** of the WebRTC gateway for FGCom-mumble, enabling web browser clients to connect to FGCom-mumble servers while preserving all existing connection methods.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 16 or higher
@@ -27,9 +27,9 @@ chmod +x start-gateway.sh
 - **Main Page**: http://localhost:3000/
 - **Status**: http://localhost:3000/health
 
-## 📋 Features
+## Features
 
-### ✅ **FULLY IMPLEMENTED**
+### **FULLY IMPLEMENTED**
 - **WebRTC Gateway Server** - Complete Node.js/Express server
 - **WebRTC Client Interface** - Full web-based client with radio controls
 - **Audio Processing** - Real-time audio conversion between WebRTC and Mumble
@@ -41,7 +41,7 @@ chmod +x start-gateway.sh
 - **Mobile Support** - Responsive design for mobile devices
 - **Connection Management** - Automatic reconnection and error handling
 
-### 🔧 **Technical Implementation**
+### **Technical Implementation**
 - **Server**: Node.js/Express with Socket.IO
 - **WebRTC**: Native WebRTC API with SimplePeer
 - **Audio**: Opus codec with real-time processing
@@ -49,7 +49,7 @@ chmod +x start-gateway.sh
 - **Security**: JWT authentication, CORS, rate limiting
 - **UI**: Modern responsive web interface
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
@@ -67,7 +67,7 @@ chmod +x start-gateway.sh
                        └──────────────────┘
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 webrtc-gateway/
@@ -95,7 +95,7 @@ webrtc-gateway/
 └── README.md             # This file
 ```
 
-## 🎮 Usage
+## Usage
 
 ### 1. Start the Gateway
 ```bash
@@ -125,7 +125,7 @@ Navigate to http://localhost:3000/webrtc
 - **PTT Button**: Click and hold
 - **Audio Level**: Monitor input/output levels
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 ```bash
@@ -156,7 +156,7 @@ Edit `config/gateway.json`:
 }
 ```
 
-## 🛠️ Management Commands
+## Management Commands
 
 ```bash
 # Start gateway
@@ -178,7 +178,7 @@ Edit `config/gateway.json`:
 ./start-gateway.sh install
 ```
 
-## 🔒 Security
+## Security
 
 - **JWT Authentication** - Secure token-based authentication
 - **Password Hashing** - bcrypt with salt rounds
@@ -187,14 +187,14 @@ Edit `config/gateway.json`:
 - **Input Validation** - All inputs validated and sanitized
 - **HTTPS Support** - SSL/TLS encryption support
 
-## 📱 Mobile Support
+## Mobile Support
 
 - **Responsive Design** - Works on all screen sizes
 - **Touch Controls** - Touch-friendly PTT buttons
 - **Mobile Audio** - Optimized for mobile audio devices
 - **PWA Ready** - Progressive Web App capabilities
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -219,13 +219,13 @@ export NODE_ENV=development
 ./start-gateway.sh start
 ```
 
-## 📊 Monitoring
+## Monitoring
 
 - **Health Check**: http://localhost:3000/health
 - **Status API**: http://localhost:3000/api/status
 - **Logs**: `./start-gateway.sh logs`
 
-## 🔄 Integration
+## Integration
 
 ### With Existing FGCom-mumble
 - **Preserves all existing connection methods**
@@ -239,14 +239,14 @@ export NODE_ENV=development
 - **JSON protocol** for easy integration
 - **Modular architecture** for customization
 
-## 📈 Performance
+## Performance
 
 - **Low Latency**: < 100ms audio latency
 - **High Quality**: Opus codec with configurable bitrate
 - **Scalable**: Supports multiple concurrent connections
 - **Efficient**: Optimized audio processing pipeline
 
-## 🚀 Deployment
+## Deployment
 
 ### Production Deployment
 1. Set `NODE_ENV=production`
@@ -266,11 +266,11 @@ EXPOSE 3000
 CMD ["node", "server/gateway.js"]
 ```
 
-## 📝 License
+## License
 
 MIT License - See LICENSE file for details.
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -278,7 +278,7 @@ MIT License - See LICENSE file for details.
 4. Test thoroughly
 5. Submit a pull request
 
-## 📞 Support
+## Support
 
 - **Issues**: GitHub Issues
 - **Documentation**: See docs/ folder
@@ -286,7 +286,7 @@ MIT License - See LICENSE file for details.
 
 ---
 
-**This is a complete, working implementation of WebRTC support for FGCom-mumble!** 🎉
+**This is a complete, working implementation of WebRTC support for FGCom-mumble!**
 
 The gateway enables web browser clients to connect to FGCom-mumble servers while preserving all existing connection methods (Mumble clients, RadioGUI, FlightGear addons, etc.).
 
