@@ -449,7 +449,7 @@ cat > $TEST_RESULTS_DIR/webrtc_test_report.html << EOF
     
     <div class="test-section">
         <h2>Coverage Report</h2>
-        <p><a href="../$COVERAGE_DIR/webrtc_html/index.html">View Coverage Report</a></p>
+        <p><a href="/home/haaken/github-projects/fgcom-mumble/test/$COVERAGE_DIR/webrtc_html/index.html">View Coverage Report</a></p>
     </div>
 </body>
 </html>

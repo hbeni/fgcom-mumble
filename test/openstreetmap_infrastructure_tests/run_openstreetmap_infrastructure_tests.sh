@@ -66,10 +66,10 @@ print_section "Building OpenStreetMap Infrastructure Test Suite"
 cd "$BUILD_DIR"
 
 # Copy test files to build directory
-cp ../test_openinframap_integration.cpp .
-cp ../test_openstreetmap_integration.cpp .
-cp ../test_openstreetmap_infrastructure_main.cpp .
-cp ../CMakeLists.txt .
+cp /home/haaken/github-projects/fgcom-mumble/test/test_openinframap_integration.cpp .
+cp /home/haaken/github-projects/fgcom-mumble/test/test_openstreetmap_integration.cpp .
+cp /home/haaken/github-projects/fgcom-mumble/test/test_openstreetmap_infrastructure_main.cpp .
+cp /home/haaken/github-projects/fgcom-mumble/test/CMakeLists.txt .
 
 # Configure and build
 cmake .
@@ -105,7 +105,7 @@ echo "Running Clang-Tidy on OpenStreetMap infrastructure modules..."
 
 if clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*' -header-filter='client/mumble-plugin/lib/.*' \
     test_openinframap_integration.cpp test_openstreetmap_integration.cpp test_openstreetmap_infrastructure_main.cpp \
-    -- -std=c++17 -I../../client/mumble-plugin/lib \
+    -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib \
     > "$TEST_RESULTS_DIR/openstreetmap_infrastructure_clang-tidy.txt" 2>&1; then
     echo -e "${GREEN}✓${NC} Clang-Tidy completed for OpenStreetMap infrastructure"
 else

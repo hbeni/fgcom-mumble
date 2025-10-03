@@ -82,7 +82,7 @@ find_package(Threads REQUIRED)
 
 # Include directories
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../client/mumble-plugin/lib
+    ${CMAKE_CURRENT_SOURCE_DIR}//home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
@@ -204,9 +204,9 @@ set_tests_properties(Performance_Coverage PROPERTIES
 EOF
 
 # Copy test files to build directory
-cp ../test_performance_main.cpp .
-cp ../test_latency.cpp .
-cp ../test_throughput.cpp .
+cp /home/haaken/github-projects/fgcom-mumble/test/test_performance_main.cpp .
+cp /home/haaken/github-projects/fgcom-mumble/test/test_latency.cpp .
+cp /home/haaken/github-projects/fgcom-mumble/test/test_throughput.cpp .
 
 # Configure and build
 cmake .
@@ -242,7 +242,7 @@ echo "Running Clang-Tidy on performance modules..."
 
 if clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*' -header-filter='client/mumble-plugin/lib/.*' \
     test_performance_main.cpp test_latency.cpp test_throughput.cpp \
-    -- -std=c++17 -I../../client/mumble-plugin/lib \
+    -- -std=c++17 -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib \
     > "$TEST_RESULTS_DIR/performance_clang-tidy.txt" 2>&1; then
     echo -e "${GREEN}✓${NC} Clang-Tidy completed for performance"
 else
