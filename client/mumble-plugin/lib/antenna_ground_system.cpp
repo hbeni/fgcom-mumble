@@ -377,6 +377,7 @@ GroundSystem FGCom_AntennaGroundSystem::createAircraftFuselage(const std::string
 }
 
 GroundSystem FGCom_AntennaGroundSystem::createMaritimeVessel(const std::string& vessel_type, float hull_area) {
+    (void)vessel_type; // Suppress unused parameter warning
     return createFuselageGround("ship", hull_area);
 }
 
@@ -598,6 +599,7 @@ float FGCom_AntennaGroundSystem::calculateHorizontalDipoleHeightEffect(float hei
 }
 
 float FGCom_AntennaGroundSystem::calculateVerticalDipoleGroundEffect(const GroundSystem& ground, float frequency_mhz) {
+    (void)frequency_mhz; // Suppress unused parameter warning
     GroundPerformance performance = evaluateGroundPerformance(ground);
     
     switch (performance) {

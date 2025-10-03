@@ -115,7 +115,7 @@ void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPC
             }
             
             // Apply lowpass filter if specified
-            if (lowpass_cutoff > 0 && lowpass_cutoff < sampleRateHz / 2) {
+            if (lowpass_cutoff > 0 && lowpass_cutoff < static_cast<int>(sampleRateHz / 2)) {
                 sample = AudioProcessing::lowpassFilter.process(sample);
             }
             

@@ -892,6 +892,7 @@ namespace FrequencyOffsetUtils {
     }
     
     float calculateTHD(const float* signal, size_t samples, float fundamental_freq, float sample_rate) {
+        (void)signal; (void)samples; (void)fundamental_freq; (void)sample_rate; // Suppress unused parameter warnings
         // Simplified THD calculation
         // In practice, this would require FFT analysis
         return 0.1f; // Placeholder
@@ -923,6 +924,7 @@ namespace FrequencyOffsetUtils {
     }
     
     float calculateAtmosphericRefractionCorrection(float elevation_angle_deg, float frequency_hz) {
+        (void)frequency_hz; // Suppress unused parameter warning
         // Simplified atmospheric refraction correction
         float correction_factor = 1.0f + 0.0003f * sin(elevation_angle_deg * M_PI / 180.0f);
         return correction_factor;
@@ -986,6 +988,7 @@ namespace FrequencyOffsetUtils {
     }
     
     float calculateSpectralFlux(const float* signal, size_t samples, float sample_rate) {
+        (void)sample_rate; // Suppress unused parameter warning
         // Simplified spectral flux calculation
         float flux = 0.0f;
         for (size_t i = 1; i < samples; i++) {

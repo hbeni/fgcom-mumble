@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests
 
-CXX_FLAGS = -g -std=gnu++17 -fsanitize=thread -fno-omit-frame-pointer -g -DGTEST_HAS_PTHREAD=1
+CXX_FLAGS = -std=gnu++17 -fsanitize=thread -fno-omit-frame-pointer -g -DGTEST_HAS_PTHREAD=1
 

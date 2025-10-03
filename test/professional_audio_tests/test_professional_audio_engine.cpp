@@ -313,3 +313,4 @@ TEST_F(ProfessionalAudioEngineTest, PerformanceTest) {
     EXPECT_GT(maxAmplitude, 0.0f) << "Processed audio should not be zero";
 }
 
+

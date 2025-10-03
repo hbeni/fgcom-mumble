@@ -1,1 +1,1 @@
-/usr/bin/c++ -g CMakeFiles/work_unit_distribution_module_tests.dir/test_work_unit_distribution_rewritten.cpp.o -o work_unit_distribution_module_tests  -lgmock -lgtest -lm -lpthread /usr/lib/x86_64-linux-gnu/libgtest_main.a /usr/lib/x86_64-linux-gnu/libgtest.a 
+/usr/bin/c++ CMakeFiles/work_unit_distribution_module_tests.dir/test_work_unit_distribution_rewritten.cpp.o -o work_unit_distribution_module_tests  -lgmock -lgtest -lm -lpthread /usr/lib/x86_64-linux-gnu/libgtest_main.a /usr/lib/x86_64-linux-gnu/libgtest.a 

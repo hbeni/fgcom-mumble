@@ -225,7 +225,7 @@ OpenStreetMap_Infrastructure_Tests_BINARY_DIR:STATIC=/home/haaken/github-project
 OpenStreetMap_Infrastructure_Tests_IS_TOP_LEVEL:STATIC=ON
 
 //Value Computed by CMake
-OpenStreetMap_Infrastructure_Tests_SOURCE_DIR:STATIC=/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build
+OpenStreetMap_Infrastructure_Tests_SOURCE_DIR:STATIC=/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests
 
 //Arguments to supply to pkg-config
 PKG_CONFIG_ARGN:STRING=
@@ -326,7 +326,7 @@ CMAKE_GENERATOR_TOOLSET:INTERNAL=
 CMAKE_HAVE_LIBC_PTHREAD:INTERNAL=1
 //Source directory with the top level CMakeLists.txt file for this
 // project
-CMAKE_HOME_DIRECTORY:INTERNAL=/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build
+CMAKE_HOME_DIRECTORY:INTERNAL=/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests
 //Install .so files without execute permission.
 CMAKE_INSTALL_SO_NO_EXE:INTERNAL=1
 //ADVANCED property for variable: CMAKE_LINKER

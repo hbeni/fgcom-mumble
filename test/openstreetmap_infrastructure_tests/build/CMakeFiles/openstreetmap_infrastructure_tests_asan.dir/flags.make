@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build
+CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests
 
 CXX_FLAGS = -std=gnu++17 -fsanitize=address -fno-omit-frame-pointer -g -DGTEST_HAS_PTHREAD=1
 

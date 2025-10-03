@@ -21,7 +21,7 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - Ease of server side installation and operation
 - Standalone nature (no dependency on flightgear)
 - Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
-- **WebRTC browser client support** (planned feature) - Enable web browser access while preserving all existing connection methods
+- **WebRTC browser client support** (implemented) - Enable web browser access while preserving all existing connection methods
 - Modularity, so individual components can be easily updated and extended with new features
 - Good and complete documentation
 
@@ -56,38 +56,16 @@ This project aims to provide a mumble-based modular radio simulation for flight 
 - **Troubleshooting**: Additional time for configuration issues
 
 ### **Advanced Features**
-See [Advanced Features Documentation](docs/ADVANCED_FEATURES.md) for a comprehensive overview of all advanced features and capabilities organized by version and update cycle.
-
-**Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
-
-**Noise Analysis**: See [EV Charging Station Noise Analysis](docs/EV_CHARGING_STATION_NOISE_ANALYSIS.md) for comprehensive noise modeling including electric vehicle charging station noise analysis.
-
-**Electrical Infrastructure**: See [Substation and Power Station Noise Analysis](docs/SUBSTATION_POWER_STATION_NOISE_ANALYSIS.md) for comprehensive noise modeling including electrical substations and power stations with 2MW+ capacity threshold, fencing effects, and multipolygon geometry support.
-
-**Real-time Infrastructure Data**: See [Open Infrastructure Map Integration](docs/OPEN_INFRASTRUCTURE_MAP_INTEGRATION.md) for comprehensive integration with Open Infrastructure Map data source, providing real-time electrical infrastructure data from OpenStreetMap via Overpass API for enhanced noise floor calculations.
-
-**Amateur Radio Band Segments**: See [Radio Amateur Band Segments CSV Format](docs/RADIO_AMATEUR_BAND_SEGMENTS_CSV_FORMAT.md) for comprehensive documentation of the amateur radio frequency allocation system, including country-specific regulations, license class requirements, and power limits.
-
-## Amateur Radio Integration
-
-FGCom-Mumble includes comprehensive amateur radio band segment support with:
-
-- **Global Frequency Allocations**: Support for all ITU regions (1, 2, 3)
-- **Country-Specific Regulations**: Detailed allocations for UK, USA, Germany, Canada, Australia, and more
-- **License Class Validation**: Automatic checking of license class requirements
-- **Power Limit Enforcement**: Real-time power limit validation
-- **Mode-Specific Allocations**: CW, SSB, Digital, EME, and Meteor Scatter support
-- **Regional Compliance**: Automatic ITU region detection and validation
-
-The system reads from `configs/radio_amateur_band_segments.csv` which contains over 280 frequency allocations covering all major amateur radio bands from 2200m to 70cm, with detailed power limits and licensing requirements for different countries and license classes.
+See [Advanced Features](advanced_features.md) for a comprehensive overview of all advanced features and capabilities.
 
 ## Quick Start Guide
 
 ### For Users
 1. **[Installation Guide](docs/INSTALLATION_GUIDE.md)** - Get started with installation and setup
 2. **[Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md)** - Learn how to use the client with your flight simulator
-3. **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** - Understand special features like ATIS and test frequencies
-4. **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)** - Solve common issues
+3. **[WebRTC Gateway](webrtc-gateway/README.md)** - Web browser client for FGCom-mumble (no installation required)
+4. **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** - Understand special features like ATIS and test frequencies
+5. **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)** - Solve common issues
 
 ### For Developers
 1. **[Compilation Guide](docs/COMPILATION_GUIDE.md)** - Build from source code
@@ -102,7 +80,7 @@ The system reads from `configs/radio_amateur_band_segments.csv` which contains o
 
 ## **Improvements and Enhancements**
 
-See [Improvements](improvements.md) for detailed information about:
+See [Improvements](docs/roadmap/improvements.md) for detailed information about:
 - Security enhancement recommendations
 - ATIS recording generation improvements
 - Cold war era voice encryption systems
@@ -135,52 +113,11 @@ The documentation is split up into relevant parts:
 - [Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md) Comprehensive setup instructions for administrators
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) Consolidated technical documentation
 
-### WebRTC Browser Client Support (Planned Feature):
-- [WebRTC Implementation Plan](docs/WebRTC_IMPLEMENTATION_PLAN.md) Comprehensive implementation plan for web browser client support
-- [WebRTC Gateway Architecture](docs/WebRTC_GATEWAY_ARCHITECTURE.md) Technical architecture for WebRTC gateway server
-- [WebRTC Protocol Translation](docs/WebRTC_PROTOCOL_TRANSLATION.md) Protocol translation between WebRTC and Mumble
-- [WebRTC Web Interface Design](docs/WebRTC_WEB_INTERFACE_DESIGN.md) Web-based client interface design and mobile optimization
-- [WebRTC Implementation Roadmap](docs/WebRTC_IMPLEMENTATION_ROADMAP.md) 8-month phased implementation roadmap
-- [WebRTC API Tests](test/webrtc_api_tests/README.md) Comprehensive test suite for WebRTC functionality
-- [Vehicle Geometry Creation Guide](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) Complete guide for creating vehicle geometry
-- [Amateur Radio Modes](docs/AMATEUR_RADIO_MODES_DOCUMENTATION.md) Complete guide to CW, LSB, USB, NFM, and AM modes
-- [Amateur Radio Terminology](docs/AMATEUR_RADIO_TERMINOLOGY.md) Comprehensive amateur radio terminology and Q-codes reference
-- [Coding Standards](docs/CODING_STANDARDS.md) Strict architectural and design standards
-- [Radio Era Classification](docs/RADIO_ERA_CLASSIFICATION.md) Comprehensive radio technology classification system
-- [BFO/SDR Compatibility](docs/BFO_SDR_COMPATIBILITY_ASSESSMENT.md) Beat Frequency Oscillator and Software Defined Radio compatibility
-- [Threading Architecture](docs/TECHNICAL_DOCUMENTATION.md#threading-architecture) Multi-threaded system documentation
-- [NEC Modeling Guide](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Antenna modeling and calculation guide
-- [VHF/UHF Antenna Specifications](docs/ANTENNA_HEIGHT_SPECIFICATIONS.md) Professional antenna height and performance
-- [New Antennas Summary](docs/2M_YAGI_ANTENNA_SUMMARY.md) Complete overview of all new VHF/UHF antennas
-- [Propagation Physics](docs/TECHNICAL_DOCUMENTATION.md#propagation-physics) Physics-based radio wave propagation modeling
-- [Vehicle Dynamics API](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) Vehicle tracking and antenna orientation API
-- [Vehicle Dynamics Examples](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) Practical examples for vehicle dynamics integration
-- [Historical Maritime Bands](docs/HISTORICAL_MARITIME_BANDS.md) Configuration and usage of historical maritime HF frequency bands
-- [Realistic Antenna Examples](docs/2M_YAGI_ANTENNA_SUMMARY.md) Realistic antenna configurations for various vehicle types
-- [Frequency Offset Documentation](docs/FREQUENCY_OFFSET_DOCUMENTATION.md) Audio processing and frequency offset simulation
-- [VHF/UHF Pattern Integration](docs/VHF_UHF_PATTERN_INTEGRATION.md) VHF/UHF antenna pattern integration documentation
+### WebRTC Browser Client Support (Implemented):
+See [WebRTC Browser Client Support](web_rtc.md) for comprehensive WebRTC implementation documentation and related features.
 
 ### Antenna Pattern Creation Documentation:
-- [Creating Radiation Patterns Guide](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Complete guide for creating radiation pattern files
-- [EZNEC Workflow Guide](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Step-by-step EZNEC workflow for pattern creation
-- [Antenna Modeling Tools](docs/TECHNICAL_DOCUMENTATION.md#antenna-patterns) Tools and software for antenna modeling
-- [Radiation Pattern Examples](docs/2M_YAGI_ANTENNA_SUMMARY.md) Practical examples for different vehicle types
-- [2M Yagi Antenna Summary](docs/2M_YAGI_ANTENNA_SUMMARY.md) Professional 2m Yagi antenna specifications
-
-**Important Note: Pattern Generation Requirements**
-- **Aircraft radiation patterns are NOT included** in the repository due to storage constraints
-- **Ground-based installation patterns are complete** and ready to use (216 patterns)
-- **Marine patterns are NOT AVAILABLE** - cannot be generated due to safety limits (50,000+ combinations exceed limit, and storage constraints.
-  use the --force option to fix the issue!
-- **Military-land and civilian-vehicle patterns are complete** and ready to use
-- **Aircraft patterns must be generated by the user** using the provided pattern generation scripts
-- **Marine patterns cannot be generated** - script safety limits prevent generation (exceeds 50,000 combination limit), use the --force option to fix the issue!
-- **Generation time**: Aircraft patterns can take several hours to generate (10,000+ combinations per aircraft)
-- **Storage requirements**: Each aircraft requires significant disk space for all attitude combinations
-- **Generation script**: Use `scripts/pattern_generation/antenna-radiation-pattern-generator.sh` to generate missing patterns
-- **Progress reporting**: The script includes progress reporting showing altitude bands and completion percentage
-
-**[Available Radiation Patterns](available_patterns.md)** - Complete list of radiation patterns currently available in the repository
+See [Antenna Pattern Creation Documentation](antenna_patterns.md) for comprehensive antenna pattern creation guides and requirements.
 
 ### Frequency and Band Documentation:
 - [Aviation VHF Civil](docs/aviation-VHF-civil.md) Civil aviation VHF frequency bands and usage
@@ -194,7 +131,7 @@ The documentation is split up into relevant parts:
 ### Antenna Pattern Visualization:
 The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
 
-![Gain Pattern Visualization](https://raw.githubusercontent.com/Supermagnum/fgcom-mumble/refs/heads/master/Screenshots/gain%20pattern.png)
+![Gain Pattern Visualization](https://raw.githubusercontent.com/Supermagnum/fgcom-mumble/refs/heads/master/assets/screenshots/gain%20pattern.png)
 
 ### Bugs/Feature requests/coding help
 The project lives on github: https://github.com/Supermagnum/fgcom-mumble
@@ -232,32 +169,6 @@ If you encounter installation problems, use the automated fix script:
 
 **See [Compilation Guide](docs/COMPILATION_GUIDE.md) for complete compilation and build instructions.**
 
-### **Testing Framework Compilation**
-The comprehensive testing framework can be compiled and executed as follows:
-
-```bash
-# AGC/Squelch Module Tests
-cd test/agc_squelch_tests
-g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_agc_squelch_main.cpp test_agc_config.cpp test_thread_safety.cpp -o agc_squelch_tests
-
-# Integration Tests
-cd test/integration_tests
-g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_integration_main.cpp -o integration_tests
-
-# Status Page Module Tests
-cd test/status_page_module_tests
-g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_status_page_main.cpp -o status_page_tests
-
-# Error Handling Tests
-cd test/error_handling_tests
-g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_error_handling_main.cpp -o error_handling_tests
-
-# Performance Tests
-cd test/performance_tests
-g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_performance_main.cpp -o performance_tests
-```
-
-**All test files compile successfully and adhere to strict quality standards including thread safety, error handling, memory management, and input validation.**
 
 ## Band Segments Reference
 
@@ -265,112 +176,11 @@ g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread tes
 
 ## Utilities and Tools
 
-### **API Testing Tool**
-Comprehensive testing framework for all FGCom-mumble APIs:
-
-- **[Comprehensive API Tester](scripts/api_testing/comprehensive_api_tester.py)** - Complete API testing tool for all endpoints
-  - **Requirements**: Must be run against a compiled and running FGCom-mumble server
-  - **Coverage**: Tests all API endpoints including authentication, solar data, weather, band segments, radio models, AGC/Squelch, antenna patterns, and vehicle dynamics
-  - **Usage**: `python3 scripts/api_testing/comprehensive_api_tester.py --base-url http://localhost:8080`
-  - **Features**: Automated testing, detailed reporting, error detection, and performance metrics
-
-### **Advanced Utilities**
-Essential tools for terrain data processing, antenna pattern conversion, and advanced configuration:
-
-- **[ASTER GDEM Advanced Processing](scripts/utilities/aster_gdem_advanced.py)** - Advanced terrain data processing with Python
-- **[ASTER GDEM Downloader](scripts/utilities/aster_gdem_downloader.sh)** - Automated ASTER terrain data download
-- **[ASTER Downloader Documentation](scripts/utilities/README_ASTER_DOWNLOADER.md)** - Complete guide for ASTER data acquisition
-- **[Pattern Extraction Advanced](scripts/utilities/extract_pattern_advanced.sh)** - Advanced antenna pattern extraction tools
-- **[EZ to NEC Converter](scripts/utilities/ez2nec_converter.py)** - Convert EZ format files to NEC format
-- **[EZNEC to NEC Converter](scripts/utilities/eznec2nec.sh)** - EZNEC format conversion script
-- **[ASTER Requirements](scripts/utilities/requirements_aster.txt)** - Python dependencies for ASTER tools
-
-### **Utility Categories**
-
-**Terrain Data Processing:**
-- ASTER GDEM download and processing
-- Advanced terrain elevation calculations
-- Geographic data format conversion
-
-**Antenna Pattern Tools:**
-- EZ/NEC format conversion
-- Pattern extraction and analysis
-- Electromagnetic simulation preparation
-
-**Data Processing:**
-- Advanced pattern extraction
-- Format conversion utilities
-- Automated processing workflows
-
-**Noise Analysis:**
-- EV charging station noise modeling
-- Substation and power station noise analysis
-- Open Infrastructure Map integration
-- Atmospheric noise calculation
-- Environmental noise analysis
+See [Utilities and Tools](utilities_and_tools.md) for comprehensive utilities, API testing tools, and advanced processing capabilities.
 
 ## Testing Framework
 
-FGCom-mumble includes a comprehensive testing framework with strict quality standards and comprehensive test coverage:
-
-### **Test Suite Overview**
-The project includes multiple test suites covering all critical components:
-
-#### **AGC/Squelch Module Tests** (`test/agc_squelch_tests/`)
-- **`test_agc_squelch_main.cpp`** - Main test framework with thread-safe fixtures and comprehensive validation
-- **`test_agc_config.cpp`** - AGC configuration testing with proper bounds checking and error handling
-- **`test_thread_safety.cpp`** - Thread safety testing with concurrent operations and race condition detection
-- **`test_singleton.cpp`** - Singleton pattern testing with thread-safe access validation
-- **Features**: Thread-safe access methods, comprehensive input validation, proper error handling, atomic operations
-
-#### **Integration Tests** (`test/integration_tests/`)
-- **`test_integration_main.cpp`** - End-to-end integration testing with mock components
-- **Features**: Mock client/server testing, audio processing validation, connection testing
-
-#### **Status Page Module Tests** (`test/status_page_module_tests/`)
-- **`test_status_page_main.cpp`** - Status page rendering and data processing tests
-- **Features**: HTML rendering validation, data processing tests, WebSocket testing
-
-#### **Error Handling Tests** (`test/error_handling_tests/`)
-- **`test_error_handling_main.cpp`** - Comprehensive error handling and recovery testing
-- **Features**: Exception handling, resource management, error propagation testing
-
-#### **Performance Tests** (`test/performance_tests/`)
-- **`test_performance_main.cpp`** - Performance and latency testing
-- **Features**: Audio encoding/decoding performance, network transmission testing, propagation calculation testing
-
-### **Test Quality Standards**
-All tests adhere to strict quality standards:
-- **Thread Safety**: All operations are properly synchronized with mutex protection
-- **Error Handling**: Comprehensive try-catch blocks with proper exception propagation
-- **Memory Management**: RAII principles with proper resource cleanup
-- **Input Validation**: All inputs validated with bounds checking and sanitization
-- **Race Condition Prevention**: Atomic operations and proper synchronization
-- **Resource Management**: Exception-safe destructors and cleanup
-- **Code Quality**: Clean separation of concerns and maintainable structure
-
-### **Test Execution**
-```bash
-# Compile individual test suites
-cd test/agc_squelch_tests
-g++ -std=c++17 -I../../client/mumble-plugin/lib -I. -lgtest -lgmock -pthread test_agc_squelch_main.cpp test_agc_config.cpp test_thread_safety.cpp -o agc_squelch_tests
-
-# Run tests with sanitizers
-cd test/agc_squelch_tests
-make test_with_sanitizers
-
-# Run tests with coverage
-cd test/agc_squelch_tests
-make test_with_coverage
-```
-
-### **Test Coverage**
-- **Unit Tests**: Individual component testing with mock objects
-- **Integration Tests**: End-to-end system testing
-- **Thread Safety Tests**: Concurrent operation validation
-- **Performance Tests**: Latency and throughput measurement
-- **Error Handling Tests**: Exception and error recovery testing
-- **Memory Safety Tests**: Memory leak detection and resource management
+See [Testing Framework](testing_framework.md) for comprehensive testing framework documentation, test suites, quality standards, and execution instructions.
 
 ## Project Reports
 

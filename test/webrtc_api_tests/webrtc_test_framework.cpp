@@ -173,6 +173,7 @@ RadioData WebRTCTestFramework::udpToJSON(const std::string& udpData) {
 }
 
 bool WebRTCTestFramework::validateProtocolTranslation(const RadioData& original, const std::string& udpData) {
+    (void)original; // Suppress unused parameter warning
     // Validate that UDP data contains expected fields
     return !udpData.empty() && 
            udpData.find("callsign=") != std::string::npos &&

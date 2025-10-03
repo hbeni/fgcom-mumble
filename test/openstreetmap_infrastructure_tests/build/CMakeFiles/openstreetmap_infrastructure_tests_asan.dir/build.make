@@ -53,7 +53,7 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build
+CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build
@@ -70,46 +70,46 @@ include CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/progress.make
 include CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/flags.make
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o: CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/flags.make
-CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o: test_openinframap_integration.cpp
+CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openinframap_integration.cpp
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o: CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o -MF CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o.d -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openinframap_integration.cpp
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o -MF CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o.d -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openinframap_integration.cpp
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openinframap_integration.cpp > CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openinframap_integration.cpp > CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.i
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openinframap_integration.cpp -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openinframap_integration.cpp -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openinframap_integration.cpp.s
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o: CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/flags.make
-CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o: test_openstreetmap_integration.cpp
+CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_integration.cpp
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o: CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o -MF CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o.d -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openstreetmap_integration.cpp
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o -MF CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o.d -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_integration.cpp
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openstreetmap_integration.cpp > CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_integration.cpp > CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.i
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openstreetmap_integration.cpp -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_integration.cpp -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_integration.cpp.s
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o: CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/flags.make
-CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o: test_openstreetmap_infrastructure_main.cpp
+CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_infrastructure_main.cpp
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o: CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o -MF CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o.d -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openstreetmap_infrastructure_main.cpp
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o -MF CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o.d -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_infrastructure_main.cpp
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openstreetmap_infrastructure_main.cpp > CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_infrastructure_main.cpp > CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.i
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/test_openstreetmap_infrastructure_main.cpp -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_infrastructure_main.cpp -o CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_main.cpp.s
 
 # Object files for target openstreetmap_infrastructure_tests_asan
 openstreetmap_infrastructure_tests_asan_OBJECTS = \
@@ -139,6 +139,6 @@ CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/clean:
 .PHONY : CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/clean
 
 CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/depend
 
