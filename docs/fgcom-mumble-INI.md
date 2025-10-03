@@ -108,7 +108,7 @@ radioAudioEffects=1
 
 INI example:
 
-
+```ini
 ;;
 ;; Optional FGCOM-mumble plugin config file
 ;; The settings will override built in defaults. Some settings can be adjusted
@@ -205,4 +205,4 @@ udpServerPort=16661
 ;; The url only accepts numbers, letters questionmark and the dash.
 ;; Setting it to "disabled" or "off" will disable the updater.
 ;updaterURL=https://fgcom.hallinger.org/version.php
-
+```
