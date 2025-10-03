@@ -81,7 +81,9 @@ You can also download and upgrade manually by the normal installation procedure 
 
 Usually the default values are fine. Some features however can be configured differently, like disabling radio audio effects (white noise etc), changing the plugins UDP listen port or the name match of the special `fgcom-mumble` channel.
 
-You can do this by copying the [`fgcom-mumble.ini`](configs/fgcom-mumble.ini) example file to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
+You can do this by copying the example 
+file found here https://github.com/Supermagnum/fgcom-mumble/blob/master/docs/fgcom-mumble-INI.md
+to your users home folder and adjusting as needed. The file is loaded once at plugin initialization from the following locations (in order):
 
 - Linux:
   - `/etc/mumble/fgcom-mumble.ini`
