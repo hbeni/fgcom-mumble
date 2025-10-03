@@ -8,7 +8,7 @@ git clone https://github.com/Supermagnum/fgcom-mumble.git
 cd fgcom-mumble
 
 # Fix all issues and install dependencies
-./scripts/fix_all_issues.sh
+sudo ./scripts/fix_all_issues.sh
 
 # Build and install
 make build
@@ -47,7 +47,7 @@ For headless servers (no GUI):
 
 ```bash
 # Build headless components only
-make build-headless
+sudo make build-headless
 sudo make install
 fgcom-service start
 ```

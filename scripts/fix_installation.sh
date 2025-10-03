@@ -257,10 +257,10 @@ echo
 echo "5. Creating Systemd Service with Headless Support..."
 echo "==================================================="
 
-# Create systemd service file with headless support
+# Create systemd service file with headless support and automatic channel creation
 sudo tee /etc/systemd/system/fgcom-mumble.service > /dev/null << 'EOF'
 [Unit]
-Description=FGCom-mumble Bot Manager
+Description=FGCom-mumble Bot Manager with Automatic Channel Creation
 After=network.target
 Wants=network.target
 
@@ -268,6 +268,7 @@ Wants=network.target
 Type=forking
 User=fgcom-mumble
 Group=fgcom-mumble
+ExecStartPre=/usr/local/bin/fgcom-create-channels
 ExecStart=/usr/local/bin/fgcom-bot-manager start
 ExecStop=/usr/local/bin/fgcom-bot-manager stop
 ExecReload=/usr/local/bin/fgcom-bot-manager restart

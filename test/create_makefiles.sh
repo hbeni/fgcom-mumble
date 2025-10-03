@@ -51,7 +51,7 @@ TEST_DIR = \$(shell pwd)
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
-INCLUDES = -I\$(TEST_DIR) -I../../client/mumble-plugin/lib
+INCLUDES = -I\$(TEST_DIR) -I/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib
 LIBS = -lgtest -lgmock -lgtest_main -pthread
 
 # Test source files
