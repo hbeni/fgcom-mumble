@@ -119,11 +119,22 @@ start_gateway() {
     
     cd "$GATEWAY_DIR"
     
+    # Read configuration from gateway.json
+    if [ -f "config/gateway.json" ]; then
+        CONFIG_PORT=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/gateway.json', 'utf8')).server.port)" 2>/dev/null || echo "8081")
+        CONFIG_MUMBLE_HOST=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/gateway.json', 'utf8')).mumble.host)" 2>/dev/null || echo "localhost")
+        CONFIG_MUMBLE_PORT=$(node -e "console.log(JSON.parse(require('fs').readFileSync('config/gateway.json', 'utf8')).mumble.port)" 2>/dev/null || echo "64738")
+    else
+        CONFIG_PORT="8081"
+        CONFIG_MUMBLE_HOST="localhost"
+        CONFIG_MUMBLE_PORT="64738"
+    fi
+    
     # Set environment variables
     export NODE_ENV="$NODE_ENV"
-    export PORT="${PORT:-3000}"
-    export MUMBLE_HOST="${MUMBLE_HOST:-localhost}"
-    export MUMBLE_PORT="${MUMBLE_PORT:-64738}"
+    export PORT="${PORT:-$CONFIG_PORT}"
+    export MUMBLE_HOST="${MUMBLE_HOST:-$CONFIG_MUMBLE_HOST}"
+    export MUMBLE_PORT="${MUMBLE_PORT:-$CONFIG_MUMBLE_PORT}"
     
     log "Configuration:"
     log "  - Environment: $NODE_ENV"
@@ -259,7 +270,7 @@ case "${1:-start}" in
         echo ""
         echo "Environment variables:"
         echo "  NODE_ENV     - Node environment (default: development)"
-        echo "  PORT         - Gateway port (default: 3000)"
+        echo "  PORT         - Gateway port (default: 8081)"
         echo "  MUMBLE_HOST  - Mumble server host (default: localhost)"
         echo "  MUMBLE_PORT  - Mumble server port (default: 64738)"
         exit 1
