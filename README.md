@@ -67,6 +67,113 @@ See [Advanced Features](advanced_features.md) for a comprehensive overview of al
 4. **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** - Understand special features like ATIS and test frequencies
 5. **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)** - Solve common issues
 
+### Configuration Setup
+
+#### Basic Configuration
+Copy the example configuration file to get started:
+
+```bash
+# Copy the example configuration
+cp configs/fgcom-mumble.ini ~/.fgcom-mumble.ini
+
+# Edit the configuration file
+nano ~/.fgcom-mumble.ini
+```
+
+#### Essential Configuration Settings
+
+**For Headless Server Setup:**
+```ini
+# Enable radio audio effects (realistic static, noise, propagation)
+radioAudioEffects=1
+
+# Allow WebRTC browser clients to be heard by plugin users
+allowHearingNonPluginUsers=1
+
+# Listen on all interfaces for WebRTC gateway access
+udpServerHost=*
+
+# Enable UDP server for client communication
+udpServerPort=16661
+```
+
+**For Standard Client Setup:**
+```ini
+# Enable radio audio effects for realistic experience
+radioAudioEffects=1
+
+# Disable hearing non-plugin users (recommended for pilots)
+allowHearingNonPluginUsers=0
+
+# Use localhost only for security
+udpServerHost=127.0.0.1
+
+# Standard UDP port
+udpServerPort=16661
+```
+
+#### Configuration File Locations
+
+The plugin loads configuration from these locations (in order of priority):
+
+**Linux:**
+- `/etc/mumble/fgcom-mumble.ini` (system-wide)
+- `~/.fgcom-mumble.ini` (user-specific)
+- `~/fgcom-mumble.ini` (alternative user location)
+
+**Windows:**
+- `%USERPROFILE%\fgcom-mumble.ini`
+- `%USERPROFILE%\Documents\fgcom-mumble.ini`
+
+#### Key Configuration Options
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `radioAudioEffects` | `1` | Enable realistic radio static, noise, and propagation effects |
+| `allowHearingNonPluginUsers` | `0` | Allow WebRTC browser clients to be heard by plugin users |
+| `udpServerHost` | `127.0.0.1` | UDP server listening interface (`*` for all interfaces) |
+| `udpServerPort` | `16661` | UDP server port for client communication |
+| `specialChannel` | `^fgcom-mumble.*` | Channel name pattern for FGCom-mumble activation |
+| `autoJoinChannel` | `0` | Automatically join FGCom-mumble channel on connect |
+
+#### Advanced Configuration Examples
+
+**For ATC Controllers:**
+```ini
+# Enable hearing all users (including non-plugin users)
+allowHearingNonPluginUsers=1
+
+# Enable radio effects for realistic ATC experience
+radioAudioEffects=1
+
+# Auto-join FGCom channel
+autoJoinChannel=1
+```
+
+**For Pilots:**
+```ini
+# Disable hearing non-plugin users (recommended)
+allowHearingNonPluginUsers=0
+
+# Enable radio effects
+radioAudioEffects=1
+
+# Use localhost for security
+udpServerHost=127.0.0.1
+```
+
+**For WebRTC Gateway Integration:**
+```ini
+# Allow WebRTC browser clients
+allowHearingNonPluginUsers=1
+
+# Listen on all interfaces for gateway access
+udpServerHost=*
+
+# Enable radio effects
+radioAudioEffects=1
+```
+
 ### For Developers
 1. **[Compilation Guide](docs/COMPILATION_GUIDE.md)** - Build from source code
 2. **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** - Integrate with your game or simulator

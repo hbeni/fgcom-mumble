@@ -23,9 +23,9 @@ chmod +x start-gateway.sh
 ```
 
 ### Access the WebRTC Client
-- **WebRTC Client**: http://localhost:3000/webrtc
-- **Main Page**: http://localhost:3000/
-- **Status**: http://localhost:3000/health
+- **WebRTC Client**: http://localhost:8081/webrtc
+- **Main Page**: http://localhost:8081/
+- **Status**: http://localhost:8081/health
 
 ## Features
 
@@ -103,10 +103,10 @@ webrtc-gateway/
 ```
 
 ### 2. Open WebRTC Client
-Navigate to http://localhost:3000/webrtc
+Navigate to http://localhost:8081/webrtc
 
 ### 3. Configure Connection
-- **Server URL**: ws://localhost:3000 (default)
+- **Server URL**: ws://localhost:8081 (default)
 - **Username**: Enter your callsign
 
 ### 4. Set Up Radio
@@ -127,10 +127,16 @@ Navigate to http://localhost:3000/webrtc
 
 ## Configuration
 
+### Port Configuration
+See [PORT_CONFIGURATION.md](PORT_CONFIGURATION.md) for detailed port configuration options and conflict resolution.
+
+**Default Port**: 8081 (to avoid conflicts with common services)
+**Alternative**: Port 8080 (standard web port) - see configuration guide
+
 ### Environment Variables
 ```bash
 export NODE_ENV=production
-export PORT=3000
+export PORT=8081
 export MUMBLE_HOST=localhost
 export MUMBLE_PORT=64738
 ```
@@ -140,7 +146,7 @@ Edit `config/gateway.json`:
 ```json
 {
   "server": {
-    "port": 3000,
+    "port": 8081,
     "host": "0.0.0.0"
   },
   "mumble": {
@@ -155,6 +161,21 @@ Edit `config/gateway.json`:
   }
 }
 ```
+
+### Port Configuration Options
+
+**Default Port**: 8081 (to avoid conflicts with common services)
+
+**Alternative Ports**:
+- **8080** - Standard web port (may conflict with other services)
+- **3000** - Development port (original default)
+- **9000** - Alternative web port
+- **5000** - Flask default port range
+
+**To Change Port**:
+1. Edit `config/gateway.json` and change the `port` value
+2. Update environment variable: `export PORT=YOUR_PORT`
+3. Restart the gateway: `./start-gateway.sh restart`
 
 ## Management Commands
 
@@ -221,8 +242,8 @@ export NODE_ENV=development
 
 ## Monitoring
 
-- **Health Check**: http://localhost:3000/health
-- **Status API**: http://localhost:3000/api/status
+- **Health Check**: http://localhost:8081/health
+- **Status API**: http://localhost:8081/api/status
 - **Logs**: `./start-gateway.sh logs`
 
 ## Integration
@@ -262,7 +283,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 COPY . .
-EXPOSE 3000
+EXPOSE 8081
 CMD ["node", "server/gateway.js"]
 ```
 

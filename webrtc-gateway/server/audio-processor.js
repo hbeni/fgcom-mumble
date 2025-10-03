@@ -30,7 +30,10 @@ class AudioProcessor {
             console.log('Audio codecs initialized successfully');
         } catch (error) {
             console.error('Failed to initialize audio codecs:', error);
-            throw error;
+            // For now, disable Opus codecs and use fallback
+            console.log('Falling back to PCM audio processing');
+            this.opusEncoder = null;
+            this.opusDecoder = null;
         }
     }
     

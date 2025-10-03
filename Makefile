@@ -272,6 +272,45 @@ install: build
 	fi
 	@echo "Installation completed successfully!"
 
+uninstall:
+	@echo "Uninstalling FGCom-mumble components..."
+	# Remove mumble plugin
+	@if [ -f $(DESTDIR)/usr/lib/mumble/plugins/fgcom-mumble.so ]; then \
+		rm -f $(DESTDIR)/usr/lib/mumble/plugins/fgcom-mumble.so; \
+		echo "Removed mumble plugin from $(DESTDIR)/usr/lib/mumble/plugins/"; \
+	fi
+	# Remove radio GUI
+	@if [ -f $(DESTDIR)/usr/share/fgcom-mumble/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar ]; then \
+		rm -f $(DESTDIR)/usr/share/fgcom-mumble/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar; \
+		echo "Removed radio GUI from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove configuration files
+	@if [ -d $(DESTDIR)/etc/fgcom-mumble ]; then \
+		rm -rf $(DESTDIR)/etc/fgcom-mumble; \
+		echo "Removed configuration files from $(DESTDIR)/etc/fgcom-mumble/"; \
+	fi
+	# Remove documentation
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble/docs ]; then \
+		rm -rf $(DESTDIR)/usr/share/fgcom-mumble/docs; \
+		echo "Removed documentation from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove server components
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble/server ]; then \
+		rm -rf $(DESTDIR)/usr/share/fgcom-mumble/server; \
+		echo "Removed server components from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove scripts
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble/scripts ]; then \
+		rm -rf $(DESTDIR)/usr/share/fgcom-mumble/scripts; \
+		echo "Removed scripts from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove main share directory if empty
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble ] && [ -z "$$(ls -A $(DESTDIR)/usr/share/fgcom-mumble 2>/dev/null)" ]; then \
+		rmdir $(DESTDIR)/usr/share/fgcom-mumble; \
+		echo "Removed empty share directory $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	@echo "Uninstallation completed successfully!"
+
 # relay everything else to the mumble-plugin makefile
 .DEFAULT:
 	@echo "target '$@' undefined, using mumble-client makefile instead"
