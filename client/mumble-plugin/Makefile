@@ -7,7 +7,7 @@ override CFLAGS+=-Wall -O3 -I. -I./lib -DENABLE_OPENINFRAMAP $(DEBUG)
 
 # DSP IIR Realtime C++ filter library support
 # Professional audio processing is now built-in using modern DSP algorithms
-$(info ✅ Professional audio processing enabled - Using DSP IIR Realtime C++ filter library)
+$(info Professional audio processing enabled - Using DSP IIR Realtime C++ filter library)
 override CFLAGS_WIN+=-Wl,--subsystem,windows -static-libgcc -static-libstdc++ $(CFLAGS)
 SSLFLAGS+=-I./lib/openssl/include/ -L./lib/openssl/ -lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32

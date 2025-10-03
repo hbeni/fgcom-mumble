@@ -55,16 +55,16 @@ public:
         : m_max (max)
         , m_values (values)
     {
-        (void)max; // Suppress unused parameter warning
-        (void)values; // Suppress unused parameter warning
-     // : m_max (max)
-     // , m_values (values)
-    {
     }
 
-    //complex_t& operator[] (int index)
-    //{
-    //};
+    complex_t& operator[] (int index)
+    {
+      return m_values[index];
+    }
+
+  private:
+    int m_max;
+    complex_t* m_values;
   };
 
   //
