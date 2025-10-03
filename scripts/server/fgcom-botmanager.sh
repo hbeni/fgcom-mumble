@@ -32,10 +32,10 @@ port="64738"
 channel="fgcom-mumble"
 rcert="recbot.pem"
 rkey="recbot.key"
-rname="$(grep "local botname" fgcom-radio-recorder.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
+rname="$(grep "local botname" server/fgcom-radio-recorder.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 pcert="playbot.pem"
 pkey="playbot.key"
-pname="$(grep "local callsignPrefix" fgcom-radio-playback.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
+pname="$(grep "local callsignPrefix" server/fgcom-radio-playback.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 scert="statusbot.pem"
 skey="statusbot.key"
 path="./recordings"
@@ -45,7 +45,7 @@ fnotify="/tmp/fgcom-fnotify-fifo"
 statusbot_db="/tmp/fgcom-web.db"
 statusbot_web=""
 statusbot_stats=""
-sname="$(grep "fgcom.callsign" statuspage/fgcom-status.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
+sname="$(grep "fgcom.callsign" server/statuspage/fgcom-status.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 debug="0"
 
 recorderbot_log=/dev/null
@@ -212,7 +212,7 @@ fi
         # Spawn the radio recorder bot
         botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua")
         if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
-            recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
+            recorderbot_cmd="luajit server/fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
             echo "Spawn bot: $recorderbot_cmd"
             if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
                 $recorderbot_cmd > $recorderbot_log &
@@ -224,7 +224,7 @@ fi
         # Spawn the statusPage bot
         botPID=$(pgrep -f -- "fgcom-status.bot.lua")
         if [[ $run_statusbot -gt "0" && -z "$botPID" ]]; then
-            statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
+            statusbot_cmd="luajit server/statuspage/fgcom-status.bot.lua $status_opts"
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
             [[ -n "$statusbot_stats" ]] && statusbot_cmd="$statusbot_cmd --stats=$statusbot_stats"
             echo "Spawn bot: $statusbot_cmd"
@@ -268,7 +268,7 @@ while true; do
             #spawn bot
             owner_opt=""
             if [[ -n $ownersession ]]; then owner_opt="--owntoken=$ownersession"; fi
-            playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts $owner_opt --sample=$samplefile"
+            playbackbot_cmd="luajit server/fgcom-radio-playback.bot.lua $playback_opts $owner_opt --sample=$samplefile"
             echo "Spawn bot: $playbackbot_cmd"
             if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
                 $playbackbot_cmd > $playbackbot_log &

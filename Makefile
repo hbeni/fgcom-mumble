@@ -30,8 +30,14 @@ release:
 # build the binary stuff
 build: build-plugin build-server build-radioGUI build-fgcom-addon
 
+# build for headless server (no GUI components)
+build-headless: build-plugin build-server build-fgcom-addon
+
 # bundle component's zip packages
 bundle: bundle-plugin bundle-server bundle-radioGUI bundle-fgcom-addon
+
+# bundle for headless server (no GUI components)
+bundle-headless: bundle-plugin bundle-server bundle-fgcom-addon
 
 # package up everything already built into a single release client zip
 package:

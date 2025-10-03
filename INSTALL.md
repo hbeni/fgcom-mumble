@@ -23,13 +23,13 @@ fgcom-service start
 
 The `fix_all_issues.sh` script automatically resolves all known installation issues:
 
-- ✅ **Build System**: Initializes submodules, installs dependencies
-- ✅ **Test Suite**: Installs testing tools, fixes path handling  
-- ✅ **Installation**: Creates directories, sets permissions
-- ✅ **Service Config**: Configures headless operation, creates systemd service
-- ✅ **Bot Dependencies**: Installs LuaJIT, protobuf, builds lua-mumble library
-- ✅ **SSL Certificates**: Generates bot authentication certificates
-- ✅ **System Integration**: Creates service management scripts
+- **Build System**: Initializes submodules, installs dependencies
+- **Test Suite**: Installs testing tools, fixes path handling  
+- **Installation**: Creates directories, sets permissions
+- **Service Config**: Configures headless operation, creates systemd service
+- **Bot Dependencies**: Installs LuaJIT, protobuf, builds lua-mumble library
+- **SSL Certificates**: Generates bot authentication certificates
+- **System Integration**: Creates service management scripts
 
 ## Service Management
 
@@ -47,7 +47,7 @@ For headless servers (no GUI):
 
 ```bash
 # Build headless components only
-make build-plugin build-server
+make build-headless
 sudo make install
 fgcom-service start
 ```
