@@ -37,7 +37,7 @@
                     <div class="connection-form">
                         <div class="form-group">
                             <label for="serverUrl">Server URL</label>
-                            <input type="text" id="serverUrl" value="ws://localhost:3000" placeholder="WebSocket server URL">
+                            <input type="text" id="serverUrl" value="" placeholder="Server URL (auto-detected)">
                         </div>
                         <div class="form-group">
                             <label for="username">Username</label>
@@ -61,6 +61,7 @@
                                     <input type="number" id="volume1" placeholder="Volume" min="0" max="100" value="50">
                                     <input type="number" id="squelch1" placeholder="Squelch" min="0" max="100" value="30">
                                     <button id="ptt1" class="btn btn-ptt">PTT</button>
+                                    <button id="testAudio1" class="btn btn-secondary">Test Audio</button>
                                 </div>
                             </div>
                             

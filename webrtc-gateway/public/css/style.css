@@ -475,3 +475,32 @@ body {
     font-size: 0.9rem;
     margin-top: 0.5rem;
 }
+
+/* WebRTC Link Section */
+.webrtc-link {
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.webrtc-panel {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.webrtc-panel p {
+    margin-bottom: 1.5rem;
+    color: var(--dark-color);
+    font-size: 1.1rem;
+}
+
+.webrtc-panel .btn {
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    display: inline-block;
+}

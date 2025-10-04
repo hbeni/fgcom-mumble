@@ -15,10 +15,11 @@
 
 const express = require('express');
 const http = require('http');
+const https = require('https');
+const fs = require('fs');
 const socketIo = require('socket.io');
 const path = require('path');
 const dgram = require('dgram');
-const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -38,7 +39,18 @@ const MumbleConnector = require('./mumble-connector');
 class WebRTCGateway {
     constructor() {
         this.app = express();
-        this.server = http.createServer(this.app);
+        
+        // Load SSL certificates
+        const sslOptions = this.loadSSLOptions();
+        
+        if (sslOptions) {
+            this.server = https.createServer(sslOptions, this.app);
+            console.log('🔒 HTTPS server created with SSL certificates');
+        } else {
+            this.server = http.createServer(this.app);
+            console.log('⚠️  HTTP server created (no SSL certificates found)');
+        }
+        
         this.io = socketIo(this.server, {
             cors: {
                 origin: "*",
@@ -63,9 +75,29 @@ class WebRTCGateway {
         this.setupMumbleConnection();
     }
     
+    loadSSLOptions() {
+        try {
+            const keyPath = path.join(__dirname, '../server.key');
+            const certPath = path.join(__dirname, '../server.crt');
+            
+            if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+                return {
+                    key: fs.readFileSync(keyPath),
+                    cert: fs.readFileSync(certPath)
+                };
+            }
+            
+            console.log('SSL certificates not found, using HTTP');
+            return null;
+        } catch (error) {
+            console.error('Error loading SSL certificates:', error);
+            return null;
+        }
+    }
+    
     loadConfig() {
         const defaultConfig = {
-            port: process.env.PORT || 3000,
+            port: process.env.PORT || 8081,
             mumble: {
                 host: process.env.MUMBLE_HOST || 'localhost',
                 port: process.env.MUMBLE_PORT || 64738,
@@ -105,16 +137,22 @@ class WebRTCGateway {
     }
     
     setupMiddleware() {
-        // Security middleware
+        // Security middleware - Proper HTTPS security
         this.app.use(helmet({
             contentSecurityPolicy: {
                 directives: {
                     defaultSrc: ["'self'"],
                     scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
                     styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
-                    connectSrc: ["'self'", "ws:", "wss:"],
-                    mediaSrc: ["'self'", "blob:"]
+                    connectSrc: ["'self'", "ws:", "wss:", "http:", "https:"],
+                    mediaSrc: ["'self'", "blob:"],
+                    upgradeInsecureRequests: process.env.NODE_ENV === 'production' ? [] : null
                 }
+            },
+            hsts: {
+                maxAge: 31536000,
+                includeSubDomains: true,
+                preload: true
             }
         }));
         
@@ -303,11 +341,12 @@ class WebRTCGateway {
     }
     
     start() {
-        this.server.listen(this.config.port, () => {
-            console.log(`🚀 FGCom-mumble WebRTC Gateway running on port ${this.config.port}`);
-            console.log(`📡 WebRTC client: http://localhost:${this.config.port}/webrtc`);
-            console.log(`🌐 Main page: http://localhost:${this.config.port}/`);
-            console.log(`📊 Status: http://localhost:${this.config.port}/health`);
+        const host = this.config.server?.host || '0.0.0.0';
+        this.server.listen(this.config.port, host, () => {
+            console.log(`🚀 FGCom-mumble WebRTC Gateway running on ${host}:${this.config.port}`);
+            console.log(`📡 WebRTC client: https://${host}:${this.config.port}/webrtc`);
+            console.log(`🌐 Main page: https://${host}:${this.config.port}/`);
+            console.log(`📊 Status: https://${host}:${this.config.port}/health`);
         });
         
         // Graceful shutdown
