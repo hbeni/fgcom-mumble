@@ -48,6 +48,7 @@ class WebRTCClient {
             this.updateConnectionStatus('connecting', 'Connecting...');
             
             // Initialize Socket.IO connection
+            console.log('Creating Socket.IO connection...');
             this.socket = io(serverUrl);
             
             this.socket.on('connect', () => {
@@ -61,8 +62,8 @@ class WebRTCClient {
                 this.handleDisconnection();
             });
             
-            this.socket.on('webrtc-answer', (answer) => {
-                this.handleWebRTCAnswer(answer);
+            this.socket.on('webrtc-connected', (data) => {
+                this.handleWebRTCConnected(data);
             });
             
             this.socket.on('webrtc-ice-candidate', (candidate) => {
@@ -97,9 +98,12 @@ class WebRTCClient {
             console.log('Initializing WebRTC...');
             
             // Get user media
+            console.log('Requesting user media...');
             await this.getUserMedia();
+            console.log('User media obtained successfully');
             
-            // Create peer connection
+            // For this implementation, we'll create a peer connection
+            // but handle the connection through the server signaling
             this.peerConnection = new RTCPeerConnection({
                 iceServers: this.iceServers
             });
@@ -159,6 +163,8 @@ class WebRTCClient {
     async getUserMedia() {
         try {
             console.log('Requesting user media...');
+            console.log('MediaDevices available:', !!navigator.mediaDevices);
+            console.log('getUserMedia available:', !!navigator.mediaDevices?.getUserMedia);
             
             this.localStream = await navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -170,7 +176,8 @@ class WebRTCClient {
                 video: false
             });
             
-            console.log('User media obtained');
+            console.log('User media obtained successfully');
+            console.log('Audio tracks:', this.localStream.getAudioTracks().length);
             this.setupAudioContext();
             
         } catch (error) {
@@ -245,12 +252,13 @@ class WebRTCClient {
         }
     }
     
-    async handleWebRTCAnswer(answer) {
+    handleWebRTCConnected(data) {
         try {
-            console.log('Handling WebRTC answer...');
-            await this.peerConnection.setRemoteDescription(answer);
+            console.log('WebRTC connection established:', data);
+            this.isConnected = true;
+            this.updateConnectionStatus('connected', 'Connected');
         } catch (error) {
-            console.error('Error handling answer:', error);
+            console.error('Error handling WebRTC connection:', error);
         }
     }
     
@@ -273,6 +281,16 @@ class WebRTCClient {
                 console.log('Remote audio loaded');
             };
             
+            audio.oncanplay = () => {
+                console.log('Remote audio can play');
+                audio.play().catch(error => {
+                    console.error('Error playing audio:', error);
+                });
+            };
+            
+            // Store reference for volume control
+            this.remoteAudio = audio;
+            
         } catch (error) {
             console.error('Error playing remote audio:', error);
         }
@@ -281,6 +299,37 @@ class WebRTCClient {
     handleIncomingAudio(audioData) {
         // Handle incoming audio data from server
         console.log('Received audio data:', audioData);
+        
+        // For now, generate test audio so you can hear something
+        this.generateTestAudio();
+    }
+    
+    generateTestAudio() {
+        try {
+            // Create a simple test tone so you can hear audio
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Set frequency to 440Hz (A note)
+            oscillator.frequency.setValueAtTime(440, audioContext.currentTime);
+            
+            // Set volume based on the volume control
+            const volume = document.getElementById('volume1')?.value || 50;
+            gainNode.gain.setValueAtTime(volume / 100 * 0.1, audioContext.currentTime); // Low volume for test
+            
+            // Play for 0.5 seconds
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.5);
+            
+            console.log('Test audio generated');
+            
+        } catch (error) {
+            console.error('Error generating test audio:', error);
+        }
     }
     
     handleIncomingRadioData(radioData) {

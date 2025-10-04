@@ -15,7 +15,7 @@
         <header class="header">
             <div class="container">
                 <div class="logo">
-                    <img src="images/fgcom-logo.png" alt="FGCom-mumble" class="logo-img">
+                    <img src="images/fgcom-logo.svg" alt="FGCom-mumble" class="logo-img">
                     <h1>FGCom-mumble WebRTC Client</h1>
                 </div>
                 <div class="header-controls">
@@ -48,6 +48,7 @@
                         </form>
                         <div class="form-footer">
                             <p>Don't have an account? <a href="#" id="registerLink">Register here</a></p>
+                            <p><strong>Default admin account:</strong> username: <code>admin</code>, password: <code>admin123</code></p>
                         </div>
                     </div>
                 </div>
@@ -79,6 +80,15 @@
 
                 <!-- Main Interface -->
                 <div id="mainInterface" class="main-interface" style="display: none;">
+                    <!-- WebRTC Client Link -->
+                    <section class="webrtc-link">
+                        <h2>WebRTC Client</h2>
+                        <div class="webrtc-panel">
+                            <p>To use the WebRTC radio client, click the button below:</p>
+                            <a href="/webrtc" class="btn btn-primary">Open WebRTC Client</a>
+                        </div>
+                    </section>
+                    
                     <!-- Radio Controls -->
                     <section class="radio-controls">
                         <h2>Radio Controls</h2>
@@ -182,5 +192,51 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/webrtc-client.js"></script>
     <script src="js/app.js"></script>
+    
+    <!-- Direct fix for registration link -->
+    <script>
+        // Ensure registration link works
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, setting up registration link...');
+            
+            const registerLink = document.getElementById('registerLink');
+            const loginLink = document.getElementById('loginLink');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            console.log('Elements found:', {
+                registerLink: !!registerLink,
+                loginLink: !!loginLink,
+                loginForm: !!loginForm,
+                registerForm: !!registerForm
+            });
+            
+            if (registerLink) {
+                registerLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Register link clicked!');
+                    
+                    if (loginForm && registerForm) {
+                        loginForm.style.display = 'none';
+                        registerForm.style.display = 'block';
+                        console.log('Switched to register form');
+                    }
+                });
+            }
+            
+            if (loginLink) {
+                loginLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Login link clicked!');
+                    
+                    if (loginForm && registerForm) {
+                        registerForm.style.display = 'none';
+                        loginForm.style.display = 'block';
+                        console.log('Switched to login form');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -20,14 +20,19 @@ class AudioProcessor {
     
     initializeCodecs() {
         try {
-            // Initialize Opus encoder for outgoing audio (WebRTC -> Mumble)
-            this.opusEncoder = new opus.OpusEncoder(this.sampleRate, this.channels);
-            this.opusEncoder.setBitrate(this.bitrate);
-            
-            // Initialize Opus decoder for incoming audio (Mumble -> WebRTC)
-            this.opusDecoder = new opus.OpusDecoder(this.sampleRate, this.channels);
-            
-            console.log('Audio codecs initialized successfully');
+            // Check if opus is available and working
+            if (typeof opus.OpusEncoder === 'function' && typeof opus.OpusDecoder === 'function') {
+                // Initialize Opus encoder for outgoing audio (WebRTC -> Mumble)
+                this.opusEncoder = new opus.OpusEncoder(this.sampleRate, this.channels);
+                this.opusEncoder.setBitrate(this.bitrate);
+                
+                // Initialize Opus decoder for incoming audio (Mumble -> WebRTC)
+                this.opusDecoder = new opus.OpusDecoder(this.sampleRate, this.channels);
+                
+                console.log('Audio codecs initialized successfully');
+            } else {
+                throw new Error('Opus codecs not available');
+            }
         } catch (error) {
             console.error('Failed to initialize audio codecs:', error);
             // For now, disable Opus codecs and use fallback

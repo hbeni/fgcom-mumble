@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Registration</title>
+</head>
+<body>
+    <h1>Debug Registration Link</h1>
+    
+    <div id="loginForm" style="display: block;">
+        <h2>Login Form</h2>
+        <p>Don't have an account? <a href="#" id="registerLink">Register here</a></p>
+    </div>
+    
+    <div id="registerForm" style="display: none;">
+        <h2>Register Form</h2>
+        <p>Already have an account? <a href="#" id="loginLink">Login here</a></p>
+    </div>
+    
+    <div id="debug"></div>
+    
+    <script>
+        console.log('Debug script loaded');
+        
+        // Test if elements exist
+        const registerLink = document.getElementById('registerLink');
+        const loginLink = document.getElementById('loginLink');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        
+        console.log('registerLink:', registerLink);
+        console.log('loginLink:', loginLink);
+        console.log('loginForm:', loginForm);
+        console.log('registerForm:', registerForm);
+        
+        if (registerLink) {
+            registerLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Register link clicked!');
+                document.getElementById('debug').innerHTML += '<p>Register link clicked!</p>';
+                
+                if (loginForm && registerForm) {
+                    loginForm.style.display = 'none';
+                    registerForm.style.display = 'block';
+                    document.getElementById('debug').innerHTML += '<p>Forms switched!</p>';
+                }
+            });
+        }
+        
+        if (loginLink) {
+            loginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log('Login link clicked!');
+                document.getElementById('debug').innerHTML += '<p>Login link clicked!</p>';
+                
+                if (loginForm && registerForm) {
+                    registerForm.style.display = 'none';
+                    loginForm.style.display = 'block';
+                    document.getElementById('debug').innerHTML += '<p>Forms switched back!</p>';
+                }
+            });
+        }
+        
+        document.getElementById('debug').innerHTML = '<p>Script loaded, elements found: registerLink=' + (registerLink ? 'YES' : 'NO') + ', loginLink=' + (loginLink ? 'YES' : 'NO') + '</p>';
+    </script>
+</body>
+</html>
+

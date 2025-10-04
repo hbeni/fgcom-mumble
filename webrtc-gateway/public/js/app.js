@@ -19,6 +19,9 @@ class FGComApp {
         this.setupFormHandlers();
         this.setupKeyboardShortcuts();
         
+        // Auto-detect server URL
+        this.setupServerURL();
+        
         // Check if we're on the WebRTC client page
         if (window.location.pathname.includes('webrtc')) {
             this.initializeWebRTCClient();
@@ -76,6 +79,12 @@ class FGComApp {
             button.addEventListener('mouseleave', () => this.stopPTT(index + 1));
         });
         
+        // Test audio buttons
+        const testAudioBtn = document.getElementById('testAudio1');
+        if (testAudioBtn) {
+            testAudioBtn.addEventListener('click', () => this.testAudio());
+        }
+        
         // Audio level slider
         const audioLevelSlider = document.getElementById('audioLevel');
         if (audioLevelSlider) {
@@ -95,6 +104,14 @@ class FGComApp {
     
     async loadAudioDevices() {
         try {
+            // Check if mediaDevices is available (requires HTTPS or localhost)
+            if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+                console.log('Audio device access not available (requires HTTPS or localhost)');
+                this.populateAudioDeviceSelect('inputDevice', []);
+                this.populateAudioDeviceSelect('outputDevice', []);
+                return;
+            }
+            
             const devices = await navigator.mediaDevices.enumerateDevices();
             const audioInputs = devices.filter(device => device.kind === 'audioinput');
             const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
@@ -104,6 +121,9 @@ class FGComApp {
             
         } catch (error) {
             console.error('Error loading audio devices:', error);
+            // Fallback: populate with default options
+            this.populateAudioDeviceSelect('inputDevice', []);
+            this.populateAudioDeviceSelect('outputDevice', []);
         }
     }
     
@@ -175,6 +195,19 @@ class FGComApp {
                 e.preventDefault();
             }
         });
+    }
+    
+    setupServerURL() {
+        // Auto-detect server URL based on current location
+        const serverUrlInput = document.getElementById('serverUrl');
+        if (serverUrlInput) {
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            const port = window.location.port || (protocol === 'https:' ? '443' : '80');
+            const autoDetectedURL = `${protocol}//${hostname}:${port}`;
+            serverUrlInput.value = autoDetectedURL;
+            console.log('Auto-detected server URL:', autoDetectedURL);
+        }
     }
     
     initializeWebRTCClient() {
@@ -339,6 +372,12 @@ class FGComApp {
         const audioLevelValue = document.getElementById('audioLevelValue');
         if (audioLevelValue) {
             audioLevelValue.textContent = level + '%';
+        }
+    }
+    
+    testAudio() {
+        if (this.webrtcClient) {
+            this.webrtcClient.generateTestAudio();
         }
     }
     
