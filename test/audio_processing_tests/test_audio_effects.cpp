@@ -296,14 +296,17 @@ TEST_F(AudioEffectsTest, AudioEffectsCombination) {
     float input_rms = calculateRMS(input_samples);
     float output_rms = calculateRMS(output_samples);
     
-    // After noise addition but before limiting/click removal, RMS should be higher
-    // But after limiting and click removal, RMS might be lower due to signal processing
-    // So we test that the processing worked correctly instead
+    // After noise addition, limiting, and click removal, the output RMS might be different
+    // We test that the processing worked correctly by checking specific conditions
     EXPECT_GT(output_rms, 0.0f) << "Output should have some signal";
     EXPECT_LE(calculatePeak(output_samples), limit_threshold) << "Peak should be <= limit threshold";
     
     // Test that the processing worked correctly by checking the input RMS is reasonable
     EXPECT_GT(input_rms, 0.0f) << "Input should have some signal";
+    
+    // Test that the output is within reasonable bounds (not too quiet, not too loud)
+    EXPECT_GT(output_rms, input_rms * 0.1f) << "Output should not be too quiet";
+    EXPECT_LT(output_rms, input_rms * 2.0f) << "Output should not be too loud";
     
     // Test that clicks were removed
     int high_peak_count = 0;

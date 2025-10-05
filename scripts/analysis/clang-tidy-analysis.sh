@@ -16,7 +16,7 @@ if [ ! -f compile_commands.json ]; then
     echo "Creating compilation database with bear..."
     bear -- make clean 2>/dev/null || true
     bear -- make plugin 2>/dev/null || {
-        echo "⚠️  Build failed, creating manual compilation database..."
+        echo "WARNING: Build failed, creating manual compilation database..."
         # Create a basic compilation database manually
         cat > compile_commands.json << 'EOF'
 [
@@ -54,11 +54,11 @@ if clang-tidy --checks='readability-identifier-naming,modernize-use-auto,moderni
     head -10 style-warnings.txt
     echo "Total style warnings: $(grep -c "warning:" style-warnings.txt || echo "0")"
 else
-    echo "⚠️  Style analysis skipped due to compilation issues"
+    echo "WARNING: Style analysis skipped due to compilation issues"
 fi
 
 # Step 5: Generate focused configuration
-echo "⚙️  Step 5: Creating focused .clang-tidy configuration..."
+echo "Step 5: Creating focused .clang-tidy configuration..."
 cat > .clang-tidy << 'EOF'
 # Focused clang-tidy configuration for FGCom-mumble
 # Prioritizes critical issues over style warnings

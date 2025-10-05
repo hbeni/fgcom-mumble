@@ -1,35 +1,31 @@
 # FGCom-mumble User Installation Guide
 
-This guide provides step-by-step instructions for users to install FGCom-mumble with all issues automatically resolved.
+This guide provides step-by-step instructions for users to install FGCom-mumble with the new automated installation system.
 
 ## Quick Installation (Recommended)
 
-For most users, run this single command to fix all issues and install everything:
+For most users, run this single command to install everything automatically:
 
 ```bash
 # Clone the repository
 git clone https://github.com/Supermagnum/fgcom-mumble.git
 cd fgcom-mumble
 
-# Run the master fix script (fixes ALL issues automatically)
-./scripts/fix_all_issues.sh
-
-# Build the project
-make build
-
-# Install the project
-sudo make install
-
-# Set up Mumble channels
-fgcom-setup-channels
-
-# Start the service
-fgcom-service start
+# Run the automated installation script
+sudo ./scripts/install_fgcom_mumble.sh
 ```
 
-## What the Fix Script Does
+This will automatically:
+- Install all dependencies
+- Configure Mumble server
+- Create required channels
+- Generate certificates
+- Set up systemd services
+- Start all services
 
-The `fix_all_issues.sh` script automatically:
+## What the Installation Script Does
+
+The `install_fgcom_mumble.sh` script automatically:
 
 ###  **Build System Fixes**
 - Initializes git submodules

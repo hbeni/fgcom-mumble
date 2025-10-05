@@ -25,13 +25,13 @@ sudo ./scripts/install_fgcom_mumble.sh
 ```
 
 The installation script will:
-- ✅ Install required dependencies (luajit, sqlite3, openssl)
-- ✅ Create system user and group (`fgcom-mumble`)
-- ✅ Generate bot certificates
-- ✅ Configure Mumble server
-- ✅ Create required Mumble channels automatically
-- ✅ Set up systemd services
-- ✅ Start all services
+- Install required dependencies (luajit, sqlite3, openssl)
+- Create system user and group (`fgcom-mumble`)
+- Generate bot certificates
+- Configure Mumble server
+- Create required Mumble channels automatically
+- Set up systemd services
+- Start all services
 
 ## What Gets Installed
 

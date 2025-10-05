@@ -47,28 +47,28 @@ for test_suite in "${TEST_SUITES[@]}"; do
         WARNING_COUNT=$(echo "$WARNING_COUNT" | head -n1 | tr -d '\n')
         
         if [ "$WARNING_COUNT" -gt 0 ] 2>/dev/null; then
-            echo "⚠️  Found $WARNING_COUNT warnings:"
+            echo "WARNING: Found $WARNING_COUNT warnings:"
             echo "$BUILD_OUTPUT" | grep -i "unused\|warning" | head -5
             if [ "$WARNING_COUNT" -gt 5 ]; then
                 echo "... and $((WARNING_COUNT - 5)) more warnings"
             fi
             TOTAL_WARNINGS=$((TOTAL_WARNINGS + WARNING_COUNT))
         else
-            echo "✅ No unused variable warnings found"
+            echo "SUCCESS: No unused variable warnings found"
         fi
         
         cd ..
         echo ""
     else
-        echo "⚠️  Directory $test_suite not found, skipping..."
+        echo "WARNING: Directory $test_suite not found, skipping..."
         echo ""
     fi
 done
 
 echo "=== SUMMARY ==="
 if [ "$TOTAL_WARNINGS" -eq 0 ]; then
-    echo "🎉 All test suites are clean - no unused variable warnings found!"
+    echo "SUCCESS: All test suites are clean - no unused variable warnings found!"
 else
-    echo "⚠️  Total warnings found: $TOTAL_WARNINGS"
+    echo "WARNING: Total warnings found: $TOTAL_WARNINGS"
     echo "Some test suites have unused variables that should be fixed."
 fi
