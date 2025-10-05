@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fix "should be inside braces" warnings in frequency management files
-echo "🔧 Fixing braces warnings in frequency management files..."
+echo "Fixing braces warnings in frequency management files..."
 
 # Function to fix single-line if statements
 fix_single_line_if() {
@@ -61,8 +61,8 @@ sed -i '229s/if (\([^)]*\)) \([^;]*\);$/if (\1) {\n        \2;\n    }/' client/m
 sed -i '331s/if (\([^)]*\)) \([^;]*\);$/if (\1) {\n        \2;\n    }/' client/mumble-plugin/lib/radio_model.cpp
 sed -i '332s/if (\([^)]*\)) \([^;]*\);$/if (\1) {\n        \2;\n    }/' client/mumble-plugin/lib/radio_model.cpp
 
-echo "✅ Braces warnings fixed!"
-echo "📋 Changes made:"
+echo "SUCCESS: Braces warnings fixed!"
+echo "Changes made:"
 echo "   - Added braces around single-line if statements"
 echo "   - Improved code readability and maintainability"
 

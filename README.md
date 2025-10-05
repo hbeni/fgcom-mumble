@@ -61,7 +61,7 @@ See [Advanced Features](advanced_features.md) for a comprehensive overview of al
 ## Quick Start Guide
 
 ### For Users
-1. **[Installation Guide](docs/INSTALLATION_GUIDE.md)** - Get started with installation and setup
+1. **[Installation Guide](INSTALLATION.md)** - Get started with installation and setup
 2. **[Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md)** - Learn how to use the client with your flight simulator
 3. **[WebRTC Gateway](webrtc-gateway/README.md)** - Web browser client for FGCom-mumble (no installation required)
 4. **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** - Understand special features like ATIS and test frequencies
@@ -181,9 +181,10 @@ radioAudioEffects=1
 4. **[Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)** - Deep technical details
 
 ### For Administrators
-1. **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Server setup and configuration
-2. **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Security implementation and best practices
-3. **[Server Documentation](server/Readme.server.md)** - Server-side components and operation
+1. **[Installation Guide](INSTALLATION.md)** - Complete automated installation system
+2. **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Server setup and configuration
+3. **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Security implementation and best practices
+4. **[Server Documentation](server/Readme.server.md)** - Server-side components and operation
 
 ## **Improvements and Enhancements**
 
@@ -248,12 +249,38 @@ If you want to request a feature or report a bug, you can do so on the issuetrac
 
 ## Installation and Setup
 
-**See [Installation Guide](docs/INSTALLATION_GUIDE.md) for complete installation and setup instructions.**
+**See [Installation Guide](INSTALLATION.md) for complete installation and setup instructions.**
 
-### Quick Fix for Installation Issues
+### Quick Installation
 
-If you encounter installation problems, use the automated fix script:
-- **[Fix Installation Script](scripts/fix_installation.sh)** - Automatically resolves common installation issues
+For a complete automated installation:
+
+```bash
+# Clone the repository
+git clone https://github.com/Supermagnum/fgcom-mumble.git
+cd fgcom-mumble
+
+# Run the automated installation script
+sudo ./scripts/install_fgcom_mumble.sh
+```
+
+This will:
+- Install all dependencies automatically
+- Configure Mumble server with Ice middleware
+- Create required Mumble channels automatically
+- Generate bot certificates
+- Set up systemd services
+- Start all services
+
+### Service Management
+
+```bash
+# Check system status
+sudo ./scripts/status_fgcom_mumble.sh
+
+# Uninstall (if needed)
+sudo ./scripts/uninstall_fgcom_mumble.sh
+```
 
 
 
@@ -289,26 +316,7 @@ See [Utilities and Tools](utilities_and_tools.md) for comprehensive utilities, A
 
 See [Testing Framework](testing_framework.md) for comprehensive testing framework documentation, test suites, quality standards, and execution instructions.
 
-## Project Reports
+### Test Results
 
-For comprehensive project status, testing results, and quality assurance documentation, see the following reports:
+See [Test Results](test/tests-passed.md) for comprehensive test suite execution results, coverage analysis, and quality assurance status.
 
-### Status Reports
-- [Current Status Report](docs/reports/CURRENT_STATUS_REPORT.md) - Latest project status and recent improvements
-- [Final Status Report](docs/reports/FINAL_STATUS_REPORT.md) - Final project status summary
-
-### Quality Assurance Reports
-- [Critical Code Inspection Report](docs/reports/CRITICAL_CODE_INSPECTION_REPORT.md) - Critical issues found and resolved
-- [Code Review Report](docs/reports/CODE_REVIEW_REPORT.md) - Comprehensive code review for quality and architecture
-- [Static Analysis Report](docs/reports/STATIC_ANALYSIS_REPORT.md) - Static code analysis results
-
-### Testing Reports
-- [Comprehensive Test Report](docs/reports/TEST_REPORT_COMPREHENSIVE.md) - Complete testing results and validation
-
-### Documentation Reports
-- [Code Documentation Audit Report](docs/reports/CODE_DOCUMENTATION_AUDIT_REPORT.md) - Documentation audit for self-documenting code standards
-
-### Reports Index
-- [Reports Index](docs/reports/REPORTS_INDEX.md) - Complete index of all project reports
-
-All reports are dated September 29, 2024, and reflect the current production-ready status of the FGCom-mumble project.

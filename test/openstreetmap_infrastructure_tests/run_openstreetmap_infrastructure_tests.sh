@@ -98,7 +98,7 @@ if cppcheck --enable=all --std=c++17 --suppress=missingIncludeSystem \
     > "$TEST_RESULTS_DIR/openstreetmap_infrastructure_cppcheck.txt" 2>&1; then
     echo -e "${GREEN}✓${NC} CppCheck completed for OpenStreetMap infrastructure"
 else
-    echo -e "${YELLOW}⚠${NC} CppCheck completed for OpenStreetMap infrastructure with warnings"
+    echo -e "${YELLOW}WARNING${NC} CppCheck completed for OpenStreetMap infrastructure with warnings"
 fi
 
 echo "Running Clang-Tidy on OpenStreetMap infrastructure modules..."
@@ -239,6 +239,7 @@ echo -e "${GREEN}✓${NC} Memory analysis completed"
 echo -e "${GREEN}✓${NC} Coverage analysis completed"
 
 echo -e "\n${BLUE}OpenStreetMap infrastructure test results saved to: $TEST_RESULTS_DIR${NC}"
+
 
 
 

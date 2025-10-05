@@ -1,10 +1,10 @@
 # FGCom-mumble Installation Issues and Fixes
 
-This document addresses all the installation issues encountered during FGCom-mumble setup and provides comprehensive solutions.
+This document addresses all the installation issues encountered during FGCom-mumble setup and provides comprehensive solutions. **Note: Most issues are now automatically resolved by the new installation system.**
 
 ## Summary of Issues Fixed
 
-### 1. Build System Issues ✅ FIXED
+### 1. Build System Issues - FIXED
 
 **Issues:**
 - Missing dependencies and submodules
@@ -13,12 +13,13 @@ This document addresses all the installation issues encountered during FGCom-mum
 - Missing Java/Maven dependencies
 
 **Solutions:**
+- **NEW**: Use `sudo ./scripts/install_fgcom_mumble.sh` for automated installation
 - Created `scripts/setup_build_environment.sh` to initialize all submodules
 - Added automatic dependency installation for Java, Maven, and build tools
 - Fixed submodule initialization with `git submodule update --init --recursive`
 - Added dependency checking and installation for all required packages
 
-### 2. Test Suite Issues ✅ FIXED
+### 2. Test Suite Issues - FIXED
 
 **Issues:**
 - Missing testing tools (gtest, cppcheck, clang-tidy)
@@ -33,7 +34,7 @@ This document addresses all the installation issues encountered during FGCom-mum
 - Created universal test runner with proper path handling
 - Fixed Google Test detection to check for headers instead of commands
 
-### 3. Installation Issues ✅ FIXED
+### 3. Installation Issues - FIXED
 
 **Issues:**
 - Missing install target in Makefile
@@ -46,7 +47,7 @@ This document addresses all the installation issues encountered during FGCom-mum
 - Added comprehensive install target that handles all components
 - Created fgcom-mumble user with proper ownership
 
-### 4. Service Configuration Issues ✅ FIXED
+### 4. Service Configuration Issues - FIXED
 
 **Issues:**
 - GUI application on headless server
@@ -59,7 +60,7 @@ This document addresses all the installation issues encountered during FGCom-mum
 - Fixed service configuration to run bots instead of GUI
 - Added headless operation support throughout
 
-### 5. Bot Script Dependencies ✅ FIXED
+### 5. Bot Script Dependencies - FIXED
 
 **Issues:**
 - Missing shared functions file
@@ -72,7 +73,7 @@ This document addresses all the installation issues encountered during FGCom-mum
 - Built lua-mumble library from source with all dependencies
 - Copied shared functions file to proper location
 
-### 6. Bot Configuration Issues ✅ FIXED
+### 6. Bot Configuration Issues - FIXED
 
 **Issues:**
 - Missing bot certificates
@@ -85,7 +86,7 @@ This document addresses all the installation issues encountered during FGCom-mum
 - Created recording directory with proper permissions
 - Added comprehensive error handling and logging
 
-### 7. System Integration Issues ✅ FIXED
+### 7. System Integration Issues - FIXED
 
 **Issues:**
 - Systemd service configuration problems
