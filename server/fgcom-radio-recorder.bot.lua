@@ -249,7 +249,12 @@ local playback_targets = nil -- holds updated list of all channel users
 updateAllChannelUsersforSend = function(cl)
     --fgcom.dbg("udpate channelusers")
     local ch = cl:getChannel(fgcom.channel)
-    playback_targets = ch:getUsers()
+    if ch then
+        playback_targets = ch:getUsers()
+    else
+        fgcom.log("ERROR: Channel '"..fgcom.channel.."' not found in updateAllChannelUsersforSend!")
+        playback_targets = {}
+    end
 end
 
 
@@ -261,8 +266,17 @@ client:hook("OnServerSync", function(client, event)
     
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
-    event.user:move(ch)
-    fgcom.log("joined channel "..fgcom.channel)
+    if ch then
+        event.user:move(ch)
+        fgcom.log("joined channel "..fgcom.channel)
+    else
+        fgcom.log("ERROR: Channel '"..fgcom.channel.."' not found!")
+        -- Try to list all available channels
+        local channels = client:getChannels()
+        for id, channel in pairs(channels) do
+            fgcom.log("  Available channel ID " .. id .. ": " .. channel:getName())
+        end
+    end
            
     -- ask all already present clients for their data
     updateAllChannelUsersforSend(client)
@@ -349,7 +363,9 @@ client:hook("OnUserSpeak", function(client, event)
             end
 
             local ch = client:getChannel(fgcom.channel)
-            ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' started.")
+            if ch then
+                ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' started.")
+            end
         end
     
         if remote.record_filename and remote.record_fh then
@@ -363,7 +379,9 @@ client:hook("OnUserSpeak", function(client, event)
                 if not remote.recordingExceededNotified then
                     remote.recordingExceededNotified = true
                     local ch = client:getChannel(fgcom.channel)
-                    ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' exceeded the limit of "..limit.."s. Not recording further samples.")
+                    if ch then
+                        ch:message(event.user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' exceeded the limit of "..limit.."s. Not recording further samples.")
+                    end
                 end
             end
         end
@@ -465,7 +483,9 @@ client:hook("OnUserStopSpeaking", function(client, user)
                 -- notify user
                 fgcom.log("recording ready: '"..record_filename_final.."'")
                 local ch = client:getChannel(fgcom.channel)
-                ch:message(user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' completed!")
+                if ch then
+                    ch:message(user:getName().." ("..remote.callsign.."): Recording for frequency '"..remote.record_tgt_frq.."' completed!")
+                end
                 
                 -- spawn a bot that replays the sample.
                 -- he is responsible fo killing himself and also to delete the sample file if it is not valid anymore.
