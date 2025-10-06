@@ -213,6 +213,14 @@ configure_mumble_server() {
         print_status "Backed up existing Mumble configuration"
     fi
     
+    # Ensure Mumble database directory exists
+    local mumble_db_dir="/var/lib/mumble-server"
+    if [[ ! -d "$mumble_db_dir" ]]; then
+        mkdir -p "$mumble_db_dir"
+        chown mumble-server:mumble-server "$mumble_db_dir"
+        print_success "Created Mumble database directory: $mumble_db_dir"
+    fi
+    
     # Create Mumble server configuration
     cat > "$mumble_config" << 'EOF'
 ; FGCom-mumble Mumble Server Configuration
@@ -345,6 +353,17 @@ start_services() {
     # Wait for Mumble server to be ready
     sleep 5
     
+    # Initialize Mumble database if it doesn't exist
+    local mumble_db="/var/lib/mumble-server/fgcom-mumble.sqlite"
+    if [[ ! -f "$mumble_db" ]]; then
+        print_status "Initializing Mumble database..."
+        # Create an empty database file to trigger Mumble to initialize it
+        touch "$mumble_db"
+        chown mumble-server:mumble-server "$mumble_db"
+        chmod 660 "$mumble_db"
+        print_success "Mumble database initialized: $mumble_db"
+    fi
+    
     # Create channels
     create_mumble_channels
     
@@ -417,6 +436,7 @@ main() {
     install_system_files
     generate_certificates
     configure_mumble_server
+    create_systemd_service
     start_services
     verify_installation
     

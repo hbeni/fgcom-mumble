@@ -183,8 +183,9 @@ radioAudioEffects=1
 ### For Administrators
 1. **[Installation Guide](INSTALLATION.md)** - Complete automated installation system
 2. **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Server setup and configuration
-3. **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Security implementation and best practices
-4. **[Server Documentation](server/Readme.server.md)** - Server-side components and operation
+3. **[Bot Management Guide](docs/BOT_MANAGEMENT_GUIDE.md)** - Bot configuration and management
+4. **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Security implementation and best practices
+5. **[Server Documentation](server/Readme.server.md)** - Server-side components and operation
 
 ## **Improvements and Enhancements**
 
@@ -208,6 +209,8 @@ The documentation is split up into relevant parts:
 - [GOOD_CODING_PRACTICES.md](docs/GOOD_CODING_PRACTICES.md) **STRICT coding standards and quality requirements** - Mandatory rules for all development work
 
 ### User Documentation:
+- **[How This Works for Dummies](docs/HOW_THIS_WORKS_FOR_DUMMIES.md)** **Simple explanation of radio propagation** - Easy-to-understand guide with practical examples like NATO Jeep scenarios and real-world radio behavior
+- **[Radio Propagation Mathematics](docs/RADIO_PROPAGATION_MATHEMATICS.md)** **Mathematical models behind radio simulation** - Complete equations, formulas, and calculations used in the system with user examples
 - **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** **Comprehensive setup guide for administrators and technical users** - Honest assessment of complexity and detailed setup instructions
 - **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** **Technical overview** - Understanding what FGCom-mumble is and its actual capabilities
 - **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** **Comprehensive guide for game developers and modders** - Technical integration requirements, data exchange protocols, and implementation examples
