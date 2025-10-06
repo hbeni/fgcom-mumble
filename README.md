@@ -192,7 +192,7 @@ radioAudioEffects=1
 See [Improvements](docs/roadmap/improvements.md) for detailed information about:
 - Security enhancement recommendations
 - ATIS recording generation improvements
-- Cold war era voice encryption systems
+- Cold war era voice encryption systems (implemented - see Voice Encryption Module section)
 - Technical improvements and feature additions
 
 Documentation
@@ -223,6 +223,14 @@ The documentation is split up into relevant parts:
 - [Security API Documentation](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security implementation
 - [Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md) Comprehensive setup instructions for administrators
 - [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) Consolidated technical documentation
+
+### Voice Encryption Module:
+- **[Voice Encryption Module](voice-encryption/README.md)** **Cold War era voice encryption systems** - Complete suite of authentic voice encryption systems including Soviet/East Bloc and NATO technologies
+- **[Voice Encryption Documentation](voice-encryption/docs/VOICE_ENCRYPTION_MODULE.md)** **Comprehensive voice encryption guide** - Detailed documentation for all encryption systems, API usage, and technical specifications
+- **[Yachta T-219 Documentation](voice-encryption/systems/yachta-t219/docs/YACHTA_T219_DOCUMENTATION.md)** **Soviet frequency-domain voice scrambling** - Warbled "Donald Duck" sound with FSK sync signal
+- **[VINSON KY-57 Documentation](voice-encryption/systems/vinson-ky57/docs/VINSON_KY57_DOCUMENTATION.md)** **NATO digital CVSD secure voice** - Robotic/buzzy digital voice with Type 1 encryption
+- **[Granit Documentation](voice-encryption/systems/granit/docs/GRANIT_DOCUMENTATION.md)** **Soviet time-domain scrambling** - Segmented, time-jumped sound with temporal distortion
+- **[STANAG 4197 Documentation](voice-encryption/systems/stanag-4197/docs/STANAG_4197_DOCUMENTATION.md)** **NATO QPSK OFDM digital voice** - Digital voice with OFDM modulation for HF communications
 
 ### WebRTC Browser Client Support (Implemented):
 See [WebRTC Browser Client Support](web_rtc.md) for comprehensive WebRTC implementation documentation and related features.
