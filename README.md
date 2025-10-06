@@ -5,7 +5,7 @@
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
 
-A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators and games with geographic separation, propagation modeling, and authentic radio procedures.
+A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators and games with geographic separation, and propagation modeling.
 
 [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5) | [Deutsche Version](server/Readme.server-de_DE.md)
 
