@@ -4,7 +4,16 @@
 **Test Execution Time:** 02:48:27 +0200  
 **Test Environment:** Linux 6.8.0-83-generic  
 **Compiler:** GNU 13.3.0  
-**Testing Framework:** Google Test 1.14.0, Google Mock 1.14.0  
+**Testing Framework:**
+  Google Test - Unit testing framework
+  Google Mock - Mocking framework
+  Valgrind - Memory leak detection
+  AddressSanitizer - Memory error detection
+    ThreadSanitizer - Race condition detection
+  Gcov/Lcov - Code coverage
+  CppCheck - Static analysis
+  Clang-Tidy - Static analysis
+
 
 ## Test Suite Execution Summary
 
