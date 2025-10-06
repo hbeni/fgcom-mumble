@@ -5,7 +5,7 @@
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
 
-A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators with geographic separation, propagation modeling, and authentic radio procedures.
+A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators and games with geographic separation, propagation modeling, and authentic radio procedures.
 
 [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5) | [Deutsche Version](server/Readme.server-de_DE.md)
 
@@ -13,7 +13,7 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 ## What This Is
 
-**FGCom-mumble** is a sophisticated radio communication simulator that brings realistic radio procedures to flight simulation. It's designed for aviation enthusiasts who want authentic radio communication experiences with proper propagation modeling, geographic separation, and realistic audio effects.
+**FGCom-mumble** is a sophisticated radio communication simulator that brings realistic radio procedures to flight simulation and games. It's designed for enthusiasts who want authentic radio communication experiences with proper propagation modeling, geographic separation, and realistic audio effects.
 
 ### Key Features
 - **Realistic Radio Simulation**: Geographic separation, propagation modeling, and authentic audio effects
@@ -30,10 +30,10 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 ### Prerequisites
 - **Server Administration**: Linux/Windows server management experience
-- **Technical Configuration**: 625+ configuration options across 17 categories  
+- **Technical Configuration**: multiple configuration options across 17 categories  
 - **Network Setup**: UDP port configuration, firewall rules, channel management
 - **Radio Knowledge**: Understanding of radio frequencies and propagation
-- **Installation Time**: 2-4 hours for basic setup, 1-2 days for advanced configuration
+
 
 ### Supported Platforms
 - **FlightGear**: Native integration (requires technical knowledge)
@@ -224,7 +224,7 @@ The system includes comprehensive antenna pattern visualization showing realisti
 
 **Generation**: Use `scripts/pattern_generation/antenna-radiation-pattern-generator.sh` to generate missing aircraft patterns. See [Antenna Pattern Creation Documentation](antenna_patterns.md) for complete details.
 
-**Note on Ground Types**: While ideal antenna patterns would account for different ground types (soil conductivity, moisture, urban vs rural environments), the database would become prohibitively large. Current patterns use standard ground assumptions for practical implementation.
+**Note on Ground Types**: While ideal antenna patterns would account for different ground types (soil conductivity, moisture, urban vs rural environments), the database would become very large. Current patterns use standard ground assumptions for practical implementation.
 
 ---
 
