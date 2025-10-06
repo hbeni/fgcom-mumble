@@ -21,37 +21,58 @@ The farther you are from someone, the weaker your signal gets. It's like shoutin
 - **Water** (lakes, rivers, wet ground) conducts radio waves better
 - **Buildings and trees** absorb and scatter radio signals
 
-### Weather Matters (Frequency Dependent!)
+### Weather Matters (CRITICAL: Frequency Dependent!)
 
-Weather effects on radio signals depend heavily on the frequency you're using:
+**IMPORTANT**: Weather effects on radio signals are HIGHLY dependent on frequency. The same weather conditions can have completely different effects depending on what frequency you're using!
 
 #### Rain Effects by Frequency
-- **VHF (30-300 MHz)**: Rain has minimal effect - signals pass through easily
-- **UHF (300-3000 MHz)**: Moderate rain absorption - signals get weaker but still work
-- **Microwave (3-30 GHz)**: Heavy rain absorption - signals can be completely blocked
-- **10 GHz and above**: Severe rain attenuation - only works in light rain
 
-#### Rain Scatter Communication (10 GHz+)
-At very high frequencies (10 GHz and 24 GHz), rain can actually help communication:
+**VHF (30-300 MHz)**: 
+- Rain has **minimal effect** - signals pass through easily
+- Raindrops are much smaller than the radio wavelength
+- No significant absorption or scattering
+
+**UHF (300-3000 MHz)**: 
+- **Moderate rain absorption** - signals get weaker but still work
+- Some scattering occurs but not enough to block communication
+- Range may be reduced by 10-20% in heavy rain
+
+**Microwave (3-30 GHz)**: 
+- **Heavy rain absorption** - signals can be completely blocked
+- Raindrops are similar in size to radio wavelength
+- Heavy rain can cause 90%+ signal loss
+
+**10 GHz and 24 GHz (Special Case)**: 
+- **Rain scatter communication** - rain can actually HELP communication!
+- These frequencies are perfect for rain scatter because the radio wavelength matches raindrop size
+- Heavy rain with large raindrops works BEST for rain scatter
+
+#### Rain Scatter Communication (10 GHz and 24 GHz)
 
 **How Rain Scatter Works:**
-- **Raindrop Interaction**: Radio waves bounce off raindrops and scatter in different directions
-- **Optimal Conditions**: Heavy rain with large raindrops works best for rain scatter
-- **Frequency Sweet Spot**: 10 GHz and 24 GHz are perfect because the radio wavelength matches raindrop size
+- **Raindrop Interaction**: When radio waves encounter raindrops, the waves are scattered in various directions. The size of the raindrops and the frequency of the radio waves determine the effectiveness of this scattering.
+- **Optimal Conditions**: Heavy rain with larger raindrops is more effective at scattering signals. This is why rain scatter is more commonly observed during intense rain showers or thunderstorms.
+- **Frequency Dependence**: Rain scatter is most effective at higher frequencies, particularly in the microwave bands. The 10 GHz and 24 GHz bands are often used for rain scatter communication because the wavelength of these frequencies is comparable to the size of raindrops.
 - **Result**: You can communicate with stations that are normally out of range by bouncing signals off rain clouds!
 
 #### Other Weather Effects by Frequency
-- **Fog**: 
-  - VHF: Minimal effect
-  - UHF: Slight scattering
-  - Microwave: Significant scattering and absorption
-- **Temperature changes**: 
-  - All frequencies: Can create "ducting" (signals travel much farther)
-  - VHF/UHF: Most affected by temperature inversions
-- **Snow**: 
-  - VHF: No effect
-  - UHF: Slight absorption
-  - Microwave: Moderate absorption
+
+**Fog Effects:**
+- **VHF (30-300 MHz)**: Minimal effect - fog droplets are too small
+- **UHF (300-3000 MHz)**: Slight scattering - minor range reduction
+- **Microwave (3-30 GHz)**: Significant scattering and absorption - major range reduction
+- **10 GHz+**: Severe attenuation - fog can completely block signals
+
+**Temperature Changes (Atmospheric Ducting):**
+- **VHF/UHF**: Most affected by temperature inversions - can extend range by hundreds of kilometers
+- **Microwave**: Less affected by ducting but still benefits from temperature inversions
+- **All frequencies**: Temperature changes can bend radio waves (like a mirage), creating "ducting" effects
+
+#### Snow Effects by Frequency
+- **VHF (30-300 MHz)**: No effect - snowflakes are too small
+- **UHF (300-3000 MHz)**: Slight absorption - minor range reduction
+- **Microwave (3-30 GHz)**: Moderate absorption - noticeable range reduction
+- **10 GHz+**: Heavy absorption - significant range reduction
 
 ## Real-World Examples
 
@@ -173,21 +194,33 @@ Avoid obstacles between you and your target. Hills, buildings, and trees all blo
 - **Urban areas:** Use UHF
 - **Rural areas:** Use VHF
 
-### 4. Consider the Weather (Frequency Specific!)
-- **Rain:** 
-  - VHF: No problem, use as normal
-  - UHF: Slight reduction in range
-  - Microwave: Switch to VHF if possible
-  - 10 GHz: Try rain scatter communication!
-- **Fog:** 
-  - VHF: Minimal effect
-  - UHF: Slight range reduction
-  - Microwave: Significant range reduction
+### 4. Consider the Weather (CRITICAL: Frequency Specific!)
+
+**Remember: The same weather affects different frequencies completely differently!**
+
+- **Rain Effects by Frequency:**
+  - **VHF (30-300 MHz)**: No problem, use as normal - rain is invisible to these frequencies
+  - **UHF (300-3000 MHz)**: Slight reduction in range (10-20% loss)
+  - **Microwave (3-30 GHz)**: Switch to VHF if possible - rain can block signals completely
+  - **10 GHz and 24 GHz**: Try rain scatter communication! Heavy rain actually helps!
+
+- **Fog Effects by Frequency:**
+  - **VHF (30-300 MHz)**: Minimal effect - fog droplets too small
+  - **UHF (300-3000 MHz)**: Slight range reduction (5-15%)
+  - **Microwave (3-30 GHz)**: Significant range reduction (50%+ loss)
+  - **10 GHz+**: Severe attenuation - fog can completely block signals
+
+- **Snow Effects by Frequency:**
+  - **VHF (30-300 MHz)**: No effect - snowflakes too small
+  - **UHF (300-3000 MHz)**: Slight range reduction (5-10%)
+  - **Microwave (3-30 GHz)**: Moderate range reduction (20-40%)
+  - **10 GHz+**: Heavy range reduction (50%+ loss)
+
 - **Clear weather:** Best conditions for all frequencies
 - **Heavy rain:** 
-  - VHF/UHF: Still works fine
-  - Microwave: May need to switch frequencies
-  - 10 GHz: Perfect for rain scatter!
+  - **VHF/UHF**: Still works fine - no problem
+  - **Microwave**: May need to switch to VHF/UHF
+  - **10 GHz/24 GHz**: Perfect for rain scatter communication!
 
 ### 5. Antenna Orientation
 - **Directional antennas:** Point them at your target
@@ -210,13 +243,18 @@ Radio propagation is like real-world physics applied to communication. The same 
 - **Distance** weakens signals
 - **Obstacles** block signals
 - **Terrain** affects signal paths
-- **Weather** changes signal strength (but effects depend on frequency!)
+- **Weather** changes signal strength (CRITICAL: effects depend on frequency!)
 - **Antenna direction** matters
 - **Frequency choice** is crucial
 - **Rain can help or hurt** depending on your frequency:
-  - VHF: Rain doesn't matter
-  - UHF: Rain slightly weakens signals
-  - Microwave: Rain blocks signals
-  - 10 GHz: Rain can enable over-the-horizon communication!
+  - **VHF (30-300 MHz)**: Rain doesn't matter - signals pass through easily
+  - **UHF (300-3000 MHz)**: Rain slightly weakens signals (10-20% loss)
+  - **Microwave (3-30 GHz)**: Rain blocks signals (90%+ loss in heavy rain)
+  - **10 GHz and 24 GHz**: Rain can enable over-the-horizon communication through rain scatter!
+- **Fog effects** are also frequency dependent:
+  - **VHF**: Minimal effect
+  - **UHF**: Slight range reduction
+  - **Microwave**: Major range reduction
+  - **10 GHz+**: Can completely block signals
 
 Understanding these principles helps you use radio communication more effectively in simulations and real life. It's not just about having the right equipment - it's about understanding how radio waves behave in the real world.
