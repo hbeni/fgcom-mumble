@@ -494,6 +494,330 @@ N_0_dBm = 10 * log10(1.38e-17)
 N_0_dBm = -168.6 dBm/Hz
 ```
 
+## Maximum Usable Frequency (MUF)
+
+The Maximum Usable Frequency is the highest frequency that can be used for skywave propagation between two points at a given time.
+
+### MUF Calculation
+
+```
+MUF = foF2 * sec(φ)
+```
+
+Where:
+- `MUF` = Maximum Usable Frequency (MHz)
+- `foF2` = Critical frequency of F2 layer (MHz)
+- `φ` = Angle of incidence at the ionosphere
+
+### Critical Frequency (foF2)
+
+The critical frequency depends on solar activity and time of day:
+
+```
+foF2 = foF2_median * (1 + 0.3 * cos(2π * (t - 12) / 24))
+```
+
+Where:
+- `foF2_median` = Median critical frequency (MHz)
+- `t` = Time of day (hours)
+- Solar activity factor varies from 0.5 to 2.0
+
+### Example Calculation
+For foF2_median = 8 MHz at 14:00 hours:
+```
+foF2 = 8 * (1 + 0.3 * cos(2π * (14 - 12) / 24))
+foF2 = 8 * (1 + 0.3 * cos(π/6))
+foF2 = 8 * (1 + 0.3 * 0.866)
+foF2 = 8 * (1 + 0.26)
+foF2 = 8 * 1.26
+foF2 = 10.08 MHz
+```
+
+### MUF for Different Distances
+
+```
+MUF_distance = MUF_3000 * (3000 / distance_km)^0.5
+```
+
+Where:
+- `MUF_3000` = MUF for 3000 km distance
+- `distance_km` = Actual distance (km)
+
+### Example Calculation
+For MUF_3000 = 15 MHz and distance = 1000 km:
+```
+MUF_distance = 15 * (3000 / 1000)^0.5
+MUF_distance = 15 * (3)^0.5
+MUF_distance = 15 * 1.732
+MUF_distance = 25.98 MHz
+```
+
+## Minimum Usable Frequency (LUF)
+
+The Minimum Usable Frequency is the lowest frequency that provides reliable communication.
+
+### LUF Calculation
+
+```
+LUF = max(LUF_absorption, LUF_noise, LUF_antenna)
+```
+
+Where:
+- `LUF_absorption` = Absorption-limited LUF
+- `LUF_noise` = Noise-limited LUF
+- `LUF_antenna` = Antenna-limited LUF
+
+### Absorption-Limited LUF
+
+```
+LUF_absorption = 0.885 * foE * sec(φ)
+```
+
+Where:
+- `foE` = Critical frequency of E layer (MHz)
+- `φ` = Angle of incidence
+
+### Noise-Limited LUF
+
+```
+LUF_noise = (P_t + G_t + G_r - L_path - SNR_required - N_floor) / 20
+```
+
+Where:
+- `P_t` = Transmitter power (dBm)
+- `G_t`, `G_r` = Antenna gains (dBi)
+- `L_path` = Path loss (dB)
+- `SNR_required` = Required signal-to-noise ratio (dB)
+- `N_floor` = Noise floor (dBm)
+
+### Example Calculation
+For P_t = 40 dBm, G_t = G_r = 3 dBi, L_path = 120 dB, SNR_required = 10 dB, N_floor = -130 dBm:
+```
+LUF_noise = (40 + 3 + 3 - 120 - 10 - (-130)) / 20
+LUF_noise = (40 + 3 + 3 - 120 - 10 + 130) / 20
+LUF_noise = 46 / 20
+LUF_noise = 2.3 MHz
+```
+
+## Solar Influence on Propagation
+
+### Solar Flux Index (SFI)
+
+The Solar Flux Index affects ionospheric propagation:
+
+```
+SFI_effect = 0.1 * (SFI - 70)
+```
+
+Where:
+- `SFI` = Solar Flux Index (10.7 cm)
+- Normal range: 70-300
+
+### Sunspot Number Influence
+
+```
+SSN_effect = 0.05 * (SSN - 20)
+```
+
+Where:
+- `SSN` = Sunspot Number
+- Normal range: 0-200
+
+### Solar Activity Factor
+
+```
+SAF = 1 + SFI_effect + SSN_effect
+```
+
+### Example Calculation
+For SFI = 150, SSN = 80:
+```
+SFI_effect = 0.1 * (150 - 70) = 8.0
+SSN_effect = 0.05 * (80 - 20) = 3.0
+SAF = 1 + 8.0 + 3.0 = 12.0
+```
+
+### Ionospheric Absorption
+
+```
+A_ion = A_0 * (f / f_c)^(-2) * SAF
+```
+
+Where:
+- `A_ion` = Ionospheric absorption (dB)
+- `A_0` = Base absorption (dB)
+- `f` = Frequency (MHz)
+- `f_c` = Critical frequency (MHz)
+
+### Example Calculation
+For A_0 = 10 dB, f = 7 MHz, f_c = 3 MHz, SAF = 2.0:
+```
+A_ion = 10 * (7 / 3)^(-2) * 2.0
+A_ion = 10 * (2.33)^(-2) * 2.0
+A_ion = 10 * 0.184 * 2.0
+A_ion = 3.68 dB
+```
+
+## Effective Radiated Power (ERP) Calculations
+
+### ERP Definition
+
+```
+ERP = P_t + G_t - L_cable - L_connector
+```
+
+Where:
+- `ERP` = Effective Radiated Power (dBm)
+- `P_t` = Transmitter power (dBm)
+- `G_t` = Transmitting antenna gain (dBi)
+- `L_cable` = Cable loss (dB)
+- `L_connector` = Connector loss (dB)
+
+### Example Calculation
+For P_t = 50 W (47 dBm), G_t = 6 dBi, L_cable = 2 dB, L_connector = 0.5 dB:
+```
+ERP = 47 + 6 - 2 - 0.5
+ERP = 50.5 dBm
+ERP = 112.2 W
+```
+
+### ERP with Antenna Efficiency
+
+```
+ERP = P_t + G_t + η_antenna - L_cable - L_connector
+```
+
+Where:
+- `η_antenna` = Antenna efficiency (dB)
+
+### Example Calculation
+For η_antenna = -1 dB (80% efficiency):
+```
+ERP = 47 + 6 + (-1) - 2 - 0.5
+ERP = 49.5 dBm
+ERP = 89.1 W
+```
+
+### ERP in Different Units
+
+```
+ERP_W = 10^((ERP_dBm - 30) / 10)
+ERP_dBW = ERP_dBm - 30
+```
+
+### Example Calculation
+For ERP = 50.5 dBm:
+```
+ERP_W = 10^((50.5 - 30) / 10)
+ERP_W = 10^(20.5 / 10)
+ERP_W = 10^2.05
+ERP_W = 112.2 W
+
+ERP_dBW = 50.5 - 30 = 20.5 dBW
+```
+
+### ERP with Directional Antenna
+
+```
+ERP_directional = ERP_isotropic + G_directional
+```
+
+Where:
+- `G_directional` = Directional antenna gain (dBi)
+
+### Example Calculation
+For ERP_isotropic = 50 dBm and G_directional = 12 dBi:
+```
+ERP_directional = 50 + 12
+ERP_directional = 62 dBm
+ERP_directional = 1584.9 W
+```
+
+### ERP and Path Loss
+
+```
+P_received = ERP - L_path + G_r
+```
+
+Where:
+- `P_received` = Received power (dBm)
+- `L_path` = Path loss (dB)
+- `G_r` = Receiving antenna gain (dBi)
+
+### Example Calculation
+For ERP = 50 dBm, L_path = 120 dB, G_r = 3 dBi:
+```
+P_received = 50 - 120 + 3
+P_received = -67 dBm
+```
+
+### ERP and Link Budget
+
+```
+SNR = ERP + G_r - L_path - N_floor
+```
+
+Where:
+- `SNR` = Signal-to-noise ratio (dB)
+- `N_floor` = Noise floor (dBm)
+
+### Example Calculation
+For ERP = 50 dBm, G_r = 3 dBi, L_path = 120 dB, N_floor = -130 dBm:
+```
+SNR = 50 + 3 - 120 - (-130)
+SNR = 50 + 3 - 120 + 130
+SNR = 63 dB
+```
+
+## Solar Activity and Propagation Windows
+
+### Optimal Working Frequency (OWF)
+
+```
+OWF = 0.85 * MUF
+```
+
+### Example Calculation
+For MUF = 20 MHz:
+```
+OWF = 0.85 * 20
+OWF = 17 MHz
+```
+
+### Frequency of Optimum Traffic (FOT)
+
+```
+FOT = 0.9 * MUF
+```
+
+### Example Calculation
+For MUF = 20 MHz:
+```
+FOT = 0.9 * 20
+FOT = 18 MHz
+```
+
+### Solar Activity and MUF Variation
+
+```
+MUF_variation = MUF_base * (1 + 0.2 * sin(2π * t / 24))
+```
+
+Where:
+- `t` = Time of day (hours)
+- Daily variation factor
+
+### Example Calculation
+For MUF_base = 15 MHz at 18:00 hours:
+```
+MUF_variation = 15 * (1 + 0.2 * sin(2π * 18 / 24))
+MUF_variation = 15 * (1 + 0.2 * sin(3π/2))
+MUF_variation = 15 * (1 + 0.2 * (-1))
+MUF_variation = 15 * (1 - 0.2)
+MUF_variation = 15 * 0.8
+MUF_variation = 12 MHz
+```
+
 ## Implementation Notes
 
 ### Numerical Stability
@@ -503,6 +827,8 @@ When implementing these equations in code, consider:
 2. **Square root operations**: Ensure positive arguments
 3. **Trigonometric functions**: Use radians for angle calculations
 4. **Exponential functions**: Check for overflow in extreme cases
+5. **Solar activity data**: Use real-time solar flux and sunspot data
+6. **Ionospheric models**: Implement ITU-R models for accuracy
 
 ### Example C++ Implementation
 ```cpp
@@ -513,6 +839,21 @@ double calculateFreeSpaceLoss(double distance_km, double frequency_mhz) {
 double calculateLineOfSight(double height1_m, double height2_m) {
     return 3.57 * sqrt(height1_m + height2_m);
 }
+
+double calculateMUF(double foF2, double angle_rad) {
+    return foF2 / cos(angle_rad);
+}
+
+double calculateERP(double power_dBm, double antenna_gain_dBi, 
+                   double cable_loss_dB, double connector_loss_dB) {
+    return power_dBm + antenna_gain_dBi - cable_loss_dB - connector_loss_dB;
+}
+
+double calculateSolarActivityFactor(double sfi, double ssn) {
+    double sfi_effect = 0.1 * (sfi - 70.0);
+    double ssn_effect = 0.05 * (ssn - 20.0);
+    return 1.0 + sfi_effect + ssn_effect;
+}
 ```
 
 ### Performance Considerations
@@ -520,6 +861,8 @@ double calculateLineOfSight(double height1_m, double height2_m) {
 - Use lookup tables for trigonometric functions
 - Implement fast square root algorithms
 - Consider floating-point precision limits
+- Update solar activity data periodically
+- Use efficient ionospheric models
 
 ## References
 

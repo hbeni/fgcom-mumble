@@ -200,6 +200,7 @@ TEST_F(PerformanceTest, ConcurrentPerformanceOperations) {
                     switch (i % 4) {
                         case 0: {
                             int load = 10 + (i % 90);
+                            (void)load; // Suppress unused variable warning
                             // Simulate high load processing
                             auto encoded_data = mock_audio_encoder->encodeAudio(test_audio_data);
                             bool result = mock_network_transmitter->transmitPacket(encoded_data);
@@ -208,6 +209,7 @@ TEST_F(PerformanceTest, ConcurrentPerformanceOperations) {
                         }
                         case 1: {
                             int pressure = 10 + (i % 90);
+                            (void)pressure; // Suppress unused variable warning
                             // Simulate memory pressure processing
                             std::vector<float> pressure_data(1000, 0.5f);
                             auto encoded_data = mock_audio_encoder->encodeAudio(pressure_data);
@@ -217,6 +219,7 @@ TEST_F(PerformanceTest, ConcurrentPerformanceOperations) {
                         }
                         case 2: {
                             int limit = 10 + (i % 90);
+                            (void)limit; // Suppress unused variable warning
                             // Simulate CPU limit processing
                             auto propagation = mock_propagation_calculator->calculatePropagation(
                                 test_distances[0], test_frequencies[0], test_altitudes[0], test_altitudes[0]);
@@ -226,6 +229,7 @@ TEST_F(PerformanceTest, ConcurrentPerformanceOperations) {
                         }
                         case 3: {
                             int performance = 10 + (i % 90);
+                            (void)performance; // Suppress unused variable warning
                             // Simulate performance measurement
                             auto start_time = std::chrono::high_resolution_clock::now();
                             auto encoded_data = mock_audio_encoder->encodeAudio(test_audio_data);
@@ -270,6 +274,7 @@ TEST_F(PerformanceTest, MemoryPressureConditions) {
         // Make performance operations under memory pressure
         for (int i = 0; i < 1000; ++i) {
             int load = 10 + (i % 90);
+            (void)load; // Suppress unused variable warning
             // Simulate high load processing
             auto encoded_data = mock_audio_encoder->encodeAudio(test_audio_data);
             bool result = mock_network_transmitter->transmitPacket(encoded_data);
@@ -362,6 +367,7 @@ TEST_F(PerformanceTest, ExceptionHandling) {
         try {
             // Make some performance operations
             int load = 10 + (i % 90);
+            (void)load; // Suppress unused variable warning
             // Simulate high load processing
             auto encoded_data = mock_audio_encoder->encodeAudio(test_audio_data);
             bool result = mock_network_transmitter->transmitPacket(encoded_data);

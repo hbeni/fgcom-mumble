@@ -218,8 +218,8 @@ CMakeFiles/run_basic_tests.dir/clean:
 # Target rules for target CMakeFiles/run_sanitizer_tests.dir
 
 # All Build rule for target.
-CMakeFiles/run_sanitizer_tests.dir/all: CMakeFiles/agc_squelch_tests_tsan.dir/all
 CMakeFiles/run_sanitizer_tests.dir/all: CMakeFiles/agc_squelch_tests_asan.dir/all
+CMakeFiles/run_sanitizer_tests.dir/all: CMakeFiles/agc_squelch_tests_tsan.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_sanitizer_tests.dir/build.make CMakeFiles/run_sanitizer_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_sanitizer_tests.dir/build.make CMakeFiles/run_sanitizer_tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=40 "Built target run_sanitizer_tests"
@@ -271,10 +271,10 @@ CMakeFiles/run_coverage_tests.dir/clean:
 # Target rules for target CMakeFiles/run_all_tests.dir
 
 # All Build rule for target.
-CMakeFiles/run_all_tests.dir/all: CMakeFiles/agc_squelch_tests_tsan.dir/all
-CMakeFiles/run_all_tests.dir/all: CMakeFiles/agc_squelch_tests_coverage.dir/all
 CMakeFiles/run_all_tests.dir/all: CMakeFiles/agc_squelch_tests.dir/all
 CMakeFiles/run_all_tests.dir/all: CMakeFiles/agc_squelch_tests_asan.dir/all
+CMakeFiles/run_all_tests.dir/all: CMakeFiles/agc_squelch_tests_tsan.dir/all
+CMakeFiles/run_all_tests.dir/all: CMakeFiles/agc_squelch_tests_coverage.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_all_tests.dir/build.make CMakeFiles/run_all_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_all_tests.dir/build.make CMakeFiles/run_all_tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=37 "Built target run_all_tests"

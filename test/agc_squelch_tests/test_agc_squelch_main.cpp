@@ -46,21 +46,23 @@ class AGC_Squelch_Test : public ::testing::Test {
 protected:
     void SetUp() override {
         try {
-            // Clean up any existing instance safely
-            FGCom_AGC_Squelch::destroyInstance();
+            // Reset AGC state for test isolation using comprehensive reset method
+            FGCom_AGC_Squelch& agc = FGCom_AGC_Squelch::getInstance();
+            agc.resetToDefaultState();  // Complete reset to default state
         } catch (const std::exception& e) {
-            // Log but don't fail setup for destroy operations
-            std::cerr << "Warning: Exception during cleanup in SetUp: " << e.what() << std::endl;
+            // Log but don't fail setup
+            std::cerr << "Warning: Exception during setup: " << e.what() << std::endl;
         }
     }
     
     void TearDown() override {
         try {
-            // Clean up after each test safely
-            FGCom_AGC_Squelch::destroyInstance();
+            // Reset AGC state for next test using comprehensive reset method
+            FGCom_AGC_Squelch& agc = FGCom_AGC_Squelch::getInstance();
+            agc.resetToDefaultState();  // Complete reset to default state
         } catch (const std::exception& e) {
             // Log but don't fail teardown
-            std::cerr << "Warning: Exception during cleanup in TearDown: " << e.what() << std::endl;
+            std::cerr << "Warning: Exception during teardown: " << e.what() << std::endl;
         }
     }
     

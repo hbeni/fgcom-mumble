@@ -76,6 +76,7 @@ public:
     
     // Network transmission methods
     virtual bool transmitPacket(const std::vector<uint8_t>& packet_data) {
+        (void)packet_data; // Suppress unused parameter warning
         auto start_time = std::chrono::high_resolution_clock::now();
         
         // Simulate network transmission
@@ -83,6 +84,7 @@ public:
         
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        (void)duration; // Suppress unused variable warning
         
         return true; // Simulate successful transmission
     }
@@ -104,6 +106,8 @@ public:
     
     // Propagation calculation methods
     virtual double calculatePropagation(double distance, double frequency, double altitude1, double altitude2) {
+        (void)altitude1; // Suppress unused parameter warning
+        (void)altitude2; // Suppress unused parameter warning
         auto start_time = std::chrono::high_resolution_clock::now();
         
         // Simulate propagation calculation
@@ -111,6 +115,7 @@ public:
         
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        (void)duration; // Suppress unused variable warning
         
         return path_loss;
     }
@@ -132,6 +137,7 @@ public:
     
     // Jitter buffer methods
     virtual void addPacket(const std::vector<uint8_t>& packet_data) {
+        (void)packet_data; // Suppress unused parameter warning
         auto start_time = std::chrono::high_resolution_clock::now();
         
         // Simulate jitter buffer processing
@@ -139,6 +145,7 @@ public:
         
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        (void)duration; // Suppress unused variable warning
     }
     
     virtual std::vector<float> getAudioSamples() {
@@ -164,6 +171,8 @@ public:
     
     // Throughput measurement methods
     virtual void recordDataPoint(double timestamp, double value) {
+        (void)timestamp; // Suppress unused parameter warning
+        (void)value; // Suppress unused parameter warning
         auto start_time = std::chrono::high_resolution_clock::now();
         
         // Simulate throughput measurement

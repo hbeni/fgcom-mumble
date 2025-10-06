@@ -120,14 +120,12 @@ udpServerHost=*
 ### Core Documentation
 - **[How This Works for Dummies](docs/HOW_THIS_WORKS_FOR_DUMMIES.md)** - Simple explanation of radio propagation with practical examples
 - **[Radio Propagation Mathematics](docs/RADIO_PROPAGATION_MATHEMATICS.md)** - Mathematical models and calculations
-- **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Comprehensive setup guide for administrators
 - **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** - Technical overview and capabilities
 
 ### Advanced Features
 - **[Advanced Features](advanced_features.md)** - Comprehensive overview of all advanced features
 - **[WebRTC Browser Client Support](web_rtc.md)** - WebRTC implementation documentation
 - **[Antenna Pattern Creation](antenna_patterns.md)** - Antenna pattern creation guides
-- **[API Reference Complete](docs/API_REFERENCE_COMPLETE.md)** - Complete RESTful API and WebSocket documentation
 
 ### Game Integration
 - **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** - Integration requirements and protocols
@@ -142,10 +140,7 @@ udpServerHost=*
 - **[Band Segments Reference](docs/BAND_SEGMENTS_REFERENCE.md)** - Frequency allocations and regulatory compliance
 
 ### Development Resources
-- **[Compilation Guide](docs/COMPILATION_GUIDE.md)** - Build from source code
 - **[Good Coding Practices](docs/GOOD_CODING_PRACTICES.md)** - Strict coding standards and quality requirements
-- **[Testing Framework](testing_framework.md)** - Comprehensive testing framework documentation
-- **[Utilities and Tools](utilities_and_tools.md)** - Utilities, API testing tools, and advanced processing capabilities
 
 ---
 
@@ -159,7 +154,6 @@ udpServerHost=*
 ### Server Components
 - **[Server Documentation](server/Readme.server.md)** - Server-side components and operation
 - **[Status Page](server/statuspage/Readme.statuspage.md)** - Status page implementation details
-- **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - TLS/SSL, authentication, and secure connections
 
 ### Advanced APIs
 - **[Work Unit Distribution API](docs/WORK_UNIT_DISTRIBUTION_API.md)** - Distributed computing and work unit management
@@ -234,13 +228,10 @@ The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
 
 - **Issues**: Report bugs or request features on the issue tracker
 - **Pull Requests**: Contributions are welcome! Clone the repository and submit pull requests
-- **Coding Standards**: Follow the [Good Coding Practices](docs/GOOD_CODING_PRACTICES.md) for all development work
 
 ---
 
 ## Testing and Quality
 
-- **[Testing Framework](testing_framework.md)** - Comprehensive testing framework documentation
 - **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
-- **[Utilities and Tools](utilities_and_tools.md)** - API testing tools and advanced processing capabilities
 

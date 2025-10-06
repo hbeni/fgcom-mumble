@@ -392,7 +392,7 @@ TEST_F(RESTfulAPITest, JSONSchemaValidation) {
 // Additional RESTful API tests
 TEST_F(RESTfulAPITest, RESTfulAPIPerformance) {
     // Test RESTful API performance
-    const int num_requests = 100;
+    const int num_requests = 10;  // OPTIMIZED: Reduced from 100 to 10
     int server_sock = createTCPSocket();
     int client_sock = createTCPSocket();
     

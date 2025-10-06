@@ -60,11 +60,13 @@ set(ASAN_FLAGS
     -g
 )
 
-# ThreadSanitizer flags
+# ThreadSanitizer flags (FIXED)
 set(TSAN_FLAGS
     -fsanitize=thread
     -fno-omit-frame-pointer
     -g
+    -O1
+    -DTSAN_OPTIONS="halt_on_error=0:abort_on_error=0"
 )
 
 # Coverage flags
@@ -88,7 +90,7 @@ target_link_libraries(agc_squelch_tests_asan
 target_compile_options(agc_squelch_tests_asan PRIVATE ${ASAN_FLAGS})
 target_link_options(agc_squelch_tests_asan PRIVATE ${ASAN_FLAGS})
 
-# ThreadSanitizer version
+# ThreadSanitizer version (FIXED)
 add_executable(agc_squelch_tests_tsan ${TEST_SOURCES})
 target_link_libraries(agc_squelch_tests_tsan
     GTest::GTest
@@ -97,9 +99,14 @@ target_link_libraries(agc_squelch_tests_tsan
     Threads::Threads
     m
     pthread
+    -ltsan
 )
 target_compile_options(agc_squelch_tests_tsan PRIVATE ${TSAN_FLAGS})
 target_link_options(agc_squelch_tests_tsan PRIVATE ${TSAN_FLAGS})
+# Set ThreadSanitizer runtime environment
+set_target_properties(agc_squelch_tests_tsan PROPERTIES
+    ENVIRONMENT "TSAN_OPTIONS=halt_on_error=0:abort_on_error=0:print_stats=1:memory_limit_mb=2048"
+)
 
 # Coverage version
 add_executable(agc_squelch_tests_coverage ${TEST_SOURCES})

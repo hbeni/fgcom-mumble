@@ -145,7 +145,7 @@
             <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_ground_system.cpp" line="229" column="17"/>
         </error>
         <error id="useStlAlgorithm" severity="style" msg="Consider using std::transform algorithm instead of a raw loop." verbose="Consider using std::transform algorithm instead of a raw loop." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_ground_system.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_ground_system.cpp" line="433" column="18"/>
+            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/antenna_ground_system.cpp" line="434" column="18"/>
         </error>
         <error id="useInitializationList" severity="performance" msg="Variable &apos;last_cleanup&apos; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&apos;t explicitly write them to the initialization list. You could avoid assigning &apos;last_cleanup&apos; a value by passing the value to the constructor in the initialization list." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp">
             <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/vehicle_dynamics.cpp" line="18" column="5"/>

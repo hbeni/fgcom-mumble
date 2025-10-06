@@ -13,8 +13,8 @@ LIBS = -lgtest -lgmock -lgtest_main -pthread
 
 # Test source files
 TEST_SOURCES = $(wildcard test_*.cpp)
-TEST_OBJECTS = $(TEST_SOURCES:.cpp=.o)
-TEST_EXECUTABLE = $(TEST_NAME)
+TEST_OBJECTS = $(addprefix build/, $(TEST_SOURCES:.cpp=.o))
+TEST_EXECUTABLE = build/$(TEST_NAME)
 
 # Default target
 all: $(TEST_EXECUTABLE)
@@ -24,20 +24,21 @@ $(TEST_EXECUTABLE): $(TEST_OBJECTS)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(LIBS)
 
 # Compile source files
-%.o: %.cpp
+build/%.o: %.cpp
+	@mkdir -p build
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # Run tests
 test: $(TEST_EXECUTABLE)
-	./$(TEST_EXECUTABLE)
+	cd build && ./$(TEST_NAME)
 
 # Run tests with verbose output
 test-verbose: $(TEST_EXECUTABLE)
-	./$(TEST_EXECUTABLE) --gtest_verbose
+	cd build && ./$(TEST_NAME) --gtest_verbose
 
 # Run tests with specific filter
 test-filter: $(TEST_EXECUTABLE)
-	./$(TEST_EXECUTABLE) --gtest_filter=$(FILTER)
+	cd build && ./$(TEST_NAME) --gtest_filter=$(FILTER)
 
 # Clean build artifacts
 clean:

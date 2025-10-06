@@ -218,8 +218,8 @@ CMakeFiles/run_audio_processing_basic_tests.dir/clean:
 # Target rules for target CMakeFiles/run_audio_processing_sanitizer_tests.dir
 
 # All Build rule for target.
-CMakeFiles/run_audio_processing_sanitizer_tests.dir/all: CMakeFiles/audio_processing_tests_asan.dir/all
 CMakeFiles/run_audio_processing_sanitizer_tests.dir/all: CMakeFiles/audio_processing_tests_tsan.dir/all
+CMakeFiles/run_audio_processing_sanitizer_tests.dir/all: CMakeFiles/audio_processing_tests_asan.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_audio_processing_sanitizer_tests.dir/build.make CMakeFiles/run_audio_processing_sanitizer_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_audio_processing_sanitizer_tests.dir/build.make CMakeFiles/run_audio_processing_sanitizer_tests.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles --progress-num=40 "Built target run_audio_processing_sanitizer_tests"
@@ -271,9 +271,9 @@ CMakeFiles/run_audio_processing_coverage_tests.dir/clean:
 # Target rules for target CMakeFiles/run_audio_processing_all_tests.dir
 
 # All Build rule for target.
-CMakeFiles/run_audio_processing_all_tests.dir/all: CMakeFiles/audio_processing_tests_asan.dir/all
 CMakeFiles/run_audio_processing_all_tests.dir/all: CMakeFiles/audio_processing_tests_tsan.dir/all
 CMakeFiles/run_audio_processing_all_tests.dir/all: CMakeFiles/audio_processing_tests_coverage.dir/all
+CMakeFiles/run_audio_processing_all_tests.dir/all: CMakeFiles/audio_processing_tests_asan.dir/all
 CMakeFiles/run_audio_processing_all_tests.dir/all: CMakeFiles/audio_processing_tests.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_audio_processing_all_tests.dir/build.make CMakeFiles/run_audio_processing_all_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_audio_processing_all_tests.dir/build.make CMakeFiles/run_audio_processing_all_tests.dir/build
