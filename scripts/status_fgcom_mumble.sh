@@ -138,15 +138,15 @@ check_mumble_channels() {
     
     local db_path="/var/lib/mumble-server/fgcom-mumble.sqlite"
     
-    if [[ -f "$db_path" ]]; then
+    if sudo test -f "$db_path"; then
         print_success "Mumble database exists: $db_path"
         
-        # Check if channels exist
-        local channel_count=$(sqlite3 "$db_path" "SELECT COUNT(*) FROM channels WHERE name IN ('fgcom-mumble', 'fgcom-mumble-admins');" 2>/dev/null)
+        # Check if channels exist (use sudo to access database)
+        local channel_count=$(sudo sqlite3 "$db_path" "SELECT COUNT(*) FROM channels WHERE name IN ('fgcom-mumble', 'fgcom-mumble-admins');" 2>/dev/null)
         
         if [[ "$channel_count" -ge 2 ]]; then
             print_success "FGcom-mumble channels exist ($channel_count channels found)"
-            sqlite3 "$db_path" "SELECT id, name FROM channels WHERE name IN ('fgcom-mumble', 'fgcom-mumble-admins');" 2>/dev/null
+            sudo sqlite3 "$db_path" "SELECT id, name FROM channels WHERE name IN ('fgcom-mumble', 'fgcom-mumble-admins');" 2>/dev/null
         else
             print_error "FGcom-mumble channels not found in database"
         fi

@@ -204,9 +204,165 @@ For issues and support:
 - fgcom-mumble: 2
 
 ### Bot Configuration
-- All bots use channel ID 2 (fgcom-mumble)
-- Bots connect via SSL with generated certificates
-- Automatic reconnection on failure
+
+By default, only the recorder bot runs automatically. Additional bots can be enabled as needed.
+
+#### Default Bot Behavior
+- **Recorder Bot**: Always running (enabled by default)
+- **Playback Bots**: Start on-demand when recordings are made
+- **Status Bot**: Disabled by default (optional)
+
+#### Enabling Additional Bots
+
+**Enable Playback Bots (Recommended for Production)**
+```bash
+# Edit the systemd service to enable playback bots
+sudo systemctl edit fgcom-mumble
+
+# Add the following content:
+[Service]
+Environment="FGCOM_RUN_PLAYBACK=1"
+
+# Reload and restart the service
+sudo systemctl daemon-reload
+sudo systemctl restart fgcom-mumble
+```
+
+**Enable Status Bot (Optional)**
+```bash
+# Edit the systemd service to enable status bot
+sudo systemctl edit fgcom-mumble
+
+# Add the following content:
+[Service]
+Environment="FGCOM_RUN_STATUS=1"
+
+# Reload and restart the service
+sudo systemctl daemon-reload
+sudo systemctl restart fgcom-mumble
+```
+
+**Enable Both Playback and Status Bots**
+```bash
+# Edit the systemd service to enable both bots
+sudo systemctl edit fgcom-mumble
+
+# Add the following content:
+[Service]
+Environment="FGCOM_RUN_PLAYBACK=1"
+Environment="FGCOM_RUN_STATUS=1"
+
+# Reload and restart the service
+sudo systemctl daemon-reload
+sudo systemctl restart fgcom-mumble
+```
+
+#### Bot Management
+
+**Check Bot Status**
+```bash
+# Check which bots are running
+./scripts/status_fgcom_mumble.sh
+
+# Check systemd service status
+systemctl status fgcom-mumble
+```
+
+**View Bot Logs**
+```bash
+# View all bot logs
+journalctl -u fgcom-mumble -f
+
+# View specific bot logs
+tail -f /var/log/fgcom-mumble/radio-recorder.log
+tail -f /var/log/fgcom-mumble/radio-playback.log
+tail -f /var/log/fgcom-mumble/status.log
+```
+
+**Manual Bot Control**
+```bash
+# Start bots manually (for testing)
+cd /usr/share/fgcom-mumble/scripts/server
+./fgcom-botmanager.sh --help
+
+# Example: Start with all bots enabled
+./fgcom-botmanager.sh --host=localhost --port=64738 --channel=fgcom-mumble
+```
+
+#### Bot Configuration Details
+
+**Recorder Bot**
+- **Purpose**: Records radio traffic continuously
+- **Default**: Always enabled
+- **Behavior**: Runs 24/7, records all radio communications
+- **Logs**: `/var/log/fgcom-mumble/radio-recorder.log`
+
+**Playback Bots**
+- **Purpose**: Plays back recorded radio samples
+- **Default**: Disabled (start on-demand)
+- **Behavior**: 
+  - Start automatically when recordings are made
+  - Spawn new instances for each recording
+  - Automatically terminate when playback completes
+  - Prevent duplicate instances for same sample
+- **Logs**: `/var/log/fgcom-mumble/radio-playback.log`
+
+**Status Bot**
+- **Purpose**: Provides web status page and statistics
+- **Default**: Disabled
+- **Behavior**: 
+  - Provides system status information
+  - Can generate usage statistics
+  - Advertises status page URL in Mumble comment
+- **Logs**: `/var/log/fgcom-mumble/status.log`
+
+#### Production Recommendations
+
+**For Basic Setup**
+- Keep default configuration (recorder bot only)
+- Playback bots will start automatically when needed
+
+**For Production with Web Interface**
+- Enable status bot for web status page
+- Consider enabling playback bots for better performance
+
+**For High-Traffic Servers**
+- Enable both playback and status bots
+- Monitor bot performance and adjust as needed
+- Consider running bots on separate servers for load distribution
+
+#### Troubleshooting Bot Issues
+
+**Bots Not Starting**
+```bash
+# Check service status
+systemctl status fgcom-mumble
+
+# Check logs for errors
+journalctl -u fgcom-mumble -n 50
+
+# Verify certificates
+ls -la /etc/fgcom-mumble/*.pem
+ls -la /etc/fgcom-mumble/*.key
+```
+
+**Playback Bots Not Spawning**
+```bash
+# Check FIFO file
+ls -la /tmp/fgcom-fnotify-fifo
+
+# Test notification manually
+echo "test_sample.wav|12345" > /tmp/fgcom-fnotify-fifo
+```
+
+**Status Bot Not Working**
+```bash
+# Check database permissions
+ls -la /var/lib/fgcom-mumble/fgcom-web.db
+
+# Check web interface configuration
+grep -r "sweb" /usr/share/fgcom-mumble/scripts/
+```
 
 ### Database Schema
 The system uses SQLite with the following key tables:

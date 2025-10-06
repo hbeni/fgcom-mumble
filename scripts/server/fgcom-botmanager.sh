@@ -30,31 +30,42 @@
 host="localhost"
 port="64738"
 channel="fgcom-mumble"
-rcert="recbot.pem"
-rkey="recbot.key"
+rcert="/etc/fgcom-mumble/recbot.pem"
+rkey="/etc/fgcom-mumble/recbot.key"
 rname="$(grep "local botname" server/fgcom-radio-recorder.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
-pcert="playbot.pem"
-pkey="playbot.key"
+pcert="/etc/fgcom-mumble/playbot.pem"
+pkey="/etc/fgcom-mumble/playbot.key"
 pname="$(grep "local callsignPrefix" server/fgcom-radio-playback.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
-scert="statusbot.pem"
-skey="statusbot.key"
-path="./recordings"
+scert="/etc/fgcom-mumble/statusbot.pem"
+skey="/etc/fgcom-mumble/statusbot.key"
+path="/var/lib/fgcom-mumble/recordings"
 limit="120" # default time limit for recordings in secs
 ttl="7200"  # default time-to-live after recordings in secs
 fnotify="/tmp/fgcom-fnotify-fifo"
-statusbot_db="/tmp/fgcom-web.db"
+statusbot_db="/var/lib/fgcom-mumble/fgcom-web.db"
 statusbot_web=""
 statusbot_stats=""
 sname="$(grep "fgcom.callsign" server/statuspage/fgcom-status.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 debug="0"
 
-recorderbot_log=/dev/null
-playbackbot_log=/dev/null
-statusbot_log=/dev/null
+recorderbot_log="/var/log/fgcom-mumble/radio-recorder.log"
+playbackbot_log="/var/log/fgcom-mumble/radio-playback.log"
+statusbot_log="/var/log/fgcom-mumble/status.log"
 
 run_recorderbot="1"
 run_playbackbot="0"
-run_statusbot="0"
+run_statusbot="1"
+
+# Check for environment variables to override defaults
+if [[ -n "$FGCOM_RUN_PLAYBACK" ]]; then
+    run_playbackbot="$FGCOM_RUN_PLAYBACK"
+    echo "Environment override: FGCOM_RUN_PLAYBACK=$FGCOM_RUN_PLAYBACK"
+fi
+
+if [[ -n "$FGCOM_RUN_STATUS" ]]; then
+    run_statusbot="$FGCOM_RUN_STATUS"
+    echo "Environment override: FGCOM_RUN_STATUS=$FGCOM_RUN_STATUS"
+fi
 
 verify="0"
 
@@ -212,18 +223,18 @@ fi
         # Spawn the radio recorder bot
         botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua")
         if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
-            echo "Spawn bot: cd server && luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
+            echo "Spawn bot: luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
             if [ -n "$recorderbot_log" ] && [ "$recorderbot_log" != "-" ]; then
-                (cd server && luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify) > "$recorderbot_log" 2>&1 &
+                (luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify) > "$recorderbot_log" 2>&1 &
             else
-                (cd server && luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify) &
+                (luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify) &
             fi
         fi
 
         # Spawn the statusPage bot
         botPID=$(pgrep -f -- "fgcom-status.bot.lua")
         if [[ $run_statusbot -gt "0" && -z "$botPID" ]]; then
-            statusbot_cmd="cd server && luajit statuspage/fgcom-status.bot.lua $status_opts"
+            statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
             [[ -n "$statusbot_stats" ]] && statusbot_cmd="$statusbot_cmd --stats=$statusbot_stats"
             echo "Spawn bot: $statusbot_cmd"
