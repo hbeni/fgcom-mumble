@@ -1,131 +1,87 @@
 
 
- FGCom-mumble - a flightsim radio simulation framework based on mumble
- 
-=====================================================================
+# FGCom-mumble
+## Realistic Radio Communication Simulator for Flight Simulators
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
-This project aims to provide a mumble-based modular radio simulation for flight simulators. The project started mainly as a successor for the asterisk-based FGCom implementation.
 
-([-> deutsche Version](server/Readme.server-de_DE.md)) | [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5)
+A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators with geographic separation, propagation modeling, and authentic radio procedures.
 
-### The main goals are:
-- Provide communication with geographic and channel separation
-- Provide a realistic radio simulation (incl. propagation)
-- Ease of use for the end user / pilot
-- Arbitary frequency support
-- ATIS recording and playback
-- Radio station broadcast support
-- Landline/Intercom support
-- RDF detection for clients
-- Ease of server side installation and operation
-- Standalone nature (no dependency on flightgear)
-- Capability to be integrated into flightgear, with the option to support third party applications (ATC, but also other flightsims)
-- **WebRTC browser client support** (implemented) - Enable web browser access while preserving all existing connection methods
-- Modularity, so individual components can be easily updated and extended with new features
-- Good and complete documentation
+[![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5) | [Deutsche Version](server/Readme.server-de_DE.md)
 
-### **Realistic Radio Communication Simulator**
-- **Technical Setup Required**: Server administration and technical configuration needed
-- **Primary Support**: FlightGear (native) and Microsoft Flight Simulator 2020 (via RadioGUI)
-- **Realistic Communication**: Experience authentic radio procedures used by real pilots and operators
-- **Educational Value**: Learn real radio communication skills and propagation physics
-- **Community Support**: Join a community of aviation and radio simulation enthusiasts
-- **Free to Use**: Open source with comprehensive documentation
+---
 
-**[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Comprehensive setup guide for administrators and technical users
+## What This Is
 
-##  **Important: Technical Complexity Assessment**
+**FGCom-mumble** is a sophisticated radio communication simulator that brings realistic radio procedures to flight simulation. It's designed for aviation enthusiasts who want authentic radio communication experiences with proper propagation modeling, geographic separation, and realistic audio effects.
 
-**FGCom-mumble is NOT a simple "plug and play" system.** It requires:
+### Key Features
+- **Realistic Radio Simulation**: Geographic separation, propagation modeling, and authentic audio effects
+- **Multi-Platform Support**: FlightGear (native), Microsoft Flight Simulator 2020 (via RadioGUI), and web browsers
+- **Advanced Features**: ATIS recording, radio station broadcasts, landline/intercom support, and RDF detection
+- **WebRTC Support**: Browser-based access without installation requirements
+- **Modular Design**: Extensible architecture for custom integrations
 
+---
+
+## Important: Technical Requirements
+
+**FGCom-mumble is NOT a simple "plug and play" system.** It requires technical expertise:
+
+### Prerequisites
 - **Server Administration**: Linux/Windows server management experience
-- **Technical Configuration**: 625+ configuration options across 17 categories
+- **Technical Configuration**: 625+ configuration options across 17 categories  
 - **Network Setup**: UDP port configuration, firewall rules, channel management
 - **Radio Knowledge**: Understanding of radio frequencies and propagation
-- **Complex Installation**: Multi-step process with dependencies and manual configuration
+- **Installation Time**: 2-4 hours for basic setup, 1-2 days for advanced configuration
 
-**Supported Platforms:**
+### Supported Platforms
 - **FlightGear**: Native integration (requires technical knowledge)
 - **Microsoft Flight Simulator 2020**: Via RadioGUI with SimConnect (requires technical setup)
-- **Other Games**: Manual integration through Mumble voice chat (no automatic detection)
+- **Web Browsers**: WebRTC gateway (no installation required)
+- **Other Games**: Manual integration through Mumble voice chat
 
-**Realistic Setup Time:**
-- **Basic Setup**: 2-4 hours for experienced administrators
-- **Advanced Configuration**: 1-2 days for full feature setup
-- **Troubleshooting**: Additional time for configuration issues
+---
 
-### **Advanced Features**
-See [Advanced Features](advanced_features.md) for a comprehensive overview of all advanced features and capabilities.
+## Getting Started
 
-## Quick Start Guide
+### For Pilots and Users
+| Guide | Purpose |
+|-------|---------|
+| **[Installation Guide](INSTALLATION.md)** | Complete setup and installation instructions |
+| **[Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md)** | How to use FGCom-mumble with your flight simulator |
+| **[WebRTC Gateway](webrtc-gateway/README.md)** | Browser-based access (no installation required) |
+| **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** | ATIS, test frequencies, and special features |
+| **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)** | Common issues and solutions |
 
-### For Users
-1. **[Installation Guide](INSTALLATION.md)** - Get started with installation and setup
-2. **[Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md)** - Learn how to use the client with your flight simulator
-3. **[WebRTC Gateway](webrtc-gateway/README.md)** - Web browser client for FGCom-mumble (no installation required)
-4. **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** - Understand special features like ATIS and test frequencies
-5. **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)** - Solve common issues
+### For Administrators
+| Guide | Purpose |
+|-------|---------|
+| **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** | Server setup and configuration |
+| **[Bot Management Guide](docs/BOT_MANAGEMENT_GUIDE.md)** | Bot configuration and management |
+| **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** | Security implementation and best practices |
+| **[Server Documentation](server/Readme.server.md)** | Server-side components and operation |
 
-### Configuration Setup
+### For Developers
+| Guide | Purpose |
+|-------|---------|
+| **[Compilation Guide](docs/COMPILATION_GUIDE.md)** | Build from source code |
+| **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** | Integrate with your game or simulator |
+| **[API Documentation](docs/API_REFERENCE_COMPLETE.md)** | RESTful API and WebSocket interfaces |
+| **[Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)** | Deep technical details |
 
-#### Basic Configuration
-Copy the example configuration file to get started:
+---
 
+## Quick Configuration
+
+### Basic Setup
 ```bash
 # Copy the example configuration
 cp configs/fgcom-mumble.ini ~/.fgcom-mumble.ini
-
-# Edit the configuration file
 nano ~/.fgcom-mumble.ini
 ```
 
-#### Essential Configuration Settings
-
-**For Headless Server Setup:**
-```ini
-# Enable radio audio effects (realistic static, noise, propagation)
-radioAudioEffects=1
-
-# Allow WebRTC browser clients to be heard by plugin users
-allowHearingNonPluginUsers=1
-
-# Listen on all interfaces for WebRTC gateway access
-udpServerHost=*
-
-# Enable UDP server for client communication
-udpServerPort=16661
-```
-
-**For Standard Client Setup:**
-```ini
-# Enable radio audio effects for realistic experience
-radioAudioEffects=1
-
-# Disable hearing non-plugin users (recommended for pilots)
-allowHearingNonPluginUsers=0
-
-# Use localhost only for security
-udpServerHost=127.0.0.1
-
-# Standard UDP port
-udpServerPort=16661
-```
-
-#### Configuration File Locations
-
-The plugin loads configuration from these locations (in order of priority):
-
-**Linux:**
-- `/etc/mumble/fgcom-mumble.ini` (system-wide)
-- `~/.fgcom-mumble.ini` (user-specific)
-- `~/fgcom-mumble.ini` (alternative user location)
-
-**Windows:**
-- `%USERPROFILE%\fgcom-mumble.ini`
-- `%USERPROFILE%\Documents\fgcom-mumble.ini`
-
-#### Key Configuration Options
+### Essential Settings
 
 | Setting | Default | Description |
 |---------|---------|-------------|
@@ -133,131 +89,88 @@ The plugin loads configuration from these locations (in order of priority):
 | `allowHearingNonPluginUsers` | `0` | Allow WebRTC browser clients to be heard by plugin users |
 | `udpServerHost` | `127.0.0.1` | UDP server listening interface (`*` for all interfaces) |
 | `udpServerPort` | `16661` | UDP server port for client communication |
-| `specialChannel` | `^fgcom-mumble.*` | Channel name pattern for FGCom-mumble activation |
-| `autoJoinChannel` | `0` | Automatically join FGCom-mumble channel on connect |
 
-#### Advanced Configuration Examples
-
-**For ATC Controllers:**
-```ini
-# Enable hearing all users (including non-plugin users)
-allowHearingNonPluginUsers=1
-
-# Enable radio effects for realistic ATC experience
-radioAudioEffects=1
-
-# Auto-join FGCom channel
-autoJoinChannel=1
-```
+### Configuration Examples
 
 **For Pilots:**
 ```ini
-# Disable hearing non-plugin users (recommended)
-allowHearingNonPluginUsers=0
-
-# Enable radio effects
 radioAudioEffects=1
-
-# Use localhost for security
+allowHearingNonPluginUsers=0
 udpServerHost=127.0.0.1
 ```
 
-**For WebRTC Gateway Integration:**
+**For ATC Controllers:**
 ```ini
-# Allow WebRTC browser clients
-allowHearingNonPluginUsers=1
-
-# Listen on all interfaces for gateway access
-udpServerHost=*
-
-# Enable radio effects
 radioAudioEffects=1
+allowHearingNonPluginUsers=1
+autoJoinChannel=1
 ```
 
-### For Developers
-1. **[Compilation Guide](docs/COMPILATION_GUIDE.md)** - Build from source code
-2. **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** - Integrate with your game or simulator
-3. **[API Documentation](docs/API_REFERENCE_COMPLETE.md)** - Use the RESTful API and WebSocket interfaces
-4. **[Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)** - Deep technical details
+**For WebRTC Gateway:**
+```ini
+radioAudioEffects=1
+allowHearingNonPluginUsers=1
+udpServerHost=*
+```
 
-### For Administrators
-1. **[Installation Guide](INSTALLATION.md)** - Complete automated installation system
-2. **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Server setup and configuration
-3. **[Bot Management Guide](docs/BOT_MANAGEMENT_GUIDE.md)** - Bot configuration and management
-4. **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Security implementation and best practices
-5. **[Server Documentation](server/Readme.server.md)** - Server-side components and operation
+---
 
-## **Improvements and Enhancements**
+## Complete Documentation
 
-See [Improvements](docs/roadmap/improvements.md) for detailed information about:
-- Security enhancement recommendations
-- ATIS recording generation improvements
-- Cold war era voice encryption systems
-- Technical improvements and feature additions
+### Core Documentation
+- **[How This Works for Dummies](docs/HOW_THIS_WORKS_FOR_DUMMIES.md)** - Simple explanation of radio propagation with practical examples
+- **[Radio Propagation Mathematics](docs/RADIO_PROPAGATION_MATHEMATICS.md)** - Mathematical models and calculations
+- **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** - Comprehensive setup guide for administrators
+- **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** - Technical overview and capabilities
 
-Documentation
-=============
-The documentation is split up into relevant parts:
+### Advanced Features
+- **[Advanced Features](advanced_features.md)** - Comprehensive overview of all advanced features
+- **[WebRTC Browser Client Support](web_rtc.md)** - WebRTC implementation documentation
+- **[Antenna Pattern Creation](antenna_patterns.md)** - Antenna pattern creation guides
+- **[API Reference Complete](docs/API_REFERENCE_COMPLETE.md)** - Complete RESTful API and WebSocket documentation
 
-- Readme.md (*this file*): General overview and client documentation ([deutsche Version](server/Readme.server-de_DE.md))
-- [client/mumble-plugin/plugin.spec.md](client/mumble-plugin/plugin.spec.md) Technical details on plugin design and its input/output data formats
-- [client/radioGUI/Readme.RadioGUI.md](client/radioGUI/Readme.RadioGUI.md) Documentation for the Radio GUI client
-- [client/fgfs-addon/Readme.md](client/fgfs-addon/Readme.md) Documentation for the Flightgear integration addon
-- [server/Readme.server.md](server/Readme.server.md) Details on the server side components and how to run them
-- [server/statuspage/Readme.statuspage.md](server/statuspage/Readme.statuspage.md) Technical details about the status page implementation
-- [Security Documentation](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security guide for TLS/SSL, authentication, and secure client connections
-- [GOOD_CODING_PRACTICES.md](docs/GOOD_CODING_PRACTICES.md) **STRICT coding standards and quality requirements** - Mandatory rules for all development work
+### Game Integration
+- **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** - Integration requirements and protocols
+- **[Terrain and Environmental Data API](docs/TERRAIN_ENVIRONMENTAL_DATA_API.md)** - Critical terrain and environmental data requirements
+- **[Game Terrain Integration Guide](docs/GAME_TERRAIN_INTEGRATION_GUIDE.md)** - Terrain integration instructions
 
-### User Documentation:
-- **[How This Works for Dummies](docs/HOW_THIS_WORKS_FOR_DUMMIES.md)** **Simple explanation of radio propagation** - Easy-to-understand guide with practical examples like NATO Jeep scenarios and real-world radio behavior
-- **[Radio Propagation Mathematics](docs/RADIO_PROPAGATION_MATHEMATICS.md)** **Mathematical models behind radio simulation** - Complete equations, formulas, and calculations used in the system with user examples
-- **[Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md)** **Comprehensive setup guide for administrators and technical users** - Honest assessment of complexity and detailed setup instructions
-- **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** **Technical overview** - Understanding what FGCom-mumble is and its actual capabilities
-- **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** **Comprehensive guide for game developers and modders** - Technical integration requirements, data exchange protocols, and implementation examples
-- **[Terrain and Environmental Data API](docs/TERRAIN_ENVIRONMENTAL_DATA_API.md)** **Critical terrain and environmental data requirements** - Line of sight, altitude, weather, and noise floor data that games must provide
-- **[Game Terrain Integration Guide](docs/GAME_TERRAIN_INTEGRATION_GUIDE.md)** **Detailed terrain integration instructions** - Step-by-step guide for implementing terrain and environmental data in games
+### Frequency Documentation
+- **[Aviation VHF Civil](docs/aviation-VHF-civil.md)** - Civil aviation VHF frequency bands
+- **[Military VHF/UHF](docs/military-vhf-uhf.md)** - Military VHF/UHF frequency bands
+- **[Civil HF Frequencies](docs/CIVIL_HF_freqs.md)** - Civil HF frequency allocations
+- **[Known Military Bands](docs/KNOWN_MILITARY_BANDS_AND_FREQS.md)** - Military frequency bands and protocols
+- **[Band Segments Reference](docs/BAND_SEGMENTS_REFERENCE.md)** - Frequency allocations and regulatory compliance
 
-### Advanced Features Documentation:
-- [API Reference Complete](docs/API_REFERENCE_COMPLETE.md) Complete RESTful API and WebSocket documentation
-- [Work Unit Distribution API](docs/WORK_UNIT_DISTRIBUTION_API.md) Distributed computing and work unit management
-- [Security API Documentation](docs/SECURITY_API_DOCUMENTATION.md) Comprehensive security implementation
-- [Technical Setup Guide](docs/TECHNICAL_SETUP_GUIDE.md) Comprehensive setup instructions for administrators
-- [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) Consolidated technical documentation
+### Development Resources
+- **[Compilation Guide](docs/COMPILATION_GUIDE.md)** - Build from source code
+- **[Good Coding Practices](docs/GOOD_CODING_PRACTICES.md)** - Strict coding standards and quality requirements
+- **[Testing Framework](testing_framework.md)** - Comprehensive testing framework documentation
+- **[Utilities and Tools](utilities_and_tools.md)** - Utilities, API testing tools, and advanced processing capabilities
 
-### WebRTC Browser Client Support (Implemented):
-See [WebRTC Browser Client Support](web_rtc.md) for comprehensive WebRTC implementation documentation and related features.
+---
 
-### Antenna Pattern Creation Documentation:
-See [Antenna Pattern Creation Documentation](antenna_patterns.md) for comprehensive antenna pattern creation guides and requirements.
+## Technical Components
 
-### Frequency and Band Documentation:
-- [Aviation VHF Civil](docs/aviation-VHF-civil.md) Civil aviation VHF frequency bands and usage
-- [Military VHF/UHF](docs/military-vhf-uhf.md) Military VHF/UHF frequency bands and protocols
-- [Civil HF Frequencies](docs/CIVIL_HF_freqs.md) Civil HF frequency allocations and usage
-- [Known Military Bands](docs/KNOWN_MILITARY_BANDS_AND_FREQS.md) Military frequency bands and protocols
-- [Vehicle Frequency Analysis](docs/TECHNICAL_DOCUMENTATION.md#vehicle-dynamics) Frequency analysis for different vehicle types
+### Client Components
+- **[Mumble Plugin](client/mumble-plugin/plugin.spec.md)** - Technical details on plugin design and data formats
+- **[RadioGUI](client/radioGUI/Readme.RadioGUI.md)** - Radio GUI client documentation
+- **[FlightGear Addon](client/fgfs-addon/Readme.md)** - FlightGear integration addon
+
+### Server Components
+- **[Server Documentation](server/Readme.server.md)** - Server-side components and operation
+- **[Status Page](server/statuspage/Readme.statuspage.md)** - Status page implementation details
+- **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - TLS/SSL, authentication, and secure connections
+
+### Advanced APIs
+- **[Work Unit Distribution API](docs/WORK_UNIT_DISTRIBUTION_API.md)** - Distributed computing and work unit management
+- **[Security API Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Comprehensive security implementation
 
 
+---
 
-### Antenna Pattern Visualization:
-The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
+## Installation
 
-![Gain Pattern Visualization](https://raw.githubusercontent.com/Supermagnum/fgcom-mumble/refs/heads/master/assets/screenshots/gain%20pattern.png)
-
-### Bugs/Feature requests/coding help
-The project lives on github: https://github.com/Supermagnum/fgcom-mumble
-
-If you want to request a feature or report a bug, you can do so on the issuetracker there. I appreciate help with coding, so feel free to clone the repository and hand in pull-requests!
-
-
-## Installation and Setup
-
-**See [Installation Guide](INSTALLATION.md) for complete installation and setup instructions.**
-
-### Quick Installation
-
-For a complete automated installation:
-
+### Automated Installation
 ```bash
 # Clone the repository
 git clone https://github.com/Supermagnum/fgcom-mumble.git
@@ -267,16 +180,7 @@ cd fgcom-mumble
 sudo ./scripts/install_fgcom_mumble.sh
 ```
 
-This will:
-- Install all dependencies automatically
-- Configure Mumble server with Ice middleware
-- Create required Mumble channels automatically
-- Generate bot certificates
-- Set up systemd services
-- Start all services
-
 ### Service Management
-
 ```bash
 # Check system status
 sudo ./scripts/status_fgcom_mumble.sh
@@ -285,41 +189,58 @@ sudo ./scripts/status_fgcom_mumble.sh
 sudo ./scripts/uninstall_fgcom_mumble.sh
 ```
 
+---
 
+## Antenna Pattern Visualization
 
-## Client Usage
+The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
 
-**See [Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md) for complete client usage instructions and compatibility information.**
+![Gain Pattern Visualization](https://raw.githubusercontent.com/Supermagnum/fgcom-mumble/refs/heads/master/assets/screenshots/gain%20pattern.png)
 
+### Included Antenna Patterns
 
-## Special Frequencies and Features
+**Note: Not all patterns are included to conserve repository space. Some patterns must be generated by users.**
 
-**See [Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md) for complete information about special frequencies, ATIS, landlines, and test features.**
+#### Ground-based Antennas (155 patterns)
+- **Yagi Antennas**: 116 patterns covering HF (7-28MHz), VHF (50-144MHz), and UHF (432MHz) bands
+- **Vertical Antennas**: 22 patterns for VHF/UHF fixed installations
+- **Loop Antennas**: 10 patterns for HF (80m) operations
+- **Coastal Stations**: 7 patterns for HF maritime communications
 
+#### Military Land Vehicles (596 patterns)
+- **Soviet UAZ**: 588 patterns with attitude variations
+- **Leopard 1 MBT**: 3 patterns
+- **T-55 Soviet MBT**: 3 patterns  
+- **NATO Jeep**: 2 patterns
 
-## Troubleshooting
+#### Civilian Vehicles (4 patterns)
+- **Ford Transit**: 2 patterns
+- **VW Passat**: 2 patterns
 
-**See [Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md) for comprehensive troubleshooting information and solutions.**
+#### Patterns Not Included (Must be Generated)
+- **Aircraft Patterns**: Not included due to storage constraints - must be generated using the pattern generation script
+- **Marine Patterns**: Not available - cannot be generated due to safety limits (exceeds 50,000+ combination limit)
+- **Ground Type Variations**: Ideally, patterns should be generated for each ground type (conductivity, permittivity), but this would create an extremely large database
 
+**Generation**: Use `scripts/pattern_generation/antenna-radiation-pattern-generator.sh` to generate missing aircraft patterns. See [Antenna Pattern Creation Documentation](antenna_patterns.md) for complete details.
 
-## Compilation and Build
+**Note on Ground Types**: While ideal antenna patterns would account for different ground types (soil conductivity, moisture, urban vs rural environments), the database would become prohibitively large. Current patterns use standard ground assumptions for practical implementation.
 
-**See [Compilation Guide](docs/COMPILATION_GUIDE.md) for complete compilation and build instructions.**
+---
 
+## Contributing
 
-## Band Segments Reference
+The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
 
-**See [Band Segments Reference](docs/BAND_SEGMENTS_REFERENCE.md) for complete information about frequency allocations, band segments, and regulatory compliance.**
+- **Issues**: Report bugs or request features on the issue tracker
+- **Pull Requests**: Contributions are welcome! Clone the repository and submit pull requests
+- **Coding Standards**: Follow the [Good Coding Practices](docs/GOOD_CODING_PRACTICES.md) for all development work
 
-## Utilities and Tools
+---
 
-See [Utilities and Tools](utilities_and_tools.md) for comprehensive utilities, API testing tools, and advanced processing capabilities.
+## Testing and Quality
 
-## Testing Framework
-
-See [Testing Framework](testing_framework.md) for comprehensive testing framework documentation, test suites, quality standards, and execution instructions.
-
-### Test Results
-
-See [Test Results](test/tests-passed.md) for comprehensive test suite execution results, coverage analysis, and quality assurance status.
+- **[Testing Framework](testing_framework.md)** - Comprehensive testing framework documentation
+- **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
+- **[Utilities and Tools](utilities_and_tools.md)** - API testing tools and advanced processing capabilities
 
