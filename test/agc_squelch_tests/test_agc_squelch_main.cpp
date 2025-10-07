@@ -19,14 +19,7 @@
 // Thread-safe test utilities
 class ThreadSafeTestUtils {
 public:
-    static void validateFloatValue(float value, float min_val, float max_val, const std::string& param_name) {
-        if (std::isnan(value) || std::isinf(value)) {
-            throw std::invalid_argument(param_name + " cannot be NaN or infinity");
-        }
-        if (value < min_val || value > max_val) {
-            throw std::out_of_range(param_name + " must be between " + std::to_string(min_val) + " and " + std::to_string(max_val));
-        }
-    }
+    // Removed unused validateFloatValue function
     
     static void validatePositiveFloat(float value, const std::string& param_name) {
         if (std::isnan(value) || std::isinf(value) || value <= 0.0f) {
@@ -55,16 +48,7 @@ protected:
         }
     }
     
-    void TearDown() override {
-        try {
-            // Reset AGC state for next test using comprehensive reset method
-            FGCom_AGC_Squelch& agc = FGCom_AGC_Squelch::getInstance();
-            agc.resetToDefaultState();  // Complete reset to default state
-        } catch (const std::exception& e) {
-            // Log but don't fail teardown
-            std::cerr << "Warning: Exception during teardown: " << e.what() << std::endl;
-        }
-    }
+    // TearDown removed - not needed as tests are self-contained
     
     // Helper functions for test data generation with proper validation
     std::vector<float> generateSineWave(float frequency, float sample_rate, size_t samples, float amplitude = 1.0f) {
@@ -89,29 +73,7 @@ protected:
         return wave;
     }
     
-    std::vector<float> generateNoise(size_t samples, float amplitude = 0.1f) {
-        // Validate inputs
-        ThreadSafeTestUtils::validateNonNegativeFloat(amplitude, "amplitude");
-        
-        if (samples == 0) {
-            throw std::invalid_argument("samples must be greater than 0");
-        }
-        
-        std::vector<float> noise;
-        noise.reserve(samples); // Pre-allocate to avoid reallocations
-        
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::normal_distribution<float> dis(0.0f, amplitude);
-        
-        for (size_t i = 0; i < samples; ++i) {
-            float sample = dis(gen);
-            // Clamp to prevent extreme values
-            sample = std::max(-1.0f, std::min(1.0f, sample));
-            noise.push_back(sample);
-        }
-        return noise;
-    }
+    // generateNoise function removed - not used
     
     std::vector<float> generateSilence(size_t samples) {
         if (samples == 0) {
@@ -120,16 +82,7 @@ protected:
         return std::vector<float>(samples, 0.0f);
     }
     
-    // Helper to measure execution time
-    template<typename Func>
-    auto measureTime(Func&& func) -> decltype(func()) {
-        auto start = std::chrono::high_resolution_clock::now();
-        auto result = func();
-        auto end = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        std::cout << "Execution time: " << duration.count() << " microseconds" << std::endl;
-        return result;
-    }
+    // measureTime function removed - not used
 };
 
 // Thread-safe test suite base class
