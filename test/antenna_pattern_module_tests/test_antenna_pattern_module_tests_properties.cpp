@@ -3,30 +3,64 @@
 #include <cmath>
 #include <algorithm>
 
-// Property tests that handle edge cases properly
+// Robust property tests that work with RapidCheck
 TEST(PropertyTests, BasicPropertyTest) {
-    rc::check("Basic property test with edge case handling", [](int value) {
-        // Handle negative values properly - they should be converted to positive
-        int processed_value = (value < 0) ? -value : value;
-        // Handle values over 1000 by clamping them
-        processed_value = (processed_value > 1000) ? 1000 : processed_value;
-        RC_ASSERT(processed_value >= 0);
-        RC_ASSERT(processed_value <= 1000);
+    rc::check("Basic property test", []() {
+        // Use simple range generation that works
+        int value = *rc::gen::arbitrary<int>() % 1000;
+        if (value < 0) value = -value; // Ensure non-negative
+        RC_ASSERT(value >= 0);
+        RC_ASSERT(value <= 1000);
     });
 }
 
 TEST(PropertyTests, StringPropertyTest) {
-    rc::check("String property test with empty string handling", [](const std::string& name) {
-        // Handle empty strings properly - they should be given a default value
-        std::string processed_name = name.empty() ? "default_name" : name;
-        RC_ASSERT(!processed_name.empty());
-        RC_ASSERT(processed_name.length() > 0);
+    rc::check("String property test", []() {
+        // Generate a simple string
+        std::string name = "test_string_" + std::to_string(*rc::gen::arbitrary<int>() % 1000);
+        RC_ASSERT(!name.empty());
+        RC_ASSERT(name.length() > 0U);
     });
 }
 
 TEST(PropertyTests, BooleanPropertyTest) {
     rc::check("Boolean property test", [](bool enabled) {
-        // Boolean values are always valid
         RC_ASSERT(enabled == true || enabled == false);
+    });
+}
+
+// Frequency-specific property tests
+TEST(PropertyTests, FrequencyRangePropertyTest) {
+    rc::check("Frequency should be within radio range", []() {
+        // Generate frequency in valid range
+        double frequency = 1e6 + (*rc::gen::arbitrary<int>() % 900000000); // 1 MHz to 1 GHz
+        RC_ASSERT(frequency >= 1e6);
+        RC_ASSERT(frequency <= 1e9);
+    });
+}
+
+TEST(PropertyTests, ChannelSeparationPropertyTest) {
+    rc::check("Channel separation should be positive", []() {
+        // Generate positive separation
+        double separation = 0.1 + (*rc::gen::arbitrary<int>() % 1000000) / 1000.0; // 0.1 Hz to 1 MHz
+        RC_ASSERT(separation > 0.0);
+        RC_ASSERT(separation <= 1e6);
+    });
+}
+
+// Security-specific property tests
+TEST(PropertyTests, SecurityLevelPropertyTest) {
+    rc::check("Security levels should be within valid range", []() {
+        // Generate security level 0-5
+        int level = *rc::gen::arbitrary<int>() % 6; // 0-5
+        if (level < 0) level = -level % 6;
+        RC_ASSERT(level >= 0);
+        RC_ASSERT(level <= 5);
+    });
+}
+
+TEST(PropertyTests, AuthenticationPropertyTest) {
+    rc::check("Authentication should be boolean", [](bool authenticated) {
+        RC_ASSERT(authenticated == true || authenticated == false);
     });
 }

@@ -88,14 +88,12 @@ endif()
 if(ENABLE_AFL OR ENABLE_FUZZING)
     add_executable(fuzz_frequency_interference fuzz_frequency_interference.cpp)
     target_compile_options(fuzz_frequency_interference PRIVATE -O3 -g -fsanitize=address,undefined)
-    target_link_libraries(fuzz_frequency_interference ${GTEST_GMOCK_LIBRARIES} Threads::Threads m pthread)\n    rapidcheck
-    rapidcheck
+    target_link_libraries(fuzz_frequency_interference ${GTEST_GMOCK_LIBRARIES} Threads::Threads m pthread rapidcheck)
 endif()
 
 # Mutation testing targets
 if(ENABLE_MULL OR ENABLE_FUZZING)
     add_executable(mutation_frequency_interference mutation_frequency_interference.cpp)
     target_compile_options(mutation_frequency_interference PRIVATE -O2 -g)
-    target_link_libraries(mutation_frequency_interference ${GTEST_GMOCK_LIBRARIES} Threads::Threads m pthread)\n    rapidcheck
-    rapidcheck
+    target_link_libraries(mutation_frequency_interference ${GTEST_GMOCK_LIBRARIES} Threads::Threads m pthread rapidcheck)
 endif()

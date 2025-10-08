@@ -21,8 +21,7 @@ endif()
 pkg_check_modules(GTEST_GMOCK REQUIRED gmock)
 
 # Include directories
-include_directories(${GTEST_GMOCK_INCLUDE_DIRS})
-    ${RAPIDCHECK_INCLUDE_DIR}
+include_directories(${GTEST_GMOCK_INCLUDE_DIRS} ${RAPIDCHECK_INCLUDE_DIR})
 
 
 # Source files

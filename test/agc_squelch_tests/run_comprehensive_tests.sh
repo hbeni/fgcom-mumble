@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Test configuration
 BUILD_DIR="build"
-TEST_RESULTS_DIR="test_results"
+TEST_RESULTS_DIR="../test-logs/agc_squelch_tests"
 COVERAGE_DIR="coverage"
 SANITIZER_DIR="sanitizer_results"
 

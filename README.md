@@ -5,7 +5,7 @@
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
 
-A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators with geographic separation, propagation modeling, and authentic radio procedures.
+A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators and games with geographic separation, propagation modeling, and authentic radio procedures.
 
 [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5) | [Deutsche Version](server/Readme.server-de_DE.md)
 
@@ -13,7 +13,7 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 ## What This Is
 
-**FGCom-mumble** is a sophisticated radio communication simulator that brings realistic radio procedures to flight simulation. It's designed for aviation enthusiasts who want authentic radio communication experiences with proper propagation modeling, geographic separation, and realistic audio effects.
+**FGCom-mumble** is a sophisticated radio communication simulator that brings realistic radio procedures to flight simulation and games. It's designed for enthusiasts who want authentic radio communication experiences with proper propagation modeling, geographic separation, and realistic audio effects.
 
 ### Key Features
 - **Realistic Radio Simulation**: Geographic separation, propagation modeling, and authentic audio effects
@@ -24,6 +24,45 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 ---
 
+##  Security Setup
+
+**IMPORTANT: Never store passwords, API keys, or usernames in configuration files!**
+
+FGCom-mumble requires secure credential management. All sensitive data must be stored as environment variables.
+
+### Quick Security Setup
+
+```bash
+# 1. Run the interactive setup script
+./scripts/setup_environment.sh
+
+# 2. Or manually copy the template
+cp configs/env.template .env
+chmod 600 .env
+
+# 3. Edit with your credentials
+nano .env
+
+# 4. Load environment variables
+source .env
+```
+
+### Security Documentation
+
+- **[Security Setup Guide](docs/SECURITY_SETUP.md)** - Complete guide for setting up environment variables
+- **[Security Best Practices](docs/SECURITY_BEST_PRACTICES.md)** - Production security guidelines
+- **[Environment Template](configs/env.template)** - Template for all required environment variables
+
+### Required Environment Variables
+
+- `FGCOM_API_KEY` - Main application API key
+- `NOAA_SWPC_API_KEY` - NOAA Space Weather API
+- `NASA_API_KEY` - NASA API access
+- `OPENWEATHERMAP_API_KEY` - Weather data API
+- Database credentials (if using external database)
+
+---
+
 ## Beta Testers Wanted!
 
 **FGCom-mumble is actively seeking beta testers to help improve the system!**
@@ -31,7 +70,7 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 We need experienced users to test new features, provide feedback, and help identify issues before public release. Beta testing is particularly valuable for:
 
 - **GPU Acceleration Features**: Test CUDA, OpenCL, and Metal GPU acceleration
-- **Advanced Configuration Options**: Validate 625+ configuration settings across 17 categories
+- **Advanced Configuration Options**: Validate multiple configuration settings across 17 categories
 - **Multi-Platform Integration**: Test FlightGear, MSFS 2020, and WebRTC compatibility
 - **Performance Optimization**: Help optimize GPU resource management and thermal control
 - **New API Endpoints**: Test RESTful API and WebSocket interfaces
@@ -61,7 +100,7 @@ We need experienced users to test new features, provide feedback, and help ident
 
 ### Prerequisites
 - **Server Administration**: Linux/Windows server management experience
-- **Technical Configuration**: 625+ configuration options across 17 categories  
+- **Technical Configuration**: Multiple configuration options across 17 categories  
 - **Network Setup**: UDP port configuration, firewall rules, channel management
 - **Radio Knowledge**: Understanding of radio frequencies and propagation
 - **Installation Time**: 2-4 hours for basic setup, 1-2 days for advanced configuration
@@ -79,7 +118,7 @@ We need experienced users to test new features, provide feedback, and help ident
 ### For Pilots and Users
 | Guide | Purpose |
 |-------|---------|
-| **[Installation Guide](docs/INSTALLATION_GUIDE.md)** | Complete setup and installation instructions |
+| **[Installation Guide](docs/INSTALLATION.md)** | Complete setup and installation instructions |
 | **[Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md)** | How to use FGCom-mumble with your flight simulator |
 | **[WebRTC Gateway](webrtc-gateway/README.md)** | Browser-based access (no installation required) |
 | **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** | ATIS, test frequencies, and special features |

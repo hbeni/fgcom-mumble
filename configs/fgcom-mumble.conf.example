@@ -287,7 +287,10 @@ rate_limit_requests_per_minute = 50000
 enable_api_key_auth = false
 
 # API key (generate a secure key for production)
-api_key = 
+# SECURITY WARNING: Use environment variables for production!
+# Set FGCOM_API_KEY environment variable instead of hardcoding here
+# Example: export FGCOM_API_KEY="your_secure_api_key_here"
+api_key = ${FGCOM_API_KEY}
 
 # Enable SSL/TLS
 enable_ssl = false

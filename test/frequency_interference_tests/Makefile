@@ -1,7 +1,7 @@
 # Makefile for frequency_interference_tests
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
-INCLUDES = -I$(CURDIR) -I../../client/mumble-plugin/lib -I../rapidcheck_tests/lib/rapidcheck/include
+INCLUDES = -I$(CURDIR) -I../../client/mumble-plugin/lib -I../rapidcheck_tests/lib/rapidcheck/include -I../rapidcheck_tests/lib/rapidcheck/extras/gtest/include
 LDFLAGS = -lgtest -lgtest_main -lpthread -L../rapidcheck_tests/lib/rapidcheck/build -lrapidcheck
 
 # Source files

@@ -1,4 +1,18 @@
 #include "test_agc_squelch_main.cpp"
+#include <random>
+
+// Helper function to generate noise
+std::vector<float> generateNoise(size_t samples, float amplitude) {
+    std::vector<float> noise(samples);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(-amplitude, amplitude);
+    
+    for (size_t i = 0; i < samples; ++i) {
+        noise[i] = dis(gen);
+    }
+    return noise;
+}
 
 // 1.4 Audio Processing Tests
 TEST_F(AudioProcessingTest, ZeroSampleCountHandling) {

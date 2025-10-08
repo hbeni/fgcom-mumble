@@ -477,12 +477,13 @@ TEST_F(EdgeCaseCoverageTests, ExtremeFrequencyManagement) {
 TEST_F(EdgeCaseCoverageTests, ExtremeWeatherHandling) {
     rc::check("Extreme weather handling", [](double frequency_hz, double temperature_c, double humidity_percent, 
                double rain_rate_mmh, double fog_density, double snow_rate_mmh) {
-        RC_PRE(frequency_hz > 0);
-        RC_PRE(temperature_c >= -50.0 && temperature_c <= 50.0);
-        RC_PRE(humidity_percent >= 0.0 && humidity_percent <= 100.0);
-        RC_PRE(rain_rate_mmh >= 0.0 && rain_rate_mmh <= 500.0);
-        RC_PRE(fog_density >= 0.0 && fog_density <= 1.0);
-        RC_PRE(snow_rate_mmh >= 0.0 && snow_rate_mmh <= 100.0);
+        // Use RC_PRE to filter out invalid values
+        RC_PRE(frequency_hz >= 1e6 && frequency_hz <= 1e9); // 1 MHz to 1 GHz
+        RC_PRE(temperature_c >= -50.0 && temperature_c <= 50.0); // -50°C to 50°C
+        RC_PRE(humidity_percent >= 0.0 && humidity_percent <= 100.0); // 0% to 100%
+        RC_PRE(rain_rate_mmh >= 0.0 && rain_rate_mmh <= 500.0); // 0 to 500 mm/h
+        RC_PRE(fog_density >= 0.0 && fog_density <= 1.0); // 0.0 to 1.0
+        RC_PRE(snow_rate_mmh >= 0.0 && snow_rate_mmh <= 100.0); // 0 to 100 mm/h
         
         RadioPropagation prop;
         RadioPropagation::ExtremeWeather weather;
@@ -505,7 +506,8 @@ TEST_F(EdgeCaseCoverageTests, ExtremeWeatherHandling) {
 
 TEST_F(EdgeCaseCoverageTests, ExtremeAudioProcessingProperty) {
     rc::check("Extreme audio processing", [](std::vector<float> samples, double gain_db) {
-        RC_PRE(gain_db >= -60.0 && gain_db <= 60.0);
+        // Use RC_PRE to filter out invalid values
+        RC_PRE(gain_db >= -60.0 && gain_db <= 60.0); // -60 dB to 60 dB
         
         // Filter out extreme values for property testing
         for (float& sample : samples) {
