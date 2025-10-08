@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o.d"
   "CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o"
   "CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o.d"
+  "CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o"
+  "CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o.d"
   "CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o"
   "CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o.d"
   "security_module_tests_coverage"

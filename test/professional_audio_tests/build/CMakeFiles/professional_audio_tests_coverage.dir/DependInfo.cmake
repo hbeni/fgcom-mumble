@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_professional_audio_tests_properties.cpp" "CMakeFiles/professional_audio_tests_coverage.dir/test_professional_audio_tests_properties.cpp.o" "gcc" "CMakeFiles/professional_audio_tests_coverage.dir/test_professional_audio_tests_properties.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_simple_iir1.cpp" "CMakeFiles/professional_audio_tests_coverage.dir/test_simple_iir1.cpp.o" "gcc" "CMakeFiles/professional_audio_tests_coverage.dir/test_simple_iir1.cpp.o.d"
   )
 

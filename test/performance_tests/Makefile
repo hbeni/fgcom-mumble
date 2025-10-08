@@ -8,8 +8,8 @@ TEST_DIR = $(shell pwd)
 # Compiler and flags
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
-INCLUDES = -I$(TEST_DIR) -I../../client/mumble-plugin/lib -I../rapidcheck_tests/lib/rapidcheck/include
-LIBS = -lgtest -lgmock -lgtest_main -pthread -L../rapidcheck_tests/lib/rapidcheck -lrapidcheck
+INCLUDES = -I$(TEST_DIR) -I../../client/mumble-plugin/lib
+LIBS = -lgtest -lgmock -lgtest_main -pthread
 
 # Test source files
 TEST_SOURCES = $(wildcard test_*.cpp)

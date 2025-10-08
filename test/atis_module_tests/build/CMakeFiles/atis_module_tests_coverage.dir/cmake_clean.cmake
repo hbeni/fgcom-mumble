@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o.d"
   "CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o"
   "CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o.d"
+  "CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o"
+  "CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o.d"
   "CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o"
   "CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o.d"
   "CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o"

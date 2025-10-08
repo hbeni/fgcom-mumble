@@ -57,6 +57,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/frequency_management_tests_tsan.dir/test_band_segment_validation.cpp.o.d"
   "CMakeFiles/frequency_management_tests_tsan.dir/test_frequency_management_main.cpp.o"
   "CMakeFiles/frequency_management_tests_tsan.dir/test_frequency_management_main.cpp.o.d"
+  "CMakeFiles/frequency_management_tests_tsan.dir/test_frequency_management_tests_properties.cpp.o"
+  "CMakeFiles/frequency_management_tests_tsan.dir/test_frequency_management_tests_properties.cpp.o.d"
   "CMakeFiles/frequency_management_tests_tsan.dir/test_frequency_offsets.cpp.o"
   "CMakeFiles/frequency_management_tests_tsan.dir/test_frequency_offsets.cpp.o.d"
   "CMakeFiles/frequency_management_tests_tsan.dir/test_maritime_frequencies.cpp.o"

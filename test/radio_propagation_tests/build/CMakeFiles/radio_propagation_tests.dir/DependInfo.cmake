@@ -16,6 +16,8 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/test_line_of_sight.cpp" "CMakeFiles/radio_propagation_tests.dir/test_line_of_sight.cpp.o" "gcc" "CMakeFiles/radio_propagation_tests.dir/test_line_of_sight.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/test_noise_floor.cpp" "CMakeFiles/radio_propagation_tests.dir/test_noise_floor.cpp.o" "gcc" "CMakeFiles/radio_propagation_tests.dir/test_noise_floor.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/test_radio_propagation_main.cpp" "CMakeFiles/radio_propagation_tests.dir/test_radio_propagation_main.cpp.o" "gcc" "CMakeFiles/radio_propagation_tests.dir/test_radio_propagation_main.cpp.o.d"
+  "/home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/test_radio_propagation_tests_properties.cpp" "CMakeFiles/radio_propagation_tests.dir/test_radio_propagation_tests_properties.cpp.o" "gcc" "CMakeFiles/radio_propagation_tests.dir/test_radio_propagation_tests_properties.cpp.o.d"
+  "/home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/test_solar_data_impact.cpp" "CMakeFiles/radio_propagation_tests.dir/test_solar_data_impact.cpp.o" "gcc" "CMakeFiles/radio_propagation_tests.dir/test_solar_data_impact.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

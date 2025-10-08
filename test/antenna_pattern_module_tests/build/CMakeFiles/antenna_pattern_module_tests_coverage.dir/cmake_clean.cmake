@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/antenna_pattern_module_tests_coverage.dir/main.cpp.o.d"
   "CMakeFiles/antenna_pattern_module_tests_coverage.dir/test_antenna_pattern_main.cpp.o"
   "CMakeFiles/antenna_pattern_module_tests_coverage.dir/test_antenna_pattern_main.cpp.o.d"
+  "CMakeFiles/antenna_pattern_module_tests_coverage.dir/test_antenna_pattern_module_tests_properties.cpp.o"
+  "CMakeFiles/antenna_pattern_module_tests_coverage.dir/test_antenna_pattern_module_tests_properties.cpp.o.d"
   "CMakeFiles/antenna_pattern_module_tests_coverage.dir/test_nec_pattern.cpp.o"
   "CMakeFiles/antenna_pattern_module_tests_coverage.dir/test_nec_pattern.cpp.o.d"
   "CMakeFiles/antenna_pattern_module_tests_coverage.dir/test_pattern_conversion.cpp.o"

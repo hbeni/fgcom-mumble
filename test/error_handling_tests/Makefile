@@ -1,69 +1,52 @@
-# Makefile for error_handling_tests test suite
-# This Makefile provides consistent build management for error_handling_tests tests
-
-# Test suite name
-TEST_NAME = error_handling_tests
-TEST_DIR = $(shell pwd)
-
-# Compiler and flags
+# Makefile for error_handling_tests
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
-INCLUDES = -I$(TEST_DIR) -I../../client/mumble-plugin/lib
-LIBS = -lgtest -lgmock -lgtest_main -pthread
+INCLUDES = -I$(CURDIR) -I../../client/mumble-plugin/lib -I../rapidcheck_tests/lib/rapidcheck/include
+LDFLAGS = -lgtest -lgtest_main -lpthread -L../rapidcheck_tests/lib/rapidcheck/build -lrapidcheck
 
-# Test source files
-TEST_SOURCES = $(wildcard test_*.cpp)
-TEST_OBJECTS = $(addprefix build/, $(TEST_SOURCES:.cpp=.o))
-TEST_EXECUTABLE = build/$(TEST_NAME)
+# Source files
+SOURCES = test_error_handling_main.cpp test_error_handling_tests_properties.cpp test_error_logging.cpp test_graceful_degradation.cpp
+OBJECTS = $(SOURCES:.cpp=.o)
+TARGET = error_handling_tests
 
 # Default target
-all: $(TEST_EXECUTABLE)
+all: $(TARGET)
 
 # Build the test executable
-$(TEST_EXECUTABLE): $(TEST_OBJECTS)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -o $@ $^ $(LIBS)
+$(TARGET): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
 
 # Compile source files
-build/%.o: %.cpp
-	@mkdir -p build
+%.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Run tests
-test: $(TEST_EXECUTABLE)
-	cd build && ./$(TEST_NAME)
-
-# Run tests with verbose output
-test-verbose: $(TEST_EXECUTABLE)
-	cd build && ./$(TEST_NAME) --gtest_verbose
-
-# Run tests with specific filter
-test-filter: $(TEST_EXECUTABLE)
-	cd build && ./$(TEST_NAME) --gtest_filter=$(FILTER)
 
 # Clean build artifacts
 clean:
-	rm -f $(TEST_OBJECTS) $(TEST_EXECUTABLE)
+	rm -f $(OBJECTS) $(TARGET)
 
-# Clean everything including build directories
-distclean: clean
-	rm -rf build/
+# Run tests
+test: $(TARGET)
+	./$(TARGET)
 
-# Install dependencies (if needed)
-install-deps:
-	@echo "Installing dependencies for $(TEST_NAME)..."
-	@echo "Dependencies: gtest, gmock, pthread"
+# Run with valgrind
+valgrind: $(TARGET)
+	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all ./$(TARGET)
 
-# Show help
-help:
-	@echo "Available targets for $(TEST_NAME):"
-	@echo "  all          - Build the test executable (default)"
-	@echo "  test         - Run tests"
-	@echo "  test-verbose - Run tests with verbose output"
-	@echo "  test-filter  - Run tests with filter (use FILTER=pattern)"
-	@echo "  clean        - Remove build artifacts"
-	@echo "  distclean    - Remove all generated files"
-	@echo "  install-deps - Show dependency information"
-	@echo "  help         - Show this help message"
+# Run with cppcheck
+cppcheck:
+	cppcheck --enable=all --inconclusive --std=c++17 .
 
-# Phony targets
-.PHONY: all test test-verbose test-filter clean distclean install-deps help
+# Run with clang-tidy
+clang-tidy:
+	clang-tidy $(SOURCES) -- -std=c++17
+
+# Coverage analysis
+coverage: CXXFLAGS += -fprofile-arcs -ftest-coverage
+coverage: LDFLAGS += -lgcov
+coverage: clean $(TARGET)
+	./$(TARGET)
+	gcov -r *.gcno
+	lcov --capture --directory . --output-file coverage.info
+	genhtml coverage.info --output-directory coverage_html
+
+.PHONY: all clean test valgrind cppcheck clang-tidy coverage

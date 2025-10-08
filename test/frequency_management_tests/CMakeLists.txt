@@ -12,10 +12,21 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GMOCK REQUIRED gmock)
 find_package(Threads REQUIRED)
 
+# RapidCheck setup
+set(RAPIDCHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../rapidcheck_tests/lib/rapidcheck")
+set(RAPIDCHECK_INCLUDE_DIR "${RAPIDCHECK_DIR}/include")
+set(RAPIDCHECK_SRC_DIR "${RAPIDCHECK_DIR}/src")
+
+# Add RapidCheck as subdirectory if not already added
+if(NOT TARGET rapidcheck)
+    add_subdirectory(${RAPIDCHECK_DIR} rapidcheck)
+endif()
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../client/mumble-plugin/lib
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${RAPIDCHECK_INCLUDE_DIR}
 )
 
 # Source files
@@ -26,6 +37,7 @@ set(TEST_SOURCES
     test_aviation_frequencies.cpp
     test_maritime_frequencies.cpp
     test_frequency_offsets.cpp
+    test_frequency_management_tests_properties.cpp
     # Add missing source files
     ../../client/mumble-plugin/lib/amateur_radio.cpp
     ../../client/mumble-plugin/lib/radio_model.cpp
@@ -59,9 +71,11 @@ add_executable(frequency_management_tests ${TEST_SOURCES})
 
 # Link libraries
 target_link_libraries(frequency_management_tests
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}
+    rapidcheck
     Threads::Threads
     m
     pthread
@@ -101,6 +115,7 @@ set(COVERAGE_FLAGS
 # AddressSanitizer version
 add_executable(frequency_management_tests_asan ${TEST_SOURCES})
 target_link_libraries(frequency_management_tests_asan
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}
@@ -114,6 +129,7 @@ target_link_options(frequency_management_tests_asan PRIVATE ${ASAN_FLAGS})
 # ThreadSanitizer version
 add_executable(frequency_management_tests_tsan ${TEST_SOURCES})
 target_link_libraries(frequency_management_tests_tsan
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}
@@ -127,6 +143,7 @@ target_link_options(frequency_management_tests_tsan PRIVATE ${TSAN_FLAGS})
 # Coverage version
 add_executable(frequency_management_tests_coverage ${TEST_SOURCES})
 target_link_libraries(frequency_management_tests_coverage
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}

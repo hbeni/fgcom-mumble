@@ -95,6 +95,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles /home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build//CMakeFiles/progress.marks
@@ -178,6 +223,19 @@ openstreetmap_infrastructure_tests_coverage/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/build
 .PHONY : openstreetmap_infrastructure_tests_coverage/fast
 
+#=============================================================================
+# Target rules for targets named rapidcheck
+
+# Build rule for target.
+rapidcheck: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rapidcheck
+.PHONY : rapidcheck
+
+# fast build rule for target.
+rapidcheck/fast:
+	$(MAKE) $(MAKESILENT) -f rapidcheck/CMakeFiles/rapidcheck.dir/build.make rapidcheck/CMakeFiles/rapidcheck.dir/build
+.PHONY : rapidcheck/fast
+
 test_openinframap_integration.o: test_openinframap_integration.cpp.o
 .PHONY : test_openinframap_integration.o
 
@@ -244,6 +302,39 @@ test_openstreetmap_infrastructure_main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/test_openstreetmap_infrastructure_main.cpp.s
 .PHONY : test_openstreetmap_infrastructure_main.cpp.s
 
+test_openstreetmap_infrastructure_tests_properties.o: test_openstreetmap_infrastructure_tests_properties.cpp.o
+.PHONY : test_openstreetmap_infrastructure_tests_properties.o
+
+# target to build an object file
+test_openstreetmap_infrastructure_tests_properties.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests.dir/test_openstreetmap_infrastructure_tests_properties.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/test_openstreetmap_infrastructure_tests_properties.cpp.o
+.PHONY : test_openstreetmap_infrastructure_tests_properties.cpp.o
+
+test_openstreetmap_infrastructure_tests_properties.i: test_openstreetmap_infrastructure_tests_properties.cpp.i
+.PHONY : test_openstreetmap_infrastructure_tests_properties.i
+
+# target to preprocess a source file
+test_openstreetmap_infrastructure_tests_properties.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests.dir/test_openstreetmap_infrastructure_tests_properties.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/test_openstreetmap_infrastructure_tests_properties.cpp.i
+.PHONY : test_openstreetmap_infrastructure_tests_properties.cpp.i
+
+test_openstreetmap_infrastructure_tests_properties.s: test_openstreetmap_infrastructure_tests_properties.cpp.s
+.PHONY : test_openstreetmap_infrastructure_tests_properties.s
+
+# target to generate assembly for a file
+test_openstreetmap_infrastructure_tests_properties.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests.dir/test_openstreetmap_infrastructure_tests_properties.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_asan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/build.make CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir/test_openstreetmap_infrastructure_tests_properties.cpp.s
+.PHONY : test_openstreetmap_infrastructure_tests_properties.cpp.s
+
 test_openstreetmap_integration.o: test_openstreetmap_integration.cpp.o
 .PHONY : test_openstreetmap_integration.o
 
@@ -284,18 +375,26 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... openstreetmap_infrastructure_tests"
 	@echo "... openstreetmap_infrastructure_tests_asan"
 	@echo "... openstreetmap_infrastructure_tests_coverage"
 	@echo "... openstreetmap_infrastructure_tests_tsan"
+	@echo "... rapidcheck"
 	@echo "... test_openinframap_integration.o"
 	@echo "... test_openinframap_integration.i"
 	@echo "... test_openinframap_integration.s"
 	@echo "... test_openstreetmap_infrastructure_main.o"
 	@echo "... test_openstreetmap_infrastructure_main.i"
 	@echo "... test_openstreetmap_infrastructure_main.s"
+	@echo "... test_openstreetmap_infrastructure_tests_properties.o"
+	@echo "... test_openstreetmap_infrastructure_tests_properties.i"
+	@echo "... test_openstreetmap_infrastructure_tests_properties.s"
 	@echo "... test_openstreetmap_integration.o"
 	@echo "... test_openstreetmap_integration.i"
 	@echo "... test_openstreetmap_integration.s"

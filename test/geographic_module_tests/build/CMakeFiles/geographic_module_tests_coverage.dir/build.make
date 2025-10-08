@@ -69,10 +69,24 @@ include CMakeFiles/geographic_module_tests_coverage.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/geographic_module_tests_coverage.dir/flags.make
 
+CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/flags.make
+CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_geographic_module_tests_properties.cpp
+CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o -MF CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o.d -o CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_geographic_module_tests_properties.cpp
+
+CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_geographic_module_tests_properties.cpp > CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.i
+
+CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_geographic_module_tests_properties.cpp -o CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.s
+
 CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/flags.make
 CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_geographic_module_main.cpp
 CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o -MF CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o.d -o CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_geographic_module_main.cpp
 
 CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.i: cmake_force
@@ -86,7 +100,7 @@ CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.
 CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/flags.make
 CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_coordinate_system.cpp
 CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o -MF CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o.d -o CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_coordinate_system.cpp
 
 CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.i: cmake_force
@@ -100,7 +114,7 @@ CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.s: cm
 CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/flags.make
 CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_terrain_data.cpp
 CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o -MF CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o.d -o CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_terrain_data.cpp
 
 CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.i: cmake_force
@@ -114,7 +128,7 @@ CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.s: cmake_f
 CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/flags.make
 CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_vehicle_dynamics.cpp
 CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o: CMakeFiles/geographic_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o -MF CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o.d -o CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/test_vehicle_dynamics.cpp
 
 CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.i: cmake_force
@@ -127,6 +141,7 @@ CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.s: cma
 
 # Object files for target geographic_module_tests_coverage
 geographic_module_tests_coverage_OBJECTS = \
+"CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o" \
 "CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o" \
 "CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o" \
 "CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o" \
@@ -135,15 +150,17 @@ geographic_module_tests_coverage_OBJECTS = \
 # External object files for target geographic_module_tests_coverage
 geographic_module_tests_coverage_EXTERNAL_OBJECTS =
 
+geographic_module_tests_coverage: CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_tests_properties.cpp.o
 geographic_module_tests_coverage: CMakeFiles/geographic_module_tests_coverage.dir/test_geographic_module_main.cpp.o
 geographic_module_tests_coverage: CMakeFiles/geographic_module_tests_coverage.dir/test_coordinate_system.cpp.o
 geographic_module_tests_coverage: CMakeFiles/geographic_module_tests_coverage.dir/test_terrain_data.cpp.o
 geographic_module_tests_coverage: CMakeFiles/geographic_module_tests_coverage.dir/test_vehicle_dynamics.cpp.o
 geographic_module_tests_coverage: CMakeFiles/geographic_module_tests_coverage.dir/build.make
+geographic_module_tests_coverage: rapidcheck/librapidcheck.a
 geographic_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 geographic_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest.a
 geographic_module_tests_coverage: CMakeFiles/geographic_module_tests_coverage.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable geographic_module_tests_coverage"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable geographic_module_tests_coverage"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/geographic_module_tests_coverage.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

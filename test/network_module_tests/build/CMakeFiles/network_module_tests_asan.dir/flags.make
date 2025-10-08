@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/../../client/mumble-plugin -I/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/network_module_tests
+CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/../rapidcheck_tests/lib/rapidcheck/include -I/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/../../client/mumble-plugin -I/home/haaken/github-projects/fgcom-mumble/test/network_module_tests/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/network_module_tests -I/home/haaken/github-projects/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
 
 CXX_FLAGS = -std=gnu++17 -Wno-unused-parameter -Wno-unused-variable -fsanitize=address -g -DGTEST_HAS_PTHREAD=1
 

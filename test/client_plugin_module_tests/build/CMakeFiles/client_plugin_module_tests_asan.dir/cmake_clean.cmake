@@ -61,6 +61,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp.o.d"
   "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_simple.cpp.o"
   "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_simple.cpp.o.d"
+  "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_tests_properties.cpp.o"
+  "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_tests_properties.cpp.o.d"
   "client_plugin_module_tests_asan"
   "client_plugin_module_tests_asan.pdb"
 )

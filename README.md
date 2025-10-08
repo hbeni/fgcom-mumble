@@ -5,7 +5,7 @@
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
 
-A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators and games with geographic separation, and propagation modeling.
+A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators with geographic separation, propagation modeling, and authentic radio procedures.
 
 [![donate](https://img.shields.io/badge/Help_keep_this_running-PaypalMe/BeniH-blue)](https://www.paypal.com/paypalme/BeniH/5) | [Deutsche Version](server/Readme.server-de_DE.md)
 
@@ -13,7 +13,7 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 ## What This Is
 
-**FGCom-mumble** is a sophisticated radio communication simulator that brings realistic radio procedures to flight simulation and games. It's designed for enthusiasts who want authentic radio communication experiences with proper propagation modeling, geographic separation, and realistic audio effects.
+**FGCom-mumble** is a sophisticated radio communication simulator that brings realistic radio procedures to flight simulation. It's designed for aviation enthusiasts who want authentic radio communication experiences with proper propagation modeling, geographic separation, and realistic audio effects.
 
 ### Key Features
 - **Realistic Radio Simulation**: Geographic separation, propagation modeling, and authentic audio effects
@@ -24,16 +24,47 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 ---
 
+## Beta Testers Wanted!
+
+**FGCom-mumble is actively seeking beta testers to help improve the system!**
+
+We need experienced users to test new features, provide feedback, and help identify issues before public release. Beta testing is particularly valuable for:
+
+- **GPU Acceleration Features**: Test CUDA, OpenCL, and Metal GPU acceleration
+- **Advanced Configuration Options**: Validate 625+ configuration settings across 17 categories
+- **Multi-Platform Integration**: Test FlightGear, MSFS 2020, and WebRTC compatibility
+- **Performance Optimization**: Help optimize GPU resource management and thermal control
+- **New API Endpoints**: Test RESTful API and WebSocket interfaces
+- **Security Features**: Validate authentication and authorization systems
+
+### How to Participate
+
+1. **Join the Beta Program**: Contact the development team through GitHub Issues
+2. **Report Issues**: Use the issue tracker to report bugs and suggest improvements
+3. **Provide Feedback**: Share your experience with different configurations and use cases
+4. **Test New Features**: Help validate new functionality before public release
+
+### Beta Tester Requirements
+
+- **Technical Expertise**: Server administration and configuration experience
+- **Testing Environment**: Dedicated test system for beta features
+- **Feedback Commitment**: Regular feedback and issue reporting
+- **Documentation**: Help improve documentation and user guides
+
+**Interested?** Open an issue on GitHub with "Beta Tester Application" in the title and describe your technical background and testing environment.
+
+---
+
 ## Important: Technical Requirements
 
 **FGCom-mumble is NOT a simple "plug and play" system.** It requires technical expertise:
 
 ### Prerequisites
 - **Server Administration**: Linux/Windows server management experience
-- **Technical Configuration**: multiple configuration options across 17 categories  
+- **Technical Configuration**: 625+ configuration options across 17 categories  
 - **Network Setup**: UDP port configuration, firewall rules, channel management
 - **Radio Knowledge**: Understanding of radio frequencies and propagation
-
+- **Installation Time**: 2-4 hours for basic setup, 1-2 days for advanced configuration
 
 ### Supported Platforms
 - **FlightGear**: Native integration (requires technical knowledge)
@@ -48,7 +79,7 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 ### For Pilots and Users
 | Guide | Purpose |
 |-------|---------|
-| **[Installation Guide](INSTALLATION.md)** | Complete setup and installation instructions |
+| **[Installation Guide](docs/INSTALLATION.md)** | Complete setup and installation instructions |
 | **[Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md)** | How to use FGCom-mumble with your flight simulator |
 | **[WebRTC Gateway](webrtc-gateway/README.md)** | Browser-based access (no installation required) |
 | **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** | ATIS, test frequencies, and special features |
@@ -123,9 +154,9 @@ udpServerHost=*
 - **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** - Technical overview and capabilities
 
 ### Advanced Features
-- **[Advanced Features](advanced_features.md)** - Comprehensive overview of all advanced features
-- **[WebRTC Browser Client Support](web_rtc.md)** - WebRTC implementation documentation
-- **[Antenna Pattern Creation](antenna_patterns.md)** - Antenna pattern creation guides
+- **[Advanced Features](docs/advanced_features.md)** - Comprehensive overview of all advanced features
+- **[WebRTC Browser Client Support](docs/web_rtc.md)** - WebRTC implementation documentation
+- **[Antenna Pattern Creation](docs/antenna_patterns.md)** - Antenna pattern creation guides
 
 ### Game Integration
 - **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** - Integration requirements and protocols
@@ -216,9 +247,9 @@ The system includes comprehensive antenna pattern visualization showing realisti
 - **Marine Patterns**: Not available - cannot be generated due to safety limits (exceeds 50,000+ combination limit)
 - **Ground Type Variations**: Ideally, patterns should be generated for each ground type (conductivity, permittivity), but this would create an extremely large database
 
-**Generation**: Use `scripts/pattern_generation/antenna-radiation-pattern-generator.sh` to generate missing aircraft patterns. See [Antenna Pattern Creation Documentation](antenna_patterns.md) for complete details.
+**Generation**: Use `scripts/pattern_generation/antenna-radiation-pattern-generator.sh` to generate missing aircraft patterns. See [Antenna Pattern Creation Documentation](docs/antenna_patterns.md) for complete details.
 
-**Note on Ground Types**: While ideal antenna patterns would account for different ground types (soil conductivity, moisture, urban vs rural environments), the database would become very large. Current patterns use standard ground assumptions for practical implementation.
+**Note on Ground Types**: While ideal antenna patterns would account for different ground types (soil conductivity, moisture, urban vs rural environments), the database would become prohibitively large. Current patterns use standard ground assumptions for practical implementation.
 
 ---
 
@@ -235,3 +266,4 @@ The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
 
 - **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
 
+s 

@@ -61,6 +61,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/network_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp.o.d"
   "CMakeFiles/network_module_tests_asan.dir/test_network_module_main.cpp.o"
   "CMakeFiles/network_module_tests_asan.dir/test_network_module_main.cpp.o.d"
+  "CMakeFiles/network_module_tests_asan.dir/test_network_module_tests_properties.cpp.o"
+  "CMakeFiles/network_module_tests_asan.dir/test_network_module_tests_properties.cpp.o.d"
   "CMakeFiles/network_module_tests_asan.dir/test_rest_api.cpp.o"
   "CMakeFiles/network_module_tests_asan.dir/test_rest_api.cpp.o.d"
   "CMakeFiles/network_module_tests_asan.dir/test_udp_protocol.cpp.o"

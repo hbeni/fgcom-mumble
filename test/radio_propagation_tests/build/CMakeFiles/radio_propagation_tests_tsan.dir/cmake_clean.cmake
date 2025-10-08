@@ -15,6 +15,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/radio_propagation_tests_tsan.dir/test_noise_floor.cpp.o.d"
   "CMakeFiles/radio_propagation_tests_tsan.dir/test_radio_propagation_main.cpp.o"
   "CMakeFiles/radio_propagation_tests_tsan.dir/test_radio_propagation_main.cpp.o.d"
+  "CMakeFiles/radio_propagation_tests_tsan.dir/test_radio_propagation_tests_properties.cpp.o"
+  "CMakeFiles/radio_propagation_tests_tsan.dir/test_radio_propagation_tests_properties.cpp.o.d"
+  "CMakeFiles/radio_propagation_tests_tsan.dir/test_solar_data_impact.cpp.o"
+  "CMakeFiles/radio_propagation_tests_tsan.dir/test_solar_data_impact.cpp.o.d"
   "radio_propagation_tests_tsan"
   "radio_propagation_tests_tsan.pdb"
 )

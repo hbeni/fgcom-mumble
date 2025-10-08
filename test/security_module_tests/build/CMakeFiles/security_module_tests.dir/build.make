@@ -69,10 +69,24 @@ include CMakeFiles/security_module_tests.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/security_module_tests.dir/flags.make
 
+CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o: CMakeFiles/security_module_tests.dir/flags.make
+CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp
+CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o: CMakeFiles/security_module_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o -MF CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o.d -o CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp
+
+CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp > CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.i
+
+CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp -o CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.s
+
 CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o: CMakeFiles/security_module_tests.dir/flags.make
 CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp
 CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o: CMakeFiles/security_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o -MF CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o.d -o CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp
 
 CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.i: cmake_force
@@ -86,7 +100,7 @@ CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.s: cmake_forc
 CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o: CMakeFiles/security_module_tests.dir/flags.make
 CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp
 CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o: CMakeFiles/security_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o -MF CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o.d -o CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp
 
 CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.i: cmake_force
@@ -100,7 +114,7 @@ CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.s: cmake_force
 CMakeFiles/security_module_tests.dir/test_authentication.cpp.o: CMakeFiles/security_module_tests.dir/flags.make
 CMakeFiles/security_module_tests.dir/test_authentication.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_authentication.cpp
 CMakeFiles/security_module_tests.dir/test_authentication.cpp.o: CMakeFiles/security_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/security_module_tests.dir/test_authentication.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/security_module_tests.dir/test_authentication.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests.dir/test_authentication.cpp.o -MF CMakeFiles/security_module_tests.dir/test_authentication.cpp.o.d -o CMakeFiles/security_module_tests.dir/test_authentication.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_authentication.cpp
 
 CMakeFiles/security_module_tests.dir/test_authentication.cpp.i: cmake_force
@@ -114,7 +128,7 @@ CMakeFiles/security_module_tests.dir/test_authentication.cpp.s: cmake_force
 CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o: CMakeFiles/security_module_tests.dir/flags.make
 CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_input_validation.cpp
 CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o: CMakeFiles/security_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o -MF CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o.d -o CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_input_validation.cpp
 
 CMakeFiles/security_module_tests.dir/test_input_validation.cpp.i: cmake_force
@@ -127,6 +141,7 @@ CMakeFiles/security_module_tests.dir/test_input_validation.cpp.s: cmake_force
 
 # Object files for target security_module_tests
 security_module_tests_OBJECTS = \
+"CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o" \
 "CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o" \
 "CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o" \
 "CMakeFiles/security_module_tests.dir/test_authentication.cpp.o" \
@@ -135,17 +150,19 @@ security_module_tests_OBJECTS = \
 # External object files for target security_module_tests
 security_module_tests_EXTERNAL_OBJECTS =
 
+security_module_tests: CMakeFiles/security_module_tests.dir/test_security_module_tests_properties.cpp.o
 security_module_tests: CMakeFiles/security_module_tests.dir/test_security_module_main.cpp.o
 security_module_tests: CMakeFiles/security_module_tests.dir/test_tls_ssl.cpp.o
 security_module_tests: CMakeFiles/security_module_tests.dir/test_authentication.cpp.o
 security_module_tests: CMakeFiles/security_module_tests.dir/test_input_validation.cpp.o
 security_module_tests: CMakeFiles/security_module_tests.dir/build.make
+security_module_tests: rapidcheck/librapidcheck.a
 security_module_tests: /usr/lib/x86_64-linux-gnu/libssl.so
 security_module_tests: /usr/lib/x86_64-linux-gnu/libcrypto.so
 security_module_tests: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 security_module_tests: /usr/lib/x86_64-linux-gnu/libgtest.a
 security_module_tests: CMakeFiles/security_module_tests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable security_module_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable security_module_tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/security_module_tests.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

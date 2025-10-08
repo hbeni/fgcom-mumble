@@ -23,6 +23,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/webrtc_api_tests_coverage.dir/test_protocol_translation.cpp.o.d"
   "CMakeFiles/webrtc_api_tests_coverage.dir/test_web_interface.cpp.o"
   "CMakeFiles/webrtc_api_tests_coverage.dir/test_web_interface.cpp.o.d"
+  "CMakeFiles/webrtc_api_tests_coverage.dir/test_webrtc_api_tests_properties.cpp.o"
+  "CMakeFiles/webrtc_api_tests_coverage.dir/test_webrtc_api_tests_properties.cpp.o.d"
   "CMakeFiles/webrtc_api_tests_coverage.dir/test_webrtc_connection.cpp.o"
   "CMakeFiles/webrtc_api_tests_coverage.dir/test_webrtc_connection.cpp.o.d"
   "CMakeFiles/webrtc_api_tests_coverage.dir/test_webrtc_mumble_integration.cpp.o"

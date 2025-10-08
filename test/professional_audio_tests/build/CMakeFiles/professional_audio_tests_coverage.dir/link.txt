@@ -1,1 +1,1 @@
-/usr/bin/c++ --coverage CMakeFiles/professional_audio_tests_coverage.dir/test_simple_iir1.cpp.o -o professional_audio_tests_coverage  /usr/lib/x86_64-linux-gnu/libgtest.a 
+/usr/bin/c++ --coverage CMakeFiles/professional_audio_tests_coverage.dir/test_professional_audio_tests_properties.cpp.o CMakeFiles/professional_audio_tests_coverage.dir/test_simple_iir1.cpp.o -o professional_audio_tests_coverage  rapidcheck/librapidcheck.a /usr/lib/x86_64-linux-gnu/libgtest.a 

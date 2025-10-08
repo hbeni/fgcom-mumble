@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/audio_processing_tests_tsan.dir/test_audio_effects.cpp.o.d"
   "CMakeFiles/audio_processing_tests_tsan.dir/test_audio_processing_main.cpp.o"
   "CMakeFiles/audio_processing_tests_tsan.dir/test_audio_processing_main.cpp.o.d"
+  "CMakeFiles/audio_processing_tests_tsan.dir/test_audio_processing_tests_properties.cpp.o"
+  "CMakeFiles/audio_processing_tests_tsan.dir/test_audio_processing_tests_properties.cpp.o.d"
   "CMakeFiles/audio_processing_tests_tsan.dir/test_codec.cpp.o"
   "CMakeFiles/audio_processing_tests_tsan.dir/test_codec.cpp.o.d"
   "CMakeFiles/audio_processing_tests_tsan.dir/test_sample_rate_conversion.cpp.o"

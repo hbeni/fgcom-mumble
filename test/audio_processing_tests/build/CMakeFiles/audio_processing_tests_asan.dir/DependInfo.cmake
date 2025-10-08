@@ -14,6 +14,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/main.cpp" "CMakeFiles/audio_processing_tests_asan.dir/main.cpp.o" "gcc" "CMakeFiles/audio_processing_tests_asan.dir/main.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_audio_effects.cpp" "CMakeFiles/audio_processing_tests_asan.dir/test_audio_effects.cpp.o" "gcc" "CMakeFiles/audio_processing_tests_asan.dir/test_audio_effects.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_audio_processing_main.cpp" "CMakeFiles/audio_processing_tests_asan.dir/test_audio_processing_main.cpp.o" "gcc" "CMakeFiles/audio_processing_tests_asan.dir/test_audio_processing_main.cpp.o.d"
+  "/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_audio_processing_tests_properties.cpp" "CMakeFiles/audio_processing_tests_asan.dir/test_audio_processing_tests_properties.cpp.o" "gcc" "CMakeFiles/audio_processing_tests_asan.dir/test_audio_processing_tests_properties.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_codec.cpp" "CMakeFiles/audio_processing_tests_asan.dir/test_codec.cpp.o" "gcc" "CMakeFiles/audio_processing_tests_asan.dir/test_codec.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/test_sample_rate_conversion.cpp" "CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o" "gcc" "CMakeFiles/audio_processing_tests_asan.dir/test_sample_rate_conversion.cpp.o.d"
   )

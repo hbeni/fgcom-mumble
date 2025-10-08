@@ -69,10 +69,24 @@ include CMakeFiles/professional_audio_tests_tsan.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/professional_audio_tests_tsan.dir/flags.make
 
+CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o: CMakeFiles/professional_audio_tests_tsan.dir/flags.make
+CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_professional_audio_tests_properties.cpp
+CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o: CMakeFiles/professional_audio_tests_tsan.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o -MF CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o.d -o CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_professional_audio_tests_properties.cpp
+
+CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_professional_audio_tests_properties.cpp > CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.i
+
+CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_professional_audio_tests_properties.cpp -o CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.s
+
 CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o: CMakeFiles/professional_audio_tests_tsan.dir/flags.make
 CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_simple_iir1.cpp
 CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o: CMakeFiles/professional_audio_tests_tsan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o -MF CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o.d -o CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/test_simple_iir1.cpp
 
 CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.i: cmake_force
@@ -85,16 +99,19 @@ CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.s: cmake_force
 
 # Object files for target professional_audio_tests_tsan
 professional_audio_tests_tsan_OBJECTS = \
+"CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o" \
 "CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o"
 
 # External object files for target professional_audio_tests_tsan
 professional_audio_tests_tsan_EXTERNAL_OBJECTS =
 
+professional_audio_tests_tsan: CMakeFiles/professional_audio_tests_tsan.dir/test_professional_audio_tests_properties.cpp.o
 professional_audio_tests_tsan: CMakeFiles/professional_audio_tests_tsan.dir/test_simple_iir1.cpp.o
 professional_audio_tests_tsan: CMakeFiles/professional_audio_tests_tsan.dir/build.make
+professional_audio_tests_tsan: rapidcheck/librapidcheck.a
 professional_audio_tests_tsan: /usr/lib/x86_64-linux-gnu/libgtest.a
 professional_audio_tests_tsan: CMakeFiles/professional_audio_tests_tsan.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable professional_audio_tests_tsan"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/professional_audio_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable professional_audio_tests_tsan"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/professional_audio_tests_tsan.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

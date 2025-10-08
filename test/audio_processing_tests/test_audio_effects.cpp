@@ -4,7 +4,7 @@
 TEST_F(AudioEffectsTest, BackgroundNoiseInjection) {
     // Test background noise injection
     std::vector<float> input_samples = generateSineWave(1000.0f, 0.5f, test_sample_rate_48k, test_frame_size_20ms);
-    std::vector<float> noise_samples = generateWhiteNoise(0.1f, test_frame_size_20ms);
+    std::vector<float> noise_samples = generateWhiteNoise(0.2f, test_frame_size_20ms);
     
     // Test noise injection
     std::vector<float> output_samples = input_samples;

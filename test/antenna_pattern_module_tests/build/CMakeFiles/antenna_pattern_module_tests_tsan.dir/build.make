@@ -69,10 +69,24 @@ include CMakeFiles/antenna_pattern_module_tests_tsan.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/antenna_pattern_module_tests_tsan.dir/flags.make
 
+CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/flags.make
+CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_antenna_pattern_module_tests_properties.cpp
+CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o -MF CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o.d -o CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_antenna_pattern_module_tests_properties.cpp
+
+CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_antenna_pattern_module_tests_properties.cpp > CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.i
+
+CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_antenna_pattern_module_tests_properties.cpp -o CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.s
+
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/flags.make
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/main.cpp
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o -MF CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o.d -o CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/main.cpp
 
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.i: cmake_force
@@ -86,7 +100,7 @@ CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.s: cmake_force
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/flags.make
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_antenna_pattern_main.cpp
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o -MF CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o.d -o CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_antenna_pattern_main.cpp
 
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.i: cmake_force
@@ -100,7 +114,7 @@ CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.s
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/flags.make
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_nec_pattern.cpp
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o -MF CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o.d -o CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_nec_pattern.cpp
 
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.i: cmake_force
@@ -114,7 +128,7 @@ CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.s: cmake_f
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/flags.make
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_vehicle_antenna.cpp
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o -MF CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o.d -o CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_vehicle_antenna.cpp
 
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.i: cmake_force
@@ -128,7 +142,7 @@ CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.s: cma
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/flags.make
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_pattern_conversion.cpp
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o: CMakeFiles/antenna_pattern_module_tests_tsan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o -MF CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o.d -o CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/test_pattern_conversion.cpp
 
 CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.i: cmake_force
@@ -141,6 +155,7 @@ CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.s: 
 
 # Object files for target antenna_pattern_module_tests_tsan
 antenna_pattern_module_tests_tsan_OBJECTS = \
+"CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o" \
 "CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o" \
 "CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o" \
 "CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o" \
@@ -150,16 +165,18 @@ antenna_pattern_module_tests_tsan_OBJECTS = \
 # External object files for target antenna_pattern_module_tests_tsan
 antenna_pattern_module_tests_tsan_EXTERNAL_OBJECTS =
 
+antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_module_tests_properties.cpp.o
 antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/main.cpp.o
 antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_antenna_pattern_main.cpp.o
 antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_nec_pattern.cpp.o
 antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_vehicle_antenna.cpp.o
 antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/test_pattern_conversion.cpp.o
 antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/build.make
+antenna_pattern_module_tests_tsan: rapidcheck/librapidcheck.a
 antenna_pattern_module_tests_tsan: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 antenna_pattern_module_tests_tsan: /usr/lib/x86_64-linux-gnu/libgtest.a
 antenna_pattern_module_tests_tsan: CMakeFiles/antenna_pattern_module_tests_tsan.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable antenna_pattern_module_tests_tsan"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/antenna_pattern_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable antenna_pattern_module_tests_tsan"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/antenna_pattern_module_tests_tsan.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

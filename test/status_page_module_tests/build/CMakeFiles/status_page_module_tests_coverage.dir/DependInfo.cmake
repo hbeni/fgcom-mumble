@@ -11,6 +11,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/main.cpp" "CMakeFiles/status_page_module_tests_coverage.dir/main.cpp.o" "gcc" "CMakeFiles/status_page_module_tests_coverage.dir/main.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_data_accuracy.cpp" "CMakeFiles/status_page_module_tests_coverage.dir/test_data_accuracy.cpp.o" "gcc" "CMakeFiles/status_page_module_tests_coverage.dir/test_data_accuracy.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_main.cpp" "CMakeFiles/status_page_module_tests_coverage.dir/test_status_page_main.cpp.o" "gcc" "CMakeFiles/status_page_module_tests_coverage.dir/test_status_page_main.cpp.o.d"
+  "/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_module_tests_properties.cpp" "CMakeFiles/status_page_module_tests_coverage.dir/test_status_page_module_tests_properties.cpp.o" "gcc" "CMakeFiles/status_page_module_tests_coverage.dir/test_status_page_module_tests_properties.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_web_interface.cpp" "CMakeFiles/status_page_module_tests_coverage.dir/test_web_interface.cpp.o" "gcc" "CMakeFiles/status_page_module_tests_coverage.dir/test_web_interface.cpp.o.d"
   )
 

@@ -95,6 +95,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build//CMakeFiles/progress.marks
@@ -229,6 +274,19 @@ run_radio_propagation_all_tests: cmake_check_build_system
 run_radio_propagation_all_tests/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_radio_propagation_all_tests.dir/build.make CMakeFiles/run_radio_propagation_all_tests.dir/build
 .PHONY : run_radio_propagation_all_tests/fast
+
+#=============================================================================
+# Target rules for targets named rapidcheck
+
+# Build rule for target.
+rapidcheck: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rapidcheck
+.PHONY : rapidcheck
+
+# fast build rule for target.
+rapidcheck/fast:
+	$(MAKE) $(MAKESILENT) -f rapidcheck/CMakeFiles/rapidcheck.dir/build.make rapidcheck/CMakeFiles/rapidcheck.dir/build
+.PHONY : rapidcheck/fast
 
 home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
 .PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o
@@ -494,6 +552,72 @@ test_radio_propagation_main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_main.cpp.s
 .PHONY : test_radio_propagation_main.cpp.s
 
+test_radio_propagation_tests_properties.o: test_radio_propagation_tests_properties.cpp.o
+.PHONY : test_radio_propagation_tests_properties.o
+
+# target to build an object file
+test_radio_propagation_tests_properties.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_radio_propagation_tests_properties.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_radio_propagation_tests_properties.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_radio_propagation_tests_properties.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_tests_properties.cpp.o
+.PHONY : test_radio_propagation_tests_properties.cpp.o
+
+test_radio_propagation_tests_properties.i: test_radio_propagation_tests_properties.cpp.i
+.PHONY : test_radio_propagation_tests_properties.i
+
+# target to preprocess a source file
+test_radio_propagation_tests_properties.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_radio_propagation_tests_properties.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_radio_propagation_tests_properties.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_radio_propagation_tests_properties.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_tests_properties.cpp.i
+.PHONY : test_radio_propagation_tests_properties.cpp.i
+
+test_radio_propagation_tests_properties.s: test_radio_propagation_tests_properties.cpp.s
+.PHONY : test_radio_propagation_tests_properties.s
+
+# target to generate assembly for a file
+test_radio_propagation_tests_properties.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_radio_propagation_tests_properties.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_radio_propagation_tests_properties.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_radio_propagation_tests_properties.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_tests_properties.cpp.s
+.PHONY : test_radio_propagation_tests_properties.cpp.s
+
+test_solar_data_impact.o: test_solar_data_impact.cpp.o
+.PHONY : test_solar_data_impact.o
+
+# target to build an object file
+test_solar_data_impact.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_solar_data_impact.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_solar_data_impact.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_solar_data_impact.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_solar_data_impact.cpp.o
+.PHONY : test_solar_data_impact.cpp.o
+
+test_solar_data_impact.i: test_solar_data_impact.cpp.i
+.PHONY : test_solar_data_impact.i
+
+# target to preprocess a source file
+test_solar_data_impact.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_solar_data_impact.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_solar_data_impact.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_solar_data_impact.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_solar_data_impact.cpp.i
+.PHONY : test_solar_data_impact.cpp.i
+
+test_solar_data_impact.s: test_solar_data_impact.cpp.s
+.PHONY : test_solar_data_impact.s
+
+# target to generate assembly for a file
+test_solar_data_impact.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_solar_data_impact.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_solar_data_impact.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_solar_data_impact.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_solar_data_impact.cpp.s
+.PHONY : test_solar_data_impact.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -501,6 +625,10 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... run_radio_propagation_all_tests"
@@ -511,6 +639,7 @@ help:
 	@echo "... radio_propagation_tests_asan"
 	@echo "... radio_propagation_tests_coverage"
 	@echo "... radio_propagation_tests_tsan"
+	@echo "... rapidcheck"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.i"
 	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.s"
@@ -535,6 +664,12 @@ help:
 	@echo "... test_radio_propagation_main.o"
 	@echo "... test_radio_propagation_main.i"
 	@echo "... test_radio_propagation_main.s"
+	@echo "... test_radio_propagation_tests_properties.o"
+	@echo "... test_radio_propagation_tests_properties.i"
+	@echo "... test_radio_propagation_tests_properties.s"
+	@echo "... test_solar_data_impact.o"
+	@echo "... test_solar_data_impact.i"
+	@echo "... test_solar_data_impact.s"
 .PHONY : help
 
 

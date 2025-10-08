@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openinframap_integration.cpp" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openinframap_integration.cpp.o" "gcc" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openinframap_integration.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_infrastructure_main.cpp" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_infrastructure_main.cpp.o" "gcc" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_infrastructure_main.cpp.o.d"
+  "/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_infrastructure_tests_properties.cpp" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.o" "gcc" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_infrastructure_tests_properties.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/test_openstreetmap_integration.cpp" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_integration.cpp.o" "gcc" "CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir/test_openstreetmap_integration.cpp.o.d"
   )
 

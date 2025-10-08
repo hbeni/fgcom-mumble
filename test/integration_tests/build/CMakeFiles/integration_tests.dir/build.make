@@ -69,64 +69,79 @@ include CMakeFiles/integration_tests.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/integration_tests.dir/flags.make
 
+CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o: CMakeFiles/integration_tests.dir/flags.make
+CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_tests_properties.cpp
+CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o: CMakeFiles/integration_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o"
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o -MF CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o.d -o CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_tests_properties.cpp
+
+CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.i"
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_tests_properties.cpp > CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.i
+
+CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.s"
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_tests_properties.cpp -o CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.s
+
 CMakeFiles/integration_tests.dir/test_integration_main.cpp.o: CMakeFiles/integration_tests.dir/flags.make
 CMakeFiles/integration_tests.dir/test_integration_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_main.cpp
 CMakeFiles/integration_tests.dir/test_integration_main.cpp.o: CMakeFiles/integration_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/integration_tests.dir/test_integration_main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_integration_main.cpp.o -MF CMakeFiles/integration_tests.dir/test_integration_main.cpp.o.d -o CMakeFiles/integration_tests.dir/test_integration_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/integration_tests.dir/test_integration_main.cpp.o"
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_integration_main.cpp.o -MF CMakeFiles/integration_tests.dir/test_integration_main.cpp.o.d -o CMakeFiles/integration_tests.dir/test_integration_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_main.cpp
 
 CMakeFiles/integration_tests.dir/test_integration_main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/integration_tests.dir/test_integration_main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_main.cpp > CMakeFiles/integration_tests.dir/test_integration_main.cpp.i
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_main.cpp > CMakeFiles/integration_tests.dir/test_integration_main.cpp.i
 
 CMakeFiles/integration_tests.dir/test_integration_main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/integration_tests.dir/test_integration_main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_main.cpp -o CMakeFiles/integration_tests.dir/test_integration_main.cpp.s
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_integration_main.cpp -o CMakeFiles/integration_tests.dir/test_integration_main.cpp.s
 
 CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o: CMakeFiles/integration_tests.dir/flags.make
 CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_end_to_end.cpp
 CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o: CMakeFiles/integration_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o -MF CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o.d -o CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_end_to_end.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o"
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o -MF CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o.d -o CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_end_to_end.cpp
 
 CMakeFiles/integration_tests.dir/test_end_to_end.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/integration_tests.dir/test_end_to_end.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_end_to_end.cpp > CMakeFiles/integration_tests.dir/test_end_to_end.cpp.i
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_end_to_end.cpp > CMakeFiles/integration_tests.dir/test_end_to_end.cpp.i
 
 CMakeFiles/integration_tests.dir/test_end_to_end.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/integration_tests.dir/test_end_to_end.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_end_to_end.cpp -o CMakeFiles/integration_tests.dir/test_end_to_end.cpp.s
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_end_to_end.cpp -o CMakeFiles/integration_tests.dir/test_end_to_end.cpp.s
 
 CMakeFiles/integration_tests.dir/test_multi_client.cpp.o: CMakeFiles/integration_tests.dir/flags.make
 CMakeFiles/integration_tests.dir/test_multi_client.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_multi_client.cpp
 CMakeFiles/integration_tests.dir/test_multi_client.cpp.o: CMakeFiles/integration_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/integration_tests.dir/test_multi_client.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_multi_client.cpp.o -MF CMakeFiles/integration_tests.dir/test_multi_client.cpp.o.d -o CMakeFiles/integration_tests.dir/test_multi_client.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_multi_client.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/integration_tests.dir/test_multi_client.cpp.o"
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_multi_client.cpp.o -MF CMakeFiles/integration_tests.dir/test_multi_client.cpp.o.d -o CMakeFiles/integration_tests.dir/test_multi_client.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_multi_client.cpp
 
 CMakeFiles/integration_tests.dir/test_multi_client.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/integration_tests.dir/test_multi_client.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_multi_client.cpp > CMakeFiles/integration_tests.dir/test_multi_client.cpp.i
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_multi_client.cpp > CMakeFiles/integration_tests.dir/test_multi_client.cpp.i
 
 CMakeFiles/integration_tests.dir/test_multi_client.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/integration_tests.dir/test_multi_client.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_multi_client.cpp -o CMakeFiles/integration_tests.dir/test_multi_client.cpp.s
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_multi_client.cpp -o CMakeFiles/integration_tests.dir/test_multi_client.cpp.s
 
 CMakeFiles/integration_tests.dir/test_stress.cpp.o: CMakeFiles/integration_tests.dir/flags.make
 CMakeFiles/integration_tests.dir/test_stress.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_stress.cpp
 CMakeFiles/integration_tests.dir/test_stress.cpp.o: CMakeFiles/integration_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/integration_tests.dir/test_stress.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_stress.cpp.o -MF CMakeFiles/integration_tests.dir/test_stress.cpp.o.d -o CMakeFiles/integration_tests.dir/test_stress.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_stress.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/integration_tests.dir/test_stress.cpp.o"
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/integration_tests.dir/test_stress.cpp.o -MF CMakeFiles/integration_tests.dir/test_stress.cpp.o.d -o CMakeFiles/integration_tests.dir/test_stress.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_stress.cpp
 
 CMakeFiles/integration_tests.dir/test_stress.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/integration_tests.dir/test_stress.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_stress.cpp > CMakeFiles/integration_tests.dir/test_stress.cpp.i
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_stress.cpp > CMakeFiles/integration_tests.dir/test_stress.cpp.i
 
 CMakeFiles/integration_tests.dir/test_stress.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/integration_tests.dir/test_stress.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_stress.cpp -o CMakeFiles/integration_tests.dir/test_stress.cpp.s
+	/usr/bin/afl-clang-fast++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/integration_tests/test_stress.cpp -o CMakeFiles/integration_tests.dir/test_stress.cpp.s
 
 # Object files for target integration_tests
 integration_tests_OBJECTS = \
+"CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o" \
 "CMakeFiles/integration_tests.dir/test_integration_main.cpp.o" \
 "CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o" \
 "CMakeFiles/integration_tests.dir/test_multi_client.cpp.o" \
@@ -135,13 +150,15 @@ integration_tests_OBJECTS = \
 # External object files for target integration_tests
 integration_tests_EXTERNAL_OBJECTS =
 
+integration_tests: CMakeFiles/integration_tests.dir/test_integration_tests_properties.cpp.o
 integration_tests: CMakeFiles/integration_tests.dir/test_integration_main.cpp.o
 integration_tests: CMakeFiles/integration_tests.dir/test_end_to_end.cpp.o
 integration_tests: CMakeFiles/integration_tests.dir/test_multi_client.cpp.o
 integration_tests: CMakeFiles/integration_tests.dir/test_stress.cpp.o
 integration_tests: CMakeFiles/integration_tests.dir/build.make
+integration_tests: rapidcheck/librapidcheck.a
 integration_tests: CMakeFiles/integration_tests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable integration_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable integration_tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/integration_tests.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

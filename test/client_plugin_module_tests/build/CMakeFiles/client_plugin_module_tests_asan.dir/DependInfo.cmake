@@ -39,6 +39,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp" "CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp.o" "gcc" "CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/shared_data.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp" "CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp.o" "gcc" "CMakeFiles/client_plugin_module_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/solar_data.cpp.o.d"
   "/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/test_client_plugin_module_simple.cpp" "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_simple.cpp.o" "gcc" "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_simple.cpp.o.d"
+  "/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/test_client_plugin_module_tests_properties.cpp" "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_tests_properties.cpp.o" "gcc" "CMakeFiles/client_plugin_module_tests_asan.dir/test_client_plugin_module_tests_properties.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

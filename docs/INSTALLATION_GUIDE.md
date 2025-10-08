@@ -29,22 +29,40 @@ For full functionality with v2.0+ features, ensure you have the additional depen
 ```bash
 sudo apt-get update
 sudo apt-get install python3 bc libssl-dev libcurl4-openssl-dev libjsoncpp-dev
-# Optional: For GPU acceleration
-sudo apt-get install nvidia-cuda-toolkit  # For CUDA support
-sudo apt-get install opencl-headers     # For OpenCL support
+
+# GPU Acceleration Dependencies (Optional but Recommended)
+# For NVIDIA GPUs (CUDA support)
+sudo apt-get install nvidia-cuda-toolkit nvidia-driver-470
+# For AMD/Intel GPUs (OpenCL support)
+sudo apt-get install opencl-headers ocl-icd-opencl-dev
+# For Intel GPUs specifically
+sudo apt-get install intel-opencl-icd
+# For AMD GPUs specifically
+sudo apt-get install rocm-opencl-runtime
 ```
 
 **Windows:**
 - Install Python 3.x from python.org
 - Install bc calculator (available via Chocolatey: `choco install bc`)
 - Install Visual Studio Build Tools for C++ compilation
-- Install CUDA Toolkit (optional, for GPU acceleration)
+
+**GPU Acceleration Dependencies (Optional but Recommended):**
+- **NVIDIA GPUs**: Install CUDA Toolkit 11.0+ from NVIDIA Developer
+- **AMD GPUs**: Install AMD Radeon Software with OpenCL support
+- **Intel GPUs**: Install Intel Graphics Driver with OpenCL support
+- **All GPUs**: Install OpenCL runtime for cross-platform support
 
 **macOS:**
 ```bash
 brew install python3 bc openssl curl jsoncpp
-# Optional: For GPU acceleration
-brew install cuda  # For CUDA support
+
+# GPU Acceleration Dependencies (Optional but Recommended)
+# For NVIDIA GPUs (CUDA support)
+brew install cuda
+# For Apple Silicon/Intel GPUs (Metal support - built-in)
+# Metal is automatically available on macOS 10.14+
+# For OpenCL support (if needed)
+brew install opencl-headers
 ```
 
 ### GUI Method (Recommended)
@@ -109,6 +127,137 @@ FGCom-mumble v2.0+ includes comprehensive configuration options for all advanced
 
 All configuration files support INI format with comprehensive documentation and validation.
 
+## GPU Acceleration Setup
+
+### GPU Acceleration Modes
+
+FGCom-mumble supports four GPU acceleration modes:
+
+#### 1. DISABLED Mode
+- **Description**: No GPU acceleration, all processing on CPU
+- **Use Case**: Systems without GPU or when GPU resources are needed for other applications
+- **Configuration**: `enable_gpu_acceleration = false`
+
+#### 2. SERVER_ONLY Mode
+- **Description**: GPU acceleration only on the server
+- **Use Case**: Centralized processing with powerful server GPU
+- **Configuration**: `gpu_mode = server`
+
+#### 3. CLIENT_ONLY Mode
+- **Description**: GPU acceleration only on client machines
+- **Use Case**: Distributed processing with client GPUs
+- **Configuration**: `gpu_mode = client`
+
+#### 4. HYBRID Mode (Recommended)
+- **Description**: Intelligent distribution between server and client GPUs
+- **Use Case**: Optimal performance with load balancing
+- **Configuration**: `gpu_mode = hybrid`
+
+### GPU Framework Selection
+
+#### NVIDIA GPUs (CUDA)
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+enable_cuda = true
+cuda_device_id = 0
+cuda_memory_fraction = 0.8
+```
+
+#### AMD/Intel GPUs (OpenCL)
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+enable_opencl = true
+opencl_platform_id = 0
+opencl_device_id = 0
+```
+
+#### Apple GPUs (Metal)
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+enable_metal = true
+metal_device_id = 0
+```
+
+### GPU Resource Management
+
+#### Basic GPU Resource Limiting
+```ini
+[gpu_resource_limiting]
+enable_gpu_resource_limiting = true
+gpu_usage_percentage_limit = 30
+gpu_memory_limit_mb = 256
+gpu_priority_level = 3
+```
+
+#### Adaptive GPU Usage (Recommended for Gaming)
+```ini
+[gpu_resource_limiting]
+enable_gpu_resource_limiting = true
+gpu_usage_percentage_limit = 30
+enable_adaptive_gpu_usage = true
+min_gpu_usage_percentage = 10
+max_gpu_usage_percentage = 50
+game_detection_reduction = 50
+high_load_reduction = 30
+low_battery_reduction = 40
+```
+
+### GPU Performance Optimization
+
+#### High-Performance Configuration
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+gpu_memory_limit = 4096
+gpu_max_concurrent_operations = 8
+temperature_threshold = 85.0
+utilization_threshold = 90.0
+enable_memory_optimization = true
+enable_thermal_management = true
+```
+
+#### Gaming-Optimized Configuration
+```ini
+[gpu_resource_limiting]
+enable_gpu_resource_limiting = true
+gpu_usage_percentage_limit = 25
+gpu_memory_limit_mb = 128
+gpu_priority_level = 2
+enable_adaptive_gpu_usage = true
+game_detection_reduction = 60
+```
+
+### GPU Monitoring and Debugging
+
+#### Enable GPU Monitoring
+```ini
+[gpu_resource_limiting]
+enable_gpu_monitoring = true
+enable_gpu_usage_logging = true
+gpu_usage_log_file = gpu_usage.log
+enable_gpu_statistics = true
+```
+
+#### Debug GPU Issues
+```bash
+# Check GPU status
+nvidia-smi  # For NVIDIA GPUs
+clinfo      # For OpenCL GPUs
+
+# Monitor GPU usage
+watch -n 1 nvidia-smi
+
+# Check FGCom GPU status via API
+curl "http://localhost:8080/api/v1/gpu-resource/status"
+```
+
 ## Troubleshooting Installation Issues
 
 ### Installation Issues
@@ -124,6 +273,13 @@ All configuration files support INI format with comprehensive documentation and 
 - Check bc calculator is available: `bc --version`
 - For GPU acceleration, verify CUDA/OpenCL drivers are installed
 - Check configuration files are in correct locations
+
+**GPU acceleration issues:**
+- **GPU not detected**: Check GPU drivers are installed and up-to-date
+- **CUDA not working**: Verify CUDA Toolkit installation and NVIDIA drivers
+- **OpenCL not working**: Install OpenCL runtime and drivers for your GPU
+- **Performance issues**: Check GPU temperature and memory usage
+- **Game conflicts**: Enable GPU resource limiting for gaming systems
 
 **Configuration issues:**
 - Ensure configuration files are in the correct directory (`configs/` not `config/`)

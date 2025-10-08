@@ -69,10 +69,24 @@ include CMakeFiles/status_page_module_tests.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/status_page_module_tests.dir/flags.make
 
+CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o: CMakeFiles/status_page_module_tests.dir/flags.make
+CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_module_tests_properties.cpp
+CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o: CMakeFiles/status_page_module_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o -MF CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o.d -o CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_module_tests_properties.cpp
+
+CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_module_tests_properties.cpp > CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.i
+
+CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_module_tests_properties.cpp -o CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.s
+
 CMakeFiles/status_page_module_tests.dir/main.cpp.o: CMakeFiles/status_page_module_tests.dir/flags.make
 CMakeFiles/status_page_module_tests.dir/main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/main.cpp
 CMakeFiles/status_page_module_tests.dir/main.cpp.o: CMakeFiles/status_page_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/status_page_module_tests.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/status_page_module_tests.dir/main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/status_page_module_tests.dir/main.cpp.o -MF CMakeFiles/status_page_module_tests.dir/main.cpp.o.d -o CMakeFiles/status_page_module_tests.dir/main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/main.cpp
 
 CMakeFiles/status_page_module_tests.dir/main.cpp.i: cmake_force
@@ -86,7 +100,7 @@ CMakeFiles/status_page_module_tests.dir/main.cpp.s: cmake_force
 CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o: CMakeFiles/status_page_module_tests.dir/flags.make
 CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_main.cpp
 CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o: CMakeFiles/status_page_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o -MF CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o.d -o CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_status_page_main.cpp
 
 CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.i: cmake_force
@@ -100,7 +114,7 @@ CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.s: cmake_force
 CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o: CMakeFiles/status_page_module_tests.dir/flags.make
 CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_web_interface.cpp
 CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o: CMakeFiles/status_page_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o -MF CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o.d -o CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_web_interface.cpp
 
 CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.i: cmake_force
@@ -114,7 +128,7 @@ CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.s: cmake_force
 CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o: CMakeFiles/status_page_module_tests.dir/flags.make
 CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_data_accuracy.cpp
 CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o: CMakeFiles/status_page_module_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o -MF CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o.d -o CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/test_data_accuracy.cpp
 
 CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.i: cmake_force
@@ -127,6 +141,7 @@ CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.s: cmake_force
 
 # Object files for target status_page_module_tests
 status_page_module_tests_OBJECTS = \
+"CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o" \
 "CMakeFiles/status_page_module_tests.dir/main.cpp.o" \
 "CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o" \
 "CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o" \
@@ -135,15 +150,17 @@ status_page_module_tests_OBJECTS = \
 # External object files for target status_page_module_tests
 status_page_module_tests_EXTERNAL_OBJECTS =
 
+status_page_module_tests: CMakeFiles/status_page_module_tests.dir/test_status_page_module_tests_properties.cpp.o
 status_page_module_tests: CMakeFiles/status_page_module_tests.dir/main.cpp.o
 status_page_module_tests: CMakeFiles/status_page_module_tests.dir/test_status_page_main.cpp.o
 status_page_module_tests: CMakeFiles/status_page_module_tests.dir/test_web_interface.cpp.o
 status_page_module_tests: CMakeFiles/status_page_module_tests.dir/test_data_accuracy.cpp.o
 status_page_module_tests: CMakeFiles/status_page_module_tests.dir/build.make
+status_page_module_tests: rapidcheck/librapidcheck.a
 status_page_module_tests: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 status_page_module_tests: /usr/lib/x86_64-linux-gnu/libgtest.a
 status_page_module_tests: CMakeFiles/status_page_module_tests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable status_page_module_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/status_page_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable status_page_module_tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/status_page_module_tests.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

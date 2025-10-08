@@ -69,10 +69,24 @@ include CMakeFiles/database_configuration_module_tests_coverage.dir/progress.mak
 # Include the compile flags for this target's objects.
 include CMakeFiles/database_configuration_module_tests_coverage.dir/flags.make
 
+CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/flags.make
+CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_database_configuration_module_tests_properties.cpp
+CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o -MF CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o.d -o CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_database_configuration_module_tests_properties.cpp
+
+CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_database_configuration_module_tests_properties.cpp > CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.i
+
+CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_database_configuration_module_tests_properties.cpp -o CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.s
+
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/flags.make
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_database_configuration_main.cpp
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o -MF CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o.d -o CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_database_configuration_main.cpp
 
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.i: cmake_force
@@ -86,7 +100,7 @@ CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_config
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/flags.make
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_csv_parsing.cpp
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o -MF CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o.d -o CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_csv_parsing.cpp
 
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.i: cmake_force
@@ -100,7 +114,7 @@ CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/flags.make
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_configuration_file.cpp
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o: CMakeFiles/database_configuration_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o -MF CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o.d -o CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/test_configuration_file.cpp
 
 CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.i: cmake_force
@@ -113,6 +127,7 @@ CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_f
 
 # Object files for target database_configuration_module_tests_coverage
 database_configuration_module_tests_coverage_OBJECTS = \
+"CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o" \
 "CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o" \
 "CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o" \
 "CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o"
@@ -120,14 +135,16 @@ database_configuration_module_tests_coverage_OBJECTS = \
 # External object files for target database_configuration_module_tests_coverage
 database_configuration_module_tests_coverage_EXTERNAL_OBJECTS =
 
+database_configuration_module_tests_coverage: CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_module_tests_properties.cpp.o
 database_configuration_module_tests_coverage: CMakeFiles/database_configuration_module_tests_coverage.dir/test_database_configuration_main.cpp.o
 database_configuration_module_tests_coverage: CMakeFiles/database_configuration_module_tests_coverage.dir/test_csv_parsing.cpp.o
 database_configuration_module_tests_coverage: CMakeFiles/database_configuration_module_tests_coverage.dir/test_configuration_file.cpp.o
 database_configuration_module_tests_coverage: CMakeFiles/database_configuration_module_tests_coverage.dir/build.make
+database_configuration_module_tests_coverage: rapidcheck/librapidcheck.a
 database_configuration_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 database_configuration_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest.a
 database_configuration_module_tests_coverage: CMakeFiles/database_configuration_module_tests_coverage.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable database_configuration_module_tests_coverage"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable database_configuration_module_tests_coverage"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/database_configuration_module_tests_coverage.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
