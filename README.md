@@ -79,7 +79,7 @@ We need experienced users to test new features, provide feedback, and help ident
 ### For Pilots and Users
 | Guide | Purpose |
 |-------|---------|
-| **[Installation Guide](docs/INSTALLATION.md)** | Complete setup and installation instructions |
+| **[Installation Guide](docs/INSTALLATION_GUIDE.md)** | Complete setup and installation instructions |
 | **[Client Usage Guide](docs/CLIENT_USAGE_GUIDE.md)** | How to use FGCom-mumble with your flight simulator |
 | **[WebRTC Gateway](webrtc-gateway/README.md)** | Browser-based access (no installation required) |
 | **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** | ATIS, test frequencies, and special features |
