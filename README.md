@@ -38,22 +38,32 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 FGCom-mumble requires secure credential management. All sensitive data must be stored as environment variables.
 
-### Quick Security Setup
+### Quick Configuration Setup
 
 ```bash
-# 1. Run the interactive setup script
+# 1. Run the interactive configuration setup (RECOMMENDED)
+./scripts/setup.sh
+
+# 2. Or run the environment setup only
 ./scripts/setup_environment.sh
 
-# 2. Or manually copy the template
+# 3. Or manually copy the template
 cp configs/env.template .env
 chmod 600 .env
 
-# 3. Edit with your credentials
+# 4. Edit with your credentials
 nano .env
 
 # 4. Load environment variables
 source .env
 ```
+
+**The interactive setup script (`./scripts/setup.sh`) will guide you through:**
+- Core application settings (API keys, database)
+- External data sources (NOAA, NASA, weather APIs)
+- GPU acceleration configuration
+- Feature toggles and network settings
+- Monitoring and logging options
 
 ### Security Documentation
 
