@@ -1010,4 +1010,409 @@ curl -X GET "http://localhost:8080/api/v1/eme/moon-position?band=2m" \
   -H "Authorization: Bearer your_jwt_token_here"
 ```
 
+## Satellite Communication API
+
+### Satellite Simulation
+
+#### POST /satellite/add
+Add a fake satellite to the simulation system.
+
+**Request:**
+```json
+{
+  "name": "FAKE-SAT-1",
+  "type": "AMATEUR_LINEAR",
+  "mode": "LINEAR_TRANSPONDER",
+  "tle": {
+    "line1": "1 12345U 12345A   12345.12345678  .00000000  00000-0  00000-0 0  1234",
+    "line2": "2 12345  98.5000 000.0000 0000000   0.0000   0.0000 14.12345678901234"
+  },
+  "frequencies": {
+    "uplink": 145.900,
+    "downlink": 435.800
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "satellite": {
+    "name": "FAKE-SAT-1",
+    "type": "AMATEUR_LINEAR",
+    "mode": "LINEAR_TRANSPONDER",
+    "frequencies": {
+      "uplink": 145.900,
+      "downlink": 435.800
+    },
+    "tle_valid": true,
+    "simulation_active": true
+  }
+}
+```
+
+#### POST /satellite/simulate
+Simulate satellite communication with realistic effects.
+
+**Request:**
+```json
+{
+  "satellite": "FAKE-SAT-1",
+  "ground_station": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "altitude": 0.0
+  },
+  "audio_data": "base64_encoded_audio_data",
+  "simulation_effects": {
+    "doppler_shift": true,
+    "signal_degradation": true,
+    "orbital_mechanics": true
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "satellite": "FAKE-SAT-1",
+  "position": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "altitude": 400.0,
+    "elevation": 45.2,
+    "azimuth": 180.5,
+    "range": 1200.5
+  },
+  "doppler_shift": 2.3,
+  "simulated_audio": "base64_encoded_simulated_audio",
+  "communication_quality": 0.85,
+  "signal_strength": -85.2
+}
+```
+
+#### GET /satellite/position/{satellite}
+Get current satellite position and tracking data.
+
+**Response:**
+```json
+{
+  "success": true,
+  "satellite": "FAKE-SAT-1",
+  "position": {
+    "latitude": 40.7128,
+    "longitude": -74.0060,
+    "altitude": 400.0,
+    "elevation": 45.2,
+    "azimuth": 180.5,
+    "range": 1200.5,
+    "velocity": 7.5,
+    "doppler_shift": 2.3
+  },
+  "visibility": {
+    "visible": true,
+    "elevation_angle": 45.2,
+    "azimuth_angle": 180.5,
+    "range_km": 1200.5
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+#### GET /satellite/passes/{satellite}
+Get satellite pass predictions.
+
+**Query Parameters:**
+- `hours` (optional): Hours to predict ahead (default: 24)
+
+**Response:**
+```json
+{
+  "success": true,
+  "satellite": "FAKE-SAT-1",
+  "passes": [
+    {
+      "aos": "2024-01-15T10:30:00Z",
+      "los": "2024-01-15T10:45:00Z",
+      "max_elevation": 67.8,
+      "max_elevation_time": "2024-01-15T10:37:30Z",
+      "duration": 900,
+      "visible": true
+    }
+  ],
+  "total_passes": 1,
+  "next_pass": "2024-01-15T10:30:00Z"
+}
+```
+
+#### POST /satellite/configure
+Configure satellite simulation parameters.
+
+**Request:**
+```json
+{
+  "satellite": "FAKE-SAT-1",
+  "parameters": {
+    "tracking_enabled": true,
+    "tracking_interval": 1.0,
+    "doppler_compensation": true,
+    "simulation_effects": {
+      "signal_degradation": true,
+      "atmospheric_effects": true,
+      "orbital_mechanics": true
+    }
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "satellite": "FAKE-SAT-1",
+  "configuration": {
+    "tracking_enabled": true,
+    "tracking_interval": 1.0,
+    "doppler_compensation": true,
+    "simulation_effects": {
+      "signal_degradation": true,
+      "atmospheric_effects": true,
+      "orbital_mechanics": true
+    }
+  }
+}
+```
+
+#### GET /satellite/list
+List all available satellites (real and simulated).
+
+**Response:**
+```json
+{
+  "success": true,
+  "satellites": [
+    {
+      "name": "FAKE-SAT-1",
+      "type": "AMATEUR_LINEAR",
+      "mode": "LINEAR_TRANSPONDER",
+      "simulated": true,
+      "active": true
+    },
+    {
+      "name": "AO-7",
+      "type": "AMATEUR_LINEAR",
+      "mode": "LINEAR_TRANSPONDER",
+      "simulated": false,
+      "active": true
+    }
+  ],
+  "total_satellites": 2
+}
+```
+
+### Satellite Simulation Features
+
+#### Supported Satellite Types
+- **Military Satellites**: Strela-3, FLTSATCOM, Tsiklon
+- **Amateur Satellites**: AO-7, FO-29, AO-73, XW-2 series, SO-50, AO-91, AO-85, ISS
+- **IoT Satellites**: Orbcomm, Gonets
+
+#### Simulation Capabilities
+- **Orbital Mechanics**: TLE-based position calculations using SGP4/SDP4 algorithms
+- **Doppler Shift**: Frequency compensation for satellite motion
+- **Visibility**: Satellite pass predictions and tracking
+- **Frequency Management**: Uplink/downlink frequency pairs
+- **Communication Modes**: Linear transponder, FM repeater, digital modes
+- **Signal Processing**: Realistic audio effects and degradation
+
+### Python SDK Example for Satellite Simulation
+```python
+import requests
+import json
+
+class SatelliteAPI:
+    def __init__(self, base_url, token):
+        self.base_url = base_url
+        self.headers = {
+            'Authorization': f'Bearer {token}',
+            'Content-Type': 'application/json'
+        }
+    
+    def add_satellite(self, name, satellite_type, mode, tle, frequencies):
+        data = {
+            'name': name,
+            'type': satellite_type,
+            'mode': mode,
+            'tle': tle,
+            'frequencies': frequencies
+        }
+        
+        response = requests.post(
+            f'{self.base_url}/satellite/add',
+            headers=self.headers,
+            json=data
+        )
+        return response.json()
+    
+    def simulate_communication(self, satellite, ground_station, audio_data, effects):
+        data = {
+            'satellite': satellite,
+            'ground_station': ground_station,
+            'audio_data': audio_data,
+            'simulation_effects': effects
+        }
+        
+        response = requests.post(
+            f'{self.base_url}/satellite/simulate',
+            headers=self.headers,
+            json=data
+        )
+        return response.json()
+    
+    def get_satellite_position(self, satellite):
+        response = requests.get(
+            f'{self.base_url}/satellite/position/{satellite}',
+            headers=self.headers
+        )
+        return response.json()
+    
+    def get_satellite_passes(self, satellite, hours=24):
+        params = {'hours': hours}
+        response = requests.get(
+            f'{self.base_url}/satellite/passes/{satellite}',
+            headers=self.headers,
+            params=params
+        )
+        return response.json()
+
+# Usage
+api = SatelliteAPI('http://localhost:8080/api/v1', 'your_token_here')
+
+# Add fake satellite
+satellite = api.add_satellite(
+    name="FAKE-SAT-1",
+    satellite_type="AMATEUR_LINEAR",
+    mode="LINEAR_TRANSPONDER",
+    tle={
+        "line1": "1 12345U 12345A   12345.12345678  .00000000  00000-0  00000-0 0  1234",
+        "line2": "2 12345  98.5000 000.0000 0000000   0.0000   0.0000 14.12345678901234"
+    },
+    frequencies={"uplink": 145.900, "downlink": 435.800}
+)
+
+# Simulate communication
+result = api.simulate_communication(
+    satellite="FAKE-SAT-1",
+    ground_station={"latitude": 40.7128, "longitude": -74.0060, "altitude": 0.0},
+    audio_data="base64_encoded_audio",
+    effects={"doppler_shift": True, "signal_degradation": True}
+)
+
+print(f"Communication quality: {result['communication_quality']}")
+print(f"Doppler shift: {result['doppler_shift']} Hz")
+```
+
+### JavaScript SDK Example for Satellite Simulation
+```javascript
+class SatelliteAPI {
+    constructor(baseUrl, token) {
+        this.baseUrl = baseUrl;
+        this.token = token;
+    }
+    
+    async request(endpoint, options = {}) {
+        const url = `${this.baseUrl}${endpoint}`;
+        const config = {
+            headers: {
+                'Authorization': `Bearer ${this.token}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            },
+            ...options
+        };
+        
+        const response = await fetch(url, config);
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error?.message || 'Request failed');
+        }
+        
+        return data;
+    }
+    
+    async addSatellite(name, type, mode, tle, frequencies) {
+        return this.request('/satellite/add', {
+            method: 'POST',
+            body: JSON.stringify({
+                name: name,
+                type: type,
+                mode: mode,
+                tle: tle,
+                frequencies: frequencies
+            })
+        });
+    }
+    
+    async simulateCommunication(satellite, groundStation, audioData, effects) {
+        return this.request('/satellite/simulate', {
+            method: 'POST',
+            body: JSON.stringify({
+                satellite: satellite,
+                ground_station: groundStation,
+                audio_data: audioData,
+                simulation_effects: effects
+            })
+        });
+    }
+    
+    async getSatellitePosition(satellite) {
+        return this.request(`/satellite/position/${satellite}`);
+    }
+    
+    async getSatellitePasses(satellite, hours = 24) {
+        const params = new URLSearchParams({ hours: hours.toString() });
+        return this.request(`/satellite/passes/${satellite}?${params}`);
+    }
+}
+
+// Usage
+const api = new SatelliteAPI('http://localhost:8080/api/v1', 'your_token_here');
+
+// Add fake satellite
+api.addSatellite(
+    'FAKE-SAT-1',
+    'AMATEUR_LINEAR',
+    'LINEAR_TRANSPONDER',
+    {
+        line1: '1 12345U 12345A   12345.12345678  .00000000  00000-0  00000-0 0  1234',
+        line2: '2 12345  98.5000 000.0000 0000000   0.0000   0.0000 14.12345678901234'
+    },
+    { uplink: 145.900, downlink: 435.800 }
+)
+.then(satellite => {
+    console.log('Satellite added:', satellite.satellite.name);
+})
+.catch(error => {
+    console.error('Error:', error.message);
+});
+
+// Simulate communication
+api.simulateCommunication(
+    'FAKE-SAT-1',
+    { latitude: 40.7128, longitude: -74.0060, altitude: 0.0 },
+    'base64_encoded_audio',
+    { doppler_shift: true, signal_degradation: true }
+)
+.then(result => {
+    console.log(`Communication quality: ${result.communication_quality}`);
+    console.log(`Doppler shift: ${result.doppler_shift} Hz`);
+})
+.catch(error => {
+    console.error('Error:', error.message);
+});
+```
+
 This comprehensive API reference provides complete documentation for all FGCom-mumble RESTful API endpoints and WebSocket communication, with practical examples in multiple programming languages.
