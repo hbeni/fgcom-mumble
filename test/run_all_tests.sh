@@ -35,11 +35,11 @@ run_test_module() {
                 local test_count=$(grep -c "\[  PASSED  \]" ../test-logs/${module_name}_test_output.log 2>/dev/null || echo "0")
                 local total_count=$(grep -c "\[  PASSED  \]\|\[  FAILED  \]" ../test-logs/${module_name}_test_output.log 2>/dev/null || echo "0")
                 
-                TEST_RESULTS+="✅ $module_name: $test_count/$total_count tests passed\n"
+                TEST_RESULTS+="PASS $module_name: $test_count/$total_count tests passed\n"
                 PASSED_TESTS=$((PASSED_TESTS + test_count))
                 TOTAL_TESTS=$((TOTAL_TESTS + total_count))
             else
-                TEST_RESULTS+="❌ $module_name: Tests failed\n"
+                TEST_RESULTS+="FAIL $module_name: Tests failed\n"
                 FAILED_TESTS=$((FAILED_TESTS + 1))
             fi
         else
@@ -52,7 +52,7 @@ run_test_module() {
                         local test_count=$(grep -c "\[  PASSED  \]" ../test-logs/${module_name}_test_output.log 2>/dev/null || echo "0")
                         local total_count=$(grep -c "\[  PASSED  \]\|\[  FAILED  \]" ../test-logs/${module_name}_test_output.log 2>/dev/null || echo "0")
                         
-                        TEST_RESULTS+="✅ $module_name: $test_count/$total_count tests passed\n"
+                        TEST_RESULTS+="PASS $module_name: $test_count/$total_count tests passed\n"
                         PASSED_TESTS=$((PASSED_TESTS + test_count))
                         TOTAL_TESTS=$((TOTAL_TESTS + total_count))
                         break
@@ -62,7 +62,7 @@ run_test_module() {
         fi
     else
         echo "Build failed for $module_name"
-        TEST_RESULTS+="❌ $module_name: Build failed\n"
+                TEST_RESULTS+="FAIL $module_name: Build failed\n"
         FAILED_TESTS=$((FAILED_TESTS + 1))
     fi
     
@@ -93,8 +93,11 @@ declare -a TEST_MODULES=(
     "performance_tests"
     "professional_audio_tests"
     "radio_propagation_tests"
+    "satellite_communication_tests"
     "security_module_tests"
     "status_page_module_tests"
+    "tts_integration_tests"
+    "voice_encryption_tests"
     "weather_impact_tests"
     "webrtc_api_tests"
     "work_unit_distribution_module_tests"
@@ -106,7 +109,7 @@ for module in "${TEST_MODULES[@]}"; do
         run_test_module "$module" "$module"
     else
         echo "Module $module not found, skipping..."
-        TEST_RESULTS+="⚠️ $module: Module not found\n"
+        TEST_RESULTS+="WARN $module: Module not found\n"
     fi
 done
 

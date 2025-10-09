@@ -29,6 +29,10 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../voice-encryption/systems/granit/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../voice-encryption/systems/stanag-4197/include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../voice-encryption/systems/stanag-4197/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../voice-encryption/systems/freedv/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../voice-encryption/systems/freedv/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../voice-encryption/systems/melpe/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../voice-encryption/systems/melpe/src
 )
 
 # Source files
@@ -37,6 +41,8 @@ set(SOURCES
     test_vinson_ky57.cpp
     test_granit.cpp
     test_stanag_4197.cpp
+    test_freedv.cpp
+    test_melpe.cpp
 )
 
 # Create executable
@@ -48,6 +54,8 @@ target_link_libraries(voice_encryption_tests
     vinson_ky57
     granit
     stanag_4197
+    freedv
+    melpe
     GTest::GTest
     GTest::Main
     GMock::GMock

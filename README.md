@@ -229,6 +229,7 @@ udpServerHost=*
 - **[Advanced Features](docs/advanced_features.md)** - Comprehensive overview of all advanced features
 - **[WebRTC Browser Client Support](docs/web_rtc.md)** - WebRTC implementation documentation
 - **[Antenna Pattern Creation](docs/antenna_patterns.md)** - Antenna pattern creation guides
+- **[Utilities and Tools](docs/utilities_and_tools.md)** - Available utilities and tools
 
 ### Game Integration
 - **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** - Integration requirements and protocols
@@ -261,6 +262,21 @@ udpServerHost=*
 ### Advanced APIs
 - **[Work Unit Distribution API](docs/WORK_UNIT_DISTRIBUTION_API.md)** - Distributed computing and work unit management
 - **[Security API Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Comprehensive security implementation
+
+### Voice Encryption Systems
+- **[Voice Encryption Analysis](voice-encryption/docs/DEGRADATION_AND_INTERCEPTION_ANALYSIS.md)** - Comprehensive analysis of voice encryption systems
+- **[FreeDV Implementation](voice-encryption/systems/freedv/README.md)** - FreeDV digital voice system
+- **[MELPe Implementation](voice-encryption/systems/melpe/README.md)** - MELPe NATO standard vocoder
+
+### Satellite Communication
+- **[Satellite Communication Documentation](voice-encryption/systems/satellites/docs/SATELLITE_COMMUNICATION_DOCUMENTATION.md)** - Complete satellite communication system
+- **[TLE Support](voice-encryption/systems/satellites/orbital/tle_support.h)** - Two-Line Element orbital calculations
+- **[Military Satellites](voice-encryption/systems/satellites/military/)** - Military satellite systems (Strela-3, FLTSATCOM, Tsiklon)
+- **[Amateur Radio Satellites](voice-encryption/systems/satellites/amateur/)** - Amateur radio satellite systems (AO-7, FO-29, ISS, etc.)
+- **[IoT Satellites](voice-encryption/systems/satellites/iot/)** - IoT and data satellite systems (Orbcomm, Gonets)
+
+### Text-to-Speech Integration
+- **[Piper TTS Integration](scripts/tts/README.md)** - Automatic ATIS generation with Piper TTS
 
 
 ---

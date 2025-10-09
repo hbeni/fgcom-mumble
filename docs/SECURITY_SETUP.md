@@ -2,7 +2,7 @@
 
 This guide explains how to securely configure FGCom-Mumble with environment variables for API keys, passwords, and other sensitive credentials.
 
-## ⚠️ CRITICAL SECURITY WARNING
+## CRITICAL SECURITY WARNING
 
 **NEVER store passwords, API keys, or usernames directly in configuration files!**
 

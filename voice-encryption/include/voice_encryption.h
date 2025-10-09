@@ -9,11 +9,13 @@
  * 
  * @details
  * The voice encryption module provides a unified API for accessing
- * various Cold War era voice encryption systems including:
+ * various voice encryption systems including:
  * - Yachta T-219: Soviet frequency-domain scrambling
  * - VINSON KY-57: NATO digital CVSD secure voice
  * - Granit: Soviet time-domain scrambling
  * - STANAG 4197: NATO QPSK OFDM digital voice
+ * - FreeDV: Modern digital voice with multiple bitrate modes
+ * - MELPe: NATO standard vocoder (STANAG 4591)
  * 
  * @see https://github.com/Supermagnum/fgcom-mumble
  * @see docs/VOICE_ENCRYPTION_MODULE.md
@@ -32,6 +34,8 @@
 #include "vinson_ky57.h"
 #include "granit.h"
 #include "stanag_4197.h"
+#include "freedv.h"
+#include "melpe.h"
 
 namespace fgcom {
 namespace voice_encryption {
@@ -48,7 +52,9 @@ enum class EncryptionSystem {
     YACHTA_T219,    ///< Soviet Yachta T-219 frequency-domain scrambling
     VINSON_KY57,    ///< NATO VINSON KY-57 digital CVSD secure voice
     GRANIT,         ///< Soviet Granit time-domain scrambling
-    STANAG_4197     ///< NATO STANAG 4197 QPSK OFDM digital voice
+    STANAG_4197,   ///< NATO STANAG 4197 QPSK OFDM digital voice
+    FREEDV,         ///< Modern FreeDV digital voice with multiple modes
+    MELPE           ///< NATO MELPe vocoder (STANAG 4591)
 };
 
 /**

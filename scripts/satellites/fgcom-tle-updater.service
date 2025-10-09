@@ -1,0 +1,42 @@
+[Unit]
+Description=FGcom-Mumble TLE Automatic Updater
+Documentation=https://github.com/Supermagnum/fgcom-mumble
+After=network.target
+Wants=network.target
+
+[Service]
+Type=forking
+User=fgcom
+Group=fgcom
+WorkingDirectory=/home/haaken/github-projects/fgcom-mumble-dev
+ExecStart=/home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh start
+ExecStop=/home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh stop
+ExecReload=/home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh restart
+PIDFile=/home/haaken/github-projects/fgcom-mumble-dev/tle_updater.pid
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables
+Environment=HOME=/home/haaken/github-projects/fgcom-mumble-dev
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=TLE_CONFIG_FILE=/home/haaken/github-projects/fgcom-mumble-dev/voice-encryption/systems/satellites/config/tle_update_config.conf
+Environment=TLE_UPDATE_DIR=/home/haaken/github-projects/fgcom-mumble-dev/tle_data
+Environment=LOG_DIR=/home/haaken/github-projects/fgcom-mumble-dev/logs
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/haaken/github-projects/fgcom-mumble-dev/tle_data
+ReadWritePaths=/home/haaken/github-projects/fgcom-mumble-dev/logs
+ReadOnlyPaths=/home/haaken/github-projects/fgcom-mumble-dev/voice-encryption
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

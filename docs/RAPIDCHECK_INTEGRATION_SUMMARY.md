@@ -6,31 +6,31 @@ RapidCheck property-based testing has been successfully integrated into all test
 
 ## Integration Status
 
-### ✅ Completed Modules
+### Completed Modules
 
 All **19 test modules** now have RapidCheck integration:
 
 | Module | Status | Property Test File | CMakeLists Updated |
 |--------|--------|-------------------|-------------------|
-| `agc_squelch_tests` | ✅ Complete | `test_agc_squelch_tests_properties.cpp` | ✅ Updated |
-| `antenna_pattern_module_tests` | ✅ Complete | `test_antenna_pattern_module_tests_properties.cpp` | ✅ Updated |
-| `atis_module_tests` | ✅ Complete | `test_atis_module_tests_properties.cpp` | ✅ Updated |
-| `audio_processing_tests` | ✅ Complete | `test_audio_processing_tests_properties.cpp` | ✅ Updated |
-| `client_plugin_module_tests` | ✅ Complete | `test_client_plugin_module_tests_properties.cpp` | ✅ Updated |
-| `database_configuration_module_tests` | ✅ Complete | `test_database_configuration_module_tests_properties.cpp` | ✅ Updated |
-| `error_handling_tests` | ✅ Complete | `test_error_handling_tests_properties.cpp` | ✅ Updated |
-| `frequency_management_tests` | ✅ Complete | `test_frequency_management_tests_properties.cpp` | ✅ Updated |
-| `geographic_module_tests` | ✅ Complete | `test_geographic_module_tests_properties.cpp` | ✅ Updated |
-| `integration_tests` | ✅ Complete | `test_integration_tests_properties.cpp` | ✅ Updated |
-| `network_module_tests` | ✅ Complete | `test_network_module_tests_properties.cpp` | ✅ Updated |
-| `openstreetmap_infrastructure_tests` | ✅ Complete | `test_openstreetmap_infrastructure_tests_properties.cpp` | ✅ Updated |
-| `performance_tests` | ✅ Complete | `test_performance_tests_properties.cpp` | ✅ Updated |
-| `professional_audio_tests` | ✅ Complete | `test_professional_audio_tests_properties.cpp` | ✅ Updated |
-| `radio_propagation_tests` | ✅ Complete | `test_radio_propagation_tests_properties.cpp` | ✅ Updated |
-| `security_module_tests` | ✅ Complete | `test_security_module_tests_properties.cpp` | ✅ Updated |
-| `status_page_module_tests` | ✅ Complete | `test_status_page_module_tests_properties.cpp` | ✅ Updated |
-| `webrtc_api_tests` | ✅ Complete | `test_webrtc_api_tests_properties.cpp` | ✅ Updated |
-| `work_unit_distribution_module_tests` | ✅ Complete | `test_work_unit_distribution_module_tests_properties.cpp` | ✅ Updated |
+| `agc_squelch_tests` | Complete | `test_agc_squelch_tests_properties.cpp` | Updated |
+| `antenna_pattern_module_tests` | Complete | `test_antenna_pattern_module_tests_properties.cpp` | Updated |
+| `atis_module_tests` | Complete | `test_atis_module_tests_properties.cpp` | Updated |
+| `audio_processing_tests` | Complete | `test_audio_processing_tests_properties.cpp` | Updated |
+| `client_plugin_module_tests` | Complete | `test_client_plugin_module_tests_properties.cpp` | Updated |
+| `database_configuration_module_tests` | Complete | `test_database_configuration_module_tests_properties.cpp` | Updated |
+| `error_handling_tests` | Complete | `test_error_handling_tests_properties.cpp` | Updated |
+| `frequency_management_tests` | Complete | `test_frequency_management_tests_properties.cpp` | Updated |
+| `geographic_module_tests` | Complete | `test_geographic_module_tests_properties.cpp` | Updated |
+| `integration_tests` | Complete | `test_integration_tests_properties.cpp` | Updated |
+| `network_module_tests` | Complete | `test_network_module_tests_properties.cpp` | Updated |
+| `openstreetmap_infrastructure_tests` | Complete | `test_openstreetmap_infrastructure_tests_properties.cpp` | Updated |
+| `performance_tests` | Complete | `test_performance_tests_properties.cpp` | Updated |
+| `professional_audio_tests` | Complete | `test_professional_audio_tests_properties.cpp` | Updated |
+| `radio_propagation_tests` | Complete | `test_radio_propagation_tests_properties.cpp` | Updated |
+| `security_module_tests` | Complete | `test_security_module_tests_properties.cpp` | Updated |
+| `status_page_module_tests` | Complete | `test_status_page_module_tests_properties.cpp` | Updated |
+| `webrtc_api_tests` | Complete | `test_webrtc_api_tests_properties.cpp` | Updated |
+| `work_unit_distribution_module_tests` | Complete | `test_work_unit_distribution_module_tests_properties.cpp` | Updated |
 
 ## Implementation Details
 

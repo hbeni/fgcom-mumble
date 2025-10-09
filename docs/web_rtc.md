@@ -1,10 +1,7 @@
-# WebRTC Browser Client Support (Implemented)
-
-- [WebRTC Implementation Plan](docs/WebRTC_IMPLEMENTATION_PLAN.md) Comprehensive implementation plan for web browser client support
+# WebRTC Browser Client Support
 - [WebRTC Gateway Architecture](docs/WebRTC_GATEWAY_ARCHITECTURE.md) Technical architecture for WebRTC gateway server
 - [WebRTC Protocol Translation](docs/WebRTC_PROTOCOL_TRANSLATION.md) Protocol translation between WebRTC and Mumble
 - [WebRTC Web Interface Design](docs/WebRTC_WEB_INTERFACE_DESIGN.md) Web-based client interface design and mobile optimization
-- [WebRTC Implementation Roadmap](docs/WebRTC_IMPLEMENTATION_ROADMAP.md) 8-month phased implementation roadmap
 - [WebRTC API Tests](test/webrtc_api_tests/README.md) Comprehensive test suite for WebRTC functionality
 - [Vehicle Geometry Creation Guide](docs/VEHICLE_GEOMETRY_CREATION_GUIDE.md) Complete guide for creating vehicle geometry
 - [Amateur Radio Modes](docs/AMATEUR_RADIO_MODES_DOCUMENTATION.md) Complete guide to CW, LSB, USB, NFM, and AM modes
