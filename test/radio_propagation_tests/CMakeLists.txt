@@ -57,6 +57,7 @@ include_directories(
 set(TEST_SOURCES
     test_solar_data_impact.cpp
     test_radio_propagation_tests_properties.cpp
+    test_real_city_pairs.cpp
 
     main.cpp
     test_radio_propagation_main.cpp

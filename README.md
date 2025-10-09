@@ -17,9 +17,16 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 
 ### Key Features
 - **Realistic Radio Simulation**: Geographic separation, propagation modeling, and authentic audio effects
-- **Multi-Platform Support**: FlightGear (native), Microsoft Flight Simulator 2020 (via RadioGUI), and web browsers
+- **Multi-Platform Support**: FlightGear (native), Microsoft Flight Simulator 2020 (experimental), and web browsers
 - **Advanced Features**: ATIS recording, radio station broadcasts, landline/intercom support, and RDF detection
 - **WebRTC Support**: Browser-based access without installation requirements
+- **GPU Acceleration**: CUDA, OpenCL, and Metal support for high-performance propagation computing
+- **Real-Time Data Integration**: Solar data, lightning data, and weather data for accurate propagation modeling
+- **Professional Audio Processing**: DSP IIR filters, noise reduction, and spatial audio processing
+- **Antenna Pattern Library**: EZNEC-based 3D radiation patterns for all vehicle types
+- **Physics-Based Propagation**: Atmospheric effects, tropospheric ducting, and terrain obstruction modeling
+- **Feature Toggle System**: 50+ configurable features for custom deployments
+- **API Integration**: RESTful APIs and WebSocket support for game developer integration
 - **Modular Design**: Extensible architecture for custom integrations
 
 ---
@@ -89,6 +96,7 @@ We need experienced users to test new features, provide feedback, and help ident
 - **Testing Environment**: Dedicated test system for beta features
 - **Feedback Commitment**: Regular feedback and issue reporting
 - **Documentation**: Help improve documentation and user guides
+- **Preferred optional skills**: C++/C experience and log reading ability
 
 **Interested?** Open an issue on GitHub with "Beta Tester Application" in the title and describe your technical background and testing environment.
 
@@ -109,7 +117,21 @@ We need experienced users to test new features, provide feedback, and help ident
 - **FlightGear**: Native integration (requires technical knowledge)
 - **Microsoft Flight Simulator 2020**: Via RadioGUI with SimConnect (requires technical setup)
 - **Web Browsers**: WebRTC gateway (no installation required)
-- **Other Games**: Manual integration through Mumble voice chat
+
+#### MSFS 2020 SimConnect Limitations
+
+**Microsoft Flight Simulator 2020 integration has significant limitations:**
+
+- **Windows-Only**: SimConnect is Windows-exclusive, no Linux/macOS support
+- **Complex Integration**: SimConnect API is poorly documented and requires deep MSFS internals knowledge
+- **Edge Cases**: Many quirks and undocumented behaviors in the SimConnect interface
+- **Build Issues**: JSIMConnect library has incomplete implementation (46+ compilation errors)
+- **Maintenance Burden**: Requires constant updates for MSFS version changes
+
+**Current Status**: MSFS 2020 integration is **experimental** and may not work reliably. The RadioGUI can be built without SimConnect support for basic functionality.
+
+**Recommendation**: For reliable operation, use FlightGear (native) or WebRTC (browser) platforms instead of MSFS 2020.
+- **Other Games**: Manual integration through API's.
 
 ---
 
@@ -253,6 +275,20 @@ sudo ./scripts/status_fgcom_mumble.sh
 sudo ./scripts/uninstall_fgcom_mumble.sh
 ```
 
+
+
+**Build Commands:**
+```bash
+# Build all components
+make all
+
+# Build without MSFS 2020 support (recommended)
+make build-radioGUI-without-jsimconnect
+
+# Build with MSFS 2020 support (experimental)
+make build-radioGUI
+```
+
 ---
 
 ## Antenna Pattern Visualization
@@ -299,10 +335,14 @@ The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
 - **Issues**: Report bugs or request features on the issue tracker
 - **Pull Requests**: Contributions are welcome! Clone the repository and submit pull requests
 
+
+
+
 ---
 
 ## Testing and Quality
 
+- **[Testing Guide](docs/TESTING_GUIDE.md)** - Simple explanation of what all tests do (non-programmer friendly)
 - **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
 
 s 

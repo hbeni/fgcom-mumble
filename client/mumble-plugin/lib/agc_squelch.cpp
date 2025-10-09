@@ -15,13 +15,13 @@ FGCom_AGC_Squelch::FGCom_AGC_Squelch()
     , squelch_stats{}
     , current_gain_db(0.0f)
     , target_gain_db(0.0f)
+    , last_agc_update(std::chrono::system_clock::now())
     , agc_hold_timer(0.0f)
     , agc_hold_active(false)
     , squelch_state(false)
     , squelch_timer(0.0f)
     , tone_detector_phase(0.0f)
     , tone_detector_amplitude(0.0f)
-    , last_agc_update(std::chrono::system_clock::now())
     , last_squelch_change(std::chrono::system_clock::now())
 {
     
