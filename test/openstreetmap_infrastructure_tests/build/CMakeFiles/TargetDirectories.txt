@@ -1,7 +1,0 @@
-/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/openstreetmap_infrastructure_tests.dir
-/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/openstreetmap_infrastructure_tests_asan.dir
-/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/openstreetmap_infrastructure_tests_tsan.dir
-/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/openstreetmap_infrastructure_tests_coverage.dir
-/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/test.dir
-/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/edit_cache.dir
-/home/haaken/github-projects/fgcom-mumble/test/openstreetmap_infrastructure_tests/build/CMakeFiles/rebuild_cache.dir

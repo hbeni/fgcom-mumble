@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/performance_tests.dir/test_performance_main.cpp.o CMakeFiles/performance_tests.dir/test_latency.cpp.o CMakeFiles/performance_tests.dir/test_throughput.cpp.o -o performance_tests  -lgmock -lgtest -lm -lpthread /usr/lib/x86_64-linux-gnu/libgtest.a 

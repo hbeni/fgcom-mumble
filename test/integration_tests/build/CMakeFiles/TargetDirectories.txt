@@ -1,4 +1,0 @@
-/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles/integration_tests.dir
-/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles/test.dir
-/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles/edit_cache.dir
-/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/CMakeFiles/rebuild_cache.dir
