@@ -38,8 +38,25 @@
 #include "fgcom-mumble.h"
 
 
-/*
- * Clean stale local data
+/**
+ * @brief Clean stale local client data from the plugin state
+ * 
+ * This function removes stale local client identities from the plugin's
+ * internal state. Local client data is considered stale if it hasn't been
+ * updated within the configured timeout period (FGCOM_GARBAGECOLLECT_TIMEOUT_LCL).
+ * 
+ * The function performs the following operations:
+ * - Scans all local client identities for staleness
+ * - Removes stale identities from the local client map
+ * - Cleans up associated notification state
+ * - Updates the client comment if identities were removed
+ * 
+ * @note This function is thread-safe and uses RAII lock guards
+ * @note Stale data is determined by comparing lastUpdate timestamp with current time
+ * @note The function automatically updates the client comment after cleanup
+ * 
+ * @see FGCOM_GARBAGECOLLECT_TIMEOUT_LCL for timeout configuration
+ * @see fgcom_updateClientComment() for comment update
  */
 void fgcom_gc_clean_lcl() {
     std::chrono::milliseconds lcl_timeout(FGCOM_GARBAGECOLLECT_TIMEOUT_LCL);
@@ -80,8 +97,24 @@ void fgcom_gc_clean_lcl() {
 }
 
 
-/*
- * Clean stale remote data
+/**
+ * @brief Clean stale remote client data from the plugin state
+ * 
+ * This function removes stale remote client data from the plugin's
+ * internal state. Remote client data is considered stale if it hasn't been
+ * updated within the configured timeout period (FGCOM_GARBAGECOLLECT_TIMEOUT_RMT).
+ * 
+ * The function performs the following operations:
+ * - Scans all remote clients and their identities for staleness
+ * - Removes stale identities from remote client maps
+ * - Removes entire remote clients if all their identities are stale
+ * - Cleans up associated notification state
+ * 
+ * @note This function is thread-safe and uses manual mutex locking
+ * @note Stale data is determined by comparing lastUpdate timestamp with current time
+ * @note Remote clients are removed entirely if all identities are stale
+ * 
+ * @see FGCOM_GARBAGECOLLECT_TIMEOUT_RMT for timeout configuration
  */
 void fgcom_gc_clean_rmt() {
     std::chrono::milliseconds rmt_timeout(FGCOM_GARBAGECOLLECT_TIMEOUT_RMT);
@@ -128,11 +161,35 @@ void fgcom_gc_clean_rmt() {
 }
 
 
-/*
- * GC thread
+/**
+ * @brief Global variables for garbage collector thread management
  */
 bool fgcom_gcThreadRunning = false;
 bool fgcom_gcThreadShutdown = false;
+
+/**
+ * @brief Spawn and run the garbage collector thread
+ * 
+ * This function starts the garbage collector thread that periodically
+ * cleans up stale local and remote client data. The thread runs in a loop
+ * checking for stale data at regular intervals defined by FGCOM_GARBAGECOLLECT_INTERVAL.
+ * 
+ * The garbage collector thread performs the following operations:
+ * - Runs continuously until shutdown is requested
+ * - Checks for stale data at configured intervals
+ * - Calls fgcom_gc_clean_lcl() to clean local data
+ * - Calls fgcom_gc_clean_rmt() to clean remote data
+ * - Sleeps for 500ms between checks to avoid excessive CPU usage
+ * 
+ * @note This function should be called once during plugin initialization
+ * @note The thread can be shut down using fgcom_shutdownGarbageCollector()
+ * @note The function sets fgcom_gcThreadRunning to true when started
+ * 
+ * @see FGCOM_GARBAGECOLLECT_INTERVAL for check interval configuration
+ * @see fgcom_gc_clean_lcl() for local data cleanup
+ * @see fgcom_gc_clean_rmt() for remote data cleanup
+ * @see fgcom_shutdownGarbageCollector() for thread shutdown
+ */
 void fgcom_spawnGarbageCollector() {
     fgcom_gcThreadRunning = true;
     pluginDbg("[GC] thread starting");
@@ -158,6 +215,18 @@ void fgcom_spawnGarbageCollector() {
 }
 
 
+/**
+ * @brief Shutdown the garbage collector thread
+ * 
+ * This function signals the garbage collector thread to shut down gracefully.
+ * The thread will finish its current iteration and then exit cleanly.
+ * 
+ * @note This function should be called during plugin shutdown
+ * @note The function sets fgcom_gcThreadShutdown to true to signal shutdown
+ * @note The thread will set fgcom_gcThreadRunning to false when it exits
+ * 
+ * @see fgcom_spawnGarbageCollector() for thread startup
+ */
 void fgcom_shutdownGarbageCollector() {
     fgcom_gcThreadShutdown = true;
 }

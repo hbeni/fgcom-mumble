@@ -428,14 +428,71 @@ retry_delay_ms = 2000
 
 Enable GPU acceleration for better performance:
 
+#### Basic GPU Configuration
 ```ini
-[gpu]
-enabled = true
-cuda_enabled = true
-opencl_enabled = true
-max_memory_mb = 8192
-utilization_threshold = 80.0
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+gpu_memory_limit = 2048
+gpu_max_concurrent_operations = 4
+```
+
+#### NVIDIA GPU (CUDA) Configuration
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+enable_cuda = true
+cuda_device_id = 0
+cuda_memory_fraction = 0.8
+cuda_stream_count = 4
+cuda_block_size = 256
+```
+
+#### AMD/Intel GPU (OpenCL) Configuration
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+enable_opencl = true
+opencl_platform_id = 0
+opencl_device_id = 0
+opencl_device_type = GPU
+opencl_work_group_size = 256
+```
+
+#### Apple GPU (Metal) Configuration
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+enable_metal = true
+metal_device_id = 0
+metal_memory_pool_size = 536870912
+```
+
+#### GPU Resource Management
+```ini
+[gpu_resource_limiting]
+enable_gpu_resource_limiting = true
+gpu_usage_percentage_limit = 30
+gpu_memory_limit_mb = 256
+gpu_priority_level = 3
+enable_adaptive_gpu_usage = true
+game_detection_reduction = 50
+```
+
+#### High-Performance GPU Configuration
+```ini
+[gpu_acceleration]
+enable_gpu_acceleration = true
+gpu_mode = hybrid
+gpu_memory_limit = 8192
+gpu_max_concurrent_operations = 8
 temperature_threshold = 85.0
+utilization_threshold = 90.0
+enable_memory_optimization = true
+enable_thermal_management = true
 ```
 
 ### 3. Load Balancing Setup
@@ -487,6 +544,20 @@ dashboard_enabled = true
    - Check rate limit configuration
    - Contact administrator for limit increases
 
+5. **GPU acceleration not working**
+   - Check GPU drivers are installed and up-to-date
+   - Verify CUDA/OpenCL runtime is properly installed
+   - Check GPU memory availability
+   - Verify GPU is not being used by other applications
+   - Check GPU temperature and thermal throttling
+
+6. **GPU performance issues**
+   - Monitor GPU utilization and memory usage
+   - Check for thermal throttling
+   - Verify GPU resource limiting configuration
+   - Test with different GPU acceleration modes
+   - Check for driver conflicts
+
 ### Debug Commands
 
 ```bash
@@ -502,12 +573,39 @@ curl http://localhost:8080/api/v1/work-units/status
 # Check security status
 curl http://localhost:8080/api/v1/security/status
 
+# Check GPU status and resource usage
+curl http://localhost:8080/api/v1/gpu-resource/status
+curl http://localhost:8080/api/v1/gpu-resource/usage
+curl http://localhost:8080/api/v1/gpu-resource/configuration
+
 # Check server logs
 tail -f server.log
 
 # Check system resources
 htop
-nvidia-smi  # If using GPU
+nvidia-smi  # For NVIDIA GPUs
+clinfo      # For OpenCL GPUs
+```
+
+### GPU Debug Commands
+
+```bash
+# Monitor GPU usage in real-time
+watch -n 1 nvidia-smi
+
+# Check GPU temperature and power
+nvidia-smi --query-gpu=temperature.gpu,power.draw --format=csv
+
+# Monitor GPU memory usage
+nvidia-smi --query-gpu=memory.used,memory.total --format=csv
+
+# Check OpenCL devices
+clinfo -l
+
+# Test GPU acceleration
+curl -X POST "http://localhost:8080/api/v1/gpu-resource/test" \
+     -H "Content-Type: application/json" \
+     -d '{"test_type": "performance", "duration_seconds": 30}'
 ```
 
 ### Log Analysis
@@ -524,6 +622,17 @@ grep "RATE_LIMIT" server.log
 
 # Check for security events
 grep "SECURITY" server.log
+
+# Check for GPU-related errors
+grep "GPU" server.log
+grep "CUDA" server.log
+grep "OpenCL" server.log
+grep "GPU_ERROR" server.log
+
+# Check for GPU resource limiting events
+grep "GPU_RESOURCE" server.log
+grep "GPU_LIMIT" server.log
+grep "GPU_THROTTLE" server.log
 ```
 
 ### Performance Monitoring
@@ -540,6 +649,18 @@ netstat -an | grep 8080
 
 # Monitor disk I/O
 iostat -x 1
+
+# Monitor GPU performance
+nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total,temperature.gpu --format=csv -l 1
+
+# Monitor GPU power consumption
+nvidia-smi --query-gpu=power.draw,power.limit --format=csv -l 1
+
+# Check GPU processes
+nvidia-smi pmon -i 0
+
+# Monitor OpenCL devices
+clinfo -l
 ```
 
 ## Next Steps

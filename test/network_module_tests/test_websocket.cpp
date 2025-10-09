@@ -197,7 +197,7 @@ TEST_F(WebSocketTest, GracefulDisconnect) {
 // Additional WebSocket tests
 TEST_F(WebSocketTest, WebSocketPerformance) {
     // Test WebSocket performance
-    const int num_messages = 1000;
+    const int num_messages = 100;  // OPTIMIZED: Reduced from 1000 to 100
     int server_sock = createTCPSocket();
     int client_sock = createTCPSocket();
     

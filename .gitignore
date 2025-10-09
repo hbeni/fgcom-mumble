@@ -71,3 +71,12 @@ server/statuspage/config.ini
 
 # Maven dependencies (if installed locally)
 .m2/
+test/fuzzing_tests/mull/
+test/rapidcheck_tests/lib/rapidcheck/
+
+# Test logs and results
+test/test-logs/
+test/*/test_results/
+test/*/coverage/
+test/*/sanitizer_results/
+test/*/test_output.log

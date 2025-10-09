@@ -22,7 +22,7 @@ FGCom-mumble v2.0+ provides comprehensive API integration for external applicati
 - **Rate Limiting**: Built-in abuse detection and prevention
 - **Documentation**: Complete API reference with request/response examples
 
-See [API Documentation](docs/API_DOCUMENTATION.md), [Band Segments API Documentation](docs/BAND_SEGMENTS_API_DOCUMENTATION.md), [Preset Channel API Documentation](docs/PRESET_CHANNEL_API_DOCUMENTATION.md), [Noise Floor Distance Guide](docs/NOISE_FLOOR_DISTANCE_GUIDE.md), [Environment Detection Guide](docs/ENVIRONMENT_DETECTION_GUIDE.md), and [GPU Acceleration Guide](docs/GPU_ACCELERATION_GUIDE.md) for complete integration details.
+See [API Documentation](API_DOCUMENTATION.md), [Band Segments API Documentation](BAND_SEGMENTS_API_DOCUMENTATION.md), [Preset Channel API Documentation](PRESET_CHANNEL_API_DOCUMENTATION.md), [Noise Floor Distance Guide](NOISE_FLOOR_DISTANCE_GUIDE.md), [Environment Detection Guide](ENVIRONMENT_DETECTION_GUIDE.md), and [GPU Acceleration Guide](GPU_ACCELERATION_GUIDE.md) for complete integration details.
 
 ## Generic Compatibility
 
@@ -86,12 +86,12 @@ When you cannot hear other pilots or are unable to transmit on the radios, you c
 
 ## Troubleshooting
 
-For detailed troubleshooting information, see [Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md).
+For detailed troubleshooting information, see [Troubleshooting Guide](TROUBLESHOOTING_GUIDE.md).
 
 ## Special Features
 
-For information about special frequencies and features, see [Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md).
+For information about special frequencies and features, see [Special Frequencies Guide](SPECIAL_FREQUENCIES_GUIDE.md).
 
 ## Configuration
 
-For detailed configuration options, see [Installation Guide](docs/INSTALLATION_GUIDE.md#plugin-configuration).
+For detailed configuration options, see [Installation Guide](INSTALLATION_GUIDE.md#plugin-configuration).

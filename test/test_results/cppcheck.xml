@@ -2,50 +2,6 @@
 <results version="2">
     <cppcheck version="2.13.0"/>
     <errors>
-        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &apos;FGCom_AGC_Squelch::agc_stats&apos; is not initialized in the constructor." verbose="Member variable &apos;FGCom_AGC_Squelch::agc_stats&apos; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp" line="12" column="20"/>
-            <symbol>FGCom_AGC_Squelch::agc_stats</symbol>
-        </error>
-        <error id="uninitMemberVarPrivate" severity="warning" msg="Member variable &apos;FGCom_AGC_Squelch::squelch_stats&apos; is not initialized in the constructor." verbose="Member variable &apos;FGCom_AGC_Squelch::squelch_stats&apos; is not initialized in the constructor. Member variables of native types, pointers, or references are left uninitialized when the class is instantiated. That may cause bugs or undefined behavior." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp" line="12" column="20"/>
-            <symbol>FGCom_AGC_Squelch::squelch_stats</symbol>
-        </error>
-        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_AGC_Squelch::detectTone&apos;" verbose="Unused private function: &apos;FGCom_AGC_Squelch::detectTone&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h" line="188" column="10"/>
-            <symbol>FGCom_AGC_Squelch::detectTone</symbol>
-        </error>
-        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_AGC_Squelch::calculatePeak&apos;" verbose="Unused private function: &apos;FGCom_AGC_Squelch::calculatePeak&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h" line="190" column="11"/>
-            <symbol>FGCom_AGC_Squelch::calculatePeak</symbol>
-        </error>
-        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_AGC_Squelch::applyGain&apos;" verbose="Unused private function: &apos;FGCom_AGC_Squelch::applyGain&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h" line="191" column="10"/>
-            <symbol>FGCom_AGC_Squelch::applyGain</symbol>
-        </error>
-        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_AGC_Squelch::applySquelch&apos;" verbose="Unused private function: &apos;FGCom_AGC_Squelch::applySquelch&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h" line="192" column="10"/>
-            <symbol>FGCom_AGC_Squelch::applySquelch</symbol>
-        </error>
-        <error id="unusedPrivateFunction" severity="style" msg="Unused private function: &apos;FGCom_AGC_Squelch::updateStats&apos;" verbose="Unused private function: &apos;FGCom_AGC_Squelch::updateStats&apos;" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h" line="203" column="10"/>
-            <symbol>FGCom_AGC_Squelch::updateStats</symbol>
-        </error>
-        <error id="useInitializationList" severity="performance" msg="Variable &apos;last_agc_update&apos; is assigned in constructor body. Consider performing initialization in initialization list." verbose="When an object of a class is created, the constructors of all member variables are called consecutively in the order the variables are declared, even if you don&apos;t explicitly write them to the initialization list. You could avoid assigning &apos;last_agc_update&apos; a value by passing the value to the constructor in the initialization list." cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp" line="22" column="5"/>
-            <symbol>last_agc_update</symbol>
-        </error>
-        <error id="constParameterPointer" severity="style" msg="Parameter &apos;input_samples&apos; can be declared as pointer to const" verbose="Parameter &apos;input_samples&apos; can be declared as pointer to const" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp" line="256" column="52" info="Parameter &apos;input_samples&apos; can be declared as pointer to const"/>
-            <symbol>input_samples</symbol>
-        </error>
-        <error id="constParameterPointer" severity="style" msg="Parameter &apos;samples&apos; can be declared as pointer to const" verbose="Parameter &apos;samples&apos; can be declared as pointer to const" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp" line="634" column="43" info="Parameter &apos;samples&apos; can be declared as pointer to const"/>
-            <symbol>samples</symbol>
-        </error>
-        <error id="constParameterPointer" severity="style" msg="Parameter &apos;samples&apos; can be declared as pointer to const" verbose="Parameter &apos;samples&apos; can be declared as pointer to const" cwe="398" file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp">
-            <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp" line="665" column="47" info="Parameter &apos;samples&apos; can be declared as pointer to const"/>
-            <symbol>samples</symbol>
-        </error>
         <error id="syntaxError" severity="error" msg="Code &apos;std::chrono&apos; is invalid C code. Use --std or --language to configure the language." verbose="Code &apos;std::chrono&apos; is invalid C code. Use --std or --language to configure the language." file0="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h">
             <location file="/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.h" line="56" column="5"/>
         </error>

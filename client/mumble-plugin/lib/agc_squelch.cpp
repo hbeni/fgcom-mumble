@@ -1,26 +1,29 @@
 #include "agc_squelch.h"
 #include <algorithm>
+#include <atomic>
 #include <cmath>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 
-// Static member initialization
-std::unique_ptr<FGCom_AGC_Squelch> FGCom_AGC_Squelch::instance = nullptr;
-std::mutex FGCom_AGC_Squelch::instance_mutex;
+// Static member initialization (ThreadSanitizer-safe)
+// Using Meyer's singleton pattern - no static members needed
 
 // Constructor
 FGCom_AGC_Squelch::FGCom_AGC_Squelch() 
-    : current_gain_db(0.0f)
+    : agc_stats{}
+    , squelch_stats{}
+    , current_gain_db(0.0f)
     , target_gain_db(0.0f)
+    , last_agc_update(std::chrono::system_clock::now())
     , agc_hold_timer(0.0f)
     , agc_hold_active(false)
     , squelch_state(false)
     , squelch_timer(0.0f)
     , tone_detector_phase(0.0f)
     , tone_detector_amplitude(0.0f)
+    , last_squelch_change(std::chrono::system_clock::now())
 {
-    last_agc_update = std::chrono::system_clock::now();
-    last_squelch_change = std::chrono::system_clock::now();
     
     // Initialize audio buffers
     audio_buffer.resize(1024);
@@ -43,18 +46,65 @@ FGCom_AGC_Squelch::FGCom_AGC_Squelch()
     squelch_config.noise_threshold_db = -60.0f;
 }
 
-// Singleton access
+// Singleton access (ThreadSanitizer-safe)
 FGCom_AGC_Squelch& FGCom_AGC_Squelch::getInstance() {
-    std::lock_guard<std::mutex> lock(instance_mutex);
-    if (!instance) {
-        instance = std::unique_ptr<FGCom_AGC_Squelch>(new FGCom_AGC_Squelch());
-    }
-    return *instance;
+    // Use Meyer's singleton pattern for ThreadSanitizer compatibility
+    static FGCom_AGC_Squelch instance;
+    return instance;
 }
 
 void FGCom_AGC_Squelch::destroyInstance() {
-    std::lock_guard<std::mutex> lock(instance_mutex);
-    instance.reset();
+    // Meyer's singleton doesn't support destruction
+    // This is a no-op for ThreadSanitizer compatibility
+    // The singleton will be destroyed when the program exits
+}
+
+void FGCom_AGC_Squelch::resetToDefaultState() {
+    // Lock both mutexes to prevent race conditions during reset
+    std::lock_guard<std::mutex> agc_lock(agc_mutex);
+    std::lock_guard<std::mutex> squelch_lock(squelch_mutex);
+    
+    // Reset AGC state
+    agc_enabled.store(true);
+    current_gain_db = 0.0f;
+    target_gain_db = 0.0f;
+    agc_hold_timer = 0.0f;
+    agc_hold_active = false;
+    last_agc_update = std::chrono::system_clock::now();
+    
+    // Reset squelch state
+    squelch_enabled.store(true);
+    squelch_state = false;  // Start with squelch closed
+    squelch_timer = 0.0f;
+    tone_detector_phase = 0.0f;
+    tone_detector_amplitude = 0.0f;
+    last_squelch_change = std::chrono::system_clock::now();
+    
+    // Reset configurations to defaults
+    agc_config.mode = AGCMode::SLOW;
+    agc_config.attack_time_ms = 10.0f;
+    agc_config.release_time_ms = 100.0f;
+    agc_config.min_gain_db = -20.0f;
+    agc_config.max_gain_db = 40.0f;
+    agc_config.threshold_db = -80.0f;
+    
+    squelch_config.threshold_db = -80.0f;
+    squelch_config.hysteresis_db = 3.0f;
+    squelch_config.attack_time_ms = 5.0f;
+    squelch_config.release_time_ms = 50.0f;
+    squelch_config.tone_squelch = false;
+    squelch_config.tone_frequency_hz = 1000.0f;
+    squelch_config.noise_squelch = false;
+    squelch_config.noise_threshold_db = -70.0f;
+    
+    // Reset statistics
+    agc_stats = AGCStats{};
+    squelch_stats = SquelchStats{};
+    
+    // Clear audio buffers
+    std::fill(audio_buffer.begin(), audio_buffer.end(), 0.0f);
+    std::fill(gain_buffer.begin(), gain_buffer.end(), 0.0f);
+    std::fill(squelch_buffer.begin(), squelch_buffer.end(), 0.0f);
 }
 
 // AGC control methods
@@ -253,7 +303,7 @@ float FGCom_AGC_Squelch::getNoiseSquelchThreshold() const {
 }
 
 // Audio processing
-void FGCom_AGC_Squelch::processAudioSamples(float* input_samples, float* output_samples, 
+void FGCom_AGC_Squelch::processAudioSamples(const float* input_samples, float* output_samples, 
                                            size_t sample_count, float sample_rate_hz) {
     if (sample_count == 0) return;
     
@@ -528,14 +578,14 @@ void FGCom_AGC_Squelch::updateAGC(float input_level_db, float sample_rate_hz) {
     float required_gain_db = 0.0f; // Default to no gain change
     
     // Only apply AGC if input is too quiet (amplify) or too loud (reduce)
-    if (input_level_db < -30.0f) {
-        // Input is too quiet - amplify it to -20 dB
-        required_gain_db = -20.0f - input_level_db;
+    if (input_level_db < -20.0f) {
+        // Input is too quiet - amplify it to -10 dB
+        required_gain_db = -10.0f - input_level_db;
     } else if (input_level_db > 0.0f) {
-        // Input is too loud - reduce it to -20 dB
-        required_gain_db = -20.0f - input_level_db;
+        // Input is too loud - reduce it to -10 dB
+        required_gain_db = -10.0f - input_level_db;
     }
-    // For signals between -30 dB and 0 dB, don't apply AGC (maintain level)
+    // For signals between -20 dB and 0 dB, don't apply AGC (maintain level)
     
     // Clamp to min/max gain limits
     required_gain_db = clamp(required_gain_db, agc_config.min_gain_db, agc_config.max_gain_db);
@@ -634,25 +684,6 @@ void FGCom_AGC_Squelch::updateSquelch(float input_level_db, float sample_rate_hz
     squelch_stats.squelch_threshold_db = threshold;
 }
 
-bool FGCom_AGC_Squelch::detectTone(float* samples, size_t sample_count, float sample_rate_hz) {
-    if (!squelch_config.tone_squelch) return false;
-    
-    // Simple tone detection using Goertzel algorithm
-    float frequency = squelch_config.tone_frequency_hz;
-    float omega = 2.0f * M_PI * frequency / sample_rate_hz;
-    
-    float q1 = 0.0f, q2 = 0.0f;
-    for (size_t i = 0; i < sample_count; ++i) {
-        float q0 = 2.0f * std::cos(omega) * q1 - q2 + samples[i];
-        q2 = q1;
-        q1 = q0;
-    }
-    
-    float magnitude = std::sqrt(q1 * q1 + q2 * q2 - q1 * q2 * 2.0f * std::cos(omega));
-    float threshold = 0.1f; // Adjust based on requirements
-    
-    return magnitude > threshold;
-}
 
 float FGCom_AGC_Squelch::calculateRMS(const float* samples, size_t sample_count) {
     if (sample_count == 0) return 0.0f;
@@ -665,34 +696,8 @@ float FGCom_AGC_Squelch::calculateRMS(const float* samples, size_t sample_count)
     return std::sqrt(sum / sample_count);
 }
 
-float FGCom_AGC_Squelch::calculatePeak(float* samples, size_t sample_count) {
-    if (sample_count == 0) return 0.0f;
-    
-    float peak = 0.0f;
-    for (size_t i = 0; i < sample_count; ++i) {
-        float abs_sample = std::abs(samples[i]);
-        if (abs_sample > peak) {
-            peak = abs_sample;
-        }
-    }
-    
-    return peak;
-}
 
-void FGCom_AGC_Squelch::applyGain(float* samples, size_t sample_count, float gain_db) {
-    float gain_linear = dbToLinear(gain_db);
-    for (size_t i = 0; i < sample_count; ++i) {
-        samples[i] *= gain_linear;
-    }
-}
 
-void FGCom_AGC_Squelch::applySquelch(float* samples, size_t sample_count, bool squelch_open) {
-    if (!squelch_open) {
-        for (size_t i = 0; i < sample_count; ++i) {
-            samples[i] = 0.0f;
-        }
-    }
-}
 
 void FGCom_AGC_Squelch::processAGCFast(float input_level_db, float sample_rate_hz) {
     // Fast AGC: Quick response to signal changes
@@ -785,19 +790,6 @@ float FGCom_AGC_Squelch::clamp(float value, float min_val, float max_val) {
     return std::max(min_val, std::min(max_val, value));
 }
 
-void FGCom_AGC_Squelch::updateStats() {
-    // Update AGC statistics
-    agc_stats.average_gain_db = (agc_stats.average_gain_db + current_gain_db) / 2.0f;
-    if (current_gain_db > agc_stats.peak_gain_db) {
-        agc_stats.peak_gain_db = current_gain_db;
-    }
-    if (current_gain_db < agc_stats.valley_gain_db) {
-        agc_stats.valley_gain_db = current_gain_db;
-    }
-    
-    // Update squelch statistics
-    squelch_stats.average_signal_level_db = (squelch_stats.average_signal_level_db + squelch_stats.current_signal_level_db) / 2.0f;
-}
 
 void FGCom_AGC_Squelch::logAGCEvent(const std::string& event) {
     std::cout << "[AGC] " << event << std::endl;

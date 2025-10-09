@@ -76,8 +76,7 @@ struct SquelchStats {
 // Main AGC and Squelch control class
 class FGCom_AGC_Squelch {
 private:
-    static std::unique_ptr<FGCom_AGC_Squelch> instance;
-    static std::mutex instance_mutex;
+    // Using Meyer's singleton pattern - no static members needed
     
     AGCConfig agc_config;
     SquelchConfig squelch_config;
@@ -117,6 +116,9 @@ public:
     static FGCom_AGC_Squelch& getInstance();
     static void destroyInstance();
     
+    // Test isolation support
+    void resetToDefaultState();
+    
     // AGC control methods
     void setAGCMode(AGCMode mode);
     AGCMode getAGCMode() const;
@@ -152,7 +154,7 @@ public:
     float getNoiseSquelchThreshold() const;
     
     // Audio processing
-    void processAudioSamples(float* input_samples, float* output_samples, 
+    void processAudioSamples(const float* input_samples, float* output_samples, 
                            size_t sample_count, float sample_rate_hz);
     bool isSquelchOpen() const;
     float getCurrentGain() const;
@@ -185,11 +187,7 @@ private:
     // Internal processing methods
     void updateAGC(float input_level_db, float sample_rate_hz);
     void updateSquelch(float input_level_db, float sample_rate_hz);
-    bool detectTone(float* samples, size_t sample_count, float sample_rate_hz);
     float calculateRMS(const float* samples, size_t sample_count);
-    float calculatePeak(float* samples, size_t sample_count);
-    void applyGain(float* samples, size_t sample_count, float gain_db);
-    void applySquelch(float* samples, size_t sample_count, bool squelch_open);
     
     // AGC mode-specific processing
     void processAGCFast(float input_level_db, float sample_rate_hz);
@@ -200,7 +198,6 @@ private:
     float dbToLinear(float db);
     float linearToDb(float linear);
     float clamp(float value, float min_val, float max_val);
-    void updateStats();
     void logAGCEvent(const std::string& event);
     void logSquelchEvent(const std::string& event);
 };

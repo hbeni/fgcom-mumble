@@ -1,0 +1,9 @@
+Name: rapidcheck
+Description: C++ framework for property based testing inspired by QuickCheck and other similar frameworks
+Version: 
+Requires: 
+prefix=/usr/local
+includedir=${prefix}/include
+libdir=${prefix}/lib
+Libs: 
+Cflags: -I${includedir}

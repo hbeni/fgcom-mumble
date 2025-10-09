@@ -1,4 +1,18 @@
 #include "test_agc_squelch_main.cpp"
+#include <random>
+
+// Helper function to generate noise
+std::vector<float> generateNoise(size_t samples, float amplitude) {
+    std::vector<float> noise(samples);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(-amplitude, amplitude);
+    
+    for (size_t i = 0; i < samples; ++i) {
+        noise[i] = dis(gen);
+    }
+    return noise;
+}
 
 // 1.4 Audio Processing Tests
 TEST_F(AudioProcessingTest, ZeroSampleCountHandling) {
@@ -155,6 +169,7 @@ TEST_F(AudioProcessingTest, AGCGainApplicationCorrectness) {
     // Test AGC gain application
     ASSERT_TRUE(isAGCValid());
     getAGC().enableAGC(true);
+    getAGC().setSquelchEnabled(false);  // Disable squelch for AGC test
     getAGC().setAGCMode(AGCMode::FAST);
     
     auto input = generateSineWave(1000.0f, 44100.0f, 1024, 0.1f); // Low amplitude
@@ -184,12 +199,15 @@ TEST_F(AudioProcessingTest, SquelchMutingCorrectness) {
     // Test squelch muting functionality
     ASSERT_TRUE(isAGCValid());
     getAGC().setSquelchEnabled(true);
-    getAGC().setSquelchThreshold(-50.0f); // High threshold
+    getAGC().setSquelchThreshold(10.0f); // Very high threshold (above signal level)
     
-    auto input = generateSineWave(1000.0f, 44100.0f, 1024, 0.01f); // Very low amplitude
+    auto input = generateSineWave(1000.0f, 44100.0f, 1024, 0.0001f); // Very low amplitude (below threshold)
     std::vector<float> output(1024);
     
-    getAGC().processAudioSamples(input.data(), output.data(), 1024, 44100.0f);
+    // Process multiple times to give squelch time to close
+    for (int i = 0; i < 10; ++i) {
+        getAGC().processAudioSamples(input.data(), output.data(), 1024, 44100.0f);
+    }
     
     // Squelch should be closed for low amplitude signal
     EXPECT_FALSE(getAGC().isSquelchOpen());

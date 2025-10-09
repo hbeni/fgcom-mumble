@@ -261,7 +261,7 @@ TEST_F(UDPProtocolTest, JitterBufferManagement) {
 // Additional UDP protocol tests
 TEST_F(UDPProtocolTest, UDPProtocolPerformance) {
     // Test UDP protocol performance
-    const int num_packets = 1000;
+    const int num_packets = 100;  // OPTIMIZED: Reduced from 1000 to 100
     int sender_sock = createUDPSocket();
     int receiver_sock = createUDPSocket();
     

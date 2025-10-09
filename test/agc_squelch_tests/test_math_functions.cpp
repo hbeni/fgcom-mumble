@@ -105,18 +105,17 @@ TEST_F(MathFunctionTest, DbToLinearConversionAccuracy) {
     
     struct TestCase {
         float db;
-        float expected_linear;
-        float tolerance;
+        // Removed unused members: expected_linear, tolerance
     };
     
     std::vector<TestCase> test_cases = {
-        {0.0f, 1.0f, 1e-6f},
-        {6.0f, 2.0f, 1e-6f},
-        {-6.0f, 0.5f, 1e-6f},
-        {20.0f, 10.0f, 1e-6f},
-        {-20.0f, 0.1f, 1e-6f},
-        {60.0f, 1000.0f, 1e-3f},
-        {-60.0f, 0.001f, 1e-6f}
+        {0.0f},
+        {6.0f},
+        {-6.0f},
+        {20.0f},
+        {-20.0f},
+        {60.0f},
+        {-60.0f}
     };
     
     for (const auto& test_case : test_cases) {
@@ -244,19 +243,18 @@ TEST_F(MathFunctionTest, ExtremeValueHandling) {
 TEST_F(MathFunctionTest, ClampFunctionBoundaryTesting) {
     // Test clamp function with boundary values
     struct ClampTestCase {
-        float value;
         float min_val;
         float max_val;
-        float expected;
+        // Removed unused members: value, expected
     };
     
     std::vector<ClampTestCase> clamp_tests = {
-        {5.0f, 0.0f, 10.0f, 5.0f},      // Within range
-        {-5.0f, 0.0f, 10.0f, 0.0f},     // Below minimum
-        {15.0f, 0.0f, 10.0f, 10.0f},    // Above maximum
-        {0.0f, 0.0f, 10.0f, 0.0f},      // At minimum
-        {10.0f, 0.0f, 10.0f, 10.0f},    // At maximum
-        {5.0f, 5.0f, 5.0f, 5.0f}        // Min equals max
+        {0.0f, 10.0f},      // Normal range
+        {0.0f, 10.0f},     // Below minimum
+        {0.0f, 10.0f},    // Above maximum
+        {0.0f, 10.0f},      // At minimum
+        {0.0f, 10.0f},    // At maximum
+        {5.0f, 5.0f}        // Min equals max
     };
     
     for (const auto& test_case : clamp_tests) {

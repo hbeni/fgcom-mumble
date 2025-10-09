@@ -12,8 +12,8 @@
   <line>Command: ./antenna_pattern_module_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/test_results/antenna_pattern_module_valgrind_tests.xml</line>
 </preamble>
 
-<pid>26102</pid>
-<ppid>25733</ppid>
+<pid>31125</pid>
+<ppid>30542</ppid>
 <tool>memcheck</tool>
 
 <args>
@@ -34,13 +34,13 @@
 
 <status>
   <state>RUNNING</state>
-  <time>00:00:00:00.054 </time>
+  <time>00:00:00:00.058 </time>
 </status>
 
 
 <status>
   <state>FINISHED</state>
-  <time>00:00:00:13.013 </time>
+  <time>00:00:00:03.140 </time>
 </status>
 
 <errorcounts>

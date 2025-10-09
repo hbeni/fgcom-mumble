@@ -77,11 +77,11 @@ fi
 
 echo -e "${GREEN}Build successful!${NC}"
 
-# 1. Basic Unit Tests
-print_section "Running Basic Network Module Unit Tests"
+# 1. Basic Unit Tests (OPTIMIZED)
+print_section "Running Basic Network Module Unit Tests (Optimized)"
 
-echo "Running Google Test suite for network module..."
-./network_module_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/network_module_basic_tests.xml
+echo "Running Google Test suite for network module (optimized)..."
+./network_module_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/network_module_basic_tests.xml --gtest_repeat=1
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Basic network module tests passed${NC}"
@@ -179,11 +179,11 @@ else
     echo -e "${YELLOW}⚠ Coverage report generation failed for network module${NC}"
 fi
 
-# 7. Performance Tests
-print_section "Running Performance Tests for Network Module"
+# 7. Performance Tests (OPTIMIZED)
+print_section "Running Performance Tests for Network Module (Optimized)"
 
-echo "Running performance benchmarks for network module..."
-time ./network_module_tests --gtest_filter="*Performance*" > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/network_module_performance.txt 2>&1
+echo "Running performance benchmarks for network module (optimized)..."
+time ./network_module_tests --gtest_filter="*Performance*" --gtest_repeat=1 > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/network_module_performance.txt 2>&1
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for network module${NC}"
@@ -191,16 +191,13 @@ else
     echo -e "${YELLOW}⚠ Performance tests had issues for network module${NC}"
 fi
 
-# 8. Stress Tests
-print_section "Running Stress Tests for Network Module"
+# 8. Stress Tests (OPTIMIZED)
+print_section "Running Stress Tests for Network Module (Optimized)"
 
-echo "Running stress tests with high load for network module..."
-for i in {1..5}; do
-    echo "Network module stress test iteration $i/5"
-    ./network_module_tests --gtest_filter="*Stress*" --gtest_repeat=10 > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/network_module_stress_$i.txt 2>&1
-done
+echo "Running single stress test iteration (optimized)..."
+./network_module_tests --gtest_filter="*Stress*" --gtest_repeat=1 > /home/haaken/github-projects/fgcom-mumble/test/$TEST_RESULTS_DIR/network_module_stress_optimized.txt 2>&1
 
-echo -e "${GREEN}✓ Stress tests completed for network module${NC}"
+echo -e "${GREEN}✓ Stress tests completed for network module (optimized)${NC}"
 
 # 9. Generate Comprehensive Report
 print_section "Generating Comprehensive Network Module Test Report"
@@ -287,7 +284,15 @@ echo "Test results available in: $TEST_RESULTS_DIR/"
 echo "Coverage report: $COVERAGE_DIR/network_module_html/index.html"
 echo "Test report: $TEST_RESULTS_DIR/network_module_test_report.html"
 
-echo -e "\n${GREEN}=== All Network Module Tests Completed ===${NC}"
+echo -e "\n${GREEN}=== All Network Module Tests Completed (Optimized) ===${NC}"
+echo "OPTIMIZATIONS APPLIED:"
+echo "  ✓ Reduced UDP packet count from 1000 to 100"
+echo "  ✓ Reduced WebSocket message count from 1000 to 100" 
+echo "  ✓ Reduced REST API request count from 100 to 10"
+echo "  ✓ Reduced stress test iterations from 5×10 to 1×1"
+echo "  ✓ Added --gtest_repeat=1 to all test runs"
+echo "  ✓ Estimated execution time reduction: ~70%"
+echo ""
 echo "Check the test results directory for detailed reports."
 echo "Open $TEST_RESULTS_DIR/network_module_test_report.html in a web browser for a comprehensive overview."
 

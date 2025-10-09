@@ -7,13 +7,48 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
 find_package(GTest REQUIRED)
+
+# RapidCheck setup
+set(RAPIDCHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../rapidcheck_tests/lib/rapidcheck")
+set(RAPIDCHECK_INCLUDE_DIR "${RAPIDCHECK_DIR}/include")
+set(RAPIDCHECK_SRC_DIR "${RAPIDCHECK_DIR}/src")
+
+# Add RapidCheck as subdirectory if not already added
+if(NOT TARGET rapidcheck)
+    add_subdirectory(${RAPIDCHECK_DIR} rapidcheck)
+endif()
+
 # Find GMock
 find_package(PkgConfig REQUIRED)
+
+# RapidCheck setup
+set(RAPIDCHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../rapidcheck_tests/lib/rapidcheck")
+set(RAPIDCHECK_INCLUDE_DIR "${RAPIDCHECK_DIR}/include")
+set(RAPIDCHECK_SRC_DIR "${RAPIDCHECK_DIR}/src")
+
+# Add RapidCheck as subdirectory if not already added
+if(NOT TARGET rapidcheck)
+    add_subdirectory(${RAPIDCHECK_DIR} rapidcheck)
+endif()
+
 pkg_check_modules(GMOCK REQUIRED gmock)
 find_package(Threads REQUIRED)
 
+# RapidCheck setup
+set(RAPIDCHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../rapidcheck_tests/lib/rapidcheck")
+set(RAPIDCHECK_INCLUDE_DIR "${RAPIDCHECK_DIR}/include")
+set(RAPIDCHECK_SRC_DIR "${RAPIDCHECK_DIR}/src")
+
+# Add RapidCheck as subdirectory if not already added
+if(NOT TARGET rapidcheck)
+    add_subdirectory(${RAPIDCHECK_DIR} rapidcheck)
+endif()
+
+
 # Include directories
 include_directories(
+    ${RAPIDCHECK_INCLUDE_DIR}
+
     ${CMAKE_CURRENT_SOURCE_DIR}/../../client/mumble-plugin/lib
     ${CMAKE_CURRENT_SOURCE_DIR}/../../client/mumble-plugin
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -21,6 +56,8 @@ include_directories(
 
 # Source files
 set(TEST_SOURCES
+    test_work_unit_distribution_module_tests_properties.cpp
+
     test_work_unit_distribution_rewritten.cpp
 )
 
@@ -29,6 +66,7 @@ add_executable(work_unit_distribution_module_tests ${TEST_SOURCES})
 
 # Link libraries
 target_link_libraries(work_unit_distribution_module_tests
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}
@@ -71,6 +109,7 @@ set(COVERAGE_FLAGS
 # AddressSanitizer version
 add_executable(work_unit_distribution_module_tests_asan ${TEST_SOURCES})
 target_link_libraries(work_unit_distribution_module_tests_asan
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}
@@ -84,6 +123,7 @@ target_link_options(work_unit_distribution_module_tests_asan PRIVATE ${ASAN_FLAG
 # ThreadSanitizer version
 add_executable(work_unit_distribution_module_tests_tsan ${TEST_SOURCES})
 target_link_libraries(work_unit_distribution_module_tests_tsan
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}
@@ -97,6 +137,7 @@ target_link_options(work_unit_distribution_module_tests_tsan PRIVATE ${TSAN_FLAG
 # Coverage version
 add_executable(work_unit_distribution_module_tests_coverage ${TEST_SOURCES})
 target_link_libraries(work_unit_distribution_module_tests_coverage
+    rapidcheck
     GTest::GTest
     GTest::Main
     ${GMOCK_LIBRARIES}

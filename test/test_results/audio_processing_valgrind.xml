@@ -12,8 +12,8 @@
   <line>Command: ./audio_processing_tests --gtest_output=xml:/home/haaken/github-projects/fgcom-mumble/test/test_results/audio_processing_valgrind_tests.xml</line>
 </preamble>
 
-<pid>62930</pid>
-<ppid>62739</ppid>
+<pid>31800</pid>
+<ppid>31238</ppid>
 <tool>memcheck</tool>
 
 <args>
@@ -34,13 +34,13 @@
 
 <status>
   <state>RUNNING</state>
-  <time>00:00:00:00.061 </time>
+  <time>00:00:00:00.058 </time>
 </status>
 
 
 <status>
   <state>FINISHED</state>
-  <time>00:00:00:01.066 </time>
+  <time>00:00:00:00.967 </time>
 </status>
 
 <errorcounts>
