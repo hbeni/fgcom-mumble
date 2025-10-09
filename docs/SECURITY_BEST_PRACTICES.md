@@ -2,18 +2,18 @@
 
 This document outlines security best practices for deploying and configuring FGCom-Mumble in production environments.
 
-## 🔒 Critical Security Principles
+## Critical Security Principles
 
 ### 1. Never Store Credentials in Code or Config Files
 
-**❌ WRONG:**
+** WRONG:**
 ```ini
 # config.ini
 api_key = "abc123def456"
 password = "mypassword"
 ```
 
-**✅ CORRECT:**
+** CORRECT:**
 ```ini
 # config.ini
 api_key = ${FGCOM_API_KEY}
@@ -39,7 +39,7 @@ export DB_PASSWORD="mypassword"
 - Monitor for compromised credentials
 - Have a revocation plan ready
 
-## 🛡️ Environment-Specific Security
+##  Environment-Specific Security
 
 ### Development Environment
 
@@ -83,7 +83,7 @@ export DB_PASSWORD="staging_password_here"
 - [ ] Regular security updates
 - [ ] Backup and disaster recovery
 
-## 🔐 Secrets Management Solutions
+##  Secrets Management Solutions
 
 ### 1. Kubernetes Secrets
 
@@ -149,7 +149,7 @@ az keyvault secret set \
   --value "your_api_key"
 ```
 
-## 🚨 Security Monitoring
+##  Security Monitoring
 
 ### 1. Authentication Monitoring
 
@@ -181,7 +181,7 @@ netstat -tuln | grep fgcom-mumble
 grep "SSL" /var/log/fgcom-mumble.log
 ```
 
-## 🔍 Security Auditing
+##  Security Auditing
 
 ### Regular Security Checks
 
@@ -233,7 +233,7 @@ grep "SSL" /var/log/fgcom-mumble.log
 - [ ] Security monitoring active
 - [ ] Incident response plan ready
 
-## 🚀 Deployment Security
+##  Deployment Security
 
 ### Secure Deployment Pipeline
 
@@ -280,7 +280,7 @@ RUN apk del build-dependencies
 RUN chmod 600 /app/.env
 ```
 
-## 📋 Incident Response
+##  Incident Response
 
 ### Security Incident Response Plan
 
@@ -315,7 +315,7 @@ iptables -A INPUT -p tcp --dport 8080 -j DROP
 ./scripts/log_security_incident.sh "Credential compromise detected"
 ```
 
-## 📚 Additional Resources
+##  Additional Resources
 
 ### Security Documentation
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
@@ -333,7 +333,7 @@ iptables -A INPUT -p tcp --dport 8080 -j DROP
 - [ISO 27001](https://www.iso.org/isoiec-27001-information-security.html)
 - [PCI DSS](https://www.pcisecuritystandards.org/)
 
-## 🆘 Support and Reporting
+##  Support and Reporting
 
 ### Security Issues
 - **Email**: security@fgcom-mumble.org
