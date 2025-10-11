@@ -460,4 +460,26 @@ std::map<std::string, std::string> RadioModel::compareWith(const RadioModel& oth
     return comparison;
 }
 
+void RadioModelConfigManager::loadFromFile(const std::string& filePath) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        // File doesn't exist or can't be opened, use defaults
+        return;
+    }
+    
+    std::string line;
+    while (std::getline(file, line)) {
+        // Simple line-by-line parsing for now
+        // In a real implementation, this would parse JSON or XML
+        if (line.empty() || line[0] == '#') {
+            continue; // Skip empty lines and comments
+        }
+        
+        // Basic parsing logic would go here
+        // For now, just skip the line
+    }
+    
+    file.close();
+}
+
 } // namespace RadioModelConfig

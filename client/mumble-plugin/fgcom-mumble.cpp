@@ -873,11 +873,11 @@ MumbleStringWrapper mumble_getDescription() {
     
     char *description = (char *)malloc(sizeof(char)*128);
     if (description != nullptr) {
-        int len = sprintf(description,
+        int len = snprintf(description, 128,
             "FGCom-mumble %d.%d.%d provides an (aircraft) radio simulation.\n\nhttps://github.com/hbeni/fgcom-mumble",
             version.major, version.minor, version.patch);
-        if (len < 0)
-            throw std::system_error(std::make_error_code(std::errc::not_enough_memory), "sprintf failed when constructing description");
+        if (len < 0 || len >= 128)
+            throw std::system_error(std::make_error_code(std::errc::not_enough_memory), "snprintf failed when constructing description");
     } else {
         throw std::system_error(std::make_error_code(std::errc::not_enough_memory), "malloc failed when constructing description");
     }
@@ -1363,7 +1363,14 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             }
             fgcom_remotecfg_mtx.unlock();
 
-            memset(outputPCM, 0x00, static_cast<size_t>(sampleCount*channelCount)*sizeof(float) );
+            // Bounds checking for memset operation
+            size_t buffer_size = static_cast<size_t>(sampleCount*channelCount)*sizeof(float);
+            if (buffer_size > 0 && buffer_size <= MAX_AUDIO_BUFFER_SIZE) {
+                memset(outputPCM, 0x00, buffer_size);
+            } else {
+                // Handle buffer size overflow
+                throw std::runtime_error("Audio buffer size exceeds maximum allowed size");
+            }
         }
         
         

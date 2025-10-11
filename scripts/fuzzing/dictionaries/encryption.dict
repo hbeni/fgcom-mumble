@@ -1,0 +1,103 @@
+# Voice Encryption Dictionary
+# Encryption Systems
+"YACHTA_T219"
+"VINSON_KY57"
+"GRANIT"
+"STANAG_4197"
+"FREEDV"
+"MELPE"
+
+# Encryption Modes
+"AES256"
+"AES128"
+"DES"
+"3DES"
+"RSA"
+"ECDSA"
+"ECDH"
+"DH"
+
+# FreeDV Modes
+"FREEDV_700C"
+"FREEDV_700D"
+"FREEDV_700E"
+"FREEDV_1600"
+"FREEDV_800XA"
+"FREEDV_800XB"
+
+# MELPe Modes
+"MELPE_2400"
+"MELPE_1200"
+"MELPE_600"
+
+# Encryption Keys
+"KEY"
+"IV"
+"SESSION_KEY"
+"MASTER_KEY"
+"PUBLIC_KEY"
+"PRIVATE_KEY"
+"SYMMETRIC"
+"ASYMMETRIC"
+
+# Voice Codecs
+"PCM"
+"G711"
+"G722"
+"G729"
+"AMR"
+"OPUS"
+"SPEEX"
+"ILBC"
+
+# Security Protocols
+"TLS"
+"SSL"
+"DTLS"
+"SRTP"
+"ZRTP"
+"MIKEY"
+"SDES"
+
+# Cryptographic Functions
+"ENCRYPT"
+"DECRYPT"
+"SIGN"
+"VERIFY"
+"HASH"
+"MAC"
+"HMAC"
+"CMAC"
+
+# Key Management
+"KEY_EXCHANGE"
+"KEY_DERIVATION"
+"KEY_ROTATION"
+"KEY_ESCROW"
+"KEY_RECOVERY"
+
+# Security Levels
+"UNCLASSIFIED"
+"CONFIDENTIAL"
+"SECRET"
+"TOP_SECRET"
+"RESTRICTED"
+"FOR_OFFICIAL_USE_ONLY"
+
+# Voice Quality
+"VOICE_QUALITY"
+"SNR"
+"BER"
+"PESQ"
+"MOS"
+"CLARITY"
+"INTELLIGIBILITY"
+
+# Error Handling
+"CRC"
+"CHECKSUM"
+"PARITY"
+"REED_SOLOMON"
+"CONVOLUTIONAL"
+"TURBO"
+"LDPC"

@@ -31,6 +31,7 @@
 
 
 #define SIGNAL_INTERPOLATE_MS  500  // timeframe for signal quality interpolation
+#define MAX_AUDIO_BUFFER_SIZE   (1024 * 1024)  // Maximum audio buffer size (1MB)
 
 
 /*

@@ -80,3 +80,47 @@ test/*/test_results/
 test/*/coverage/
 test/*/sanitizer_results/
 test/*/test_output.log
+
+# Security and Environment Files
+.env
+.env.local
+.env.production
+.env.staging
+*.key
+*.pem
+*.crt
+*.csr
+secrets/
+credentials/
+config/secrets/
+
+# Fuzzing artifacts
+test/fuzzing_outputs/
+test/fuzzing_inputs/
+corpus/
+afl_output/
+mull_output/
+
+# Build artifacts
+build/
+cmake-build-*/
+*.cmake
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

@@ -41,9 +41,16 @@ private:
     
     // Load UHF antenna patterns for various vehicles
     void loadUHFAntennaPatterns();
-    void loadAircraftUHFPatterns();
-    void loadGroundVehicleUHFPatterns();
-    void loadMaritimeUHFPatterns();
+    void loadMilitaryUHFPatterns();
+    void loadCivilianUHFPatterns();
+    
+    // Get UHF antenna gain from pattern interpolation
+    double getUHFGain(const std::string& antenna_name, int altitude_m, 
+                     double frequency_mhz, double theta_deg, double phi_deg,
+                     int roll_deg = 0, int pitch_deg = 0);
+    
+    // Determine UHF antenna name based on vehicle type and frequency
+    std::string getUHFAntennaName(const std::string& vehicle_type, double frequency_mhz);
     
 public:
     FGCom_radiowaveModel_UHF();
@@ -59,7 +66,10 @@ public:
     
     // UHF-specific power distance calculation
     float calcPowerDistance(float power_watts, double distance_km, 
-                          double altitude_m, double frequency_mhz);
+                          double frequency_mhz, double altitude_m, double antenna_height_m);
+    
+    // Legacy method for backward compatibility
+    float calcPowerDistance(float power_watts, double distance_km);
     
     // Required virtual methods from base class
     virtual std::string getType() override;

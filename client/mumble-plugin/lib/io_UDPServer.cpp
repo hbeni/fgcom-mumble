@@ -698,7 +698,17 @@ void fgcom_spawnUDPServer() {
         int recvfrom_flags = MSG_WAITALL;
 #endif
 
-        // receive datagrams
+        // Set socket timeout to prevent blocking forever
+        struct timeval timeout;
+        timeout.tv_sec = 5;  // 5 second timeout
+        timeout.tv_usec = 0;
+        setsockopt(fgcom_UDPServer_sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+
+        // receive datagrams with bounds checking
+        if (len > MAXLINE) {
+            pluginLog("[UDP-server] Client address length exceeds maximum buffer size");
+            continue;
+        }
         n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
                      recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
         if (n < 0) {
@@ -821,8 +831,13 @@ void fgcom_shutdownUDPServer() {
 		return;
 	}
 
-	// send data
-	int len = sendto(sock, message.c_str(), strlen(message.c_str()), 0,
+	// send data with bounds checking
+	size_t message_len = strlen(message.c_str());
+	if (message_len > MAXLINE) {
+		pluginLog("[UDP-server] Message length exceeds maximum buffer size");
+		return;
+	}
+	int len = sendto(sock, message.c_str(), message_len, 0,
 	           (struct sockaddr*)&server_address, sizeof(server_address));
     if (len == -1) {
         pluginLog("[UDP-server] error sending UDP shutdown packet");

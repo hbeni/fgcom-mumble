@@ -1,0 +1,83 @@
+# Satellite Communication Dictionary
+# TLE Keywords
+"TLE"
+"NORAD"
+"SATCAT"
+"EPOCH"
+"MEAN_MOTION"
+"ECCENTRICITY"
+"INCLINATION"
+"RAAN"
+"ARG_PERIGEE"
+"MEAN_ANOMALY"
+
+# Satellite Types
+"LEO"
+"GEO"
+"MEO"
+"HEO"
+"POLAR"
+"EQUATORIAL"
+"INCLINED"
+
+# Communication Modes
+"LINEAR_TRANSPONDER"
+"FM_REPEATER"
+"DIGITAL_MODE"
+"STORE_AND_FORWARD"
+"BEACON"
+"TELEMETRY"
+
+# Frequency Bands
+"VHF"
+"UHF"
+"L_BAND"
+"S_BAND"
+"C_BAND"
+"X_BAND"
+"KU_BAND"
+"KA_BAND"
+
+# Ground Station Terms
+"GROUND_STATION"
+"ANTENNA"
+"AZIMUTH"
+"ELEVATION"
+"RANGE"
+"VISIBILITY"
+"PASS"
+"AOS"
+"LOS"
+
+# Orbital Mechanics
+"ORBIT"
+"PERIOD"
+"APOGEE"
+"PERIGEE"
+"ALTITUDE"
+"VELOCITY"
+"DOPPLER"
+"SHIFT"
+"COMPENSATION"
+
+# Satellite Names
+"AO-7"
+"FO-29"
+"AO-73"
+"XW-2"
+"SO-50"
+"AO-91"
+"AO-85"
+"ISS"
+"PO-101"
+"NO-84"
+"LilacSat-2"
+"AO-95"
+
+# Military Satellites
+"STRELA-3"
+"FLTSATCOM"
+"TSIKLON"
+"TSIKADA"
+"ORBCOMM"
+"GONETS"
