@@ -1,0 +1,27 @@
+{
+  "name": "fgcom-mumble-fake-moon-api-examples",
+  "version": "1.0.0",
+  "description": "JavaScript examples for the FGcom-Mumble Fake Moon API",
+  "main": "fake_moon_examples.js",
+  "scripts": {
+    "start": "node fake_moon_examples.js",
+    "test": "node fake_moon_examples.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "keywords": [
+    "fgcom-mumble",
+    "fake-moon",
+    "api",
+    "satellite",
+    "communication",
+    "simulation"
+  ],
+  "author": "FGcom-mumble Development Team",
+  "license": "GPL-3.0",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
+

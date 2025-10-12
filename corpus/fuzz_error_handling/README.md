@@ -1,0 +1,33 @@
+# Error Handling Fuzzing Corpus
+
+## Overview
+This corpus contains test data for fuzzing error handling mechanisms in FGCom-mumble.
+
+## Test Data Files
+*Note: Error handling corpus files are designed to test various error conditions*
+
+## Fuzzing Target
+- **Binary**: `test/build-fuzz/fuzz_error_handling`
+- **Purpose**: Tests error handling for:
+  - Error condition detection
+  - Error recovery mechanisms
+  - Error reporting systems
+  - Error logging functionality
+  - Error propagation handling
+
+## Expected Behaviors
+- Error conditions should be detected reliably
+- Error recovery should be robust
+- Error reporting should be comprehensive
+- Error logging should be secure
+- Error propagation should be controlled
+
+## Coverage Areas
+- Error condition detection
+- Error recovery mechanisms
+- Error reporting systems
+- Error logging functionality
+- Error propagation handling
+- Exception handling
+- Error state management
+- Error communication

@@ -97,7 +97,7 @@ config/secrets/
 # Fuzzing artifacts
 test/fuzzing_outputs/
 test/fuzzing_inputs/
-corpus/
+#corpus/
 afl_output/
 mull_output/
 
