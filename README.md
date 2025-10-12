@@ -383,6 +383,12 @@ The system includes comprehensive antenna pattern visualization showing realisti
 
 ---
 
+## TODO
+
+- **Automatic ATIS Updates**: Implement automatic ATIS recording updates when weather conditions change for airports (e.g., KJFK, ENGM). This will integrate the existing Piper TTS system with real-time weather data APIs to automatically regenerate ATIS recordings when significant weather changes are detected.
+
+---
+
 ## Contributing
 
 The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
