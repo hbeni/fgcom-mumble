@@ -59,7 +59,7 @@ include_directories(
 # Source files
 set(TEST_SOURCES
     test_atis_module_tests_properties.cpp
-
+    atis_functions.cpp
     main.cpp
     test_atis_module_main.cpp
     test_recording.cpp

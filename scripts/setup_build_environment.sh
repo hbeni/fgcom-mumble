@@ -104,6 +104,21 @@ if ! command_exists bc; then
 fi
 
 echo "✓ Build dependencies installed successfully"
+
+# Install Python dependencies for ATIS Weather Integration
+echo "Installing Python dependencies for ATIS Weather Integration..."
+if command_exists pip3; then
+    echo "Installing required Python packages..."
+    pip3 install requests python-dateutil
+    echo "✓ Python dependencies installed successfully"
+else
+    echo "pip3 not found. Installing pip3..."
+    install_package "python3-pip"
+    echo "Installing required Python packages..."
+    pip3 install requests python-dateutil
+    echo "✓ Python dependencies installed successfully"
+fi
+echo
 echo
 
 echo "3. Installing Bot Dependencies..."

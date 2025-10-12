@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/atis_module_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/atis_module_tests/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/atis_module_tests_coverage.dir/depend.make
@@ -70,92 +70,107 @@ include CMakeFiles/atis_module_tests_coverage.dir/progress.make
 include CMakeFiles/atis_module_tests_coverage.dir/flags.make
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/flags.make
-CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp
+CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o: /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o -c /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.i
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_tests_properties.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.s
+
+CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/flags.make
+CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o: /home/haaken/fgcom-mumble/test/atis_module_tests/atis_functions.cpp
+CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o -c /home/haaken/fgcom-mumble/test/atis_module_tests/atis_functions.cpp
+
+CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/atis_module_tests/atis_functions.cpp > CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.i
+
+CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/atis_module_tests/atis_functions.cpp -o CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.s
 
 CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/flags.make
-CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/main.cpp
+CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o: /home/haaken/fgcom-mumble/test/atis_module_tests/main.cpp
 CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o -c /home/haaken/fgcom-mumble/test/atis_module_tests/main.cpp
 
 CMakeFiles/atis_module_tests_coverage.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/atis_module_tests_coverage.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/main.cpp > CMakeFiles/atis_module_tests_coverage.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/atis_module_tests/main.cpp > CMakeFiles/atis_module_tests_coverage.dir/main.cpp.i
 
 CMakeFiles/atis_module_tests_coverage.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/atis_module_tests_coverage.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/main.cpp -o CMakeFiles/atis_module_tests_coverage.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/atis_module_tests/main.cpp -o CMakeFiles/atis_module_tests_coverage.dir/main.cpp.s
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/flags.make
-CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp
+CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o: /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o -c /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.i
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_module_main.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.s
 
 CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/flags.make
-CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp
+CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o: /home/haaken/fgcom-mumble/test/atis_module_tests/test_recording.cpp
 CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o -c /home/haaken/fgcom-mumble/test/atis_module_tests/test_recording.cpp
 
 CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/atis_module_tests/test_recording.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.i
 
 CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_recording.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/atis_module_tests/test_recording.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.s
 
 CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/flags.make
-CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp
+CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o: /home/haaken/fgcom-mumble/test/atis_module_tests/test_playback.cpp
 CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.o -c /home/haaken/fgcom-mumble/test/atis_module_tests/test_playback.cpp
 
 CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/atis_module_tests/test_playback.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.i
 
 CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_playback.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/atis_module_tests/test_playback.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_playback.cpp.s
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/flags.make
-CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp
+CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o: /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o: CMakeFiles/atis_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o -MF CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o.d -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.o -c /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp > CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.i
 
 CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/atis_module_tests/test_atis_content.cpp -o CMakeFiles/atis_module_tests_coverage.dir/test_atis_content.cpp.s
 
 # Object files for target atis_module_tests_coverage
 atis_module_tests_coverage_OBJECTS = \
 "CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o" \
+"CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o" \
 "CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o" \
 "CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o" \
 "CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o" \
@@ -166,6 +181,7 @@ atis_module_tests_coverage_OBJECTS = \
 atis_module_tests_coverage_EXTERNAL_OBJECTS =
 
 atis_module_tests_coverage: CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_tests_properties.cpp.o
+atis_module_tests_coverage: CMakeFiles/atis_module_tests_coverage.dir/atis_functions.cpp.o
 atis_module_tests_coverage: CMakeFiles/atis_module_tests_coverage.dir/main.cpp.o
 atis_module_tests_coverage: CMakeFiles/atis_module_tests_coverage.dir/test_atis_module_main.cpp.o
 atis_module_tests_coverage: CMakeFiles/atis_module_tests_coverage.dir/test_recording.cpp.o
@@ -177,7 +193,7 @@ atis_module_tests_coverage: rapidcheck/librapidcheck.a
 atis_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 atis_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest.a
 atis_module_tests_coverage: CMakeFiles/atis_module_tests_coverage.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable atis_module_tests_coverage"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable atis_module_tests_coverage"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/atis_module_tests_coverage.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -189,6 +205,6 @@ CMakeFiles/atis_module_tests_coverage.dir/clean:
 .PHONY : CMakeFiles/atis_module_tests_coverage.dir/clean
 
 CMakeFiles/atis_module_tests_coverage.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/atis_module_tests/build/CMakeFiles/atis_module_tests_coverage.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/atis_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/atis_module_tests /home/haaken/fgcom-mumble/test/atis_module_tests /home/haaken/fgcom-mumble/test/atis_module_tests/build /home/haaken/fgcom-mumble/test/atis_module_tests/build /home/haaken/fgcom-mumble/test/atis_module_tests/build/CMakeFiles/atis_module_tests_coverage.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/atis_module_tests_coverage.dir/depend
 

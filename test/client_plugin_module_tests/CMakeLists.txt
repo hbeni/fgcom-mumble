@@ -65,13 +65,13 @@ set(TEST_SOURCES
     ../../client/mumble-plugin/lib/io_UDPServer.cpp
     ../../client/mumble-plugin/lib/radio_model.cpp
     ../../client/mumble-plugin/lib/radio_model_vhf.cpp
-    ../../client/mumble-plugin/lib/radio_model_hf.cpp
+    ../../client/mumble-plugin/lib/radio_model_hf_impl.cpp
     ../../client/mumble-plugin/lib/radio_model_hf_impl.cpp
     ../../client/mumble-plugin/lib/radio_model_uhf.cpp
     ../../client/mumble-plugin/lib/radio_model_uhf_impl.cpp
-    ../../client/mumble-plugin/lib/radio_model_amateur.cpp
     ../../client/mumble-plugin/lib/radio_model_amateur_impl.cpp
-    ../../client/mumble-plugin/lib/radio_model_string.cpp
+    ../../client/mumble-plugin/lib/radio_model_amateur_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_string_impl.cpp
     ../../client/mumble-plugin/lib/radio_model_string_impl.cpp
     ../../client/mumble-plugin/lib/radio_model_aviation_hf.cpp
     ../../client/mumble-plugin/lib/radio_model_maritime_hf.cpp

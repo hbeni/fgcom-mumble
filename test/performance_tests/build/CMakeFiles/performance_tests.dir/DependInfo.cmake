@@ -8,9 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_latency.cpp" "CMakeFiles/performance_tests.dir/test_latency.cpp.o" "gcc" "CMakeFiles/performance_tests.dir/test_latency.cpp.o.d"
-  "/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_performance_main.cpp" "CMakeFiles/performance_tests.dir/test_performance_main.cpp.o" "gcc" "CMakeFiles/performance_tests.dir/test_performance_main.cpp.o.d"
-  "/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_throughput.cpp" "CMakeFiles/performance_tests.dir/test_throughput.cpp.o" "gcc" "CMakeFiles/performance_tests.dir/test_throughput.cpp.o.d"
+  "/home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_main.cpp" "CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o" "gcc" "CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o.d"
+  "/home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_properties.cpp" "CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o" "gcc" "CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/audio_processing_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/audio_processing_tests/build
 
 # Utility rule file for run_audio_processing_coverage_tests.
 
@@ -67,7 +67,7 @@ include CMakeFiles/run_audio_processing_coverage_tests.dir/compiler_depend.make
 include CMakeFiles/run_audio_processing_coverage_tests.dir/progress.make
 
 CMakeFiles/run_audio_processing_coverage_tests: audio_processing_tests_coverage
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running audio processing coverage tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running audio processing coverage tests"
 	/usr/bin/ctest -L coverage;audio_processing
 
 run_audio_processing_coverage_tests: CMakeFiles/run_audio_processing_coverage_tests
@@ -83,6 +83,6 @@ CMakeFiles/run_audio_processing_coverage_tests.dir/clean:
 .PHONY : CMakeFiles/run_audio_processing_coverage_tests.dir/clean
 
 CMakeFiles/run_audio_processing_coverage_tests.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles/run_audio_processing_coverage_tests.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/audio_processing_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/audio_processing_tests /home/haaken/fgcom-mumble/test/audio_processing_tests /home/haaken/fgcom-mumble/test/audio_processing_tests/build /home/haaken/fgcom-mumble/test/audio_processing_tests/build /home/haaken/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles/run_audio_processing_coverage_tests.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/run_audio_processing_coverage_tests.dir/depend
 

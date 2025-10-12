@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/performance_tests.dir/test_latency.cpp.o"
-  "CMakeFiles/performance_tests.dir/test_latency.cpp.o.d"
-  "CMakeFiles/performance_tests.dir/test_performance_main.cpp.o"
-  "CMakeFiles/performance_tests.dir/test_performance_main.cpp.o.d"
-  "CMakeFiles/performance_tests.dir/test_throughput.cpp.o"
-  "CMakeFiles/performance_tests.dir/test_throughput.cpp.o.d"
+  "CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o"
+  "CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o.d"
+  "CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o"
+  "CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o.d"
   "performance_tests"
   "performance_tests.pdb"
 )

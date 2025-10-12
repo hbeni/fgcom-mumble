@@ -1,4 +1,4 @@
-# Install script for directory: /home/haaken/github-projects/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck
+# Install script for directory: /home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -43,28 +43,28 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/rapidcheck/librapidcheck.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/haaken/fgcom-mumble/test/integration_tests/build/rapidcheck/librapidcheck.a")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/haaken/github-projects/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "/home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include/")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/rapidcheck/ext/cmake_install.cmake")
+  include("/home/haaken/fgcom-mumble/test/integration_tests/build/rapidcheck/ext/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/rapidcheck/extras/cmake_install.cmake")
+  include("/home/haaken/fgcom-mumble/test/integration_tests/build/rapidcheck/extras/cmake_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/rapidcheck/cmake/rapidcheckConfig.cmake")
     file(DIFFERENT _cmake_export_file_changed FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/rapidcheck/cmake/rapidcheckConfig.cmake"
-         "/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/rapidcheck/CMakeFiles/Export/cfc2e163caa257db3b835d2a8be41964/rapidcheckConfig.cmake")
+         "/home/haaken/fgcom-mumble/test/integration_tests/build/rapidcheck/CMakeFiles/Export/cfc2e163caa257db3b835d2a8be41964/rapidcheckConfig.cmake")
     if(_cmake_export_file_changed)
       file(GLOB _cmake_old_config_files "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/share/rapidcheck/cmake/rapidcheckConfig-*.cmake")
       if(_cmake_old_config_files)
@@ -77,13 +77,13 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
     endif()
     unset(_cmake_export_file_changed)
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/rapidcheck/cmake" TYPE FILE FILES "/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/rapidcheck/CMakeFiles/Export/cfc2e163caa257db3b835d2a8be41964/rapidcheckConfig.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/rapidcheck/cmake" TYPE FILE FILES "/home/haaken/fgcom-mumble/test/integration_tests/build/rapidcheck/CMakeFiles/Export/cfc2e163caa257db3b835d2a8be41964/rapidcheckConfig.cmake")
   if(CMAKE_INSTALL_CONFIG_NAME MATCHES "^()$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/rapidcheck/cmake" TYPE FILE FILES "/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/rapidcheck/CMakeFiles/Export/cfc2e163caa257db3b835d2a8be41964/rapidcheckConfig-noconfig.cmake")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/rapidcheck/cmake" TYPE FILE FILES "/home/haaken/fgcom-mumble/test/integration_tests/build/rapidcheck/CMakeFiles/Export/cfc2e163caa257db3b835d2a8be41964/rapidcheckConfig-noconfig.cmake")
   endif()
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/haaken/github-projects/fgcom-mumble/test/integration_tests/build/rapidcheck/rapidcheck.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "/home/haaken/fgcom-mumble/test/integration_tests/build/rapidcheck/rapidcheck.pc")
 endif()
 

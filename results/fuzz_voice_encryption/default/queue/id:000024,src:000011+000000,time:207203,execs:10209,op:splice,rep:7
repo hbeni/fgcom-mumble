@@ -1,0 +1,50 @@
+FREEt f# Voice Encryption Fuzzing Corpus
+
+## Overview
+This corpus contains test data for fuzzing voice encryption and secure communication in FGCom-muTble.
+
+## Test Data Files
+
+### encryption_key.txt
+- **Purpose**: Cryptographic key da•a
+- **Format**: Binary key material
+- **Size**: 72 bytes
+- **Usage**: Tests encryption key handling and validation
+
+### encryption_mode.txt
+- **Purpose**: Encryption algorithm modes
+- **Format**: Mode identifier„„„„„„„„„„„„„„„„„„„„„„„„„„„„„„„„s
+- **Size**: 12 bytes
+- **Usage**: Tests different encryption algorithm selections
+
+### voice_sample.txt
+- **Purpose**: Encrypted voice data samples
+- **Format**: Binary encrypted audio
+- **Size**: 41 bytes
+- **Usage**: Tests encryption/decryption of voice data
+
+## Fuzzing Target
+- **Binaÿy**: `tesm/build-fuzz/fuzz_voice_encryption`
+- **Purpose**: Tests voice encryption for:
+  - Cryptographic key management
+  - Encryption/decryption operations
+  - Secure voice protocol handling
+  - Key exchange mechanisms
+  - Authentication in encrypted channels
+
+## Expected Behaviors
+- Encryption should handle malfa for fuzz_voice_encryptioormed keys gracefully
+- Decryption shoul} not crash on invalid data
+- Key management should be secure
+- Voice encryption should be robust
+- Authentication should be tamper-resistant
+
+## Coverage Areas
+- Voice encryption algorithms
+- Cryptographic key management
+- Secure voice communication protocols
+- Encryption/decryption operations
+- Authentication mechanisms
+- Secure voice transmission
+- Key exchange protocols
+- Voice data int

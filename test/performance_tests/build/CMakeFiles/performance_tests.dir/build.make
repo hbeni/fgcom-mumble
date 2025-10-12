@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/performance_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/performance_tests/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/performance_tests.dir/depend.make
@@ -69,64 +69,50 @@ include CMakeFiles/performance_tests.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/performance_tests.dir/flags.make
 
-CMakeFiles/performance_tests.dir/test_performance_main.cpp.o: CMakeFiles/performance_tests.dir/flags.make
-CMakeFiles/performance_tests.dir/test_performance_main.cpp.o: test_performance_main.cpp
-CMakeFiles/performance_tests.dir/test_performance_main.cpp.o: CMakeFiles/performance_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/performance_tests.dir/test_performance_main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/performance_tests.dir/test_performance_main.cpp.o -MF CMakeFiles/performance_tests.dir/test_performance_main.cpp.o.d -o CMakeFiles/performance_tests.dir/test_performance_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_performance_main.cpp
+CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o: CMakeFiles/performance_tests.dir/flags.make
+CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o: /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_main.cpp
+CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o: CMakeFiles/performance_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/performance_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o -MF CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o.d -o CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o -c /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_main.cpp
 
-CMakeFiles/performance_tests.dir/test_performance_main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/performance_tests.dir/test_performance_main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_performance_main.cpp > CMakeFiles/performance_tests.dir/test_performance_main.cpp.i
+CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_main.cpp > CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.i
 
-CMakeFiles/performance_tests.dir/test_performance_main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/performance_tests.dir/test_performance_main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_performance_main.cpp -o CMakeFiles/performance_tests.dir/test_performance_main.cpp.s
+CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_main.cpp -o CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.s
 
-CMakeFiles/performance_tests.dir/test_latency.cpp.o: CMakeFiles/performance_tests.dir/flags.make
-CMakeFiles/performance_tests.dir/test_latency.cpp.o: test_latency.cpp
-CMakeFiles/performance_tests.dir/test_latency.cpp.o: CMakeFiles/performance_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/performance_tests.dir/test_latency.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/performance_tests.dir/test_latency.cpp.o -MF CMakeFiles/performance_tests.dir/test_latency.cpp.o.d -o CMakeFiles/performance_tests.dir/test_latency.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_latency.cpp
+CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o: CMakeFiles/performance_tests.dir/flags.make
+CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o: /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_properties.cpp
+CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o: CMakeFiles/performance_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/performance_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o -MF CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o.d -o CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o -c /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_properties.cpp
 
-CMakeFiles/performance_tests.dir/test_latency.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/performance_tests.dir/test_latency.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_latency.cpp > CMakeFiles/performance_tests.dir/test_latency.cpp.i
+CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_properties.cpp > CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.i
 
-CMakeFiles/performance_tests.dir/test_latency.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/performance_tests.dir/test_latency.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_latency.cpp -o CMakeFiles/performance_tests.dir/test_latency.cpp.s
-
-CMakeFiles/performance_tests.dir/test_throughput.cpp.o: CMakeFiles/performance_tests.dir/flags.make
-CMakeFiles/performance_tests.dir/test_throughput.cpp.o: test_throughput.cpp
-CMakeFiles/performance_tests.dir/test_throughput.cpp.o: CMakeFiles/performance_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/performance_tests.dir/test_throughput.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/performance_tests.dir/test_throughput.cpp.o -MF CMakeFiles/performance_tests.dir/test_throughput.cpp.o.d -o CMakeFiles/performance_tests.dir/test_throughput.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_throughput.cpp
-
-CMakeFiles/performance_tests.dir/test_throughput.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/performance_tests.dir/test_throughput.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_throughput.cpp > CMakeFiles/performance_tests.dir/test_throughput.cpp.i
-
-CMakeFiles/performance_tests.dir/test_throughput.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/performance_tests.dir/test_throughput.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/test_throughput.cpp -o CMakeFiles/performance_tests.dir/test_throughput.cpp.s
+CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/performance_tests/test_performance_tests_properties.cpp -o CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.s
 
 # Object files for target performance_tests
 performance_tests_OBJECTS = \
-"CMakeFiles/performance_tests.dir/test_performance_main.cpp.o" \
-"CMakeFiles/performance_tests.dir/test_latency.cpp.o" \
-"CMakeFiles/performance_tests.dir/test_throughput.cpp.o"
+"CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o" \
+"CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o"
 
 # External object files for target performance_tests
 performance_tests_EXTERNAL_OBJECTS =
 
-performance_tests: CMakeFiles/performance_tests.dir/test_performance_main.cpp.o
-performance_tests: CMakeFiles/performance_tests.dir/test_latency.cpp.o
-performance_tests: CMakeFiles/performance_tests.dir/test_throughput.cpp.o
+performance_tests: CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o
+performance_tests: CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o
 performance_tests: CMakeFiles/performance_tests.dir/build.make
+performance_tests: rapidcheck/librapidcheck.a
+performance_tests: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 performance_tests: /usr/lib/x86_64-linux-gnu/libgtest.a
 performance_tests: CMakeFiles/performance_tests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable performance_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/fgcom-mumble/test/performance_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable performance_tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/performance_tests.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -138,6 +124,6 @@ CMakeFiles/performance_tests.dir/clean:
 .PHONY : CMakeFiles/performance_tests.dir/clean
 
 CMakeFiles/performance_tests.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/CMakeFiles/performance_tests.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/performance_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/performance_tests /home/haaken/fgcom-mumble/test/performance_tests /home/haaken/fgcom-mumble/test/performance_tests/build /home/haaken/fgcom-mumble/test/performance_tests/build /home/haaken/fgcom-mumble/test/performance_tests/build/CMakeFiles/performance_tests.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/performance_tests.dir/depend
 

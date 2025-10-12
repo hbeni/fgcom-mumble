@@ -121,6 +121,7 @@ create_directories() {
         "/usr/share/fgcom-mumble/scripts"
         "/usr/share/fgcom-mumble/configs"
         "/etc/fgcom-mumble"
+        "/var/lib/fgcom-mumble/atis_recordings"\        "/var/lib/fgcom-mumble/atis_cache"\        "/var/lib/fgcom-mumble/weather_data"
     )
     
     for dir in "${dirs[@]}"; do

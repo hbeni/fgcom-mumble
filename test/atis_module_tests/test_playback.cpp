@@ -1,4 +1,4 @@
-#include "test_atis_module_main.cpp"
+#include "atis_test_classes.h"
 
 // 7.2 Playback Tests
 TEST_F(PlaybackTest, PlaybackOnDemand) {

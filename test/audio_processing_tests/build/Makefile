@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/audio_processing_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/audio_processing_tests/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles /home/haaken/fgcom-mumble/test/audio_processing_tests/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/audio_processing_tests/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -288,104 +288,104 @@ rapidcheck/fast:
 	$(MAKE) $(MAKESILENT) -f rapidcheck/CMakeFiles/rapidcheck.dir/build.make rapidcheck/CMakeFiles/rapidcheck.dir/build
 .PHONY : rapidcheck/fast
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.o: home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.o
 
 # target to build an object file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.i: home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.i
 
 # target to preprocess a source file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.s: home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.s
 
 # target to generate assembly for a file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o: home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o
 
 # target to build an object file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.o
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i: home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i
 
 # target to preprocess a source file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.i
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s: home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s
 
 # target to generate assembly for a file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.cpp.s
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.o: home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.o
 
 # target to build an object file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.o
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.i: home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.i
 
 # target to preprocess a source file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.i
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.s: home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.s
 
 # target to generate assembly for a file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests.dir/build.make CMakeFiles/audio_processing_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_asan.dir/build.make CMakeFiles/audio_processing_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_tsan.dir/build.make CMakeFiles/audio_processing_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/audio_processing_tests_coverage.dir/build.make CMakeFiles/audio_processing_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.cpp.s
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -607,15 +607,15 @@ help:
 	@echo "... audio_processing_tests_coverage"
 	@echo "... audio_processing_tests_tsan"
 	@echo "... rapidcheck"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.o"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.i"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.s"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.o"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.i"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.s"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.o"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.i"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.s"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.o"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.i"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/audio_modern.s"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.o"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.i"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/frequency_offset.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

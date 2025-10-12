@@ -1,4 +1,4 @@
-#include "test_atis_module_main.cpp"
+#include "atis_test_classes.h"
 
 // 7.1 Recording Tests
 TEST_F(RecordingTest, VoiceRecordingStartStop) {

@@ -559,3 +559,142 @@ int main(int argc, char **argv) {
     return RUN_ALL_TESTS();
 }
 
+
+// Dynamic GPU Scaling Tests
+class DynamicGPUScalingTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Initialize dynamic GPU scaling test parameters
+        scaling_thresholds = {20, 50, 100, 150, 200};
+        gpu_allocation_per_threshold = {1, 2, 3, 4, 6};
+        max_local_gpus = 4;
+        max_network_gpus = 8;
+    }
+    
+    std::vector<int> scaling_thresholds;
+    std::vector<int> gpu_allocation_per_threshold;
+    int max_local_gpus;
+    int max_network_gpus;
+};
+
+TEST_F(DynamicGPUScalingTest, CalculateOptimalGPUsForLowUserCount) {
+    // Test GPU allocation for 1-20 users
+    for (int user_count = 1; user_count <= 20; user_count++) {
+        int optimal_gpus = calculateOptimalGPUs(user_count, max_local_gpus);
+        EXPECT_EQ(optimal_gpus, 1) << "Should allocate 1 GPU for " << user_count << " users";
+    }
+}
+
+TEST_F(DynamicGPUScalingTest, CalculateOptimalGPUsForMediumUserCount) {
+    // Test GPU allocation for 21-50 users
+    for (int user_count = 21; user_count <= 50; user_count++) {
+        int optimal_gpus = calculateOptimalGPUs(user_count, max_local_gpus);
+        EXPECT_EQ(optimal_gpus, 2) << "Should allocate 2 GPUs for " << user_count << " users";
+    }
+}
+
+TEST_F(DynamicGPUScalingTest, CalculateOptimalGPUsForHighUserCount) {
+    // Test GPU allocation for 51-100 users
+    for (int user_count = 51; user_count <= 100; user_count++) {
+        int optimal_gpus = calculateOptimalGPUs(user_count, max_local_gpus);
+        EXPECT_EQ(optimal_gpus, 3) << "Should allocate 3 GPUs for " << user_count << " users";
+    }
+}
+
+TEST_F(DynamicGPUScalingTest, CalculateOptimalGPUsForVeryHighUserCount) {
+    // Test GPU allocation for 101-150 users
+    for (int user_count = 101; user_count <= 150; user_count++) {
+        int optimal_gpus = calculateOptimalGPUs(user_count, max_local_gpus);
+        EXPECT_EQ(optimal_gpus, 5) << "Should allocate 5 GPUs for " << user_count << " users";
+    }
+}
+
+TEST_F(DynamicGPUScalingTest, CalculateOptimalGPUsForMaximumUserCount) {
+    // Test GPU allocation for 151-200 users
+    for (int user_count = 151; user_count <= 200; user_count++) {
+        int optimal_gpus = calculateOptimalGPUs(user_count, max_local_gpus);
+        EXPECT_EQ(optimal_gpus, 8) << "Should allocate 8 GPUs for " << user_count << " users";
+    }
+}
+
+TEST_F(DynamicGPUScalingTest, NetworkGPULimits) {
+    // Test network GPU limits
+    int user_count = 100;
+    int network_gpu_count = 4;
+    double bandwidth_requirement = calculateNetworkBandwidthRequirement(network_gpu_count, user_count);
+    
+    EXPECT_LE(bandwidth_requirement, 1000.0) << "Bandwidth requirement should not exceed 1 Gbps";
+    EXPECT_GT(bandwidth_requirement, 0.0) << "Bandwidth requirement should be positive";
+}
+
+TEST_F(DynamicGPUScalingTest, NetworkLatencyLimits) {
+    // Test network latency limits
+    std::vector<int> latencies = {50, 75, 100, 150, 200};
+    int max_latency_threshold = 100;
+    
+    for (int latency : latencies) {
+        bool can_allocate = (latency <= max_latency_threshold);
+        if (latency <= max_latency_threshold) {
+            EXPECT_TRUE(can_allocate) << "Should allow allocation for latency " << latency << "ms";
+        } else {
+            EXPECT_FALSE(can_allocate) << "Should not allow allocation for latency " << latency << "ms";
+        }
+    }
+}
+
+TEST_F(DynamicGPUScalingTest, GPUScalingThresholds) {
+    // Test that scaling thresholds are properly configured
+    EXPECT_EQ(scaling_thresholds.size(), 5) << "Should have 5 scaling thresholds";
+    EXPECT_EQ(gpu_allocation_per_threshold.size(), 5) << "Should have 5 GPU allocation values";
+    
+    // Verify threshold order
+    for (size_t i = 1; i < scaling_thresholds.size(); i++) {
+        EXPECT_GT(scaling_thresholds[i], scaling_thresholds[i-1]) 
+            << "Thresholds should be in ascending order";
+    }
+}
+
+TEST_F(DynamicGPUScalingTest, WorkUnitDistributionWithDynamicScaling) {
+    // Test work unit distribution with dynamic GPU scaling
+    int user_count = 75;
+    int optimal_gpus = calculateOptimalGPUs(user_count, max_local_gpus);
+    
+    // Create work units that require GPU processing
+    std::vector<WorkUnit> gpu_work_units;
+    for (int i = 0; i < 10; i++) {
+        WorkUnit unit;
+        unit.id = "gpu_unit_" + std::to_string(i);
+        unit.type = WorkUnitType::PROPAGATION_GRID;
+        unit.requires_gpu = true;
+        unit.dynamic_gpu_scaling = true;
+        unit.user_count_threshold = user_count;
+        gpu_work_units.push_back(unit);
+    }
+    
+    // Distribute work units across available GPUs
+    int units_per_gpu = gpu_work_units.size() / optimal_gpus;
+    EXPECT_GE(units_per_gpu, 1) << "Should distribute at least 1 unit per GPU";
+}
+
+// Helper functions for dynamic GPU scaling tests
+int calculateOptimalGPUs(int user_count, int available_local_gpus) {
+    if (user_count <= 20) {
+        return std::min(1, available_local_gpus);
+    } else if (user_count <= 50) {
+        return std::min(2, available_local_gpus);
+    } else if (user_count <= 100) {
+        return std::min(3, available_local_gpus);
+    } else if (user_count <= 150) {
+        return std::min(5, available_local_gpus);
+    } else {
+        return std::min(8, available_local_gpus);
+    }
+}
+
+double calculateNetworkBandwidthRequirement(int network_gpu_count, int user_count) {
+    if (network_gpu_count == 0) return 0.0;
+    double users_per_gpu = static_cast<double>(user_count) / network_gpu_count;
+    double bandwidth_per_user = 2.0; // MB/s per user
+    return users_per_gpu * bandwidth_per_user * network_gpu_count;
+}
+

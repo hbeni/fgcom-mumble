@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/edge_case_coverage_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/edge_case_coverage_tests.dir/depend.make
@@ -70,32 +70,32 @@ include CMakeFiles/edge_case_coverage_tests.dir/progress.make
 include CMakeFiles/edge_case_coverage_tests.dir/flags.make
 
 CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o: CMakeFiles/edge_case_coverage_tests.dir/flags.make
-CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp
+CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o: /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp
 CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o: CMakeFiles/edge_case_coverage_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o -MF CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o.d -o CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o -MF CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o.d -o CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.o -c /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp
 
 CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp > CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp > CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.i
 
 CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp -o CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_edge_case_coverage.cpp -o CMakeFiles/edge_case_coverage_tests.dir/test_edge_case_coverage.cpp.s
 
 CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o: CMakeFiles/edge_case_coverage_tests.dir/flags.make
-CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp
+CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o: /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp
 CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o: CMakeFiles/edge_case_coverage_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o -MF CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o.d -o CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o -MF CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o.d -o CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.o -c /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp
 
 CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp > CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp > CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.i
 
 CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp -o CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/test_platform_specific.cpp -o CMakeFiles/edge_case_coverage_tests.dir/test_platform_specific.cpp.s
 
 # Object files for target edge_case_coverage_tests
 edge_case_coverage_tests_OBJECTS = \
@@ -114,7 +114,7 @@ edge_case_coverage_tests: /usr/lib/x86_64-linux-gnu/libpthread.a
 edge_case_coverage_tests: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 edge_case_coverage_tests: /usr/lib/x86_64-linux-gnu/libgtest.a
 edge_case_coverage_tests: CMakeFiles/edge_case_coverage_tests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable edge_case_coverage_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable edge_case_coverage_tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/edge_case_coverage_tests.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -126,6 +126,6 @@ CMakeFiles/edge_case_coverage_tests.dir/clean:
 .PHONY : CMakeFiles/edge_case_coverage_tests.dir/clean
 
 CMakeFiles/edge_case_coverage_tests.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build /home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles/edge_case_coverage_tests.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/edge_case_coverage_tests /home/haaken/fgcom-mumble/test/edge_case_coverage_tests /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build /home/haaken/fgcom-mumble/test/edge_case_coverage_tests/build/CMakeFiles/edge_case_coverage_tests.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/edge_case_coverage_tests.dir/depend
 

@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o"
-  "CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o.d"
+  "CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o"
+  "CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o.d"
   "CMakeFiles/agc_squelch_tests.dir/main.cpp.o"
   "CMakeFiles/agc_squelch_tests.dir/main.cpp.o.d"
   "CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o"

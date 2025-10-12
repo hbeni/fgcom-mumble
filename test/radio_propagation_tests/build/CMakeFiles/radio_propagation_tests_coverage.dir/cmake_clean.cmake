@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o"
-  "CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o.d"
+  "CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o"
+  "CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o.d"
   "CMakeFiles/radio_propagation_tests_coverage.dir/main.cpp.o"
   "CMakeFiles/radio_propagation_tests_coverage.dir/main.cpp.o.d"
   "CMakeFiles/radio_propagation_tests_coverage.dir/test_antenna_patterns.cpp.o"
@@ -17,6 +17,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_main.cpp.o.d"
   "CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_tests_properties.cpp.o"
   "CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_tests_properties.cpp.o.d"
+  "CMakeFiles/radio_propagation_tests_coverage.dir/test_real_city_pairs.cpp.o"
+  "CMakeFiles/radio_propagation_tests_coverage.dir/test_real_city_pairs.cpp.o.d"
   "CMakeFiles/radio_propagation_tests_coverage.dir/test_solar_data_impact.cpp.o"
   "CMakeFiles/radio_propagation_tests_coverage.dir/test_solar_data_impact.cpp.o.d"
   "radio_propagation_tests_coverage"

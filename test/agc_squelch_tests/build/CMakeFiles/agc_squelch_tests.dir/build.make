@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/agc_squelch_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/agc_squelch_tests/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/agc_squelch_tests.dir/depend.make
@@ -70,116 +70,116 @@ include CMakeFiles/agc_squelch_tests.dir/progress.make
 include CMakeFiles/agc_squelch_tests.dir/flags.make
 
 CMakeFiles/agc_squelch_tests.dir/main.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/main.cpp
+CMakeFiles/agc_squelch_tests.dir/main.cpp.o: /home/haaken/fgcom-mumble/test/agc_squelch_tests/main.cpp
 CMakeFiles/agc_squelch_tests.dir/main.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/agc_squelch_tests.dir/main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/main.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/main.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/agc_squelch_tests.dir/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/main.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/main.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/main.cpp.o -c /home/haaken/fgcom-mumble/test/agc_squelch_tests/main.cpp
 
 CMakeFiles/agc_squelch_tests.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/main.cpp > CMakeFiles/agc_squelch_tests.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/agc_squelch_tests/main.cpp > CMakeFiles/agc_squelch_tests.dir/main.cpp.i
 
 CMakeFiles/agc_squelch_tests.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/main.cpp -o CMakeFiles/agc_squelch_tests.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/agc_squelch_tests/main.cpp -o CMakeFiles/agc_squelch_tests.dir/main.cpp.s
 
 CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp
+CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o: /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp
 CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.o -c /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp
 
 CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp > CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp > CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.i
 
 CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp -o CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_squelch_main.cpp -o CMakeFiles/agc_squelch_tests.dir/test_agc_squelch_main.cpp.s
 
 CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp
+CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o: /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp
 CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.o -c /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp
 
 CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp > CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp > CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.i
 
 CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp -o CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_singleton.cpp -o CMakeFiles/agc_squelch_tests.dir/test_singleton.cpp.s
 
 CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp
+CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o: /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp
 CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o -c /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp
 
 CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp > CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp > CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.i
 
 CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp -o CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp -o CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.s
 
 CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp
+CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o: /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp
 CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o -c /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp
 
 CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp > CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp > CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.i
 
 CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp -o CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp -o CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.s
 
 CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp
+CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o: /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp
 CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o -c /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp
 
 CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp > CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp > CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.i
 
 CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp -o CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_audio_processing.cpp -o CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.s
 
 CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp
+CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o: /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp
 CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o -c /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp
 
 CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp > CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp > CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.i
 
 CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp -o CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/agc_squelch_tests/test_math_functions.cpp -o CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.s
 
-CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
-CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp
-CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o -c /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp
+CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: CMakeFiles/agc_squelch_tests.dir/flags.make
+CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: /home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp
+CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o: CMakeFiles/agc_squelch_tests.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o -MF CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o.d -o CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o -c /home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp
 
-CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp > CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
+CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp > CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.i
 
-CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp -o CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
+CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp -o CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.s
 
 # Object files for target agc_squelch_tests
 agc_squelch_tests_OBJECTS = \
@@ -190,7 +190,7 @@ agc_squelch_tests_OBJECTS = \
 "CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o" \
 "CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o" \
 "CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o" \
-"CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o"
+"CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o"
 
 # External object files for target agc_squelch_tests
 agc_squelch_tests_EXTERNAL_OBJECTS =
@@ -202,12 +202,12 @@ agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/test_agc_config.cpp.o
 agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/test_squelch_config.cpp.o
 agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/test_audio_processing.cpp.o
 agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/test_math_functions.cpp.o
-agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
+agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/agc_squelch.cpp.o
 agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/build.make
 agc_squelch_tests: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 agc_squelch_tests: /usr/lib/x86_64-linux-gnu/libgtest.a
 agc_squelch_tests: CMakeFiles/agc_squelch_tests.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable agc_squelch_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable agc_squelch_tests"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/agc_squelch_tests.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -219,6 +219,6 @@ CMakeFiles/agc_squelch_tests.dir/clean:
 .PHONY : CMakeFiles/agc_squelch_tests.dir/clean
 
 CMakeFiles/agc_squelch_tests.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build /home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles/agc_squelch_tests.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/agc_squelch_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/agc_squelch_tests /home/haaken/fgcom-mumble/test/agc_squelch_tests /home/haaken/fgcom-mumble/test/agc_squelch_tests/build /home/haaken/fgcom-mumble/test/agc_squelch_tests/build /home/haaken/fgcom-mumble/test/agc_squelch_tests/build/CMakeFiles/agc_squelch_tests.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/agc_squelch_tests.dir/depend
 

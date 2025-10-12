@@ -15,6 +15,19 @@ This test suite provides comprehensive testing for the Work Unit Distribution Mo
 - [x] Task distribution accuracy
 
 ### 12.2 Results Collection Tests (`test_results_collection.cpp`)
+
+### 12.3 Dynamic GPU Scaling Tests (`test_work_unit_distribution_main.cpp`)
+- [x] GPU allocation for low user counts (1-20 users)
+- [x] GPU allocation for medium user counts (21-50 users)
+- [x] GPU allocation for high user counts (51-100 users)
+- [x] GPU allocation for very high user counts (101-150 users)
+- [x] GPU allocation for maximum user counts (151-200 users)
+- [x] Network GPU bandwidth limits
+- [x] Network GPU latency limits
+- [x] GPU scaling thresholds validation
+- [x] Work unit distribution with dynamic scaling
+- [x] Network GPU pool management
+- [x] Dynamic scaling performance tests
 - [x] Result validation
 - [x] Result aggregation
 - [x] Partial result handling

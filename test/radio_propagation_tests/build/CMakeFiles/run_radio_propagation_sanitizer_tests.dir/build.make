@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/radio_propagation_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/radio_propagation_tests/build
 
 # Utility rule file for run_radio_propagation_sanitizer_tests.
 
@@ -68,7 +68,7 @@ include CMakeFiles/run_radio_propagation_sanitizer_tests.dir/progress.make
 
 CMakeFiles/run_radio_propagation_sanitizer_tests: radio_propagation_tests_asan
 CMakeFiles/run_radio_propagation_sanitizer_tests: radio_propagation_tests_tsan
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running radio propagation sanitizer tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running radio propagation sanitizer tests"
 	/usr/bin/ctest -L sanitizer;radio_propagation
 
 run_radio_propagation_sanitizer_tests: CMakeFiles/run_radio_propagation_sanitizer_tests
@@ -84,6 +84,6 @@ CMakeFiles/run_radio_propagation_sanitizer_tests.dir/clean:
 .PHONY : CMakeFiles/run_radio_propagation_sanitizer_tests.dir/clean
 
 CMakeFiles/run_radio_propagation_sanitizer_tests.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles/run_radio_propagation_sanitizer_tests.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/radio_propagation_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/radio_propagation_tests /home/haaken/fgcom-mumble/test/radio_propagation_tests /home/haaken/fgcom-mumble/test/radio_propagation_tests/build /home/haaken/fgcom-mumble/test/radio_propagation_tests/build /home/haaken/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles/run_radio_propagation_sanitizer_tests.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/run_radio_propagation_sanitizer_tests.dir/depend
 

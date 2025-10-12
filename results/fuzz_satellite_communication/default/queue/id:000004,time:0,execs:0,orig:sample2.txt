@@ -1,0 +1,1 @@
+Testa for fuzz_satellite_communication

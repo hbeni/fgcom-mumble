@@ -30,7 +30,6 @@ include_directories(
 set(TEST_SOURCES
     test_performance_tests_main.cpp
     test_performance_tests_properties.cpp
-    main.cpp
 )
 
 # Create test executable

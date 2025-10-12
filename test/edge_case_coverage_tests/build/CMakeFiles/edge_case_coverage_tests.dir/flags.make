@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -D__linux__
 
-CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/edge_case_coverage_tests -I/home/haaken/github-projects/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
+CXX_INCLUDES = -I/home/haaken/fgcom-mumble/test/edge_case_coverage_tests/../../client/mumble-plugin/lib -I/home/haaken/fgcom-mumble/test/edge_case_coverage_tests -I/home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
 
 CXX_FLAGS = -std=gnu++17 -DGTEST_HAS_PTHREAD=1
 

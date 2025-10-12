@@ -1,0 +1,1 @@
+../scripts/server/fgcom-botmanager.sh

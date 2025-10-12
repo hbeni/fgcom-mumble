@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/client_plugin_module_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/client_plugin_module_tests/build
 
 # Utility rule file for run_client_plugin_module_all_tests.
 
@@ -70,7 +70,7 @@ CMakeFiles/run_client_plugin_module_all_tests: client_plugin_module_tests
 CMakeFiles/run_client_plugin_module_all_tests: client_plugin_module_tests_asan
 CMakeFiles/run_client_plugin_module_all_tests: client_plugin_module_tests_tsan
 CMakeFiles/run_client_plugin_module_all_tests: client_plugin_module_tests_coverage
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running all client plugin module tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/fgcom-mumble/test/client_plugin_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running all client plugin module tests"
 	/usr/bin/ctest -L client_plugin_module --verbose
 
 run_client_plugin_module_all_tests: CMakeFiles/run_client_plugin_module_all_tests
@@ -86,6 +86,6 @@ CMakeFiles/run_client_plugin_module_all_tests.dir/clean:
 .PHONY : CMakeFiles/run_client_plugin_module_all_tests.dir/clean
 
 CMakeFiles/run_client_plugin_module_all_tests.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/client_plugin_module_tests/build/CMakeFiles/run_client_plugin_module_all_tests.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/client_plugin_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/client_plugin_module_tests /home/haaken/fgcom-mumble/test/client_plugin_module_tests /home/haaken/fgcom-mumble/test/client_plugin_module_tests/build /home/haaken/fgcom-mumble/test/client_plugin_module_tests/build /home/haaken/fgcom-mumble/test/client_plugin_module_tests/build/CMakeFiles/run_client_plugin_module_all_tests.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/run_client_plugin_module_all_tests.dir/depend
 

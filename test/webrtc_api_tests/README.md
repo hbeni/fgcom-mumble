@@ -142,6 +142,6 @@ npm install
 ## References
 
 - [WebRTC API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API)
-- [FGCom-mumble Documentation](../docs/)
-- [Test Framework Documentation](../test/TestFramework.h)
+- [FGCom-mumble Documentation](../../docs/)
+- [Test Framework Documentation](../../client/mumble-plugin/TestFramework.h)
 - [WebRTC Testing Best Practices](https://webrtc.org/testing/)

@@ -116,3 +116,8 @@ fgcom_radiowave_signal FGCom_radiowaveModel_HF::getSignal(double lat1, double lo
     
     return signal;
 }
+
+// Check compatibility with other radio models
+bool FGCom_radiowaveModel_HF::isCompatible(FGCom_radiowaveModel *otherModel) {
+    return otherModel->getType() != "STRING";
+}

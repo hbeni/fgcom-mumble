@@ -390,3 +390,147 @@ int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
+
+// Dynamic GPU Scaling Performance Tests
+class DynamicGPUScalingPerformanceTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Initialize dynamic GPU scaling performance test parameters
+        max_local_gpus = 4;
+        max_network_gpus = 8;
+        scaling_thresholds = {20, 50, 100, 150, 200};
+        test_user_counts = {10, 30, 60, 120, 180, 200};
+    }
+    
+    int max_local_gpus;
+    int max_network_gpus;
+    std::vector<int> scaling_thresholds;
+    std::vector<int> test_user_counts;
+};
+
+TEST_F(DynamicGPUScalingPerformanceTest, GPUScalingLatency) {
+    // Test GPU scaling decision latency
+    for (int user_count : test_user_counts) {
+        auto start_time = std::chrono::high_resolution_clock::now();
+        
+        int optimal_gpus = calculateOptimalGPUs(user_count, max_local_gpus);
+        
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        
+        EXPECT_LT(duration.count(), 1000) << "GPU scaling decision should take less than 1ms";
+        EXPECT_GE(optimal_gpus, 1) << "Should allocate at least 1 GPU";
+        EXPECT_LE(optimal_gpus, 8) << "Should not exceed maximum GPU allocation";
+    }
+}
+
+TEST_F(DynamicGPUScalingPerformanceTest, NetworkGPUPerformance) {
+    // Test network GPU performance for high user loads
+    int user_count = 150;
+    int network_gpu_count = 4;
+    
+    auto start_time = std::chrono::high_resolution_clock::now();
+    
+    double bandwidth_requirement = calculateNetworkBandwidthRequirement(network_gpu_count, user_count);
+    bool can_allocate = canAllocateNetworkGPU(network_gpu_count, user_count);
+    
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+    
+    EXPECT_LT(duration.count(), 500) << "Network GPU allocation should take less than 0.5ms";
+    EXPECT_LE(bandwidth_requirement, 1000.0) << "Bandwidth requirement should not exceed 1 Gbps";
+    EXPECT_TRUE(can_allocate) << "Should be able to allocate network GPUs";
+}
+
+TEST_F(DynamicGPUScalingPerformanceTest, ScalingThresholdPerformance) {
+    // Test performance of scaling threshold calculations
+    for (int threshold : scaling_thresholds) {
+        auto start_time = std::chrono::high_resolution_clock::now();
+        
+        int gpu_allocation = getGPUAllocationForThreshold(threshold);
+        
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        
+        EXPECT_LT(duration.count(), 100) << "Threshold calculation should be very fast";
+        EXPECT_GE(gpu_allocation, 1) << "Should allocate at least 1 GPU";
+    }
+}
+
+TEST_F(DynamicGPUScalingPerformanceTest, HighLoadScalingPerformance) {
+    // Test performance for high user loads (150+ users)
+    int high_user_count = 180;
+    
+    auto start_time = std::chrono::high_resolution_clock::now();
+    
+    int local_gpus = std::min(4, max_local_gpus);
+    int network_gpus = std::min(4, max_network_gpus);
+    int total_gpus = local_gpus + network_gpus;
+    
+    auto end_time = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+    
+    EXPECT_LT(duration.count(), 200) << "High load scaling should be fast";
+    EXPECT_EQ(total_gpus, 8) << "Should allocate 8 GPUs for high user count";
+}
+
+TEST_F(DynamicGPUScalingPerformanceTest, NetworkLatencyImpact) {
+    // Test impact of network latency on GPU scaling performance
+    std::vector<int> latencies = {10, 50, 100, 200, 500};
+    
+    for (int latency : latencies) {
+        auto start_time = std::chrono::high_resolution_clock::now();
+        
+        bool can_use_network_gpu = (latency <= 100);
+        int optimal_gpus = calculateOptimalGPUsWithLatency(100, latency);
+        
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        
+        EXPECT_LT(duration.count(), 1000) << "Latency impact calculation should be fast";
+        
+        if (latency <= 100) {
+            EXPECT_TRUE(can_use_network_gpu) << "Should allow network GPU for low latency";
+        } else {
+            EXPECT_FALSE(can_use_network_gpu) << "Should not allow network GPU for high latency";
+        }
+    }
+}
+
+// Helper functions for dynamic GPU scaling performance tests
+int calculateOptimalGPUs(int user_count, int available_local_gpus) {
+    if (user_count <= 20) return 1;
+    if (user_count <= 50) return 2;
+    if (user_count <= 100) return 3;
+    if (user_count <= 150) return 5;
+    return 8;
+}
+
+double calculateNetworkBandwidthRequirement(int network_gpu_count, int user_count) {
+    if (network_gpu_count == 0) return 0.0;
+    double users_per_gpu = static_cast<double>(user_count) / network_gpu_count;
+    double bandwidth_per_user = 2.0; // MB/s per user
+    return users_per_gpu * bandwidth_per_user * network_gpu_count;
+}
+
+bool canAllocateNetworkGPU(int network_gpu_count, int user_count) {
+    double bandwidth = calculateNetworkBandwidthRequirement(network_gpu_count + 1, user_count);
+    return bandwidth <= 1000.0; // 1 Gbps limit
+}
+
+int getGPUAllocationForThreshold(int threshold) {
+    if (threshold <= 20) return 1;
+    if (threshold <= 50) return 2;
+    if (threshold <= 100) return 3;
+    if (threshold <= 150) return 4;
+    return 6;
+}
+
+int calculateOptimalGPUsWithLatency(int user_count, int network_latency_ms) {
+    int base_gpus = calculateOptimalGPUs(user_count, 4);
+    if (network_latency_ms > 100) {
+        return std::min(base_gpus, 4); // Limit to local GPUs only
+    }
+    return base_gpus;
+}
+

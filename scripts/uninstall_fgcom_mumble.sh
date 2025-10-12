@@ -56,6 +56,7 @@ stop_services() {
     # Disable FGcom-mumble service
     if systemctl is-enabled --quiet "$SERVICE_NAME"; then
         systemctl disable "$SERVICE_NAME"
+    # Stop ATIS Weather service if it exists\    if systemctl is-active --quiet "fgcom-mumble-atis-weather" 2>/dev/null; then\        systemctl stop "fgcom-mumble-atis-weather"\        print_success "Stopped fgcom-mumble-atis-weather service"\    fi\    \    # Disable ATIS Weather service if it exists\    if systemctl is-enabled --quiet "fgcom-mumble-atis-weather" 2>/dev/null; then\        systemctl disable "fgcom-mumble-atis-weather"\        print_success "Disabled fgcom-mumble-atis-weather service"\    fi
         print_success "Disabled $SERVICE_NAME service"
     else
         print_status "$SERVICE_NAME service is not enabled"

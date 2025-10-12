@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/database_configuration_module_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -143,14 +143,14 @@ rapidcheck/extras/clean:
 CMakeFiles/database_configuration_module_tests.dir/all: rapidcheck/CMakeFiles/rapidcheck.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests.dir/build.make CMakeFiles/database_configuration_module_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests.dir/build.make CMakeFiles/database_configuration_module_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target database_configuration_module_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target database_configuration_module_tests"
 .PHONY : CMakeFiles/database_configuration_module_tests.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/database_configuration_module_tests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/database_configuration_module_tests.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/database_configuration_module_tests.dir/rule
 
 # Convenience name for target.
@@ -169,14 +169,14 @@ CMakeFiles/database_configuration_module_tests.dir/clean:
 CMakeFiles/database_configuration_module_tests_asan.dir/all: rapidcheck/CMakeFiles/rapidcheck.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests_asan.dir/build.make CMakeFiles/database_configuration_module_tests_asan.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests_asan.dir/build.make CMakeFiles/database_configuration_module_tests_asan.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=6,7,8,9,10 "Built target database_configuration_module_tests_asan"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=6,7,8,9,10 "Built target database_configuration_module_tests_asan"
 .PHONY : CMakeFiles/database_configuration_module_tests_asan.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/database_configuration_module_tests_asan.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/database_configuration_module_tests_asan.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/database_configuration_module_tests_asan.dir/rule
 
 # Convenience name for target.
@@ -195,14 +195,14 @@ CMakeFiles/database_configuration_module_tests_asan.dir/clean:
 CMakeFiles/database_configuration_module_tests_tsan.dir/all: rapidcheck/CMakeFiles/rapidcheck.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests_tsan.dir/build.make CMakeFiles/database_configuration_module_tests_tsan.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests_tsan.dir/build.make CMakeFiles/database_configuration_module_tests_tsan.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=16,17,18,19,20 "Built target database_configuration_module_tests_tsan"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=16,17,18,19,20 "Built target database_configuration_module_tests_tsan"
 .PHONY : CMakeFiles/database_configuration_module_tests_tsan.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/database_configuration_module_tests_tsan.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/database_configuration_module_tests_tsan.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/database_configuration_module_tests_tsan.dir/rule
 
 # Convenience name for target.
@@ -221,14 +221,14 @@ CMakeFiles/database_configuration_module_tests_tsan.dir/clean:
 CMakeFiles/database_configuration_module_tests_coverage.dir/all: rapidcheck/CMakeFiles/rapidcheck.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests_coverage.dir/build.make CMakeFiles/database_configuration_module_tests_coverage.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/database_configuration_module_tests_coverage.dir/build.make CMakeFiles/database_configuration_module_tests_coverage.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=11,12,13,14,15 "Built target database_configuration_module_tests_coverage"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=11,12,13,14,15 "Built target database_configuration_module_tests_coverage"
 .PHONY : CMakeFiles/database_configuration_module_tests_coverage.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/database_configuration_module_tests_coverage.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 40
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/database_configuration_module_tests_coverage.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/database_configuration_module_tests_coverage.dir/rule
 
 # Convenience name for target.
@@ -247,14 +247,14 @@ CMakeFiles/database_configuration_module_tests_coverage.dir/clean:
 CMakeFiles/run_database_configuration_module_basic_tests.dir/all: CMakeFiles/database_configuration_module_tests.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_basic_tests.dir/build.make CMakeFiles/run_database_configuration_module_basic_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_basic_tests.dir/build.make CMakeFiles/run_database_configuration_module_basic_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=57 "Built target run_database_configuration_module_basic_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=57 "Built target run_database_configuration_module_basic_tests"
 .PHONY : CMakeFiles/run_database_configuration_module_basic_tests.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/run_database_configuration_module_basic_tests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 41
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 41
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/run_database_configuration_module_basic_tests.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/run_database_configuration_module_basic_tests.dir/rule
 
 # Convenience name for target.
@@ -274,14 +274,14 @@ CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/all: CMakeFiles
 CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/all: CMakeFiles/database_configuration_module_tests_tsan.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/build.make CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/build.make CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=59 "Built target run_database_configuration_module_sanitizer_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=59 "Built target run_database_configuration_module_sanitizer_tests"
 .PHONY : CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 46
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 46
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/rule
 
 # Convenience name for target.
@@ -300,14 +300,14 @@ CMakeFiles/run_database_configuration_module_sanitizer_tests.dir/clean:
 CMakeFiles/run_database_configuration_module_coverage_tests.dir/all: CMakeFiles/database_configuration_module_tests_coverage.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_coverage_tests.dir/build.make CMakeFiles/run_database_configuration_module_coverage_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_coverage_tests.dir/build.make CMakeFiles/run_database_configuration_module_coverage_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=58 "Built target run_database_configuration_module_coverage_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=58 "Built target run_database_configuration_module_coverage_tests"
 .PHONY : CMakeFiles/run_database_configuration_module_coverage_tests.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/run_database_configuration_module_coverage_tests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 41
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 41
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/run_database_configuration_module_coverage_tests.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/run_database_configuration_module_coverage_tests.dir/rule
 
 # Convenience name for target.
@@ -329,14 +329,14 @@ CMakeFiles/run_database_configuration_module_all_tests.dir/all: CMakeFiles/datab
 CMakeFiles/run_database_configuration_module_all_tests.dir/all: CMakeFiles/database_configuration_module_tests_coverage.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_all_tests.dir/build.make CMakeFiles/run_database_configuration_module_all_tests.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_database_configuration_module_all_tests.dir/build.make CMakeFiles/run_database_configuration_module_all_tests.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=56 "Built target run_database_configuration_module_all_tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=56 "Built target run_database_configuration_module_all_tests"
 .PHONY : CMakeFiles/run_database_configuration_module_all_tests.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/run_database_configuration_module_all_tests.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 56
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 56
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/run_database_configuration_module_all_tests.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : CMakeFiles/run_database_configuration_module_all_tests.dir/rule
 
 # Convenience name for target.
@@ -355,14 +355,14 @@ CMakeFiles/run_database_configuration_module_all_tests.dir/clean:
 rapidcheck/CMakeFiles/rapidcheck.dir/all:
 	$(MAKE) $(MAKESILENT) -f rapidcheck/CMakeFiles/rapidcheck.dir/build.make rapidcheck/CMakeFiles/rapidcheck.dir/depend
 	$(MAKE) $(MAKESILENT) -f rapidcheck/CMakeFiles/rapidcheck.dir/build.make rapidcheck/CMakeFiles/rapidcheck.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55 "Built target rapidcheck"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles --progress-num=21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55 "Built target rapidcheck"
 .PHONY : rapidcheck/CMakeFiles/rapidcheck.dir/all
 
 # Build rule for subdir invocation for target.
 rapidcheck/CMakeFiles/rapidcheck.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 35
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 35
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rapidcheck/CMakeFiles/rapidcheck.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/database_configuration_module_tests/build/CMakeFiles 0
 .PHONY : rapidcheck/CMakeFiles/rapidcheck.dir/rule
 
 # Convenience name for target.

@@ -307,6 +307,14 @@ main() {
     else
         ENABLE_EME_CALCULATIONS="false"
     fi
+
+    # ATIS Weather Integration
+    if ask_yes_no "Enable ATIS Weather Integration (automatic ATIS updates based on weather)?" "n"; then
+        ENABLE_ATIS_WEATHER="true"
+        print_info "ATIS Weather Integration will be configured in the next section"
+    else
+        ENABLE_ATIS_WEATHER="false"
+    fi
     
     # =============================================================================
     # NETWORK SETTINGS
@@ -345,6 +353,42 @@ main() {
         ENABLE_GPU_MONITORING="false"
     fi
     
+
+    # =============================================================================
+    # ATIS WEATHER INTEGRATION CONFIGURATION
+    # =============================================================================
+    if [ "$ENABLE_ATIS_WEATHER" = "true" ]; then
+        print_header "ATIS Weather Integration Configuration"
+        print_info "Configure automatic ATIS updates based on weather changes"
+        
+        # Weather API Configuration
+        ask_input "Aviation Weather API Key" "AVIATION_WEATHER_API_KEY" ""
+        ask_input "OpenWeatherMap API Key (fallback)" "OPENWEATHER_API_KEY" ""
+        
+        # Airport Configuration
+        print_info "Enter airports to monitor (comma-separated, e.g., KJFK,ENGM,EGLL):"
+        ask_input "Airports to monitor" "ATIS_AIRPORTS" "KJFK,ENGM,EGLL"
+        
+        # Weather Thresholds
+        print_info "Configure weather change thresholds:"
+        ask_input "Wind direction change threshold (degrees)" "WIND_DIRECTION_THRESHOLD" "10"
+        ask_input "Wind speed change threshold (knots)" "WIND_SPEED_THRESHOLD" "5"
+        ask_input "Temperature change threshold (Celsius)" "TEMPERATURE_THRESHOLD" "2.0"
+        ask_input "Pressure change threshold (hPa)" "PRESSURE_THRESHOLD" "0.68"
+        
+        # Update Settings
+        ask_input "ATIS update interval (minutes)" "ATIS_UPDATE_INTERVAL" "60"
+        ask_input "Maximum age for weather data (hours)" "WEATHER_MAX_AGE" "12"
+        
+        # TTS Configuration
+        if ask_yes_no "Configure TTS settings for ATIS generation?" "y"; then
+            ask_input "TTS Voice" "TTS_VOICE" "en_US-lessac-medium"
+            ask_input "TTS Speed" "TTS_SPEED" "1.0"
+            ask_input "TTS Pitch" "TTS_PITCH" "1.0"
+        fi
+        
+        print_success "ATIS Weather Integration configuration completed"
+    fi
     # =============================================================================
     # GENERATE CONFIGURATION FILES
     # =============================================================================
@@ -401,6 +445,21 @@ SSL_KEY_PATH="$SSL_KEY_PATH"
 LOG_LEVEL="$LOG_LEVEL"
 DEBUG_LOGGING="$DEBUG_LOGGING"
 ENABLE_GPU_MONITORING="$ENABLE_GPU_MONITORING"
+
+# ATIS Weather Integration
+ENABLE_ATIS_WEATHER="$ENABLE_ATIS_WEATHER"
+AVIATION_WEATHER_API_KEY="$AVIATION_WEATHER_API_KEY"
+OPENWEATHER_API_KEY="$OPENWEATHER_API_KEY"
+ATIS_AIRPORTS="$ATIS_AIRPORTS"
+WIND_DIRECTION_THRESHOLD="$WIND_DIRECTION_THRESHOLD"
+WIND_SPEED_THRESHOLD="$WIND_SPEED_THRESHOLD"
+TEMPERATURE_THRESHOLD="$TEMPERATURE_THRESHOLD"
+PRESSURE_THRESHOLD="$PRESSURE_THRESHOLD"
+ATIS_UPDATE_INTERVAL="$ATIS_UPDATE_INTERVAL"
+WEATHER_MAX_AGE="$WEATHER_MAX_AGE"
+TTS_VOICE="$TTS_VOICE"
+TTS_SPEED="$TTS_SPEED"
+TTS_PITCH="$TTS_PITCH"
 EOF
     
     # Generate GPU acceleration config
@@ -506,6 +565,32 @@ enable_nasa_data = $([[ -n "$NASA_API_KEY" ]] && echo "true" || echo "false")
 enable_weather_data = $([[ -n "$OPENWEATHERMAP_API_KEY" || -n "$NOAA_WEATHER_API_KEY" ]] && echo "true" || echo "false")
 enable_lightning_data = $([[ -n "$LIGHTNING_API_KEY" ]] && echo "true" || echo "false")
 enable_elevation_data = $([[ -n "$USGS_API_KEY" ]] && echo "true" || echo "false")
+
+# ATIS Weather Integration Features
+enable_atis_weather_integration = $ENABLE_ATIS_WEATHER
+enable_atis_weather_monitoring = $ENABLE_ATIS_WEATHER
+enable_automatic_atis_generation = $ENABLE_ATIS_WEATHER
+enable_atis_letter_system = $ENABLE_ATIS_WEATHER
+enable_atis_pressure_correction = $ENABLE_ATIS_WEATHER
+enable_atis_runway_detection = $ENABLE_ATIS_WEATHER
+enable_atis_gust_detection = $ENABLE_ATIS_WEATHER
+enable_atis_visibility_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_cloud_cover_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_temperature_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_wind_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_dew_point_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_qnh_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_qfe_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_notifications = false
+enable_atis_webhook_notifications = false
+enable_atis_email_notifications = false
+enable_atis_debug_logging = false
+enable_atis_verbose_logging = false
+enable_atis_performance_monitoring = $ENABLE_ATIS_WEATHER
+enable_atis_error_recovery = $ENABLE_ATIS_WEATHER
+enable_atis_fallback_apis = $ENABLE_ATIS_WEATHER
+enable_atis_caching = $ENABLE_ATIS_WEATHER
+enable_atis_persistence = $ENABLE_ATIS_WEATHER
 
 # Monitoring
 enable_debug_logging = $DEBUG_LOGGING

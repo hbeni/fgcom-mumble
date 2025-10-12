@@ -1,4 +1,4 @@
-# Install script for directory: /home/haaken/github-projects/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/extras
+# Install script for directory: /home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/extras
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

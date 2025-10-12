@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/performance_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/performance_tests/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -95,11 +95,56 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/CMakeFiles /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/performance_tests/build/CMakeFiles /home/haaken/fgcom-mumble/test/performance_tests/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/performance_tests/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -140,142 +185,65 @@ performance_tests/fast:
 .PHONY : performance_tests/fast
 
 #=============================================================================
-# Target rules for targets named performance_tests_asan
+# Target rules for targets named rapidcheck
 
 # Build rule for target.
-performance_tests_asan: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 performance_tests_asan
-.PHONY : performance_tests_asan
+rapidcheck: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rapidcheck
+.PHONY : rapidcheck
 
 # fast build rule for target.
-performance_tests_asan/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/build
-.PHONY : performance_tests_asan/fast
+rapidcheck/fast:
+	$(MAKE) $(MAKESILENT) -f rapidcheck/CMakeFiles/rapidcheck.dir/build.make rapidcheck/CMakeFiles/rapidcheck.dir/build
+.PHONY : rapidcheck/fast
 
-#=============================================================================
-# Target rules for targets named performance_tests_tsan
-
-# Build rule for target.
-performance_tests_tsan: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 performance_tests_tsan
-.PHONY : performance_tests_tsan
-
-# fast build rule for target.
-performance_tests_tsan/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/build
-.PHONY : performance_tests_tsan/fast
-
-#=============================================================================
-# Target rules for targets named performance_tests_coverage
-
-# Build rule for target.
-performance_tests_coverage: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 performance_tests_coverage
-.PHONY : performance_tests_coverage
-
-# fast build rule for target.
-performance_tests_coverage/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/build
-.PHONY : performance_tests_coverage/fast
-
-test_latency.o: test_latency.cpp.o
-.PHONY : test_latency.o
+test_performance_tests_main.o: test_performance_tests_main.cpp.o
+.PHONY : test_performance_tests_main.o
 
 # target to build an object file
-test_latency.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_latency.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_latency.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_latency.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_latency.cpp.o
-.PHONY : test_latency.cpp.o
+test_performance_tests_main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.o
+.PHONY : test_performance_tests_main.cpp.o
 
-test_latency.i: test_latency.cpp.i
-.PHONY : test_latency.i
+test_performance_tests_main.i: test_performance_tests_main.cpp.i
+.PHONY : test_performance_tests_main.i
 
 # target to preprocess a source file
-test_latency.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_latency.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_latency.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_latency.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_latency.cpp.i
-.PHONY : test_latency.cpp.i
+test_performance_tests_main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.i
+.PHONY : test_performance_tests_main.cpp.i
 
-test_latency.s: test_latency.cpp.s
-.PHONY : test_latency.s
+test_performance_tests_main.s: test_performance_tests_main.cpp.s
+.PHONY : test_performance_tests_main.s
 
 # target to generate assembly for a file
-test_latency.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_latency.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_latency.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_latency.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_latency.cpp.s
-.PHONY : test_latency.cpp.s
+test_performance_tests_main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_tests_main.cpp.s
+.PHONY : test_performance_tests_main.cpp.s
 
-test_performance_main.o: test_performance_main.cpp.o
-.PHONY : test_performance_main.o
+test_performance_tests_properties.o: test_performance_tests_properties.cpp.o
+.PHONY : test_performance_tests_properties.o
 
 # target to build an object file
-test_performance_main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_main.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_performance_main.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_performance_main.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_performance_main.cpp.o
-.PHONY : test_performance_main.cpp.o
+test_performance_tests_properties.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.o
+.PHONY : test_performance_tests_properties.cpp.o
 
-test_performance_main.i: test_performance_main.cpp.i
-.PHONY : test_performance_main.i
+test_performance_tests_properties.i: test_performance_tests_properties.cpp.i
+.PHONY : test_performance_tests_properties.i
 
 # target to preprocess a source file
-test_performance_main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_main.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_performance_main.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_performance_main.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_performance_main.cpp.i
-.PHONY : test_performance_main.cpp.i
+test_performance_tests_properties.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.i
+.PHONY : test_performance_tests_properties.cpp.i
 
-test_performance_main.s: test_performance_main.cpp.s
-.PHONY : test_performance_main.s
+test_performance_tests_properties.s: test_performance_tests_properties.cpp.s
+.PHONY : test_performance_tests_properties.s
 
 # target to generate assembly for a file
-test_performance_main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_main.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_performance_main.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_performance_main.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_performance_main.cpp.s
-.PHONY : test_performance_main.cpp.s
-
-test_throughput.o: test_throughput.cpp.o
-.PHONY : test_throughput.o
-
-# target to build an object file
-test_throughput.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_throughput.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_throughput.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_throughput.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_throughput.cpp.o
-.PHONY : test_throughput.cpp.o
-
-test_throughput.i: test_throughput.cpp.i
-.PHONY : test_throughput.i
-
-# target to preprocess a source file
-test_throughput.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_throughput.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_throughput.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_throughput.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_throughput.cpp.i
-.PHONY : test_throughput.cpp.i
-
-test_throughput.s: test_throughput.cpp.s
-.PHONY : test_throughput.s
-
-# target to generate assembly for a file
-test_throughput.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_throughput.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_asan.dir/build.make CMakeFiles/performance_tests_asan.dir/test_throughput.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_tsan.dir/build.make CMakeFiles/performance_tests_tsan.dir/test_throughput.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests_coverage.dir/build.make CMakeFiles/performance_tests_coverage.dir/test_throughput.cpp.s
-.PHONY : test_throughput.cpp.s
+test_performance_tests_properties.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/performance_tests.dir/build.make CMakeFiles/performance_tests.dir/test_performance_tests_properties.cpp.s
+.PHONY : test_performance_tests_properties.cpp.s
 
 # Help Target
 help:
@@ -284,21 +252,20 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... performance_tests"
-	@echo "... performance_tests_asan"
-	@echo "... performance_tests_coverage"
-	@echo "... performance_tests_tsan"
-	@echo "... test_latency.o"
-	@echo "... test_latency.i"
-	@echo "... test_latency.s"
-	@echo "... test_performance_main.o"
-	@echo "... test_performance_main.i"
-	@echo "... test_performance_main.s"
-	@echo "... test_throughput.o"
-	@echo "... test_throughput.i"
-	@echo "... test_throughput.s"
+	@echo "... rapidcheck"
+	@echo "... test_performance_tests_main.o"
+	@echo "... test_performance_tests_main.i"
+	@echo "... test_performance_tests_main.s"
+	@echo "... test_performance_tests_properties.o"
+	@echo "... test_performance_tests_properties.i"
+	@echo "... test_performance_tests_properties.s"
 .PHONY : help
 
 

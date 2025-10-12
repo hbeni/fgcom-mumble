@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/security_module_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/security_module_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/security_module_tests/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/security_module_tests_coverage.dir/depend.make
@@ -70,74 +70,74 @@ include CMakeFiles/security_module_tests_coverage.dir/progress.make
 include CMakeFiles/security_module_tests_coverage.dir/flags.make
 
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o: CMakeFiles/security_module_tests_coverage.dir/flags.make
-CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp
+CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o: /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o: CMakeFiles/security_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.o -c /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp
 
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp > CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp > CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.i
 
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_tests_properties.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_tests_properties.cpp.s
 
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o: CMakeFiles/security_module_tests_coverage.dir/flags.make
-CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp
+CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o: /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o: CMakeFiles/security_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.o -c /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp
 
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp > CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp > CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.i
 
 CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/security_module_tests/test_security_module_main.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_security_module_main.cpp.s
 
 CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o: CMakeFiles/security_module_tests_coverage.dir/flags.make
-CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp
+CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o: /home/haaken/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp
 CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o: CMakeFiles/security_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.o -c /home/haaken/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp
 
 CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp > CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp > CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.i
 
 CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/security_module_tests/test_tls_ssl.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_tls_ssl.cpp.s
 
 CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o: CMakeFiles/security_module_tests_coverage.dir/flags.make
-CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_authentication.cpp
+CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o: /home/haaken/fgcom-mumble/test/security_module_tests/test_authentication.cpp
 CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o: CMakeFiles/security_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_authentication.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.o -c /home/haaken/fgcom-mumble/test/security_module_tests/test_authentication.cpp
 
 CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_authentication.cpp > CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/security_module_tests/test_authentication.cpp > CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.i
 
 CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_authentication.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/security_module_tests/test_authentication.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_authentication.cpp.s
 
 CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o: CMakeFiles/security_module_tests_coverage.dir/flags.make
-CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o: /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_input_validation.cpp
+CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o: /home/haaken/fgcom-mumble/test/security_module_tests/test_input_validation.cpp
 CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o: CMakeFiles/security_module_tests_coverage.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o -c /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_input_validation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/haaken/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o -MF CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o.d -o CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.o -c /home/haaken/fgcom-mumble/test/security_module_tests/test_input_validation.cpp
 
 CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_input_validation.cpp > CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/haaken/fgcom-mumble/test/security_module_tests/test_input_validation.cpp > CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.i
 
 CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/test_input_validation.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/haaken/fgcom-mumble/test/security_module_tests/test_input_validation.cpp -o CMakeFiles/security_module_tests_coverage.dir/test_input_validation.cpp.s
 
 # Object files for target security_module_tests_coverage
 security_module_tests_coverage_OBJECTS = \
@@ -162,7 +162,7 @@ security_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libcrypto.so
 security_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest_main.a
 security_module_tests_coverage: /usr/lib/x86_64-linux-gnu/libgtest.a
 security_module_tests_coverage: CMakeFiles/security_module_tests_coverage.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable security_module_tests_coverage"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/haaken/fgcom-mumble/test/security_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable security_module_tests_coverage"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/security_module_tests_coverage.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -174,6 +174,6 @@ CMakeFiles/security_module_tests_coverage.dir/clean:
 .PHONY : CMakeFiles/security_module_tests_coverage.dir/clean
 
 CMakeFiles/security_module_tests_coverage.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/security_module_tests /home/haaken/github-projects/fgcom-mumble/test/security_module_tests /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/security_module_tests/build/CMakeFiles/security_module_tests_coverage.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/security_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/security_module_tests /home/haaken/fgcom-mumble/test/security_module_tests /home/haaken/fgcom-mumble/test/security_module_tests/build /home/haaken/fgcom-mumble/test/security_module_tests/build /home/haaken/fgcom-mumble/test/security_module_tests/build/CMakeFiles/security_module_tests_coverage.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/security_module_tests_coverage.dir/depend
 

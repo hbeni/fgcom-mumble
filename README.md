@@ -20,14 +20,18 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 - **Multi-Platform Support**: FlightGear (native), Microsoft Flight Simulator 2020 (experimental), and web browsers
 - **Advanced Features**: ATIS recording, radio station broadcasts, landline/intercom support, and RDF detection
 - **WebRTC Support**: Browser-based access without installation requirements
-- **GPU Acceleration**: CUDA, OpenCL, and Metal support with shared computing capabilities for high-performance propagation
-- **Advanced GPU acceleration with shared computing capabilities:**  Distribute calculations across multiple clients
+- **GPU Acceleration with Dynamic Scaling**: Intelligent GPU resource management for up to 200 concurrent users for high-performance propagation
+- **Advanced GPU acceleration with shared computing capabilities**: Distribute calculations across multiple clients
 - **Real-Time Data Integration**: Solar data, lightning data, and weather data for accurate propagation modeling
 - **Professional Audio Processing**: DSP IIR filters, noise reduction, and spatial audio processing
 - **Antenna Pattern Library**: EZNEC-based 3D radiation patterns for all vehicle types
 - **Physics-Based Propagation**: Atmospheric effects, tropospheric ducting, and terrain obstruction modeling
 - **Feature Toggle System**: 50+ configurable features for custom deployments
 - **API Integration**: RESTful APIs and WebSocket support for game developer integration
+- **Voice Encryption Systems**: Military-grade voice encryption with FreeDV, MELPe, and NATO standards
+- **Satellite Communication**: Real-time satellite tracking and communication simulation
+- **Advanced Fuzzing**: Comprehensive testing framework with AFL++ and MULL integration
+- **ATIS Weather Integration**: Automatic weather data integration for realistic ATIS generation
 - **Modular Design**: Extensible architecture for custom integrations
 
 ---
@@ -81,6 +85,24 @@ source .env
 
 ---
 
+## Recent Updates (v1.3.1)
+
+### New Features Added
+- **Voice Encryption Systems**: Complete implementation of military-grade voice encryption including FreeDV, MELPe, and NATO standards
+- **Satellite Communication**: Real-time satellite tracking with TLE support for military and amateur radio satellites
+- **Advanced Fuzzing Framework**: Comprehensive testing with AFL++ and MULL integration for improved code quality
+- **ATIS Weather Integration**: Automatic weather data integration with Piper TTS for realistic ATIS generation
+- **Enhanced Security**: Multi-core optimization and comprehensive security fixes
+- **Interactive Configuration**: New setup scripts for easier installation and configuration
+
+### Component Versions
+- **Plugin**: 1.1.1
+- **Server**: 1.3.0  
+- **RadioGUI**: 1.2.0
+- **FlightGear Addon**: 1.3.1
+
+---
+
 ## Beta Testers Wanted!
 
 **FGCom-mumble is actively seeking beta testers to help improve the system!**
@@ -129,20 +151,7 @@ We need experienced users to test new features, provide feedback, and help ident
 - **Microsoft Flight Simulator 2020**: Via RadioGUI with SimConnect (requires technical setup)
 - **Web Browsers**: WebRTC gateway (no installation required)
 
-#### MSFS 2020 SimConnect Limitations
 
-**Microsoft Flight Simulator 2020 integration has significant limitations:**
-
-- **Windows-Only**: SimConnect is Windows-exclusive, no Linux/macOS support
-- **Complex Integration**: SimConnect API is poorly documented and requires deep MSFS internals knowledge
-- **Edge Cases**: Many quirks and undocumented behaviors in the SimConnect interface
-- **Build Issues**: JSIMConnect library has incomplete implementation (46+ compilation errors)
-- **Maintenance Burden**: Requires constant updates for MSFS version changes
-
-**Current Status**: MSFS 2020 integration is **experimental** and may not work reliably. The RadioGUI can be built without SimConnect support for basic functionality.
-
-**Recommendation**: For reliable operation, use FlightGear (native) or WebRTC (browser) platforms instead of MSFS 2020.
-- **Other Games**: Manual integration through API's.
 
 ---
 
@@ -172,6 +181,9 @@ We need experienced users to test new features, provide feedback, and help ident
 | **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** | Integrate with your game or simulator |
 | **[API Documentation](docs/API_REFERENCE_COMPLETE.md)** | RESTful API and WebSocket interfaces |
 | **[Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)** | Deep technical details |
+| **[Voice Encryption Documentation](voice-encryption/docs/VOICE_ENCRYPTION_MODULE.md)** | Military-grade voice encryption systems |
+| **[Satellite Communication](voice-encryption/systems/satellites/docs/SATELLITE_COMMUNICATION_DOCUMENTATION.md)** | Satellite tracking and communication |
+| **[Fuzzing Guide](docs/AFL_MULL_FUZZING_GUIDE.md)** | Advanced testing and quality assurance |
 
 ---
 
@@ -229,6 +241,7 @@ udpServerHost=*
 - **[Advanced Features](docs/advanced_features.md)** - Comprehensive overview of all advanced features
 - **[WebRTC Browser Client Support](docs/web_rtc.md)** - WebRTC implementation documentation
 - **[Antenna Pattern Creation](docs/antenna_patterns.md)** - Antenna pattern creation guides
+- **[Dynamic GPU Scaling](docs/DYNAMIC_GPU_SCALING.md)** - Intelligent GPU resource management
 - **[Utilities and Tools](docs/utilities_and_tools.md)** - Available utilities and tools
 
 ### Game Integration
@@ -277,6 +290,25 @@ udpServerHost=*
 
 ### Text-to-Speech Integration
 - **[Piper TTS Integration](scripts/tts/README.md)** - Automatic ATIS generation with Piper TTS
+- **[ATIS Weather Integration](scripts/tts/README_ATIS_WEATHER_INTEGRATION.md)** - Real-time weather data integration for ATIS
+
+### Voice Encryption Systems
+- **[Voice Encryption Analysis](voice-encryption/docs/DEGRADATION_AND_INTERCEPTION_ANALYSIS.md)** - Comprehensive analysis of voice encryption systems
+- **[FreeDV Implementation](voice-encryption/systems/freedv/README.md)** - FreeDV digital voice system
+- **[MELPe Implementation](voice-encryption/systems/melpe/README.md)** - MELPe NATO standard vocoder
+- **[Military Encryption Systems](voice-encryption/systems/)** - Various military-grade encryption systems
+
+### Satellite Communication
+- **[Satellite Communication Documentation](voice-encryption/systems/satellites/docs/SATELLITE_COMMUNICATION_DOCUMENTATION.md)** - Complete satellite communication system
+- **[TLE Support](voice-encryption/systems/satellites/orbital/tle_support.h)** - Two-Line Element orbital calculations
+- **[Military Satellites](voice-encryption/systems/satellites/military/)** - Military satellite systems (Strela-3, FLTSATCOM, Tsiklon)
+- **[Amateur Radio Satellites](voice-encryption/systems/satellites/amateur/)** - Amateur radio satellite systems (AO-7, FO-29, ISS, etc.)
+- **[IoT Satellites](voice-encryption/systems/satellites/iot/)** - IoT and data satellite systems (Orbcomm, Gonets)
+
+### Advanced Testing and Quality Assurance
+- **[Fuzzing Framework](docs/AFL_MULL_FUZZING_GUIDE.md)** - Comprehensive testing with AFL++ and MULL
+- **[Testing Guide](docs/TESTING_GUIDE.md)** - Simple explanation of what all tests do (non-programmer friendly)
+- **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
 
 
 ---
@@ -289,7 +321,10 @@ udpServerHost=*
 git clone https://github.com/Supermagnum/fgcom-mumble.git
 cd fgcom-mumble
 
-# Run the automated installation script
+# Run the interactive configuration setup (RECOMMENDED)
+./scripts/setup.sh
+
+# Or run the automated installation script
 sudo ./scripts/install_fgcom_mumble.sh
 ```
 
@@ -300,6 +335,17 @@ sudo ./scripts/status_fgcom_mumble.sh
 
 # Uninstall (if needed)
 sudo ./scripts/uninstall_fgcom_mumble.sh
+```
+
+### Environment Setup
+```bash
+# Set up environment variables securely
+./scripts/setup_environment.sh
+
+# Or manually copy and edit the template
+cp configs/env.template .env
+nano .env
+source .env
 ```
 
 
@@ -313,7 +359,13 @@ make all
 make build-radioGUI-without-jsimconnect
 
 # Build with MSFS 2020 support (experimental)
-make build-radioGUI
+make build-radioGUI-with-jsimconnect
+
+# Build headless server (no GUI components)
+make build-headless
+
+# Create release packages
+make release
 ```
 
 ### GPU Acceleration & Shared Computing
@@ -328,25 +380,37 @@ make build-radioGUI
 
 **Performance Benefits:**
 - **10-100x faster** than CPU-only calculations
-- **Handles 500+ pilots** simultaneously
+- **Handles 200+ pilots with intelligent dynamic scaling** simultaneously
 - **Real-time weather** effects with no lag
 - **Scalable performance** as you add more GPUs
 
-**Configuration Examples:**
-```bash
-# Multi-GPU setup
-shared_gpu = true
-gpu_count = 4
-gpu_distribution = "workload"
+## Dynamic GPU Scaling
 
-# Network GPU sharing
-network_gpu_sharing = true
-server_gpu_pool = ["192.168.1.10:gpu1", "192.168.1.11:gpu2"]
+📚 **For detailed configuration and implementation guide, see [Dynamic GPU Scaling Documentation](docs/DYNAMIC_GPU_SCALING.md)**
+
+**Intelligent GPU resource management for high user loads (up to 200 concurrent users):**
+
+### **Key Features**
+- **Automatic Scaling**: Adjusts GPU allocation based on user count (1-200+ users)
+- **Network GPU Support**: Distribute calculations across multiple computers
+- **Health Monitoring**: Automatic failover and load balancing
+- **Performance Optimization**: Intelligent resource allocation with minimal waste
+
+### **Quick Setup**
+```bash
+# Enable dynamic GPU scaling
+enable_dynamic_gpu_scaling = true
+max_local_gpus = 4
+max_network_gpus = 8
+scaling_thresholds = [20, 50, 100, 150, 200]
 ```
 
----
+**For complete configuration options, troubleshooting, and advanced setup, see the [Dynamic GPU Scaling Documentation](docs/DYNAMIC_GPU_SCALING.md).**
+
 
 ## Antenna Pattern Visualization
+
+📚 **For detailed ATIS weather integration guide, see [ATIS Weather Integration Documentation](docs/ATIS_WEATHER_INTEGRATION.md)**
 
 The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
 
@@ -354,7 +418,7 @@ The system includes comprehensive antenna pattern visualization showing realisti
 
 ### Included Antenna Patterns
 
-**Note: Not all patterns are included to conserve repository space. Some patterns must be generated by users.**
+**Note: Not all patterns are included to conserve repository space. Some patterns must be generated by users. Some of these needs improvements**
 
 #### Ground-based Antennas (155 patterns)
 - **Yagi Antennas**: 116 patterns covering HF (7-28MHz), VHF (50-144MHz), and UHF (432MHz) bands
@@ -383,12 +447,6 @@ The system includes comprehensive antenna pattern visualization showing realisti
 
 ---
 
-## TODO
-
-- **Automatic ATIS Updates**: Implement automatic ATIS recording updates when weather conditions change for airports (e.g., KJFK, ENGM). This will integrate the existing Piper TTS system with real-time weather data APIs to automatically regenerate ATIS recordings when significant weather changes are detected.
-
----
-
 ## Contributing
 
 The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
@@ -405,5 +463,9 @@ The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
 
 - **[Testing Guide](docs/TESTING_GUIDE.md)** - Simple explanation of what all tests do (non-programmer friendly)
 - **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
+- **[Fuzzing Framework](docs/AFL_MULL_FUZZING_GUIDE.md)** - Advanced testing with AFL++ and MULL integration
+- **[Fuzzing Results Report](docs/FUZZING_RESULTS_REPORT_2025-10-12.md)** - Comprehensive 12-hour fuzzing session results with zero crashes found
+- **[RapidCheck Integration](docs/RAPIDCHECK_INTEGRATION_SUMMARY.md)** - Property-based testing framework
+- **[Test Coverage Documentation](docs/TEST_COVERAGE_DOCUMENTATION.md)** - Comprehensive test coverage analysis
 
-s 
+This code was built with AI assistance. I cannot program at all, but I can understand some compiler warnings and understand some log files. The code has proper formulas and calculations throughout. "Is these claims bullshit?" has one definitive answer: Run the tests. Examine what they do. Examine the mathematics. Read the documentation.

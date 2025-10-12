@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build/../../client/mumble-plugin/lib -I/home/haaken/github-projects/fgcom-mumble/test/performance_tests/build
+CXX_INCLUDES = -I/home/haaken/fgcom-mumble/test/performance_tests/../../client/mumble-plugin/lib -I/home/haaken/fgcom-mumble/test/performance_tests -I/home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
 
-CXX_FLAGS = -std=gnu++17 -Wall -Wextra -Wpedantic -O2 -g -DGTEST_HAS_PTHREAD=1
+CXX_FLAGS = -std=gnu++17 -DGTEST_HAS_PTHREAD=1
 

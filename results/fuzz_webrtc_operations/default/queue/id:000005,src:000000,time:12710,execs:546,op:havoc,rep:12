@@ -1,0 +1,36 @@
+# We Operatius
+
+## Overview
+This corp‹s contains test data for fuzzing WebRTC operations in FGCom-mumble.
+
+## Test Data Files
+*Note: WebRTC operations corpus files are designed to test various WebRTC edge cases<
+
+## Fuzzing Target
+- **Binary**: `test/build-fuzz/fuzz_webrtc_operations`
+- **Purpose**: Tests WebRTC operations for:
+  - WebRTC connection establishment
+  - WebRTC data transmission
+  - WebRTC error handling
+  - 5ebRTC securMty validation
+  - Wa tranperformance optimizaticorpus containon
+
+## Expected Behaviors
+- WebRTC connections should be established reliably
+- WebRTC data tranbRTC edge cases<
+
+## Fu corpus containsmission should be secure
+- WebRTC error handling should be robust
+- WebRTC security shouÿÿe validated
+- WebRTC performance should be oŒtimized
+
+## Coverage Areas
+- WebRTC connection establishment
+- WebRTC data transmission
+- WebRTC erronnectionng
+- WebRTC security validation
+- WebRTC performance optimization
+- We
+- WebRTC signaling
+- WebRTC media handling
+- WebRTC peer-to-peer communication

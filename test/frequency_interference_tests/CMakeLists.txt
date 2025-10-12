@@ -30,9 +30,28 @@ set(TEST_SOURCES
     main.cpp
     test_frequency_interference.cpp
     test_frequency_interference_properties.cpp
-    ../../client/mumble-plugin/lib/frequency_management.cpp
-    ../../client/mumble-plugin/lib/channel_planning.cpp
-    ../../client/mumble-plugin/lib/interference_calculation.cpp
+    ../../client/mumble-plugin/lib/frequency_offset.cpp
+    ../../client/mumble-plugin/lib/radio_model.cpp
+    ../../client/mumble-plugin/lib/radio_model_vhf.cpp
+    ../../client/mumble-plugin/lib/radio_model_uhf.cpp
+    ../../client/mumble-plugin/lib/radio_model_hf_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_amateur_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_string_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_uhf_impl.cpp
+    ../../client/mumble-plugin/lib/radio_model_aviation_hf.cpp
+    ../../client/mumble-plugin/lib/radio_model_maritime_hf.cpp
+    ../../client/mumble-plugin/lib/amateur_radio.cpp
+    ../../client/mumble-plugin/lib/non_amateur_hf_impl.cpp
+    ../../client/mumble-plugin/lib/solar_data.cpp
+    ../../client/mumble-plugin/lib/propagation_physics.cpp
+    ../../client/mumble-plugin/lib/power_management.cpp
+    ../../client/mumble-plugin/lib/antenna_pattern_mapping.cpp
+    ../../client/mumble-plugin/lib/pattern_interpolation.cpp
+    ../../client/mumble-plugin/lib/antenna_ground_system.cpp
+    ../../client/mumble-plugin/lib/atmospheric_ducting.cpp
+    ../../client/mumble-plugin/lib/enhanced_multipath.cpp
+    ../../client/mumble-plugin/lib/audio_modern.cpp
+    ../../client/mumble-plugin/lib/radio_config.cpp
 )
 
 # Create test executable

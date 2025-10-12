@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/atis_module_tests_asan.dir/atis_functions.cpp.o"
+  "CMakeFiles/atis_module_tests_asan.dir/atis_functions.cpp.o.d"
   "CMakeFiles/atis_module_tests_asan.dir/main.cpp.o"
   "CMakeFiles/atis_module_tests_asan.dir/main.cpp.o.d"
   "CMakeFiles/atis_module_tests_asan.dir/test_atis_content.cpp.o"

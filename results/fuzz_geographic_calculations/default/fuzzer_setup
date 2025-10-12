@@ -1,0 +1,8 @@
+# environment variables:
+AFL_CUSTOM_INFO_PROGRAM=./test/build-fuzz/fuzz_geographic_calculations
+AFL_CUSTOM_INFO_PROGRAM_ARGV=@@
+AFL_CUSTOM_INFO_OUT=results/fuzz_geographic_calculations/default
+AFL_I_DONT_CARE_ABOUT_MISSING_CRASHES=1
+AFL_SKIP_CPUFREQ=1
+# command line:
+'afl-fuzz' '-i' 'corpus/fuzz_geographic_calculations' '-o' 'results/fuzz_geographic_calculations' '-t' '10000' '--' './test/build-fuzz/fuzz_geographic_calculations' '@@'

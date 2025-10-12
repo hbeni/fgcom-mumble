@@ -8,6 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Find required packages
 find_package(GTest REQUIRED)
 
+# Dynamic GPU Scaling Configuration
+add_definitions(-DDYNAMIC_GPU_SCALING_ENABLED)
+add_definitions(-DMAX_LOCAL_GPUS=4)
+add_definitions(-DMAX_NETWORK_GPUS=8)
+add_definitions(-DSCALING_THRESHOLDS="20,50,100,150,200")
+add_definitions(-DNETWORK_BANDWIDTH_LIMIT_MBPS=1000)
+add_definitions(-DNETWORK_LATENCY_LIMIT_MS=100)
+
 # RapidCheck setup
 set(RAPIDCHECK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../rapidcheck_tests/lib/rapidcheck")
 set(RAPIDCHECK_INCLUDE_DIR "${RAPIDCHECK_DIR}/include")

@@ -43,6 +43,9 @@ private:
     void loadUHFAntennaPatterns();
     void loadMilitaryUHFPatterns();
     void loadCivilianUHFPatterns();
+    void loadAircraftUHFPatterns();
+    void loadGroundVehicleUHFPatterns();
+    void loadMaritimeUHFPatterns();
     
     // Get UHF antenna gain from pattern interpolation
     double getUHFGain(const std::string& antenna_name, int altitude_m, 
@@ -67,6 +70,10 @@ public:
     // UHF-specific power distance calculation
     float calcPowerDistance(float power_watts, double distance_km, 
                           double frequency_mhz, double altitude_m, double antenna_height_m);
+    
+    // 4-parameter version for implementation compatibility
+    float calcPowerDistance(float power_watts, double distance_km, 
+                          double altitude_m, double frequency_mhz);
     
     // Legacy method for backward compatibility
     float calcPowerDistance(float power_watts, double distance_km);

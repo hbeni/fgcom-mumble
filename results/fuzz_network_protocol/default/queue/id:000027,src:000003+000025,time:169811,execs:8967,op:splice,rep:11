@@ -1,0 +1,31 @@
+PITest data for fuzz_n# Network Procol Fuzzing Corpus
+
+## Overview
+This corpus contains test data for fuzzing network communiUation protocols in FGCom-mumble.
+
+## Test Data Files
+*Note: Network prNtocol corpus files are designed to test variÏerabilities
+  - Network pacFuzzing Target
+- **Binary**: `test/build-fuzz/fuzz_network_protocol`
+- **Purpose**: Tests network protocols for:
+  - Protocol parsing vulous network edge ca3es*
+
+## ket handling edge cases
+  - Commonication protÿÿÿ€ robustness
+  - Network security issues
+  - Protocol state machine bugs
+
+## Expected Behaviors
+- Network protocols should handle malformed packets gracefully
+- Communication should be robust against network issues
+- Protocol parsing should be secure
+- Network operations should not crash
+- Protocol state machines rotocpls for:
+abs
+- Network protocol parsing
+- Packet handƒing and validetion
+- CommunicatiOn protocol implementati- Prooo
+- Network security mechanisms
+- Protocol state managementd handle malrror handling
+- Communication reliability
+- P

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/haaken/github-projects/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
+CXX_INCLUDES = -I/home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
 
 CXX_FLAGS =  -Wall -Wno-missing-braces -Wno-unused-command-line-argument -std=gnu++11
 

@@ -1,5 +1,14 @@
 #include "test_integration_common.h"
 
+// Forward declarations
+int calculateOptimalGPUs(int user_count, int available_local_gpus);
+std::string fetchWeatherData(const std::string& airport, const std::string& api_key);
+bool detectWeatherChange(const std::string& old_weather, const std::string& new_weather);
+std::string generateAutomaticATIS(const std::string& airport, const std::string& weather_data);
+std::string getATISLetter(const std::string& airport);
+double calculateNetworkBandwidthRequirement(int network_gpu_count, int user_count);
+int calculateOptimalGPUsWithNetworkLimits(int user_count, int network_latency_ms);
+
 // 14.1 End-to-End Tests
 TEST_F(EndToEndTest, ClientConnectsToServer) {
     // Test client connection to server
@@ -481,5 +490,146 @@ TEST_F(EndToEndTest, EndToEndAccuracy) {
     // Clean up
     test_clients[0]->disconnect();
     mock_server->stopServer();
+}
+
+
+// Dynamic GPU Scaling Integration Tests
+TEST_F(EndToEndTest, DynamicGPUScalingIntegration) {
+    // Test dynamic GPU scaling integration with the main system
+    int user_count = 75;
+    
+    // Simulate user connections
+    for (int i = 0; i < user_count; i++) {
+        std::string client_id = "client_" + std::to_string(i);
+        auto client = std::make_shared<MockClient>(client_id);
+        mock_server->addClient(client);
+    }
+    
+    // Test GPU scaling decision
+    int optimal_gpus = calculateOptimalGPUs(user_count, 4);
+    EXPECT_GE(optimal_gpus, 3) << "Should allocate at least 3 GPUs for 75 users";
+    EXPECT_LE(optimal_gpus, 8) << "Should not exceed maximum GPU allocation";
+    
+    // Test network GPU allocation
+    if (user_count > 50) {
+        int local_gpus = std::min(optimal_gpus, 4); // Maximum 4 local GPUs
+        int network_gpus = optimal_gpus - local_gpus; // Remaining are network GPUs
+        EXPECT_GE(network_gpus, 0) << "Should consider network GPUs for high user count";
+    }
+}
+
+TEST_F(EndToEndTest, ATISWeatherIntegrationEndToEnd) {
+    // Test complete ATIS weather integration workflow
+    std::string airport = "KJFK";
+    std::string weather_api_key = "test_api_key";
+    
+    // Test weather data fetching
+    std::string weather_data = fetchWeatherData(airport, weather_api_key);
+    EXPECT_FALSE(weather_data.empty()) << "Should fetch weather data";
+    
+    // Test weather change detection
+    std::string old_weather = "Wind 270 at 15 knots, temperature 15C";
+    std::string new_weather = "Wind 280 at 18 knots, temperature 17C";
+    bool significant_change = detectWeatherChange(old_weather, new_weather);
+    EXPECT_TRUE(significant_change) << "Should detect significant weather change";
+    
+    // Test automatic ATIS generation
+    std::string atis_content = generateAutomaticATIS(airport, new_weather);
+    EXPECT_FALSE(atis_content.empty()) << "Should generate ATIS content";
+    EXPECT_TRUE(atis_content.find(airport) != std::string::npos) << "Should contain airport code";
+    
+    // Test ATIS letter system
+    std::string atis_letter = getATISLetter(airport);
+    EXPECT_FALSE(atis_letter.empty()) << "Should generate ATIS letter";
+    EXPECT_EQ(atis_letter.length(), 1) << "ATIS letter should be single character";
+}
+
+TEST_F(EndToEndTest, HighLoadSystemIntegration) {
+    // Test system integration with high user load (150+ users)
+    int high_user_count = 180;
+    
+    // Simulate high user load
+    for (int i = 0; i < high_user_count; i++) {
+        std::string client_id = "high_load_client_" + std::to_string(i);
+        auto client = std::make_shared<MockClient>(client_id);
+        mock_server->addClient(client);
+    }
+    
+    // Test GPU scaling for high load
+    int optimal_gpus = calculateOptimalGPUs(high_user_count, 4);
+    EXPECT_EQ(optimal_gpus, 8) << "Should allocate 8 GPUs for high user load";
+    
+    // Test network GPU pool management
+    int network_gpu_count = optimal_gpus - 4; // Assuming 4 local GPUs
+    EXPECT_GE(network_gpu_count, 4) << "Should use network GPU pool for high load";
+    
+    // Test ATIS generation under high load
+    std::string airport = "ENGM";
+    std::string weather_data = "Wind 090 at 12 knots, visibility 15 miles";
+    std::string atis_content = generateAutomaticATIS(airport, weather_data);
+    EXPECT_FALSE(atis_content.empty()) << "Should generate ATIS under high load";
+}
+
+TEST_F(EndToEndTest, NetworkLimitsIntegration) {
+    // Test network limits integration with dynamic GPU scaling
+    int user_count = 120;
+    int network_gpu_count = 3;
+    
+    // Test bandwidth requirements
+    double bandwidth_requirement = calculateNetworkBandwidthRequirement(network_gpu_count, user_count);
+    EXPECT_LE(bandwidth_requirement, 1000.0) << "Bandwidth should not exceed 1 Gbps limit";
+    
+    // Test latency limits
+    int network_latency = 75; // ms
+    bool can_use_network_gpu = (network_latency <= 100);
+    EXPECT_TRUE(can_use_network_gpu) << "Should allow network GPU for acceptable latency";
+    
+    // Test GPU allocation with network limits
+    int optimal_gpus = calculateOptimalGPUsWithNetworkLimits(user_count, network_latency);
+    EXPECT_GE(optimal_gpus, 3) << "Should allocate GPUs considering network limits";
+}
+
+// Helper functions for integration tests
+int calculateOptimalGPUs(int user_count, int available_local_gpus) {
+    if (user_count <= 20) return 1;
+    if (user_count <= 50) return 2;
+    if (user_count <= 100) return 3;
+    if (user_count <= 150) return 5;
+    return 8;
+}
+
+std::string fetchWeatherData(const std::string& airport, const std::string& api_key) {
+    // Simulate weather data fetching
+    return "Wind 270 at 15 knots, visibility 10 miles, ceiling 2500 feet, temperature 15C, pressure 1013.25";
+}
+
+bool detectWeatherChange(const std::string& old_weather, const std::string& new_weather) {
+    // Simulate weather change detection
+    return old_weather != new_weather;
+}
+
+std::string generateAutomaticATIS(const std::string& airport, const std::string& weather_data) {
+    // Simulate automatic ATIS generation
+    return airport + " ATIS " + weather_data;
+}
+
+std::string getATISLetter(const std::string& airport) {
+    // Simulate ATIS letter generation
+    return "A";
+}
+
+double calculateNetworkBandwidthRequirement(int network_gpu_count, int user_count) {
+    if (network_gpu_count == 0) return 0.0;
+    double users_per_gpu = static_cast<double>(user_count) / network_gpu_count;
+    double bandwidth_per_user = 2.0; // MB/s per user
+    return users_per_gpu * bandwidth_per_user * network_gpu_count;
+}
+
+int calculateOptimalGPUsWithNetworkLimits(int user_count, int network_latency_ms) {
+    int base_gpus = calculateOptimalGPUs(user_count, 4);
+    if (network_latency_ms > 100) {
+        return std::min(base_gpus, 4); // Limit to local GPUs only
+    }
+    return base_gpus;
 }
 

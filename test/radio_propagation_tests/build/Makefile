@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/radio_propagation_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/radio_propagation_tests/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles /home/haaken/fgcom-mumble/test/radio_propagation_tests/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/github-projects/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/haaken/fgcom-mumble/test/radio_propagation_tests/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -288,38 +288,38 @@ rapidcheck/fast:
 	$(MAKE) $(MAKESILENT) -f rapidcheck/CMakeFiles/rapidcheck.dir/build.make rapidcheck/CMakeFiles/rapidcheck.dir/build
 .PHONY : rapidcheck/fast
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o: home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o
 
 # target to build an object file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.o
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.i: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.i: home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.i
 
 # target to preprocess a source file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.i
 
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.s: home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.s: home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.s
 
 # target to generate assembly for a file
-home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
-.PHONY : home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
+home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
+.PHONY : home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.cpp.s
 
 main.o: main.cpp.o
 .PHONY : main.o
@@ -585,6 +585,39 @@ test_radio_propagation_tests_properties.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_radio_propagation_tests_properties.cpp.s
 .PHONY : test_radio_propagation_tests_properties.cpp.s
 
+test_real_city_pairs.o: test_real_city_pairs.cpp.o
+.PHONY : test_real_city_pairs.o
+
+# target to build an object file
+test_real_city_pairs.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_real_city_pairs.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_real_city_pairs.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_real_city_pairs.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_real_city_pairs.cpp.o
+.PHONY : test_real_city_pairs.cpp.o
+
+test_real_city_pairs.i: test_real_city_pairs.cpp.i
+.PHONY : test_real_city_pairs.i
+
+# target to preprocess a source file
+test_real_city_pairs.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_real_city_pairs.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_real_city_pairs.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_real_city_pairs.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_real_city_pairs.cpp.i
+.PHONY : test_real_city_pairs.cpp.i
+
+test_real_city_pairs.s: test_real_city_pairs.cpp.s
+.PHONY : test_real_city_pairs.s
+
+# target to generate assembly for a file
+test_real_city_pairs.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests.dir/build.make CMakeFiles/radio_propagation_tests.dir/test_real_city_pairs.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_asan.dir/build.make CMakeFiles/radio_propagation_tests_asan.dir/test_real_city_pairs.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_tsan.dir/build.make CMakeFiles/radio_propagation_tests_tsan.dir/test_real_city_pairs.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/radio_propagation_tests_coverage.dir/build.make CMakeFiles/radio_propagation_tests_coverage.dir/test_real_city_pairs.cpp.s
+.PHONY : test_real_city_pairs.cpp.s
+
 test_solar_data_impact.o: test_solar_data_impact.cpp.o
 .PHONY : test_solar_data_impact.o
 
@@ -640,9 +673,9 @@ help:
 	@echo "... radio_propagation_tests_coverage"
 	@echo "... radio_propagation_tests_tsan"
 	@echo "... rapidcheck"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.i"
-	@echo "... home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.s"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.o"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.i"
+	@echo "... home/haaken/fgcom-mumble/client/mumble-plugin/lib/propagation_physics.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
@@ -667,6 +700,9 @@ help:
 	@echo "... test_radio_propagation_tests_properties.o"
 	@echo "... test_radio_propagation_tests_properties.i"
 	@echo "... test_radio_propagation_tests_properties.s"
+	@echo "... test_real_city_pairs.o"
+	@echo "... test_real_city_pairs.i"
+	@echo "... test_real_city_pairs.s"
 	@echo "... test_solar_data_impact.o"
 	@echo "... test_solar_data_impact.i"
 	@echo "... test_solar_data_impact.s"

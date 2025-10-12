@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests
+CMAKE_SOURCE_DIR = /home/haaken/fgcom-mumble/test/geographic_module_tests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build
+CMAKE_BINARY_DIR = /home/haaken/fgcom-mumble/test/geographic_module_tests/build
 
 # Utility rule file for run_geographic_module_basic_tests.
 
@@ -67,7 +67,7 @@ include CMakeFiles/run_geographic_module_basic_tests.dir/compiler_depend.make
 include CMakeFiles/run_geographic_module_basic_tests.dir/progress.make
 
 CMakeFiles/run_geographic_module_basic_tests: geographic_module_tests
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running basic geographic module tests"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=/home/haaken/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Running basic geographic module tests"
 	/usr/bin/ctest -L basic;geographic_module
 
 run_geographic_module_basic_tests: CMakeFiles/run_geographic_module_basic_tests
@@ -83,6 +83,6 @@ CMakeFiles/run_geographic_module_basic_tests.dir/clean:
 .PHONY : CMakeFiles/run_geographic_module_basic_tests.dir/clean
 
 CMakeFiles/run_geographic_module_basic_tests.dir/depend:
-	cd /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build /home/haaken/github-projects/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles/run_geographic_module_basic_tests.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/haaken/fgcom-mumble/test/geographic_module_tests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/haaken/fgcom-mumble/test/geographic_module_tests /home/haaken/fgcom-mumble/test/geographic_module_tests /home/haaken/fgcom-mumble/test/geographic_module_tests/build /home/haaken/fgcom-mumble/test/geographic_module_tests/build /home/haaken/fgcom-mumble/test/geographic_module_tests/build/CMakeFiles/run_geographic_module_basic_tests.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/run_geographic_module_basic_tests.dir/depend
 
