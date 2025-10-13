@@ -1,16 +1,16 @@
 # Advanced Features
 
-See [Advanced Features Documentation](docs/ADVANCED_FEATURES.md) for a comprehensive overview of all advanced features and capabilities organized by version and update cycle.
+See [Advanced Features Documentation](ADVANCED_FEATURES.md) for a comprehensive overview of all advanced features and capabilities organized by version and update cycle.
 
-**Detailed Documentation**: See [Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
+**Detailed Documentation**: See [Technical Documentation](TECHNICAL_DOCUMENTATION.md) for comprehensive technical details.
 
-**Noise Analysis**: See [EV Charging Station Noise Analysis](docs/EV_CHARGING_STATION_NOISE_ANALYSIS.md) for comprehensive noise modeling including electric vehicle charging station noise analysis.
+**Noise Analysis**: See [EV Charging Station Noise Analysis](EV_CHARGING_STATION_NOISE_ANALYSIS.md) for comprehensive noise modeling including electric vehicle charging station noise analysis.
 
-**Electrical Infrastructure**: See [Substation and Power Station Noise Analysis](docs/SUBSTATION_POWER_STATION_NOISE_ANALYSIS.md) for comprehensive noise modeling including electrical substations and power stations with 2MW+ capacity threshold, fencing effects, and multipolygon geometry support.
+**Electrical Infrastructure**: See [Substation and Power Station Noise Analysis](SUBSTATION_POWER_STATION_NOISE_ANALYSIS.md) for comprehensive noise modeling including electrical substations and power stations with 2MW+ capacity threshold, fencing effects, and multipolygon geometry support.
 
-**Real-time Infrastructure Data**: See [Open Infrastructure Map Integration](docs/OPEN_INFRASTRUCTURE_MAP_INTEGRATION.md) for comprehensive integration with Open Infrastructure Map data source, providing real-time electrical infrastructure data from OpenStreetMap via Overpass API for enhanced noise floor calculations.
+**Real-time Infrastructure Data**: See [Open Infrastructure Map Integration](OPEN_INFRASTRUCTURE_MAP_INTEGRATION.md) for comprehensive integration with Open Infrastructure Map data source, providing real-time electrical infrastructure data from OpenStreetMap via Overpass API for enhanced noise floor calculations.
 
-**Amateur Radio Band Segments**: See [Radio Amateur Band Segments CSV Format](docs/RADIO_AMATEUR_BAND_SEGMENTS_CSV_FORMAT.md) for comprehensive documentation of the amateur radio frequency allocation system, including country-specific regulations, license class requirements, and power limits.
+**Amateur Radio Band Segments**: See [Radio Amateur Band Segments CSV Format](RADIO_AMATEUR_BAND_SEGMENTS_CSV_FORMAT.md) for comprehensive documentation of the amateur radio frequency allocation system, including country-specific regulations, license class requirements, and power limits.
 
 ## Amateur Radio Integration
 

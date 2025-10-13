@@ -28,13 +28,48 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 - **Physics-Based Propagation**: Atmospheric effects, tropospheric ducting, and terrain obstruction modeling
 - **Feature Toggle System**: 50+ configurable features for custom deployments
 - **API Integration**: RESTful APIs and WebSocket support for game developer integration
-- **Voice Encryption Systems**: Military-grade voice encryption with FreeDV, MELPe, and NATO standards
+- **Voice Encryption Systems**: Military-grade voice encryption simulated
 - **Satellite Communication**: Real-time satellite tracking and communication simulation
 - **Advanced Fuzzing**: Comprehensive testing framework with AFL++ and MULL integration
 - **ATIS Weather Integration**: Automatic weather data integration for realistic ATIS generation
 - **Modular Design**: Extensible architecture for custom integrations
 
 ---
+
+---
+
+## Beta Testers Wanted!
+
+**FGCom-mumble is actively seeking beta testers to help improve the system!**
+
+We need experienced users to test new features, provide feedback, and help identify issues before public release. Beta testing is particularly valuable for:
+
+- **GPU Acceleration Features**: Test CUDA, OpenCL, and Metal GPU acceleration
+- **Advanced Configuration Options**: Validate multiple configuration settings across 17 categories
+- **Multi-Platform Integration**: Test FlightGear, MSFS 2020, and WebRTC compatibility
+- **Performance Optimization**: Help optimize GPU resource management and thermal control
+- **New API Endpoints**: Test RESTful API and WebSocket interfaces
+- **Security Features**: Validate authentication and authorization systems
+
+### How to Participate
+
+1. **Join the Beta Program**: Contact the development team through GitHub Issues
+2. **Report Issues**: Use the issue tracker to report bugs and suggest improvements
+3. **Provide Feedback**: Share your experience with different configurations and use cases
+4. **Test New Features**: Help validate new functionality before public release
+
+### Beta Tester Requirements
+
+- **Technical Expertise**: Server administration and configuration experience
+- **Testing Environment**: Dedicated test system for beta features
+- **Feedback Commitment**: Regular feedback and issue reporting
+- **Documentation**: Help improve documentation and user guides
+- **Preferred optional skills**: C++/C experience and log reading ability
+
+**Interested?** Open an issue on GitHub with "Beta Tester Application" in the title and describe your technical background and testing environment.
+
+---
+
 
 ##  Security Setup
 
@@ -101,39 +136,6 @@ source .env
 - **RadioGUI**: 1.2.0
 - **FlightGear Addon**: 1.3.1
 
----
-
-## Beta Testers Wanted!
-
-**FGCom-mumble is actively seeking beta testers to help improve the system!**
-
-We need experienced users to test new features, provide feedback, and help identify issues before public release. Beta testing is particularly valuable for:
-
-- **GPU Acceleration Features**: Test CUDA, OpenCL, and Metal GPU acceleration
-- **Advanced Configuration Options**: Validate multiple configuration settings across 17 categories
-- **Multi-Platform Integration**: Test FlightGear, MSFS 2020, and WebRTC compatibility
-- **Performance Optimization**: Help optimize GPU resource management and thermal control
-- **New API Endpoints**: Test RESTful API and WebSocket interfaces
-- **Security Features**: Validate authentication and authorization systems
-
-### How to Participate
-
-1. **Join the Beta Program**: Contact the development team through GitHub Issues
-2. **Report Issues**: Use the issue tracker to report bugs and suggest improvements
-3. **Provide Feedback**: Share your experience with different configurations and use cases
-4. **Test New Features**: Help validate new functionality before public release
-
-### Beta Tester Requirements
-
-- **Technical Expertise**: Server administration and configuration experience
-- **Testing Environment**: Dedicated test system for beta features
-- **Feedback Commitment**: Regular feedback and issue reporting
-- **Documentation**: Help improve documentation and user guides
-- **Preferred optional skills**: C++/C experience and log reading ability
-
-**Interested?** Open an issue on GitHub with "Beta Tester Application" in the title and describe your technical background and testing environment.
-
----
 
 ## Important: Technical Requirements
 
@@ -292,6 +294,12 @@ udpServerHost=*
 - **[Piper TTS Integration](scripts/tts/README.md)** - Automatic ATIS generation with Piper TTS
 - **[ATIS Weather Integration](scripts/tts/README_ATIS_WEATHER_INTEGRATION.md)** - Real-time weather data integration for ATIS
 
+### Voice Encryption Systems Simulated
+- **Yachta T-219 (Soviet/East Bloc)** 
+- **VINSON KY-57 (NATO)**
+- **Granit (Soviet/East Bloc)**
+- **STANAG 4197 (NATO)**
+
 ### Voice Encryption Systems
 - **[Voice Encryption Analysis](voice-encryption/docs/DEGRADATION_AND_INTERCEPTION_ANALYSIS.md)** - Comprehensive analysis of voice encryption systems
 - **[FreeDV Implementation](voice-encryption/systems/freedv/README.md)** - FreeDV digital voice system
@@ -305,10 +313,7 @@ udpServerHost=*
 - **[Amateur Radio Satellites](voice-encryption/systems/satellites/amateur/)** - Amateur radio satellite systems (AO-7, FO-29, ISS, etc.)
 - **[IoT Satellites](voice-encryption/systems/satellites/iot/)** - IoT and data satellite systems (Orbcomm, Gonets)
 
-### Advanced Testing and Quality Assurance
-- **[Fuzzing Framework](docs/AFL_MULL_FUZZING_GUIDE.md)** - Comprehensive testing with AFL++ and MULL
-- **[Testing Guide](docs/TESTING_GUIDE.md)** - Simple explanation of what all tests do (non-programmer friendly)
-- **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
+
 
 
 ---
@@ -350,7 +355,7 @@ source .env
 
 
 
-**Build Commands:**
+### Build Commands
 ```bash
 # Build all components
 make all
@@ -368,7 +373,7 @@ make build-headless
 make release
 ```
 
-### GPU Acceleration & Shared Computing
+## GPU Acceleration & Shared Computing
 
 **Advanced GPU acceleration with shared computing capabilities:**
 
@@ -386,7 +391,7 @@ make release
 
 ## Dynamic GPU Scaling
 
-📚 **For detailed configuration and implementation guide, see [Dynamic GPU Scaling Documentation](docs/DYNAMIC_GPU_SCALING.md)**
+**For detailed configuration and implementation guide, see [Dynamic GPU Scaling Documentation](docs/DYNAMIC_GPU_SCALING.md)**
 
 **Intelligent GPU resource management for high user loads (up to 200 concurrent users):**
 
@@ -407,10 +412,11 @@ scaling_thresholds = [20, 50, 100, 150, 200]
 
 **For complete configuration options, troubleshooting, and advanced setup, see the [Dynamic GPU Scaling Documentation](docs/DYNAMIC_GPU_SCALING.md).**
 
+---
 
 ## Antenna Pattern Visualization
 
-📚 **For detailed ATIS weather integration guide, see [ATIS Weather Integration Documentation](docs/ATIS_WEATHER_INTEGRATION.md)**
+**For detailed antenna pattern guide, see [Antenna Pattern Creation Documentation](docs/antenna_patterns.md)**
 
 The system includes comprehensive antenna pattern visualization showing realistic radiation patterns for various vehicle types. The purple lines represent a basic, crude representation of a JEEP vehicle (sides and wheels not shown for clarity). The "8" figure demonstrates how a typical antenna tied down at a 45° angle radiates, providing realistic propagation modeling for ground-based vehicles.
 
@@ -453,9 +459,6 @@ The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
 
 - **Issues**: Report bugs or request features on the issue tracker
 - **Pull Requests**: Contributions are welcome! Clone the repository and submit pull requests
-
-
-
 
 ---
 
