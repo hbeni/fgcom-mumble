@@ -278,10 +278,6 @@ udpServerHost=*
 - **[Work Unit Distribution API](docs/WORK_UNIT_DISTRIBUTION_API.md)** - Distributed computing and work unit management
 - **[Security API Documentation](docs/SECURITY_API_DOCUMENTATION.md)** - Comprehensive security implementation
 
-### Voice Encryption Systems
-- **[Voice Encryption Analysis](voice-encryption/docs/DEGRADATION_AND_INTERCEPTION_ANALYSIS.md)** - Comprehensive analysis of voice encryption systems
-- **[FreeDV Implementation](voice-encryption/systems/freedv/README.md)** - FreeDV digital voice system
-- **[MELPe Implementation](voice-encryption/systems/melpe/README.md)** - MELPe NATO standard vocoder
 
 ### Satellite Communication
 - **[Satellite Communication Documentation](voice-encryption/systems/satellites/docs/SATELLITE_COMMUNICATION_DOCUMENTATION.md)** - Complete satellite communication system
