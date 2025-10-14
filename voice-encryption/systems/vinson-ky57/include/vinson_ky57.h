@@ -176,7 +176,6 @@ private:
     
     // CVSD processing
     std::vector<float> cvsd_filter_;        ///< CVSD filter coefficients
-    float cvsd_previous_sample_;            ///< Previous CVSD sample
     float cvsd_integration_;                ///< CVSD integration value
     
     // Random number generator for encryption

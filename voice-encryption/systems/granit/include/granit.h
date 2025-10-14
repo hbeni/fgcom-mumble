@@ -357,7 +357,7 @@ private:
     void processPilotSynchronization(std::vector<float>& audio);
     void processTemporalEffects(std::vector<float>& audio);
     void processSovietEffects(std::vector<float>& audio);
-    void generateScramblingSequence();
+    void generateScramblingSequenceInternal();
     void processKeyStream(std::vector<float>& audio);
     void processSynchronizationKey(std::vector<float>& audio);
 };
