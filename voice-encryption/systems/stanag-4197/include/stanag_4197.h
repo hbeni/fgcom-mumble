@@ -202,7 +202,7 @@ private:
     std::uniform_real_distribution<float> dist_;    ///< Uniform distribution for encryption
     
     // Key management
-    std::string encryption_key_;                    ///< Encryption key string
+    // Note: encryption_key_ already declared above as std::vector<uint8_t>
     std::vector<uint8_t> key_bytes_;                ///< Parsed key bytes
     size_t key_index_;                              ///< Current key position
     

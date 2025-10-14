@@ -53,11 +53,11 @@ set_target_properties(rapidcheck PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "/home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include/"
 )
 
-# Import target "rapidcheck" for configuration ""
-set_property(TARGET rapidcheck APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "rapidcheck" for configuration "Debug"
+set_property(TARGET rapidcheck APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(rapidcheck PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_NOCONFIG "CXX"
-  IMPORTED_LOCATION_NOCONFIG "/home/haaken/fgcom-mumble/test/atis_module_tests/build/rapidcheck/librapidcheck.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
+  IMPORTED_LOCATION_DEBUG "/home/haaken/fgcom-mumble/test/atis_module_tests/build/rapidcheck/librapidcheck.a"
   )
 
 # This file does not depend on other imported targets which have

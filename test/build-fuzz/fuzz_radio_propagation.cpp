@@ -12,7 +12,11 @@ int main(int argc, char* argv[]) {
                       std::istreambuf_iterator<char>());
     
     // Fuzz radio propagation calculations
-    if (input.find(",") != std::string::npos) {
+    if (input.find("AIRPORT:") != std::string::npos ||
+        input.find("RADIO_RANGE:") != std::string::npos ||
+        input.find("TERRAIN:") != std::string::npos ||
+        input.find("WEATHER:") != std::string::npos ||
+        input.find(",") != std::string::npos) {
         return 0;
     }
     

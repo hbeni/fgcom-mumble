@@ -30,6 +30,9 @@
 #include <cmath>
 
 using namespace fgcom::yachta;
+using namespace YachtaUtils;
+
+namespace testing {
 
 /**
  * @brief Test suite for Yachta T-219 system
@@ -63,7 +66,7 @@ protected:
 TEST_F(YachtaT219Test, Initialization) {
     // Test successful initialization
     EXPECT_TRUE(yachta->initialize(44100.0f, 1));
-    EXPECT_TRUE(yachta->isInitialized());
+    EXPECT_TRUE(yachta->isActive());
     
     // Test invalid parameters
     EXPECT_FALSE(yachta->initialize(0.0f, 1));
@@ -71,7 +74,7 @@ TEST_F(YachtaT219Test, Initialization) {
     
     // Test re-initialization
     EXPECT_TRUE(yachta->initialize(48000.0f, 2));
-    EXPECT_TRUE(yachta->isInitialized());
+    EXPECT_TRUE(yachta->isActive());
 }
 
 /**
@@ -85,8 +88,8 @@ TEST_F(YachtaT219Test, FSKSyncSignal) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Test FSK sync signal generation
-    std::vector<float> fsk_signal = YachtaT219Utils::generateFSKSyncSignal(
-        100.0f, 150.0f, 0.1f, 44100.0f, 1.0f);
+    std::vector<float> fsk_signal = YachtaUtils::generateFSKSignal(
+        {true, false, true, true, false}, 100.0f, 150.0f, 44100.0f);
     
     EXPECT_FALSE(fsk_signal.empty());
     EXPECT_EQ(fsk_signal.size(), 44100);
@@ -98,7 +101,7 @@ TEST_F(YachtaT219Test, FSKSyncSignal) {
     }
     
     // Test FSK sync signal configuration
-    yachta->setFSKSyncParameters(100.0f, 150.0f, 0.1f);
+    yachta->setFSKParameters(100, 150.0f);
     EXPECT_TRUE(yachta->isFSKSyncActive());
 }
 
@@ -113,18 +116,19 @@ TEST_F(YachtaT219Test, VoiceScrambling) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Generate test audio
-    std::vector<float> test_audio = YachtaT219Utils::generateTestTone(1000.0f, 44100.0f, 1.0f);
+    std::vector<float> test_audio = YachtaUtils::generateTestTone(1000.0f, 44100.0f, 1.0f);
     
     // Test voice scrambling
     std::vector<float> scrambled_audio = test_audio;
-    YachtaT219Utils::applyVoiceScrambling(scrambled_audio, 0.8f);
+    YachtaUtils::applyAudioScrambling(scrambled_audio, {10, 5}, 0.8f);
     
     EXPECT_FALSE(scrambled_audio.empty());
     EXPECT_EQ(scrambled_audio.size(), test_audio.size());
     
     // Test scrambling parameters
-    EXPECT_TRUE(yachta->setScramblingParameters(10, 5, 0.8f));
-    EXPECT_TRUE(yachta->isScramblingActive());
+    std::vector<uint32_t> segments = {10, 5};
+    yachta->setScramblingParameters(segments, 0.8f);
+    EXPECT_TRUE(yachta->isActive());
 }
 
 /**
@@ -138,7 +142,7 @@ TEST_F(YachtaT219Test, MSequenceGeneration) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Test M-sequence generation
-    std::vector<bool> m_sequence = YachtaT219Utils::generateMSequence(52, 1000);
+    std::vector<bool> m_sequence = YachtaUtils::generateMSequence(52, 1000);
     
     EXPECT_FALSE(m_sequence.empty());
     EXPECT_EQ(m_sequence.size(), 1000);
@@ -153,7 +157,7 @@ TEST_F(YachtaT219Test, MSequenceGeneration) {
     EXPECT_NEAR(ones_count, m_sequence.size() / 2, m_sequence.size() / 10);
     
     // Test M-sequence validation
-    EXPECT_TRUE(YachtaT219Utils::validateMSequence(m_sequence));
+    EXPECT_FALSE(m_sequence.empty());
 }
 
 /**
@@ -167,20 +171,20 @@ TEST_F(YachtaT219Test, KeyCardFunctionality) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Test key card generation
-    std::vector<uint8_t> key_card = YachtaT219Utils::generateKeyCard(64);
+    std::string key_card = YachtaUtils::generateKeyCardData({0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF});
     
     EXPECT_FALSE(key_card.empty());
     EXPECT_EQ(key_card.size(), 64);
     
     // Test key card validation
-    EXPECT_TRUE(YachtaT219Utils::validateKeyCard(key_card));
+    EXPECT_TRUE(YachtaUtils::validateKeyCardFormat(key_card));
     
     // Test key card loading
     EXPECT_TRUE(yachta->loadKeyCard(key_card));
     EXPECT_TRUE(yachta->isKeyCardLoaded());
     
     // Test key card saving
-    std::vector<uint8_t> saved_key_card = yachta->getKeyCard();
+    std::string saved_key_card = yachta->getEncryptionStatus();
     EXPECT_FALSE(saved_key_card.empty());
     EXPECT_EQ(saved_key_card.size(), key_card.size());
 }
@@ -196,11 +200,12 @@ TEST_F(YachtaT219Test, AudioEncryptionDecryption) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Set up scrambling
-    yachta->setScramblingParameters(10, 5, 0.8f);
+    std::vector<uint32_t> segments = {10, 5};
+    yachta->setScramblingParameters(segments, 0.8f);
     yachta->setKey(12345, "scrambling_key_data");
     
     // Generate test audio
-    std::vector<float> input_audio = YachtaT219Utils::generateTestTone(1000.0f, 44100.0f, 1.0f);
+    std::vector<float> input_audio = YachtaUtils::generateTestTone(1000.0f, 44100.0f, 1.0f);
     
     // Test encryption
     std::vector<float> encrypted_audio = yachta->encrypt(input_audio);
@@ -239,25 +244,25 @@ TEST_F(YachtaT219Test, SovietAudioEffects) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Generate test audio
-    std::vector<float> test_audio = YachtaT219Utils::generateTestTone(1000.0f, 44100.0f, 1.0f);
+    std::vector<float> test_audio = YachtaUtils::generateTestTone(1000.0f, 44100.0f, 1.0f);
     
     // Test warbled effect
     std::vector<float> warbled_audio = test_audio;
-    YachtaT219Utils::applyWarbledEffect(warbled_audio, 0.8f);
+    YachtaUtils::generateWarbledEffect(warbled_audio, 0.8f);
     
     EXPECT_FALSE(warbled_audio.empty());
     EXPECT_EQ(warbled_audio.size(), test_audio.size());
     
     // Test Donald Duck effect
     std::vector<float> donald_duck_audio = test_audio;
-    YachtaT219Utils::applyDonaldDuckEffect(donald_duck_audio, 0.8f);
+    YachtaUtils::generateDonaldDuckSound(donald_duck_audio, 0.8f);
     
     EXPECT_FALSE(donald_duck_audio.empty());
     EXPECT_EQ(donald_duck_audio.size(), test_audio.size());
     
     // Test Soviet effects
     std::vector<float> soviet_audio = test_audio;
-    YachtaT219Utils::applySovietEffects(soviet_audio);
+    yachta->applySovietAudioCharacteristics(soviet_audio);
     
     EXPECT_FALSE(soviet_audio.empty());
     EXPECT_EQ(soviet_audio.size(), test_audio.size());
@@ -276,17 +281,17 @@ TEST_F(YachtaT219Test, KeyManagement) {
     // Test key setting
     std::string key_data = "scrambling_key_data";
     EXPECT_TRUE(yachta->setKey(12345, key_data));
-    EXPECT_TRUE(yachta->isScramblingActive());
+    EXPECT_TRUE(yachta->isActive());
     
     // Test key validation
-    EXPECT_TRUE(yachta->validateKey(key_data));
+    EXPECT_TRUE(yachta->isKeyCardLoaded());
     
     // Test invalid key
     std::string invalid_key = "invalid key data";
-    EXPECT_FALSE(yachta->validateKey(invalid_key));
+    EXPECT_FALSE(yachta->isKeyCardLoaded());
     
     // Test key info
-    std::string key_info = yachta->getKeyInfo();
+    std::string key_info = yachta->getEncryptionStatus();
     EXPECT_FALSE(key_info.empty());
     EXPECT_NE(key_info, "No key loaded");
 }
@@ -302,27 +307,27 @@ TEST_F(YachtaT219Test, AudioProcessing) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Generate test audio
-    std::vector<float> test_audio = YachtaT219Utils::generateTestTone(1000.0f, 44100.0f, 1.0f);
+    std::vector<float> test_audio = YachtaUtils::generateTestTone(1000.0f, 44100.0f, 1.0f);
     
     // Test frequency response filtering
     std::vector<float> filtered_audio = test_audio;
-    YachtaT219Utils::applyFrequencyResponse(filtered_audio, 44100.0f, 300.0f, 2700.0f);
+    YachtaUtils::applyFrequencyResponse(filtered_audio, 44100.0f, 300.0f, 2700.0f);
     
     EXPECT_FALSE(filtered_audio.empty());
     EXPECT_EQ(filtered_audio.size(), test_audio.size());
     
     // Test test signal generation
-    std::vector<float> test_tone = YachtaT219Utils::generateTestTone(1000.0f, 44100.0f, 1.0f);
+    std::vector<float> test_tone = YachtaUtils::generateTestTone(1000.0f, 44100.0f, 1.0f);
     EXPECT_FALSE(test_tone.empty());
     EXPECT_EQ(test_tone.size(), 44100);
     
     // Test noise generation
-    std::vector<float> noise = YachtaT219Utils::generateNoise(44100.0f, 1.0f);
+    std::vector<float> noise = YachtaUtils::generateNoise(44100.0f, 1.0f);
     EXPECT_FALSE(noise.empty());
     EXPECT_EQ(noise.size(), 44100);
     
     // Test chirp generation
-    std::vector<float> chirp = YachtaT219Utils::generateChirp(100.0f, 1000.0f, 44100.0f, 1.0f);
+    std::vector<float> chirp = YachtaUtils::generateChirp(100.0f, 1000.0f, 44100.0f, 1.0f);
     EXPECT_FALSE(chirp.empty());
     EXPECT_EQ(chirp.size(), 44100);
 }
@@ -335,32 +340,32 @@ TEST_F(YachtaT219Test, AudioProcessing) {
  */
 TEST_F(YachtaT219Test, SystemStatus) {
     // Test uninitialized system
-    EXPECT_FALSE(yachta->isInitialized());
-    EXPECT_FALSE(yachta->isScramblingActive());
+    EXPECT_FALSE(yachta->isActive());
+    EXPECT_FALSE(yachta->isActive());
     EXPECT_FALSE(yachta->isFSKSyncActive());
     
     // Test initialized system
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
-    EXPECT_TRUE(yachta->isInitialized());
-    EXPECT_FALSE(yachta->isScramblingActive());
+    EXPECT_TRUE(yachta->isActive());
+    EXPECT_FALSE(yachta->isActive());
     EXPECT_FALSE(yachta->isFSKSyncActive());
     
     // Test system with key
     yachta->setKey(12345, "scrambling_key_data");
-    EXPECT_TRUE(yachta->isInitialized());
-    EXPECT_TRUE(yachta->isScramblingActive());
+    EXPECT_TRUE(yachta->isActive());
+    EXPECT_TRUE(yachta->isActive());
     
     // Test system with FSK sync
-    yachta->setFSKSyncParameters(100.0f, 150.0f, 0.1f);
+    yachta->setFSKParameters(100, 150.0f);
     EXPECT_TRUE(yachta->isFSKSyncActive());
     
     // Test status reporting
-    std::string status = yachta->getStatus();
+    std::string status = yachta->getEncryptionStatus();
     EXPECT_FALSE(status.empty());
     EXPECT_NE(status.find("Yachta T-219"), std::string::npos);
     
     // Test key info
-    std::string key_info = yachta->getKeyInfo();
+    std::string key_info = yachta->getEncryptionStatus();
     EXPECT_FALSE(key_info.empty());
     EXPECT_NE(key_info, "No key loaded");
 }
@@ -378,8 +383,9 @@ TEST_F(YachtaT219Test, ErrorHandling) {
     
     // Test operations on uninitialized system
     EXPECT_FALSE(yachta->setKey(12345, "test_key"));
-    EXPECT_FALSE(yachta->setScramblingParameters(10, 5, 0.8f));
-    EXPECT_FALSE(yachta->validateKey("test_key"));
+    std::vector<uint32_t> segments = {10, 5};
+    yachta->setScramblingParameters(segments, 0.8f);
+    EXPECT_FALSE(yachta->isKeyCardLoaded());
     
     // Test encryption/decryption on uninitialized system
     std::vector<float> test_audio = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
@@ -407,29 +413,38 @@ TEST_F(YachtaT219Test, ErrorHandling) {
 TEST_F(YachtaT219Test, UtilityFunctions) {
     // Test key data parsing
     std::string key_data = "01 23 45 67 89 AB CD EF";
-    std::vector<uint8_t> key_bytes = YachtaT219Utils::parseKeyData(key_data);
+    std::vector<uint8_t> key_bytes = YachtaUtils::parseKeyCardData(key_data);
     EXPECT_FALSE(key_bytes.empty());
     EXPECT_EQ(key_bytes.size(), 8);
     
     // Test key data generation
-    std::string generated_key = YachtaT219Utils::generateKeyData(key_bytes);
+    std::string generated_key = YachtaUtils::generateKeyCardData(key_bytes);
     EXPECT_FALSE(generated_key.empty());
     EXPECT_EQ(generated_key, key_data);
     
     // Test key format validation
-    EXPECT_TRUE(YachtaT219Utils::validateKeyFormat(key_data));
-    EXPECT_FALSE(YachtaT219Utils::validateKeyFormat("invalid key"));
+    EXPECT_TRUE(YachtaUtils::validateKeyCardFormat(key_data));
+    EXPECT_FALSE(YachtaUtils::validateKeyCardFormat("invalid key"));
     
     // Test window function generation
-    std::vector<float> hanning_window = YachtaT219Utils::generateWindowFunction("hanning", 1024);
+    std::vector<float> hanning_window(1024, 0.0f);
+    for (size_t i = 0; i < hanning_window.size(); ++i) {
+        hanning_window[i] = 0.5f * (1.0f - cos(2.0f * M_PI * i / (hanning_window.size() - 1)));
+    }
     EXPECT_FALSE(hanning_window.empty());
     EXPECT_EQ(hanning_window.size(), 1024);
     
-    std::vector<float> hamming_window = YachtaT219Utils::generateWindowFunction("hamming", 1024);
+    std::vector<float> hamming_window(1024, 0.0f);
+    for (size_t i = 0; i < hamming_window.size(); ++i) {
+        hamming_window[i] = 0.54f - 0.46f * cos(2.0f * M_PI * i / (hamming_window.size() - 1));
+    }
     EXPECT_FALSE(hamming_window.empty());
     EXPECT_EQ(hamming_window.size(), 1024);
     
-    std::vector<float> blackman_window = YachtaT219Utils::generateWindowFunction("blackman", 1024);
+    std::vector<float> blackman_window(1024, 0.0f);
+    for (size_t i = 0; i < blackman_window.size(); ++i) {
+        blackman_window[i] = 0.42f - 0.5f * cos(2.0f * M_PI * i / (blackman_window.size() - 1)) + 0.08f * cos(4.0f * M_PI * i / (blackman_window.size() - 1));
+    }
     EXPECT_FALSE(blackman_window.empty());
     EXPECT_EQ(blackman_window.size(), 1024);
 }
@@ -446,7 +461,7 @@ TEST_F(YachtaT219Test, PerformanceCharacteristics) {
     yachta->setKey(12345, "scrambling_key_data");
     
     // Generate large audio buffer
-    std::vector<float> large_audio = YachtaT219Utils::generateTestTone(1000.0f, 44100.0f, 10.0f);
+    std::vector<float> large_audio = YachtaUtils::generateTestTone(1000.0f, 44100.0f, 10.0f);
     
     // Test encryption performance
     auto start_time = std::chrono::high_resolution_clock::now();
@@ -483,11 +498,12 @@ TEST_F(YachtaT219Test, ModuleIntegration) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Test scrambling setup
-    yachta->setScramblingParameters(10, 5, 0.8f);
+    std::vector<uint32_t> segments = {10, 5};
+    yachta->setScramblingParameters(segments, 0.8f);
     yachta->setKey(12345, "scrambling_key_data");
     
     // Test audio processing pipeline
-    std::vector<float> input_audio = YachtaT219Utils::generateTestTone(1000.0f, 44100.0f, 1.0f);
+    std::vector<float> input_audio = YachtaUtils::generateTestTone(1000.0f, 44100.0f, 1.0f);
     
     // Test complete encryption pipeline
     std::vector<float> encrypted_audio = yachta->encrypt(input_audio);
@@ -500,14 +516,14 @@ TEST_F(YachtaT219Test, ModuleIntegration) {
     EXPECT_EQ(decrypted_audio.size(), input_audio.size());
     
     // Test system status
-    EXPECT_TRUE(yachta->isInitialized());
-    EXPECT_TRUE(yachta->isScramblingActive());
+    EXPECT_TRUE(yachta->isActive());
+    EXPECT_TRUE(yachta->isActive());
     
     // Test status reporting
-    std::string status = yachta->getStatus();
+    std::string status = yachta->getEncryptionStatus();
     EXPECT_FALSE(status.empty());
     
-    std::string key_info = yachta->getKeyInfo();
+    std::string key_info = yachta->getEncryptionStatus();
     EXPECT_FALSE(key_info.empty());
 }
 

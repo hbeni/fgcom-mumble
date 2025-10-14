@@ -32,6 +32,8 @@
 
 using namespace fgcom::stanag4197;
 
+namespace testing {
+
 /**
  * @brief Test suite for STANAG 4197 system
  * 

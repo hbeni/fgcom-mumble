@@ -14,6 +14,9 @@
 #include <string>
 #include <cmath>
 #include <chrono>
+#include <thread>
+#include <fstream>
+#include "tts_configuration.h"
 
 using namespace std;
 using namespace testing;

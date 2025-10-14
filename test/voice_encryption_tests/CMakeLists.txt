@@ -17,7 +17,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
 find_package(GTest REQUIRED)
-find_package(GMock REQUIRED)
 
 # Include directories
 include_directories(
@@ -58,7 +57,6 @@ target_link_libraries(voice_encryption_tests
     melpe
     GTest::GTest
     GTest::Main
-    GMock::GMock
     pthread
     m
 )

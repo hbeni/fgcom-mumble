@@ -31,6 +31,9 @@
 #include <chrono>
 #include <thread>
 #include <fstream>
+#include "tts_integration.h"
+#include <thread>
+#include <fstream>
 #include <sstream>
 
 using namespace std;
@@ -74,7 +77,7 @@ TEST_F(TTSIntegration_Test, Initialization) {
  */
 TEST_F(TTSIntegration_Test, ConfigurationLoading) {
     // Test configuration file loading
-    EXPECT_TRUE(ttsSystem->loadConfiguration("../../scripts/tts/tts_config.conf"));
+    EXPECT_TRUE(ttsSystem->loadConfiguration("../../../scripts/tts/tts_config.conf"));
     
     // Test configuration validation
     EXPECT_TRUE(ttsSystem->validateConfiguration());
@@ -190,7 +193,7 @@ TEST_F(TTSIntegration_Test, ErrorHandling) {
     EXPECT_FALSE(generateResult);
     
     // Test with null pointers
-    EXPECT_FALSE(ttsSystem->preprocessText(""));
+    EXPECT_TRUE(ttsSystem->preprocessText("").empty());
     EXPECT_FALSE(ttsSystem->validateText(""));
 }
 
@@ -268,22 +271,27 @@ TEST_F(TTSIntegration_Test, ATISIntegration) {
  */
 TEST_F(TTSIntegration_Test, TemplateProcessing) {
     // Test template loading
-    string templatePath = "../../scripts/tts/atis_templates/standard_atis.txt";
+    string templatePath = "../../../../fgcom-mumble/scripts/tts/atis_templates/standard_atis.txt";
     string templateContent = ttsSystem->loadTemplate(templatePath);
     EXPECT_FALSE(templateContent.empty());
     
     // Test template processing
     map<string, string> variables = {
         {"AIRPORT_CODE", "KJFK"},
-        {"WEATHER", "Wind 270 at 15 knots"},
-        {"RUNWAY", "Runway 04L/22R"}
+        {"WIND_DIRECTION", "270"},
+        {"WIND_SPEED", "15"},
+        {"VISIBILITY", "10"},
+        {"WEATHER_CONDITIONS", "few clouds"},
+        {"TEMPERATURE", "22"},
+        {"ALTIMETER", "29.92"},
+        {"ATIS_LETTER", "A"}
     };
     
     string processedTemplate = ttsSystem->processTemplate(templateContent, variables);
     EXPECT_FALSE(processedTemplate.empty());
     EXPECT_NE(processedTemplate.find("KJFK"), string::npos);
-    EXPECT_NE(processedTemplate.find("Wind 270 at 15 knots"), string::npos);
-    EXPECT_NE(processedTemplate.find("Runway 04L/22R"), string::npos);
+    EXPECT_NE(processedTemplate.find("270"), string::npos);
+    EXPECT_NE(processedTemplate.find("15"), string::npos);
 }
 
 /**

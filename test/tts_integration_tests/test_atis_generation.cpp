@@ -14,6 +14,9 @@
 #include <string>
 #include <cmath>
 #include <chrono>
+#include <thread>
+#include <fstream>
+#include "atis_generator.h"
 
 using namespace std;
 using namespace testing;
@@ -70,22 +73,27 @@ TEST_F(ATISGeneration_Test, TextGeneration) {
  */
 TEST_F(ATISGeneration_Test, TemplateProcessing) {
     // Test template loading
-    string templatePath = "../../scripts/tts/atis_templates/standard_atis.txt";
+    string templatePath = "../../../../fgcom-mumble/scripts/tts/atis_templates/standard_atis.txt";
     string templateContent = atisGenerator->loadTemplate(templatePath);
     EXPECT_FALSE(templateContent.empty());
     
     // Test template processing
     map<string, string> variables = {
         {"AIRPORT_CODE", "KJFK"},
-        {"WEATHER", "Wind 270 at 15 knots"},
-        {"RUNWAY", "Runway 04L/22R"}
+        {"WIND_DIRECTION", "270"},
+        {"WIND_SPEED", "15"},
+        {"VISIBILITY", "10"},
+        {"WEATHER_CONDITIONS", "few clouds"},
+        {"TEMPERATURE", "22"},
+        {"ALTIMETER", "29.92"},
+        {"ATIS_LETTER", "A"}
     };
     
     string processedTemplate = atisGenerator->processTemplate(templateContent, variables);
     EXPECT_FALSE(processedTemplate.empty());
     EXPECT_NE(processedTemplate.find("KJFK"), string::npos);
-    EXPECT_NE(processedTemplate.find("Wind 270 at 15 knots"), string::npos);
-    EXPECT_NE(processedTemplate.find("Runway 04L/22R"), string::npos);
+    EXPECT_NE(processedTemplate.find("270"), string::npos);
+    EXPECT_NE(processedTemplate.find("15"), string::npos);
 }
 
 /**

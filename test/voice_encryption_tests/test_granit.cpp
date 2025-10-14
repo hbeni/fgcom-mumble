@@ -31,6 +31,8 @@
 
 using namespace fgcom::granit;
 
+namespace testing {
+
 /**
  * @brief Test suite for Granit system
  * 

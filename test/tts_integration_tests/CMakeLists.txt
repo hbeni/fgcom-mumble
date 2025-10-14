@@ -17,7 +17,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
 find_package(GTest REQUIRED)
-find_package(GMock REQUIRED)
 
 # Include directories
 include_directories(
@@ -31,6 +30,10 @@ set(SOURCES
     test_piper_tts.cpp
     test_atis_generation.cpp
     test_tts_configuration.cpp
+    tts_integration.cpp
+    piper_tts.cpp
+    atis_generator.cpp
+    tts_configuration.cpp
 )
 
 # Create executable
@@ -40,7 +43,6 @@ add_executable(tts_integration_tests ${SOURCES})
 target_link_libraries(tts_integration_tests
     GTest::GTest
     GTest::Main
-    GMock::GMock
     pthread
     m
 )

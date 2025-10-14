@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
 find_package(GTest REQUIRED)
-find_package(GMock REQUIRED)
 find_package(RapidCheck REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(Threads REQUIRED)
@@ -30,10 +29,8 @@ add_executable(atis_weather_integration_tests ${SOURCES})
 
 # Link libraries
 target_link_libraries(atis_weather_integration_tests
-    GTest::gtest
-    GTest::gtest_main
-    GMock::gmock
-    GMock::gmock_main
+    GTest::GTest
+    GTest::Main
     rapidcheck
     nlohmann_json::nlohmann_json
     Threads::Threads
