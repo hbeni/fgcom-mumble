@@ -7,35 +7,29 @@ SHELL=/bin/bash
 PATH=/usr/local/bin:/usr/bin:/bin
 HOME=/home/haaken/github-projects/fgcom-mumble-dev
 
-# TLE Update Schedule
-# Update amateur satellites daily at 6:00 AM
-0 6 * * * fgcom /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh start >/dev/null 2>&1
+# TLE Update Schedule - 24-Hour Automatic Updates
+# Update all TLE sources daily at 6:00 AM (24-hour cycle)
+0 6 * * * haaken /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --force >/dev/null 2>&1
 
 # Update ISS hourly (for critical tracking)
-0 * * * * fgcom /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh status >/dev/null 2>&1
-
-# Update military satellites weekly on Sunday at 2:00 AM
-0 2 * * 0 fgcom /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh restart >/dev/null 2>&1
+0 * * * * haaken /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --source iss --force >/dev/null 2>&1
 
 # Clean up old log files monthly
-0 3 1 * * fgcom find /home/haaken/github-projects/fgcom-mumble-dev/logs -name "*.log" -mtime +30 -delete >/dev/null 2>&1
+0 3 1 * * haaken find /home/haaken/fgcom-mumble/logs -name "*.log" -mtime +30 -delete >/dev/null 2>&1
 
 # Backup TLE files weekly on Sunday at 1:00 AM
-0 1 * * 0 fgcom /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/backup_tle_files.sh >/dev/null 2>&1
+0 1 * * 0 haaken /home/haaken/fgcom-mumble/scripts/satellites/backup_tle_files.sh >/dev/null 2>&1
 
 # Alternative: User crontab entries (add to user's crontab with: crontab -e)
 # 
-# # TLE Updates - Amateur satellites daily at 6:00 AM
-# 0 6 * * * /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh start
+# # TLE Updates - All sources daily at 6:00 AM (24-hour cycle)
+# 0 6 * * * /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --force
 # 
-# # TLE Updates - ISS hourly
-# 0 * * * * /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh status
-# 
-# # TLE Updates - Military satellites weekly on Sunday at 2:00 AM
-# 0 2 * * 0 /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/start_tle_updater.sh restart
+# # TLE Updates - ISS hourly for critical tracking
+# 0 * * * * /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --source iss --force
 # 
 # # Clean up old log files monthly
-# 0 3 1 * * find /home/haaken/github-projects/fgcom-mumble-dev/logs -name "*.log" -mtime +30 -delete
+# 0 3 1 * * find /home/haaken/fgcom-mumble/logs -name "*.log" -mtime +30 -delete
 # 
 # # Backup TLE files weekly
-# 0 1 * * 0 /home/haaken/github-projects/fgcom-mumble-dev/scripts/satellites/backup_tle_files.sh
+# 0 1 * * 0 /home/haaken/fgcom-mumble/scripts/satellites/backup_tle_files.sh

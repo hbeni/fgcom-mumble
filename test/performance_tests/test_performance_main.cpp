@@ -27,6 +27,13 @@
 #include <chrono>
 #include <ratio>
 
+// Function declarations
+int getGPUAllocationForThreshold(int threshold);
+int calculateOptimalGPUsWithLatency(int user_count, int network_latency_ms);
+int calculateOptimalGPUs(int user_count, int available_local_gpus);
+double calculateNetworkBandwidthRequirement(int network_gpu_count, int user_count);
+bool canAllocateNetworkGPU(int network_gpu_count, int user_count);
+
 // Mock classes for performance testing
 class MockAudioEncoder {
 public:
@@ -386,10 +393,7 @@ protected:
     }
 };
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+// Main function removed - using gtest_main
 
 // Dynamic GPU Scaling Performance Tests
 class DynamicGPUScalingPerformanceTest : public ::testing::Test {
@@ -460,6 +464,7 @@ TEST_F(DynamicGPUScalingPerformanceTest, ScalingThresholdPerformance) {
 TEST_F(DynamicGPUScalingPerformanceTest, HighLoadScalingPerformance) {
     // Test performance for high user loads (150+ users)
     int high_user_count = 180;
+    (void)high_user_count; // Suppress unused variable warning
     
     auto start_time = std::chrono::high_resolution_clock::now();
     
@@ -483,6 +488,7 @@ TEST_F(DynamicGPUScalingPerformanceTest, NetworkLatencyImpact) {
         
         bool can_use_network_gpu = (latency <= 100);
         int optimal_gpus = calculateOptimalGPUsWithLatency(100, latency);
+        (void)optimal_gpus; // Suppress unused variable warning
         
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
@@ -499,6 +505,7 @@ TEST_F(DynamicGPUScalingPerformanceTest, NetworkLatencyImpact) {
 
 // Helper functions for dynamic GPU scaling performance tests
 int calculateOptimalGPUs(int user_count, int available_local_gpus) {
+    (void)available_local_gpus; // Suppress unused parameter warning
     if (user_count <= 20) return 1;
     if (user_count <= 50) return 2;
     if (user_count <= 100) return 3;

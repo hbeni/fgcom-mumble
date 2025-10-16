@@ -6,7 +6,7 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
 
-CXX_FLAGS =  -Wall -Wno-missing-braces -Wno-unused-command-line-argument -g -std=gnu++11
+CXX_FLAGS =  -Wall -Wno-missing-braces -Wno-unused-command-line-argument -std=gnu++11
 
 # Custom flags: rapidcheck/CMakeFiles/rapidcheck.dir/src/Random.cpp.o_FLAGS =  -O3
 

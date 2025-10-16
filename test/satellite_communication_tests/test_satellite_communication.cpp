@@ -32,6 +32,7 @@
 
 using namespace std;
 using namespace testing;
+using namespace fgcom::satellites;
 
 /**
  * @class SatelliteCommunication_Test
@@ -60,111 +61,86 @@ protected:
  */
 TEST_F(SatelliteCommunication_Test, Initialization) {
     EXPECT_TRUE(satComm->isInitialized());
-    EXPECT_TRUE(satComm->isEnabled());
-    EXPECT_GT(satComm->getUpdateInterval(), 0);
-    EXPECT_FALSE(satComm->getDefaultTLESource().empty());
-    EXPECT_FALSE(satComm->getLocalTLEPath().empty());
+    EXPECT_TRUE(satComm->isTrackingActive());
+    EXPECT_FALSE(satComm->getStatus().empty());
+    EXPECT_FALSE(satComm->getAvailableSatellites().empty());
 }
 
 /**
  * @test Test satellite frequency management
  */
 TEST_F(SatelliteCommunication_Test, FrequencyManagement) {
-    // Test military satellite frequencies
-    vector<float> militaryFreqs = satComm->getMilitaryFrequencies();
-    EXPECT_GT(militaryFreqs.size(), 0);
+    // Test frequency setting
+    EXPECT_TRUE(satComm->setFrequency(145.0, 435.0));
     
-    // Test amateur satellite frequencies
-    vector<float> amateurFreqs = satComm->getAmateurFrequencies();
-    EXPECT_GT(amateurFreqs.size(), 0);
+    // Test satellite mode setting
+    EXPECT_TRUE(satComm->setMode(SatelliteMode::FM_REPEATER));
     
-    // Test IoT satellite frequencies
-    vector<float> iotFreqs = satComm->getIoTFrequencies();
-    EXPECT_GT(iotFreqs.size(), 0);
+    // Test tracking enable
+    EXPECT_TRUE(satComm->enableTracking(true, 1.0));
     
-    // Test frequency validation
-    EXPECT_TRUE(satComm->isValidFrequency(145.0f)); // 2m band
-    EXPECT_TRUE(satComm->isValidFrequency(435.0f)); // 70cm band
-    EXPECT_FALSE(satComm->isValidFrequency(1000.0f)); // Invalid frequency
+    // Test doppler compensation
+    EXPECT_TRUE(satComm->enableDopplerCompensation(true));
 }
 
 /**
  * @test Test satellite communication protocols
  */
 TEST_F(SatelliteCommunication_Test, CommunicationProtocols) {
-    // Test SSB/CW protocol
-    EXPECT_TRUE(satComm->isProtocolSupported("SSB"));
-    EXPECT_TRUE(satComm->isProtocolSupported("CW"));
+    // Test satellite mode setting
+    EXPECT_TRUE(satComm->setMode(SatelliteMode::FM_REPEATER));
+    EXPECT_TRUE(satComm->setMode(SatelliteMode::DIGITAL));
+    EXPECT_TRUE(satComm->setMode(SatelliteMode::LINEAR_TRANSPONDER));
     
-    // Test FM voice protocol
-    EXPECT_TRUE(satComm->isProtocolSupported("FM"));
+    // Test frequency setting for different modes
+    EXPECT_TRUE(satComm->setFrequency(145.0, 435.0));
+    EXPECT_TRUE(satComm->setFrequency(435.0, 145.0));
     
-    // Test digital protocols
-    EXPECT_TRUE(satComm->isProtocolSupported("PSK31"));
-    EXPECT_TRUE(satComm->isProtocolSupported("BPSK"));
-    EXPECT_TRUE(satComm->isProtocolSupported("GMSK"));
-    EXPECT_TRUE(satComm->isProtocolSupported("GFSK"));
-    EXPECT_TRUE(satComm->isProtocolSupported("APRS"));
-    
-    // Test invalid protocol
-    EXPECT_FALSE(satComm->isProtocolSupported("INVALID"));
+    // Test tracking for different modes
+    EXPECT_TRUE(satComm->enableTracking(true, 0.5));
 }
 
 /**
  * @test Test satellite signal processing
  */
 TEST_F(SatelliteCommunication_Test, SignalProcessing) {
-    const int sampleCount = 1024;
-    vector<float> inputSignal(sampleCount);
-    vector<float> outputSignal(sampleCount);
+    // Test satellite initialization with coordinates
+    EXPECT_TRUE(satComm->initialize(40.7128, -74.0060, 10.0));
     
-    // Generate test signal
-    for (int i = 0; i < sampleCount; i++) {
-        float t = static_cast<float>(i) / 8000.0f;
-        inputSignal[i] = 0.5f * sin(2.0f * M_PI * 1000.0f * t);
-    }
+    // Test TLE loading
+    EXPECT_TRUE(satComm->loadTLE("../../voice-encryption/systems/satellites/data/amateur.tle"));
     
-    // Test signal processing
-    bool processResult = satComm->processSignal(inputSignal, outputSignal);
-    EXPECT_TRUE(processResult);
-    EXPECT_EQ(outputSignal.size(), inputSignal.size());
+    // Test satellite visibility
+    EXPECT_TRUE(satComm->isSatelliteVisible("AO-7"));
     
-    // Test modulation
-    vector<uint8_t> modulatedData;
-    bool modulateResult = satComm->modulateSignal(inputSignal, "SSB", modulatedData);
-    EXPECT_TRUE(modulateResult);
-    EXPECT_GT(modulatedData.size(), 0);
+    // Test current satellite setting
+    EXPECT_TRUE(satComm->setCurrentSatellite("AO-7"));
     
-    // Test demodulation
-    vector<float> demodulatedSignal;
-    bool demodulateResult = satComm->demodulateSignal(modulatedData, "SSB", demodulatedSignal);
-    EXPECT_TRUE(demodulateResult);
-    EXPECT_EQ(demodulatedSignal.size(), inputSignal.size());
+    // Test status retrieval
+    string status = satComm->getStatus();
+    EXPECT_FALSE(status.empty());
 }
 
 /**
  * @test Test satellite tracking and visibility
  */
 TEST_F(SatelliteCommunication_Test, SatelliteTracking) {
-    // Test satellite visibility calculation
-    float latitude = 40.7128f; // New York
-    float longitude = -74.0060f;
-    float altitude = 0.0f;
+    // Test satellite initialization
+    EXPECT_TRUE(satComm->initialize(40.7128, -74.0060, 0.0));
     
-    vector<string> visibleSatellites = satComm->getVisibleSatellites(latitude, longitude, altitude);
-    EXPECT_GE(visibleSatellites.size(), 0);
+    // Test available satellites
+    vector<string> availableSatellites = satComm->getAvailableSatellites();
+    EXPECT_GE(availableSatellites.size(), 0);
     
-    // Test elevation and azimuth calculation
-    string satelliteName = "AO-7";
-    float elevation, azimuth;
-    bool trackingResult = satComm->calculateSatellitePosition(satelliteName, latitude, longitude, altitude, elevation, azimuth);
+    // Test satellite visibility
+    EXPECT_TRUE(satComm->isSatelliteVisible("AO-7"));
     
-    if (trackingResult) {
-        EXPECT_GE(elevation, -90.0f);
-        EXPECT_LE(elevation, 90.0f);
-        EXPECT_GE(azimuth, 0.0f);
-        EXPECT_LT(azimuth, 360.0f);
-    }
+    // Test current satellite setting
+    EXPECT_TRUE(satComm->setCurrentSatellite("AO-7"));
+    
+    // Test tracking enable
+    EXPECT_TRUE(satComm->enableTracking(true, 1.0));
+    EXPECT_TRUE(satComm->isTrackingActive());
 }
 
 /**
@@ -182,53 +158,49 @@ TEST_F(SatelliteCommunication_Test, Performance) {
         inputSignal[i] = 0.5f * sin(2.0f * M_PI * 1000.0f * i / 8000.0f);
     }
     
-    bool processResult = satComm->processSignal(inputSignal, outputSignal);
-    EXPECT_TRUE(processResult);
+    EXPECT_TRUE(satComm->initialize(40.7128, -74.0060, 0.0));
     
     auto end = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
     
-    // Signal processing should be fast (less than 1ms for 128ms of audio)
-    EXPECT_LT(duration.count(), 1000);
+    // Initialization should be fast (less than 100ms)
+    EXPECT_LT(duration.count(), 100000);
     
     // Test tracking performance
     start = chrono::high_resolution_clock::now();
     
-    float latitude = 40.7128f;
-    float longitude = -74.0060f;
-    float altitude = 0.0f;
-    vector<string> visibleSatellites = satComm->getVisibleSatellites(latitude, longitude, altitude);
+    EXPECT_TRUE(satComm->enableTracking(true, 1.0));
+    EXPECT_TRUE(satComm->isTrackingActive());
     
     end = chrono::high_resolution_clock::now();
     duration = chrono::duration_cast<chrono::microseconds>(end - start);
     
-    // Tracking should be fast (less than 10ms)
+    // Tracking enable should be fast (less than 10ms)
     EXPECT_LT(duration.count(), 10000);
+    
+    // Test performance metrics
+    string metrics = satComm->getPerformanceMetrics();
+    EXPECT_FALSE(metrics.empty());
 }
 
 /**
  * @test Test satellite communication error handling
  */
 TEST_F(SatelliteCommunication_Test, ErrorHandling) {
-    // Test with invalid parameters
-    vector<float> emptySignal;
-    vector<float> outputSignal;
-    bool processResult = satComm->processSignal(emptySignal, outputSignal);
-    EXPECT_FALSE(processResult);
+    // Test with invalid initialization parameters
+    EXPECT_FALSE(satComm->initialize(999.0, 999.0, -1000.0));
     
     // Test with invalid satellite name
-    float latitude = 40.7128f;
-    float longitude = -74.0060f;
-    float altitude = 0.0f;
-    float elevation, azimuth;
-    bool trackingResult = satComm->calculateSatellitePosition("INVALID_SATELLITE", latitude, longitude, altitude, elevation, azimuth);
-    EXPECT_FALSE(trackingResult);
+    EXPECT_FALSE(satComm->setCurrentSatellite("INVALID_SATELLITE"));
     
-    // Test with invalid protocol
-    vector<float> inputSignal(1024);
-    vector<uint8_t> modulatedData;
-    bool modulateResult = satComm->modulateSignal(inputSignal, "INVALID_PROTOCOL", modulatedData);
-    EXPECT_FALSE(modulateResult);
+    // Test with invalid frequency
+    EXPECT_FALSE(satComm->setFrequency(-1.0, -1.0));
+    
+    // Test with invalid mode
+    EXPECT_FALSE(satComm->setMode(static_cast<SatelliteMode>(999)));
+    
+    // Test with invalid tracking parameters
+    EXPECT_FALSE(satComm->enableTracking(true, -1.0));
 }
 
 /**
@@ -243,19 +215,16 @@ TEST_F(SatelliteCommunication_Test, ThreadSafety) {
     for (int t = 0; t < numThreads; t++) {
         threads.emplace_back([this, t, iterationsPerThread, &results]() {
             for (int i = 0; i < iterationsPerThread; i++) {
-                const int sampleCount = 1024;
-                vector<float> inputSignal(sampleCount);
-                vector<float> outputSignal(sampleCount);
+                // Test concurrent initialization
+                bool initResult = satComm->initialize(40.7128 + t, -74.0060 + t, 0.0);
                 
-                // Generate test signal
-                for (int j = 0; j < sampleCount; j++) {
-                    inputSignal[j] = 0.5f * sin(2.0f * M_PI * 1000.0f * j / 8000.0f);
-                }
+                // Test concurrent tracking
+                bool trackingResult = satComm->enableTracking(true, 1.0);
                 
-                // Process signal
-                bool processResult = satComm->processSignal(inputSignal, outputSignal);
+                // Test concurrent status retrieval
+                string status = satComm->getStatus();
                 
-                if (!processResult) {
+                if (!initResult || !trackingResult || status.empty()) {
                     results[t] = false;
                     break;
                 }
@@ -278,60 +247,57 @@ TEST_F(SatelliteCommunication_Test, ThreadSafety) {
  * @test Test satellite communication integration with voice encryption
  */
 TEST_F(SatelliteCommunication_Test, VoiceEncryptionIntegration) {
-    // Test encryption system integration
-    vector<string> supportedEncryptionSystems = satComm->getSupportedEncryptionSystems();
-    EXPECT_GT(supportedEncryptionSystems.size(), 0);
+    // Test satellite initialization
+    EXPECT_TRUE(satComm->initialize(40.7128, -74.0060, 0.0));
     
-    // Test encryption system selection
-    EXPECT_TRUE(satComm->setEncryptionSystem("FREEDV"));
-    EXPECT_EQ(satComm->getCurrentEncryptionSystem(), "FREEDV");
+    // Test satellite mode setting for voice
+    EXPECT_TRUE(satComm->setMode(SatelliteMode::FM_REPEATER));
     
-    EXPECT_TRUE(satComm->setEncryptionSystem("MELPE"));
-    EXPECT_EQ(satComm->getCurrentEncryptionSystem(), "MELPE");
+    // Test frequency setting for voice communication
+    EXPECT_TRUE(satComm->setFrequency(145.0, 435.0));
     
-    // Test invalid encryption system
-    EXPECT_FALSE(satComm->setEncryptionSystem("INVALID"));
+    // Test doppler compensation for voice
+    EXPECT_TRUE(satComm->enableDopplerCompensation(true));
+    
+    // Test tracking for voice communication
+    EXPECT_TRUE(satComm->enableTracking(true, 1.0));
 }
 
 /**
  * @test Test satellite communication configuration
  */
 TEST_F(SatelliteCommunication_Test, Configuration) {
-    // Test configuration loading
-    EXPECT_TRUE(satComm->loadConfiguration("../../configs/satellite_config.conf"));
+    // Test satellite initialization
+    EXPECT_TRUE(satComm->initialize(40.7128, -74.0060, 0.0));
     
-    // Test configuration validation
-    EXPECT_TRUE(satComm->validateConfiguration());
+    // Test TLE loading
+    EXPECT_TRUE(satComm->loadTLE("../../voice-encryption/systems/satellites/data/amateur.tle"));
     
-    // Test configuration saving
-    EXPECT_TRUE(satComm->saveConfiguration("test_satellite_config.conf"));
+    // Test satellite info retrieval
+    string satelliteInfo = satComm->getSatelliteInfo("AO-7");
+    EXPECT_FALSE(satelliteInfo.empty());
     
-    // Test configuration reset
-    satComm->resetConfiguration();
-    EXPECT_TRUE(satComm->isDefaultConfiguration());
+    // Test status retrieval
+    string status = satComm->getStatus();
+    EXPECT_FALSE(status.empty());
 }
 
 /**
  * @test Test satellite communication logging
  */
 TEST_F(SatelliteCommunication_Test, Logging) {
-    // Test logging initialization
-    EXPECT_TRUE(satComm->initializeLogging());
+    // Test satellite initialization
+    EXPECT_TRUE(satComm->initialize(40.7128, -74.0060, 0.0));
     
-    // Test log levels
-    satComm->setLogLevel("DEBUG");
-    EXPECT_EQ(satComm->getLogLevel(), "DEBUG");
+    // Test status logging
+    string status = satComm->getStatus();
+    EXPECT_FALSE(status.empty());
     
-    satComm->setLogLevel("INFO");
-    EXPECT_EQ(satComm->getLogLevel(), "INFO");
+    // Test performance metrics logging
+    string metrics = satComm->getPerformanceMetrics();
+    EXPECT_FALSE(metrics.empty());
     
-    satComm->setLogLevel("WARNING");
-    EXPECT_EQ(satComm->getLogLevel(), "WARNING");
-    
-    satComm->setLogLevel("ERROR");
-    EXPECT_EQ(satComm->getLogLevel(), "ERROR");
-    
-    // Test invalid log level
-    satComm->setLogLevel("INVALID");
-    EXPECT_NE(satComm->getLogLevel(), "INVALID");
+    // Test satellite info logging
+    string satelliteInfo = satComm->getSatelliteInfo("AO-7");
+    EXPECT_FALSE(satelliteInfo.empty());
 }

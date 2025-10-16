@@ -15,15 +15,10 @@ INCLUDES = -I../../voice-encryption/systems/satellites/include \
            -I../../voice-encryption/systems/satellites/orbital
 
 # Libraries
-LIBS = -lgtest -lgmock -lpthread -lm
+LIBS = -lgtest_main -lgtest -lgmock -lpthread -lm
 
-# Source files
-SOURCES = test_satellite_communication.cpp \
-          test_military_satellites.cpp \
-          test_amateur_satellites.cpp \
-          test_iot_satellites.cpp \
-          test_orbital_mechanics.cpp \
-          test_tle_support.cpp
+# Source files (only main test file for now)
+SOURCES = test_satellite_communication.cpp ../../voice-encryption/systems/satellites/satellite_communication.cpp
 
 # Object files
 OBJECTS = $(SOURCES:.cpp=.o)

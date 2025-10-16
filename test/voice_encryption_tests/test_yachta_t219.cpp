@@ -47,6 +47,7 @@ class YachtaT219Test : public ::testing::Test {
 protected:
     void SetUp() override {
         yachta = std::make_unique<YachtaT219>();
+        ASSERT_TRUE(yachta->initialize(8000.0f, 1));
     }
     
     void TearDown() override {
@@ -88,8 +89,15 @@ TEST_F(YachtaT219Test, FSKSyncSignal) {
     ASSERT_TRUE(yachta->initialize(44100.0f, 1));
     
     // Test FSK sync signal generation
+    std::vector<bool> test_bits(100, false);  // Generate 100 bits to get 44100 samples
+    for (int i = 0; i < 100; i += 4) {
+        test_bits[i] = true;
+        test_bits[i+1] = false;
+        test_bits[i+2] = true;
+        test_bits[i+3] = true;
+    }
     std::vector<float> fsk_signal = YachtaUtils::generateFSKSignal(
-        {true, false, true, true, false}, 100.0f, 150.0f, 44100.0f);
+        test_bits, 44100.0f, 100, 150.0f);
     
     EXPECT_FALSE(fsk_signal.empty());
     EXPECT_EQ(fsk_signal.size(), 44100);
@@ -174,7 +182,7 @@ TEST_F(YachtaT219Test, KeyCardFunctionality) {
     std::string key_card = YachtaUtils::generateKeyCardData({0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF});
     
     EXPECT_FALSE(key_card.empty());
-    EXPECT_EQ(key_card.size(), 64);
+    EXPECT_EQ(key_card.size(), 23);  // 8 bytes * 2 chars + 7 spaces
     
     // Test key card validation
     EXPECT_TRUE(YachtaUtils::validateKeyCardFormat(key_card));
@@ -184,7 +192,7 @@ TEST_F(YachtaT219Test, KeyCardFunctionality) {
     EXPECT_TRUE(yachta->isKeyCardLoaded());
     
     // Test key card saving
-    std::string saved_key_card = yachta->getEncryptionStatus();
+    std::string saved_key_card = yachta->getKeyCardData();
     EXPECT_FALSE(saved_key_card.empty());
     EXPECT_EQ(saved_key_card.size(), key_card.size());
 }
@@ -287,8 +295,8 @@ TEST_F(YachtaT219Test, KeyManagement) {
     EXPECT_TRUE(yachta->isKeyCardLoaded());
     
     // Test invalid key
-    std::string invalid_key = "invalid key data";
-    EXPECT_FALSE(yachta->isKeyCardLoaded());
+    std::string invalid_key = "inv";
+    EXPECT_FALSE(yachta->setKey(54321, invalid_key));
     
     // Test key info
     std::string key_info = yachta->getEncryptionStatus();
@@ -340,15 +348,13 @@ TEST_F(YachtaT219Test, AudioProcessing) {
  */
 TEST_F(YachtaT219Test, SystemStatus) {
     // Test uninitialized system
-    EXPECT_FALSE(yachta->isActive());
-    EXPECT_FALSE(yachta->isActive());
-    EXPECT_FALSE(yachta->isFSKSyncActive());
+    YachtaT219 uninitialized_system;
+    EXPECT_FALSE(uninitialized_system.isActive());
+    EXPECT_FALSE(uninitialized_system.isFSKSyncActive());
     
-    // Test initialized system
-    ASSERT_TRUE(yachta->initialize(44100.0f, 1));
+    // Test initialized system (already initialized in SetUp)
     EXPECT_TRUE(yachta->isActive());
-    EXPECT_FALSE(yachta->isActive());
-    EXPECT_FALSE(yachta->isFSKSyncActive());
+    EXPECT_TRUE(yachta->isFSKSyncActive());
     
     // Test system with key
     yachta->setKey(12345, "scrambling_key_data");

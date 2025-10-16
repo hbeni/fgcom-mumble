@@ -319,6 +319,7 @@ public:
     bool saveKeyToFile(const std::string& filename);
     bool generateKey(uint32_t key_length);
     bool validateKey(const std::string& key_data);
+    std::string getKeyData() const;
     
     // Audio effects
     void applyRoboticEffect(std::vector<float>& audio, float intensity);

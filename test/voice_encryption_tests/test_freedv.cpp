@@ -46,6 +46,9 @@ protected:
         // Initialize FreeDV system
         freedv = new FreeDV();
         ASSERT_NE(freedv, nullptr);
+        
+        // Initialize the system with proper parameters
+        ASSERT_TRUE(freedv->initialize(8000.0f, 1));
     }
 
     void TearDown() override {

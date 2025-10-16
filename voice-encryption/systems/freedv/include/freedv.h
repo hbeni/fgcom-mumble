@@ -475,7 +475,7 @@ namespace FreeDVUtils {
      * Returns a list of all supported audio channel counts.
      */
     std::vector<uint32_t> getSupportedChannelCounts();
-}
+};
 
 } // namespace freedv
 } // namespace fgcom

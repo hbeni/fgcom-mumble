@@ -46,6 +46,9 @@ class GranitTest : public ::testing::Test {
 protected:
     void SetUp() override {
         granit = std::make_unique<Granit>();
+        
+        // Initialize the system
+        ASSERT_TRUE(granit->initialize(8000.0f, 1));
     }
     
     void TearDown() override {
@@ -122,7 +125,7 @@ TEST_F(GranitTest, ScramblingSequence) {
     EXPECT_EQ(unique_values.size(), sequence.size());
     
     // Test scrambling parameters
-    EXPECT_TRUE(granit->setScramblingParameters(882, 8, 1500.0f));
+    EXPECT_TRUE(granit->setScramblingParameters(512, 4, 1000.0f));
     EXPECT_TRUE(granit->isScramblingActive());
 }
 
@@ -376,12 +379,12 @@ TEST_F(GranitTest, AudioProcessing) {
  */
 TEST_F(GranitTest, SystemStatus) {
     // Test uninitialized system
-    EXPECT_FALSE(granit->isInitialized());
-    EXPECT_FALSE(granit->isScramblingActive());
-    EXPECT_FALSE(granit->isPilotActive());
+    Granit uninitialized_system;
+    EXPECT_FALSE(uninitialized_system.isInitialized());
+    EXPECT_FALSE(uninitialized_system.isScramblingActive());
+    EXPECT_FALSE(uninitialized_system.isPilotActive());
     
-    // Test initialized system
-    ASSERT_TRUE(granit->initialize(44100.0f, 1));
+    // Test initialized system (already initialized in SetUp)
     EXPECT_TRUE(granit->isInitialized());
     EXPECT_FALSE(granit->isScramblingActive());
     EXPECT_FALSE(granit->isPilotActive());

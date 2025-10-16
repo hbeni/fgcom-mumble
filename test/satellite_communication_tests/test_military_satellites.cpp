@@ -18,6 +18,7 @@
 
 using namespace std;
 using namespace testing;
+using namespace fgcom::satellites::military;
 
 /**
  * @class MilitarySatellites_Test

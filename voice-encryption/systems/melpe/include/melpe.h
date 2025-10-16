@@ -355,6 +355,14 @@ public:
      * Returns the NATO compliance status of the MELPe system.
      */
     std::string getNATOComplianceStatus() const;
+
+private:
+    // Helper functions for MELPe processing
+    std::vector<float> computeLPC(const std::vector<float>& signal, int order);
+    std::vector<uint8_t> quantizeLPC(const std::vector<float>& coeffs);
+    std::vector<float> dequantizeLPC(const std::vector<uint8_t>& quantized);
+    std::vector<float> applyLPCSynthesis(const std::vector<float>& excitation, 
+                                        const std::vector<float>& lpc_coeffs);
 };
 
 /**
@@ -486,7 +494,8 @@ namespace MELPeUtils {
      * Returns information about NATO compliance for the MELPe system.
      */
     std::string getNATOComplianceInfo();
-}
+
+} // namespace MELPeUtils
 
 } // namespace melpe
 } // namespace fgcom

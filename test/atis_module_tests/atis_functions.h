@@ -13,4 +13,10 @@ bool shouldUpdateATIS(double wind_change, double temperature_change, double pres
                       double wind_threshold, double temp_threshold, double pressure_threshold);
 int calculateOptimalGPUsForATIS(int user_count);
 
+// Additional ATIS functions for content tests
+bool isValidAirportCode(const std::string& code);
+std::string generateWeatherInfo();
+std::string generateRunwayInfo();
+std::string generateATISContent(const std::string& airport_code, const std::string& weather_info, const std::string& runway_info);
+
 #endif // ATIS_FUNCTIONS_H

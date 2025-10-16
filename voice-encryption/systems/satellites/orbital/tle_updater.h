@@ -476,6 +476,14 @@ private:
      * Checks if an update is needed for the specified source.
      */
     bool isUpdateNeeded(const std::string& source_name) const;
+    
+    /**
+     * @brief Set up default TLE sources
+     * 
+     * @details
+     * Sets up default TLE sources with standard configurations.
+     */
+    void setupDefaultSources();
 };
 
 /**

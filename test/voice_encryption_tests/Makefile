@@ -22,7 +22,7 @@ INCLUDES = -I../../voice-encryption/systems/yachta-t219/include \
            -I../../voice-encryption/systems/melpe/src
 
 # Libraries
-LIBS = -lgtest -lgmock -lpthread -lm
+LIBS = -lgtest_main -lgtest -lgmock -lpthread -lm
 
 # Source files
 SOURCES = test_yachta_t219.cpp \
@@ -30,7 +30,13 @@ SOURCES = test_yachta_t219.cpp \
           test_granit.cpp \
           test_stanag_4197.cpp \
           test_freedv.cpp \
-          test_melpe.cpp
+          test_melpe.cpp \
+          ../../voice-encryption/systems/yachta-t219/src/yachta_t219.cpp \
+          ../../voice-encryption/systems/vinson-ky57/src/vinson_ky57.cpp \
+          ../../voice-encryption/systems/granit/src/granit.cpp \
+          ../../voice-encryption/systems/stanag-4197/src/stanag_4197.cpp \
+          ../../voice-encryption/systems/freedv/src/freedv.cpp \
+          ../../voice-encryption/systems/melpe/src/melpe.cpp
 
 # Object files
 OBJECTS = $(SOURCES:.cpp=.o)

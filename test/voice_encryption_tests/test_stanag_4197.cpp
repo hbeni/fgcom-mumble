@@ -47,6 +47,7 @@ class Stanag4197Test : public ::testing::Test {
 protected:
     void SetUp() override {
         stanag = std::make_unique<Stanag4197>();
+        ASSERT_TRUE(stanag->initialize(8000.0f, 1));
     }
     
     void TearDown() override {
@@ -129,7 +130,7 @@ TEST_F(Stanag4197Test, OFDMSymbolGeneration) {
     EXPECT_EQ(ofdm_symbols.size(), 4); // 8 bits -> 4 symbols
     
     // Test OFDM parameters
-    EXPECT_TRUE(stanag->setOFDMParameters(2400, 39, 16));
+    EXPECT_TRUE(stanag->setOFDMParameters(4800, 52, 8));
     EXPECT_TRUE(stanag->isOFDMProcessingActive());
 }
 
@@ -401,13 +402,13 @@ TEST_F(Stanag4197Test, AudioProcessing) {
  * Tests the system status reporting and diagnostic capabilities.
  */
 TEST_F(Stanag4197Test, SystemStatus) {
-    // Test uninitialized system
-    EXPECT_FALSE(stanag->isInitialized());
-    EXPECT_FALSE(stanag->isEncryptionActive());
-    EXPECT_FALSE(stanag->isOFDMProcessingActive());
+    // Test uninitialized system (create new instance)
+    Stanag4197 uninitialized_system;
+    EXPECT_FALSE(uninitialized_system.isInitialized());
+    EXPECT_FALSE(uninitialized_system.isEncryptionActive());
+    EXPECT_FALSE(uninitialized_system.isOFDMProcessingActive());
     
-    // Test initialized system
-    ASSERT_TRUE(stanag->initialize(44100.0f, 1));
+    // Test initialized system (already initialized in SetUp)
     EXPECT_TRUE(stanag->isInitialized());
     EXPECT_FALSE(stanag->isEncryptionActive());
     EXPECT_FALSE(stanag->isOFDMProcessingActive());
@@ -418,7 +419,7 @@ TEST_F(Stanag4197Test, SystemStatus) {
     EXPECT_TRUE(stanag->isEncryptionActive());
     
     // Test system with OFDM
-    stanag->setOFDMParameters(2400, 39, 16);
+    stanag->setOFDMParameters(4800, 52, 8);
     EXPECT_TRUE(stanag->isOFDMProcessingActive());
     
     // Test status reporting
@@ -549,7 +550,7 @@ TEST_F(Stanag4197Test, ModuleIntegration) {
     ASSERT_TRUE(stanag->initialize(44100.0f, 1));
     
     // Test OFDM setup
-    stanag->setOFDMParameters(2400, 39, 16);
+    stanag->setOFDMParameters(4800, 52, 8);
     stanag->setKey(12345, "01 23 45 67 89 AB CD EF");
     
     // Test audio processing pipeline

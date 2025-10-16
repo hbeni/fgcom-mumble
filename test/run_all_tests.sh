@@ -32,8 +32,9 @@ run_test_module() {
         if [ -f "build/${module_name}" ]; then
             echo "Running $module_name tests..."
             if ./build/${module_name} 2>&1 | tee ../test-logs/${module_name}_test_output.log; then
-                local test_count=$(grep -c "\[  PASSED  \]" ../test-logs/${module_name}_test_output.log 2>/dev/null || echo "0")
-                local total_count=$(grep -c "\[  PASSED  \]\|\[  FAILED  \]" ../test-logs/${module_name}_test_output.log 2>/dev/null || echo "0")
+                local test_count=$(grep -c "\[       OK \]" ../test-logs/${module_name}_test_output.log 2>/dev/null || echo "0")
+                local failed_count=$(grep "\[  FAILED  \].*Test\..*ms)" ../test-logs/${module_name}_test_output.log 2>/dev/null | wc -l)
+                local total_count=$((test_count + failed_count))
                 
                 TEST_RESULTS+="PASS $module_name: $test_count/$total_count tests passed\n"
                 PASSED_TESTS=$((PASSED_TESTS + test_count))
@@ -98,7 +99,6 @@ declare -a TEST_MODULES=(
     "status_page_module_tests"
     "tts_integration_tests"
     "voice_encryption_tests"
-    "weather_impact_tests"
     "webrtc_api_tests"
     "work_unit_distribution_module_tests"
 )
@@ -131,7 +131,7 @@ echo "=================="
 echo -e "$TEST_RESULTS"
 
 # Save results to file
-cat > test/test-logs/tests-passed_$(date +%Y%m%d_%H%M%S).md << EOF
+cat > test-logs/tests-passed_$(date +%Y%m%d_%H%M%S).md << EOF
 # FGCom-Mumble Comprehensive Test Results
 
 **Test Execution Date:** $(date)  

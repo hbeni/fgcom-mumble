@@ -12,13 +12,17 @@ INCLUDES = -I../../scripts/tts \
            -I../../scripts/tts/atis_templates
 
 # Libraries
-LIBS = -lgtest -lgmock -lpthread -lm
+LIBS = -lgtest_main -lgtest -lgmock -lpthread -lm
 
 # Source files
 SOURCES = test_tts_integration.cpp \
           test_piper_tts.cpp \
           test_atis_generation.cpp \
-          test_tts_configuration.cpp
+          test_tts_configuration.cpp \
+          tts_integration.cpp \
+          atis_generator.cpp \
+          piper_tts.cpp \
+          tts_configuration.cpp
 
 # Object files
 OBJECTS = $(SOURCES:.cpp=.o)

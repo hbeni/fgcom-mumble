@@ -32,8 +32,8 @@ protected:
         test_frame_size_20ms = 160; // 20ms at 8kHz
         test_frame_size_20ms_48k = 960; // 20ms at 48kHz
         
-        // Initialize random number generator
-        rng.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+        // Initialize random number generator with a fixed seed for reproducible tests
+        rng.seed(12345);
         
         // Initialize test buffers
         test_buffer_8k.resize(test_frame_size_20ms);

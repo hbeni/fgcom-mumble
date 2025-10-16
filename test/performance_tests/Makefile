@@ -9,10 +9,10 @@ TEST_DIR = $(shell pwd)
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -g
 INCLUDES = -I$(TEST_DIR) -I../../client/mumble-plugin/lib
-LIBS = -lgtest -lgmock -lgtest_main -pthread
+LIBS = -lgtest -lgmock -lgtest_main -pthread -L./build/rapidcheck -lrapidcheck
 
-# Test source files
-TEST_SOURCES = $(wildcard test_*.cpp)
+# Test source files (exclude main files to avoid conflicts)
+TEST_SOURCES = $(filter-out test_performance_tests_main.cpp, $(wildcard test_*.cpp))
 TEST_OBJECTS = $(TEST_SOURCES:.cpp=.o)
 TEST_EXECUTABLE = $(TEST_NAME)
 

@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/haaken/fgcom-mumble/test/atis_module_tests/../rapidcheck_tests/lib/rapidcheck/extras/gtest/include -I/home/haaken/fgcom-mumble/test/atis_module_tests/../rapidcheck_tests/lib/rapidcheck/include -I/home/haaken/fgcom-mumble/test/atis_module_tests/../../server -I/home/haaken/fgcom-mumble/test/atis_module_tests/../../client/mumble-plugin/lib -I/home/haaken/fgcom-mumble/test/atis_module_tests -I/home/haaken/fgcom-mumble/test/rapidcheck_tests/lib/rapidcheck/include
 
-CXX_FLAGS = -g -std=gnu++17 -fsanitize=address -fno-omit-frame-pointer -g -DGTEST_HAS_PTHREAD=1
+CXX_FLAGS = -std=gnu++17 -fsanitize=address -fno-omit-frame-pointer -g -DGTEST_HAS_PTHREAD=1
 

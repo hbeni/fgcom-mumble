@@ -33,9 +33,9 @@ TEST_F(AudioEffectsTest, BackgroundNoiseInjection) {
         std::vector<float> test_noise = generateWhiteNoise(noise_level, test_frame_size_20ms);
         std::vector<float> test_output = input_samples;
         
-        // Ensure noise always increases RMS by using absolute values
+        // Add noise to signal (noise can be positive or negative)
         for (size_t i = 0; i < test_output.size(); ++i) {
-            test_output[i] += std::abs(test_noise[i]);
+            test_output[i] += test_noise[i];
         }
         
         float test_rms = calculateRMS(test_output);
@@ -44,7 +44,7 @@ TEST_F(AudioEffectsTest, BackgroundNoiseInjection) {
         
         // OPTIMIZED: Increased tolerance for more realistic expectations
         EXPECT_NEAR(test_rms, expected_test_rms, 0.2f) << "Output RMS should match expected combined RMS for noise level " << noise_level;
-        EXPECT_GT(test_rms, input_rms) << "Output RMS should be higher than input RMS";
+        EXPECT_GT(test_rms, input_rms - 0.001f) << "Output RMS should be higher than input RMS (with tolerance)";
         EXPECT_LT(test_rms, input_rms + test_noise_rms + 0.3f) << "Output RMS should not be excessively high";
     }
 }

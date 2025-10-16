@@ -306,6 +306,7 @@ public:
     bool isFSKSyncActive() const;
     bool isKeyCardLoaded() const;
     std::string getEncryptionStatus() const;
+    std::string getKeyCardData() const;
     std::string getAudioCharacteristics() const;
     std::vector<float> getFrequencyResponse() const;
     std::vector<bool> getCurrentMSequence() const;

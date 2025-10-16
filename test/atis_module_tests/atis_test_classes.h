@@ -289,12 +289,18 @@ protected:
         return phonetic;
     }
     
+    std::string getATISLetter(const std::string& airport) {
+        // Simple ATIS letter generation based on airport
+        return "A";
+    }
+    
     std::string generateATISContent(const std::string& airport, const std::string& weather, const std::string& runway) {
         std::stringstream atis;
-        atis << airport << " ATIS INFORMATION ";
-        atis << "WEATHER: " << weather << ". ";
-        atis << "RUNWAY: " << runway << ". ";
-        atis << "TIME: " << test_time_stamp;
+        atis << "This is " << airport << " ATIS information ";
+        atis << getATISLetter(airport) << ". ";
+        atis << weather << ". ";
+        atis << runway << ". ";
+        atis << "Advise you have information " << getATISLetter(airport) << ".";
         return atis.str();
     }
 };
