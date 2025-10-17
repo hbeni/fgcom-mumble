@@ -211,6 +211,8 @@ bool Stanag4197::setKey(uint32_t key_id, const std::string& key_data) {
         return false;
     }
     
+    (void)key_id; // Suppress unused parameter warning
+    
     // Parse key data
     std::vector<uint8_t> key_bytes = Stanag4197Utils::parseKeyData(key_data);
     if (key_bytes.empty()) {
@@ -1054,6 +1056,7 @@ std::pair<std::vector<float>, std::vector<float>> applyLPCEncoding(const std::ve
 std::vector<float> applyLPCDecoding(const std::vector<float>& lpc_coefficients, 
                                   const std::vector<float>& lpc_residual, 
                                   uint32_t lpc_order) {
+    (void)lpc_order; // Suppress unused parameter warning
     std::vector<float> audio;
     if (lpc_coefficients.empty() || lpc_residual.empty()) {
         return audio;

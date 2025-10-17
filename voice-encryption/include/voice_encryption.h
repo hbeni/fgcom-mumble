@@ -30,12 +30,12 @@
 #include <cstdint>
 
 // Include all voice encryption systems
-#include "yachta_t219.h"
-#include "vinson_ky57.h"
-#include "granit.h"
-#include "stanag_4197.h"
-#include "freedv.h"
-#include "melpe.h"
+#include "../systems/yachta-t219/include/yachta_t219.h"
+#include "../systems/vinson-ky57/include/vinson_ky57.h"
+#include "../systems/granit/include/granit.h"
+#include "../systems/stanag-4197/include/stanag_4197.h"
+#include "../systems/freedv/include/freedv.h"
+#include "../systems/melpe/include/melpe.h"
 
 namespace fgcom {
 namespace voice_encryption {

@@ -688,6 +688,7 @@ std::complex<float> YachtaT219::complexExp(float phase) {
 namespace YachtaUtils {
 
 std::vector<bool> generateMSequence(uint64_t polynomial, uint32_t length) {
+    (void)polynomial; // Suppress unused parameter warning
     std::vector<bool> sequence;
     sequence.reserve(length);
     
@@ -788,6 +789,10 @@ void applyFrequencyResponse(std::vector<float>& audio,
     // Simple bandpass filter implementation
     float low_cutoff = min_freq / sample_rate;
     float high_cutoff = max_freq / sample_rate;
+    
+    // Use the cutoff frequencies to avoid unused variable warning
+    (void)low_cutoff;
+    (void)high_cutoff;
     
     // Apply simple moving average filter (simplified)
     std::vector<float> filtered(audio.size());
@@ -914,6 +919,7 @@ void YachtaT219::applyBandpassFilter(std::vector<float>& audio, float low_freq, 
     
     // Filter order
     const int order = 4;
+    (void)order; // Suppress unused variable warning
     
     // Apply digital bandpass filter
     std::vector<float> filtered(audio.size());
@@ -942,7 +948,7 @@ void YachtaT219::applyBandpassFilter(std::vector<float>& audio, float low_freq, 
     // Apply convolution
     for (size_t i = 0; i < audio.size(); ++i) {
         filtered[i] = 0.0f;
-        for (int j = 0; j < filter_length && (i - j) >= 0; ++j) {
+        for (int j = 0; j < filter_length && static_cast<int>(i) - j >= 0; ++j) {
             filtered[i] += audio[i - j] * filter_coeffs[j];
         }
     }

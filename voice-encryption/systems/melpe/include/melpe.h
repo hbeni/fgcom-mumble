@@ -29,6 +29,7 @@
 #include <cstdint>
 #include <complex>
 #include <random>
+#include <array>
 
 namespace fgcom {
 namespace melpe {
@@ -123,6 +124,19 @@ private:
     // Random number generation
     std::mt19937 rng_;                  ///< Random number generator
     std::uniform_real_distribution<float> dist_; ///< Uniform distribution
+    
+    // NATO Type 1 Encryption System (Cold War era)
+    std::vector<uint8_t> encryption_key_;    ///< NATO Type 1 encryption key
+    std::vector<uint8_t> key_stream_;       ///< Key stream for encryption
+    size_t key_stream_index_;               ///< Current key stream position
+    bool encryption_active_;                ///< Encryption active status
+    bool nato_type1_encryption_;            ///< NATO Type 1 encryption enabled
+    uint32_t encryption_key_id_;           ///< Encryption key identifier
+    
+    // NATO Type 1 encryption parameters
+    std::array<uint8_t, 16> nato_key_schedule_; ///< NATO key schedule
+    std::array<uint32_t, 4> nato_round_keys_;   ///< NATO round keys
+    uint32_t nato_encryption_rounds_;          ///< Number of encryption rounds
     
 public:
     /**
@@ -355,6 +369,113 @@ public:
      * Returns the NATO compliance status of the MELPe system.
      */
     std::string getNATOComplianceStatus() const;
+    
+    // NATO Type 1 Encryption System (Cold War era)
+    
+    /**
+     * @brief Set NATO Type 1 encryption key
+     * 
+     * @param key_id Key identifier
+     * @param key_data NATO Type 1 encryption key data
+     * @return true if key set successfully, false otherwise
+     * 
+     * @details
+     * Sets the NATO Type 1 encryption key for the MELPe system.
+     * This implements Cold War-era NATO encryption standards.
+     * 
+     * @note The system must be initialized before setting keys.
+     * 
+     * @see initialize()
+     * @see enableNATOEncryption()
+     */
+    bool setEncryptionKey(uint32_t key_id, const std::string& key_data);
+    
+    /**
+     * @brief Enable NATO Type 1 encryption
+     * 
+     * @param enabled Whether to enable NATO Type 1 encryption
+     * @return true if encryption enabled successfully, false otherwise
+     * 
+     * @details
+     * Enables or disables NATO Type 1 encryption for MELPe voice data.
+     * This provides Cold War-era NATO security for digital voice.
+     * 
+     * @note A valid encryption key must be set before enabling encryption.
+     * 
+     * @see setEncryptionKey()
+     * @see isEncryptionActive()
+     */
+    bool enableNATOEncryption(bool enabled);
+    
+    /**
+     * @brief Check if NATO encryption is active
+     * 
+     * @return true if NATO encryption is active, false otherwise
+     * 
+     * @details
+     * Returns the current NATO Type 1 encryption status.
+     */
+    bool isEncryptionActive() const;
+    
+    /**
+     * @brief Encrypt MELPe voice data
+     * 
+     * @param input Input MELPe voice data
+     * @return Encrypted MELPe voice data
+     * 
+     * @details
+     * Encrypts MELPe voice data using NATO Type 1 encryption.
+     * This provides Cold War-era security for digital voice communications.
+     * 
+     * @note The system must have encryption enabled and a valid key set.
+     * 
+     * @see decrypt()
+     * @see enableNATOEncryption()
+     * @see setEncryptionKey()
+     */
+    std::vector<float> encrypt(const std::vector<float>& input);
+    
+    /**
+     * @brief Decrypt MELPe voice data
+     * 
+     * @param input Encrypted MELPe voice data
+     * @return Decrypted MELPe voice data
+     * 
+     * @details
+     * Decrypts MELPe voice data using NATO Type 1 encryption.
+     * This reverses the encryption process to recover original voice data.
+     * 
+     * @note The system must have the same encryption key as used for encryption.
+     * 
+     * @see encrypt()
+     * @see enableNATOEncryption()
+     * @see setEncryptionKey()
+     */
+    std::vector<float> decrypt(const std::vector<float>& input);
+    
+    /**
+     * @brief Generate NATO Type 1 encryption key
+     * 
+     * @param key_length Key length in bits
+     * @return Generated NATO Type 1 encryption key
+     * 
+     * @details
+     * Generates a NATO Type 1 encryption key for the MELPe system.
+     * Type 1 keys are NSA approved for classified communications.
+     * 
+     * @note Key length should be appropriate for NATO Type 1 standards.
+     */
+    std::vector<uint8_t> generateNATOKey(uint32_t key_length);
+    
+    /**
+     * @brief Get encryption status
+     * 
+     * @return Encryption status string
+     * 
+     * @details
+     * Returns detailed information about the NATO Type 1 encryption status.
+     */
+    std::string getEncryptionStatus() const;
 
 private:
     // Helper functions for MELPe processing
@@ -363,6 +484,9 @@ private:
     std::vector<float> dequantizeLPC(const std::vector<uint8_t>& quantized);
     std::vector<float> applyLPCSynthesis(const std::vector<float>& excitation, 
                                         const std::vector<float>& lpc_coeffs);
+    
+    // NATO Type 1 encryption helper functions
+    void generateNATOKeySchedule();
 };
 
 /**
@@ -494,6 +618,77 @@ namespace MELPeUtils {
      * Returns information about NATO compliance for the MELPe system.
      */
     std::string getNATOComplianceInfo();
+    
+    // NATO Type 1 Encryption Utilities (Cold War era)
+    
+    /**
+     * @brief Generate NATO Type 1 encryption key
+     * 
+     * @param key_length Key length in bits
+     * @return Generated NATO Type 1 encryption key
+     * 
+     * @details
+     * Generates a NATO Type 1 encryption key for MELPe systems.
+     * Type 1 keys are NSA approved for classified communications.
+     * 
+     * @note Key length should be appropriate for NATO Type 1 standards.
+     */
+    std::vector<uint8_t> generateNATOType1Key(uint32_t key_length);
+    
+    /**
+     * @brief Validate NATO Type 1 encryption key
+     * 
+     * @param key Key to validate
+     * @return true if key is valid, false otherwise
+     * 
+     * @details
+     * Validates that the key meets NATO Type 1 encryption requirements.
+     * 
+     * @note Type 1 keys must meet specific NSA requirements.
+     */
+    bool validateNATOType1Key(const std::vector<uint8_t>& key);
+    
+    /**
+     * @brief Apply NATO Type 1 encryption
+     * 
+     * @param data Data to encrypt
+     * @param key NATO Type 1 encryption key
+     * @return Encrypted data
+     * 
+     * @details
+     * Applies NATO Type 1 encryption to the input data.
+     * This implements Cold War-era NATO encryption standards.
+     */
+    std::vector<uint8_t> applyNATOEncryption(const std::vector<uint8_t>& data, 
+                                            const std::vector<uint8_t>& key);
+    
+    /**
+     * @brief Apply NATO Type 1 decryption
+     * 
+     * @param encrypted_data Encrypted data
+     * @param key NATO Type 1 encryption key
+     * @return Decrypted data
+     * 
+     * @details
+     * Applies NATO Type 1 decryption to the encrypted data.
+     * This reverses the NATO encryption process.
+     */
+    std::vector<uint8_t> applyNATODecryption(const std::vector<uint8_t>& encrypted_data, 
+                                            const std::vector<uint8_t>& key);
+    
+    /**
+     * @brief Generate key stream for NATO encryption
+     * 
+     * @param key NATO Type 1 encryption key
+     * @param length Key stream length in bytes
+     * @return Generated key stream
+     * 
+     * @details
+     * Generates a key stream for NATO Type 1 encryption.
+     * This implements Cold War-era key stream generation.
+     */
+    std::vector<uint8_t> generateNATOKeyStream(const std::vector<uint8_t>& key, 
+                                               size_t length);
 
 } // namespace MELPeUtils
 

@@ -24,6 +24,7 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 namespace fgcom {
 namespace voice_encryption {
@@ -231,8 +232,14 @@ bool VoiceEncryptionManager::loadKeyFromFile(const std::string& filename) {
     }
     
     switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->loadKeyFromFile(filename);
+        case EncryptionSystem::YACHTA_T219: {
+            // Yachta system doesn't have loadKeyFromFile, use setKeyCardData instead
+            std::ifstream file(filename);
+            if (!file.is_open()) return false;
+            std::string key_data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+            yachta_t219_->setKeyCardData(key_data);
+            return true;
+        }
         case EncryptionSystem::VINSON_KY57:
             return vinson_ky57_->loadKeyFromFile(filename);
         case EncryptionSystem::GRANIT:
@@ -259,8 +266,13 @@ bool VoiceEncryptionManager::saveKeyToFile(const std::string& filename) {
     }
     
     switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->saveKeyToFile(filename);
+        case EncryptionSystem::YACHTA_T219: {
+            // Yachta system doesn't have saveKeyToFile, use getKeyCardData instead
+            std::ofstream file(filename);
+            if (!file.is_open()) return false;
+            file << yachta_t219_->getKeyCardData();
+            return true;
+        }
         case EncryptionSystem::VINSON_KY57:
             return vinson_ky57_->saveKeyToFile(filename);
         case EncryptionSystem::GRANIT:
@@ -289,7 +301,7 @@ bool VoiceEncryptionManager::validateKey(const std::string& key_data) {
     
     switch (current_system_) {
         case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->validateKey(key_data);
+            return yachta::YachtaUtils::validateKeyCardFormat(key_data);
         case EncryptionSystem::VINSON_KY57:
             return vinson_ky57_->validateKey(key_data);
         case EncryptionSystem::GRANIT:
@@ -317,7 +329,10 @@ bool VoiceEncryptionManager::setYachtaT219Parameters(uint32_t segment_size, uint
         return false;
     }
     
-    return yachta_t219_->setScramblingParameters(segment_size, scrambling_depth, intensity);
+    // Yachta system expects vector of segments, not individual parameters
+    std::vector<uint32_t> segments = {segment_size};
+    yachta_t219_->setScramblingParameters(segments, intensity);
+    return true;
 }
 
 /**
@@ -335,7 +350,9 @@ bool VoiceEncryptionManager::setVinsonKY57Parameters(float cvsd_rate, float qual
         return false;
     }
     
-    return vinson_ky57_->setCVSDParameters(cvsd_rate, quality);
+    // VINSON system expects 3 parameters: bit_rate, step_size, adaptation_rate
+    vinson_ky57_->setCVSDParameters(static_cast<uint32_t>(cvsd_rate), quality, quality * 0.1f);
+    return true;
 }
 
 /**
@@ -403,7 +420,7 @@ bool VoiceEncryptionManager::isEncryptionActive() const {
     
     switch (current_system_) {
         case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->isScramblingActive();
+            return yachta_t219_->isActive();
         case EncryptionSystem::VINSON_KY57:
             return vinson_ky57_->isEncryptionActive();
         case EncryptionSystem::GRANIT:
@@ -449,7 +466,7 @@ std::string VoiceEncryptionManager::getKeyInfo() const {
     
     switch (current_system_) {
         case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->getKeyInfo();
+            return yachta_t219_->getEncryptionStatus();
         case EncryptionSystem::VINSON_KY57:
             return vinson_ky57_->getKeyInfo();
         case EncryptionSystem::GRANIT:

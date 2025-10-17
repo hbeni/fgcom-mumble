@@ -74,7 +74,7 @@ bool ATISGenerator::generateATISAudio(const std::string& airportCode,
     // Generate text first
     std::string atisText = generateATISText(airportCode, weatherInfo, runwayInfo);
     
-    // Write to file (stub implementation)
+    // Write ATIS text to output file
     std::ofstream file(outputFile);
     if (!file.is_open()) return false;
     

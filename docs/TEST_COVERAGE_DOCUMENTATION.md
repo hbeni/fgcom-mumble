@@ -86,7 +86,7 @@ This document provides comprehensive documentation of the test coverage for the 
   - `calculateFresnelZone()`: All frequency ranges
   - `calculateTerrainLoss()`: All terrain profiles
 
-### 🌐 Integration Tests Coverage
+### Integration Tests Coverage
 
 #### End-to-End Communication
 - **Radio Link Establishment**: 90% coverage
@@ -117,7 +117,7 @@ This document provides comprehensive documentation of the test coverage for the 
   - Configuration management
   - User interface responsiveness
 
-### 🧪 Property-Based Tests Coverage
+### Property-Based Tests Coverage
 
 #### RapidCheck Implementation
 - **Mathematical Properties**: 85% coverage
@@ -133,7 +133,7 @@ This document provides comprehensive documentation of the test coverage for the 
   - Extreme values
   - Boundary behavior
 
-### 🔍 Fuzzing Tests Coverage
+### Fuzzing Tests Coverage
 
 #### AFL++ Implementation
 - **Input Validation**: 80% coverage
@@ -149,7 +149,7 @@ This document provides comprehensive documentation of the test coverage for the 
   - Buffer overflows
   - Integer overflows
 
-### 🧬 Mutation Tests Coverage
+### Mutation Tests Coverage
 
 #### Mull Implementation
 - **Mutation Operators**: 75% coverage
@@ -182,7 +182,7 @@ This document provides comprehensive documentation of the test coverage for the 
   - Refractive index changes
   - Signal bending effects
 
-### 📡 Frequency Interference Tests Coverage
+### Frequency Interference Tests Coverage
 
 #### Channel Separation
 - **Adjacent Channel Interference**: 95% coverage
@@ -208,7 +208,7 @@ This document provides comprehensive documentation of the test coverage for the 
   - Band edge protection
   - Spurious emission control
 
-### ⚡ Performance Tests Coverage
+### Performance Tests Coverage
 
 #### Load Testing
 - **Concurrent Users**: 85% coverage
@@ -235,7 +235,7 @@ This document provides comprehensive documentation of the test coverage for the 
   - Thread efficiency
   - Processing bottlenecks
 
-### 🔒 Security Tests Coverage
+### Security Tests Coverage
 
 #### Vulnerability Testing
 - **Input Validation**: 80% coverage
@@ -333,7 +333,7 @@ This document provides comprehensive documentation of the test coverage for the 
 
 ## Test Maintenance and Evolution
 
-### 🔄 Test Update Strategy
+### Test Update Strategy
 
 #### Regular Updates
 - **Weekly**: Unit test updates for new features

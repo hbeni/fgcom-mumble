@@ -30,12 +30,14 @@ SOURCES = test_yachta_t219.cpp \
           test_granit.cpp \
           test_stanag_4197.cpp \
           test_freedv.cpp \
+          test_chacha20_poly1305.cpp \
           test_melpe.cpp \
           ../../voice-encryption/systems/yachta-t219/src/yachta_t219.cpp \
           ../../voice-encryption/systems/vinson-ky57/src/vinson_ky57.cpp \
           ../../voice-encryption/systems/granit/src/granit.cpp \
           ../../voice-encryption/systems/stanag-4197/src/stanag_4197.cpp \
           ../../voice-encryption/systems/freedv/src/freedv.cpp \
+          ../../voice-encryption/systems/freedv/src/chacha20_poly1305.cpp \
           ../../voice-encryption/systems/melpe/src/melpe.cpp
 
 # Object files
@@ -82,6 +84,9 @@ test-stanag: $(TARGET)
 
 test-freedv: $(TARGET)
 	./$(TARGET) --gtest_filter="*FreeDV*"
+
+test-chacha20: $(TARGET)
+	./$(TARGET) --gtest_filter="*ChaCha20*"
 
 test-melpe: $(TARGET)
 	./$(TARGET) --gtest_filter="*MELPe*"
@@ -150,6 +155,7 @@ help:
 	@echo "  test-granit  - Run Granit tests"
 	@echo "  test-stanag  - Run STANAG 4197 tests"
 	@echo "  test-freedv  - Run FreeDV tests"
+	@echo "  test-chacha20- Run ChaCha20-Poly1305 tests"
 	@echo "  test-melpe   - Run MELPe tests"
 	@echo "  test-asan    - Run tests with AddressSanitizer"
 	@echo "  test-tsan    - Run tests with ThreadSanitizer"
@@ -163,4 +169,4 @@ help:
 	@echo "  help         - Show this help"
 
 # Phony targets
-.PHONY: all test test-verbose test-filter test-yachta test-vinson test-granit test-stanag test-freedv test-melpe test-asan test-tsan test-valgrind test-coverage cmake-build cmake-test clean install-deps check-deps help
+.PHONY: all test test-verbose test-filter test-yachta test-vinson test-granit test-stanag test-freedv test-chacha20 test-melpe test-asan test-tsan test-valgrind test-coverage cmake-build cmake-test clean install-deps check-deps help

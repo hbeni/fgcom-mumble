@@ -565,4 +565,3 @@ TEST_F(GranitTest, ModuleIntegration) {
     EXPECT_FALSE(key_info.empty());
 }
 
-} // namespace testing

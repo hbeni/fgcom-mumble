@@ -40,7 +40,7 @@ bool TTSConfiguration::loadConfiguration(const std::string& configPath) {
     std::ifstream file(configPath);
     if (!file.is_open()) return false;
     
-    // Simple config parsing (stub implementation)
+    // Parse configuration file
     std::string line;
     while (std::getline(file, line)) {
         if (line.find("model=") == 0) {

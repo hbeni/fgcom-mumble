@@ -29,6 +29,7 @@
 #include <cstdint>
 #include <complex>
 #include <random>
+#include "chacha20_poly1305.h"
 
 namespace fgcom {
 namespace freedv {
@@ -126,6 +127,11 @@ private:
     std::vector<float> input_buffer_;   ///< Input audio buffer
     std::vector<float> output_buffer_;   ///< Output audio buffer
     std::vector<std::complex<float>> fft_buffer_; ///< FFT processing buffer
+    
+    // Encryption system
+    std::unique_ptr<crypto::ChaCha20Poly1305> encryption_; ///< ChaCha20-Poly1305 encryption
+    bool encryption_enabled_;           ///< Encryption enabled status
+    std::vector<uint8_t> encryption_key_; ///< Encryption key (16 bytes)
     
     // Random number generation
     std::mt19937 rng_;                  ///< Random number generator
@@ -290,6 +296,73 @@ public:
      * Sets the HF optimization parameters for the FreeDV system.
      */
     bool setHFParameters(bool enabled, float strength);
+    
+    // Encryption methods
+    
+    /**
+     * @brief Enable ChaCha20-Poly1305 encryption
+     * 
+     * @param key 128-bit encryption key (16 bytes)
+     * @return true if encryption enabled successfully, false otherwise
+     * 
+     * @details
+     * Enables ChaCha20-Poly1305 encryption for FreeDV voice data.
+     * The key must be exactly 16 bytes long.
+     * 
+     * @note Encryption adds overhead to the voice data.
+     */
+    bool enableEncryption(const std::vector<uint8_t>& key);
+    
+    /**
+     * @brief Enable encryption with key string
+     * 
+     * @param key_string Encryption key as hexadecimal string (32 characters)
+     * @return true if encryption enabled successfully, false otherwise
+     * 
+     * @details
+     * Enables encryption using a hexadecimal key string.
+     * The string must be 32 characters long (16 bytes).
+     */
+    bool enableEncryptionFromString(const std::string& key_string);
+    
+    /**
+     * @brief Disable encryption
+     * 
+     * @details
+     * Disables encryption for FreeDV voice data.
+     * Voice data will be transmitted in plaintext.
+     */
+    void disableEncryption();
+    
+    /**
+     * @brief Check if encryption is enabled
+     * 
+     * @return true if encryption is enabled, false otherwise
+     * 
+     * @details
+     * Returns the current encryption status.
+     */
+    bool isEncryptionEnabled() const;
+    
+    /**
+     * @brief Generate random encryption key
+     * 
+     * @return Generated 128-bit encryption key
+     * 
+     * @details
+     * Generates a cryptographically secure random encryption key.
+     */
+    static std::vector<uint8_t> generateEncryptionKey();
+    
+    /**
+     * @brief Get encryption status
+     * 
+     * @return Encryption status string
+     * 
+     * @details
+     * Returns detailed information about the encryption status.
+     */
+    std::string getEncryptionStatus() const;
     
     // Status and diagnostics
     

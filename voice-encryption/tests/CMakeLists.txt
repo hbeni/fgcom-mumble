@@ -17,7 +17,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find required packages
 find_package(GTest REQUIRED)
-find_package(GMock REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GMOCK REQUIRED gmock)
 
 # Include directories
 include_directories(
@@ -54,7 +55,7 @@ target_link_libraries(voice_encryption_tests
     stanag_4197
     GTest::GTest
     GTest::Main
-    GMock::GMock
+    gmock
     pthread
     m
 )

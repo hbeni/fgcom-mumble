@@ -504,6 +504,18 @@ public:
      * Returns performance metrics for the satellite communication system.
      */
     std::string getPerformanceMetrics() const;
+    
+    /**
+     * @brief Parse TLE data from string
+     * 
+     * @param tle_data TLE data string
+     * @return true if parsing successful, false otherwise
+     * 
+     * @details
+     * Parses TLE (Two-Line Element) data from a string and adds
+     * satellites to the database.
+     */
+    bool parseTLEFromString(const std::string& tle_data);
 };
 
 /**

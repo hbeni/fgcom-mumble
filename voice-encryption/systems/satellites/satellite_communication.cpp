@@ -71,9 +71,36 @@ bool SatelliteCommunication::loadTLE(const std::string& filename) {
 
 // Load TLE data from URL
 bool SatelliteCommunication::loadTLEFromURL(const std::string& url) {
-    (void)url; // Suppress unused parameter warning
-    // Stub implementation - would use libcurl in real implementation
-    return true;
+    if (url.empty()) {
+        return false;
+    }
+    
+    // Simple HTTP client implementation using system tools
+    // In a production environment, this would use libcurl or similar
+    std::string command = "curl -s --connect-timeout 10 --max-time 30 \"" + url + "\"";
+    
+    FILE* pipe = popen(command.c_str(), "r");
+    if (!pipe) {
+        return false;
+    }
+    
+    std::string tle_data;
+    char buffer[1024];
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        tle_data += buffer;
+    }
+    
+    int result = pclose(pipe);
+    if (result != 0) {
+        return false;
+    }
+    
+    if (tle_data.empty()) {
+        return false;
+    }
+    
+    // Parse TLE data and add to database
+    return parseTLEFromString(tle_data);
 }
 
 // Add satellite to database
@@ -173,6 +200,56 @@ std::vector<std::string> SatelliteCommunication::getAvailableSatellites() const 
         satellites.push_back(pair.first);
     }
     return satellites;
+}
+
+// Parse TLE data from string
+bool SatelliteCommunication::parseTLEFromString(const std::string& tle_data) {
+    if (tle_data.empty()) {
+        return false;
+    }
+    
+    std::istringstream iss(tle_data);
+    std::string line;
+    std::string satellite_name;
+    TLEData tle;
+    int line_count = 0;
+    
+    while (std::getline(iss, line)) {
+        // Skip empty lines
+        if (line.empty()) continue;
+        
+        // Remove carriage return if present
+        if (!line.empty() && line.back() == '\r') {
+            line.pop_back();
+        }
+        
+        if (line_count == 0) {
+            // First line is satellite name
+            satellite_name = line;
+            line_count++;
+        } else if (line_count == 1) {
+            // Second line is TLE line 1
+            tle.line1 = line;
+            line_count++;
+        } else if (line_count == 2) {
+            // Third line is TLE line 2
+            tle.line2 = line;
+            
+            // Add satellite to database
+            if (!satellite_name.empty() && !tle.line1.empty() && !tle.line2.empty()) {
+                tle_database_[satellite_name] = tle;
+                satellite_types_[satellite_name] = SatelliteType::AMATEUR_FM; // Default type
+                satellite_modes_[satellite_name] = SatelliteMode::FM_REPEATER; // Default mode
+            }
+            
+            // Reset for next satellite
+            satellite_name.clear();
+            tle = TLEData();
+            line_count = 0;
+        }
+    }
+    
+    return !tle_database_.empty();
 }
 
 // Get performance metrics

@@ -1489,7 +1489,99 @@ Encryption simulation is essential for realistic military radio communication. I
 - **Voice Encoding**: Linear predictive encoded digital speech
 - **Encryption**: Advanced Narrowband Digital Voice Terminal (ANDVT)
 
+### **FreeDV with ChaCha20-Poly1305 Encryption**
+
+**FreeDV** is a modern digital voice system that can be combined with strong encryption for secure communications:
+
+**Key Characteristics:**
+- **FreeDV Modes**: 1600, 700, 700D, 2020, 2020B, 2020C bps
+- **Encryption**: ChaCha20-Poly1305 authenticated encryption
+- **Key Length**: 128 bits (16 bytes)
+- **Security Level**: 128-bit equivalent
+- **Authentication**: Poly1305 MAC for integrity
+- **Performance**: Real-time capable with minimal overhead
+- **Standards**: RFC 8439 compliant
+
 **Reference**: [STANAG 4197 - Signal Identification Wiki](https://www.sigidwiki.com/wiki/STANAG_4197)
+
+### **FreeDV Encryption Implementation**
+
+**FreeDV with ChaCha20-Poly1305 encryption provides modern secure digital voice:**
+
+```cpp
+#include "freedv.h"
+
+class FreeDVEncryption {
+private:
+    fgcom::freedv::FreeDV freedv;
+    std::vector<uint8_t> encryption_key;
+    bool encryption_enabled;
+    
+public:
+    FreeDVEncryption() : encryption_enabled(false) {
+        // Initialize FreeDV system
+        freedv.initialize(44100.0f, 1);
+        freedv.setMode(fgcom::freedv::FreeDVMode::MODE_2020);
+    }
+    
+    // Enable encryption with key
+    bool enableEncryption(const std::vector<uint8_t>& key) {
+        if (key.size() != 16) return false;
+        encryption_key = key;
+        encryption_enabled = freedv.enableEncryption(key);
+        return encryption_enabled;
+    }
+    
+    // Generate random encryption key
+    std::vector<uint8_t> generateKey() {
+        return fgcom::freedv::FreeDV::generateEncryptionKey();
+    }
+    
+    // Process audio with encryption
+    std::vector<uint8_t> processAudio(const std::vector<float>& audio) {
+        if (encryption_enabled) {
+            return freedv.encode(audio);
+        } else {
+            // Process without encryption
+            std::vector<uint8_t> output(audio.size() * sizeof(float));
+            std::memcpy(output.data(), audio.data(), audio.size() * sizeof(float));
+            return output;
+        }
+    }
+    
+    // Decrypt audio
+    std::vector<float> decryptAudio(const std::vector<uint8_t>& encrypted) {
+        return freedv.decode(encrypted);
+    }
+    
+    // Get encryption status
+    std::string getEncryptionStatus() {
+        return freedv.getEncryptionStatus();
+    }
+};
+```
+
+**Usage in Game:**
+```cpp
+// Create FreeDV encryption instance
+FreeDVEncryption encryption;
+
+// Generate and set encryption key
+std::vector<uint8_t> key = encryption.generateKey();
+encryption.enableEncryption(key);
+
+// Process voice audio with encryption
+std::vector<float> voice_audio = getVoiceAudio();
+std::vector<uint8_t> encrypted = encryption.processAudio(voice_audio);
+
+// Transmit encrypted audio
+transmitAudio(encrypted);
+
+// Receive and decrypt audio
+std::vector<uint8_t> received_audio = receiveAudio();
+std::vector<float> decrypted = encryption.decryptAudio(received_audio);
+playAudio(decrypted);
+```
 
 ### **How to Code Encryption Simulation**
 
@@ -3746,6 +3838,8 @@ iostat -x 1
 ### **Documentation**
 - [Technical Setup Guide](TECHNICAL_SETUP_GUIDE.md)
 - [API Reference](API_REFERENCE_COMPLETE.md)
+- [Voice Encryption Module](../voice-encryption/docs/VOICE_ENCRYPTION_MODULE.md)
+- [FreeDV Encryption Documentation](../voice-encryption/systems/freedv/docs/FREEDV_ENCRYPTION_DOCUMENTATION.md)
 - [Amateur Radio Terminology](AMATEUR_RADIO_TERMINOLOGY.md)
 
 ### **Community Support**

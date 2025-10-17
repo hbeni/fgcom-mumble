@@ -497,4 +497,3 @@ TEST_F(VinsonKY57Test, ModuleIntegration) {
     EXPECT_FALSE(key_info.empty());
 }
 
-} // namespace testing

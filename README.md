@@ -307,12 +307,21 @@ udpServerHost=*
 - **VINSON KY-57 (NATO)**
 - **Granit (Soviet/East Bloc)**
 - **STANAG 4197 (NATO)**
+- **MELPe with NATO Type 1 Encryption (NATO)**
+- **FreeDV with ChaCha20-Poly1305 + X25519 Key Exchange (Modern)** 
+
+> **IMPORTANT DISCLAIMER**: All voice encryption systems in this project are implemented for **educational and simulation purposes only**. These systems are designed to provide authentic Cold War-era and modern military communication simulation for flight simulators and games. **If used for any illegal activities, the responsibility lies solely with the user.** The developers and maintainers of this project are not responsible for any misuse of these systems.
 
 ### Voice Encryption Systems
 - **[Voice Encryption Analysis](voice-encryption/docs/DEGRADATION_AND_INTERCEPTION_ANALYSIS.md)** - Comprehensive analysis of voice encryption systems
-- **[FreeDV Implementation](voice-encryption/systems/freedv/README.md)** - FreeDV digital voice system
-- **[MELPe Implementation](voice-encryption/systems/melpe/README.md)** - MELPe NATO standard vocoder
+- **[FreeDV Implementation](voice-encryption/systems/freedv/README.md)** - FreeDV digital voice system with X25519 key exchange
+- **[MELPe Implementation](voice-encryption/systems/melpe/README.md)** - MELPe NATO standard vocoder with NATO Type 1 encryption
 - **[Military Encryption Systems](voice-encryption/systems/)** - Various military-grade encryption systems
+
+#### Security Classifications
+- **128-bit (Standard)**: Squadron communications, routine operations
+- **192-bit (Tactical)**: Command channels, tactical operations  
+- **256-bit (Top Secret)**: Special operations, classified missions
 
 ### Satellite Communication
 - **[Satellite Communication Documentation](voice-encryption/systems/satellites/docs/SATELLITE_COMMUNICATION_DOCUMENTATION.md)** - Complete satellite communication system

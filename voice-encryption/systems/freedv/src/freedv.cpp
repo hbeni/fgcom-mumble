@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <sstream>
+#include <iomanip>
 
 namespace fgcom {
 namespace freedv {
@@ -27,7 +29,10 @@ FreeDV::FreeDV()
     , symbol_duration_(0.1f)
     , bitrate_(1600)
     , frame_size_(1024)
-    , frame_duration_(0.1f) {
+    , frame_duration_(0.1f)
+    , encryption_(std::make_unique<crypto::ChaCha20Poly1305>(crypto::SecurityLevel::STANDARD))
+    , encryption_enabled_(false)
+    , encryption_key_(16, 0) {
 }
 
 // Destructor
@@ -85,6 +90,12 @@ std::vector<uint8_t> FreeDV::encode(const std::vector<float>& input) {
     // Simple encoding - just convert float to bytes
     std::vector<uint8_t> output(input.size() * sizeof(float));
     std::memcpy(output.data(), input.data(), input.size() * sizeof(float));
+    
+    // Apply encryption if enabled
+    if (encryption_enabled_ && encryption_) {
+        output = encryption_->encrypt(output);
+    }
+    
     return output;
 }
 
@@ -92,9 +103,19 @@ std::vector<uint8_t> FreeDV::encode(const std::vector<float>& input) {
 std::vector<float> FreeDV::decode(const std::vector<uint8_t>& input) {
     if (!initialized_) return std::vector<float>();
     
+    std::vector<uint8_t> decrypted_data = input;
+    
+    // Apply decryption if encryption is enabled
+    if (encryption_enabled_ && encryption_) {
+        decrypted_data = encryption_->decrypt(input);
+        if (decrypted_data.empty()) {
+            return std::vector<float>(); // Decryption failed
+        }
+    }
+    
     // Simple decoding - just convert bytes to float
-    std::vector<float> output(input.size() / sizeof(float));
-    std::memcpy(output.data(), input.data(), input.size());
+    std::vector<float> output(decrypted_data.size() / sizeof(float));
+    std::memcpy(output.data(), decrypted_data.data(), decrypted_data.size());
     return output;
 }
 
@@ -118,18 +139,24 @@ bool FreeDV::setVoiceEncodingParameters(uint32_t bitrate, uint32_t frame_size) {
 // Set error correction parameters
 bool FreeDV::setErrorCorrection(bool enabled, float strength) {
     if (!initialized_) return false;
+    (void)enabled; // Suppress unused parameter warning
+    (void)strength; // Suppress unused parameter warning
     return true;
 }
 
 // Set synchronization parameters
 bool FreeDV::setSynchronization(bool enabled, float threshold) {
     if (!initialized_) return false;
+    (void)enabled; // Suppress unused parameter warning
+    (void)threshold; // Suppress unused parameter warning
     return true;
 }
 
 // Set HF optimization parameters
 bool FreeDV::setHFParameters(bool enabled, float strength) {
     if (!initialized_) return false;
+    (void)enabled; // Suppress unused parameter warning
+    (void)strength; // Suppress unused parameter warning
     return true;
 }
 
@@ -151,6 +178,7 @@ std::string FreeDV::getStatus() const {
 
 // Get mode information
 std::string FreeDV::getModeInfo(FreeDVMode mode) const {
+    (void)mode; // Suppress unused parameter warning
     return "FreeDV Mode Information";
 }
 
@@ -158,6 +186,79 @@ std::string FreeDV::getModeInfo(FreeDVMode mode) const {
 std::vector<FreeDVMode> FreeDV::getAvailableModes() const {
     return {FreeDVMode::MODE_1600, FreeDVMode::MODE_700, FreeDVMode::MODE_700D, 
             FreeDVMode::MODE_2020, FreeDVMode::MODE_2020B, FreeDVMode::MODE_2020C};
+}
+
+// Enable ChaCha20-Poly1305 encryption
+bool FreeDV::enableEncryption(const std::vector<uint8_t>& key) {
+    if (!initialized_) {
+        encryption_enabled_ = false;
+        return false;
+    }
+    
+    // Check if key length matches current security level
+    size_t expected_length = encryption_->getKeyLength();
+    if (key.size() != expected_length) {
+        encryption_enabled_ = false;
+        return false;
+    }
+    
+    encryption_key_ = key;
+    encryption_enabled_ = encryption_->setKey(key);
+    return encryption_enabled_;
+}
+
+// Enable encryption with key string
+bool FreeDV::enableEncryptionFromString(const std::string& key_string) {
+    if (!initialized_) {
+        encryption_enabled_ = false;
+        return false;
+    }
+    
+    // Check if key string length matches current security level
+    size_t expected_length = encryption_->getKeyLength() * 2; // 2 hex chars per byte
+    if (key_string.length() != expected_length) {
+        encryption_enabled_ = false;
+        return false;
+    }
+    
+    encryption_enabled_ = encryption_->setKeyFromString(key_string);
+    if (encryption_enabled_) {
+        encryption_key_ = encryption_->stringToKey(key_string);
+    }
+    return encryption_enabled_;
+}
+
+// Disable encryption
+void FreeDV::disableEncryption() {
+    encryption_enabled_ = false;
+    std::fill(encryption_key_.begin(), encryption_key_.end(), 0);
+}
+
+// Check if encryption is enabled
+bool FreeDV::isEncryptionEnabled() const {
+    return encryption_enabled_;
+}
+
+// Generate random encryption key
+std::vector<uint8_t> FreeDV::generateEncryptionKey() {
+    return crypto::ChaCha20Poly1305::generateKey();
+}
+
+// Get encryption status
+std::string FreeDV::getEncryptionStatus() const {
+    std::ostringstream oss;
+    oss << "FreeDV Encryption Status:\n";
+    oss << "Encryption Enabled: " << (encryption_enabled_ ? "Yes" : "No") << "\n";
+    if (encryption_enabled_) {
+        oss << "Algorithm: ChaCha20-Poly1305\n";
+        oss << "Key Length: 128 bits (16 bytes)\n";
+        oss << "Security Level: 128-bit equivalent\n";
+        oss << "Authentication: Poly1305 MAC\n";
+        oss << "Encryption: ChaCha20 stream cipher\n";
+    } else {
+        oss << "Voice data transmitted in plaintext\n";
+    }
+    return oss.str();
 }
 
 

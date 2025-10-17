@@ -10,20 +10,20 @@ The WebRTC Gateway provides multiple API interfaces for different use cases:
 - **WebSocket API**: Real-time communication for client connections
 - **Authentication API**: User authentication and authorization
 - **Status API**: System monitoring and health checks
-- **Audio API**: Audio stream management and processing
+- **Radio Data API**: Radio data transmission to Mumble server
 
 ## RESTful API
 
 ### Base URL
 ```
-http://localhost:8081/api/v1
+http://localhost:8081/api
 ```
 
 ### Authentication
 
 #### Login
 ```http
-POST /api/v1/auth/login
+POST /api/auth/login
 Content-Type: application/json
 
 {
@@ -36,24 +36,22 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "token": "jwt_token_here",
+  "token": "session_token_here",
   "user": {
     "username": "callsign",
-    "callsign": "N123AB",
-    "permissions": ["radio", "position"]
+    "id": "user_id"
   }
 }
 ```
 
 #### Register
 ```http
-POST /api/v1/auth/register
+POST /api/auth/register
 Content-Type: application/json
 
 {
   "username": "callsign",
   "password": "password",
-  "callsign": "N123AB",
   "email": "user@example.com"
 }
 ```
@@ -62,158 +60,51 @@ Content-Type: application/json
 ```json
 {
   "success": true,
-  "message": "User registered successfully",
-  "user": {
-    "username": "callsign",
-    "callsign": "N123AB"
-  }
+  "message": "Registration successful"
 }
 ```
 
-### Radio Configuration
+### Radio Data Transmission
 
-#### Set Radio Frequency
+#### Send Radio Data
 ```http
-POST /api/v1/radio/frequency
-Authorization: Bearer jwt_token_here
+POST /api/radio/data
 Content-Type: application/json
 
 {
   "frequency": 121.500,
   "power": 100,
-  "squelch": 50
-}
-```
-
-**Response**:
-```json
-{
-  "success": true,
-  "radio": {
-    "frequency": 121.500,
-    "power": 100,
-    "squelch": 50,
-    "status": "active"
-  }
-}
-```
-
-#### Get Radio Status
-```http
-GET /api/v1/radio/status
-Authorization: Bearer jwt_token_here
-```
-
-**Response**:
-```json
-{
-  "success": true,
-  "radio": {
-    "frequency": 121.500,
-    "power": 100,
-    "squelch": 50,
-    "status": "active",
-    "transmitting": false,
-    "receiving": true
-  }
-}
-```
-
-### Position Management
-
-#### Set Position
-```http
-POST /api/v1/position
-Authorization: Bearer jwt_token_here
-Content-Type: application/json
-
-{
-  "latitude": 40.7128,
-  "longitude": -74.0060,
-  "altitude": 1000,
-  "heading": 270
-}
-```
-
-**Response**:
-```json
-{
-  "success": true,
+  "squelch": 50,
+  "transmitting": false,
   "position": {
     "latitude": 40.7128,
     "longitude": -74.0060,
-    "altitude": 1000,
-    "heading": 270,
-    "timestamp": "2025-01-16T10:30:00Z"
+    "altitude": 1000
   }
 }
-```
-
-#### Get Position
-```http
-GET /api/v1/position
-Authorization: Bearer jwt_token_here
 ```
 
 **Response**:
 ```json
 {
   "success": true,
-  "position": {
-    "latitude": 40.7128,
-    "longitude": -74.0060,
-    "altitude": 1000,
-    "heading": 270,
-    "timestamp": "2025-01-16T10:30:00Z"
-  }
+  "message": "Radio data sent"
 }
 ```
 
-### Audio Management
+### Logout
 
-#### Start Audio Stream
+#### Logout
 ```http
-POST /api/v1/audio/start
-Authorization: Bearer jwt_token_here
+POST /api/auth/logout
 Content-Type: application/json
-
-{
-  "sampleRate": 48000,
-  "channels": 1,
-  "bitrate": 64000
-}
 ```
 
 **Response**:
 ```json
 {
   "success": true,
-  "audio": {
-    "streamId": "stream_123",
-    "sampleRate": 48000,
-    "channels": 1,
-    "bitrate": 64000,
-    "status": "active"
-  }
-}
-```
-
-#### Stop Audio Stream
-```http
-POST /api/v1/audio/stop
-Authorization: Bearer jwt_token_here
-Content-Type: application/json
-
-{
-  "streamId": "stream_123"
-}
-```
-
-**Response**:
-```json
-{
-  "success": true,
-  "message": "Audio stream stopped"
+  "message": "Logged out successfully"
 }
 ```
 
@@ -221,7 +112,7 @@ Content-Type: application/json
 
 #### Health Check
 ```http
-GET /api/v1/health
+GET /health
 ```
 
 **Response**:
@@ -229,36 +120,28 @@ GET /api/v1/health
 {
   "status": "healthy",
   "timestamp": "2025-01-16T10:30:00Z",
-  "uptime": 3600,
-  "version": "1.0.0",
-  "services": {
-    "mumble": "connected",
-    "webrtc": "active",
-    "audio": "processing"
-  }
+  "clients": 3,
+  "uptime": 3600
 }
 ```
 
 #### System Status
 ```http
-GET /api/v1/status
-Authorization: Bearer jwt_token_here
+GET /api/status
 ```
 
 **Response**:
 ```json
 {
-  "success": true,
-  "status": {
-    "users": 5,
-    "connections": 3,
-    "audio_streams": 2,
-    "performance": {
-      "cpu_usage": 45.2,
-      "memory_usage": 67.8,
-      "network_usage": 12.3
-    }
-  }
+  "server": "FGCom-mumble WebRTC Gateway",
+  "version": "1.0.0",
+  "clients": 3,
+  "mumble": {
+    "connected": true,
+    "host": "localhost",
+    "port": 64738
+  },
+  "uptime": 3600
 }
 ```
 
@@ -282,62 +165,41 @@ ws.onclose = function() {
 };
 ```
 
-### Authentication
+### WebRTC Signaling
 ```javascript
-// Authenticate WebSocket connection
+// Send WebRTC offer
 ws.send(JSON.stringify({
-    type: 'auth',
-    token: 'jwt_token_here'
+    type: 'webrtc-offer',
+    sdp: 'offer_sdp_data'
+}));
+
+// Send WebRTC answer
+ws.send(JSON.stringify({
+    type: 'webrtc-answer',
+    sdp: 'answer_sdp_data'
+}));
+
+// Send ICE candidate
+ws.send(JSON.stringify({
+    type: 'ice-candidate',
+    candidate: 'ice_candidate_data'
 }));
 ```
 
-### Radio Control
+### Radio Data
 ```javascript
-// Set radio frequency
+// Send radio data
 ws.send(JSON.stringify({
-    type: 'radio',
-    action: 'set_frequency',
+    type: 'radio-data',
     frequency: 121.500,
     power: 100,
-    squelch: 50
-}));
-
-// PTT (Push-to-Talk)
-ws.send(JSON.stringify({
-    type: 'radio',
-    action: 'ptt',
-    state: 'on'  // or 'off'
-}));
-```
-
-### Position Updates
-```javascript
-// Send position update
-ws.send(JSON.stringify({
-    type: 'position',
-    latitude: 40.7128,
-    longitude: -74.0060,
-    altitude: 1000,
-    heading: 270
-}));
-```
-
-### Audio Stream
-```javascript
-// Start audio stream
-ws.send(JSON.stringify({
-    type: 'audio',
-    action: 'start',
-    sampleRate: 48000,
-    channels: 1,
-    bitrate: 64000
-}));
-
-// Send audio data
-ws.send(JSON.stringify({
-    type: 'audio',
-    action: 'data',
-    data: 'base64_encoded_audio_data'
+    squelch: 50,
+    transmitting: false,
+    position: {
+        latitude: 40.7128,
+        longitude: -74.0060,
+        altitude: 1000
+    }
 }));
 ```
 
@@ -371,68 +233,72 @@ class FGcomWebRTCClient {
         };
     }
 
-    authenticate(token) {
+    sendWebRTCOffer(sdp) {
         this.ws.send(JSON.stringify({
-            type: 'auth',
-            token: token
+            type: 'webrtc-offer',
+            sdp: sdp
         }));
     }
 
-    setRadio(frequency, power, squelch) {
+    sendWebRTCAnswer(sdp) {
         this.ws.send(JSON.stringify({
-            type: 'radio',
-            action: 'set_frequency',
-            frequency: frequency,
-            power: power,
-            squelch: squelch
+            type: 'webrtc-answer',
+            sdp: sdp
         }));
     }
 
-    setPosition(latitude, longitude, altitude, heading) {
+    sendIceCandidate(candidate) {
         this.ws.send(JSON.stringify({
-            type: 'position',
-            latitude: latitude,
-            longitude: longitude,
-            altitude: altitude,
-            heading: heading
+            type: 'ice-candidate',
+            candidate: candidate
         }));
     }
 
-    ptt(state) {
+    sendRadioData(radioData) {
         this.ws.send(JSON.stringify({
-            type: 'radio',
-            action: 'ptt',
-            state: state
+            type: 'radio-data',
+            ...radioData
         }));
     }
 
     handleMessage(data) {
         switch(data.type) {
-            case 'auth':
-                this.authenticated = data.success;
+            case 'webrtc-offer':
+                this.handleWebRTCOffer(data);
                 break;
-            case 'radio':
-                this.handleRadioMessage(data);
+            case 'webrtc-answer':
+                this.handleWebRTCAnswer(data);
                 break;
-            case 'position':
-                this.handlePositionMessage(data);
+            case 'ice-candidate':
+                this.handleIceCandidate(data);
                 break;
-            case 'audio':
-                this.handleAudioMessage(data);
+            case 'radio-data':
+                this.handleRadioData(data);
+                break;
+            case 'audio-data':
+                this.handleAudioData(data);
                 break;
         }
     }
 
-    handleRadioMessage(data) {
-        console.log('Radio status:', data);
+    handleWebRTCOffer(data) {
+        console.log('WebRTC offer received:', data);
     }
 
-    handlePositionMessage(data) {
-        console.log('Position update:', data);
+    handleWebRTCAnswer(data) {
+        console.log('WebRTC answer received:', data);
     }
 
-    handleAudioMessage(data) {
-        console.log('Audio data:', data);
+    handleIceCandidate(data) {
+        console.log('ICE candidate received:', data);
+    }
+
+    handleRadioData(data) {
+        console.log('Radio data received:', data);
+    }
+
+    handleAudioData(data) {
+        console.log('Audio data received:', data);
     }
 }
 
@@ -440,17 +306,21 @@ class FGcomWebRTCClient {
 const client = new FGcomWebRTCClient('ws://localhost:8081');
 client.connect();
 
-// Authenticate
-client.authenticate('your_jwt_token');
+// Send WebRTC offer
+client.sendWebRTCOffer('your_sdp_offer');
 
-// Set radio
-client.setRadio(121.500, 100, 50);
-
-// Set position
-client.setPosition(40.7128, -74.0060, 1000, 270);
-
-// PTT
-client.ptt('on');
+// Send radio data
+client.sendRadioData({
+    frequency: 121.500,
+    power: 100,
+    squelch: 50,
+    transmitting: false,
+    position: {
+        latitude: 40.7128,
+        longitude: -74.0060,
+        altitude: 1000
+    }
+});
 ```
 
 ### Python Client
@@ -490,71 +360,76 @@ class FGcomWebRTCClient:
     def on_close(self, ws):
         print('Disconnected from FGcom WebRTC Gateway')
 
-    def authenticate(self, token):
+    def send_webrtc_offer(self, sdp):
         self.ws.send(json.dumps({
-            'type': 'auth',
-            'token': token
+            'type': 'webrtc-offer',
+            'sdp': sdp
         }))
 
-    def set_radio(self, frequency, power, squelch):
+    def send_webrtc_answer(self, sdp):
         self.ws.send(json.dumps({
-            'type': 'radio',
-            'action': 'set_frequency',
-            'frequency': frequency,
-            'power': power,
-            'squelch': squelch
+            'type': 'webrtc-answer',
+            'sdp': sdp
         }))
 
-    def set_position(self, latitude, longitude, altitude, heading):
+    def send_ice_candidate(self, candidate):
         self.ws.send(json.dumps({
-            'type': 'position',
-            'latitude': latitude,
-            'longitude': longitude,
-            'altitude': altitude,
-            'heading': heading
+            'type': 'ice-candidate',
+            'candidate': candidate
         }))
 
-    def ptt(self, state):
+    def send_radio_data(self, radio_data):
         self.ws.send(json.dumps({
-            'type': 'radio',
-            'action': 'ptt',
-            'state': state
+            'type': 'radio-data',
+            **radio_data
         }))
 
     def handle_message(self, data):
-        if data['type'] == 'auth':
-            self.authenticated = data['success']
-        elif data['type'] == 'radio':
-            self.handle_radio_message(data)
-        elif data['type'] == 'position':
-            self.handle_position_message(data)
-        elif data['type'] == 'audio':
-            self.handle_audio_message(data)
+        if data['type'] == 'webrtc-offer':
+            self.handle_webrtc_offer(data)
+        elif data['type'] == 'webrtc-answer':
+            self.handle_webrtc_answer(data)
+        elif data['type'] == 'ice-candidate':
+            self.handle_ice_candidate(data)
+        elif data['type'] == 'radio-data':
+            self.handle_radio_data(data)
+        elif data['type'] == 'audio-data':
+            self.handle_audio_data(data)
 
-    def handle_radio_message(self, data):
-        print('Radio status:', data)
+    def handle_webrtc_offer(self, data):
+        print('WebRTC offer received:', data)
 
-    def handle_position_message(self, data):
-        print('Position update:', data)
+    def handle_webrtc_answer(self, data):
+        print('WebRTC answer received:', data)
 
-    def handle_audio_message(self, data):
-        print('Audio data:', data)
+    def handle_ice_candidate(self, data):
+        print('ICE candidate received:', data)
+
+    def handle_radio_data(self, data):
+        print('Radio data received:', data)
+
+    def handle_audio_data(self, data):
+        print('Audio data received:', data)
 
 # Usage
 client = FGcomWebRTCClient('ws://localhost:8081')
 client.connect()
 
-# Authenticate
-client.authenticate('your_jwt_token')
+# Send WebRTC offer
+client.send_webrtc_offer('your_sdp_offer')
 
-# Set radio
-client.set_radio(121.500, 100, 50)
-
-# Set position
-client.set_position(40.7128, -74.0060, 1000, 270)
-
-# PTT
-client.ptt('on')
+# Send radio data
+client.send_radio_data({
+    'frequency': 121.500,
+    'power': 100,
+    'squelch': 50,
+    'transmitting': False,
+    'position': {
+        'latitude': 40.7128,
+        'longitude': -74.0060,
+        'altitude': 1000
+    }
+})
 ```
 
 ## Error Handling
@@ -572,10 +447,9 @@ client.ptt('on')
 ### WebSocket Error Messages
 ```json
 {
-  "type": "error",
-  "error": "Authentication failed",
-  "code": 401,
-  "message": "Invalid token"
+  "type": "webrtc-error",
+  "error": "Failed to handle offer",
+  "message": "WebRTC connection failed"
 }
 ```
 
@@ -589,59 +463,58 @@ client.ptt('on')
 ## Security
 
 ### Authentication
-- JWT token-based authentication
-- Token expiration handling
-- Secure token storage
-- Session management
+- Session-based authentication
+- Secure session storage
+- Session expiration handling
+- User registration and login
 
 ### Authorization
-- Role-based access control
-- Permission management
+- Session-based access control
+- User permission management
 - Resource access control
-- API rate limiting
 
 ### Encryption
-- TLS/SSL encryption
-- WebSocket secure connections
-- Audio stream encryption
-- Data transmission security
+- TLS/SSL encryption for HTTPS
+- WebSocket secure connections (WSS)
+- Audio stream encryption via WebRTC
+- Secure data transmission
 
 ## Performance
 
 ### Optimization
+- WebRTC connection management
+- Audio stream optimization
+- Message compression
 - Connection pooling
-- Message batching
-- Compression
-- Caching
-- Load balancing
+- Efficient data transmission
 
 ### Monitoring
-- Connection metrics
-- Performance monitoring
-- Error tracking
-- Usage analytics
-- Health checks
+- WebRTC connection metrics
+- Audio stream performance
+- Error tracking and logging
+- Health check endpoints
+- System status monitoring
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Connection Failed**
-   - Check server URL
+1. **WebRTC Connection Failed**
+   - Check server URL and port
    - Verify firewall settings
    - Check network connectivity
-   - Verify server status
+   - Verify SSL certificates
 
 2. **Authentication Failed**
-   - Check token validity
-   - Verify token expiration
-   - Check user permissions
-   - Verify credentials
+   - Check username and password
+   - Verify user registration
+   - Check session validity
+   - Verify server authentication
 
 3. **Audio Issues**
    - Check microphone permissions
-   - Verify audio device selection
-   - Check audio format settings
+   - Verify WebRTC audio settings
+   - Check audio codec support
    - Verify network bandwidth
 
 ### Debug Mode
@@ -650,29 +523,32 @@ client.ptt('on')
 const client = new FGcomWebRTCClient('ws://localhost:8081');
 client.debug = true;
 client.connect();
+
+// Check WebRTC connection status
+console.log('WebRTC connection status:', client.webrtcConnection);
 ```
 
 ## Best Practices
 
 ### Client Development
-1. **Error Handling**: Implement comprehensive error handling
-2. **Reconnection**: Implement automatic reconnection
-3. **Authentication**: Handle token expiration
-4. **Performance**: Optimize message handling
-5. **Security**: Use secure connections
+1. **Error Handling**: Implement comprehensive error handling for WebRTC
+2. **Reconnection**: Implement automatic WebSocket reconnection
+3. **Authentication**: Handle session expiration
+4. **Performance**: Optimize WebRTC audio handling
+5. **Security**: Use secure HTTPS/WSS connections
 
 ### API Usage
-1. **Rate Limiting**: Respect API rate limits
-2. **Error Handling**: Handle all error conditions
-3. **Validation**: Validate input data
-4. **Monitoring**: Monitor API performance
+1. **WebRTC Signaling**: Handle WebRTC offer/answer/ICE properly
+2. **Error Handling**: Handle all WebRTC and WebSocket errors
+3. **Validation**: Validate audio and radio data
+4. **Monitoring**: Monitor WebRTC connection performance
 5. **Documentation**: Keep API documentation updated
 
 ## Support
 
 For API issues:
 1. Check API documentation
-2. Review error messages
-3. Verify authentication
-4. Check network connectivity
-5. Review server logs
+2. Review WebRTC error messages
+3. Verify authentication and session
+4. Check network connectivity and SSL
+5. Review server logs and WebRTC status

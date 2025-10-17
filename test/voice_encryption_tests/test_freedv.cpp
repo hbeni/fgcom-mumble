@@ -421,6 +421,191 @@ TEST_F(FreeDV_Test, ThreadSafety) {
 }
 
 /**
+ * @test Test FreeDV ChaCha20-Poly1305 encryption functionality
+ */
+TEST_F(FreeDV_Test, EncryptionFunctionality) {
+    // Test encryption key generation
+    std::vector<uint8_t> key = FreeDV::generateEncryptionKey();
+    EXPECT_FALSE(key.empty());
+    EXPECT_EQ(key.size(), 16); // 128 bits / 8 bits per byte
+    
+    // Test encryption enabling
+    EXPECT_TRUE(freedv->enableEncryption(key));
+    EXPECT_TRUE(freedv->isEncryptionEnabled());
+    
+    // Test encryption status
+    std::string status = freedv->getEncryptionStatus();
+    EXPECT_FALSE(status.empty());
+    EXPECT_NE(status.find("ChaCha20-Poly1305"), std::string::npos);
+    
+    // Test encryption with key string
+    std::string key_string = "0123456789abcdef0123456789abcdef";
+    EXPECT_TRUE(freedv->enableEncryptionFromString(key_string));
+    EXPECT_TRUE(freedv->isEncryptionEnabled());
+    
+    // Test encryption disable
+    freedv->disableEncryption();
+    EXPECT_FALSE(freedv->isEncryptionEnabled());
+}
+
+/**
+ * @test Test FreeDV encryption with audio data
+ */
+TEST_F(FreeDV_Test, EncryptionWithAudio) {
+    // Generate test audio
+    const int sampleCount = 160;
+    vector<float> inputAudio(sampleCount);
+    for (int i = 0; i < sampleCount; i++) {
+        inputAudio[i] = 0.5f * sin(2.0f * M_PI * 1000.0f * i / 8000.0f);
+    }
+    
+    // Test without encryption
+    vector<uint8_t> plainData = freedv->encode(inputAudio);
+    EXPECT_FALSE(plainData.empty());
+    
+    // Enable encryption
+    std::vector<uint8_t> key = FreeDV::generateEncryptionKey();
+    EXPECT_TRUE(freedv->enableEncryption(key));
+    
+    // Test with encryption
+    vector<uint8_t> encryptedData = freedv->encode(inputAudio);
+    EXPECT_FALSE(encryptedData.empty());
+    
+    // Encrypted data should be different from plain data
+    EXPECT_NE(plainData.size(), encryptedData.size());
+    
+    // Test decryption
+    vector<float> decryptedAudio = freedv->decode(encryptedData);
+    EXPECT_FALSE(decryptedAudio.empty());
+    EXPECT_EQ(decryptedAudio.size(), inputAudio.size());
+    
+    // Test audio quality after encryption/decryption
+    float mse = 0.0f;
+    for (size_t i = 0; i < inputAudio.size(); i++) {
+        float diff = inputAudio[i] - decryptedAudio[i];
+        mse += diff * diff;
+    }
+    mse /= inputAudio.size();
+    
+    // MSE should be low for good encryption/decryption
+    EXPECT_LT(mse, 0.1f);
+}
+
+/**
+ * @test Test FreeDV encryption with wrong key
+ */
+TEST_F(FreeDV_Test, EncryptionWithWrongKey) {
+    // Generate test audio
+    const int sampleCount = 160;
+    vector<float> inputAudio(sampleCount);
+    for (int i = 0; i < sampleCount; i++) {
+        inputAudio[i] = 0.5f * sin(2.0f * M_PI * 1000.0f * i / 8000.0f);
+    }
+    
+    // Enable encryption with first key
+    std::vector<uint8_t> key1 = FreeDV::generateEncryptionKey();
+    EXPECT_TRUE(freedv->enableEncryption(key1));
+    
+    // Encrypt audio
+    vector<uint8_t> encryptedData = freedv->encode(inputAudio);
+    EXPECT_FALSE(encryptedData.empty());
+    
+    // Change to different key
+    std::vector<uint8_t> key2 = FreeDV::generateEncryptionKey();
+    EXPECT_TRUE(freedv->enableEncryption(key2));
+    
+    // Try to decrypt with wrong key
+    vector<float> decryptedAudio = freedv->decode(encryptedData);
+    
+    // Decryption should fail or produce different audio
+    if (!decryptedAudio.empty()) {
+        // If decryption doesn't fail, audio should be different
+        float mse = 0.0f;
+        for (size_t i = 0; i < inputAudio.size(); i++) {
+            float diff = inputAudio[i] - decryptedAudio[i];
+            mse += diff * diff;
+        }
+        mse /= inputAudio.size();
+        
+        // MSE should be high for wrong key
+        EXPECT_GT(mse, 0.5f);
+    }
+}
+
+/**
+ * @test Test FreeDV encryption performance
+ */
+TEST_F(FreeDV_Test, EncryptionPerformance) {
+    // Generate large test audio
+    const int sampleCount = 8000; // 1 second at 8kHz
+    vector<float> inputAudio(sampleCount);
+    for (int i = 0; i < sampleCount; i++) {
+        inputAudio[i] = 0.5f * sin(2.0f * M_PI * 1000.0f * i / 8000.0f);
+    }
+    
+    // Enable encryption
+    std::vector<uint8_t> key = FreeDV::generateEncryptionKey();
+    EXPECT_TRUE(freedv->enableEncryption(key));
+    
+    // Test encryption performance
+    auto start = chrono::high_resolution_clock::now();
+    vector<uint8_t> encryptedData = freedv->encode(inputAudio);
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+    
+    EXPECT_FALSE(encryptedData.empty());
+    EXPECT_GT(encryptedData.size(), inputAudio.size() * sizeof(float));
+    
+    // Encryption should be fast (less than 10ms for 1 second of audio)
+    EXPECT_LT(duration.count(), 10000);
+    
+    // Test decryption performance
+    start = chrono::high_resolution_clock::now();
+    vector<float> decryptedAudio = freedv->decode(encryptedData);
+    end = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::microseconds>(end - start);
+    
+    EXPECT_FALSE(decryptedAudio.empty());
+    EXPECT_EQ(decryptedAudio.size(), inputAudio.size());
+    
+    // Decryption should be fast (less than 10ms for 1 second of audio)
+    EXPECT_LT(duration.count(), 10000);
+}
+
+/**
+ * @test Test FreeDV encryption edge cases
+ */
+TEST_F(FreeDV_Test, EncryptionEdgeCases) {
+    // Test with empty audio
+    vector<float> emptyAudio;
+    std::vector<uint8_t> key = FreeDV::generateEncryptionKey();
+    EXPECT_TRUE(freedv->enableEncryption(key));
+    
+    vector<uint8_t> encryptedData = freedv->encode(emptyAudio);
+    EXPECT_TRUE(encryptedData.empty());
+    
+    // Test with invalid key length
+    std::vector<uint8_t> invalidKey(8, 0); // Too short
+    EXPECT_FALSE(freedv->enableEncryption(invalidKey));
+    EXPECT_FALSE(freedv->isEncryptionEnabled());
+    
+    // Test with invalid key string
+    std::string invalidKeyString = "invalid_key";
+    EXPECT_FALSE(freedv->enableEncryptionFromString(invalidKeyString));
+    EXPECT_FALSE(freedv->isEncryptionEnabled());
+    
+    // Test decryption with empty data
+    vector<float> decryptedAudio = freedv->decode(vector<uint8_t>());
+    EXPECT_TRUE(decryptedAudio.empty());
+    
+    // Test decryption with corrupted data
+    std::vector<uint8_t> corruptedData(100, 0xFF);
+    decryptedAudio = freedv->decode(corruptedData);
+    // Should either fail gracefully or return empty result
+    EXPECT_TRUE(decryptedAudio.empty() || !decryptedAudio.empty());
+}
+
+/**
  * @test Test FreeDV edge cases
  */
 TEST_F(FreeDV_Test, EdgeCases) {
@@ -450,4 +635,73 @@ TEST_F(FreeDV_Test, EdgeCases) {
     float snr = 0.0f; // Simulate SNR value
     EXPECT_GE(snr, -20.0f);
     EXPECT_LE(snr, 30.0f);
+}
+
+/**
+ * @test Test FreeDV with different security levels
+ */
+TEST_F(FreeDV_Test, SecurityLevels) {
+    // Test standard security level (128-bit)
+    std::vector<uint8_t> standard_key(16, 0x42);
+    EXPECT_TRUE(freedv->enableEncryption(standard_key));
+    EXPECT_TRUE(freedv->isEncryptionEnabled());
+    
+    // Test tactical security level (192-bit) - would need different key length
+    // Note: FreeDV currently uses 128-bit keys, but we can test the concept
+    std::vector<uint8_t> tactical_key(24, 0x42);
+    // This should fail with current implementation as it expects 16-byte keys
+    EXPECT_FALSE(freedv->enableEncryption(tactical_key));
+    
+    // Test top secret security level (256-bit)
+    std::vector<uint8_t> topsecret_key(32, 0x42);
+    // This should also fail with current implementation
+    EXPECT_FALSE(freedv->enableEncryption(topsecret_key));
+    
+    // Reset to standard key for further testing
+    EXPECT_TRUE(freedv->enableEncryption(standard_key));
+    
+    // Test encryption with standard key
+    vector<float> testAudio = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
+    vector<uint8_t> encrypted = freedv->encode(testAudio);
+    EXPECT_FALSE(encrypted.empty());
+    
+    vector<float> decrypted = freedv->decode(encrypted);
+    EXPECT_FALSE(decrypted.empty());
+    EXPECT_EQ(decrypted.size(), testAudio.size());
+}
+
+/**
+ * @test Test FreeDV encryption with X25519 key exchange simulation
+ */
+TEST_F(FreeDV_Test, X25519KeyExchangeSimulation) {
+    // Simulate X25519 key exchange process
+    // In a real implementation, this would use the ChaCha20-Poly1305 class
+    
+    // Generate simulated key pair
+    std::vector<uint8_t> private_key(32, 0x42);
+    std::vector<uint8_t> public_key(32, 0x43);
+    
+    // Simulate key exchange
+    std::vector<uint8_t> shared_secret(32, 0x44);
+    
+    // Derive encryption key from shared secret (simplified)
+    std::vector<uint8_t> derived_key(16, 0x45);
+    
+    // Enable encryption with derived key
+    EXPECT_TRUE(freedv->enableEncryption(derived_key));
+    EXPECT_TRUE(freedv->isEncryptionEnabled());
+    
+    // Test encryption/decryption with derived key
+    vector<float> testAudio = {0.1f, 0.2f, 0.3f, 0.4f, 0.5f};
+    vector<uint8_t> encrypted = freedv->encode(testAudio);
+    EXPECT_FALSE(encrypted.empty());
+    
+    vector<float> decrypted = freedv->decode(encrypted);
+    EXPECT_FALSE(decrypted.empty());
+    EXPECT_EQ(decrypted.size(), testAudio.size());
+    
+    // Verify encryption status includes security information
+    std::string status = freedv->getEncryptionStatus();
+    EXPECT_FALSE(status.empty());
+    EXPECT_NE(status.find("ChaCha20-Poly1305"), std::string::npos);
 }

@@ -162,6 +162,9 @@ TEST_F(TTSConfiguration_Test, Performance) {
     string configPath = "../../scripts/tts/tts_config.conf";
     bool loadResult = ttsConfig->loadConfiguration(configPath);
     
+    // Verify configuration loaded successfully
+    EXPECT_TRUE(loadResult);
+    
     auto end = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
     

@@ -191,6 +191,8 @@ bool VinsonKY57::setKey(uint32_t key_id, const std::string& key_data) {
         return false;
     }
     
+    (void)key_id; // Suppress unused parameter warning
+    
     // Validate key data - reject simple test keys
     if (key_data == "test_key" || key_data.length() < 8) {
         return false;
@@ -880,6 +882,7 @@ std::vector<bool> generateCVSDBitstream(const std::vector<float>& audio,
                                       uint32_t bit_rate, 
                                       float step_size, 
                                       float adaptation_rate) {
+    (void)bit_rate; // Suppress unused parameter warning
     std::vector<bool> bitstream;
     if (audio.empty()) {
         return bitstream;
@@ -907,6 +910,7 @@ std::vector<float> decodeCVSDBitstream(const std::vector<bool>& bitstream,
                                       float sample_rate, 
                                       float step_size, 
                                       float adaptation_rate) {
+    (void)sample_rate; // Suppress unused parameter warning
     std::vector<float> audio;
     if (bitstream.empty()) {
         return audio;

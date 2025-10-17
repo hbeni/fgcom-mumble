@@ -210,6 +210,8 @@ bool Granit::setKey(uint32_t key_id, const std::string& key_data) {
         return false;
     }
     
+    (void)key_id; // Suppress unused parameter warning
+    
     // Parse key data
     std::vector<uint8_t> key_bytes = GranitUtils::parseKeyData(key_data);
     if (key_bytes.empty()) {
@@ -589,6 +591,7 @@ void Granit::processSegmentReordering(std::vector<float>& audio) {
     for (size_t i = 0; i < audio.size(); i += config_.segment_size) {
         uint32_t segment_index = (i / config_.segment_size) % scrambling_sequence_.size();
         uint32_t target_index = scrambling_sequence_[segment_index];
+        (void)target_index; // Suppress unused variable warning
         // Note: Actual reordering implementation would go here
     }
 }
@@ -667,6 +670,8 @@ void Granit::processSynchronizationKey(std::vector<float>& audio) {
 std::vector<float> GranitUtils::reconstructFromSegments(
     const std::vector<std::vector<float>>& segments,
     float overlap_factor) {
+    
+    (void)overlap_factor; // Suppress unused parameter warning
     
     if (segments.empty()) {
         return {};
@@ -911,6 +916,7 @@ void GranitUtils::applyTemporalDistortion(std::vector<float>& audio, float inten
 
 // Apply segment scrambling
 void GranitUtils::applySegmentScrambling(std::vector<float>& audio, uint32_t segment_size, const std::vector<uint32_t>& scrambling_sequence) {
+    (void)segment_size; // Suppress unused parameter warning
     if (audio.empty() || scrambling_sequence.empty()) {
         return;
     }
@@ -977,6 +983,7 @@ std::vector<float> GranitUtils::generatePilotSignal(float frequency, float ampli
 
 // Generate scrambling sequence
 std::vector<uint32_t> GranitUtils::generateScramblingSequence(uint32_t key_length, uint32_t sequence_length) {
+    (void)key_length; // Suppress unused parameter warning
     std::vector<uint32_t> sequence(sequence_length);
     
     // Initialize sequence
