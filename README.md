@@ -175,6 +175,8 @@ source .env
 | **[Bot Management Guide](docs/BOT_MANAGEMENT_GUIDE.md)** | Bot configuration and management |
 | **[Security Documentation](docs/SECURITY_API_DOCUMENTATION.md)** | Security implementation and best practices |
 | **[Server Documentation](server/Readme.server.md)** | Server-side components and operation |
+| **[Server Components](server/README.md)** | Complete server components and API documentation |
+| **[Configuration Files](configs/README.md)** | All configuration files documentation |
 
 ### For Developers
 | Guide | Purpose |
@@ -186,6 +188,16 @@ source .env
 | **[Voice Encryption Documentation](voice-encryption/docs/VOICE_ENCRYPTION_MODULE.md)** | Military-grade voice encryption systems |
 | **[Satellite Communication](voice-encryption/systems/satellites/docs/SATELLITE_COMMUNICATION_DOCUMENTATION.md)** | Satellite tracking and communication |
 | **[Fuzzing Guide](docs/AFL_MULL_FUZZING_GUIDE.md)** | Advanced testing and quality assurance |
+| **[Test Infrastructure](test/README.md)** | Comprehensive test infrastructure overview |
+| **[Scripts Documentation](scripts/README.md)** | All scripts and utilities documentation |
+| **[Analysis Scripts](scripts/analysis/README.md)** | Code analysis and static analysis tools |
+| **[Debug Scripts](scripts/debug/README.md)** | Debugging and diagnostic scripts |
+| **[Fix Scripts](scripts/fixes/README.md)** | Automated fix scripts |
+| **[Validation Scripts](scripts/validation/README.md)** | Validation and testing scripts |
+| **[Utility Scripts](scripts/utilities/README.md)** | Utility scripts for data processing |
+| **[Pattern Generation](scripts/pattern_generation/README.md)** | Antenna pattern generation scripts |
+| **[WebRTC API Documentation](webrtc-gateway/API_DOCUMENTATION.md)** | Complete WebRTC Gateway API reference |
+| **[WebRTC Integration Examples](webrtc-gateway/INTEGRATION_EXAMPLES.md)** | WebRTC Gateway integration examples |
 
 ---
 
