@@ -195,7 +195,7 @@ source .env
 | **[Fix Scripts](scripts/fixes/README.md)** | Automated fix scripts |
 | **[Validation Scripts](scripts/validation/README.md)** | Validation and testing scripts |
 | **[Utility Scripts](scripts/utilities/README.md)** | Utility scripts for data processing |
-| **[Pattern Generation](scripts/pattern_generation/README.md)** | Antenna pattern generation scripts |
+| **[Pattern Generation](scripts/pattern_generation/README.md)** | Antenna pattern generation scripts,also includes a link to a stl to eznec tool  |
 | **[WebRTC API Documentation](webrtc-gateway/API_DOCUMENTATION.md)** | Complete WebRTC Gateway API reference |
 | **[WebRTC Integration Examples](webrtc-gateway/INTEGRATION_EXAMPLES.md)** | WebRTC Gateway integration examples |
 
