@@ -3701,7 +3701,479 @@ void MSFSIntegration::UpdateRadioData() {
 }
 ```
 
-### **3. Custom Game Integration (API)**
+### **3. Unreal Engine Integration**
+
+**C++ Integration:**
+```cpp
+// Unreal Engine C++ integration
+UCLASS(BlueprintType, Blueprintable)
+class FGCOMMUMBLE_API AFGComMumbleActor : public AActor
+{
+    GENERATED_BODY()
+
+public:
+    AFGComMumbleActor();
+    
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
+    
+    // Blueprint callable functions
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble")
+    void UpdatePlayerPosition(FVector WorldPosition);
+    
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble")
+    void UpdateRadioSettings(int32 RadioChannel, float Frequency, bool bPTT);
+    
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble")
+    void SetVehicleData(FString VehicleType, FString VehicleID);
+
+protected:
+    virtual void BeginPlay() override;
+    
+    // UDP communication
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FGCom-Mumble")
+    FString ServerIP = TEXT("127.0.0.1");
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FGCom-Mumble")
+    int32 ServerPort = 16661;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FGCom-Mumble")
+    float UpdateInterval = 0.1f;
+    
+private:
+    FSocket* UDPSocket;
+    FTimerHandle UpdateTimer;
+    
+    void InitializeUDP();
+    void SendUDPMessage(const FString& Message);
+    FVector ConvertToGeographicCoordinates(FVector WorldPosition);
+};
+
+// Implementation
+void AFGComMumbleActor::UpdatePlayerPosition(FVector WorldPosition)
+{
+    FVector GeoCoords = ConvertToGeographicCoordinates(WorldPosition);
+    
+    FString Message = FString::Printf(TEXT(
+        "POS_LAT=%.6f,"
+        "POS_LON=%.6f,"
+        "POS_ALT=%.2f,"
+        "POS_HEADING=%.2f"
+    ), GeoCoords.X, GeoCoords.Y, GeoCoords.Z, 0.0f);
+    
+    SendUDPMessage(Message);
+}
+
+void AFGComMumbleActor::UpdateRadioSettings(int32 RadioChannel, float Frequency, bool bPTT)
+{
+    FString Message = FString::Printf(TEXT(
+        "COM%d_FRQ=%.3f,"
+        "COM%d_PTT=%s,"
+        "COM%d_PWR=1.0"
+    ), RadioChannel, Frequency, RadioChannel, 
+       bPTT ? TEXT("true") : TEXT("false"), RadioChannel);
+    
+    SendUDPMessage(Message);
+}
+```
+
+**Blueprint Integration:**
+```cpp
+// Blueprint node implementation
+UFUNCTION(BlueprintImplementableEvent, Category = "FGCom-Mumble")
+void OnRadioTransmissionReceived(const FString& TransmissionData);
+
+UFUNCTION(BlueprintImplementableEvent, Category = "FGCom-Mumble")
+void OnSignalQualityChanged(float Quality, float Strength);
+
+// Blueprint callable for audio integration
+UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble")
+void SetAudioOutputDevice(const FString& DeviceName);
+
+UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble")
+void SetAudioInputDevice(const FString& DeviceName);
+```
+
+**Audio System Integration:**
+```cpp
+// Audio component integration
+UCLASS(BlueprintType, Blueprintable)
+class FGCOMMUMBLE_API UFGComMumbleAudioComponent : public UActorComponent
+{
+    GENERATED_BODY()
+
+public:
+    UFGComMumbleAudioComponent();
+    
+    // Audio input/output
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble Audio")
+    void StartAudioCapture();
+    
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble Audio")
+    void StopAudioCapture();
+    
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble Audio")
+    void PlayReceivedAudio(const TArray<float>& AudioData);
+    
+    // Audio processing
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble Audio")
+    void ApplyRadioEffects(float Frequency, float SignalStrength);
+    
+    UFUNCTION(BlueprintCallable, Category = "FGCom-Mumble Audio")
+    void ApplyNoiseReduction(float NoiseLevel);
+    
+private:
+    UPROPERTY()
+    class UAudioComponent* AudioComponent;
+    
+    UPROPERTY()
+    class UAudioComponent* InputAudioComponent;
+    
+    void ProcessAudioInput();
+    void ProcessAudioOutput();
+};
+```
+
+### **4. Unity Integration**
+
+**C# Integration:**
+```csharp
+// Unity C# integration
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
+using System;
+
+public class FGComMumbleIntegration : MonoBehaviour
+{
+    [Header("FGCom-Mumble Settings")]
+    public string serverIP = "127.0.0.1";
+    public int serverPort = 16661;
+    public float updateInterval = 0.1f;
+    
+    [Header("Player Settings")]
+    public Transform playerTransform;
+    public string playerID = "UnityPlayer";
+    public string vehicleType = "Ground";
+    
+    [Header("Radio Settings")]
+    public float[] radioFrequencies = { 121.5f, 243.0f, 118.1f };
+    public int activeRadioChannel = 0;
+    public bool isPTT = false;
+    
+    private UdpClient udpClient;
+    private Coroutine updateCoroutine;
+    
+    void Start()
+    {
+        InitializeUDP();
+        StartPositionUpdates();
+    }
+    
+    void InitializeUDP()
+    {
+        try
+        {
+            udpClient = new UdpClient();
+            Debug.Log("FGCom-Mumble UDP client initialized");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to initialize UDP client: {e.Message}");
+        }
+    }
+    
+    void StartPositionUpdates()
+    {
+        if (updateCoroutine != null)
+            StopCoroutine(updateCoroutine);
+            
+        updateCoroutine = StartCoroutine(UpdatePositionCoroutine());
+    }
+    
+    IEnumerator UpdatePositionCoroutine()
+    {
+        while (true)
+        {
+            UpdatePlayerPosition();
+            yield return new WaitForSeconds(updateInterval);
+        }
+    }
+    
+    public void UpdatePlayerPosition()
+    {
+        if (playerTransform == null || udpClient == null) return;
+        
+        Vector3 worldPos = playerTransform.position;
+        Vector2 geoCoords = ConvertToGeographicCoordinates(worldPos);
+        
+        string message = $"POS_LAT={geoCoords.x:F6}," +
+                        $"POS_LON={geoCoords.y:F6}," +
+                        $"POS_ALT={worldPos.y:F2}," +
+                        $"POS_HEADING={playerTransform.eulerAngles.y:F2}," +
+                        $"PLAYER_ID={playerID}," +
+                        $"VEHICLE_TYPE={vehicleType}";
+        
+        SendUDPMessage(message);
+    }
+    
+    public void UpdateRadioSettings(int channel, float frequency, bool ptt)
+    {
+        if (udpClient == null) return;
+        
+        string message = $"COM{channel}_FRQ={frequency:F3}," +
+                        $"COM{channel}_PTT={ptt.ToString().ToLower()}," +
+                        $"COM{channel}_PWR=1.0";
+        
+        SendUDPMessage(message);
+    }
+    
+    public void SetPTT(bool ptt)
+    {
+        isPTT = ptt;
+        UpdateRadioSettings(activeRadioChannel, radioFrequencies[activeRadioChannel], ptt);
+    }
+    
+    public void ChangeRadioChannel(int channel)
+    {
+        if (channel >= 0 && channel < radioFrequencies.Length)
+        {
+            activeRadioChannel = channel;
+            UpdateRadioSettings(channel, radioFrequencies[channel], isPTT);
+        }
+    }
+    
+    void SendUDPMessage(string message)
+    {
+        try
+        {
+            byte[] data = Encoding.UTF8.GetBytes(message);
+            udpClient.Send(data, data.Length, serverIP, serverPort);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to send UDP message: {e.Message}");
+        }
+    }
+    
+    Vector2 ConvertToGeographicCoordinates(Vector3 worldPosition)
+    {
+        // Convert Unity world coordinates to lat/lon
+        // This is a simplified conversion - implement proper coordinate system conversion
+        float lat = (worldPosition.x / 111000f) + 0.0f; // Approximate conversion
+        float lon = (worldPosition.z / 111000f) + 0.0f; // Approximate conversion
+        return new Vector2(lat, lon);
+    }
+    
+    void OnDestroy()
+    {
+        if (updateCoroutine != null)
+            StopCoroutine(updateCoroutine);
+            
+        if (udpClient != null)
+            udpClient.Close();
+    }
+}
+```
+
+**Audio System Integration:**
+```csharp
+// Unity Audio Integration
+using UnityEngine;
+using System.Collections.Generic;
+
+public class FGComMumbleAudioManager : MonoBehaviour
+{
+    [Header("Audio Settings")]
+    public AudioSource audioSource;
+    public AudioSource inputAudioSource;
+    public float audioQuality = 1.0f;
+    public float noiseLevel = 0.1f;
+    
+    [Header("Radio Effects")]
+    public AudioClip[] radioStatic;
+    public AudioClip[] radioBeeps;
+    
+    private Queue<float> audioBuffer = new Queue<float>();
+    private bool isTransmitting = false;
+    
+    void Start()
+    {
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+            
+        if (inputAudioSource == null)
+            inputAudioSource = gameObject.AddComponent<AudioSource>();
+    }
+    
+    public void PlayReceivedAudio(float[] audioData)
+    {
+        if (audioData == null || audioData.Length == 0) return;
+        
+        // Apply radio effects
+        float[] processedAudio = ApplyRadioEffects(audioData);
+        
+        // Create AudioClip from processed data
+        AudioClip clip = AudioClip.Create("RadioAudio", processedAudio.Length, 1, 44100, false);
+        clip.SetData(processedAudio, 0);
+        
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+    
+    public void StartTransmission()
+    {
+        isTransmitting = true;
+        // Start capturing microphone input
+        StartMicrophoneCapture();
+    }
+    
+    public void StopTransmission()
+    {
+        isTransmitting = false;
+        // Stop microphone capture
+        StopMicrophoneCapture();
+    }
+    
+    float[] ApplyRadioEffects(float[] audioData)
+    {
+        float[] processed = new float[audioData.Length];
+        
+        for (int i = 0; i < audioData.Length; i++)
+        {
+            // Apply noise reduction
+            processed[i] = audioData[i] * audioQuality;
+            
+            // Apply radio static
+            if (Random.Range(0f, 1f) < noiseLevel)
+            {
+                processed[i] += Random.Range(-0.1f, 0.1f);
+            }
+        }
+        
+        return processed;
+    }
+    
+    void StartMicrophoneCapture()
+    {
+        // Implement microphone capture
+        // This would typically use Unity's Microphone class
+    }
+    
+    void StopMicrophoneCapture()
+    {
+        // Stop microphone capture
+    }
+}
+```
+
+**UI Integration:**
+```csharp
+// Unity UI Integration
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class FGComMumbleUI : MonoBehaviour
+{
+    [Header("UI Elements")]
+    public Slider frequencySlider;
+    public TextMeshProUGUI frequencyText;
+    public Button pttButton;
+    public Toggle[] radioChannelToggles;
+    public Slider volumeSlider;
+    public TextMeshProUGUI signalQualityText;
+    
+    private FGComMumbleIntegration fgcomIntegration;
+    
+    void Start()
+    {
+        fgcomIntegration = FindObjectOfType<FGComMumbleIntegration>();
+        SetupUI();
+    }
+    
+    void SetupUI()
+    {
+        // Setup frequency slider
+        if (frequencySlider != null)
+        {
+            frequencySlider.minValue = 118.0f;
+            frequencySlider.maxValue = 137.0f;
+            frequencySlider.value = 121.5f;
+            frequencySlider.onValueChanged.AddListener(OnFrequencyChanged);
+        }
+        
+        // Setup PTT button
+        if (pttButton != null)
+        {
+            pttButton.onClick.AddListener(OnPTTPressed);
+        }
+        
+        // Setup radio channel toggles
+        for (int i = 0; i < radioChannelToggles.Length; i++)
+        {
+            int channelIndex = i; // Capture for closure
+            radioChannelToggles[i].onValueChanged.AddListener((bool isOn) => {
+                if (isOn) OnRadioChannelChanged(channelIndex);
+            });
+        }
+        
+        // Setup volume slider
+        if (volumeSlider != null)
+        {
+            volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+        }
+    }
+    
+    void OnFrequencyChanged(float frequency)
+    {
+        if (fgcomIntegration != null)
+        {
+            fgcomIntegration.UpdateRadioSettings(0, frequency, fgcomIntegration.isPTT);
+        }
+        
+        if (frequencyText != null)
+        {
+            frequencyText.text = frequency.ToString("F3") + " MHz";
+        }
+    }
+    
+    void OnPTTPressed()
+    {
+        if (fgcomIntegration != null)
+        {
+            fgcomIntegration.SetPTT(!fgcomIntegration.isPTT);
+        }
+    }
+    
+    void OnRadioChannelChanged(int channel)
+    {
+        if (fgcomIntegration != null)
+        {
+            fgcomIntegration.ChangeRadioChannel(channel);
+        }
+    }
+    
+    void OnVolumeChanged(float volume)
+    {
+        // Update audio volume
+        AudioListener.volume = volume;
+    }
+    
+    public void UpdateSignalQuality(float quality, float strength)
+    {
+        if (signalQualityText != null)
+        {
+            signalQualityText.text = $"Quality: {quality:F1}% | Strength: {strength:F1}dB";
+        }
+    }
+}
+```
+
+### **5. Custom Game Integration (API)**
 
 **RESTful API Integration:**
 ```cpp
