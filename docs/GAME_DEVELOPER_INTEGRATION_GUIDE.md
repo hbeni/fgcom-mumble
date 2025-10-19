@@ -1266,6 +1266,8 @@ Antenna pattern files are essential for realistic radio communication simulation
 
 ### **How to Add Antenna Patterns to Your Code**
 
+
+
 #### **1. Pattern File Structure**
 
 Antenna pattern files are stored in the `lib/antenna_patterns/` directory with this structure:
@@ -1351,6 +1353,8 @@ if (!pattern_info.antenna_name.empty()) {
 ### **How to Make Antenna Pattern Files**
 
 #### **1. Using the Pattern Generation Tool**
+
+Note, this converts stl files to eznec format: https://github.com/Supermagnum/stl-to-nec
 
 **Generate patterns for ground-based antennas:**
 ```bash
