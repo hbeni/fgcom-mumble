@@ -2,6 +2,8 @@
 
 This directory contains scripts for generating antenna radiation patterns using electromagnetic simulation software (NEC2) and advanced pattern processing techniques.
 
+Useable tool: https://github.com/Supermagnum/stl-to-nec
+
 ## Scripts Overview
 
 ### `antenna-radiation-pattern-generator.sh`
