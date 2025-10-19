@@ -1354,7 +1354,35 @@ if (!pattern_info.antenna_name.empty()) {
 
 #### **1. Using the Pattern Generation Tool**
 
-Note, this converts stl files to eznec format: https://github.com/Supermagnum/stl-to-nec
+**STL to NEC Converter Tool**: [https://github.com/Supermagnum/stl-to-nec](https://github.com/Supermagnum/stl-to-nec)
+
+⚠️ **Important**: This tool converts STL files to EZNEC format but is **untested** and may need refinement.
+
+**What is EZNEC?**
+EZNEC (Easy NEC) is antenna modeling software based on the Numerical Electromagnetics Code (NEC). It's used for:
+- Antenna design and optimization
+- Radiation pattern analysis
+- Impedance matching calculations
+- Gain and directivity analysis
+
+**Where to Find EZNEC Software:**
+- **4NEC2** (Free, Windows) - Most popular free NEC-based software
+- **EZNEC Pro** (Commercial, Windows/macOS) - Professional antenna modeling
+- **xnecview** (Free, Linux) - NEC file viewer and analyzer
+- **Python NEC** (Free, Cross-platform) - Python-based implementation
+
+**Using the STL to NEC Tool:**
+```bash
+cd scripts/pattern_generation/stl-to-nec/
+./build.sh  # Build the tool
+./stl-to-eznec  # Run the converter
+```
+
+The tool automatically:
+- Detects antenna wires in 3D models
+- Applies correct material properties
+- Calculates proper grid spacing
+- Generates NEC and EZ files for simulation software
 
 **Generate patterns for ground-based antennas:**
 ```bash

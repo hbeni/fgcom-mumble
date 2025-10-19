@@ -2,7 +2,64 @@
 
 This directory contains scripts for generating antenna radiation patterns using electromagnetic simulation software (NEC2) and advanced pattern processing techniques.
 
-Useable tool: https://github.com/Supermagnum/stl-to-nec
+## STL to NEC Converter Tool
+
+**Location**: `stl-to-nec/` directory  
+**Tool**: [STL to EZ/NEC Converter](https://github.com/Supermagnum/stl-to-nec)  
+**Status**: ⚠️ **Untested** - The tool compiles but has not been thoroughly tested and may need refinement.
+
+### What is EZNEC?
+
+**EZNEC** (Easy NEC) is a popular antenna modeling software based on the Numerical Electromagnetics Code (NEC). It's widely used by amateur radio operators, antenna designers, and electromagnetic simulation professionals for:
+
+- **Antenna Design**: Modeling and optimizing antenna performance
+- **Radiation Pattern Analysis**: Visualizing antenna radiation patterns
+- **Impedance Matching**: Calculating antenna input impedance
+- **Gain Analysis**: Determining antenna gain and directivity
+- **Ground Effects**: Analyzing antenna performance over different ground types
+
+### Where to Find EZNEC Software
+
+#### Free Options:
+- **[4NEC2](https://www.qsl.net/4nec2/)** (Windows) - Most popular free NEC-based antenna modeling software
+- **[xnecview](https://www.qsl.net/4nec2/)** (Linux) - NEC file viewer and analyzer
+- **[nec2c](https://www.qsl.net/4nec2/)** (Linux) - Command-line NEC-2 engine
+- **[Python NEC](https://github.com/tmolteno/python-nec)** (Cross-platform) - Python-based NEC implementation
+
+#### Commercial Options:
+- **[EZNEC Pro](https://www.eznec.com/)** (Windows/macOS) - Professional antenna modeling software
+- **[NEC-Win Plus](https://www.necwin.com/)** (Windows) - Advanced NEC modeling
+- **[MMANA-GAL](https://mmhamsoft.amateur-radio.com/p/mmmana-gal.html)** (Windows) - Antenna modeling and optimization
+
+### STL to NEC Tool Features
+
+The STL-to-NEC converter tool enables you to:
+
+- **Convert 3D Models**: Transform STL files from 3D CAD software into electromagnetic simulation files
+- **Vehicle Modeling**: Create accurate antenna models on vehicles (ships, aircraft, cars)
+- **Material Properties**: Automatically apply correct electromagnetic properties for different materials
+- **Antenna Detection**: Automatically detect antenna wires in your 3D models
+- **Frequency Analysis**: Calculate proper grid spacing based on operating frequency
+- **Multiple Formats**: Generate both NEC and EZ files for different simulation software
+
+### Using the STL to NEC Tool
+
+```bash
+# Navigate to the tool directory
+cd stl-to-nec/
+
+# Build the tool (Linux/macOS)
+./build.sh
+
+# Run the tool
+./stl-to-eznec
+```
+
+**Important Notes:**
+- The tool is **untested** and may require refinement
+- Generated files should be verified in EZNEC software before use
+- The tool supports various vehicle types and materials
+- Output files are compatible with 4NEC2, EZNEC, and other NEC-based software
 
 ## Scripts Overview
 
