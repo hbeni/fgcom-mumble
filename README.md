@@ -23,7 +23,6 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 - **GPU Acceleration with Dynamic Scaling**: Intelligent GPU resource management for up to 200 concurrent users for high-performance propagation
 - **Advanced GPU acceleration with shared computing capabilities**: Distribute calculations across multiple clients
 - **Real-Time Data Integration**: Solar data, lightning data, and weather data for accurate propagation modeling
-- **Professional Audio Processing**: DSP IIR filters, noise reduction, and spatial audio processing
 - **Antenna Pattern Library**: EZNEC-based 3D radiation patterns for all vehicle types
 - **Physics-Based Propagation**: Atmospheric effects, tropospheric ducting, and terrain obstruction modeling
 - **Feature Toggle System**: 50+ configurable features for custom deployments

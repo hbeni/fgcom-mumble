@@ -34,6 +34,18 @@ public:
         double atmospheric_loss_db,
         double terrain_loss_db
     );
+    
+    // ITU-R standard propagation calculations
+    static double calculateAtmosphericAbsorption(double frequency_mhz, double distance_km, 
+                                                double tx_altitude_m, double rx_altitude_m);
+    static double calculateRainAttenuation(double frequency_mhz, double distance_km);
+    static double calculateLineOfSightDistance(double tx_altitude_m, double rx_altitude_m);
+    static double calculateDiffractionLoss(double frequency_mhz, double distance_km, 
+                                          double tx_altitude_m, double rx_altitude_m);
+    static double calculateGroundReflectionLoss(double frequency_mhz, double distance_km, 
+                                               double tx_altitude_m, double rx_altitude_m);
+    static double calculateFresnelZoneLoss(double frequency_mhz, double distance_km, 
+                                          double tx_altitude_m, double rx_altitude_m);
 };
 
 #endif // PROPAGATION_PHYSICS_H

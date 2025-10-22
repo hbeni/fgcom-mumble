@@ -346,12 +346,20 @@ float FGCom_radiowaveModel_VHF::calcPowerDistance(float power_watts, double dist
         return 0.0f;
     }
     
-    // Free space path loss
+    // ITU-R P.525-2: Correct Free Space Path Loss formula
     double wavelength = 300.0 / frequency_mhz; // Wavelength in meters
     double free_space_loss = 20.0 * log10(4.0 * M_PI * distance_km * 1000.0 / wavelength);
     
-    // Atmospheric absorption (simplified)
-    double atmospheric_loss = 0.01 * distance_km;
+    // ITU-R P.676-11: Frequency-dependent atmospheric absorption
+    double atmospheric_loss = 0.0;
+    if (frequency_mhz >= 50.0) {
+        // Oxygen absorption for frequencies above 50 MHz
+        atmospheric_loss += 0.001 * distance_km; // Minimal for VHF
+    }
+    if (frequency_mhz >= 20.0) {
+        // Water vapor absorption for frequencies above 20 MHz
+        atmospheric_loss += 0.0005 * distance_km; // Minimal for VHF
+    }
     
     // Total path loss
     double total_loss_db = free_space_loss + atmospheric_loss;

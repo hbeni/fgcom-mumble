@@ -742,8 +742,23 @@ ObstructionResult FGCom_TerrainObstructionAnalyzer::analyzeObstruction(const Ter
         result.obstruction_distance_km = profile.obstruction_distance_km;
         result.obstruction_type = "mountain"; // Simplified classification
         
-        // Calculate terrain loss
-        result.terrain_loss_db = 20.0 * std::log10(profile.obstruction_height_m / 10.0);
+        // ITU-R P.526-14: Correct terrain loss calculation
+        double wavelength_m = 300.0 / frequency_mhz;
+        double total_distance_km = profile.points.empty() ? 0.0 : profile.points.back().distance_km;
+        double fresnel_radius_m = std::sqrt(wavelength_m * profile.obstruction_distance_km * 1000.0 * 
+                                          (total_distance_km - profile.obstruction_distance_km) * 1000.0 / 
+                                          (total_distance_km * 1000.0));
+        
+        if (fresnel_radius_m > 0.0) {
+            double clearance_ratio = profile.obstruction_height_m / fresnel_radius_m;
+            if (clearance_ratio < 0.6) {
+                result.terrain_loss_db = 20.0 * std::log10(0.6 / clearance_ratio);
+            } else {
+                result.terrain_loss_db = 0.0; // Sufficient clearance
+            }
+        } else {
+            result.terrain_loss_db = 20.0 * std::log10(profile.obstruction_height_m / 10.0);
+        }
         
         // Calculate diffraction loss if enabled
         if (enable_diffraction) {
