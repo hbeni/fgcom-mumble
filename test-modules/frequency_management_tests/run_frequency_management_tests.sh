@@ -112,7 +112,7 @@ cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed for frequency management${NC}"
 else
-    echo -e "${YELLOW}⚠ CppCheck found issues in frequency management (see report)${NC}"
+    echo -e "${YELLOW}WARNING: CppCheck found issues in frequency management (see report)${NC}"
 fi
 
 echo "Running Clang-Tidy on frequency management modules..."
@@ -124,7 +124,7 @@ clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*'
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for frequency management${NC}"
 else
-    echo -e "${YELLOW}⚠ Clang-Tidy found issues in frequency management (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Clang-Tidy found issues in frequency management (see report)${NC}"
 fi
 
 # 3. Memory Analysis with Valgrind
@@ -142,7 +142,7 @@ valgrind --tool=memcheck \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed for frequency management${NC}"
 else
-    echo -e "${YELLOW}⚠ Valgrind found memory issues in frequency management (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Valgrind found memory issues in frequency management (see report)${NC}"
 fi
 
 # 4. AddressSanitizer Tests
@@ -184,7 +184,7 @@ if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated for frequency management${NC}"
     echo "Frequency management coverage report available at: $COVERAGE_DIR/frequency_management_html/index.html"
 else
-    echo -e "${YELLOW}⚠ Coverage report generation failed for frequency management${NC}"
+    echo -e "${YELLOW}WARNING: Coverage report generation failed for frequency management${NC}"
 fi
 
 # 7. Performance Tests
@@ -196,7 +196,7 @@ time ./frequency_management_tests --gtest_filter="*Performance*" > /home/haaken/
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for frequency management${NC}"
 else
-    echo -e "${YELLOW}⚠ Performance tests had issues for frequency management${NC}"
+    echo -e "${YELLOW}WARNING: Performance tests had issues for frequency management${NC}"
 fi
 
 # 8. Stress Tests

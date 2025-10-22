@@ -128,7 +128,7 @@ fi
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed for radio propagation${NC}"
 else
-    echo -e "${YELLOW}⚠ CppCheck found issues in radio propagation (see report)${NC}"
+    echo -e "${YELLOW}WARNING: CppCheck found issues in radio propagation (see report)${NC}"
 fi
 
 echo "Running Clang-Tidy on radio propagation modules..."
@@ -159,7 +159,7 @@ fi
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for radio propagation${NC}"
 else
-    echo -e "${YELLOW}⚠ Clang-Tidy found issues in radio propagation (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Clang-Tidy found issues in radio propagation (see report)${NC}"
 fi
 
 # 3. Memory Analysis with Valgrind
@@ -177,7 +177,7 @@ valgrind --tool=memcheck \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed for radio propagation${NC}"
 else
-    echo -e "${YELLOW}⚠ Valgrind found memory issues in radio propagation (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Valgrind found memory issues in radio propagation (see report)${NC}"
 fi
 
 # 4. AddressSanitizer Tests
@@ -219,7 +219,7 @@ if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated for radio propagation${NC}"
     echo "Radio propagation coverage report available at: $COVERAGE_DIR/radio_propagation_html/index.html"
 else
-    echo -e "${YELLOW}⚠ Coverage report generation failed for radio propagation${NC}"
+    echo -e "${YELLOW}WARNING: Coverage report generation failed for radio propagation${NC}"
 fi
 
 # 7. Performance Tests
@@ -231,7 +231,7 @@ time ./radio_propagation_tests --gtest_filter="*Performance*" > /home/haaken/git
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for radio propagation${NC}"
 else
-    echo -e "${YELLOW}⚠ Performance tests had issues for radio propagation${NC}"
+    echo -e "${YELLOW}WARNING: Performance tests had issues for radio propagation${NC}"
 fi
 
 # 8. Stress Tests

@@ -112,7 +112,7 @@ cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed for ATIS module${NC}"
 else
-    echo -e "${YELLOW}⚠ CppCheck found issues in ATIS module (see report)${NC}"
+    echo -e "${YELLOW}WARNING: CppCheck found issues in ATIS module (see report)${NC}"
 fi
 
 echo "Running Clang-Tidy on ATIS module..."
@@ -126,7 +126,7 @@ find /home/haaken/github-projects/fgcom-mumble -name "*.cpp" -o -name "*.h" -o -
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for ATIS module${NC}"
 else
-    echo -e "${YELLOW}⚠ Clang-Tidy found issues in ATIS module (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Clang-Tidy found issues in ATIS module (see report)${NC}"
 fi
 
 # 3. Memory Analysis with Valgrind
@@ -144,7 +144,7 @@ valgrind --tool=memcheck \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed for ATIS module${NC}"
 else
-    echo -e "${YELLOW}⚠ Valgrind found memory issues in ATIS module (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Valgrind found memory issues in ATIS module (see report)${NC}"
 fi
 
 # 4. AddressSanitizer Tests
@@ -186,7 +186,7 @@ if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated for ATIS module${NC}"
     echo "ATIS module coverage report available at: $COVERAGE_DIR/atis_module_html/index.html"
 else
-    echo -e "${YELLOW}⚠ Coverage report generation failed for ATIS module${NC}"
+    echo -e "${YELLOW}WARNING: Coverage report generation failed for ATIS module${NC}"
 fi
 
 # 7. Performance Tests
@@ -198,7 +198,7 @@ time ./atis_module_tests --gtest_filter="*Performance*" > /home/haaken/github-pr
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for ATIS module${NC}"
 else
-    echo -e "${YELLOW}⚠ Performance tests had issues for ATIS module${NC}"
+    echo -e "${YELLOW}WARNING: Performance tests had issues for ATIS module${NC}"
 fi
 
 # 8. Stress Tests

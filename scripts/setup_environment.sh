@@ -21,26 +21,26 @@ ENV_TEMPLATE="$PROJECT_ROOT/configs/env.template"
 ENV_FILE="$PROJECT_ROOT/.env"
 CONFIG_DIR="$PROJECT_ROOT/configs"
 
-echo -e "${BLUE}🔧 FGCom-Mumble Environment Setup${NC}"
+echo -e "${BLUE}FGCom-Mumble Environment Setup${NC}"
 echo "=================================="
 echo
 
 # Check if .env already exists
 if [[ -f "$ENV_FILE" ]]; then
-    echo -e "${YELLOW}⚠️  .env file already exists!${NC}"
+    echo -e "${YELLOW}WARNING: .env file already exists!${NC}"
     echo "Current .env file location: $ENV_FILE"
     echo
     read -p "Do you want to overwrite it? (y/N): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo -e "${BLUE}ℹ️  Keeping existing .env file${NC}"
+        echo -e "${BLUE}INFO:  Keeping existing .env file${NC}"
         exit 0
     fi
 fi
 
 # Check if template exists
 if [[ ! -f "$ENV_TEMPLATE" ]]; then
-    echo -e "${RED}❌ Error: Environment template not found!${NC}"
+    echo -e "${RED}FAIL: Error: Environment template not found!${NC}"
     echo "Expected location: $ENV_TEMPLATE"
     exit 1
 fi
@@ -53,7 +53,7 @@ cp "$ENV_TEMPLATE" "$ENV_FILE"
 # Set proper permissions
 chmod 600 "$ENV_FILE"
 
-echo -e "${GREEN}✅ Created .env file with secure permissions${NC}"
+echo -e "${GREEN}PASS: Created .env file with secure permissions${NC}"
 echo "Location: $ENV_FILE"
 echo
 
@@ -71,7 +71,7 @@ fi
 
 # Database settings
 echo
-echo -e "${YELLOW}🗄️  Database Settings (optional)${NC}"
+echo -e "${YELLOW}Database Settings (optional)${NC}"
 read -p "Database Host (leave empty if using default): " db_host
 if [[ -n "$db_host" ]]; then
     sed -i "s/DB_HOST=/DB_HOST=\"$db_host\"/" "$ENV_FILE"
@@ -129,13 +129,13 @@ fi
 
 # Final setup
 echo
-echo -e "${BLUE}🔧 Finalizing setup...${NC}"
+echo -e "${BLUE}Finalizing setup...${NC}"
 
 # Add to .gitignore if not already present
 GITIGNORE="$PROJECT_ROOT/.gitignore"
 if [[ -f "$GITIGNORE" ]] && ! grep -q "\.env" "$GITIGNORE"; then
     echo ".env" >> "$GITIGNORE"
-    echo -e "${GREEN}✅ Added .env to .gitignore${NC}"
+    echo -e "${GREEN}PASS: Added .env to .gitignore${NC}"
 fi
 
 # Create a simple test script
@@ -148,30 +148,30 @@ echo "Testing environment variables..."
 # Load environment variables
 if [[ -f ".env" ]]; then
     source .env
-    echo "✅ .env file loaded"
+    echo "PASS: .env file loaded"
 else
-    echo "❌ .env file not found"
+    echo "FAIL: .env file not found"
     exit 1
 fi
 
 # Test core variables
 if [[ -n "${FGCOM_API_KEY:-}" ]]; then
-    echo "✅ FGCOM_API_KEY is set"
+    echo "PASS: FGCOM_API_KEY is set"
 else
-    echo "⚠️  FGCOM_API_KEY is not set"
+    echo "WARNING: FGCOM_API_KEY is not set"
 fi
 
 # Test external APIs
 if [[ -n "${NOAA_SWPC_API_KEY:-}" ]]; then
-    echo "✅ NOAA_SWPC_API_KEY is set"
+    echo "PASS: NOAA_SWPC_API_KEY is set"
 else
-    echo "⚠️  NOAA_SWPC_API_KEY is not set"
+    echo "WARNING: NOAA_SWPC_API_KEY is not set"
 fi
 
 if [[ -n "${NASA_API_KEY:-}" ]]; then
-    echo "✅ NASA_API_KEY is set"
+    echo "PASS: NASA_API_KEY is set"
 else
-    echo "⚠️  NASA_API_KEY is not set"
+    echo "WARNING:️  NASA_API_KEY is not set"
 fi
 
 echo "Environment test complete!"
@@ -179,7 +179,7 @@ EOF
 
 chmod +x "$PROJECT_ROOT/test_env.sh"
 
-echo -e "${GREEN}✅ Environment setup complete!${NC}"
+echo -e "${GREEN}PASS: Environment setup complete!${NC}"
 echo
 echo -e "${BLUE}📋 Next steps:${NC}"
 echo "1. Review your .env file: $ENV_FILE"
@@ -187,7 +187,7 @@ echo "2. Test your environment: ./test_env.sh"
 echo "3. Load environment variables: source .env"
 echo "4. Start FGCom-Mumble: ./start_fgcom_mumble.sh"
 echo
-echo -e "${YELLOW}⚠️  Security reminders:${NC}"
+echo -e "${YELLOW}WARNING:️  Security reminders:${NC}"
 echo "• Never commit .env to version control"
 echo "• Use strong, unique passwords and API keys"
 echo "• Rotate credentials regularly"

@@ -121,7 +121,7 @@ cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed for work unit distribution module${NC}"
 else
-    echo -e "${YELLOW}⚠ CppCheck found issues in work unit distribution module (see report)${NC}"
+    echo -e "${YELLOW}WARNING: CppCheck found issues in work unit distribution module (see report)${NC}"
 fi
 
 echo "Running Clang-Tidy on work unit distribution module..."
@@ -134,7 +134,7 @@ clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*'
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed for work unit distribution module${NC}"
 else
-    echo -e "${YELLOW}⚠ Clang-Tidy found issues in work unit distribution module (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Clang-Tidy found issues in work unit distribution module (see report)${NC}"
 fi
 
 # 3. Memory Analysis with Valgrind
@@ -152,7 +152,7 @@ valgrind --tool=memcheck \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed for work unit distribution module${NC}"
 else
-    echo -e "${YELLOW}⚠ Valgrind found memory issues in work unit distribution module (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Valgrind found memory issues in work unit distribution module (see report)${NC}"
 fi
 
 # 4. AddressSanitizer Tests
@@ -194,7 +194,7 @@ if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated for work unit distribution module${NC}"
     echo "Work unit distribution module coverage report available at: $COVERAGE_DIR/work_unit_distribution_module_html/index.html"
 else
-    echo -e "${YELLOW}⚠ Coverage report generation failed for work unit distribution module${NC}"
+    echo -e "${YELLOW}WARNING: Coverage report generation failed for work unit distribution module${NC}"
 fi
 
 # 7. Performance Tests
@@ -206,7 +206,7 @@ time ./work_unit_distribution_module_tests --gtest_filter="*Performance*" > /hom
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed for work unit distribution module${NC}"
 else
-    echo -e "${YELLOW}⚠ Performance tests had issues for work unit distribution module${NC}"
+    echo -e "${YELLOW}WARNING: Performance tests had issues for work unit distribution module${NC}"
 fi
 
 # 8. Stress Tests

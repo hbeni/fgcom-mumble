@@ -124,7 +124,7 @@ if [ "$JSIMCONNECT_STRUCTURE_OK" = true ]; then
         JSIMCONNECT_BUILD_OK=false
     fi
 else
-    echo -e "${YELLOW}⚠${NC} Skipping Maven build test - jsimconnect structure not OK"
+    echo -e "${YELLOW}WARNING:${NC} Skipping Maven build test - jsimconnect structure not OK"
     JSIMCONNECT_BUILD_OK=false
 fi
 
@@ -170,7 +170,7 @@ if [ -f "$RADIOGUI_JAR" ]; then
         echo -e "${GREEN}✓${NC} RadioGUI JAR file size is reasonable ($JAR_SIZE bytes)"
         JAR_FILE_OK=true
     else
-        echo -e "${YELLOW}⚠${NC} RadioGUI JAR file size seems small ($JAR_SIZE bytes)"
+        echo -e "${YELLOW}WARNING:${NC} RadioGUI JAR file size seems small ($JAR_SIZE bytes)"
         JAR_FILE_OK=false
     fi
 else
@@ -222,7 +222,7 @@ if grep -q "ENABLE_JSIMCONNECT.*true" Makefile; then
     echo -e "${GREEN}✓${NC} ENABLE_JSIMCONNECT is set to true in Makefile"
     MAKEFILE_CONFIG_OK=true
 else
-    echo -e "${YELLOW}⚠${NC} ENABLE_JSIMCONNECT not found or not set to true in Makefile"
+    echo -e "${YELLOW}WARNING:${NC} ENABLE_JSIMCONNECT not found or not set to true in Makefile"
     MAKEFILE_CONFIG_OK=false
 fi
 
@@ -238,11 +238,11 @@ if [ -f ".github/workflows/make-release.yml" ]; then
         echo -e "${GREEN}✓${NC} GitHub Actions workflow includes jsimconnect submodule update"
         GITHUB_WORKFLOW_OK=true
     else
-        echo -e "${YELLOW}⚠${NC} GitHub Actions workflow may not properly handle jsimconnect submodule"
+        echo -e "${YELLOW}WARNING:${NC} GitHub Actions workflow may not properly handle jsimconnect submodule"
         GITHUB_WORKFLOW_OK=false
     fi
 else
-    echo -e "${YELLOW}⚠${NC} GitHub Actions workflow file not found"
+    echo -e "${YELLOW}WARNING:${NC} GitHub Actions workflow file not found"
     GITHUB_WORKFLOW_OK=false
 fi
 

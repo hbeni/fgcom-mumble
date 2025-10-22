@@ -57,7 +57,7 @@ for tool in "${OPTIONAL_TOOLS[@]}"; do
     if command_exists "$tool"; then
         echo -e "${GREEN}✓${NC} $tool"
     else
-        echo -e "${YELLOW}⚠${NC} $tool (optional)"
+        echo -e "${YELLOW}WARNING:${NC} $tool (optional)"
     fi
 done
 
@@ -75,7 +75,7 @@ for tool in "${WEBRTC_TOOLS[@]}"; do
     if command_exists "$tool"; then
         echo -e "${GREEN}✓${NC} $tool"
     else
-        echo -e "${YELLOW}⚠${NC} $tool (optional)"
+        echo -e "${YELLOW}WARNING:${NC} $tool (optional)"
     fi
 done
 
@@ -279,7 +279,7 @@ if [ "$RUN_BROWSER_TESTS" = true ]; then
                 echo -e "${RED}✗${NC} Chrome tests failed"
             fi
         else
-            echo -e "${YELLOW}⚠${NC} Chrome not available, skipping Chrome tests"
+            echo -e "${YELLOW}WARNING:${NC} Chrome not available, skipping Chrome tests"
         fi
         
         if command_exists "firefox"; then
@@ -291,7 +291,7 @@ if [ "$RUN_BROWSER_TESTS" = true ]; then
                 echo -e "${RED}✗${NC} Firefox tests failed"
             fi
         else
-            echo -e "${YELLOW}⚠${NC} Firefox not available, skipping Firefox tests"
+            echo -e "${YELLOW}WARNING:${NC} Firefox not available, skipping Firefox tests"
         fi
         
         echo "Running Safari tests..."
@@ -302,7 +302,7 @@ if [ "$RUN_BROWSER_TESTS" = true ]; then
             echo -e "${RED}✗${NC} Safari tests failed"
         fi
     else
-        echo -e "${YELLOW}⚠${NC} Node.js/npm not available, skipping browser tests"
+        echo -e "${YELLOW}WARNING:${NC} Node.js/npm not available, skipping browser tests"
     fi
 fi
 

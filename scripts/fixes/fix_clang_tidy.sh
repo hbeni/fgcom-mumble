@@ -17,7 +17,7 @@ find test -name "*.sh" -exec grep -l "clang-tidy.*-checks='\*'" {} \; | while re
     sed -i "s/-header-filter='\.\*'/-header-filter='client\/mumble-plugin\/lib\/.*'/g" "$file"
 done
 
-echo "✅ Clang-Tidy configurations fixed!"
+echo "PASS: Clang-Tidy configurations fixed!"
 echo "📋 Changes made:"
 echo "   - Replaced -checks='*' with focused checks"
 echo "   - Replaced -header-filter='.*' with project-specific filter"

@@ -104,7 +104,7 @@ cppcheck --enable=all --std=c++17 --xml --xml-version=2 \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ CppCheck completed${NC}"
 else
-    echo -e "${YELLOW}⚠ CppCheck found issues (see report)${NC}"
+    echo -e "${YELLOW}WARNING: CppCheck found issues (see report)${NC}"
 fi
 
 echo "Running Clang-Tidy..."
@@ -115,7 +115,7 @@ clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines-*'
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Clang-Tidy completed${NC}"
 else
-    echo -e "${YELLOW}⚠ Clang-Tidy found issues (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Clang-Tidy found issues (see report)${NC}"
 fi
 
 # 3. Memory Analysis with Valgrind
@@ -133,7 +133,7 @@ valgrind --tool=memcheck \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Valgrind analysis completed${NC}"
 else
-    echo -e "${YELLOW}⚠ Valgrind found memory issues (see report)${NC}"
+    echo -e "${YELLOW}WARNING: Valgrind found memory issues (see report)${NC}"
 fi
 
 # 4. AddressSanitizer Tests
@@ -165,7 +165,7 @@ export MALLOC_PERTURB_=0
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ ThreadSanitizer tests passed${NC}"
 else
-    echo -e "${YELLOW}⚠ ThreadSanitizer found issues (see report)${NC}"
+    echo -e "${YELLOW}WARNING: ThreadSanitizer found issues (see report)${NC}"
 fi
 
 # 6. Code Coverage Analysis
@@ -183,7 +183,7 @@ if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Coverage report generated${NC}"
     echo "Coverage report available at: $COVERAGE_DIR/html/index.html"
 else
-    echo -e "${YELLOW}⚠ Coverage report generation failed${NC}"
+    echo -e "${YELLOW}WARNING: Coverage report generation failed${NC}"
 fi
 
 # 7. Performance Tests
@@ -195,7 +195,7 @@ time ./agc_squelch_tests --gtest_filter="*Performance*" > /home/haaken/github-pr
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed${NC}"
 else
-    echo -e "${YELLOW}⚠ Performance tests had issues${NC}"
+    echo -e "${YELLOW}WARNING: Performance tests had issues${NC}"
 fi
 
 # 8. Stress Tests

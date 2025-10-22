@@ -26,19 +26,19 @@ print_header() {
 }
 
 print_success() {
-    echo -e "${GREEN}✅ $1${NC}"
+    echo -e "${GREEN}PASS: $1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}❌ $1${NC}"
+    echo -e "${RED}FAIL: $1${NC}"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
+    echo -e "${YELLOW}WARNING: $1${NC}"
 }
 
 print_info() {
-    echo -e "${BLUE}ℹ️  $1${NC}"
+    echo -e "${BLUE}INFO: $1${NC}"
 }
 
 check_dependencies() {
@@ -191,17 +191,17 @@ generate_report() {
         </tr>
         <tr>
             <td>Unit Tests</td>
-            <td class="success">✅ Passed</td>
+            <td class="success">PASSED</td>
             <td>unit_tests.xml</td>
         </tr>
         <tr>
             <td>Property-based Tests</td>
-            <td class="success">✅ Passed</td>
+            <td class="success">PASSED</td>
             <td>property_tests.xml</td>
         </tr>
         <tr>
             <td>Integration Tests</td>
-            <td class="success">✅ Passed</td>
+            <td class="success">PASSED</td>
             <td>integration_tests.xml</td>
         </tr>
     </table>

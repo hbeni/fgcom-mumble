@@ -235,7 +235,7 @@ if cppcheck --enable=all --std=c++17 --suppress=missingIncludeSystem \
     > "$TEST_RESULTS_DIR/performance_cppcheck.txt" 2>&1; then
     echo -e "${GREEN}✓${NC} CppCheck completed for performance"
 else
-    echo -e "${YELLOW}⚠${NC} CppCheck completed for performance with warnings"
+    echo -e "${YELLOW}WARNING:${NC} CppCheck completed for performance with warnings"
 fi
 
 echo "Running Clang-Tidy on performance modules..."
@@ -246,7 +246,7 @@ if clang-tidy -checks='modernize-*,readability-*,performance-*,cppcoreguidelines
     > "$TEST_RESULTS_DIR/performance_clang-tidy.txt" 2>&1; then
     echo -e "${GREEN}✓${NC} Clang-Tidy completed for performance"
 else
-    echo -e "${YELLOW}⚠${NC} Clang-Tidy completed for performance with warnings"
+    echo -e "${YELLOW}WARNING:${NC} Clang-Tidy completed for performance with warnings"
 fi
 
 # Run memory analysis with Valgrind
@@ -258,7 +258,7 @@ if timeout 300 valgrind --leak-check=full --show-leak-kinds=all \
     ./performance_tests; then
     echo -e "${GREEN}✓${NC} Valgrind analysis completed for performance"
 else
-    echo -e "${YELLOW}⚠${NC} Valgrind analysis completed for performance with issues"
+    echo -e "${YELLOW}WARNING:${NC} Valgrind analysis completed for performance with issues"
 fi
 
 # Run AddressSanitizer tests
@@ -268,7 +268,7 @@ echo "Running AddressSanitizer memory error detection on performance..."
 if ./performance_tests_asan; then
     echo -e "${GREEN}✓${NC} AddressSanitizer tests passed for performance"
 else
-    echo -e "${YELLOW}⚠${NC} AddressSanitizer tests completed for performance with issues"
+    echo -e "${YELLOW}WARNING:${NC} AddressSanitizer tests completed for performance with issues"
 fi
 
 # Run ThreadSanitizer tests
@@ -278,7 +278,7 @@ echo "Running ThreadSanitizer race condition detection on performance..."
 if timeout 300 ./performance_tests_tsan; then
     echo -e "${GREEN}✓${NC} ThreadSanitizer tests passed for performance"
 else
-    echo -e "${YELLOW}⚠${NC} ThreadSanitizer tests completed for performance with issues"
+    echo -e "${YELLOW}WARNING:${NC} ThreadSanitizer tests completed for performance with issues"
 fi
 
 # Run coverage tests
@@ -296,7 +296,7 @@ if ./performance_tests_coverage; then
         echo -e "${GREEN}✓${NC} Coverage report generated"
     fi
 else
-    echo -e "${YELLOW}⚠${NC} Coverage tests completed for performance with issues"
+    echo -e "${YELLOW}WARNING:${NC} Coverage tests completed for performance with issues"
 fi
 
 # Generate test report

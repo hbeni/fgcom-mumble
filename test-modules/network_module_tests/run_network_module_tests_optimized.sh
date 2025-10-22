@@ -102,7 +102,7 @@ if [ -f "./network_module_tests_asan" ]; then
         echo -e "${RED}✗ AddressSanitizer found memory errors${NC}"
     fi
 else
-    echo -e "${YELLOW}⚠ AddressSanitizer build not available, skipping${NC}"
+    echo -e "${YELLOW}WARNING: AddressSanitizer build not available, skipping${NC}"
 fi
 
 # 3. Optimized Performance Tests
@@ -116,7 +116,7 @@ time ./network_module_tests --gtest_filter="*Performance*" \
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Performance tests completed${NC}"
 else
-    echo -e "${YELLOW}⚠ Performance tests had issues${NC}"
+    echo -e "${YELLOW}WARNING: Performance tests had issues${NC}"
 fi
 
 # 4. Single Stress Test (reduced iterations)
@@ -144,10 +144,10 @@ if [ -f "./network_module_tests_coverage" ]; then
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✓ Basic coverage report generated${NC}"
     else
-        echo -e "${YELLOW}⚠ Coverage report generation failed${NC}"
+        echo -e "${YELLOW}WARNING: Coverage report generation failed${NC}"
     fi
 else
-    echo -e "${YELLOW}⚠ Coverage build not available, skipping${NC}"
+    echo -e "${YELLOW}WARNING: Coverage build not available, skipping${NC}"
 fi
 
 # 6. Generate Optimized Report

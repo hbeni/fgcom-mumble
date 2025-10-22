@@ -2,7 +2,7 @@
 
 This directory contains comprehensive LibFuzzer harnesses for testing FGCom (FlightGear Communication) components.
 
-## 🎯 **FUZZING TARGETS**
+## **FUZZING TARGETS**
 
 ### **Core FGCom Functionality:**
 - **Radio Propagation Calculations** - Frequency validation, path loss, signal strength
@@ -40,7 +40,7 @@ This directory contains comprehensive LibFuzzer harnesses for testing FGCom (Fli
 - **Noise Floor Calculations** - Atmospheric absorption, terrain shadowing
 - **Interference Detection** - Frequency separation, power analysis
 
-## 🚀 **QUICK START**
+## **QUICK START**
 
 ### **1. Compile All Fuzzers:**
 ```bash
@@ -59,7 +59,7 @@ chmod +x scripts/run_individual_fuzzer.sh
 ./scripts/run_individual_fuzzer.sh fuzz_radio_propagation 12
 ```
 
-## 📁 **DIRECTORY STRUCTURE**
+## **DIRECTORY STRUCTURE**
 
 ```
 fuzzing-tests/
@@ -81,7 +81,7 @@ fuzzing-tests/
 └── README.md            # This file
 ```
 
-## ⚙️ **FUZZER CONFIGURATION**
+## **FUZZER CONFIGURATION**
 
 ### **Critical Requirements:**
 - **Duration**: 12 hours (`-max_total_time=43200`)
@@ -99,7 +99,7 @@ fuzzing-tests/
 - **Line Coverage** - Source line coverage
 - **Function Coverage** - Function entry coverage
 
-## 🧪 **CORPUS GENERATION**
+## **CORPUS GENERATION**
 
 The corpus contains binary seed files covering:
 
@@ -134,7 +134,7 @@ The corpus contains binary seed files covering:
 - Configuration files (key-value pairs)
 - ATIS weather messages
 
-## 🔧 **COMPILATION FLAGS**
+## **COMPILATION FLAGS**
 
 ```bash
 clang++ -g -O1 -fsanitize=fuzzer,address,undefined \
@@ -146,7 +146,7 @@ clang++ -g -O1 -fsanitize=fuzzer,address,undefined \
     harness.cpp -o fuzzer
 ```
 
-## 📊 **MONITORING & RESULTS**
+## **MONITORING & RESULTS**
 
 ### **Fuzzer Output:**
 - **Execution Speed** - Executions per second
@@ -164,7 +164,7 @@ clang++ -g -O1 -fsanitize=fuzzer,address,undefined \
 - **Line Coverage** - Source line coverage
 - **Function Coverage** - Function entry coverage
 
-## 🛠️ **TROUBLESHOOTING**
+## **TROUBLESHOOTING**
 
 ### **Common Issues:**
 
@@ -203,7 +203,7 @@ ls -la crashes/
 tail -f fuzzer.log
 ```
 
-## 📈 **PERFORMANCE TUNING**
+## **PERFORMANCE TUNING**
 
 ### **Optimization Tips:**
 - Use `-O1` for faster execution
@@ -216,7 +216,7 @@ tail -f fuzzer.log
 - Distribute across multiple cores
 - Monitor system resources
 
-## 🔒 **SECURITY CONSIDERATIONS**
+## **SECURITY CONSIDERATIONS**
 
 ### **Input Validation:**
 - All inputs are validated and sanitized
@@ -237,13 +237,13 @@ tail -f fuzzer.log
 - [UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
 - [FGCom Documentation](https://github.com/hbeni/fgcom-mumble)
 
-## 🤝 **CONTRIBUTING**
+## **CONTRIBUTING**
 
 1. Add new harnesses to `harnesses/`
 2. Update corpus generation in `scripts/generate_corpus.py`
 3. Test with `scripts/run_individual_fuzzer.sh`
 4. Update documentation as needed
 
-## 📄 **LICENSE**
+## **LICENSE**
 
 This fuzzing infrastructure is part of the FGCom project and follows the same licensing terms.
