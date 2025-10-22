@@ -481,9 +481,11 @@ The project lives on GitHub: https://github.com/Supermagnum/fgcom-mumble
 ## Testing and Quality
 
 - **[Testing Guide](docs/TESTING_GUIDE.md)** - Simple explanation of what all tests do (non-programmer friendly)
-- **[Test Results](test/tests-passed.md)** - Test suite execution results and coverage analysis
+- **[Test Results](docs/TEST_COVERAGE_DOCUMENTATION.md)** - Test suite execution results and coverage analysis
 - **[Fuzzing Framework](docs/AFL_MULL_FUZZING_GUIDE.md)** - Advanced testing with AFL++ and MULL integration
 - **[Fuzzing Results Report](docs/FUZZING_RESULTS_REPORT_2025-10-12.md)** - Comprehensive 12-hour fuzzing session results with zero crashes found
+- **[Fuzzing Harnesses](test/build-fuzz/)** - libFuzzer-based fuzzing targets for comprehensive testing
+- **[Test Modules](test-modules/)** - Comprehensive test suite with 20+ specialized testing modules
 - **[RapidCheck Integration](docs/RAPIDCHECK_INTEGRATION_SUMMARY.md)** - Property-based testing framework
 - **[Test Coverage Documentation](docs/TEST_COVERAGE_DOCUMENTATION.md)** - Comprehensive test coverage analysis
 

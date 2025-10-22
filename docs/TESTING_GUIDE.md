@@ -78,10 +78,12 @@ Testing is like checking that a car works properly before you drive it. We test 
 - **Coverage**: How much of the system we test
 
 ### **Current Status**
-- **368 individual tests** run automatically
-- **100% success rate** for all working tests
-- **13 different test categories** covering all aspects
+- **2,440+ individual tests** run automatically across all modules
+- **94.3% success rate** for all working tests
+- **20+ different test categories** covering all aspects
 - **Real-time monitoring** of system health
+- **8+ billion fuzzing executions** completed with zero crashes
+- **Comprehensive test coverage** across 15+ specialized modules
 
 ## What This Means for Users
 
@@ -113,8 +115,9 @@ Testing is like checking that a car works properly before you drive it. We test 
 - Report any unusual behavior
 
 ### **For Technical Users**
-- Run `./test/run_all_tests.sh` to see all test results
-- Check `test/tests-passed.md` for detailed results
+- Run `./test-modules/run_all_tests.sh` to see all test results
+- Check `docs/FUZZING_RESULTS_REPORT_2025-10-12.md` for comprehensive fuzzing results
+- Review `docs/TEST_COVERAGE_DOCUMENTATION.md` for detailed coverage analysis
 - Look at individual test logs for specific information
 
 ## Summary
