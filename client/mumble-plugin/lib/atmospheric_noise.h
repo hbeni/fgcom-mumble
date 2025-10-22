@@ -172,6 +172,7 @@ private:
     float k_index;
     float a_index;
     
+public:
     // Configuration
     struct NoiseConfig {
         float base_thermal_noise = -174.0f;  // dBm/Hz (theoretical limit)

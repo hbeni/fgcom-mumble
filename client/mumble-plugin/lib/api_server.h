@@ -26,7 +26,7 @@
 #include <atomic>
 #include <memory>
 #include <functional>
-#include "lib/http/httplib.h"
+#include "http/httplib.h"
 #include "lib/json/json.hpp"
 #include "solar_data.h"
 #include "amateur_radio.h"

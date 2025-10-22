@@ -7,6 +7,7 @@
 
 #include "atmospheric_noise.h"
 #include <iostream>
+#include <iomanip>
 
 void demonstrateAdvancedConfiguration() {
     std::cout << "=== Advanced Noise Floor Configuration ===" << std::endl;
