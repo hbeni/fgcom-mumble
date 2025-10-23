@@ -31,32 +31,28 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@main
+      uses: actions/checkout@v4
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
         fetch-depth: 2
+        submodules: recursive
 
-    - if: matrix.language == 'java'
-      name: Checkout GIT submodules (java)
-      run: |
-        git submodule init
-        git submodule update client/radioGUI/lib/jsimconnect
 
     - if: matrix.language == 'java'
       name: Setup Java
-      uses: actions/setup-java@main
+      uses: actions/setup-java@v4
       with:
         java-version: '11' # The JDK version to make available on the path.
-        distribution: adopt
+        distribution: temurin
 
     - if: matrix.language == 'cpp'
       name: Setup C++
-      run: sudo apt-get install libssl-dev mingw-w64 mingw-w64-common build-essential
+      run: sudo apt-get install libssl-dev libcurl-dev mingw-w64 mingw-w64-common build-essential
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
         # If you wish to specify custom queries, you can do so here or in a config file.
@@ -93,7 +89,7 @@ jobs:
 
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
 
 
   #
@@ -105,11 +101,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@main
+      uses: actions/checkout@v4
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
         fetch-depth: 2
+        submodules: recursive
 
     - name: Check PHP syntax errors
       uses: overtrue/phplint@main
@@ -123,11 +120,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@main
+      uses: actions/checkout@v4
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
         fetch-depth: 2
+        submodules: recursive
 
     - name: Setup programs
       run: |
