@@ -154,16 +154,15 @@ install_system_files() {
     cp -r "$PROJECT_ROOT/configs"/* "$CONFIGS_DIR/"
     print_success "Copied configs to $CONFIGS_DIR/"
     
-    # Copy system bot manager
-    cp "$SCRIPTS_DIR/server/fgcom-botmanager-system.sh" "$SCRIPTS_DIR/server/fgcom-botmanager.sh"
-    
     # Copy uninstall and status scripts to system location
     cp "$PROJECT_ROOT/scripts/uninstall_fgcom_mumble.sh" "$SCRIPTS_DIR/"
     cp "$PROJECT_ROOT/scripts/status_fgcom_mumble.sh" "$SCRIPTS_DIR/"
     
     # Set ownership
     chown -R "$FGCOM_USER:$FGCOM_GROUP" /usr/share/fgcom-mumble/
-    chmod +x "$SCRIPTS_DIR/server/fgcom-botmanager.sh"
+    chmod +x "$SERVER_DIR/fgcom-botmanager.sh"
+    chmod +x "$SERVER_DIR/fgcom-botmanager-system.sh"
+    chmod +x "$SERVER_DIR/test/loadTest.sh"
     chmod +x "$SCRIPTS_DIR/uninstall_fgcom_mumble.sh"
     chmod +x "$SCRIPTS_DIR/status_fgcom_mumble.sh"
     
@@ -319,7 +318,7 @@ Type=simple
 User=$FGCOM_USER
 Group=$FGCOM_GROUP
 WorkingDirectory=$SERVER_DIR
-ExecStart=$SCRIPTS_DIR/server/fgcom-botmanager.sh
+ExecStart=$SERVER_DIR/fgcom-botmanager.sh
 ExecStop=/bin/kill -TERM \$MAINPID
 Restart=always
 RestartSec=10

@@ -282,7 +282,7 @@ tail -f /var/log/fgcom-mumble/status.log
 **Manual Bot Control**
 ```bash
 # Start bots manually (for testing)
-cd /usr/share/fgcom-mumble/scripts/server
+cd /usr/share/fgcom-mumble/server
 ./fgcom-botmanager.sh --help
 
 # Example: Start with all bots enabled

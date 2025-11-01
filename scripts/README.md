@@ -84,12 +84,12 @@ scripts/
 ./scripts/testing/run_tests.sh --jobs 5 all
 ```
 
-### Server Scripts (`server/`)
+### Server Scripts
 
-These scripts are used for server operations:
+Server scripts are located in the `server/` directory (not in `scripts/`):
 
-- **`fgcom-botmanager.sh`** - Bot manager for FGCom server
-- **`loadTest.sh`** - Load testing script
+- **`server/fgcom-botmanager.sh`** - Bot manager for FGCom server
+- **`server/test/loadTest.sh`** - Load testing script (test tool for spawning fake pilots)
 
 ### Utility Scripts (`utilities/`)
 
@@ -127,10 +127,10 @@ These are general utility scripts used by other scripts:
 
 ```bash
 # Start bot manager
-./scripts/server/fgcom-botmanager.sh
+./server/fgcom-botmanager.sh
 
-# Run load tests
-./scripts/server/loadTest.sh
+# Run load tests (spawns fake pilot bots for testing)
+./server/test/loadTest.sh
 ```
 
 ## Dependencies

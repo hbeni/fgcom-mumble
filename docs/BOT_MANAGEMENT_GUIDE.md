@@ -157,7 +157,7 @@ journalctl -u fgcom-mumble -n 50
 
 ```bash
 # Start bots manually (for testing)
-cd /usr/share/fgcom-mumble/scripts/server
+cd /usr/share/fgcom-mumble/server
 ./fgcom-botmanager.sh --help
 
 # Start with all bots enabled
