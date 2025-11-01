@@ -210,7 +210,7 @@ fi
     trap cleanup EXIT
     while [[ -p $fnotify ]]; do
         # Spawn the radio recorder bot
-        botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua")
+	botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua.*--host=$host")
         if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
             recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
             echo "Spawn bot: $recorderbot_cmd"
@@ -222,7 +222,7 @@ fi
         fi
 
         # Spawn the statusPage bot
-        botPID=$(pgrep -f -- "fgcom-status.bot.lua")
+        botPID=$(pgrep -f -- "fgcom-status.bot.lua.*--host=$host")
         if [[ $run_statusbot -gt "0" && -z "$botPID" ]]; then
             statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
