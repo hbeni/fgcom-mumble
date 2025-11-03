@@ -219,7 +219,7 @@ fi
 	botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua.*--host=$host")
         if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
             recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
-            log "Spawn bot: $recorderbot_cmd"
+            log "Spawn recorder bot: $recorderbot_cmd"
             if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
                 $recorderbot_cmd > $recorderbot_log &
             else
@@ -233,7 +233,7 @@ fi
             statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
             [[ -n "$statusbot_stats" ]] && statusbot_cmd="$statusbot_cmd --stats=$statusbot_stats"
-            log "Spawn bot: $statusbot_cmd"
+            log "Spawn status bot: $statusbot_cmd"
             if [ -n $statusbot_log ] && [ $statusbot_log != "-" ]; then
                 $statusbot_cmd > $statusbot_log &
             else
@@ -267,7 +267,7 @@ while true; do
             # See if there is already a playback bot instance with that sample
             botPID=$(pgrep -f -- "--sample=$samplefile")
             if [[ -n "$botPID" ]]; then
-                log "Spawn bot ignored (found already running instance): $playbackbot_cmd"
+                log "Spawn playback bot ignored (found already running instance): $playbackbot_cmd"
                 continue
             fi
             
@@ -275,7 +275,7 @@ while true; do
             owner_opt=""
             if [[ -n $ownersession ]]; then owner_opt="--owntoken=$ownersession"; fi
             playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts $owner_opt --sample=$samplefile"
-            log "Spawn bot: $playbackbot_cmd"
+            log "Spawn playback bot: $playbackbot_cmd"
             if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
                 $playbackbot_cmd > $playbackbot_log &
             else
