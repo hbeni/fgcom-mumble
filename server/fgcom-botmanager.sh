@@ -231,8 +231,8 @@ fi
         if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
             recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
             log "Spawn recorder bot: $recorderbot_cmd"
-            if [ -n "$recorderbot_log" ] && [ "$recorderbot_log" != "-" ]; then
-                $recorderbot_cmd > "$recorderbot_log" 2>&1 &
+            if [ -n $recorderbot_log ] && [ $recorderbot_log != "-" ]; then
+                $recorderbot_cmd > $recorderbot_log &
             else
                 (luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify) &
             fi
@@ -245,8 +245,8 @@ fi
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
             [[ -n "$statusbot_stats" ]] && statusbot_cmd="$statusbot_cmd --stats=$statusbot_stats"
             log "Spawn status bot: $statusbot_cmd"
-            if [ -n "$statusbot_log" ] && [ "$statusbot_log" != "-" ]; then
-                $statusbot_cmd > "$statusbot_log" 2>&1 &
+            if [ -n $statusbot_log ] && [ $statusbot_log != "-" ]; then
+                $statusbot_cmd > $statusbot_log &
             else
                 ($statusbot_cmd) &
             fi
@@ -289,6 +289,8 @@ while true; do
             log "Spawn playback bot: $playbackbot_cmd"
             if [ -n "$playbackbot_log" ] && [ "$playbackbot_log" != "-" ]; then
                 $playbackbot_cmd > "$playbackbot_log" 2>&1 &
+            if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
+                $playbackbot_cmd > $playbackbot_log &
             else
                 ($playbackbot_cmd) &
             fi
