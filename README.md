@@ -3,6 +3,62 @@
 # FGCom-mumble
 ## Realistic Radio Communication Simulator for Flight Simulators
 
+## Table of Contents
+
+- [Terms of Service](#terms-of-service)
+- [What This Is](#what-this-is)
+- [Beta Testers Wanted!](#beta-testers-wanted)
+- [Security Setup](#security-setup)
+- [Recent Updates](#recent-updates-v131)
+- [Important: Technical Requirements](#important-technical-requirements)
+- [Getting Started](#getting-started)
+  - [For Pilots and Users](#for-pilots-and-users)
+  - [For Administrators](#for-administrators)
+  - [For Developers](#for-developers)
+- [Quick Configuration](#quick-configuration)
+- [Complete Documentation](#complete-documentation)
+  - [Core Documentation](#core-documentation)
+  - [Advanced Features](#advanced-features)
+  - [Game Integration](#game-integration)
+  - [Frequency Documentation](#frequency-documentation)
+- [Technical Components](#technical-components)
+- [Installation](#installation)
+- [GPU Acceleration & Shared Computing](#gpu-acceleration--shared-computing)
+- [Dynamic GPU Scaling](#dynamic-gpu-scaling)
+- [Antenna Pattern Visualization](#antenna-pattern-visualization)
+- [Contributing](#contributing)
+- [Testing and Quality](#testing-and-quality)
+
+---
+
+## Terms of Service
+
+By using FGCom-mumble, you agree to the following terms:
+
+**Use at Your Own Risk**: This software is provided "as is" without warranty of any kind. The developers and maintainers are not responsible for any damage, loss, or issues arising from the use of this software.
+
+**Educational and Simulation Purposes Only**: This software is designed for educational and simulation purposes. All voice encryption systems, radio protocols, and communication features are implemented for simulation only. Any misuse of this software is the sole responsibility of the user.
+
+**No Warranty**: The software is provided without any express or implied warranties, including but not limited to merchantability, fitness for a particular purpose, or non-infringement.
+
+**License Compliance**: This software is provided under its respective license terms. Users must comply with all applicable license requirements when using, modifying, or distributing this software.
+
+**Technical Requirements**: This software requires technical expertise to install, configure, and operate. Users are responsible for ensuring they have the necessary technical knowledge and resources before attempting to use this software.
+
+**Beta Software**: Some features may be in beta testing. Beta features are provided for testing purposes and may be unstable or incomplete.
+
+**No Support Guarantee**: While the project accepts bug reports and contributions, there is no guarantee of support, updates, or maintenance.
+
+**User Responsibility**: Users are responsible for:
+- Properly configuring and securing their installations
+- Complying with all applicable laws and regulations
+- Maintaining backups of their data and configurations
+- Understanding the technical requirements before installation
+
+By proceeding to use this software, you acknowledge that you have read, understood, and agree to these terms.
+
+---
+
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
 
 A mumble-based modular radio simulation framework that provides realistic radio communication for flight simulators and games with geographic separation, propagation modeling, and authentic radio effects.
@@ -248,6 +304,7 @@ udpServerHost=*
 ### Core Documentation
 - **[How This Works for Dummies](docs/HOW_THIS_WORKS_FOR_DUMMIES.md)** - Simple explanation of radio propagation with practical examples
 - **[Radio Propagation Mathematics](docs/RADIO_PROPAGATION_MATHEMATICS.md)** - Mathematical models and calculations
+- **[Radio Propagation Formulas](docs/propagation-maths.md)** - Complete formula reference for all propagation calculations
 - **[Technical User Guide](docs/TECHNICAL_USER_GUIDE.md)** - Technical overview and capabilities
 
 ### Advanced Features
