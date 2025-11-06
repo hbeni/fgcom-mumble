@@ -32,10 +32,10 @@ port="64738"
 channel="fgcom-mumble"
 rcert="/etc/fgcom-mumble/recbot.pem"
 rkey="/etc/fgcom-mumble/recbot.key"
-rname="$(grep "local botname" server/fgcom-radio-recorder.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
+rname="$(grep "local botname" fgcom-radio-recorder.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 pcert="/etc/fgcom-mumble/playbot.pem"
 pkey="/etc/fgcom-mumble/playbot.key"
-pname="$(grep "local callsignPrefix" server/fgcom-radio-playback.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
+pname="$(grep "local callsignPrefix" fgcom-radio-playback.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 scert="/etc/fgcom-mumble/statusbot.pem"
 skey="/etc/fgcom-mumble/statusbot.key"
 path="/var/lib/fgcom-mumble/recordings"
@@ -45,7 +45,7 @@ fnotify="/tmp/fgcom-fnotify-fifo"
 statusbot_db="/var/lib/fgcom-mumble/fgcom-web.db"
 statusbot_web=""
 statusbot_stats=""
-sname="$(grep "fgcom.callsign" server/statuspage/fgcom-status.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
+sname="$(grep "fgcom.callsign" statuspage/fgcom-status.bot.lua |head -n1 |sed 's/.\+"\(.\+\)".*/\1/')"
 debug="0"
 
 recorderbot_log="/var/log/fgcom-mumble/radio-recorder.log"
@@ -53,7 +53,7 @@ playbackbot_log="/var/log/fgcom-mumble/radio-playback.log"
 statusbot_log="/var/log/fgcom-mumble/status.log"
 
 run_recorderbot="1"
-run_playbackbot="0"
+run_playbackbot="1"
 run_statusbot="1"
 
 # Check for environment variables to override defaults
@@ -68,6 +68,9 @@ if [[ -n "$FGCOM_RUN_STATUS" ]]; then
 fi
 
 verify="0"
+
+# function for nicer output
+log() { echo "$(date '+%F %T.%N'): $1"; }
 
 # print usage information
 function usage() {
@@ -151,29 +154,32 @@ for opt in "$@"; do
 done
 
 # Print a nice message when starting, so its clear what will happen
-echo "Starting FGCom-mumble bot manager..."
-echo "  --host=$host"
-echo "  --port=$port"
-echo "  --channel=$channel"
-echo "  --rname=$rname"
-echo "  --rcert=$rcert"
-echo "  --rkey=$rkey"
-echo "  --pname=$pname"
-echo "  --pcert=$pcert"
-echo "  --pkey=$pkey"
-echo "  --scert=$scert"
-echo "  --skey=$skey"
-echo "  --path=$path"
-echo "  --limit=$limit"
-echo "  --ttl=$ttl"
-echo "  --rlog=$recorderbot_log"
-echo "  --plog=$playbackbot_log"
-echo "  --sname=$sname"
-echo "  --slog=$statusbot_log"
-echo "  --sdb=$statusbot_db"
-echo "  --sweb=$statusbot_web"
-echo "  --sstats=$statusbot_stats"
-[[ $debug == "1" ]] && echo "  --debug"
+log "Starting FGCom-mumble bot manager..."
+log "pwd: $(pwd)"
+log "commandline used: $0$(for opt in "$@"; do echo -n " $opt"; done)"
+log "effective options:"
+log "  --host=$host"
+log "  --port=$port"
+log "  --channel=$channel"
+log "  --rname=$rname"
+log "  --rcert=$rcert"
+log "  --rkey=$rkey"
+log "  --pname=$pname"
+log "  --pcert=$pcert"
+log "  --pkey=$pkey"
+log "  --scert=$scert"
+log "  --skey=$skey"
+log "  --path=$path"
+log "  --limit=$limit"
+log "  --ttl=$ttl"
+log "  --rlog=$recorderbot_log"
+log "  --plog=$playbackbot_log"
+log "  --sname=$sname"
+log "  --slog=$statusbot_log"
+log "  --sdb=$statusbot_db"
+log "  --sweb=$statusbot_web"
+log "  --sstats=$statusbot_stats"
+[[ $debug == "1" ]] && log "  --debug"
 
 # define cmd options for the bot callups
 common_opts="--host=$host --port=$port --channel=$channel"
@@ -183,9 +189,9 @@ recorder_opts="$common_opts --name=$rname --cert=$rcert --key=$rkey --path=$path
 status_opts="$common_opts --name=$sname --cert=$scert --key=$skey --db=$statusbot_db"
 
 if [[ $verify == "1" ]] then
-    echo "basic playback_opts=$playback_opts"
-    echo "basic recorder_opts=$recorder_opts"
-    echo "basic status_opts=$status_opts"
+    log "basic playback_opts=$playback_opts"
+    log "basic recorder_opts=$recorder_opts"
+    log "basic status_opts=$status_opts"
     exit 0
 fi
 
@@ -193,7 +199,7 @@ fi
 # define cleanup routine
 function cleanup()
 {
-    echo "cleanup..."
+    log "cleanup..."
     rm -f $fnotify
     sleep 1  # so the watchdog can shut down properly, removing the notify pipe signals this
     pkill -f "fgcom-radio-recorder.bot.lua"
@@ -203,43 +209,44 @@ trap cleanup EXIT
 
 
 # setup the fifo
-echo "Setup fifo '$fnotify'"
+log "Setup fifo '$fnotify'"
 
 if [[ ! -p $fnotify ]]; then
     mkfifo $fnotify
 fi
 
 if [[ ! -p "$fnotify" ]]; then
-    echo "error creating/opening fifo $fnotify"
+    log "error creating/opening fifo $fnotify"
     exit 1
 fi
 
 
 # Botmanager watchdog
 {
-    echo "watchdog starting..."
+    log "watchdog starting..."
     trap cleanup EXIT
     while [[ -p $fnotify ]]; do
         # Spawn the radio recorder bot
-        botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua")
+	botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua.*--host=$host")
         if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
-            echo "Spawn bot: luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
+            recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
+            log "Spawn recorder bot: $recorderbot_cmd"
             if [ -n "$recorderbot_log" ] && [ "$recorderbot_log" != "-" ]; then
-                (luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify) > "$recorderbot_log" 2>&1 &
+                $recorderbot_cmd > "$recorderbot_log" 2>&1 &
             else
                 (luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify) &
             fi
         fi
 
         # Spawn the statusPage bot
-        botPID=$(pgrep -f -- "fgcom-status.bot.lua")
+        botPID=$(pgrep -f -- "fgcom-status.bot.lua.*--host=$host")
         if [[ $run_statusbot -gt "0" && -z "$botPID" ]]; then
             statusbot_cmd="luajit statuspage/fgcom-status.bot.lua $status_opts"
             [[ -n "$statusbot_web" ]] && statusbot_cmd="$statusbot_cmd --web=$statusbot_web"
             [[ -n "$statusbot_stats" ]] && statusbot_cmd="$statusbot_cmd --stats=$statusbot_stats"
-            echo "Spawn bot: $statusbot_cmd"
+            log "Spawn status bot: $statusbot_cmd"
             if [ -n "$statusbot_log" ] && [ "$statusbot_log" != "-" ]; then
-                ($statusbot_cmd) > "$statusbot_log" 2>&1 &
+                $statusbot_cmd > "$statusbot_log" 2>&1 &
             else
                 ($statusbot_cmd) &
             fi
@@ -247,7 +254,7 @@ fi
         
         sleep 1
     done
-    echo "watchdog finished"
+    log "watchdog finished"
     
 } &
 
@@ -271,17 +278,17 @@ while true; do
             # See if there is already a playback bot instance with that sample
             botPID=$(pgrep -f -- "--sample=$samplefile")
             if [[ -n "$botPID" ]]; then
-                echo "Spawn bot ignored (found already running instance): $playbackbot_cmd"
+                log "Spawn playback bot ignored (found already running instance): $playbackbot_cmd"
                 continue
             fi
             
             #spawn bot
             owner_opt=""
             if [[ -n $ownersession ]]; then owner_opt="--owntoken=$ownersession"; fi
-            playbackbot_cmd="cd server && luajit fgcom-radio-playback.bot.lua $playback_opts $owner_opt --sample=$samplefile"
-            echo "Spawn bot: $playbackbot_cmd"
+            playbackbot_cmd="luajit fgcom-radio-playback.bot.lua $playback_opts $owner_opt --sample=$samplefile"
+            log "Spawn playback bot: $playbackbot_cmd"
             if [ -n "$playbackbot_log" ] && [ "$playbackbot_log" != "-" ]; then
-                ($playbackbot_cmd) > "$playbackbot_log" 2>&1 &
+                $playbackbot_cmd > "$playbackbot_log" 2>&1 &
             else
                 ($playbackbot_cmd) &
             fi
@@ -289,4 +296,4 @@ while true; do
     fi
 done
 
-echo "Botmanager exiting"
+log "Botmanager exiting"
