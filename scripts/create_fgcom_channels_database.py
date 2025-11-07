@@ -72,13 +72,34 @@ def create_fgcom_channels():
             (1, 2, 1, None, "admin", 1, 1, 0, 0),  # @admin: +speak, +whisper, +textmessage
         ]
         
+        acl_created = 0
+        acl_skipped = 0
         for server_id, channel_id, priority, user_id, group_name, apply_here, apply_sub, grantpriv, revokepriv in acl_entries:
+            # Check if ACL entry already exists
+            cursor.execute("""
+                SELECT COUNT(*) FROM acl 
+                WHERE server_id = ? AND channel_id = ? AND priority = ? 
+                AND (user_id IS NULL AND ? IS NULL OR user_id = ?)
+                AND (group_name IS NULL AND ? IS NULL OR group_name = ?)
+            """, (server_id, channel_id, priority, user_id, user_id, group_name, group_name))
+            
+            if cursor.fetchone()[0] > 0:
+                acl_skipped += 1
+                continue
+            
+            # Insert ACL entry
             cursor.execute("""
                 INSERT INTO acl (server_id, channel_id, priority, user_id, group_name, apply_here, apply_sub, grantpriv, revokepriv)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (server_id, channel_id, priority, user_id, group_name, apply_here, apply_sub, grantpriv, revokepriv))
+            acl_created += 1
         
-        print("✅ ACL permissions configured")
+        if acl_created > 0:
+            print(f"✅ Created {acl_created} ACL permission(s)")
+        if acl_skipped > 0:
+            print(f"ℹ️  Skipped {acl_skipped} existing ACL permission(s)")
+        if acl_created == 0 and acl_skipped > 0:
+            print("✅ ACL permissions already configured")
         
         # Commit changes
         conn.commit()

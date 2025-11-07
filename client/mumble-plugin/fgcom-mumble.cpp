@@ -31,6 +31,7 @@
 #include "io_UDPServer.h"
 #include "io_UDPClient.h"
 #include "radio_model.h"
+#include "audio.h"
 #include "garbage_collector.h"
 #include "solar_data.h"
 #include "shared_data.h"
@@ -1370,6 +1371,38 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             } else {
                 // Handle buffer size overflow
                 throw std::runtime_error("Audio buffer size exceeds maximum allowed size");
+            }
+            
+            // Generate white noise when squelch is open but no signal is present
+            // This simulates realistic radio behavior where you hear static when squelch is open
+            if (fgcom_cfg.radioAudioEffects) {
+                // Check all local radios to see if any have squelch open
+                float bestNoiseLevel = 0.0f;  // Track the highest noise level from any radio
+                const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
+                const float MAX_NOISE_VOLUME = 0.3f;  // Maximum white noise volume (30%)
+                
+                for (const auto &lcl_idty : fgcom_local_client) {
+                    const fgcom_client& lcl = lcl_idty.second;
+                    for (const auto &radio : lcl.radios) {
+                        // Check if radio is operable and has squelch open
+                        if (radio.operable && radio.frequency != "" && radio.squelch <= SQUELCH_OPEN_THRESHOLD) {
+                            // Calculate noise level based on squelch setting
+                            // Lower squelch (closer to 0.0) = more noise
+                            // When squelch is 0.0, use maximum noise; when squelch is at threshold, use less noise
+                            float noiseLevel = (1.0f - (radio.squelch / SQUELCH_OPEN_THRESHOLD)) * MAX_NOISE_VOLUME;
+                            if (noiseLevel > bestNoiseLevel) {
+                                bestNoiseLevel = noiseLevel;
+                            }
+                            pluginDbg("mumble_onAudioSourceFetched():   generating white noise for radio (freq="+radio.frequency+", squelch="+std::to_string(radio.squelch)+", noiseLevel="+std::to_string(noiseLevel)+")");
+                        }
+                    }
+                }
+                
+                // Generate white noise if any radio has squelch open
+                if (bestNoiseLevel > 0.0f) {
+                    fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
+                    pluginDbg("mumble_onAudioSourceFetched():   white noise generated (level="+std::to_string(bestNoiseLevel)+")");
+                }
             }
         }
         
