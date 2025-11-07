@@ -123,24 +123,208 @@ source .env
 ```
 
 #### `feature_toggles.conf`
-**Purpose**: Feature toggle configuration for enabling/disabling specific features.
+**Purpose**: Comprehensive feature toggle configuration for enabling/disabling specific features across 17 categories. Controls 107+ configurable features including API endpoints, external data sources, noise analysis, ATIS integration, and GPU scaling.
 
-**Features**:
-- Feature enable/disable controls
-- A/B testing support
-- Gradual feature rollout
-- Feature flags
-- Configuration management
+**Documentation**: See [Feature Toggle System](../docs/FEATURE_TOGGLE_SYSTEM.md) and [Feature Toggle API Control](../docs/FEATURE_TOGGLE_API_CONTROL.md) for detailed information.
 
-**Usage**:
+**Configuration Sections**:
+
+##### `[feature_toggles]` - Core System Features
+- **Core Features**: Radio communication, terrain analysis, antenna patterns, propagation modeling
+- **Advanced Features**: GPU acceleration, distributed computing, EME calculations, solar data integration
+- **Audio Features**: Audio effects, noise reduction, AGC squelch, frequency offset
+- **Network Features**: UDP communication, WebSocket API, REST API, secure communication
+- **API Endpoint Control**: Read/write controls for solar, weather, propagation, and antenna APIs
+- **Debugging Features**: Debug logging, performance monitoring, memory tracking, thread monitoring (default: `false`)
+- **Experimental Features**: Experimental propagation, audio, networking, GPU features (default: `false`)
+
+##### `[radio_features]` - Radio Communication Types
+Controls which radio frequency bands and communication types are enabled:
+- VHF, UHF, HF communication
+- Amateur, military, aviation, maritime radio
+- **Default**: All enabled (`true`)
+
+##### `[antenna_features]` - Antenna Types
+Controls which antenna pattern types are supported:
+- Yagi, dipole, vertical, beam, parabolic antennas
+- **Default**: All enabled (`true`)
+
+##### `[propagation_features]` - Propagation Models
+Controls which radio propagation models are active:
+- Line of sight, tropospheric ducting, ionospheric propagation, ground wave, sky wave
+- **Default**: All enabled (`true`)
+
+##### `[audio_features]` - Audio Processing
+Controls audio processing capabilities:
+- Doppler shift, audio compression, enhancement, filtering
+- **Default**: All enabled (`true`)
+
+##### `[network_features]` - Network Protocols
+Controls network communication protocols:
+- UDP/TCP server/client, WebSocket server/client
+- **Default**: All enabled (`true`)
+
+##### `[security_features]` - Security Controls
+Controls security features:
+- Authentication, encryption, certificate validation, threat detection
+- **Default**: All enabled (`true`)
+
+##### `[monitoring_features]` - System Monitoring
+Controls monitoring and statistics collection:
+- Signal monitoring, performance monitoring, error monitoring, statistics collection
+- **Default**: All enabled (`true`)
+
+##### `[api_endpoint_features]` - API Endpoint Controls
+**IMPORTANT**: Most API endpoints are **disabled by default** (`false`) for security.
+
+**Solar Data API Controls** (default: `false`):
+- `enable_solar_data_get_current` - GET current solar data
+- `enable_solar_data_get_history` - GET solar data history
+- `enable_solar_data_get_forecast` - GET solar data forecast
+- `enable_solar_data_post_submit` - POST submit solar data
+- `enable_solar_data_post_batch_submit` - POST batch submit solar data
+- `enable_solar_data_put_update` - PUT update solar data
+
+**Weather Data API Controls** (default: `false`):
+- `enable_weather_data_get_current` - GET current weather data
+- `enable_weather_data_get_history` - GET weather data history
+- `enable_weather_data_get_forecast` - GET weather forecast
+- `enable_weather_data_post_submit` - POST submit weather data
+- `enable_weather_data_post_batch_submit` - POST batch submit weather data
+- `enable_weather_data_put_update` - PUT update weather data
+
+**Lightning Data API Controls** (default: `false`):
+- `enable_lightning_data_get_current` - GET current lightning data
+- `enable_lightning_data_get_strikes` - GET lightning strikes
+- `enable_lightning_data_post_submit` - POST submit lightning data
+- `enable_lightning_data_post_batch_submit` - POST batch submit lightning data
+
+**External Data Source Controls** (default: `false`):
+- `enable_external_solar_data_sources` - Master toggle for external solar data
+- `enable_external_weather_data_sources` - Master toggle for external weather data
+- `enable_noaa_solar_data` - NOAA solar data fetching
+- `enable_noaa_weather_data` - NOAA weather data fetching
+- `enable_openweather_api` - OpenWeather API integration
+- `enable_weather_gov_api` - Weather.gov API integration
+- `enable_noaa_swpc` - NOAA Space Weather Prediction Center
+- `enable_nasa_space_weather` - NASA space weather data
+- `enable_openweathermap_api` - OpenWeatherMap API
+- `enable_aster_gdem` - ASTER GDEM elevation data
+- `enable_usgs_ned` - USGS National Elevation Dataset
+- `enable_ionospheric_data` - Real-time ionospheric data
+- `enable_wwlln_lightning` - World Wide Lightning Location Network
+- `enable_vaisala_lightning` - Vaisala Global Lightning Dataset
+
+**Note**: External data sources require API keys configured via environment variables (see `[external_data_credentials]` section).
+
+##### `[data_source_features]` - Data Source Behavior
+Controls how data is fetched and submitted:
+- `enable_solar_data_external_fetch` - Fetch solar data from external sources (default: `true`)
+- `enable_weather_data_external_fetch` - Fetch weather data from external sources (default: `true`)
+- `enable_solar_data_game_submission` - Allow game clients to submit solar data (default: `true`)
+- `enable_weather_data_game_submission` - Allow game clients to submit weather data (default: `true`)
+
+**Note**: When game submission is enabled, external fetching should typically be disabled to avoid conflicts.
+
+##### `[noise_analysis_features]` - Noise Floor Analysis
+Controls noise floor calculation features:
+- **Basic Noise** (default: `true`): Atmospheric noise, lightning noise, solar noise, environmental noise
+- **Advanced Noise** (default: `false`): Power line analysis, traffic analysis, industrial analysis, EV charging analysis, substation analysis, power station analysis, OpenInfraMap integration
+
+**Note**: Advanced noise features require external data sources and may need API keys.
+
+##### `[external_data_credentials]` - API Credentials
+**Security Note**: Credentials should be set via environment variables, not in config files.
+
+All credentials use environment variable substitution:
+- NOAA SWPC: `NOAA_SWPC_API_KEY`, `NOAA_SWPC_USERNAME`, `NOAA_SWPC_PASSWORD`
+- NASA: `NASA_API_KEY`, `NASA_USERNAME`, `NASA_PASSWORD`
+- OpenWeatherMap: `OPENWEATHERMAP_API_KEY`, `OPENWEATHERMAP_USERNAME`, `OPENWEATHERMAP_PASSWORD`
+- NOAA Weather: `NOAA_WEATHER_API_KEY`, `NOAA_WEATHER_USERNAME`, `NOAA_WEATHER_PASSWORD`
+- ASTER GDEM: `ASTER_USERNAME`, `ASTER_PASSWORD`
+- USGS NED: `USGS_API_KEY`, `USGS_USERNAME`, `USGS_PASSWORD`
+- Ionospheric Data: `IONOSPHERIC_API_KEY`, `IONOSPHERIC_USERNAME`, `IONOSPHERIC_PASSWORD`
+- WWLLN: `WWLLN_USERNAME`, `WWLLN_PASSWORD`
+- Vaisala: `VAISALA_API_KEY`, `VAISALA_USERNAME`, `VAISALA_PASSWORD`
+
+##### `[atis_weather_integration_features]` - ATIS Weather Integration
+Controls ATIS (Automatic Terminal Information Service) weather monitoring and generation:
+- **Core Features** (default: `true`): Weather monitoring, automatic ATIS generation, letter system, pressure correction, runway detection, gust detection, visibility/cloud/temperature/wind/dew point monitoring, QNH/QFE monitoring
+- **Notifications** (default: `false`): ATIS notifications, webhook notifications, email notifications
+- **Debugging** (default: `false`): Debug logging, verbose logging
+- **System Features** (default: `true`): Performance monitoring, error recovery, fallback APIs, caching, persistence
+
+##### `[atis_weather_api_features]` - ATIS Weather API Integration
+Controls which weather APIs are used for ATIS:
+- **Core APIs** (default: `true`): Aviation weather API, OpenWeatherMap API, Weather.gov API, METAR data fetching
+- **Extended Features** (default: `false`): TAF data fetching, weather forecast, historical weather, weather alerts
+
+##### `[atis_weather_threshold_features]` - ATIS Weather Thresholds
+Controls which weather parameters trigger ATIS updates:
+- All monitoring features enabled by default (`true`): Wind direction/speed, gusts, temperature, pressure, visibility, cloud cover, dew point, runway change detection, active runway detection
+
+##### `[atis_weather_tts_features]` - ATIS Text-to-Speech
+Controls ATIS voice synthesis:
+- **Core TTS** (default: `true`): Piper TTS integration, voice selection, speed control, pitch control, audio quality control
+- **Advanced TTS** (default: `false`): Multilingual support, voice customization
+
+##### `[dynamic_gpu_scaling_features]` - Dynamic GPU Scaling
+Controls GPU resource management for high user loads (up to 200 users):
+- All features enabled by default (`true`): Dynamic GPU scaling, auto GPU allocation, network GPU sharing, load balancing, fallback, performance monitoring, utilization tracking, health checking, scaling thresholds, high load management, bandwidth monitoring, latency monitoring, reliability tracking, adaptive scaling, GPU pool management
+
+**Usage Examples**:
+
+**Minimal Configuration** (disable all external APIs):
 ```ini
-[features]
-voice_encryption = true
-satellite_communication = true
-gpu_acceleration = true
-webrtc_gateway = true
-atis_integration = true
+[api_endpoint_features]
+# All API endpoints disabled by default
+enable_solar_data_get_current = false
+enable_weather_data_get_current = false
+enable_external_solar_data_sources = false
+enable_external_weather_data_sources = false
 ```
+
+**Enable Read-Only APIs**:
+```ini
+[api_endpoint_features]
+# Enable read operations only
+enable_solar_data_get_current = true
+enable_solar_data_get_history = true
+enable_weather_data_get_current = true
+enable_weather_data_get_history = true
+# Keep write operations disabled
+enable_solar_data_post_submit = false
+enable_weather_data_post_submit = false
+```
+
+**Enable External Data Sources**:
+```ini
+[api_endpoint_features]
+enable_external_solar_data_sources = true
+enable_external_weather_data_sources = true
+enable_noaa_solar_data = true
+enable_noaa_weather_data = true
+enable_openweather_api = true
+
+[external_data_credentials]
+# Set these via environment variables:
+# export NOAA_API_KEY="your_key"
+# export OPENWEATHER_API_KEY="your_key"
+```
+
+**Enable Advanced Noise Analysis**:
+```ini
+[noise_analysis_features]
+enable_ev_charging_analysis = true
+enable_substation_analysis = true
+enable_power_station_analysis = true
+enable_openinframap_integration = true
+```
+
+**Related Documentation**:
+- [Feature Toggle System Documentation](../docs/FEATURE_TOGGLE_SYSTEM.md) - Complete system overview
+- [Feature Toggle API Control](../docs/FEATURE_TOGGLE_API_CONTROL.md) - API endpoint control details
+- [Installation Guide](../docs/INSTALLATION_GUIDE.md) - Setup instructions
 
 #### `frequency_offset.conf`
 **Purpose**: Frequency offset configuration for calibration and adjustment.

@@ -309,6 +309,9 @@ udpServerHost=*
 
 ### Advanced Features
 - **[Advanced Features](docs/advanced_features.md)** - Comprehensive overview of all advanced features
+- **[Feature Toggle System](docs/FEATURE_TOGGLE_SYSTEM.md)** - Runtime control over 107+ configurable features across 17 categories
+- **[Feature Toggle API Control](docs/FEATURE_TOGGLE_API_CONTROL.md)** - API endpoint access and external data source controls
+- **[Feature Toggles Configuration](configs/README.md#feature_togglesconf)** - Complete documentation for `feature_toggles.conf` with all 17 sections and 107+ features
 - **[WebRTC Browser Client Support](docs/web_rtc.md)** - WebRTC implementation documentation
 - **[Antenna Pattern Creation](docs/antenna_patterns.md)** - Antenna pattern creation guides
 - **[Dynamic GPU Scaling](docs/DYNAMIC_GPU_SCALING.md)** - Intelligent GPU resource management
