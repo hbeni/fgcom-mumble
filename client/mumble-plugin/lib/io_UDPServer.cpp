@@ -31,6 +31,7 @@
 #include <stdlib.h> 
 #include <unistd.h> 
 #include <string.h> 
+#include <errno.h>
 #include <sstream> 
 #include <regex>
 #include <algorithm>
@@ -712,16 +713,33 @@ void fgcom_spawnUDPServer() {
         n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
                      recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
         if (n < 0) {
-            // SOCKET_ERROR returned
+            // SOCKET_ERROR returned - check errno to determine if it's a fatal error
 #if defined(MINGW_WIN64) || defined(MINGW_WIN32)
-            //details for windows error codes: https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recvfrom
-            wprintf(L"recvfrom failed with error %d\n", WSAGetLastError());
-            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in nf-winsock-recvfrom()="+std::to_string(WSAGetLastError()));
-            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+", WSAGetLastError()="+std::to_string(WSAGetLastError())+")").c_str());
+            int error_code = WSAGetLastError();
+            // On Windows, WSAEINTR (10004) means interrupted, WSAEWOULDBLOCK (10035) means would block
+            if (error_code == WSAEINTR || error_code == WSAEWOULDBLOCK) {
+                // Non-fatal: interrupted by signal or would block - continue loop
+                continue;
+            }
+            // Fatal error
+            wprintf(L"recvfrom failed with error %d\n", error_code);
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom()="+std::to_string(error_code));
+            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+", WSAGetLastError()="+std::to_string(error_code)+")").c_str());
 #else
-            // linux recvfrom has no further details
-            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom()");
-            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+")").c_str());
+            // Linux: check errno
+            int error_code = errno;
+            if (error_code == EINTR) {
+                // Interrupted by signal - retry (this is normal and non-fatal)
+                pluginDbg("[UDP-server] recvfrom() interrupted by signal (EINTR), retrying...");
+                continue;
+            } else if (error_code == EAGAIN || error_code == EWOULDBLOCK) {
+                // Would block (socket is non-blocking) - continue loop (this is normal)
+                pluginDbg("[UDP-server] recvfrom() would block (EAGAIN/EWOULDBLOCK), continuing...");
+                continue;
+            }
+            // Fatal error - log and stop
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom(), errno="+std::to_string(error_code)+" ("+std::string(strerror(error_code))+")");
+            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+", errno="+std::to_string(error_code)+")").c_str());
 #endif
             // abort further processing and stop the udp server
             close(fgcom_UDPServer_sockfd);
