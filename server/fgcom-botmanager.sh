@@ -289,8 +289,6 @@ while true; do
             log "Spawn playback bot: $playbackbot_cmd"
             if [ -n "$playbackbot_log" ] && [ "$playbackbot_log" != "-" ]; then
                 $playbackbot_cmd > "$playbackbot_log" 2>&1 &
-            if [ -n $playbackbot_log ] && [ $playbackbot_log != "-" ]; then
-                $playbackbot_cmd > $playbackbot_log &
             else
                 ($playbackbot_cmd) &
             fi
