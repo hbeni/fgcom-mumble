@@ -1,7 +1,14 @@
 # FGCom-Mumble Plugin Specification
 
 ## Overview
-This document describes the technical specifications for the FGCom-Mumble plugin's internal architecture and I/O interfaces. The plugin provides intelligent radio communication management for flight simulation environments with realistic propagation modeling and advanced antenna pattern support.
+This document describes the technical specifications for the FGCom-Mumble plugin's internal architecture and I/O interfaces.
+
+The basic idea is that the plugin is some intelligent send/receive manager for the mumble client. The sending/receiving is governed by the underlaying radio simulation, i.e. the radios state, tuned frequencies and location.
+
+These states should be provided to the plugin in an application agnostic manner, so it's easy to interface as well as to flightgear and also third party ATC clients; and maybe also other flightsims...  
+I have chosen a simple, text based UDP protocol for this reason.
+
+The plugin provides intelligent radio communication management for flight simulation environments with realistic propagation modeling and advanced antenna pattern support.
 
 ## Architecture
 The plugin serves as an intelligent send/receive manager for the Mumble client, governed by sophisticated radio simulation including antenna radiation patterns, propagation physics, and realistic communication modeling. The system supports multiple frequency bands (HF, VHF, UHF) with physics-based propagation characteristics.
@@ -118,6 +125,24 @@ Therefore the internal radio model may convert such "channel names" to the real 
 - if the supplied frequency is *non-numeric* (eg. `PHONE:`... etc) it is used as-is.
 - if the supplied frequency is *the recorder one* (`RECORD_<tgtFrq>`), the frequency part is subject to channel-conversion.
 - if the supplied frequency *is* numeric, the frequency will be inspected for known "channel names". If so, it gets converted to the respective carrier frequency (like 25kHz `118.025` => `118.0250`; or 8.33kHz `118.015` => `118.0167`).
+
+#### Special Frequencies
+The plugin supports special frequency strings that provide additional functionality beyond standard radio communication:
+
+- **Test Frequencies**: Server-side bots provide test frequencies for system verification:
+  - **910.000 MHz**: Echo test frequency. Your voice will be echoed back after you release PTT, to allow you to check that your microphone, speakers/headset and that your connection to the FGCom server works and to let you know how you are heard from others. Test recordings are limited to 10 seconds by default.
+  - **911.000 MHz**: The frequency continuously plays a test sample, allowing you to check that your connection to the FGCom server works.
+
+- **Landlines/Intercom**: Landlines/Intercom connections are a feature meant to be used by ATC instances. They are not subject to radio limits like range or signal quality. They operate worldwide and in full duplex. Landline channel names start with `PHONE` and intercom with `IC:`. The difference between the two is audio characteristics.
+  - Format: `PHONE:[ICAO]:[POS](:[LINE])`, like `PHONE:EDDM:TWR:1` or `PHONE:EDMO:GND`
+  - Format: `IC:[ICAO]:[POS](:[LINE])` for intercom connections
+
+- **Recording Frequencies**: For ATIS and radio recording functionality:
+  - Format: `RECORD_<tgtFrq>` where `<tgtFrq>` is the target frequency to record (e.g., `RECORD_121.500`)
+
+- **Radio Deregistration**: To deregister a radio, set the frequency to `<del>`. A radio on this frequency is never operable and thus never sends or receives transmissions.
+
+For more details on special frequencies, see the [Special Frequencies Guide](../../docs/SPECIAL_FREQUENCIES_GUIDE.md).
 
 
 ### Configuration options
@@ -316,16 +341,98 @@ Radio wave models
 ------------------------
 When receiving radio transmissions, it is important to see if the sender is in range. Frequencies are reused around the globe and so this is the only way to distinguish between nearby transmitters and the ones on the other side of the globe.
 
-As a first draft, the plugin implements a set of simple radio wave propagation models in a continuous spectrum. The models support tuning bands, so a slight overlap and off-tuning can be simulated.  
-The main purpose is pilots geographic radio net separation and not realistic range behaviour at this time.
+The plugin implements sophisticated radio wave propagation models with physics-based calculations. The models support tuning bands, so a slight overlap and off-tuning can be simulated. The system provides realistic geographic radio net separation with advanced propagation characteristics.
+
+### Basic Propagation Models
 
 - **HF** (below 30MHz): Long range capabilities with sky wave propagation behind the horizon.  
-  Behind the horizon the signal will degrade a little, but otherwise the signal quality depends solely on distance and output power. No advanced characteristics (like time of day or sunspot cycle affecting the ionosphere) are taken into consideration yet.
-- **VHF** (30MHz to 300MHz): line-of-sight propagation, no reception behind the radio horizon.  
-  Altitude of sender/receiver, output power and distance affects signal quality and range. It is currently modelled very simply, so that the tx-power of 10W approximates linearly to 50 nautical miles in flat coordinate distance (i got this number for the Bendix KX165A by googling).  
-Please note that currently no (to me) known flightgear aircraft sets the radios tx-power, so it defaults to 10W/50nM (like current FGCom does).  
-The VHF model supports the notion of "channels" which get converted to real wave frequencies automatically (see `COMn_FRQ` description above).
-- **UHF** (above 300MHz): Modelled like VHF but with reduced range per output watt. No advanced calculations for obstructions like trees/buildings are done yet.
+  The HF model includes:
+  - Sky wave propagation with ionospheric reflection
+  - Solar cycle effects (sunspot cycle, solar flux index)
+  - Time of day variations (day/night ionospheric changes)
+  - Geomagnetic storm effects
+  - MUF/LUF (Maximum/Minimum Usable Frequency) calculations
+  - Ground wave propagation for short distances
+  - Signal quality depends on distance, output power, solar activity, and time of day
+
+- **VHF** (30MHz to 300MHz): Line-of-sight propagation with advanced atmospheric effects.  
+  The VHF model includes:
+  - Line-of-sight propagation with radio horizon calculations
+  - Altitude-based range extension (height gain)
+  - Tropospheric ducting (extended range under favorable conditions)
+  - Enhanced multipath effects (ground reflection, building scattering, vegetation)
+  - Doppler shift for moving vehicles
+  - Weather effects (humidity, temperature, pressure)
+  - Terrain obstruction and diffraction
+  - Antenna pattern effects (3D radiation patterns)
+  - Default tx-power of 10W approximates to 50 nautical miles in flat coordinate distance (Bendix KX165A reference)
+  - The VHF model supports the notion of "channels" which get converted to real wave frequencies automatically (see `COMn_FRQ` description above)
+
+- **UHF** (above 300MHz): Similar to VHF but with reduced range per output watt and additional effects.  
+  The UHF model includes:
+  - Line-of-sight propagation with shorter range than VHF
+  - Enhanced multipath effects
+  - Building and vegetation obstruction modeling
+  - Doppler shift effects
+  - Weather attenuation
+  - Antenna pattern effects
+
+### Advanced Propagation Features
+
+The system implements comprehensive propagation modeling including:
+
+#### Atmospheric Effects
+- **Free Space Path Loss**: Distance and frequency-dependent signal attenuation
+- **Atmospheric Absorption**: Weather-dependent signal loss with humidity and temperature effects
+- **Tropospheric Ducting**: Extended range under favorable atmospheric conditions
+- **Ionospheric Reflection**: HF sky wave propagation with solar cycle variations
+- **Rain Attenuation**: Frequency-dependent signal loss in precipitation
+
+#### Antenna and Terrain Effects
+- **Antenna Height Gain**: Professional base station performance modeling with height advantage
+- **3D Antenna Patterns**: Attitude-based radiation patterns for aircraft and vehicles
+- **Terrain Obstruction**: Realistic signal blocking, diffraction, and multipath effects
+- **Ground Reflection**: Ground plane effects and reflection coefficient modeling
+- **Antenna Efficiency**: Power efficiency and SWR modeling
+
+#### Solar and Ionospheric Effects
+- **Solar Data Integration**: Real-time solar flux index (SFI), K-index, A-index from NOAA
+- **Sunspot Cycle**: Long-term solar activity affecting HF propagation
+- **Ionospheric Modeling**: MUF/LUF calculations based on solar activity
+- **Geomagnetic Storms**: Effects on HF propagation during solar storms
+- **Time of Day Variations**: Day/night ionospheric changes
+
+#### Noise Floor Calculations
+- **Thermal Noise**: Base thermal noise floor
+- **Atmospheric Noise**: Frequency-dependent atmospheric noise (ITU-R P.372)
+- **Man-Made Noise**: Environment-based noise (urban, suburban, rural, quiet rural)
+- **Lightning Effects**: Real-time lightning strike noise
+- **Weather Noise**: Precipitation and weather-related noise
+- **Time of Day Factors**: Noise variations throughout the day
+- **Advanced Features** (optional): OSM integration, population density, power lines, traffic, industrial, EV charging, substations, power stations
+
+#### Advanced Audio Effects
+- **Doppler Shift**: Frequency offset for moving vehicles with relativistic corrections
+- **Enhanced Multipath**: Complex multipath component modeling with fading statistics
+- **Signal Quality Degradation**: Realistic signal quality based on propagation conditions
+
+### Configuration
+
+Many advanced features can be enabled/disabled through configuration:
+- Solar data integration (enabled by default)
+- Atmospheric effects (enabled by default)
+- Terrain analysis (enabled by default)
+- Advanced noise floor calculations (optional, can be enabled for realistic simulation)
+- GPU acceleration for complex calculations (optional)
+
+### Testing and Validation
+
+The `client/test/geotest` utility can be used for testing and validation of propagation models and antenna patterns. The system includes comprehensive test suites for validating propagation calculations.
+
+For more details on propagation modeling, see:
+- [Radio Propagation Mathematics](../../docs/RADIO_PROPAGATION_MATHEMATICS.md)
+- [Radio Propagation Formulas](../../docs/propagation-maths.md)
+- [How This Works for Dummies](../../docs/HOW_THIS_WORKS_FOR_DUMMIES.md)
 
 ## API and Security Features
 

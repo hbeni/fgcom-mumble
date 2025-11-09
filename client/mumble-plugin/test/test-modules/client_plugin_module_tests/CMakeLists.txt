@@ -57,6 +57,7 @@ include_directories(
 # Source files
 set(TEST_SOURCES
     test_client_plugin_module_tests_properties.cpp
+    test_white_noise_generation.cpp
 
     test_client_plugin_module_simple.cpp
     ../../client/mumble-plugin/fgcom-mumble.cpp
