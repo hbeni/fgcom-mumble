@@ -11,6 +11,7 @@
 - [Security Setup](#security-setup)
 - [Recent Updates](#recent-updates-v131)
 - [Important: Technical Requirements](#important-technical-requirements)
+- [Current Issues](#current-issues) *(Note: Issue is in the Mumble plugin itself, not the codebase. Fix has been attempted but the file is finicky.)*
 - [Getting Started](#getting-started)
   - [For Pilots and Users](#for-pilots-and-users)
   - [For Administrators](#for-administrators)
@@ -209,6 +210,14 @@ source .env
 - **Web Browsers**: WebRTC gateway (no installation required)
 
 
+
+---
+
+## Current Issues
+
+**Note:** The issue documented here is in the Mumble plugin itself, not the codebase. A fix has been attempted but the file is finicky.
+
+For details on current plugin issues, see [Plugin Issues Documentation](docs/plugin-issues.md).
 
 ---
 
