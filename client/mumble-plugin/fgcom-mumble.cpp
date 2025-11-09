@@ -737,14 +737,24 @@ mumble_error_t mumble_init(uint32_t id) {
 }
 
 void mumble_shutdown() {
-	pluginLog("Shutdown plugin");
-
+    pluginLog("Shutdown plugin - START");
     pluginDbg("stopping threads");
-    fgcom_shutdownUDPServer();
-    fgcom_stopUDPClient();
-    fgcom_shutdownGarbageCollector();
     
+    pluginLog("DEBUG: Shutting down UDP server...");
+    fgcom_shutdownUDPServer();
+    pluginLog("DEBUG: UDP server shutdown complete");
+    
+    pluginLog("DEBUG: Stopping UDP client...");
+    fgcom_stopUDPClient();
+    pluginLog("DEBUG: UDP client stopped");
+    
+    pluginLog("DEBUG: Shutting down garbage collector...");
+    fgcom_shutdownGarbageCollector();
+    pluginLog("DEBUG: Garbage collector shutdown complete");
+    
+    pluginLog("DEBUG: Deactivating plugin...");
     fgcom_setPluginActive(false); // stop plugin handling
+    pluginLog("DEBUG: Plugin deactivated");
     
 #ifdef DEBUG
     fgcom_debugthread_shutdown = true;
@@ -752,21 +762,38 @@ void mumble_shutdown() {
 
     // wait for all threads to have terminated
     pluginDbg("waiting for threads to finish");
+    pluginLog("DEBUG: Thread status - UDP Server: " + std::to_string(udpServerRunning) + 
+              ", UDP Client: " + std::to_string(udpClientRunning) + 
+              ", GC: " + std::to_string(fgcom_gcThreadRunning) + 
+              ", Debug: " + std::to_string(fgcom_debugthread_running));
     
     // Add timeout to prevent blocking forever
     auto start_time = std::chrono::steady_clock::now();
-    const auto timeout_duration = std::chrono::seconds(10);  // 10 second timeout
+    const auto timeout_duration = std::chrono::seconds(3);  // Reduced from 10 to 3 seconds
     
+    int loop_count = 0;
     while (udpServerRunning || udpClientRunning || fgcom_gcThreadRunning || fgcom_debugthread_running) {
         // Check if timeout has been reached
         auto current_time = std::chrono::steady_clock::now();
         if (current_time - start_time > timeout_duration) {
             pluginLog("WARNING: Thread shutdown timeout reached, forcing exit");
+            pluginLog("DEBUG: Still running - UDP Server: " + std::to_string(udpServerRunning) + 
+                      ", UDP Client: " + std::to_string(udpClientRunning) + 
+                      ", GC: " + std::to_string(fgcom_gcThreadRunning) + 
+                      ", Debug: " + std::to_string(fgcom_debugthread_running));
             break;
         }
         
+        // Log every second to see what's stuck
+        if (loop_count % 10 == 0) {
+            pluginLog("DEBUG: Waiting for threads... (" + std::to_string(loop_count/10) + "s)");
+        }
+        loop_count++;
+        
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+    
+    pluginLog("DEBUG: All threads terminated or timeout reached");
     
     // reenable a future init and reloading of config
     fgcom_offlineInitDone = false;
@@ -778,6 +805,7 @@ void mumble_shutdown() {
     
     pluginDbg("mumble_shutdown() complete.");
 	mumAPI.log(ownPluginID, "Plugin deactivated");
+    pluginLog("Shutdown plugin - COMPLETE");
 }
 
 MumbleStringWrapper mumble_getName() {
@@ -1381,28 +1409,43 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                 const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
                 const float MAX_NOISE_VOLUME = 0.3f;  // Maximum white noise volume (30%)
                 
-                for (const auto &lcl_idty : fgcom_local_client) {
-                    const fgcom_client& lcl = lcl_idty.second;
-                    for (const auto &radio : lcl.radios) {
-                        // Check if radio is operable and has squelch open
-                        if (radio.operable && radio.frequency != "" && radio.squelch <= SQUELCH_OPEN_THRESHOLD) {
+                // Thread-safe access: use try_lock to avoid blocking the audio thread
+                // If we can't get the lock immediately, skip noise generation for this frame
+                if (fgcom_localcfg_mtx.try_lock()) {
+                    // Make a quick snapshot of squelch values - only copy primitive types
+                    std::vector<float> squelchValues;
+                    squelchValues.reserve(8);  // Pre-allocate to avoid reallocation
+                    for (const auto &lcl_idty : fgcom_local_client) {
+                        const fgcom_client& lcl = lcl_idty.second;
+                        for (const auto &radio : lcl.radios) {
+                            // Only copy if radio is operable and has frequency set
+                            if (radio.operable && !radio.frequency.empty()) {
+                                squelchValues.push_back(radio.squelch);
+                            }
+                        }
+                    }
+                    fgcom_localcfg_mtx.unlock();
+                    
+                    // Process the snapshot without holding the lock
+                    for (float squelch : squelchValues) {
+                        if (squelch <= SQUELCH_OPEN_THRESHOLD) {
                             // Calculate noise level based on squelch setting
                             // Lower squelch (closer to 0.0) = more noise
                             // When squelch is 0.0, use maximum noise; when squelch is at threshold, use less noise
-                            float noiseLevel = (1.0f - (radio.squelch / SQUELCH_OPEN_THRESHOLD)) * MAX_NOISE_VOLUME;
+                            float noiseLevel = (1.0f - (squelch / SQUELCH_OPEN_THRESHOLD)) * MAX_NOISE_VOLUME;
                             if (noiseLevel > bestNoiseLevel) {
                                 bestNoiseLevel = noiseLevel;
                             }
-                            pluginDbg("mumble_onAudioSourceFetched():   generating white noise for radio (freq="+radio.frequency+", squelch="+std::to_string(radio.squelch)+", noiseLevel="+std::to_string(noiseLevel)+")");
                         }
                     }
+                    
+                    // Generate white noise if any radio has squelch open
+                    if (bestNoiseLevel > 0.0f) {
+                        fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
+                    }
                 }
-                
-                // Generate white noise if any radio has squelch open
-                if (bestNoiseLevel > 0.0f) {
-                    fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
-                    pluginDbg("mumble_onAudioSourceFetched():   white noise generated (level="+std::to_string(bestNoiseLevel)+")");
-                }
+                // If try_lock failed, silently skip noise generation for this frame
+                // This prevents blocking the audio thread
             }
         }
         

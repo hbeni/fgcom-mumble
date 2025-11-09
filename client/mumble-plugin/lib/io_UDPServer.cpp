@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <sys/types.h> 
 #include <math.h>
+#include <mutex>
 
 #if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     #include <winsock2.h>
@@ -621,9 +622,10 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
 int fgcom_udp_port_used = fgcom_cfg.udpServerPort;
 bool fgcom_udp_shutdowncmd = false;
 bool udpServerRunning = false;
+int  fgcom_UDPServer_sockfd = -1;  // Global socket descriptor for shutdown
+std::mutex fgcom_UDPServer_sockfd_mtx;  // Mutex to protect socket access
 void fgcom_spawnUDPServer() {
     pluginLog("[UDP-server] server starting");
-    int  fgcom_UDPServer_sockfd;
     char buffer[MAXLINE];
     struct sockaddr_in servaddr, cliaddr; 
     
@@ -639,10 +641,13 @@ void fgcom_spawnUDPServer() {
 #endif
       
     // Creating socket file descriptor 
-    if ( (fgcom_UDPServer_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        pluginLog("[UDP-server] socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")"); 
-        mumAPI.log(ownPluginID, std::string("UDP server failed: socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")").c_str());
-        return;
+    {
+        std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+        if ( (fgcom_UDPServer_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
+            pluginLog("[UDP-server] socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")"); 
+            mumAPI.log(ownPluginID, std::string("UDP server failed: socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")").c_str());
+            return;
+        }
     } 
       
     memset(&servaddr, 0, sizeof(servaddr)); 
@@ -699,26 +704,47 @@ void fgcom_spawnUDPServer() {
         int recvfrom_flags = MSG_WAITALL;
 #endif
 
-        // Set socket timeout to prevent blocking forever
+        // Set socket timeout to prevent blocking forever - use 1 second for faster shutdown response
         struct timeval timeout;
-        timeout.tv_sec = 5;  // 5 second timeout
+        timeout.tv_sec = 1;  // 1 second timeout - allows checking shutdown flag more frequently
         timeout.tv_usec = 0;
-        setsockopt(fgcom_UDPServer_sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+        {
+            std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+            if (fgcom_UDPServer_sockfd >= 0) {
+                setsockopt(fgcom_UDPServer_sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+            }
+        }
 
         // receive datagrams with bounds checking
         if (len > MAXLINE) {
             pluginLog("[UDP-server] Client address length exceeds maximum buffer size");
             continue;
         }
-        n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
-                     recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
+        {
+            std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+            if (fgcom_UDPServer_sockfd < 0) {
+                // Socket was closed by shutdown
+                break;
+            }
+            n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
+                         recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
+        }
         if (n < 0) {
             // SOCKET_ERROR returned - check errno to determine if it's a fatal error
 #if defined(MINGW_WIN64) || defined(MINGW_WIN32)
             int error_code = WSAGetLastError();
             // On Windows, WSAEINTR (10004) means interrupted, WSAEWOULDBLOCK (10035) means would block
+            // WSAETIMEDOUT (10060) means timeout
             if (error_code == WSAEINTR || error_code == WSAEWOULDBLOCK) {
-                // Non-fatal: interrupted by signal or would block - continue loop
+                // Non-fatal: interrupted by signal or would block - check shutdown flag and continue
+                if (fgcom_udp_shutdowncmd) break;
+                continue;
+            } else if (error_code == WSAETIMEDOUT) {
+                // Timeout - check shutdown flag
+                if (fgcom_udp_shutdowncmd) {
+                    pluginDbg("[UDP-server] shutdown requested during timeout");
+                    break;
+                }
                 continue;
             }
             // Fatal error
@@ -731,10 +757,19 @@ void fgcom_spawnUDPServer() {
             if (error_code == EINTR) {
                 // Interrupted by signal - retry (this is normal and non-fatal)
                 pluginDbg("[UDP-server] recvfrom() interrupted by signal (EINTR), retrying...");
+                if (fgcom_udp_shutdowncmd) break;
                 continue;
             } else if (error_code == EAGAIN || error_code == EWOULDBLOCK) {
                 // Would block (socket is non-blocking) - continue loop (this is normal)
                 pluginDbg("[UDP-server] recvfrom() would block (EAGAIN/EWOULDBLOCK), continuing...");
+                if (fgcom_udp_shutdowncmd) break;
+                continue;
+            } else if (error_code == ETIMEDOUT) {
+                // Timeout - check shutdown flag
+                if (fgcom_udp_shutdowncmd) {
+                    pluginDbg("[UDP-server] shutdown requested during timeout");
+                    break;
+                }
                 continue;
             }
             // Fatal error - log and stop
@@ -742,7 +777,13 @@ void fgcom_spawnUDPServer() {
             mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+", errno="+std::to_string(error_code)+")").c_str());
 #endif
             // abort further processing and stop the udp server
-            close(fgcom_UDPServer_sockfd);
+            {
+                std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+                if (fgcom_UDPServer_sockfd >= 0) {
+                    close(fgcom_UDPServer_sockfd);
+                    fgcom_UDPServer_sockfd = -1;
+                }
+            }
             mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped forcefully").c_str());
             break;
         }
@@ -756,7 +797,13 @@ void fgcom_spawnUDPServer() {
         if (strstr(buffer, "SHUTDOWN") && fgcom_udp_shutdowncmd) {
             pluginLog("[UDP-server] shutdown command recieved, server stopping now");
             fgcom_udp_shutdowncmd = false;
-            close(fgcom_UDPServer_sockfd);
+            {
+                std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+                if (fgcom_UDPServer_sockfd >= 0) {
+                    close(fgcom_UDPServer_sockfd);
+                    fgcom_UDPServer_sockfd = -1;
+                }
+            }
             //mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
             // ^^ note: as long as the mumAPI is synchronuous/blocking, we cannot emit that message: it causes mumble's main thread to block/deadlock.
             break;
@@ -805,6 +852,14 @@ void fgcom_spawnUDPServer() {
         }
     }
 
+    // Clean up socket
+    {
+        std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+        if (fgcom_UDPServer_sockfd >= 0) {
+            close(fgcom_UDPServer_sockfd);
+            fgcom_UDPServer_sockfd = -1;
+        }
+    }
     udpServerRunning = false;
     pluginDbg("[UDP-server] thread finished.");
     fgcom_udp_port_used = fgcom_cfg.udpServerPort;
@@ -812,11 +867,23 @@ void fgcom_spawnUDPServer() {
 }
 
 void fgcom_shutdownUDPServer() {
-    // Trigger shutdown: this just sends some magic UDP message.
-    // This is neccessary because of the blocking state of the socket.
+    // Set shutdown flag first
+    fgcom_udp_shutdowncmd = true;
+    
+    // Close the socket to interrupt blocking recvfrom() call
+    // This is the most reliable way to wake up the thread
+    {
+        std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+        if (fgcom_UDPServer_sockfd >= 0) {
+            pluginDbg("[UDP-server] closing socket to interrupt blocking recvfrom()");
+            close(fgcom_UDPServer_sockfd);
+            fgcom_UDPServer_sockfd = -1;
+        }
+    }
+    
+    // Also send UDP shutdown message as backup (in case socket wasn't blocking)
     pluginDbg("sending UDP shutdown request to port "+std::to_string(fgcom_udp_port_used));
     std::string message = "SHUTDOWN";
-    fgcom_udp_shutdowncmd = true;
 
 	struct sockaddr_in server_address;
 	memset(&server_address, 0, sizeof(server_address));
