@@ -1,6 +1,6 @@
 .PHONY : all debug all-debug plugin-debug plugin libs test tools clean clean-all debug-on
 CC=g++
-DEBUG=
+DEBUG=-g
 THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
 override CFLAGS+=-Wall -O3 -I. -I./lib -DENABLE_OPENINFRAMAP $(DEBUG)

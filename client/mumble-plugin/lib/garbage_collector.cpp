@@ -61,8 +61,14 @@
 void fgcom_gc_clean_lcl() {
     std::chrono::milliseconds lcl_timeout(FGCOM_GARBAGECOLLECT_TIMEOUT_LCL);
     
-    // CRITICAL FIX: Use RAII lock guard for exception safety
-    std::lock_guard<std::mutex> lock(fgcom_localcfg_mtx);
+    // CRITICAL FIX: Use try_lock to avoid blocking - if lock unavailable, skip this cleanup cycle
+    // This prevents deadlock when audio callback or main thread holds the lock
+    std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Lock unavailable - skip this cleanup cycle to avoid deadlock
+        pluginDbg("[GC] LCL cleanup skipped: fgcom_localcfg_mtx unavailable");
+        return;
+    }
 
     pluginDbg("[GC] LCL searching for stale local state..."); 
     std::vector<int> staleIIDs;
@@ -89,7 +95,7 @@ void fgcom_gc_clean_lcl() {
         pluginDbg("[GC] LCL  clean iid="+std::to_string(elem));
     }
     
-    // Mutex automatically unlocked by RAII lock guard
+    // Mutex automatically unlocked when lock goes out of scope
     
     // update client comment if we removed identities
     if (!staleIIDs.empty()) fgcom_updateClientComment();
@@ -119,7 +125,14 @@ void fgcom_gc_clean_lcl() {
 void fgcom_gc_clean_rmt() {
     std::chrono::milliseconds rmt_timeout(FGCOM_GARBAGECOLLECT_TIMEOUT_RMT);
     
-    fgcom_remotecfg_mtx.lock();
+    // CRITICAL FIX: Use try_lock to avoid blocking - if lock unavailable, skip this cleanup cycle
+    // This prevents deadlock when audio callback or main thread holds the lock
+    std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        // Lock unavailable - skip this cleanup cycle to avoid deadlock
+        pluginDbg("[GC] RMT cleanup skipped: fgcom_remotecfg_mtx unavailable");
+        return;
+    }
     
     pluginDbg("[GC] RMT searching for stale remote state...");
     std::vector<mumble_userid_t> staleRemoteClients;
@@ -155,9 +168,7 @@ void fgcom_gc_clean_rmt() {
         pluginDbg("[GC] RMT  clean mumid="+std::to_string(elem)+" (no identities left)");
     }
     
-    
-
-    fgcom_remotecfg_mtx.unlock();
+    // Mutex automatically unlocked when lock goes out of scope
 }
 
 

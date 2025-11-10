@@ -682,5 +682,18 @@ While the current fix uses a simple fixed-volume approach for performance reason
 
 ---
 
+## Debugging Hung Mumble Processes
+
+If Mumble hangs or freezes when using the plugin, see the [Debugging Hung Mumble](DEBUGGING_HUNG_MUMBLE.md) guide for detailed instructions on:
+
+- Capturing backtraces using GDB
+- Running Mumble with debug output (`mumble -v -debug`)
+- Identifying deadlocks and mutex issues
+- Common deadlock scenarios in the FGCom plugin
+
+This guide includes step-by-step instructions for diagnosing threading issues and capturing detailed stack traces from hung processes.
+
+---
+
 **Implementation Note:**
-I have tried to fix these issues, but it very often results in Mumble freezing if one tries to reload or install the plugin. The fix described above uses safe locking patterns (`try_lock()`) and avoids blocking operations to minimize this risk.
+Multiple deadlock fixes have been applied to prevent Mumble from freezing when reloading the plugin. All blocking mutex operations in background threads and audio callbacks have been replaced with non-blocking `std::unique_lock` with `std::try_to_lock` to prevent deadlocks. However, reloading the plugin while RadioGUI is sending UDP data can still cause Mumble to become unresponsive. The white noise generation issue at 0% squelch is currently under investigation with extensive debug logging added to diagnose the problem.

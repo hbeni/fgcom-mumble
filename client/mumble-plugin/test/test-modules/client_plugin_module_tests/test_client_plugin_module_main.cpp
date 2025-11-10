@@ -20,19 +20,17 @@
 #include <functional>
 
 // Include the client plugin modules
-#include "../../client/mumble-plugin/lib/globalVars.h"
-#include "../../client/mumble-plugin/lib/radio_model.h"
-#include "../../client/mumble-plugin/lib/mumble/MumblePlugin_v_1_0_x.h"
-#include "../../client/mumble-plugin/lib/io_plugin.h"
-#include "../../client/mumble-plugin/lib/fgcom_config.h"
-#include "../../client/mumble-plugin/lib/audio.h"
-#include "../../client/mumble-plugin/lib/vehicle_dynamics.h"
+#include "../../../lib/globalVars.h"
+#include "../../../lib/radio_model.h"
+#include "../../../lib/mumble/MumblePlugin_v_1_0_x.h"
+#include "../../../lib/io_plugin.h"
+#include "../../../lib/fgcom_config.h"
+#include "../../../lib/audio.h"
+#include "../../../lib/vehicle_dynamics.h"
 
 // Forward declarations for missing functions
-extern "C" {
-    bool fgcom_isPluginActive();
-    void fgcom_handlePTT();
-}
+bool fgcom_isPluginActive();
+void fgcom_handlePTT();
 
 // Test suite for client plugin module tests
 class ClientPluginModuleTest : public ::testing::Test {

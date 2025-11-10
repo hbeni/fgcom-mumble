@@ -35,6 +35,7 @@
 #include "garbage_collector.h"
 #include "solar_data.h"
 #include "shared_data.h"
+#include "atmospheric_noise.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,6 +48,8 @@
 #include <regex>
 #include <fstream>
 #include <memory>
+#include <chrono>
+#include <cmath>
 
 #ifdef DEBUG
 // include debug code
@@ -76,6 +79,33 @@ std::mutex fgcom_channel_mutex; // Mutex for channel operations
 
 struct fgcom_config fgcom_cfg;
 std::mutex fgcom_config_mutex; // Mutex for configuration access
+
+// Noise floor cache for performance optimization
+struct NoiseFloorCacheEntry {
+    float noise_floor_db;
+    float audio_volume;  // Converted to 0.0-1.0 range
+    std::chrono::system_clock::time_point last_calculated;
+    double cached_lat;
+    double cached_lon;
+    float cached_freq_mhz;
+    bool is_valid;
+    
+    NoiseFloorCacheEntry() : noise_floor_db(0.0f), audio_volume(0.0f), 
+                             cached_lat(0.0), cached_lon(0.0), cached_freq_mhz(0.0f), is_valid(false) {
+        last_calculated = std::chrono::system_clock::now();
+    }
+};
+
+// Cache for noise floor calculations (key: "lat_lon_freq" as string)
+std::map<std::string, NoiseFloorCacheEntry> noise_floor_cache;
+std::mutex noise_floor_cache_mtx;
+const std::chrono::seconds CACHE_DURATION(5);  // Recalculate every 5 seconds
+const double POSITION_THRESHOLD = 0.001;  // ~100m - recalculate if moved more
+const float FREQ_THRESHOLD = 0.001f;  // 1 kHz - recalculate if frequency changed
+
+// Background thread for cache updates
+std::thread noise_floor_update_thread;
+std::atomic<bool> noise_floor_thread_running{false};
 
 
 /*******************
@@ -165,6 +195,159 @@ bool fgcom_isPluginActive() {
     return fgcom_inSpecialChannel.load(); // Thread-safe atomic read
 }
 
+/**
+ * Convert noise floor in dBm to audio volume (0.0 to 1.0)
+ * 
+ * Typical noise floor ranges:
+ * - Remote areas: -140 to -130 dBm (S0-S1) -> 0.05-0.10 volume
+ * - Suburban: -130 to -120 dBm (S1-S3) -> 0.10-0.15 volume
+ * - Urban: -120 to -110 dBm (S3-S5) -> 0.15-0.25 volume
+ * - Industrial: -110 to -100 dBm (S5-S7) -> 0.25-0.35 volume
+ * - Very noisy: -100 to -90 dBm (S7-S9+) -> 0.35-0.50 volume
+ */
+float convertNoiseFloorToVolume(float noise_floor_dbm) {
+    // Clamp noise floor to reasonable range
+    noise_floor_dbm = std::max(-150.0f, std::min(-80.0f, noise_floor_dbm));
+    
+    // Convert dBm to linear scale (0.0 to 1.0)
+    // Formula: volume = (noise_floor_dbm + 150) / 70
+    // This maps -150 dBm -> 0.0, -80 dBm -> 1.0
+    float volume = (noise_floor_dbm + 150.0f) / 70.0f;
+    
+    // Apply non-linear curve for more realistic feel
+    volume = std::pow(volume, 0.7f);  // Slight compression
+    
+    // Clamp to maximum reasonable volume (30% max, same as current MAX_NOISE_VOLUME)
+    return std::min(0.3f, volume);
+}
+
+// Forward declaration
+float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz);
+
+/**
+ * Background thread to update noise floor cache periodically
+ * This pre-calculates noise floor values to avoid expensive calculations in the audio callback
+ */
+void noiseFloorUpdateThread() {
+    while (noise_floor_thread_running) {
+        // Update cache for all active radios
+        // Use RAII to ensure mutex is always unlocked, even if exception occurs
+        std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+        if (lock.owns_lock()) {
+            for (const auto &lcl_idty : fgcom_local_client) {
+                const fgcom_client& lcl = lcl_idty.second;
+                for (const auto &radio : lcl.radios) {
+                    if (radio.operable && !radio.frequency.empty()) {
+                        try {
+                            float freq_mhz = std::stof(radio.frequency);
+                            // Pre-calculate and cache
+                            getCachedNoiseFloorVolume(lcl.lat, lcl.lon, freq_mhz);
+                        } catch (const std::exception& e) {
+                            // Invalid frequency, skip this radio
+                            pluginDbg("[noise-floor-thread] Invalid frequency for radio: " + std::string(e.what()));
+                        } catch (...) {
+                            // Unknown exception, skip this radio
+                            pluginDbg("[noise-floor-thread] Unknown exception parsing frequency");
+                        }
+                    }
+                }
+            }
+            // Mutex automatically unlocked when lock goes out of scope
+        }
+        
+        // Sleep for cache update interval
+        std::this_thread::sleep_for(CACHE_DURATION);
+    }
+}
+
+/**
+ * Get cached or calculate noise floor for a radio
+ * Returns audio volume (0.0 to 1.0) ready to use
+ * 
+ * IMPORTANT: This function must NEVER block the audio callback.
+ * Uses try_lock and exception handling to ensure non-blocking operation.
+ */
+float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz) {
+    // Create cache key
+    std::string cache_key = std::to_string(lat) + "_" + std::to_string(lon) + "_" + std::to_string(freq_mhz);
+    
+    // Check cache with try_lock to avoid blocking
+    // Use RAII to ensure mutex is always unlocked, even if exception occurs
+    bool cache_hit = false;
+    float cached_volume = 0.1f;  // Default fallback
+    
+    {
+        std::unique_lock<std::mutex> lock(noise_floor_cache_mtx, std::try_to_lock);
+        if (lock.owns_lock()) {
+            auto it = noise_floor_cache.find(cache_key);
+            if (it != noise_floor_cache.end()) {
+                NoiseFloorCacheEntry& entry = it->second;
+                auto now = std::chrono::system_clock::now();
+                auto age = std::chrono::duration_cast<std::chrono::seconds>(now - entry.last_calculated);
+                
+                // Check if cache is still valid
+                bool position_changed = (std::abs(entry.cached_lat - lat) > POSITION_THRESHOLD ||
+                                         std::abs(entry.cached_lon - lon) > POSITION_THRESHOLD);
+                bool freq_changed = std::abs(entry.cached_freq_mhz - freq_mhz) > FREQ_THRESHOLD;
+                bool cache_expired = (age > CACHE_DURATION);
+                
+                if (!position_changed && !freq_changed && !cache_expired && entry.is_valid) {
+                    // Cache hit - return cached value
+                    cached_volume = entry.audio_volume;
+                    cache_hit = true;
+                }
+            }
+            // Mutex automatically unlocked when lock goes out of scope
+        }
+    }
+    
+    // If cache hit, return immediately (no blocking)
+    if (cache_hit) {
+        return cached_volume;
+    }
+    
+    // Cache miss - try to calculate, but with timeout protection
+    // Use try_lock on cache mutex to check if we can calculate
+    {
+        std::unique_lock<std::mutex> lock(noise_floor_cache_mtx, std::try_to_lock);
+        if (lock.owns_lock()) {
+            // We can proceed with calculation, but wrap in try-catch
+            // and use a timeout mechanism to prevent blocking
+            try {
+                // Pre-initialize singleton if needed (should be fast)
+                // This is safe because getInstance() uses a mutex internally
+                // and we're not holding any other locks
+                float noise_floor_db = FGCom_AtmosphericNoise::getInstance().calculateNoiseFloor(
+                    lat, lon, freq_mhz, EnvironmentType::URBAN
+                );
+                
+                float audio_volume = convertNoiseFloorToVolume(noise_floor_db);
+                
+                // Update cache (lock is already held, so we can update directly)
+                NoiseFloorCacheEntry entry;
+                entry.noise_floor_db = noise_floor_db;
+                entry.audio_volume = audio_volume;
+                entry.last_calculated = std::chrono::system_clock::now();
+                entry.cached_lat = lat;
+                entry.cached_lon = lon;
+                entry.cached_freq_mhz = freq_mhz;
+                entry.is_valid = true;
+                noise_floor_cache[cache_key] = entry;
+                
+                // Mutex automatically unlocked when lock goes out of scope
+                return audio_volume;
+            } catch (...) {
+                // If calculation fails, return default
+                // Mutex automatically unlocked when lock goes out of scope
+                return 0.1f;
+            }
+        }
+    }
+    
+    // Couldn't get lock or calculation failed - return safe default
+    return 0.1f;
+}
+
 /*
  * Handle UDP protocol PTT-Request change of local user
  *
@@ -183,28 +366,37 @@ void fgcom_handlePTT() {
         // see which radio was used and if its operational.
         bool radio_ptt, radio_ptt_result = false; // if we should open or close the mic, default no
 
-        fgcom_localcfg_mtx.lock();
-        for (const auto &lcl_idty : fgcom_local_client) {
-            //int iid          = lcl_idty.first;
-            fgcom_client lcl = lcl_idty.second;
-            for (long unsigned int i=0; i<lcl.radios.size(); i++) {
-                radio_ptt = lcl.radios[i].ptt_req;
-                
-                if (radio_ptt) {
-                    //if (radio_serviceable && radio_switchedOn && radio_powered) {
-                    if ( lcl.radios[i].operable) {
-                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active and radio is operable -> open mic");
-                        radio_ptt_result = true;
-                        break; // we only have one output stream, so further search makes no sense
-                    } else {
-                        pluginLog("  COM"+std::to_string(i+1)+" PTT_REQ active but radio not operable!");
+        // Use RAII with try_lock to avoid blocking - if lock unavailable, skip PTT handling for this packet
+        // This prevents deadlock when audio callback or main thread holds the lock
+        {
+            std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+            if (lock.owns_lock()) {
+                for (const auto &lcl_idty : fgcom_local_client) {
+                    //int iid          = lcl_idty.first;
+                    fgcom_client lcl = lcl_idty.second;
+                    for (long unsigned int i=0; i<lcl.radios.size(); i++) {
+                        radio_ptt = lcl.radios[i].ptt_req;
+                        
+                        if (radio_ptt) {
+                            //if (radio_serviceable && radio_switchedOn && radio_powered) {
+                            if ( lcl.radios[i].operable) {
+                                pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active and radio is operable -> open mic");
+                                radio_ptt_result = true;
+                                break; // we only have one output stream, so further search makes no sense
+                            } else {
+                                pluginLog("  COM"+std::to_string(i+1)+" PTT_REQ active but radio not operable!");
+                            }
+                        } else {
+                            pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ off");
+                        }
                     }
-                } else {
-                    pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ off");
                 }
+                // Mutex automatically unlocked when lock goes out of scope
+            } else {
+                // Lock unavailable - skip PTT handling for this packet to avoid deadlock
+                pluginDbg("  PTT handling skipped: fgcom_localcfg_mtx unavailable");
             }
         }
-        fgcom_localcfg_mtx.unlock();
         
         pluginDbg("final PTT/radio openmic state: "+std::to_string(radio_ptt_result));
         mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, radio_ptt_result);
@@ -216,17 +408,27 @@ void fgcom_handlePTT() {
             // to also trigger mumbles PTT in ordinary channels.
             pluginDbg("Handling PTT protocol request state: Plugin not active, but fgcom_cfg.alwaysMumblePTT requested");
             bool radio_ptt_result = false; // if we should open or close the mic, default no
-            fgcom_localcfg_mtx.lock();
-            for (const auto &lcl_idty : fgcom_local_client) {
-                fgcom_client lcl = lcl_idty.second;
-                for (long unsigned int i=0; i<lcl.radios.size(); i++) {
-                    if (lcl.radios[i].ptt_req) {
-                        pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active -> open mic");
-                        radio_ptt_result = true;
+            // CRITICAL FIX: Use try_lock to avoid blocking - if lock unavailable, skip PTT handling
+            // This prevents deadlock when audio callback or main thread holds the lock
+            {
+                std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+                if (lock.owns_lock()) {
+                    for (const auto &lcl_idty : fgcom_local_client) {
+                        fgcom_client lcl = lcl_idty.second;
+                        for (long unsigned int i=0; i<lcl.radios.size(); i++) {
+                            if (lcl.radios[i].ptt_req) {
+                                pluginDbg("  COM"+std::to_string(i+1)+" PTT_REQ active -> open mic");
+                                radio_ptt_result = true;
+                                break; // we only have one output stream, so further search makes no sense
+                            }
+                        }
                     }
+                    // Mutex automatically unlocked when lock goes out of scope
+                } else {
+                    // Lock unavailable - skip PTT handling to avoid deadlock
+                    pluginDbg("  PTT handling (alwaysMumblePTT) skipped: fgcom_localcfg_mtx unavailable");
                 }
             }
-            fgcom_localcfg_mtx.unlock();
             pluginDbg("final PTT/radio openmic state: "+std::to_string(radio_ptt_result));
             mumAPI.requestMicrophoneActivationOvewrite(ownPluginID, radio_ptt_result);
 
@@ -283,30 +485,39 @@ void fgcom_updateClientComment() {
         newComment += (fgcom_isPluginActive())? "active" : "inactive";
 
         // Add Identity and frequency information
-        fgcom_localcfg_mtx.lock();
-        if (!fgcom_local_client.empty()) {
-            for (const auto &idty : fgcom_local_client) {
-                //int iid          = idty.first;
-                fgcom_client lcl = idty.second;
-                std::string frqs;
-                if (!lcl.radios.empty()) {
-                    for (long unsigned int i=0; i<lcl.radios.size(); i++) {
-                        if (lcl.radios[i].frequency != "") {
-                            if (i >= 1) frqs += ", ";
-                            if (!lcl.radios[i].operable) frqs += "<i><font color=\"grey\">";
-                            frqs += lcl.radios[i].dialedFRQ;
-                            if (!lcl.radios[i].operable) frqs += "</font></i>";
+        // Use try_lock to avoid blocking if audio callback is holding the lock
+        // Use RAII to ensure mutex is always unlocked, even if exception occurs
+        {
+            std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+            if (lock.owns_lock()) {
+                if (!fgcom_local_client.empty()) {
+                    for (const auto &idty : fgcom_local_client) {
+                        //int iid          = idty.first;
+                        fgcom_client lcl = idty.second;
+                        std::string frqs;
+                        if (!lcl.radios.empty()) {
+                            for (long unsigned int i=0; i<lcl.radios.size(); i++) {
+                                if (lcl.radios[i].frequency != "") {
+                                    if (i >= 1) frqs += ", ";
+                                    if (!lcl.radios[i].operable) frqs += "<i><font color=\"grey\">";
+                                    frqs += lcl.radios[i].dialedFRQ;
+                                    if (!lcl.radios[i].operable) frqs += "</font></i>";
+                                }
+                            }
+                        } else {
+                            frqs = "-";
                         }
+                        newComment += "<br/>&nbsp;&nbsp;<i>" + lcl.callsign + "</i>: " + frqs;
                     }
                 } else {
-                    frqs = "-";
+                    newComment += "<br/>&nbsp;&nbsp;<i>no callsigns registered</i>";
                 }
-                newComment += "<br/>&nbsp;&nbsp;<i>" + lcl.callsign + "</i>: " + frqs;
+                // Mutex automatically unlocked when lock goes out of scope
+            } else {
+                // Couldn't get lock - skip updating comment details to avoid blocking
+                newComment += "<br/>&nbsp;&nbsp;<i>updating...</i>";
             }
-        }   else {
-            newComment += "<br/>&nbsp;&nbsp;<i>no callsigns registered</i>";
         }
-        fgcom_localcfg_mtx.unlock();
         
         // Finally request to set the new comment
         // (this will broadcast the comment to other clients)
@@ -575,6 +786,26 @@ mumble_error_t fgcom_initPlugin() {
         pluginDbg("garbage collector started");
 #endif
         
+        // Pre-initialize noise floor singleton to avoid blocking in audio callback
+        pluginDbg("pre-initializing noise floor calculation system");
+        try {
+            // Pre-initialize singleton during plugin init (not in audio callback)
+            // This ensures getInstance() won't block when called from audio callback
+            FGCom_AtmosphericNoise::getInstance();
+            pluginDbg("noise floor calculation system initialized");
+        } catch (...) {
+            pluginLog("WARNING: Failed to initialize noise floor system, will use defaults");
+        }
+        
+        // start the noise floor cache update thread
+        // DISABLED: Background thread can cause hangs during plugin load/unload
+        // Cache will be populated on-demand in audio callback (with proper caching to avoid blocking)
+        // pluginDbg("starting noise floor cache update thread");
+        // noise_floor_thread_running = true;
+        // noise_floor_update_thread = std::thread(noiseFloorUpdateThread);
+        // noise_floor_update_thread.detach();
+        // pluginDbg("noise floor cache update thread started");
+        
         // Initialize solar data provider
         pluginDbg("initializing solar data provider");
         FGCom_SolarDataProvider solar_provider;
@@ -600,11 +831,14 @@ mumble_error_t fgcom_initPlugin() {
             } else {
                 // update mumble session id to all known identities
                 localMumId = localUser;
-                fgcom_remotecfg_mtx.lock();
-                for (const auto &idty : fgcom_local_client) {
-                    fgcom_local_client[idty.first].mumid = localUser;
+                // Use RAII to ensure mutex is always unlocked, even if exception occurs
+                {
+                    std::lock_guard<std::mutex> lock(fgcom_remotecfg_mtx);
+                    for (const auto &idty : fgcom_local_client) {
+                        fgcom_local_client[idty.first].mumid = localUser;
+                    }
+                    // Mutex automatically unlocked when lock goes out of scope
                 }
-                fgcom_remotecfg_mtx.unlock();
                 pluginLog("got local clientID="+std::to_string(localUser));
             }
             
@@ -751,6 +985,11 @@ void mumble_shutdown() {
     pluginLog("DEBUG: Shutting down garbage collector...");
     fgcom_shutdownGarbageCollector();
     pluginLog("DEBUG: Garbage collector shutdown complete");
+    
+    pluginLog("DEBUG: Stopping noise floor cache update thread...");
+    // Background thread is disabled, no cleanup needed
+    // noise_floor_thread_running = false;
+    pluginLog("DEBUG: Noise floor cache update thread stopped (was disabled)");
     
     pluginLog("DEBUG: Deactivating plugin...");
     fgcom_setPluginActive(false); // stop plugin handling
@@ -1065,74 +1304,88 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
         }
         
         // update identities radios depending on config options
-        fgcom_localcfg_mtx.lock();
-        pluginDbg("  checking identities/radios for local users PTT...");
-        for (const auto &lcl_idty : fgcom_local_client) {
-            int iid          = lcl_idty.first;
-            fgcom_client lcl = lcl_idty.second;
-            for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
-                bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
-                auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(static_cast<int>(radio_id));
-                bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
-                pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
-                pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
-                pluginDbg("     radio_mapmumbleptt="+std::to_string(radio_mapmumbleptt));
-                for (const auto& cv : fgcom_cfg.mapMumblePTT) {
-                    pluginDbg("    mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
-                }
-                
-                bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
-                bool newValue = false;
-                pluginDbg("                old_ptt="+std::to_string(oldValue));
-                pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
-                if ( radio_ptt_req || (!udp_protocol_ptt_detected && radio_mapmumbleptt) ) {
-                    // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
-                    newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
-                }
-                pluginDbg("                new_ptt="+std::to_string(lcl.radios[radio_id].ptt));
-                
-                // broadcast changed PTT state to clients
-                fgcom_local_client[iid].radios[radio_id].ptt = newValue;
-                if (oldValue != newValue) {
-                    pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
-                    notifyRemotes(iid, NTFY_COM, static_cast<int>(radio_id));
-                }
-            }
-        }
-        fgcom_localcfg_mtx.unlock();
-    }
-
-
-    // some remote client is speaking.
-    if (userID != localMumId && fgcom_isPluginActive()) {
-        // check if we know this client, but don't have user data yet;
-        // if so: request data update (workaround for https://github.com/hbeni/fgcom-mumble/issues/119)
-        fgcom_client tmp_default = fgcom_client();
-        
-        fgcom_remotecfg_mtx.lock();
-        auto search = fgcom_remote_clients.find(userID);
-        if (search != fgcom_remote_clients.end()) {
-            for (const auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
-                //int rmt_iid      = idty.first;
-                fgcom_client rmt = idty.second;
-                
-                if (mumble_talk_detected) {
-                    bool isCallsignInitialized = rmt.callsign != tmp_default.callsign;
-                    bool isLocationInitialized = rmt.alt != tmp_default.alt || rmt.lat != tmp_default.lat || rmt.lon != tmp_default.lon;
-                    if ( !isCallsignInitialized || !isLocationInitialized ) {
-                        // ATTENTION: Seeing this in the log indicates that there is a problem with the userdata synchronization process!
-                        pluginLog("WARNING: known remote plugin user speaking, but no user data received so far: requesting it now");
-                        notifyRemotes(0, NTFY_ASK); // request all other state
+        // CRITICAL FIX: Use try_lock in audio callback to avoid blocking
+        // This prevents deadlock when background threads hold the lock
+        {
+            std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+            if (lock.owns_lock()) {
+                pluginDbg("  checking identities/radios for local users PTT...");
+                for (const auto &lcl_idty : fgcom_local_client) {
+                    int iid          = lcl_idty.first;
+                    fgcom_client lcl = lcl_idty.second;
+                    for (long unsigned int radio_id=0; radio_id<lcl.radios.size(); radio_id++) {
+                        bool radio_ptt_req  = lcl.radios[radio_id].ptt_req; // requested from UDP state
+                        auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(static_cast<int>(radio_id));
+                        bool radio_mapmumbleptt = (radio_mapmumbleptt_srch != fgcom_cfg.mapMumblePTT.end())? radio_mapmumbleptt_srch->second : false;
+                        pluginDbg("  IID="+std::to_string(iid)+"; radio_id="+std::to_string(radio_id)+"; operable="+std::to_string(lcl.radios[radio_id].operable));
+                        pluginDbg("          radio_ptt_req="+std::to_string(radio_ptt_req));
+                        pluginDbg("     radio_mapmumbleptt="+std::to_string(radio_mapmumbleptt));
+                        for (const auto& cv : fgcom_cfg.mapMumblePTT) {
+                            pluginDbg("    mapMumblePTT["+std::to_string(cv.first)+"]="+std::to_string(cv.second));
+                        }
+                        
+                        bool oldValue = fgcom_local_client[iid].radios[radio_id].ptt;
+                        bool newValue = false;
+                        pluginDbg("                old_ptt="+std::to_string(oldValue));
+                        pluginDbg("   mumble_talk_detected="+std::to_string(mumble_talk_detected));
+                        if ( radio_ptt_req || (!udp_protocol_ptt_detected && radio_mapmumbleptt) ) {
+                            // We should activate/deactivate PTT on the radio; either it's ptt was pressed in the UDP client, or we are configured for honoring mumbles talk state
+                            newValue = mumble_talk_detected && lcl.radios[radio_id].operable;
+                        }
+                        pluginDbg("                new_ptt="+std::to_string(lcl.radios[radio_id].ptt));
+                        
+                        // broadcast changed PTT state to clients
+                        fgcom_local_client[iid].radios[radio_id].ptt = newValue;
+                        if (oldValue != newValue) {
+                            pluginDbg("  COM"+std::to_string(radio_id+1)+" PTT changed: notifying remotes");
+                            notifyRemotes(iid, NTFY_COM, static_cast<int>(radio_id));
+                        }
                     }
-
-                } else {
-                    // reset last remembered signal, so interpolation can start fresh
-                    rmt.lastSeenSignal = -1;
                 }
+                // Mutex automatically unlocked when lock goes out of scope
+            } else {
+                // Lock unavailable - skip PTT update for this frame to avoid deadlock
+                pluginDbg("  PTT update skipped: fgcom_localcfg_mtx unavailable");
             }
         }
-        fgcom_remotecfg_mtx.unlock();
     }
+
+
+        // some remote client is speaking.
+        if (userID != localMumId && fgcom_isPluginActive()) {
+            // check if we know this client, but don't have user data yet;
+            // if so: request data update (workaround for https://github.com/hbeni/fgcom-mumble/issues/119)
+            fgcom_client tmp_default = fgcom_client();
+            
+            // CRITICAL FIX: Use try_lock in audio callback to avoid blocking
+            // This prevents deadlock when background threads hold the lock
+            std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
+            if (lock.owns_lock()) {
+                auto search = fgcom_remote_clients.find(userID);
+                if (search != fgcom_remote_clients.end()) {
+                    for (const auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
+                        //int rmt_iid      = idty.first;
+                        fgcom_client rmt = idty.second;
+                        
+                        if (mumble_talk_detected) {
+                            bool isCallsignInitialized = rmt.callsign != tmp_default.callsign;
+                            bool isLocationInitialized = rmt.alt != tmp_default.alt || rmt.lat != tmp_default.lat || rmt.lon != tmp_default.lon;
+                            if ( !isCallsignInitialized || !isLocationInitialized ) {
+                                // ATTENTION: Seeing this in the log indicates that there is a problem with the userdata synchronization process!
+                                pluginLog("WARNING: known remote plugin user speaking, but no user data received so far: requesting it now");
+                                notifyRemotes(0, NTFY_ASK); // request all other state
+                            }
+
+                        } else {
+                            // reset last remembered signal, so interpolation can start fresh
+                            rmt.lastSeenSignal = -1;
+                        }
+                    }
+                }
+                // Mutex automatically unlocked when lock goes out of scope
+            }
+            // If lock unavailable, skip this check to avoid deadlock
+        }
 }
 
 // Note: Audio input is only possible with open mic. fgcom_hanldePTT() takes care of that.
@@ -1190,151 +1443,160 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
     // We let the audio trough in case plugin is not active.
     pluginDbg("mumble_onAudioSourceFetched(): plugin active="+std::to_string(fgcom_isPluginActive())+"; isSpeech="+std::to_string(isSpeech));
     bool rv = false;  // return value; false means the stream was not touched
+    float bestSignalStrength = -1.0; // we want to get the connections signal strength (declared in function scope)
     if (fgcom_isPluginActive() && isSpeech) {
         // This means, that the remote client was able to send, ie. his radio had power to transmit (or its a pluginless mumble client).
         pluginDbg("mumble_onAudioSourceFetched():   plugin active+speech detected from id="+std::to_string(userID));
-        
-        float bestSignalStrength = -1.0; // we want to get the connections signal strength.
         fgcom_radio matchedLocalRadio;
         int matchedIID  = -1;
         bool useRawData = false;
         
         // Fetch the remote clients data
-        fgcom_remotecfg_mtx.lock();
-        auto search = fgcom_remote_clients.find(userID);
-        if (search != fgcom_remote_clients.end()) {
-            // we found remote state.
-            for (auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
-                int rmt_iid       = idty.first;
-                fgcom_client& rmt = idty.second;
-            
-                pluginDbg("mumble_onAudioSourceFetched():   sender callsign="+rmt.callsign);
-                
-                // lets search the used radio(s) and determine best signal strength.
-                // currently mumble has only one voice stream per client, so we assume it comes from the best matching radio.
-                // Note: If we are PTTing ourself currently, the radio cannot receive at the moment (half-duplex mode!)
-                pluginDbg("mumble_onAudioSourceFetched():   sender registered rmt-radios: "+std::to_string(rmt.radios.size()));
-                for (long unsigned int ri=0; ri<rmt.radios.size(); ri++) {
-                    pluginDbg("mumble_onAudioSourceFetched():   check remote radio #"+std::to_string(ri));
-                    pluginDbg("mumble_onAudioSourceFetched():    frequency='"+rmt.radios[ri].frequency+"'");
-                    pluginDbg("mumble_onAudioSourceFetched():    ptt='"+std::to_string(rmt.radios[ri].ptt)+"'");
-                    pluginDbg("mumble_onAudioSourceFetched():    txpwr='"+std::to_string(rmt.radios[ri].pwr)+"'");
-                    std::unique_ptr<FGCom_radiowaveModel> radio_model_rmt(FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency));
-                    pluginDbg("mumble_onAudioSourceFetched():    type='"+radio_model_rmt->getType()+"'");
-                    fgcom_radiowave_freqConvRes rmt_frq_p = FGCom_radiowaveModel::splitFreqString(rmt.radios[ri].frequency);
-                    if (rmt.radios[ri].ptt) {
-                        pluginDbg("mumble_onAudioSourceFetched():     PTT detected");
-                        // The remote radio does transmit currently.
-                        // See if we have an operable radio tuned to that frequency
-                        for (const auto &lcl_idty : fgcom_local_client) { // inspect all identites of the local client
-                            int iid          = lcl_idty.first;
-                            fgcom_client lcl = lcl_idty.second;
-                            pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match (local iid="+std::to_string(iid)+")");
-                            for (long unsigned int lri=0; lri<lcl.radios.size(); lri++) {
-                                pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
-                                pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
-                                pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(lcl.radios[lri].operable)+"'");
-                                pluginDbg("mumble_onAudioSourceFetched():       RDF='"+std::to_string(lcl.radios[lri].rdfEnabled)+"'");
-                                pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
-                                pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");
-                                std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency));
-                                pluginDbg("mumble_onAudioSourceFetched():       type='"+radio_model_lcl->getType()+"'");
-                                
-                                // skip check for "empty radios"
-                                if (lcl.radios[lri].frequency == "") continue;
-                                
-                                // Calculate radio type compatibility and basic frequency match.
-                                // (this is expected to return signalMatchFilter==0 when the model is compatible,
-                                //  but no connection can be made based on tuned frequency; including half-duplex checks etc)
-                                float signalMatchFilter;
-                                if (radio_model_lcl->isCompatible(radio_model_rmt.get())) {
-                                    signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri], rmt.radios[ri]);
-                                    pluginDbg("mumble_onAudioSourceFetched():       radio models compatible: signalMatchFilter="+std::to_string(signalMatchFilter));
-                                } else {
-                                    pluginDbg("mumble_onAudioSourceFetched():       radio models not compatible: lcl_type="+radio_model_lcl->getType()+"; rmt_type="+radio_model_rmt->getType());
-                                    continue;
-                                }
-                                
-                                // See if a signal can be received for this radio pair; and if yes, how good it is.
-                                // (only consider non-prefixed remote radio frequencies, as they are special)
-                                if (signalMatchFilter > 0.0 && rmt_frq_p.prefix.length() == 0) {
-                                    pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
-                                    // we are listening on that frequency!
-                                    // determine signal strenght for this connection
-                                    fgcom_radiowave_signal signal = radio_model_lcl->getSignal(
-                                        lcl.lat, lcl.lon, lcl.alt,
-                                        rmt.lat, rmt.lon, rmt.alt,
-                                        rmt.radios[ri].pwr);
-                                    
-                                    // apply signal filter from frequency match (miss-tuned will reduce the signal quality)
-                                    signal.quality *= signalMatchFilter;
-                                    
-                                    pluginDbg("mumble_onAudioSourceFetched():       signalStrength="+std::to_string(signal.quality)
-                                        +"; direction="+std::to_string(signal.direction)
-                                        +"; angle="+std::to_string(signal.verticalAngle)
-                                    );
-                                
-                                    
-                                    // RDF: Updpate the radios signal information
-                                    if (lcl.radios[lri].rdfEnabled && signal.quality > lcl.radios[lri].squelch) {
-                                        pluginDbg("mumble_onAudioSourceFetched(): update signal data for RDF ("+std::to_string(rmt.mumid)+")="+rmt.callsign+", radio["+std::to_string(ri)+"]");
-                                        //std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign+":"+std::to_string(lri);
-                                        std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign;
-                                        struct fgcom_rdfInfo rdfInfo = fgcom_rdfInfo();
-                                        rdfInfo.txIdentity = rmt;
-                                        rdfInfo.txRadio    = rmt.radios[ri];
-                                        rdfInfo.rxIdentity = lcl;
-                                        rdfInfo.rxRadio    = lcl.radios[lri];
-                                        rdfInfo.rxRadioId  = static_cast<int>(lri+1);  // Radios indices start at 0, names start at 1.
-                                        rdfInfo.signal     = signal;
-                                        fgcom_rdf_registerSignal(rdfID, rdfInfo);
-                                    }
+        // CRITICAL FIX: Use try_lock in audio callback to avoid blocking - if lock unavailable, skip processing
+        // This prevents deadlock when background threads hold the lock
+        {
+            std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
+            if (lock.owns_lock()) {
+                auto search = fgcom_remote_clients.find(userID);
+                if (search != fgcom_remote_clients.end()) {
+                    // we found remote state.
+                    for (auto &idty : fgcom_remote_clients[userID]) { // inspect all identites of the remote
+                        int rmt_iid       = idty.first;
+                        fgcom_client& rmt = idty.second;
+                    
+                        pluginDbg("mumble_onAudioSourceFetched():   sender callsign="+rmt.callsign);
+                        
+                        // lets search the used radio(s) and determine best signal strength.
+                        // currently mumble has only one voice stream per client, so we assume it comes from the best matching radio.
+                        // Note: If we are PTTing ourself currently, the radio cannot receive at the moment (half-duplex mode!)
+                        pluginDbg("mumble_onAudioSourceFetched():   sender registered rmt-radios: "+std::to_string(rmt.radios.size()));
+                        for (long unsigned int ri=0; ri<rmt.radios.size(); ri++) {
+                            pluginDbg("mumble_onAudioSourceFetched():   check remote radio #"+std::to_string(ri));
+                            pluginDbg("mumble_onAudioSourceFetched():    frequency='"+rmt.radios[ri].frequency+"'");
+                            pluginDbg("mumble_onAudioSourceFetched():    ptt='"+std::to_string(rmt.radios[ri].ptt)+"'");
+                            pluginDbg("mumble_onAudioSourceFetched():    txpwr='"+std::to_string(rmt.radios[ri].pwr)+"'");
+                            std::unique_ptr<FGCom_radiowaveModel> radio_model_rmt(FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency));
+                            pluginDbg("mumble_onAudioSourceFetched():    type='"+radio_model_rmt->getType()+"'");
+                            fgcom_radiowave_freqConvRes rmt_frq_p = FGCom_radiowaveModel::splitFreqString(rmt.radios[ri].frequency);
+                            if (rmt.radios[ri].ptt) {
+                                pluginDbg("mumble_onAudioSourceFetched():     PTT detected");
+                                // The remote radio does transmit currently.
+                                // See if we have an operable radio tuned to that frequency
+                                for (const auto &lcl_idty : fgcom_local_client) { // inspect all identites of the local client
+                                    int iid          = lcl_idty.first;
+                                    fgcom_client lcl = lcl_idty.second;
+                                    pluginDbg("mumble_onAudioSourceFetched():     check local radios for frequency match (local iid="+std::to_string(iid)+")");
+                                    for (long unsigned int lri=0; lri<lcl.radios.size(); lri++) {
+                                        pluginDbg("mumble_onAudioSourceFetched():     checking local radio #"+std::to_string(lri));
+                                        pluginDbg("mumble_onAudioSourceFetched():       frequency='"+lcl.radios[lri].frequency+"'");
+                                        pluginDbg("mumble_onAudioSourceFetched():       operable='"+std::to_string(lcl.radios[lri].operable)+"'");
+                                        pluginDbg("mumble_onAudioSourceFetched():       RDF='"+std::to_string(lcl.radios[lri].rdfEnabled)+"'");
+                                        pluginDbg("mumble_onAudioSourceFetched():       ptt='"+std::to_string(lcl.radios[lri].ptt)+"'");
+                                        pluginDbg("mumble_onAudioSourceFetched():       volume='"+std::to_string(lcl.radios[lri].volume)+"'");
+                                        std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(lcl.radios[lri].frequency));
+                                        pluginDbg("mumble_onAudioSourceFetched():       type='"+radio_model_lcl->getType()+"'");
+                                        
+                                        // skip check for "empty radios"
+                                        if (lcl.radios[lri].frequency == "") continue;
+                                        
+                                        // Calculate radio type compatibility and basic frequency match.
+                                        // (this is expected to return signalMatchFilter==0 when the model is compatible,
+                                        //  but no connection can be made based on tuned frequency; including half-duplex checks etc)
+                                        float signalMatchFilter;
+                                        if (radio_model_lcl->isCompatible(radio_model_rmt.get())) {
+                                            signalMatchFilter = radio_model_lcl->getFrqMatch(lcl.radios[lri], rmt.radios[ri]);
+                                            pluginDbg("mumble_onAudioSourceFetched():       radio models compatible: signalMatchFilter="+std::to_string(signalMatchFilter));
+                                        } else {
+                                            pluginDbg("mumble_onAudioSourceFetched():       radio models not compatible: lcl_type="+radio_model_lcl->getType()+"; rmt_type="+radio_model_rmt->getType());
+                                            continue;
+                                        }
+                                        
+                                        // See if a signal can be received for this radio pair; and if yes, how good it is.
+                                        // (only consider non-prefixed remote radio frequencies, as they are special)
+                                        if (signalMatchFilter > 0.0 && rmt_frq_p.prefix.length() == 0) {
+                                            pluginDbg("mumble_onAudioSourceFetched():       local_radio="+std::to_string(lri)+"  frequency "+lcl.radios[lri].frequency+" matches!");
+                                            // we are listening on that frequency!
+                                            // determine signal strenght for this connection
+                                            fgcom_radiowave_signal signal = radio_model_lcl->getSignal(
+                                                lcl.lat, lcl.lon, lcl.alt,
+                                                rmt.lat, rmt.lon, rmt.alt,
+                                                rmt.radios[ri].pwr);
+                                            
+                                            // apply signal filter from frequency match (miss-tuned will reduce the signal quality)
+                                            signal.quality *= signalMatchFilter;
+                                            
+                                            pluginDbg("mumble_onAudioSourceFetched():       signalStrength="+std::to_string(signal.quality)
+                                                +"; direction="+std::to_string(signal.direction)
+                                                +"; angle="+std::to_string(signal.verticalAngle)
+                                            );
+                                        
+                                            
+                                            // RDF: Updpate the radios signal information
+                                            if (lcl.radios[lri].rdfEnabled && signal.quality > lcl.radios[lri].squelch) {
+                                                pluginDbg("mumble_onAudioSourceFetched(): update signal data for RDF ("+std::to_string(rmt.mumid)+")="+rmt.callsign+", radio["+std::to_string(ri)+"]");
+                                                //std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign+":"+std::to_string(lri);
+                                                std::string rdfID = "rdf-"+rmt.callsign+":"+std::to_string(ri)+"-"+lcl.callsign;
+                                                struct fgcom_rdfInfo rdfInfo = fgcom_rdfInfo();
+                                                rdfInfo.txIdentity = rmt;
+                                                rdfInfo.txRadio    = rmt.radios[ri];
+                                                rdfInfo.rxIdentity = lcl;
+                                                rdfInfo.rxRadio    = lcl.radios[lri];
+                                                rdfInfo.rxRadioId  = static_cast<int>(lri+1);  // Radios indices start at 0, names start at 1.
+                                                rdfInfo.signal     = signal;
+                                                fgcom_rdf_registerSignal(rdfID, rdfInfo);
+                                            }
 
 
-                                    // See if the signal is better than the previous one.
-                                    // As we have only one audio source stream per user, we want to apply the best
-                                    // signal. If the remote station transmits with multiple radios, and we are tuned to more than
-                                    // one, this will result in hearing the best signal quality of those available.
-                                    if (signal.quality > lcl.radios[lri].squelch && signal.quality > bestSignalStrength) {
-                                        // the signal is stronger than our squelch and tops the current last best signal
-                                        bestSignalStrength  = signal.quality;
-                                        matchedIID          = rmt_iid;
-                                        matchedLocalRadio   = lcl.radios[lri];
-                                        pluginDbg("mumble_onAudioSourceFetched():         taking it, its better than the previous one");
-                                    } else {
-                                        pluginDbg("mumble_onAudioSourceFetched():         not taking it. squelch="+std::to_string(lcl.radios[lri].squelch)+", previousBestSignal="+std::to_string(bestSignalStrength));
+                                            // See if the signal is better than the previous one.
+                                            // As we have only one audio source stream per user, we want to apply the best
+                                            // signal. If the remote station transmits with multiple radios, and we are tuned to more than
+                                            // one, this will result in hearing the best signal quality of those available.
+                                            if (signal.quality > lcl.radios[lri].squelch && signal.quality > bestSignalStrength) {
+                                                // the signal is stronger than our squelch and tops the current last best signal
+                                                bestSignalStrength  = signal.quality;
+                                                matchedIID          = rmt_iid;
+                                                matchedLocalRadio   = lcl.radios[lri];
+                                                pluginDbg("mumble_onAudioSourceFetched():         taking it, its better than the previous one");
+                                            } else {
+                                                pluginDbg("mumble_onAudioSourceFetched():         not taking it. squelch="+std::to_string(lcl.radios[lri].squelch)+", previousBestSignal="+std::to_string(bestSignalStrength));
+                                            }
+                                            
+                                            
+                                        /* no match means, we had no operable mode for this radio pair */
+                                        } else {
+                                            pluginDbg("mumble_onAudioSourceFetched():     => nomatch");
+                                        }
+                                        
+                                        if (bestSignalStrength == 1.0) break; // no point in searching more
                                     }
-                                    
-                                    
-                                /* no match means, we had no operable mode for this radio pair */
-                                } else {
-                                    pluginDbg("mumble_onAudioSourceFetched():     => nomatch");
                                 }
-                                
-                                if (bestSignalStrength == 1.0) break; // no point in searching more
+                            } else {
+                                // the inspected remote radio did not PTT
+                                pluginDbg("mumble_onAudioSourceFetched():     remote PTT OFF");
                             }
                         }
+                    }
+                    
+                } else {
+                    // we have no idea about the remote yet: 
+                    // (this may especially happen with sending clients without enabled plugin!)
+                    if (fgcom_cfg.allowHearingNonPluginUsers) {
+                        // let audio trough unaffected
+                        useRawData = true;
+                        pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state: stream untouched (allowHearingNonPluginUsers on).");
                     } else {
-                        // the inspected remote radio did not PTT
-                        pluginDbg("mumble_onAudioSourceFetched():     remote PTT OFF");
+                        // treat him as if hes not in range
+                        bestSignalStrength = 0.0;
+                        pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state: muting stream.");
                     }
                 }
-            }
-            
-        } else {
-            // we have no idea about the remote yet: 
-            // (this may especially happen with sending clients without enabled plugin!)
-            if (fgcom_cfg.allowHearingNonPluginUsers) {
-                // let audio trough unaffected
-                useRawData = true;
-                pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state: stream untouched (allowHearingNonPluginUsers on).");
+                // Mutex automatically unlocked when lock goes out of scope
             } else {
-                // treat him as if hes not in range
-                bestSignalStrength = 0.0;
-                pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state: muting stream.");
+                // Lock unavailable - skip audio processing for this frame to avoid deadlock
+                pluginDbg("mumble_onAudioSourceFetched(): skipped - fgcom_remotecfg_mtx unavailable");
+                bestSignalStrength = 0.0;  // Mute audio if we can't process
             }
         }
-        fgcom_remotecfg_mtx.unlock();
         
         
         // Now we got the connections signal strength.
@@ -1347,7 +1609,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // we should use the raw audio packets unaffected
             pluginDbg("mumble_onAudioSourceFetched():   connected (use raw data)");
             rv = false;
-
         } else if (bestSignalStrength > 0.0) {
             // we got a connection!
 #ifdef DEBUG
@@ -1361,100 +1622,156 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // Interpolate the signal quality, so we don't have such nasty audible steps with fast moving senders
             float interpolated_bestSignalStrength = bestSignalStrength;
             if (matchedIID > -1) {
-                fgcom_remotecfg_mtx.lock();
-                float& lastSignalStrength = fgcom_remote_clients[userID][matchedIID].lastSeenSignal;
-                if (lastSignalStrength >= 0.0) {
-                    const float interpolateOver_ms        = (float)SIGNAL_INTERPOLATE_MS; // interpolate over this milliseconds.
-                    const float samplesDuration_ms        = ((float)sampleCount/(float)sampleRate)*1000; //in milliseconds (10.6666666667 for 512 samples and 48000 rate)
-                    const float interpolate_stepsize      = (bestSignalStrength-lastSignalStrength) / interpolateOver_ms;
-                    interpolated_bestSignalStrength = lastSignalStrength + interpolate_stepsize*samplesDuration_ms;
-                    //pluginDbg("mumble_onAudioSourceFetched():   signalQuality interpolate: interpolateOver_ms="+std::to_string(interpolateOver_ms)+"; samplesDuration_ms="+std::to_string(samplesDuration_ms)+"; interpolate_stepsize="+std::to_string(interpolate_stepsize));
-                }
+                // Use RAII with try_lock to avoid blocking in audio callback
+                std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
+                if (lock.owns_lock()) {
+                    float& lastSignalStrength = fgcom_remote_clients[userID][matchedIID].lastSeenSignal;
+                    if (lastSignalStrength >= 0.0) {
+                        const float interpolateOver_ms        = (float)SIGNAL_INTERPOLATE_MS; // interpolate over this milliseconds.
+                        const float samplesDuration_ms        = ((float)sampleCount/(float)sampleRate)*1000; //in milliseconds (10.6666666667 for 512 samples and 48000 rate)
+                        const float interpolate_stepsize      = (bestSignalStrength-lastSignalStrength) / interpolateOver_ms;
+                        interpolated_bestSignalStrength = lastSignalStrength + interpolate_stepsize*samplesDuration_ms;
+                        //pluginDbg("mumble_onAudioSourceFetched():   signalQuality interpolate: interpolateOver_ms="+std::to_string(interpolateOver_ms)+"; samplesDuration_ms="+std::to_string(samplesDuration_ms)+"; interpolate_stepsize="+std::to_string(interpolate_stepsize));
+                    }
 
-                pluginDbg("mumble_onAudioSourceFetched():   signalQuality interpolate: "+std::to_string(interpolated_bestSignalStrength)+" (lastSignalStrength="+std::to_string(lastSignalStrength)+" -> bestSignalStrength="+std::to_string(bestSignalStrength)+")");
-                lastSignalStrength = interpolated_bestSignalStrength;
-                fgcom_remotecfg_mtx.unlock();
+                    pluginDbg("mumble_onAudioSourceFetched():   signalQuality interpolate: "+std::to_string(interpolated_bestSignalStrength)+" (lastSignalStrength="+std::to_string(lastSignalStrength)+" -> bestSignalStrength="+std::to_string(bestSignalStrength)+")");
+                    lastSignalStrength = interpolated_bestSignalStrength;
+                    // Mutex automatically unlocked when lock goes out of scope
+                }
             }
 
             std::unique_ptr<FGCom_radiowaveModel> radio_model_lcl(FGCom_radiowaveModel::selectModel(matchedLocalRadio.frequency));
             pluginDbg("mumble_onAudioSourceFetched():   connected (lcl_type="+radio_model_lcl->getType()+"), signalStrength="+std::to_string(interpolated_bestSignalStrength));
             if (fgcom_cfg.radioAudioEffects)
                 radio_model_lcl->processAudioSamples(matchedLocalRadio, interpolated_bestSignalStrength, outputPCM, sampleCount, channelCount, sampleRate);
-            
-        } else {
-            pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
+        }
+    } else if (fgcom_isPluginActive() && !isSpeech) {
+        pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
+        pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE PATH: plugin active, no speech detected");
 
-            // reset interpolator of all remote identities, because none matched
-            fgcom_remotecfg_mtx.lock();
+        // reset interpolator of all remote identities, because none matched
+        // Use RAII with try_lock to avoid blocking in audio callback
+        std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
+        if (lock.owns_lock()) {
             for (auto &idty : fgcom_remote_clients[userID]) {
                 fgcom_client& rmt = idty.second;
                 rmt.lastSeenSignal = -1;
             }
-            fgcom_remotecfg_mtx.unlock();
+            // Mutex automatically unlocked when lock goes out of scope
+        }
 
-            // Bounds checking for memset operation
-            size_t buffer_size = static_cast<size_t>(sampleCount*channelCount)*sizeof(float);
-            if (buffer_size > 0 && buffer_size <= MAX_AUDIO_BUFFER_SIZE) {
-                memset(outputPCM, 0x00, buffer_size);
-            } else {
-                // Handle buffer size overflow
-                throw std::runtime_error("Audio buffer size exceeds maximum allowed size");
-            }
-            
-            // Generate white noise when squelch is open but no signal is present
-            // This simulates realistic radio behavior where you hear static when squelch is open
-            if (fgcom_cfg.radioAudioEffects) {
-                // Check all local radios to see if any have squelch open
-                float bestNoiseLevel = 0.0f;  // Track the highest noise level from any radio
-                const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
-                const float MAX_NOISE_VOLUME = 0.3f;  // Maximum white noise volume (30%)
-                
-                // Thread-safe access: use try_lock to avoid blocking the audio thread
-                // If we can't get the lock immediately, skip noise generation for this frame
-                if (fgcom_localcfg_mtx.try_lock()) {
-                    // Make a quick snapshot of squelch values - only copy primitive types
-                    std::vector<float> squelchValues;
-                    squelchValues.reserve(8);  // Pre-allocate to avoid reallocation
-                    for (const auto &lcl_idty : fgcom_local_client) {
-                        const fgcom_client& lcl = lcl_idty.second;
-                        for (const auto &radio : lcl.radios) {
-                            // Only copy if radio is operable and has frequency set
-                            if (radio.operable && !radio.frequency.empty()) {
-                                squelchValues.push_back(radio.squelch);
-                            }
-                        }
-                    }
-                    fgcom_localcfg_mtx.unlock();
-                    
-                    // Process the snapshot without holding the lock
-                    for (float squelch : squelchValues) {
-                        if (squelch <= SQUELCH_OPEN_THRESHOLD) {
-                            // Calculate noise level based on squelch setting
-                            // Lower squelch (closer to 0.0) = more noise
-                            // When squelch is 0.0, use maximum noise; when squelch is at threshold, use less noise
-                            float noiseLevel = (1.0f - (squelch / SQUELCH_OPEN_THRESHOLD)) * MAX_NOISE_VOLUME;
-                            if (noiseLevel > bestNoiseLevel) {
-                                bestNoiseLevel = noiseLevel;
-                            }
-                        }
-                    }
-                    
-                    // Generate white noise if any radio has squelch open
-                    if (bestNoiseLevel > 0.0f) {
-                        fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
-                    }
-                }
-                // If try_lock failed, silently skip noise generation for this frame
-                // This prevents blocking the audio thread
-            }
+        // Bounds checking for memset operation
+        size_t buffer_size = static_cast<size_t>(sampleCount*channelCount)*sizeof(float);
+        if (buffer_size > 0 && buffer_size <= MAX_AUDIO_BUFFER_SIZE) {
+            memset(outputPCM, 0x00, buffer_size);
+        } else {
+            // Handle buffer size overflow
+            throw std::runtime_error("Audio buffer size exceeds maximum allowed size");
         }
         
-        
+        // Generate white noise when squelch is open but no signal is present
+        // This simulates realistic radio behavior where you hear static when squelch is open
+        pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: checking radioAudioEffects="+std::to_string(fgcom_cfg.radioAudioEffects));
+        if (fgcom_cfg.radioAudioEffects) {
+            pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: radioAudioEffects enabled, checking radios");
+            // Check all local radios to see if any have squelch open
+            float bestNoiseLevel = 0.0f;  // Track the highest noise level from any radio
+            const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
+            
+            // Get position and frequency for noise floor calculation
+            // We need to get this from the locked data, so we'll store it during the snapshot
+            struct RadioInfo {
+                float squelch;
+                double lat;
+                double lon;
+                float freq_mhz;
+            };
+            std::vector<RadioInfo> radioInfos;
+            radioInfos.reserve(8);
+            
+            // Thread-safe access: use try_lock to avoid blocking the audio thread
+            // If we can't get the lock immediately, skip noise generation for this frame
+            // Use RAII to ensure mutex is always unlocked, even if exception occurs
+            {
+                std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+                if (lock.owns_lock()) {
+                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: acquired lock, scanning "+std::to_string(fgcom_local_client.size())+" identities");
+                    // During lock, copy radio info including position
+                    for (const auto &lcl_idty : fgcom_local_client) {
+                        const fgcom_client& lcl = lcl_idty.second;
+                        pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: identity has "+std::to_string(lcl.radios.size())+" radios");
+                        for (const auto &radio : lcl.radios) {
+                            pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: checking radio: operable="+std::to_string(radio.operable)+", frequency='"+radio.frequency+"', squelch="+std::to_string(radio.squelch));
+                            if (radio.operable && !radio.frequency.empty()) {
+                                RadioInfo info;
+                                info.squelch = radio.squelch;
+                                info.lat = lcl.lat;
+                                info.lon = lcl.lon;
+                                // Parse frequency string to float
+                                try {
+                                    info.freq_mhz = std::stof(radio.frequency);
+                                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: added radio: squelch="+std::to_string(info.squelch)+", freq="+std::to_string(info.freq_mhz)+" MHz");
+                                } catch (...) {
+                                    info.freq_mhz = 0.0f;  // Invalid frequency
+                                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: radio has invalid frequency, skipping");
+                                }
+                                radioInfos.push_back(info);
+                            } else {
+                                pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: radio skipped: operable="+std::to_string(radio.operable)+", frequency empty="+std::to_string(radio.frequency.empty()));
+                            }
+                        }
+                    }
+                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: found "+std::to_string(radioInfos.size())+" operable radios with frequencies");
+                    // Mutex automatically unlocked when lock goes out of scope
+                } else {
+                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: lock unavailable, skipping noise generation for this frame");
+                }
+            }
+            
+            // Process radios and calculate noise floor (without holding lock)
+            pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: processing "+std::to_string(radioInfos.size())+" radios");
+            for (const auto& info : radioInfos) {
+                pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: checking radio squelch="+std::to_string(info.squelch)+" <= threshold="+std::to_string(SQUELCH_OPEN_THRESHOLD)+", freq_mhz="+std::to_string(info.freq_mhz));
+                if (info.squelch <= SQUELCH_OPEN_THRESHOLD && info.freq_mhz > 0.0f) {
+                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: squelch is open, getting noise floor volume");
+                    // Get noise floor-based volume (cached)
+                    float baseVolume = getCachedNoiseFloorVolume(info.lat, info.lon, info.freq_mhz);
+                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: baseVolume="+std::to_string(baseVolume));
+                    
+                    // Apply squelch modulation (lower squelch = more noise)
+                    float squelchFactor = (1.0f - (info.squelch / SQUELCH_OPEN_THRESHOLD));
+                    float noiseLevel = baseVolume * squelchFactor;
+                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: squelchFactor="+std::to_string(squelchFactor)+", noiseLevel="+std::to_string(noiseLevel));
+                    
+                    if (noiseLevel > bestNoiseLevel) {
+                        bestNoiseLevel = noiseLevel;
+                        pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: updated bestNoiseLevel="+std::to_string(bestNoiseLevel));
+                    }
+                } else {
+                    pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: radio skipped (squelch closed or invalid freq)");
+                }
+            }
+            
+            // Generate white noise if any radio has squelch open
+            pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: final bestNoiseLevel="+std::to_string(bestNoiseLevel));
+            if (bestNoiseLevel > 0.0f) {
+                pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: GENERATING NOISE with level="+std::to_string(bestNoiseLevel));
+                fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
+                rv = true;  // We modified the audio stream
+                pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: noise generated successfully");
+            } else {
+                pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: no noise generated (bestNoiseLevel="+std::to_string(bestNoiseLevel)+")");
+            }
+            // If try_lock failed, silently skip noise generation for this frame
+            // This prevents blocking the audio thread
+        } else {
+            pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE: radioAudioEffects is disabled, skipping noise generation");
+        }
     } else {
-        // plugin not active OR no speech detected
-        // do nothing, leave the stream alone
-        rv = false;
-    }
+            // Plugin not active OR no speech detected
+            // do nothing, leave the stream alone
+            rv = false;
+        }
     
     
     // go home

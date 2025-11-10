@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <iostream>
-#include "../../client/mumble-plugin/fgcom-mumble.h"
+#include "../../../fgcom-mumble.h"
 
 // Test basic compilation and linking
 TEST(ClientPluginModuleTest, BasicCompilation) {

@@ -346,15 +346,20 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
 void notifyRemotesCombined(int iid, mumble_userid_t tgtUser) {
     setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     
-    // Get local client data with RAII lock guard for exception safety
-    std::lock_guard<std::mutex> lock(fgcom_localcfg_mtx);
+    // CRITICAL FIX: Use try_lock to avoid blocking - this function can be called from audio callbacks
+    // This prevents deadlock when background threads hold the lock
+    std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        pluginDbg("[mum_pluginIO] notifyRemotesCombined(): skipped - fgcom_localcfg_mtx unavailable");
+        return;
+    }
     if (iid >= static_cast<int>(fgcom_local_client.size())) {
         pluginLog("[mum_pluginIO] notifyRemotesCombined(): ERROR resolving identity='"+std::to_string(iid)+"'!");
         return;
     }
     
     fgcom_client lcl = fgcom_local_client[iid];
-    // Mutex automatically unlocked by RAII lock guard
+    // Mutex automatically unlocked when lock goes out of scope
     
     // Build combined message with all data
     std::string dataID = "FGCOM:UPD_ALL:"+std::to_string(iid);
@@ -446,7 +451,9 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
         }
         std::string iid_str = std::to_string(iid);
         
-        fgcom_remotecfg_mtx.lock();
+        // CRITICAL FIX: Use RAII to ensure mutex is always unlocked, even if exception occurs
+        // This is called from Mumble's plugin data thread, which could deadlock with audio callbacks
+        std::lock_guard<std::mutex> lock(fgcom_remotecfg_mtx);
         
         // check if user is already known to us; if not add him to the local clients store
         bool clientAlreadyknown = true;
@@ -618,7 +625,7 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             pluginDbg("[mum_pluginIO] dataID='"+dataID+"' not known. Ignoring.");
         }
         
-        fgcom_remotecfg_mtx.unlock();
+        // Mutex automatically unlocked when lock goes out of scope
         
         pluginDbg("[mum_pluginIO] Parsing done.");
         return true; // signal to other plugins that the data was handled already
@@ -636,12 +643,13 @@ void fgcom_notifyThread() {
     while (true) {
         if (fgcom_isPluginActive()) {
             // if plugin is active, check if we need to send notifications.
-            // CRITICAL FIX: Use RAII lock guard for exception safety
-            std::lock_guard<std::mutex> lock(fgcom_localcfg_mtx);
-            
-            // Note: we are just looking at location and userdata. Radio data is "urgent" and notified directly.
-            // Difference with 3 decimals is about 100m: http://wiki.gis.com/wiki/index.php/Decimal_degrees
-            for (const auto &idty : fgcom_local_client) {
+            // CRITICAL FIX: Use try_lock to avoid blocking - if lock unavailable, skip this iteration
+            // This prevents deadlock when audio callback or main thread holds the lock
+            std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+            if (lock.owns_lock()) {
+                // Note: we are just looking at location and userdata. Radio data is "urgent" and notified directly.
+                // Difference with 3 decimals is about 100m: http://wiki.gis.com/wiki/index.php/Decimal_degrees
+                for (const auto &idty : fgcom_local_client) {
                 int iid          = idty.first;
                 fgcom_client lcl = idty.second;
                 bool notifyUserData     = false;
@@ -686,9 +694,12 @@ void fgcom_notifyThread() {
                     lastNotifiedState[iid].lastPing = std::chrono::system_clock::now();
                     notifyRemotes(iid, NTFY_USR);
                 }
+                }
+                // Mutex automatically unlocked when lock goes out of scope
+            } else {
+                // Lock unavailable - skip this notification cycle to avoid deadlock
+                pluginDbg("[mum_pluginIO] fgcom_notifyThread() skipped: fgcom_localcfg_mtx unavailable");
             }
-            // Mutex automatically unlocked by RAII lock guard
-            
         }
         
         std::this_thread::sleep_for(std::chrono::milliseconds(NOTIFYINTERVAL));

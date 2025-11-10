@@ -231,6 +231,7 @@ For details on current plugin issues, see [Plugin Issues Documentation](docs/plu
 | **[WebRTC Gateway](webrtc-gateway/README.md)** | Browser-based access (no installation required) |
 | **[Special Frequencies Guide](docs/SPECIAL_FREQUENCIES_GUIDE.md)** | ATIS, test frequencies, and special features |
 | **[Troubleshooting Guide](docs/TROUBLESHOOTING_GUIDE.md)** | Common issues and solutions |
+| **[Debugging Hung Mumble](docs/DEBUGGING_HUNG_MUMBLE.md)** | How to capture backtraces from hung processes |
 
 ### For Administrators
 | Guide | Purpose |
