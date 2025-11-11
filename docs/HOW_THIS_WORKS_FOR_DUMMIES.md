@@ -140,6 +140,49 @@ You're operating a military radio near a farm with electric fences.
 
 **Result:** Clear communication by avoiding the noise source and using proper positioning.
 
+### Example 6: Atmospheric Ducting (Temperature Inversion)
+You're operating a VHF radio link between two ground stations that are normally 50 kilometers apart - just at the edge of reliable communication range.
+
+**The Problem:** During the day, communication is spotty and unreliable. The signal is weak and often breaks up, making it difficult to maintain contact.
+
+**What's happening:**
+- During the day, the ground heats up and warm air rises
+- Radio waves travel in straight lines and get weaker with distance
+- At 50 km, the signal is barely strong enough to be received
+
+**The Solution:** Wait for evening or early morning when a temperature inversion occurs!
+
+**How ducting works:**
+- **Temperature inversion**: Cold air sits near the ground, with warm air above it (opposite of normal)
+- **Radio wave bending**: The temperature difference creates a "duct" that bends radio waves back toward the ground
+- **Extended range**: Instead of traveling straight and getting weaker, the radio waves bounce between the ground and the warm air layer above
+- **Result**: Your signal can travel 200-500+ kilometers instead of the normal 50 km!
+
+**Real-world conditions that create ducting:**
+- **Evening**: Ground cools faster than the air above, creating an inversion (happens everywhere, not just coasts)
+- **Early morning**: Cold ground with warm air above (common in valleys and inland areas)
+- **Coastal areas**: Cold ocean air under warm land air (one type of ducting, but not the only type)
+- **Inland areas**: Very common! Temperature inversions occur regularly in:
+  - **Valleys**: Cold air pools in valleys at night, with warmer air above
+  - **Plains**: Rapid ground cooling creates inversions over flat terrain
+  - **Mountainous areas**: Cold air drainage from mountains creates inversions
+  - **Desert conditions**: Hot ground during day, rapid cooling at night (common far from coasts)
+  - **Agricultural areas**: Moisture from crops and irrigation can enhance inversions
+- **Clear, calm weather**: Best conditions for temperature inversions (happens everywhere)
+- **High pressure systems**: Often create stable air conditions that favor ducting
+
+**Important:** Ducting is NOT limited to coastal areas! It happens regularly far inland, especially in valleys, plains, and desert regions. In fact, some of the strongest ducting occurs in inland desert areas where temperature differences between day and night are extreme.
+
+**Frequency effects:**
+- **VHF (30-300 MHz)**: Most affected by ducting - can extend range by 5-10x
+- **UHF (300-3000 MHz)**: Also benefits from ducting - can extend range by 3-5x
+- **Microwave (3-30 GHz)**: Less affected but still benefits from inversions
+- **HF (3-30 MHz)**: Uses different propagation methods (ionosphere), not affected by ducting
+
+**Result:** During a temperature inversion, you can communicate clearly over 200+ kilometers with the same radio that normally only reaches 50 km! The signal is actually stronger at long distances during ducting conditions than it is at short distances during normal conditions.
+
+**Note:** Ducting is most common at VHF and UHF frequencies. It's like having a natural radio "waveguide" that traps and guides your signal over much longer distances than normal line-of-sight propagation.
+
 ## Antenna Direction Matters
 
 Radio antennas don't radiate equally in all directions. They have "hot spots" and "dead spots":
