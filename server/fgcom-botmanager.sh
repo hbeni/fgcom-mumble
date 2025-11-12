@@ -25,6 +25,7 @@
 #   - read from the fifo to call playback bots for new samples
 #
 
+botmgr_version="1.2.0"
 
 # Define defaults
 host="localhost"
@@ -63,10 +64,10 @@ log() { echo "$(date '+%F %T.%N'): $1"; }
 
 # print usage information
 function usage() {
-    echo "Manage FGCOM-mumble bots"
+    echo "Manage FGCOM-mumble bots, $botmgr_version"
     echo "Options:"
     echo "    --help -h  print usage and exit"
-    echo "    --verify   print set optins and exit"
+    echo "    --verify   print set options and exit"
     echo ""
     echo "Common options, that will be passed to bots:"
     echo "    --host=    host to connect to               (default=$host)"
@@ -143,7 +144,7 @@ for opt in "$@"; do
 done
 
 # Print a nice message when starting, so its clear what will happen
-log "Starting FGCom-mumble bot manager..."
+log "Starting FGCom-mumble bot manager $botmgr_version ..."
 log "pwd: $(pwd)"
 log "commandline used: $0$(for opt in "$@"; do echo -n " $opt"; done)"
 log "effective options:"
@@ -189,15 +190,21 @@ fi
 function cleanup()
 {
     log "cleanup..."
+    
+    # remove notify pipe signals shutdown request to watchdog
     rm -f $fnotify
-    sleep 1  # so the watchdog can shut down properly, removing the notify pipe signals this
-    pkill -f "fgcom-radio-recorder.bot.lua"
-    pkill -f "fgcom-status.bot.lua"
+    sleep 1  # so the watchdog can shut down properly
+    
+    # kill managed bots
+    pkill -f -- "fgcom-radio-recorder.bot.lua.*--host=$host"
+    pkill -f -- "fgcom-status.bot.lua.*--host=$host"
 }
 trap cleanup EXIT
 
 
-# setup the fifo
+# setup the fifo.
+# the fifo is used to detect new recordings, so we can spawn a playback bot;
+# also the watchdog is alive as long as this named-pipe exists
 log "Setup fifo '$fnotify'"
 
 if [[ ! -p $fnotify ]]; then
@@ -216,7 +223,7 @@ fi
     trap cleanup EXIT
     while [[ -p $fnotify ]]; do
         # Spawn the radio recorder bot
-	botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua.*--host=$host")
+        botPID=$(pgrep -f -- "fgcom-radio-recorder.bot.lua.*--host=$host")
         if [[ $run_recorderbot -gt "0" && -z "$botPID" ]]; then
             recorderbot_cmd="luajit fgcom-radio-recorder.bot.lua $recorder_opts --fnotify=$fnotify"
             log "Spawn recorder bot: $recorderbot_cmd"
