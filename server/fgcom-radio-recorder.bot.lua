@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.8.3"
+fgcom.botversion  = "1.8.4"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -537,4 +537,13 @@ client:hook("OnMessage", function(client, event)
     end
 end)
 
+
+client:hook("OnDisconnect", function(client, reason)
+    fgcom.log("remote disconnect: "..reason)
+    mumble.stop()
+end)
+
+
+-- Finally start the bot
 mumble.loop()
+fgcom.log(botname.." with callsign "..fgcom.callsign.." completed.")

@@ -33,7 +33,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.0.2"
+fgcom.botversion = "1.0.3"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -422,5 +422,12 @@ client:hook("OnPluginData", function(client, event)
 end)
 
 
+client:hook("OnDisconnect", function(client, reason)
+    fgcom.log("remote disconnect: "..reason)
+    mumble.stop()
+end)
+
+
+-- Finally start the bot
 mumble.loop()
 fgcom.log(botname.." with callsign "..fgcom.callsign.." completed.")
