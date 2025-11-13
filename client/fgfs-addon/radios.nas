@@ -408,43 +408,58 @@ var get_radios_usable = func {
 
 # Input properties (initialized in start_rdf)
 var fgcom_rdf_input_node      = nil;
-var fgcom_rdf_input_radio     = nil;
-var fgcom_rdf_input_callsign  = nil;
-var fgcom_rdf_input_direction = nil;
-var fgcom_rdf_input_quality   = nil;
 
 var rdf_data_callback = func {
-    var radio     = fgcom_rdf_input_radio.getValue();
-    #callsign unused so far:  var callsign  = fgcom_rdf_input_callsign.getValue();
-    var direction = fgcom_rdf_input_direction.getValue();
-    var quality   = fgcom_rdf_input_quality.getValue();
-
-    FGComMumble.logger.logHash("rdf", 5, "rdf_data_callback called:", {radioID:radio, direction:direction, quality:quality} );
-
-    if (radio == "" or direction == "" or quality == "") return; # No data
-
+    var data = fgcom_rdf_input_node.getValue();
+    FGComMumble.logger.log("rdf", 5, "rdf_data_callback called: data="~data);
+    if (data == "") return; # No data
+    
+    # look if the data string is for us:
+    # RDF:...
+    var dataID = substr(data, 0, 4);
+    if (dataID != "RDF:") return; # data not for us
+    data = substr(data, 4);
+    FGComMumble.logger.log("rdf", 5, "rdf_data_callback: dataID='"~dataID~"' matched. processing: "~data);
+    
+    
+    # prepare data structure
+    var radio     = "";
+    var callsign  = "";
+    var frequency = "";
+    var direction = "";
+    var angle     = "";
+    var quality   = "";
+    
+    # Now parse the fields.
     # handle escaped delimiters (mask, so split() can do its magic)
-    var esc_comma  = "\x1A";
-    var esc_equals = "\x1B";
-    radio     = string.replace(radio,     "\\,", esc_comma);   radio     = string.replace(radio,     "\\=", esc_equals);
-    #callsign  = string.replace(callsign,  "\\,", esc_comma);   callsign  = string.replace(callsign,  "\\=", esc_equals);
-    direction = string.replace(direction, "\\,", esc_comma);   direction = string.replace(direction, "\\=", esc_equals);
-    quality   = string.replace(quality,   "\\,", esc_comma);   quality   = string.replace(quality,   "\\=", esc_equals);
-
-    # Read input data
-    # Format is this: "RDF:CS_TX=NDB:TEST,FRQ=0.342,DIR=11.567468,VRT=2.299456,QLY=0.999998,ID_RX=3"
-    # (ID_RX is the radio index in the mumble plugin)
-    radio     = num(split("=", radio)[1]) - 1; # we need the vector index which is one less
-    radio     = ""~radio;  # force string type (cause of num() returned number)
-    #callsign  = split("=", callsign)[1];
-    direction = split("=", direction)[1];
-    quality   = split("=", quality)[1];
-
-    # handle escaped delimiters (undo masking and unescape)
-    radio     = string.replace(radio,     esc_comma, ",");   radio     = string.replace(radio,     esc_equals, "=");
-    #callsign  = string.replace(callsign,  esc_comma, ",");   callsign  = string.replace(callsign,  esc_equals, "=");
-    direction = string.replace(direction, esc_comma, ",");   direction = string.replace(direction, esc_equals, "=");
-    quality   = string.replace(quality,   esc_comma, ",");   quality   = string.replace(quality,   esc_equals, "=");
+    var udp_escapes = {comma: "\x1A", equals: "\x1B"};
+    data = string.replace(data, "\\,", udp_escapes.comma);
+    data = string.replace(data, "\\=", udp_escapes.equals);
+    foreach (var chunk; split(",", data)) {
+        chunk = string.replace(chunk, udp_escapes.comma, ","); # undo masking and unescape
+        FGComMumble.logger.log("rdf", 5, "rdf_data_callback: process data chunk '"~chunk~"'");
+        
+        chunk_split = split("=", chunk);
+        if (size(chunk_split) != 2) {
+            FGComMumble.logger.log("rdf", 1, "rdf_data_callback: ERROR processing data chunk '"~chunk~"'! retrieved "~size(chunk_split)~" elements but expected 2!");
+            return;
+        }
+        
+        var key = chunk_split[0];
+        var val = string.replace(chunk_split[1], udp_escapes.equals, "="); # undo masking and unescape
+        
+        # fields: CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1
+        if (key == "CS_TX") callsign  = val;
+        if (key == "FRQ")   frequency = val;
+        if (key == "DIR")   direction = val;
+        if (key == "VRT")   angle     = val;
+        if (key == "QLY")   quality   = val;
+        if (key == "ID_RX") radio     = num(val)-1; # we need the vector index which is one less
+    };
+        
+    # done with parsing the fields. Look if everything we need is here.
+    FGComMumble.logger.logHash("rdf", 5, "rdf_data_callback parsing finished:", {radioID:radio, direction:direction, angle:angle, quality:quality, callsign:callsign, frequency:frequency } );
+    if (radio == "" or direction == "" or quality == "") return; # No complete/valid data
 
     # Send to corresponding ADF
     var radios = get_radios_usable();
@@ -454,6 +469,7 @@ var rdf_data_callback = func {
         FGComMumble.logger.log("rdf", 5, "rdf_data_callback update: radioIDX="~radio~" => "~radios[radio].name);
         radios[radio].set_rdf_data(direction, quality);
     }
+
 }
 
 # Listener to receive RDF data.
@@ -467,12 +483,9 @@ var start_rdf = func(rdfInputNode) {
 
     # Init RDF input nodes
     FGComMumble.logger.log("rdf", 2, " start RDF input handling using "~rdfInputNode.getPath());
-    fgcom_rdf_input_radio     = rdfInputNode.initNode("radio", "");
-    fgcom_rdf_input_callsign  = rdfInputNode.initNode("callsign", "");
-    fgcom_rdf_input_direction = rdfInputNode.initNode("direction", "");
-    fgcom_rdf_input_quality   = rdfInputNode.initNode("quality", "");
+    fgcom_rdf_input_node = rdfInputNode;
     
-    rdf_data_listener = setlistener(fgcom_rdf_input_radio, func {
+    rdf_data_listener = setlistener(fgcom_rdf_input_node, func {
         # call() to set the local namespace.
         call(rdf_data_callback, [], nil, FGComMumble_radios);
     });

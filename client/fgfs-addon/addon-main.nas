@@ -362,9 +362,9 @@ var main = func( addon ) {
     FGComMumble.logger.log("core", 2, "initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
     FGComMumble_radios.FGComMumble = FGComMumble;
-    var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
+    var udpinputNode = props.globals.getNode(mySettingsRootPath ~ "/input",1);
     FGComMumble_radios.create_radios();
-    FGComMumble_radios.start_rdf(rdfinputNode);
+    FGComMumble_radios.start_rdf(udpinputNode);
 
     # Show error message, if no radios could be found
     if (size(FGComMumble_radios.get_com_radios_usable()) == 0) {
@@ -448,9 +448,7 @@ var main = func( addon ) {
             "name":"fgcom-mumble-in"
           }));
           
-          foreach(var p; rdfinputNode.getChildren()) {
-            p.setValue("");
-          }
+          udpinputNode.setValue(""); # clean/init to string
           
           # Register a listener to each initialized radios output node
           var r_out_l_idx = 0;
