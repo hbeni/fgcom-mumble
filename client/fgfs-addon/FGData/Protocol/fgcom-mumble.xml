@@ -101,7 +101,7 @@
     <name>callsign</name>
     <type>string</type>
     <format>CALLSIGN=%s</format>
-    <node>/sim/multiplay/callsign</node>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/callsign</node>
    </chunk>
 
 

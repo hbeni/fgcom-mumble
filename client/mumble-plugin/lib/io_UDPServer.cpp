@@ -84,7 +84,8 @@ std::map<int, fgcom_client> fgcom_local_client;
 std::map<std::pair<std::string,uint16_t>, int> fgcom_udp_portMap; // host,port2iid
 bool fgcom_com_ptt_compatmode = false;
 std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort, std::string clientHost) {
-    pluginDbg("[UDP-server] received message (client="+clientHost+":"+std::to_string(clientPort)+"): "+std::string(buffer));
+    std::string buffer_str(buffer);
+    pluginDbg("[UDP-server] received message (client="+clientHost+":"+std::to_string(clientPort)+"): "+buffer_str);
     //std::cout << "DBG: Stored local userID=" << localMumId <<std::endl;
     setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     
@@ -103,14 +104,25 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     // marker for PTT change
     bool needToHandlePTT = false;
 
-    // convert to stringstream so we can easily tokenize
-    // TODO: why not simply refactor to strtok()?
-    std::stringstream streambuffer(buffer); //std::string(buffer)
+    // convert udp string buffer to string, so we can easily handle escaped delimeters.
+    // the goal is that we want to support: `a,b\,c,d`=>['a', 'b,c', 'd']; we do this by replacing the escaped sequence
+    // into a non-printable ASCII, so we can easily spit by ',' later on.
+    const std::string delimEscPlaceholderC = "\x1A"; // for processing escaped `\,` sequences in UDP input string ('a,b' => 'a\x1Ab' )
+    const std::string delimEscPlaceholderE = "\x1B"; // for processing escaped `\,` sequences in UDP input string ('a=b' => 'a\x1Bb' )
+    replace_all(buffer_str, "\\,", delimEscPlaceholderC);
+    replace_all(buffer_str, "\\=", delimEscPlaceholderE);
+
+    
+    // Tokenize and process UDP fields.
+    // (convert to stringstream so we can easily tokenize.)
+    std::stringstream streambuffer(buffer_str);
     std::string segment;
     std::regex parse_key_value ("^(\\w+)=(.+)");
     std::regex parse_COM ("^(COM)(\\d+)_(.+)");
     fgcom_localcfg_mtx.lock();
     while(std::getline(streambuffer, segment, ',')) {
+        replace_all(segment, delimEscPlaceholderC, ","); // undo escaping of delim ('a\x1Ab' => 'a,b')
+        replace_all(segment, delimEscPlaceholderE, "="); // undo escaping of delim ('a\x1Bb' => 'a=b')
         pluginDbg("[UDP-server] Segment='"+segment+"'");
 
         try {

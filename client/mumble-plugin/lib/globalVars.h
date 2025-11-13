@@ -109,4 +109,26 @@ extern std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clie
 extern std::vector<mumble_channelid_t>  fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp
 
 
+
+/**
+ * Utils
+ */
+
+/*
+ * inplace replace all occurences of from with to in source
+ * 
+ * std::string s = "abcde";
+ * replace_all(s, "bc", "xxx");  // s = "axxxde"
+ */
+inline void replace_all(std::string& source, const std::string& from, const std::string& to) {
+    if (from.empty()) return;  // prevent infinite loop
+
+    std::size_t pos = 0;
+    while ((pos = source.find(from, pos)) != std::string::npos)
+    {
+        source.replace(pos, from.length(), to);
+        pos += to.length(); // advance past the replaced segment
+    }
+}
+
 #endif

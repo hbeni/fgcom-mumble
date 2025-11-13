@@ -157,6 +157,9 @@ var FGComMumble = {
     
     # Generic UDP output root tree, to be used by individual radio instances
     me.rootNodeOutput = me.rootNode.getNode("output", 1);
+
+    # Callsing UDP output node
+    me.NodeOutputCallsign = me.rootNodeOutput.getNode("callsign", 1)
   },
   
   fgcom3_compatInit: func() {
@@ -246,6 +249,20 @@ var FGComMumble = {
       props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
       fgcommand("gui-redraw");
     }
+  },
+  
+  # Escape protocol field value
+  escapeUDP: func(s) {
+    s = string.replace(s, ",", "\\,");
+    s = string.replace(s, "=", "\\=");
+    return s;
+  },
+  
+  # Unescape protocol field value
+  unescapeUDP: func(s) {
+    s = string.replace(s, "\\,", ",");
+    s = string.replace(s, "\\=", "=");
+    return s;
   },
 
   # Udpate checks
@@ -369,7 +386,7 @@ var main = func( addon ) {
     FGComMumble_combar.FGComMumble = FGComMumble;
 
     # Build the final UDP output string transmitted by the protocol file out of the individual radios udp string
-    # (note: the generic protocl handler can only process ~256 chars; to prevent truncation,
+    # (note: the generic protocol handler can only process ~256 chars; to prevent truncation,
     #        we need to multiplex into several chunks. The plugin currently supports MAXLINE=1024 chars)
     var out_prop = [
       props.globals.getNode(mySettingsRootPath ~ "/output/udp[0]",1),
@@ -443,6 +460,12 @@ var main = func( addon ) {
             r_out_l_idx = r_out_l_idx + 1;
           }
           
+          # Register and execute a listener to escape callsign
+          FGComMumble.logger.log("udp", 3, "  add listener for udp callsign field");
+          fgcom_listeners["upd_com_out:callsign"] = _setlistener("/sim/multiplay/callsign", func() {
+            FGComMumble.logger.log("udp", 5, "  updating udp callsign field");
+            FGComMumble.NodeOutputCallsign.setValue(FGComMumble.escapeUDP(getprop("/sim/multiplay/callsign")));
+          }, 1, 0);
           
           update_udp_output();
           

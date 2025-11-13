@@ -118,7 +118,10 @@ var GenericRadio = {
             }
 
             FGComMumble.logger.log("udp", 4, "     generate udp packet field: "~f~ " ("~(propval != nil? propval:"<nil>")~")");
-            if (propval != nil) append(fields, "COM" ~ me.fgcomPacketStr.getIndex() ~ "_" ~ f ~ "=" ~ propval);
+            if (propval != nil) {
+                propval = ""~propval;  # force string type (bools get casted)
+                append(fields, "COM" ~ me.fgcomPacketStr.getIndex() ~ "_" ~ f ~ "=" ~ FGComMumble.escapeUDP(propval));
+            }
         }
 
         me.fgcomPacketStr.setValue(string.join(",", fields));
@@ -298,12 +301,14 @@ var ADF = {
                 # Has signal, and is in the correct mode: animate the needle
                 me.has_rdf_signal = 1;
                 me.rdf_signal_flag_node.setBoolValue(1);
+                #FGComMumble.logger.log("rdf", 5, me.name~" interpolate ADF needle at: "~me.indicated_bearing.getPath()~" (cur="~me.indicated_bearing.getValue()~"; tgt="~direction~")");
                 interpolate(me.indicated_bearing, direction, 1);
             } else {
                 if (me.has_rdf_signal) {
                     # signal lost, reset needle
                     me.has_rdf_signal = 0;
                     me.rdf_signal_flag_node.setBoolValue(0);
+                    #FGComMumble.logger.log("rdf", 5, me.name~" interpolate ADF needle at: "~me.indicated_bearing.getPath()~" (cur="~me.indicated_bearing.getValue()~"; tgt="~direction~")");
                     interpolate(me.indicated_bearing, 90, 1);
                 }
             }
@@ -410,18 +415,36 @@ var fgcom_rdf_input_quality   = nil;
 
 var rdf_data_callback = func {
     var radio     = fgcom_rdf_input_radio.getValue();
+    #callsign unused so far:  var callsign  = fgcom_rdf_input_callsign.getValue();
     var direction = fgcom_rdf_input_direction.getValue();
     var quality   = fgcom_rdf_input_quality.getValue();
+
     FGComMumble.logger.logHash("rdf", 5, "rdf_data_callback called:", {radioID:radio, direction:direction, quality:quality} );
 
     if (radio == "" or direction == "" or quality == "") return; # No data
 
+    # handle escaped delimiters (mask, so split() can do its magic)
+    var esc_comma  = "\x1A";
+    var esc_equals = "\x1B";
+    radio     = string.replace(radio,     "\\,", esc_comma);   radio     = string.replace(radio,     "\\=", esc_equals);
+    #callsign  = string.replace(callsign,  "\\,", esc_comma);   callsign  = string.replace(callsign,  "\\=", esc_equals);
+    direction = string.replace(direction, "\\,", esc_comma);   direction = string.replace(direction, "\\=", esc_equals);
+    quality   = string.replace(quality,   "\\,", esc_comma);   quality   = string.replace(quality,   "\\=", esc_equals);
+
     # Read input data
     # Format is this: "RDF:CS_TX=NDB:TEST,FRQ=0.342,DIR=11.567468,VRT=2.299456,QLY=0.999998,ID_RX=3"
     # (ID_RX is the radio index in the mumble plugin)
-    var radio     = num(split("=", radio)[1]) - 1; # we need the vector index which is one less
-    var direction = split("=", direction)[1];
-    var quality   = split("=", quality)[1];
+    radio     = num(split("=", radio)[1]) - 1; # we need the vector index which is one less
+    radio     = ""~radio;  # force string type (cause of num() returned number)
+    #callsign  = split("=", callsign)[1];
+    direction = split("=", direction)[1];
+    quality   = split("=", quality)[1];
+
+    # handle escaped delimiters (undo masking and unescape)
+    radio     = string.replace(radio,     esc_comma, ",");   radio     = string.replace(radio,     esc_equals, "=");
+    #callsign  = string.replace(callsign,  esc_comma, ",");   callsign  = string.replace(callsign,  esc_equals, "=");
+    direction = string.replace(direction, esc_comma, ",");   direction = string.replace(direction, esc_equals, "=");
+    quality   = string.replace(quality,   esc_comma, ",");   quality   = string.replace(quality,   esc_equals, "=");
 
     # Send to corresponding ADF
     var radios = get_radios_usable();
