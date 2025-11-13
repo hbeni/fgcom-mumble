@@ -366,9 +366,12 @@ var main = func( addon ) {
     FGComMumble_radios.create_radios();
     FGComMumble_radios.start_rdf(udpinputNode);
 
-    # Show error message, if no radios could be found
+    # Show error message, if no radios could be found.
+    # We offer a compatibility mode, so the user should be able to run radio comms nonetheless.
+    # (The dialog code can add the needed properties)
     if (size(FGComMumble_radios.get_com_radios_usable()) == 0) {
-      FGComMumble.logger.log("core", 1, "WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
+      FGComMumble.logger.log("core", 1, "WARNING: no usable COM radios where found! This should be reported to the aircraft devs "~
+                                        "(They need to include a <comm-radio> node in instrumentation.xml).");
       fgcommand("dialog-show", {"dialog-name" : "fgcom-mumble-comoverride"});
     }
 
