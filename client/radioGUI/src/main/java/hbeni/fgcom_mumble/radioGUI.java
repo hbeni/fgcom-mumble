@@ -43,6 +43,7 @@ public class radioGUI {
         public static String  simConnectHost      = "localhost";
         public static int     simConnectPort      = 500; // 500=MSFS2020
         public static boolean enableAudioEffecs   = true;
+        public static boolean audioNoiseSquelch   = true;
         public static boolean allowHearingNonPluginUsers = false;
         public static boolean alwaysMumblePTT     = false;
     }

@@ -109,6 +109,8 @@ public class UDPclient {
         msg += ",DEBUG_SIGQLY="+dbgSignalQLY;
         String audioFX = (radioGUI.Options.enableAudioEffecs)? "1" : "0";
         msg += ",AUDIO_FX_RADIO="+audioFX;
+        String audioNoiseSquelch = (radioGUI.Options.audioNoiseSquelch)? "1" : "0";
+        msg += ",AUDIO_FX_NOISES="+audioNoiseSquelch;
         String audioHearall = (radioGUI.Options.allowHearingNonPluginUsers)? "1" : "0";
         msg += ",AUDIO_HEAR_ALL="+audioHearall;
         String alwaysMumblePTT = (radioGUI.Options.alwaysMumblePTT)? "1" : "0";

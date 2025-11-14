@@ -1417,81 +1417,12 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 
 // Helper function to generate white noise when squelch is open
 // This is called from both mumble_onAudioSourceFetched() and mumble_onAudioOutputAboutToPlay()
+// Wrapper function that calls the audio.cpp implementation
 // Returns true if noise was generated, false otherwise
 static bool generateWhiteNoiseIfNeeded(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    // Only generate noise if plugin is active and radio audio effects are enabled
-    if (!fgcom_isPluginActive() || !fgcom_cfg.radioAudioEffects) {
-        return false;
-    }
-    
-    // Check all local radios to see if any have squelch open
-    float bestNoiseLevel = 0.0f;  // Track the highest noise level from any radio
-    const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
-    
-    // Get position and frequency for noise floor calculation
-    struct RadioInfo {
-        float squelch;
-        double lat;
-        double lon;
-        float freq_mhz;
-    };
-    std::vector<RadioInfo> radioInfos;
-    radioInfos.reserve(8);
-    
-    // Thread-safe access: use try_lock to avoid blocking the audio thread
-    // If we can't get the lock immediately, skip noise generation for this frame
-    {
-        std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
-        if (lock.owns_lock()) {
-            // During lock, copy radio info including position
-            for (const auto &lcl_idty : fgcom_local_client) {
-                const fgcom_client& lcl = lcl_idty.second;
-                for (const auto &radio : lcl.radios) {
-                    if (radio.operable && !radio.frequency.empty()) {
-                        RadioInfo info;
-                        info.squelch = radio.squelch;
-                        info.lat = lcl.lat;
-                        info.lon = lcl.lon;
-                        // Parse frequency string to float
-                        try {
-                            info.freq_mhz = std::stof(radio.frequency);
-                        } catch (...) {
-                            info.freq_mhz = 0.0f;  // Invalid frequency
-                        }
-                        radioInfos.push_back(info);
-                    }
-                }
-            }
-            // Mutex automatically unlocked when lock goes out of scope
-        } else {
-            // Lock unavailable, skip noise generation for this frame
-            return false;
-        }
-    }
-    
-    // Process radios and calculate noise floor (without holding lock)
-    for (const auto& info : radioInfos) {
-        if (info.squelch <= SQUELCH_OPEN_THRESHOLD && info.freq_mhz > 0.0f) {
-            // Get noise floor-based volume (cached)
-            float baseVolume = getCachedNoiseFloorVolume(info.lat, info.lon, info.freq_mhz);
-            
-            // Apply squelch modulation (lower squelch = more noise)
-            float squelchFactor = (1.0f - (info.squelch / SQUELCH_OPEN_THRESHOLD));
-            float noiseLevel = baseVolume * squelchFactor;
-            
-            if (noiseLevel > bestNoiseLevel) {
-                bestNoiseLevel = noiseLevel;
-            }
-        }
-    }
-    
-    // Generate white noise if any radio has squelch open
-    if (bestNoiseLevel > 0.0f) {
-        fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
-        return true;  // We modified the audio stream
-    }
-    
-    return false;  // No noise generated
+    // Use location-based noise if enabled in config (default: true)
+    bool useLocationBasedNoise = fgcom_cfg.useLocationBasedNoise;
+    return fgcom_audio_addSquelchNoise(outputPCM, sampleCount, channelCount, useLocationBasedNoise);
 }
 
 bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRate, bool isSpeech, mumble_userid_t userID) {
