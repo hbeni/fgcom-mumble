@@ -37,7 +37,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.10.1"
+fgcom.botversion = "1.10.2"
 json = require("dkjson")
 local botname     = "FGCOM-Status"
 fgcom.callsign    = "FGCOM-Status"
@@ -590,7 +590,12 @@ fgcom.hooks.parsePluginData_processedPacket = function(mumble_user, packtype, da
 end
 
 
+client:hook("OnDisconnect", function(client, reason)
+    fgcom.log("remote disconnect: "..reason)
+    mumble.stop()
+end)
 
 
 -- Finally start the bot
 mumble.loop()
+fgcom.log(botname.." with callsign "..fgcom.callsign.." completed.")
