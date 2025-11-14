@@ -65,6 +65,9 @@
 #include "mumble/MumblePlugin_v_1_0_x.h"
 #include "fgcom-mumble.h"
 
+// Forward declaration for cache update function
+void updateCachedRadioInfo();
+
 #ifdef DEBUG
     float fgcom_debug_signalstrength = -1;
 #endif
@@ -516,6 +519,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
                 }
                 
+                // Enable/Disable squelch noise
+                if (token_key == "AUDIO_FX_NOISES") {
+                    fgcom_cfg.addNoiseSquelch = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
+                    pluginDbg("[UDP-server] AUDIO_FX_NOISES updated to "+std::to_string(fgcom_cfg.addNoiseSquelch));
+                }
+                
                 // Allow hearing of non-plugin users
                 if (token_key == "AUDIO_HEAR_ALL") {
                     fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
@@ -846,6 +855,9 @@ void fgcom_spawnUDPServer() {
             
             std::map<int, fgcom_udp_parseMsg_result> updates; // so we can send updates to remotes
             updates = fgcom_udp_parseMsg(buffer, clientPort, clientHost_str);
+            
+            // Update cached radio info for audio callbacks (reduces lock contention)
+            updateCachedRadioInfo();
             
             /* Process pending urgent notifications
              * (not-urgent updates are dealt from the notification thread) */

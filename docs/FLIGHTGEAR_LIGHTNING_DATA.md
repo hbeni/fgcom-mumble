@@ -163,6 +163,7 @@ LAT=48.123456,LON=11.654321,ALT=5000,CALLSIGN=TEST1,COM1_FRQ=121.5000,COM1_PTT=0
 
 **Configuration:**
 - `AUDIO_FX_RADIO=1` - Radio audio effects: 0=off, 1=on (Bool)
+- `AUDIO_FX_NOISES=1` - Add noise when squelch is open: 0=off, 1=on (Bool). FlightGear creates its own noise, so this can be disabled (default: 1)
 - `AUDIO_HEAR_ALL=0` - Hear non-plugin users: 0=off, 1=on (Bool)
 - `ALWAYSMUMBLEPTT=0` - Always handle Mumble PTT: 0=off, 1=on (Bool)
 - `IID=0` - Identity ID (Int, for multiple identities)

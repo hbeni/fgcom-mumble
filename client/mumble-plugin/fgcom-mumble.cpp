@@ -107,6 +107,80 @@ const float FREQ_THRESHOLD = 0.001f;  // 1 kHz - recalculate if frequency change
 std::thread noise_floor_update_thread;
 std::atomic<bool> noise_floor_thread_running{false};
 
+// Thread-safe cache for radio info used in audio callbacks
+// This reduces lock contention and prevents skipped noise generation frames
+struct CachedRadioInfo {
+    float squelch;
+    double lat;
+    double lon;
+    float freq_mhz;
+    bool operable;
+    std::chrono::system_clock::time_point last_updated;
+    
+    CachedRadioInfo() : squelch(1.0f), lat(0.0), lon(0.0), freq_mhz(0.0f), operable(false) {
+        last_updated = std::chrono::system_clock::now();
+    }
+};
+
+// Cache for radio info (updated periodically, read lock-free in audio callback)
+std::vector<CachedRadioInfo> cached_radio_infos;
+std::mutex cached_radio_infos_mtx;
+const std::chrono::milliseconds RADIO_INFO_CACHE_UPDATE_INTERVAL(50);  // Update every 50ms
+std::chrono::system_clock::time_point last_radio_info_update;
+
+/**
+ * Update the cached radio info from fgcom_local_client
+ * This should be called periodically (e.g., after UDP packet processing)
+ * to keep the cache fresh without blocking audio callbacks
+ */
+void updateCachedRadioInfo() {
+    auto now = std::chrono::system_clock::now();
+    auto time_since_update = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_radio_info_update);
+    
+    // Only update if enough time has passed
+    if (time_since_update < RADIO_INFO_CACHE_UPDATE_INTERVAL) {
+        return;
+    }
+    
+    // Use try_lock to avoid blocking if audio callback is running
+    std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        return;  // Skip this update if lock unavailable
+    }
+    
+    // Copy radio info to cache
+    std::vector<CachedRadioInfo> new_cache;
+    new_cache.reserve(8);
+    
+    for (const auto &lcl_idty : fgcom_local_client) {
+        const fgcom_client& lcl = lcl_idty.second;
+        for (const auto &radio : lcl.radios) {
+            if (radio.operable && !radio.frequency.empty()) {
+                CachedRadioInfo info;
+                info.squelch = radio.squelch;
+                info.lat = lcl.lat;
+                info.lon = lcl.lon;
+                info.operable = radio.operable;
+                // Parse frequency string to float
+                try {
+                    info.freq_mhz = std::stof(radio.frequency);
+                } catch (...) {
+                    info.freq_mhz = 0.0f;  // Invalid frequency
+                }
+                info.last_updated = now;
+                new_cache.push_back(info);
+            }
+        }
+    }
+    
+    // Update cache atomically
+    {
+        std::lock_guard<std::mutex> cache_lock(cached_radio_infos_mtx);
+        cached_radio_infos = std::move(new_cache);
+        last_radio_info_update = now;
+    }
+}
+
 
 /*******************
  * Some helpers    *
@@ -797,6 +871,12 @@ mumble_error_t fgcom_initPlugin() {
             pluginLog("WARNING: Failed to initialize noise floor system, will use defaults");
         }
         
+        // Initialize radio info cache
+        pluginDbg("initializing radio info cache");
+        last_radio_info_update = std::chrono::system_clock::now();
+        updateCachedRadioInfo();  // Initial cache population
+        pluginDbg("radio info cache initialized");
+        
         // start the noise floor cache update thread
         // DISABLED: Background thread can cause hangs during plugin load/unload
         // Cache will be populated on-demand in audio callback (with proper caching to avoid blocking)
@@ -1417,81 +1497,12 @@ bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channel
 
 // Helper function to generate white noise when squelch is open
 // This is called from both mumble_onAudioSourceFetched() and mumble_onAudioOutputAboutToPlay()
+// Wrapper function that calls the audio.cpp implementation
 // Returns true if noise was generated, false otherwise
 static bool generateWhiteNoiseIfNeeded(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    // Only generate noise if plugin is active and radio audio effects are enabled
-    if (!fgcom_isPluginActive() || !fgcom_cfg.radioAudioEffects) {
-        return false;
-    }
-    
-    // Check all local radios to see if any have squelch open
-    float bestNoiseLevel = 0.0f;  // Track the highest noise level from any radio
-    const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
-    
-    // Get position and frequency for noise floor calculation
-    struct RadioInfo {
-        float squelch;
-        double lat;
-        double lon;
-        float freq_mhz;
-    };
-    std::vector<RadioInfo> radioInfos;
-    radioInfos.reserve(8);
-    
-    // Thread-safe access: use try_lock to avoid blocking the audio thread
-    // If we can't get the lock immediately, skip noise generation for this frame
-    {
-        std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
-        if (lock.owns_lock()) {
-            // During lock, copy radio info including position
-            for (const auto &lcl_idty : fgcom_local_client) {
-                const fgcom_client& lcl = lcl_idty.second;
-                for (const auto &radio : lcl.radios) {
-                    if (radio.operable && !radio.frequency.empty()) {
-                        RadioInfo info;
-                        info.squelch = radio.squelch;
-                        info.lat = lcl.lat;
-                        info.lon = lcl.lon;
-                        // Parse frequency string to float
-                        try {
-                            info.freq_mhz = std::stof(radio.frequency);
-                        } catch (...) {
-                            info.freq_mhz = 0.0f;  // Invalid frequency
-                        }
-                        radioInfos.push_back(info);
-                    }
-                }
-            }
-            // Mutex automatically unlocked when lock goes out of scope
-        } else {
-            // Lock unavailable, skip noise generation for this frame
-            return false;
-        }
-    }
-    
-    // Process radios and calculate noise floor (without holding lock)
-    for (const auto& info : radioInfos) {
-        if (info.squelch <= SQUELCH_OPEN_THRESHOLD && info.freq_mhz > 0.0f) {
-            // Get noise floor-based volume (cached)
-            float baseVolume = getCachedNoiseFloorVolume(info.lat, info.lon, info.freq_mhz);
-            
-            // Apply squelch modulation (lower squelch = more noise)
-            float squelchFactor = (1.0f - (info.squelch / SQUELCH_OPEN_THRESHOLD));
-            float noiseLevel = baseVolume * squelchFactor;
-            
-            if (noiseLevel > bestNoiseLevel) {
-                bestNoiseLevel = noiseLevel;
-            }
-        }
-    }
-    
-    // Generate white noise if any radio has squelch open
-    if (bestNoiseLevel > 0.0f) {
-        fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
-        return true;  // We modified the audio stream
-    }
-    
-    return false;  // No noise generated
+    // Use location-based noise if enabled in config (default: true)
+    bool useLocationBasedNoise = fgcom_cfg.useLocationBasedNoise;
+    return fgcom_audio_addSquelchNoise(outputPCM, sampleCount, channelCount, useLocationBasedNoise);
 }
 
 bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRate, bool isSpeech, mumble_userid_t userID) {
@@ -1748,11 +1759,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             throw std::runtime_error("Audio buffer size exceeds maximum allowed size");
         }
         
-        // Generate white noise when squelch is open but no signal is present
-        // This simulates realistic radio behavior where you hear static when squelch is open
-        if (generateWhiteNoiseIfNeeded(outputPCM, sampleCount, channelCount)) {
-            rv = true;  // We modified the audio stream
-        }
+        // NOTE: Noise generation is now handled by mumble_onAudioOutputAboutToPlay()
+        // which runs continuously. This prevents duplicate noise generation and conflicts.
+        // Do NOT generate noise here to avoid fragmentation and conflicts.
     } else {
             // Plugin not active OR no speech detected
             // do nothing, leave the stream alone

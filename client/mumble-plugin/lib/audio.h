@@ -92,4 +92,16 @@ void fgcom_audio_applyDonaldDuckEffect(float intensity, float *outputPCM, uint32
  */
 void fgcom_audio_applyDopplerShift(float relative_velocity_mps, float carrier_frequency_hz, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
 
+/*
+ * Generate squelch noise when squelch is open
+ * This function handles all noise generation logic including location-based noise floor calculations
+ * 
+ * @param float *outputPCM: Audio buffer to process
+ * @param uint32_t sampleCount: Number of samples
+ * @param uint16_t channelCount: Number of channels
+ * @param bool useLocationBasedNoise: If true, use location-based noise floor calculations
+ * @return bool: true if noise was generated, false otherwise
+ */
+bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, bool useLocationBasedNoise);
+
 #endif

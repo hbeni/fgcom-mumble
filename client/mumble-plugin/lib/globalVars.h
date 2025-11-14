@@ -36,6 +36,8 @@
 struct fgcom_config {
     bool        allowHearingNonPluginUsers;
     bool        radioAudioEffects;
+    bool        addNoiseSquelch;       // if true, add noise when squelch is open
+    bool        useLocationBasedNoise; // if true, use location-based noise floor calculations
     std::string specialChannel;
     std::string udpServerHost;
     int         udpServerPort;
@@ -49,6 +51,8 @@ struct fgcom_config {
     fgcom_config() noexcept {
         allowHearingNonPluginUsers = false;
         radioAudioEffects = true;
+        addNoiseSquelch = true;
+        useLocationBasedNoise = true;
         specialChannel    = "^fgcom-mumble.*";
         udpServerHost     = "127.0.0.1";
         udpServerPort     = 16661;

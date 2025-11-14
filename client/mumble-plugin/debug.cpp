@@ -8,6 +8,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include "globalVars.h"
 
 // Debug thread management
 bool fgcom_debugthread_running = false;
@@ -69,8 +70,12 @@ void debugPerformanceStats() {
 
 // Debug output internal state function
 void debug_out_internal_state() {
-    debugLog("Debug output internal state function called");
-    // Placeholder for internal state debugging
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        debugLog("Config: radioAudioEffects=" + std::to_string(fgcom_cfg.radioAudioEffects) + 
+                 ", addNoiseSquelch=" + std::to_string(fgcom_cfg.addNoiseSquelch) +
+                 ", useLocationBasedNoise=" + std::to_string(fgcom_cfg.useLocationBasedNoise));
+    }
 }
 
 // Debug thread shutdown flag

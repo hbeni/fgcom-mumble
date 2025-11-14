@@ -153,6 +153,7 @@ The Following fields are configuration options that change plugin behaviour.
 | `COM`*n*`_RDF`   | Bool   | Set to `1` to enable RDF output for signals received on this radio (details below: "*UDP client interface / RDF data*")   | `0`|
 | `COM`*n*`_PUBLISH`| Bool  | Set to `0` to prevent this radio from being published anymore. Use this at the first the radio field!  | `1`|
 | `AUDIO_FX_RADIO` | Bool   | `0` will switch radio effects like static off. | `1` |
+| `AUDIO_FX_NOISES` | Bool   | `0` will disable adding noise when squelch is open. FlightGear creates its own noise, so this can be disabled. | `1` |
 | `AUDIO_HEAR_ALL` | Bool   | `1` will enable hearing of non-plugin users. | `0` |
 | `COM`*n*`_MAPMUMBLEPTT` | Bool   | `1` switches PTT handling to mumbles own talking state and activates _this_ radios PTT when mumble activates talking.| COM1=`1`, others=`0` |
 | `ALWAYSMUMBLEPTT` | Bool   | `1` will handle mumbles PTT upon activating any COM device's PTT, even when the plugin is not active.| `0` |
