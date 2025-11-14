@@ -65,6 +65,9 @@
 #include "mumble/MumblePlugin_v_1_0_x.h"
 #include "fgcom-mumble.h"
 
+// Forward declaration for cache update function
+void updateCachedRadioInfo();
+
 #ifdef DEBUG
     float fgcom_debug_signalstrength = -1;
 #endif
@@ -852,6 +855,9 @@ void fgcom_spawnUDPServer() {
             
             std::map<int, fgcom_udp_parseMsg_result> updates; // so we can send updates to remotes
             updates = fgcom_udp_parseMsg(buffer, clientPort, clientHost_str);
+            
+            // Update cached radio info for audio callbacks (reduces lock contention)
+            updateCachedRadioInfo();
             
             /* Process pending urgent notifications
              * (not-urgent updates are dealt from the notification thread) */

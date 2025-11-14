@@ -44,8 +44,17 @@
  * Following functions are called from plugin code
  */
 void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    PinkNoise fgcom_PinkSource;
-    InitializePinkNoise(&fgcom_PinkSource, 12);     // Init new PinkNoise source with num of rows
+    // Use static PinkNoise generator to maintain state between calls
+    // This prevents discontinuities and fragmentation in the noise stream
+    static PinkNoise fgcom_PinkSource;
+    static bool pinkNoiseInitialized = false;
+    
+    // Initialize once on first call
+    if (!pinkNoiseInitialized) {
+        InitializePinkNoise(&fgcom_PinkSource, 12);
+        pinkNoiseInitialized = true;
+    }
+    
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
         float noise = GeneratePinkNoise( &fgcom_PinkSource );
         noise = noise * noiseVolume;
@@ -325,9 +334,21 @@ void fgcom_audio_applyDopplerShift(float relative_velocity_mps, float carrier_fr
 extern bool fgcom_isPluginActive();
 extern float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz);
 
+// Forward declaration for cached radio info
+struct CachedRadioInfo {
+    float squelch;
+    double lat;
+    double lon;
+    float freq_mhz;
+    bool operable;
+};
+extern std::vector<CachedRadioInfo> cached_radio_infos;
+extern std::mutex cached_radio_infos_mtx;
+
 /*
  * Generate squelch noise when squelch is open
  * This function handles all noise generation logic including location-based noise floor calculations
+ * Uses cached radio info to avoid lock contention and prevent skipped frames
  * 
  * @param float *outputPCM: Audio buffer to process
  * @param uint32_t sampleCount: Number of samples
@@ -335,60 +356,30 @@ extern float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz);
  * @param bool useLocationBasedNoise: If true, use location-based noise floor calculations
  * @return bool: true if noise was generated, false otherwise
  */
+// Smoothed noise level to prevent abrupt volume changes (static to maintain state between calls)
+static float smoothed_noise_level = 0.0f;
+
 bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, bool useLocationBasedNoise) {
     // Only generate noise if plugin is active, radio audio effects are enabled, and squelch noise is enabled
     if (!fgcom_isPluginActive() || !fgcom_cfg.radioAudioEffects || !fgcom_cfg.addNoiseSquelch) {
+        smoothed_noise_level = 0.0f;  // Reset smoothed level when noise is disabled
         return false;
     }
     
     // Check all local radios to see if any have squelch open
-    float bestNoiseLevel = 0.0f;  // Track the highest noise level from any radio
+    float targetNoiseLevel = 0.0f;  // Target noise level for this frame
     const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
     
-    // Get position and frequency for noise floor calculation
-    struct RadioInfo {
-        float squelch;
-        double lat;
-        double lon;
-        float freq_mhz;
-    };
-    std::vector<RadioInfo> radioInfos;
-    radioInfos.reserve(8);
-    
-    // Thread-safe access: use try_lock to avoid blocking the audio thread
-    // If we can't get the lock immediately, skip noise generation for this frame
+    // Read from cached radio info (lock-free read, cache is updated separately)
+    std::vector<CachedRadioInfo> radioInfos;
     {
-        std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
-        if (lock.owns_lock()) {
-            // During lock, copy radio info including position
-            for (const auto &lcl_idty : fgcom_local_client) {
-                const fgcom_client& lcl = lcl_idty.second;
-                for (const auto &radio : lcl.radios) {
-                    if (radio.operable && !radio.frequency.empty()) {
-                        RadioInfo info;
-                        info.squelch = radio.squelch;
-                        info.lat = lcl.lat;
-                        info.lon = lcl.lon;
-                        // Parse frequency string to float
-                        try {
-                            info.freq_mhz = std::stof(radio.frequency);
-                        } catch (...) {
-                            info.freq_mhz = 0.0f;  // Invalid frequency
-                        }
-                        radioInfos.push_back(info);
-                    }
-                }
-            }
-            // Mutex automatically unlocked when lock goes out of scope
-        } else {
-            // Lock unavailable, skip noise generation for this frame
-            return false;
-        }
+        std::lock_guard<std::mutex> lock(cached_radio_infos_mtx);
+        radioInfos = cached_radio_infos;  // Copy cache atomically
     }
     
-    // Process radios and calculate noise level (without holding lock)
+    // Process radios and calculate noise level (without holding any locks)
     for (const auto& info : radioInfos) {
-        if (info.squelch <= SQUELCH_OPEN_THRESHOLD && info.freq_mhz > 0.0f) {
+        if (info.operable && info.squelch <= SQUELCH_OPEN_THRESHOLD && info.freq_mhz > 0.0f) {
             float baseVolume;
             
             if (useLocationBasedNoise) {
@@ -403,16 +394,37 @@ bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_
             float squelchFactor = (1.0f - (info.squelch / SQUELCH_OPEN_THRESHOLD));
             float noiseLevel = baseVolume * squelchFactor;
             
-            if (noiseLevel > bestNoiseLevel) {
-                bestNoiseLevel = noiseLevel;
+            if (noiseLevel > targetNoiseLevel) {
+                targetNoiseLevel = noiseLevel;
             }
         }
     }
     
-    // Generate white noise if any radio has squelch open
-    if (bestNoiseLevel > 0.0f) {
-        fgcom_audio_addNoise(bestNoiseLevel, outputPCM, sampleCount, channelCount);
-        return true;  // We modified the audio stream
+    // Apply exponential smoothing to prevent abrupt volume changes
+    // This creates a smooth transition between noise levels
+    const float SMOOTHING_FACTOR = 0.15f;  // How quickly to adapt (0.0 = no change, 1.0 = instant)
+    
+    if (targetNoiseLevel > 0.0f) {
+        // Smoothly transition to target level
+        smoothed_noise_level = smoothed_noise_level + (targetNoiseLevel - smoothed_noise_level) * SMOOTHING_FACTOR;
+        
+        // Generate white noise with smoothed level
+        if (smoothed_noise_level > 0.001f) {  // Only generate if above threshold
+            fgcom_audio_addNoise(smoothed_noise_level, outputPCM, sampleCount, channelCount);
+            return true;  // We modified the audio stream
+        }
+    } else {
+        // Smoothly fade out when no noise is needed
+        smoothed_noise_level = smoothed_noise_level * (1.0f - SMOOTHING_FACTOR);
+        
+        if (smoothed_noise_level > 0.001f) {
+            // Still generating noise while fading out
+            fgcom_audio_addNoise(smoothed_noise_level, outputPCM, sampleCount, channelCount);
+            return true;
+        } else {
+            // Noise has faded out completely
+            smoothed_noise_level = 0.0f;
+        }
     }
     
     return false;  // No noise generated
