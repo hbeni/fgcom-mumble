@@ -48,7 +48,7 @@ jobs:
 
     - if: matrix.language == 'cpp'
       name: Setup C++
-      run: sudo apt-get install libssl-dev libcurl-dev mingw-w64 mingw-w64-common build-essential
+      run: sudo apt-get update && sudo apt-get install -y libssl-dev libcurl4-openssl-dev mingw-w64 mingw-w64-common build-essential
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
