@@ -64,7 +64,7 @@ set(TEST_SOURCES
     ../../lib/radio_model_amateur_impl.cpp
     ../../lib/radio_model_aviation_hf.cpp
     ../../lib/radio_model_maritime_hf.cpp
-    ../../lib/frequency_offset_processor.cpp
+    ../../lib/frequency_offset.cpp
     ../../lib/non_amateur_hf_impl.cpp
     ../../lib/radio_model_hf_impl.cpp
     ../../lib/radio_model_string_impl.cpp

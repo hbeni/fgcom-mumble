@@ -334,16 +334,7 @@ void fgcom_audio_applyDopplerShift(float relative_velocity_mps, float carrier_fr
 extern bool fgcom_isPluginActive();
 extern float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz);
 
-// Forward declaration for cached radio info
-struct CachedRadioInfo {
-    float squelch;
-    double lat;
-    double lon;
-    float freq_mhz;
-    bool operable;
-};
-extern std::vector<CachedRadioInfo> cached_radio_infos;
-extern std::mutex cached_radio_infos_mtx;
+// CachedRadioInfo and cached_radio_infos are now declared in globalVars.h
 
 /*
  * Generate squelch noise when squelch is open

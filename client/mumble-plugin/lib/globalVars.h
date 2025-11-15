@@ -25,6 +25,7 @@
 #include <string>
 #include <mutex>
 #include <map>
+#include <chrono>
 #include "mumble/MumblePlugin_v_1_0_x.h"
 #include "radio_model.h"
 
@@ -111,6 +112,25 @@ extern std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clie
 
 // Global plugin state
 extern std::vector<mumble_channelid_t>  fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp
+
+// Thread-safe cache for radio info used in audio callbacks
+// This reduces lock contention and prevents skipped noise generation frames
+struct CachedRadioInfo {
+    float squelch;
+    double lat;
+    double lon;
+    float freq_mhz;
+    bool operable;
+    std::chrono::system_clock::time_point last_updated;
+    
+    CachedRadioInfo() : squelch(1.0f), lat(0.0), lon(0.0), freq_mhz(0.0f), operable(false) {
+        last_updated = std::chrono::system_clock::now();
+    }
+};
+
+// Cache for radio info (updated periodically, read lock-free in audio callback)
+extern std::vector<CachedRadioInfo> cached_radio_infos;
+extern std::mutex cached_radio_infos_mtx;
 
 
 #endif

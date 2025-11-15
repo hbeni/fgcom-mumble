@@ -107,22 +107,8 @@ const float FREQ_THRESHOLD = 0.001f;  // 1 kHz - recalculate if frequency change
 std::thread noise_floor_update_thread;
 std::atomic<bool> noise_floor_thread_running{false};
 
-// Thread-safe cache for radio info used in audio callbacks
-// This reduces lock contention and prevents skipped noise generation frames
-struct CachedRadioInfo {
-    float squelch;
-    double lat;
-    double lon;
-    float freq_mhz;
-    bool operable;
-    std::chrono::system_clock::time_point last_updated;
-    
-    CachedRadioInfo() : squelch(1.0f), lat(0.0), lon(0.0), freq_mhz(0.0f), operable(false) {
-        last_updated = std::chrono::system_clock::now();
-    }
-};
-
 // Cache for radio info (updated periodically, read lock-free in audio callback)
+// CachedRadioInfo struct is defined in globalVars.h
 std::vector<CachedRadioInfo> cached_radio_infos;
 std::mutex cached_radio_infos_mtx;
 const std::chrono::milliseconds RADIO_INFO_CACHE_UPDATE_INTERVAL(50);  // Update every 50ms
