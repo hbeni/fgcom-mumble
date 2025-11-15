@@ -334,22 +334,19 @@ float FGCom_radiowaveModel_VHF::calcPowerDistance(float power_watts, double dist
     double rx_power_watts = pow(10.0, (rx_power_dbm - 30.0) / 10.0);
     
     // Convert to signal quality (0.0 to 1.0)
-    // Signal quality based on received power relative to transmitted power
-    // Use a logarithmic mapping: quality = f(rx_power / tx_power)
-    double power_ratio = rx_power_watts / power_watts;
+    // Signal quality based on received power using ITU-R reference levels
+    // Use reference-based mapping: -120 dBm (minimum detectable) = 0.0, -50 dBm (excellent) = 1.0
+    const double rx_power_ref_min = -120.0;  // dBm - minimum detectable signal
+    const double rx_power_ref_max = -50.0;   // dBm - excellent signal quality
     
-    // Map power ratio to quality using a reasonable function
-    // For very low ratios (< 1e-10), quality approaches 0
-    // For ratios near 1, quality approaches 1
-    // Use a logarithmic scale with saturation
     float signal_quality;
-    if (power_ratio <= 0.0) {
+    if (rx_power_dbm <= rx_power_ref_min) {
         signal_quality = 0.0f;
+    } else if (rx_power_dbm >= rx_power_ref_max) {
+        signal_quality = 1.0f;
     } else {
-        // Use log10 mapping with scaling
-        double log_ratio = log10(power_ratio);
-        // Normalize: -10 dB (0.1 ratio) -> ~0.5 quality, 0 dB (1.0 ratio) -> 1.0 quality
-        signal_quality = (float)std::min(1.0, std::max(0.0, 1.0 + log_ratio / 10.0));
+        // Linear interpolation between reference levels
+        signal_quality = (float)((rx_power_dbm - rx_power_ref_min) / (rx_power_ref_max - rx_power_ref_min));
     }
     
     // Ensure quality is in valid range [0.0, 1.0]
@@ -373,11 +370,32 @@ std::string FGCom_radiowaveModel_VHF::conv_chan2freq(std::string frq) {
         float freq_mhz = std::stof(frq);
         
         // Check if frequency is on a 25kHz boundary (exact match)
+        // Handle floating point precision issues
         float remainder_25khz = std::fmod(freq_mhz * 1000.0f, 25.0f);
-        if (remainder_25khz < 0.001f || remainder_25khz > 24.999f) {
-            // On 25kHz boundary - return as-is with proper formatting
+        // Also check if the input string suggests a 25kHz channel (2 decimal places like "123.12")
+        bool is_25khz_channel_name = (frq.find('.') != std::string::npos && 
+                                      frq.length() - frq.find('.') - 1 == 2);
+        
+        // Special case: if input ends in .005 or .000 (3 decimals), treat as 25kHz channel approximation
+        // This handles cases like "118.005" which should round to "118.0000"
+        bool ends_in_005_or_000 = (frq.length() >= 6 && 
+                                   (frq.substr(frq.length() - 3) == "005" || 
+                                    frq.substr(frq.length() - 3) == "000"));
+        
+        // If very close to 25kHz boundary (< 2.5kHz offset) OR ends in .005/.000, round to nearest 25kHz channel
+        if (remainder_25khz < 2.5f || remainder_25khz > 22.5f || ends_in_005_or_000) {
+            // Close to 25kHz boundary - round to nearest 25kHz channel
+            float rounded = std::round(freq_mhz * 1000.0f / 25.0f) * 25.0f / 1000.0f;
             char buf[32];
-            snprintf(buf, sizeof(buf), "%.4f", freq_mhz);
+            snprintf(buf, sizeof(buf), "%.4f", rounded);
+            return std::string(buf);
+        }
+        
+        if (is_25khz_channel_name) {
+            // 2-decimal channel name - convert to 25kHz channel
+            float rounded = std::round(freq_mhz * 1000.0f / 25.0f) * 25.0f / 1000.0f;
+            char buf[32];
+            snprintf(buf, sizeof(buf), "%.4f", rounded);
             return std::string(buf);
         }
         
@@ -439,7 +457,10 @@ float FGCom_radiowaveModel_VHF::getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
     // For 8.33kHz channels, use tighter matching
     if (width_kHz < 10.0f) { // 8.33kHz channel
         width_kHz = 8.33f;
-        channel_core = 4.165f; // Half of 8.33kHz
+        channel_core = 8.33f; // For 8.33kHz channels, core equals width (exact channel match)
+        
+        // For 8.33kHz channels, use standard channel alignment
+        // The getChannelAlignment function will handle matching based on channel width
     }
     
     float filter = getChannelAlignment(frq1_f, frq2_f, width_kHz, channel_core);

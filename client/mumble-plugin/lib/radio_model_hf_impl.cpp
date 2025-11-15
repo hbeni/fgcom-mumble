@@ -74,18 +74,19 @@ float FGCom_radiowaveModel_HF::calcPowerDistance(float power, double slantDist) 
     double rx_power_watts = pow(10.0, (rx_power_dbm - 30.0) / 10.0);
     
     // Convert to signal quality (0.0 to 1.0)
-    // Signal quality based on received power relative to transmitted power
-    double power_ratio = rx_power_watts / effective_power;
+    // Signal quality based on received power using ITU-R reference levels
+    // Use reference-based mapping: -120 dBm (minimum detectable) = 0.0, -50 dBm (excellent) = 1.0
+    const double rx_power_ref_min = -120.0;  // dBm - minimum detectable signal
+    const double rx_power_ref_max = -50.0;   // dBm - excellent signal quality
     
-    // Map power ratio to quality using a reasonable function
     float signal_quality;
-    if (power_ratio <= 0.0) {
+    if (rx_power_dbm <= rx_power_ref_min) {
         signal_quality = 0.0f;
+    } else if (rx_power_dbm >= rx_power_ref_max) {
+        signal_quality = 1.0f;
     } else {
-        // Use log10 mapping with scaling
-        double log_ratio = log10(power_ratio);
-        // Normalize: -10 dB (0.1 ratio) -> ~0.5 quality, 0 dB (1.0 ratio) -> 1.0 quality
-        signal_quality = (float)std::min(1.0, std::max(0.0, 1.0 + log_ratio / 10.0));
+        // Linear interpolation between reference levels
+        signal_quality = (float)((rx_power_dbm - rx_power_ref_min) / (rx_power_ref_max - rx_power_ref_min));
     }
     
     // Ensure quality is in valid range [0.0, 1.0]

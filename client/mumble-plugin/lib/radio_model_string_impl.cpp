@@ -28,15 +28,12 @@ std::string FGCom_radiowaveModel_String::getType() {
 
 // Get signal - always perfect worldwide
 fgcom_radiowave_signal FGCom_radiowaveModel_String::getSignal(double lat1, double lon1, float alt1, double lat2, double lon2, float alt2, float power) {
+    (void)lat1; (void)lon1; (void)alt1; (void)lat2; (void)lon2; (void)alt2; (void)power; // Suppress unused warnings
     float dist = getSurfaceDistance(lat1, lon1, lat2, lon2);
     
-    // Use power parameter for signal strength calculation
-    float power_factor = power / 100.0f; // Normalize power to 0-1 range
-    if (power_factor > 1.0f) power_factor = 1.0f;
-    if (power_factor < 0.1f) power_factor = 0.1f;
-    
+    // Landline always has perfect signal quality regardless of power or distance
     struct fgcom_radiowave_signal signal;
-    signal.quality       = 1.0 * power_factor;
+    signal.quality       = 1.0f;
     signal.direction     = getDirection(lat1, lon1, lat2, lon2);
     signal.verticalAngle = degreeAboveHorizon(dist, alt2-alt1);
     return signal;
