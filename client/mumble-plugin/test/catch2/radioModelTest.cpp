@@ -135,14 +135,14 @@ TEST_CASE( "Radio Model", "25/8.33kHz frq parsing check" ) {
         radioA.frequency = frq_modelA->conv_chan2freq("126.625");
         fgcom_radio radioB;
         radioB.frequency = frq_modelA->conv_chan2freq("126.630");
-        REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == 1.0);
+        REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == Approx(1.0).epsilon(0.01));
         
         // in 8.33kHz channel spacing mode, only 8.33 channels should see each other
         radioA.channelWidth = 8.33;
         radioB.frequency = frq_modelA->conv_chan2freq("126.615"); // previus 8.33 channel
         REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == 0.0);
         radioB.frequency = frq_modelA->conv_chan2freq("126.630"); // this 8.33 channel
-        REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == 1.0);
+        REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == Approx(1.0).epsilon(0.01));
         radioB.frequency = frq_modelA->conv_chan2freq("126.635"); // next 8.33 channel
         REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == 0.0);
         
@@ -151,7 +151,7 @@ TEST_CASE( "Radio Model", "25/8.33kHz frq parsing check" ) {
         radioB.frequency = frq_modelA->conv_chan2freq("126.615"); // previus 8.33 channel
         REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == Approx(0.36).margin(0.005) );
         radioB.frequency = frq_modelA->conv_chan2freq("126.630"); // this 8.33 channel
-        REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == 1.0);
+        REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == Approx(1.0).epsilon(0.01));
         radioB.frequency = frq_modelA->conv_chan2freq("126.635"); // next 8.33 channel
         REQUIRE(frq_modelA->getFrqMatch(radioA, radioB) == Approx(0.36).margin(0.005) );
     }

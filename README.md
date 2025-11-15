@@ -11,7 +11,6 @@
 - [Security Setup](#security-setup)
 - [Recent Updates](#recent-updates-v131)
 - [Important: Technical Requirements](#important-technical-requirements)
-- [Current Issues](#current-issues) *(Note: Issue is in the Mumble plugin itself, not the codebase. Fix has been attempted but the file is finicky.)*
 - [Getting Started](#getting-started)
   - [For Pilots and Users](#for-pilots-and-users)
   - [For Administrators](#for-administrators)

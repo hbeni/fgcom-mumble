@@ -19,6 +19,8 @@
 #include "audio.h"
 #include "solar_data.h"
 #include "power_management.h"
+#include "propagation_physics.h"
+#include <cmath>
 
 // Static member is defined in the original radio_model_hf.cpp file
 
@@ -26,35 +28,68 @@
 
 // Calculate power distance
 float FGCom_radiowaveModel_HF::calcPowerDistance(float power, double slantDist) {
+    // HF propagation model using ITU-R formulas
+    if (power <= 0.0 || slantDist <= 0.0) {
+        return 0.0f;
+    }
+    
     // Get power management instance
     auto& power_manager = FGCom_PowerManager::getInstance();
     
     // Calculate effective radiated power considering efficiency
     float effective_power = power * power_manager.getCurrentPowerEfficiency();
     
-    // HF propagation model
-    if (power <= 0.0 || slantDist <= 0.0) {
-        return 0.0f;
+    // If power efficiency is 0, use power directly (fallback)
+    if (effective_power <= 0.0f) {
+        effective_power = power;
     }
     
-    // Free space path loss for HF
-    double wavelength = 300.0 / 15.0; // 15 MHz default
-    double free_space_loss = 20.0 * log10(4.0 * M_PI * slantDist * 1000.0 / wavelength);
+    // Convert power to dBm for ITU-R calculations
+    double tx_power_dbm = 10.0 * log10(effective_power * 1000.0);
+    double rx_sensitivity_dbm = -120.0; // Typical receiver sensitivity
+    double frequency_mhz = 15.0; // Default HF frequency
+    double altitude_m = 0.0; // HF uses slant distance, altitude handled separately
     
-    // Ionospheric effects
+    // Use ITU-R formulas from propagation_physics.cpp
+    // Note: HF uses slant distance which already accounts for altitude
+    double total_loss_db = FGCom_PropagationPhysics::calculateTotalPropagationLoss(
+        frequency_mhz,
+        slantDist,
+        altitude_m,
+        altitude_m,  // Using same altitude for both TX and RX
+        tx_power_dbm,
+        rx_sensitivity_dbm,
+        0.0,  // Additional atmospheric loss
+        0.0   // Terrain loss
+    );
+    
+    // Add ionospheric effects for HF (skywave propagation)
     double ionospheric_loss = 10.0 * log10(slantDist);
+    total_loss_db += ionospheric_loss;
     
-    // Total path loss
-    double total_loss_db = free_space_loss + ionospheric_loss;
+    // Calculate received power in dBm
+    double rx_power_dbm = tx_power_dbm - total_loss_db;
     
-    // Convert to linear scale
-    double total_loss_linear = pow(10.0, -total_loss_db / 10.0);
-    
-    // Calculate received power
-    double received_power_watts = effective_power * total_loss_linear;
+    // Convert received power to linear scale (watts)
+    double rx_power_watts = pow(10.0, (rx_power_dbm - 30.0) / 10.0);
     
     // Convert to signal quality (0.0 to 1.0)
-    float signal_quality = (float)std::min(1.0, std::max(0.0, received_power_watts / effective_power));
+    // Signal quality based on received power relative to transmitted power
+    double power_ratio = rx_power_watts / effective_power;
+    
+    // Map power ratio to quality using a reasonable function
+    float signal_quality;
+    if (power_ratio <= 0.0) {
+        signal_quality = 0.0f;
+    } else {
+        // Use log10 mapping with scaling
+        double log_ratio = log10(power_ratio);
+        // Normalize: -10 dB (0.1 ratio) -> ~0.5 quality, 0 dB (1.0 ratio) -> 1.0 quality
+        signal_quality = (float)std::min(1.0, std::max(0.0, 1.0 + log_ratio / 10.0));
+    }
+    
+    // Ensure quality is in valid range [0.0, 1.0]
+    signal_quality = (float)std::min(1.0, std::max(0.0, (double)signal_quality));
     
     return signal_quality;
 }
@@ -106,10 +141,15 @@ fgcom_radiowave_signal FGCom_radiowaveModel_HF::getSignal(double lat1, double lo
     
     // Calculate distance
     double dist = getSurfaceDistance(lat1, lon1, lat2, lon2);
+    double height_above_horizon = heightAboveHorizon(dist, alt1, alt2);
+    double slantDist = getSlantDistance(dist, height_above_horizon-alt1);
     
     // HF can work beyond line of sight via sky waves
-    if (dist > 0.0) {
-        signal.quality = calcPowerDistance(power, dist);
+    if (power <= 0.0f) {
+        // No power - return 0.0 (HF uses 0.0 for no signal, not -1.0)
+        signal.quality = 0.0f;
+    } else if (dist > 0.0) {
+        signal.quality = calcPowerDistance(power, slantDist);
         signal.direction = getDirection(lat1, lon1, lat2, lon2);
         signal.verticalAngle = degreeAboveHorizon(dist, alt2-alt1);
     }

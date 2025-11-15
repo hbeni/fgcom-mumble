@@ -21,6 +21,7 @@
 #include "antenna_ground_system.h"
 #include "antenna_pattern_mapping.h"
 #include "propagation_physics.h"
+#include <cmath>
 
 // Constructor
 FGCom_radiowaveModel_UHF::FGCom_radiowaveModel_UHF() 
@@ -137,8 +138,8 @@ fgcom_radiowave_signal FGCom_radiowaveModel_UHF::getSignal(double lat1, double l
     double dist = getSurfaceDistance(lat1, lon1, lat2, lon2);
     
     if (dist > radiodist) {
-        // Beyond line of sight
-        signal.quality = 0.0f;
+        // Beyond line of sight - return -1.0 to indicate no signal
+        signal.quality = -1.0f;
         return signal;
     }
     
@@ -146,8 +147,13 @@ fgcom_radiowave_signal FGCom_radiowaveModel_UHF::getSignal(double lat1, double l
     double slantDist = getSlantDistance(dist, height_above_horizon-alt1);
     
     // Calculate signal strength
-    float ss = calcPowerDistance(power, slantDist, alt1, 400.0);
-    signal.quality = ss;
+    if (power <= 0.0f) {
+        // No power - return -1.0 to indicate no signal
+        signal.quality = -1.0f;
+    } else {
+        float ss = calcPowerDistance(power, slantDist, (alt1 + alt2) / 2.0, 400.0);
+        signal.quality = ss;
+    }
     
     // Set direction and vertical angle
     signal.direction     = getDirection(lat1, lon1, lat2, lon2);
@@ -159,31 +165,50 @@ fgcom_radiowave_signal FGCom_radiowaveModel_UHF::getSignal(double lat1, double l
 // Calculate power distance
 float FGCom_radiowaveModel_UHF::calcPowerDistance(float power_watts, double distance_km, 
                                   double altitude_m, double frequency_mhz) {
-    // Suppress unused parameter warning
-    (void)altitude_m;
-    // UHF propagation model with power and distance calculation
+    // UHF propagation model using ITU-R formulas
     if (power_watts <= 0.0 || distance_km <= 0.0) {
         return 0.0f;
     }
     
-    // Free space path loss
-    double wavelength = 300.0 / frequency_mhz; // Wavelength in meters
-    double free_space_loss = 20.0 * log10(4.0 * M_PI * distance_km * 1000.0 / wavelength);
+    // Convert power to dBm for ITU-R calculations
+    double tx_power_dbm = 10.0 * log10(power_watts * 1000.0);
+    double rx_sensitivity_dbm = -120.0; // Typical receiver sensitivity
     
-    // Atmospheric absorption (simplified)
-    double atmospheric_loss = 0.01 * distance_km;
+    // Use ITU-R formulas from propagation_physics.cpp
+    double total_loss_db = FGCom_PropagationPhysics::calculateTotalPropagationLoss(
+        frequency_mhz,
+        distance_km,
+        altitude_m,
+        altitude_m,  // Using same altitude for both TX and RX
+        tx_power_dbm,
+        rx_sensitivity_dbm,
+        0.0,  // Additional atmospheric loss
+        0.0   // Terrain loss
+    );
     
-    // Total path loss
-    double total_loss_db = free_space_loss + atmospheric_loss;
+    // Calculate received power in dBm
+    double rx_power_dbm = tx_power_dbm - total_loss_db;
     
-    // Convert to linear scale
-    double total_loss_linear = pow(10.0, -total_loss_db / 10.0);
-    
-    // Calculate received power
-    double received_power_watts = power_watts * total_loss_linear;
+    // Convert received power to linear scale (watts)
+    double rx_power_watts = pow(10.0, (rx_power_dbm - 30.0) / 10.0);
     
     // Convert to signal quality (0.0 to 1.0)
-    float signal_quality = (float)std::min(1.0, std::max(0.0, received_power_watts / power_watts));
+    // Signal quality based on received power relative to transmitted power
+    double power_ratio = rx_power_watts / power_watts;
+    
+    // Map power ratio to quality using a reasonable function
+    float signal_quality;
+    if (power_ratio <= 0.0) {
+        signal_quality = 0.0f;
+    } else {
+        // Use log10 mapping with scaling
+        double log_ratio = log10(power_ratio);
+        // Normalize: -10 dB (0.1 ratio) -> ~0.5 quality, 0 dB (1.0 ratio) -> 1.0 quality
+        signal_quality = (float)std::min(1.0, std::max(0.0, 1.0 + log_ratio / 10.0));
+    }
+    
+    // Ensure quality is in valid range [0.0, 1.0]
+    signal_quality = (float)std::min(1.0, std::max(0.0, (double)signal_quality));
     
     return signal_quality;
 }

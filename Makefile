@@ -191,7 +191,7 @@ bundle-fgcom-addon:
 
 build-plugin:
 	# Plugin: delegate build
-	$(MAKE) -C client/mumble-plugin/ clean plugin
+	$(MAKE) -C client/mumble-plugin/ libs plugin
 	
 build-server:
 	# Server: nothing to build so far
