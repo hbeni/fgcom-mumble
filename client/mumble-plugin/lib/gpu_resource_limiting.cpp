@@ -112,6 +112,11 @@ void GPUResourceLimitingManager::shutdown() {
     is_initialized.store(false);
 }
 
+// Check if initialized
+bool GPUResourceLimitingManager::isInitialized() const {
+    return is_initialized.load();
+}
+
 // Configuration management
 void GPUResourceLimitingManager::setConfiguration(const GPUResourceConfig& new_config) {
     std::lock_guard<std::mutex> lock(config_mutex);

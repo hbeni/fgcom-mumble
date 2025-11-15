@@ -75,13 +75,15 @@ tools: libs
 
 
 # catch2 unit tests linking against main
-test: libs test/catch2/tests-main.o test/catch2/tests-main.o test/catch2/radioModelTest.o
-	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o lib/radio_model.o lib/audio.o test/catch2/radioModelTest.o $(CFLAGS) && test/catch2/radioModelTest.catch2
+# Note: test needs fgcom-mumble.cpp for audio.cpp dependencies (cached_radio_infos_mtx, fgcom_cfg, etc.)
+test: libs test/catch2/tests-main.o test/catch2/radioModelTest.o
+	$(CC) -fPIC -c -o fgcom-mumble-test.o fgcom-mumble.cpp $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o test/catch2/radioModelTest.o $(lib_OBJS) fgcom-mumble-test.o $(CFLAGS) $(THREADS_UNIX) -lcurl && test/catch2/radioModelTest.catch2
 # ^ add more
 
 # clean compile results
 clean:
-	rm -f *.o *.rc lib/*.o test/catch2/*.catch2 test/catch2/*.o
+	rm -f *.o *.rc lib/*.o test/catch2/*.catch2 test/catch2/*.o fgcom-mumble-test.o
 
 # clean compile results and binarys
 clean-all: clean
