@@ -374,32 +374,17 @@
                     var udpin_text_update_t = maketimer(0.1, udpin_text, func(){
                         var wrapAt = 100;      # after so many characters, sart a new line
                         var s = "";
-                        var udp_in_nodes = props.globals.getNode("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput").getChildren();
-                        foreach (var udp_in_n; udp_in_nodes) {
+                        var charsLeft = wrapAt;
+                        var udp_in_node = getprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/input") or "<no-data>";
+                        foreach (var ch; split("", udp_in_node)) {
                             # Generate debug string and do a nice wrapping:
-                            #   walk each chunk and print its chars as long as we have space for the chunk in the line
-                            var pfx = sprintf("%s=",udp_in_n.getName());
-                            var chunks = split(",", pfx~udp_in_n.getValue());  # a chunk is a udp protocol part: "field=value"
-                            var charsLeft = wrapAt;
-                            for (var i=0; i<size(chunks); i = i+1) {
-                                var ch_chrs = split("", chunks[i]);
-                                if (charsLeft <= size(ch_chrs)) {
-                                    # wrapping needed
-                                    s = s ~ "\n";
-                                    for (var pfx_c=0;pfx_c<size(pfx);pfx_c=pfx_c+1) s = s~" "; # left-pad the new line by the size of the prefix
-                                    charsLeft = wrapAt-size(pfx);
-                                }
-                                for (var ch=0; ch<size(ch_chrs); ch=ch+1) {
-                                    s = s ~ ch_chrs[ch];
-                                    charsLeft = charsLeft -1;
-                                }
-                                if (size(ch_chrs) > 0) {
-                                    s = s ~ "";
-                                    charsLeft = charsLeft -1;
-                                }
+                            #   walk each char and print it as long as we have space for the chunk in the line
+                            s = s~ch;
+                            charsLeft = charsLeft -1;
+                            if (charsLeft <= 0) {
+                                 s = s~"\n";
+                                 charsLeft = wrapAt;
                             }
-                            
-                            s = s~"\n"; # end this udp string prop
                         }
                         udpin_text.setText(s);
                     });

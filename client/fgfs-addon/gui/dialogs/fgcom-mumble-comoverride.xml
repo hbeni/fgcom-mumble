@@ -19,8 +19,8 @@ a working FGCom-mumble despite unsupported/non-default radio implementations.
                 com.setBoolValue("operable", 1);
                 com.setBoolValue("ptt", 0);
                 com.setDoubleValue("volume", 1.0);
-                #com.setValue("tx-power", "");
-                #com.setDoubleValue("cutoff-signal-quality", 0.4);
+                com.setValue("tx-power", "");
+                com.setDoubleValue("cutoff-signal-quality", 0.4);
                 print("Addon FGCom-mumble unused COM"~(i+1)~" accepted for override");
                 setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/com-override-text["~i~"]", "add on reload");
             }

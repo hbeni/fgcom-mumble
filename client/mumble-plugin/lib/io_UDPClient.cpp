@@ -95,9 +95,9 @@ std::string fgcom_rdf_generateMsg(std::string selectedHost, uint16_t selectedPor
         bool hostPortMatches = rdfInfo.rxIdentity.clientHost == selectedHost && rdfInfo.rxIdentity.clientPort == selectedPort;
         if (hostPortMatches && rdfInfo.signal.quality > 0.0) {
             clientMsg += "RDF:";
-            clientMsg += "CS_TX="+rdfInfo.txIdentity.callsign;
-            //clientMsg += ",CS_RX="+rdfInfo.rxIdentity.callsign;
-            clientMsg += ",FRQ="+rdfInfo.txRadio.frequency;
+            clientMsg += "CS_TX="+fgcom_udp_escape(rdfInfo.txIdentity.callsign);
+            //clientMsg += ",CS_RX="+fgcom_rdf_escaperdfInfo.rxIdentity.callsign);
+            clientMsg += ",FRQ="+fgcom_udp_escape(rdfInfo.txRadio.frequency);
             clientMsg += ",DIR="+std::to_string(rdfInfo.signal.direction);
             clientMsg += ",VRT="+std::to_string(rdfInfo.signal.verticalAngle);
             clientMsg += ",QLY="+std::to_string(rdfInfo.signal.quality);

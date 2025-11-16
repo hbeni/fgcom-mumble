@@ -120,6 +120,12 @@ void pluginDbg(std::string log) {
 }
 
 
+std::string fgcom_udp_escape(std::string s) {
+    replace_all(s, ",", "\\,");
+    replace_all(s, "=", "\\=");
+    return s;
+}
+
 
 /*****************************************************
  *               Plugin communications               *
@@ -216,8 +222,8 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
                 if (lcl.radios[selector].publish) {
                     pluginDbg("[mum_pluginIO] notifyRemotes():    send state of COM"+std::to_string(selector+1) );
                     dataID  = "FGCOM:UPD_COM:"+std::to_string(iid)+":"+std::to_string(selector);
-                    message = "FRQ="+lcl.radios[selector].frequency+","
-                            + "CHN="+lcl.radios[selector].dialedFRQ+","
+                    message = "FRQ="+fgcom_udp_escape(lcl.radios[selector].frequency)+","
+                            + "CHN="+fgcom_udp_escape(lcl.radios[selector].dialedFRQ)+","
                             //+ "VLT="+std::to_string(lcl.radios[selector].volts)+","
                             //+ "PBT="+std::to_string(lcl.radios[selector].power_btn)+","
                             //+ "SRV="+std::to_string(lcl.radios[selector].serviceable)+","
@@ -245,7 +251,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
             // userstate
             pluginDbg("[mum_pluginIO] notifyRemotes(): selected: userdata");
             dataID  = "FGCOM:UPD_USR:"+std::to_string(iid);
-            message = "CALLSIGN="+lcl.callsign;
+            message = "CALLSIGN="+fgcom_udp_escape(lcl.callsign);
             break;
 
         case NTFY_PNG:
@@ -332,6 +338,14 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
     // Handle the incoming data (if it belongs to us)
     setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     
+    // Handle escaped data
+    // the goal is that we want to support: `a,b\,c,d`=>['a', 'b,c', 'd']; we do this by replacing the escaped sequence
+    // into a non-printable ASCII, so we can easily spit by ',' later on.
+    const std::string delimEscPlaceholderC = "\x1A"; // for processing escaped `\,` sequences in UDP input string ('a,b' => 'a\x1Ab' )
+    const std::string delimEscPlaceholderE = "\x1B"; // for processing escaped `\,` sequences in UDP input string ('a=b' => 'a\x1Bb' )
+    replace_all(data, "\\,", delimEscPlaceholderC);
+    replace_all(data, "\\=", delimEscPlaceholderE);
+    
     if (dataID.substr(0,5) == "FGCOM") {
         // Data is for our plugin
         mumble_userid_t clientID = senderID;  // get mumble client id
@@ -386,6 +400,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
                 std::stringstream streambuffer(data);
                 std::string segment;
                 while(std::getline(streambuffer, segment, ',')) {
+                    replace_all(segment, delimEscPlaceholderC, ","); // undo escaping of delim ('a\x1Ab' => 'a,b')
+                    replace_all(segment, delimEscPlaceholderE, "="); // undo escaping of delim ('a\x1Bb' => 'a=b')
                     try {
                         int rmt_iid = stoi(segment);
                         if (fgcom_remote_clients[clientID].count(rmt_iid) > 0) {
@@ -412,6 +428,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             std::string segment;
             while(std::getline(streambuffer, segment, ',')) {
                 // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
+                replace_all(segment, delimEscPlaceholderC, ","); // undo escaping of delim ('a\x1Ab' => 'a,b')
+                replace_all(segment, delimEscPlaceholderE, "="); // undo escaping of delim ('a\x1Bb' => 'a=b')
                 pluginDbg("[mum_pluginIO] Segment="+segment);
                 
                 try {
@@ -466,6 +484,8 @@ bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std:
             std::string segment;
             while(std::getline(streambuffer, segment, ',')) {
                 // example: FRQ=1234,VLT=12,000000,PBT=1,SRV=1,PTT=0,VOL=1,000000,PWR=10,000000   segment=FRQ=1234
+                replace_all(segment, delimEscPlaceholderC, ","); // undo escaping of delim ('a\x1Ab' => 'a,b')
+                replace_all(segment, delimEscPlaceholderE, "="); // undo escaping of delim ('a\x1Bb' => 'a=b')
                 pluginDbg("[mum_pluginIO] Segment="+segment);
                 
                 try {        

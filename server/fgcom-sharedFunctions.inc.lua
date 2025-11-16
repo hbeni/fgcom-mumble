@@ -80,7 +80,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.9.0",
+    libversion = "1.9.1",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -263,20 +263,47 @@ fgcom = {
             return header.timestamp+header.timetolive-os.time()
         end,
         
-        -- single char string splitter, sep *must* be a single char pattern
-        -- *probably* escaped with % if it has any special pattern meaning, eg "%." not "."
-        -- so good for splitting paths on "/" or "%." which is a common need
-        -- taken from http://lua-users.org/wiki/SplitJoin
-        csplit = function (str,sep)
-            local ret={}
-            local n=1
-            for w in str:gmatch("([^"..sep.."]*)") do
-                ret[n] = ret[n] or w -- only set once (so the blank after a string is ignored)
-                if w=="" then
-                    n = n + 1
-                end -- step forwards on a blank but not a string
+        -- Split str by sep.
+        -- @param str string to operate on ("a,b\,c,d")
+        -- @param sep separator (",")
+        -- @return table with the elements ("a", "b,c", "d")
+        csplit = function(str, sep)
+            local result = {}
+            local current = ""
+            local i = 1
+            local len = #str
+
+            while i <= len do
+                local c = str:sub(i,i)
+                if c == "\\" then
+                    local next_char = str:sub(i+1, i+1)
+                    if next_char == sep then
+                        current = current .. sep   -- unescape only separator
+                        i = i + 1
+                    else
+                        current = current .. "\\" .. next_char  -- keep the backslash
+                        i = i + 1
+                    end
+                elseif c == sep then
+                    table.insert(result, current)
+                    current = ""
+                else
+                    current = current .. c
+                end
+                i = i + 1
             end
-            return ret
+
+            table.insert(result, current)
+            return result
+        end,
+        
+        -- Escape fields for packets (udp/io)
+        -- @param str string to escape  ("a,b=c")
+        -- @return escaped string ("a\,b\=c")
+        escape = function(str)
+            str = str:gsub(",", "\\,")
+            str = str:gsub("=", "\\=")
+            return str
         end,
           
         -- ensure internal state for an user is sane
@@ -337,7 +364,6 @@ fgcom = {
                     -- OK, go ahead and try to parse;
                     -- we are interested in the callsign and the location.
                     -- For proper recording, also the PTT state is important to us.
-                    -- for token in string.gmatch(data, ",") do
                     for index,token in ipairs(fgcom.data.csplit(data, ",")) do
                         field = fgcom.data.csplit(token, "=")
                         if #field == 2 then
@@ -378,7 +404,7 @@ fgcom = {
                                 if "OPR" == field[1] then fgcom_clients[sid][iid].radios[radioID].operable = field[2] end
                             end
                         else
-                            fgcom.dbg("parsing field failed! "..#field.." tokens seen")
+                            fgcom.dbg("parsing field failed! "..#field.." tokens seen ("..token..")")
                         end
                     end
                     

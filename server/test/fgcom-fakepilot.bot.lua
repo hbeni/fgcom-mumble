@@ -253,8 +253,8 @@ playbackTimer_func = function(t)
             -- Broadcast radio
             updateAllChannelUsersforSend(client)
             if #playback_targets > 0 then
-                local msg = "FRQ="..freq
-                        ..",CHN="..freq
+                local msg = "FRQ="..fgcom.data.escape(freq)
+                        ..",CHN="..fgcom.data.escape(freq)
                         ..",PWR=10"
                         ..",PTT=1"
                 fgcom.dbg(fgcom.callsign.."  Bot sets radio: "..msg)
@@ -291,8 +291,8 @@ playbackTimer_func = function(t)
                 -- broadcast radio
                 updateAllChannelUsersforSend(client)
                 if #playback_targets > 0 then
-                    local msg = "FRQ="..freq
-                            ..",CHN="..freq
+                    local msg = "FRQ="..fgcom.data.escape(freq)
+                            ..",CHN="..fgcom.data.escape(freq)
                             ..",PWR=10"
                             ..",PTT=0"
                     fgcom.dbg("  Bot sets radio: "..msg)
@@ -327,7 +327,7 @@ client:hook("OnServerSync", function(client, event)
     fgcom.log(fgcom.callsign.." joined channel "..fgcom.channel)
     
     updateAllChannelUsersforSend(client)
-    local msg = "CALLSIGN="..fgcom.callsign
+    local msg = "CALLSIGN="..fgcom.data.escape(fgcom.callsign)
     client:sendPluginData("FGCOM:UPD_USR:0", msg, playback_targets)
            
     -- update location
@@ -361,8 +361,8 @@ client:hook("OnServerSync", function(client, event)
     freq = pickRandomFrequency()
     fgcom.log("picked new frequency: "..freq)
     if #playback_targets > 0 then
-        local msg = "FRQ="..freq
-                ..",CHN="..freq
+        local msg = "FRQ="..fgcom.data.escape(freq)
+                ..",CHN="..fgcom.data.escape(freq)
                 ..",PWR=10"
                 ..",PTT=0"
         fgcom.dbg("  Bot sets radio: "..msg)
@@ -401,7 +401,7 @@ client:hook("OnPluginData", function(client, event)
     if event.id:len() > 0 and event.id:find("FGCOM:ICANHAZDATAPLZ") then
         fgcom.dbg("OnPluginData(): client asks for data: "..tostring(event.sender))
         
-        local msg = "CALLSIGN="..fgcom.callsign
+        local msg = "CALLSIGN="..fgcom.data.escape(fgcom.callsign)
         client:sendPluginData("FGCOM:UPD_USR:0", msg, {event.sender})
         --event.sender:sendPluginData("FGCOM:UPD_USR:0", msg)
            
@@ -411,8 +411,8 @@ client:hook("OnPluginData", function(client, event)
         client:sendPluginData("FGCOM:UPD_LOC:0", msg, {event.sender})
         --event.sender:sendPluginData("FGCOM:UPD_LOC:0", msg)
            
-        local msg = "FRQ="..freq
-                ..",CHN="..freq
+        local msg = "FRQ="..fgcom.data.escape(freq)
+                ..",CHN="..fgcom.data.escape(freq)
                 ..",PWR=10"
                 ..",PTT=0"
         client:sendPluginData("FGCOM:UPD_COM:0:0", msg, {event.sender})
