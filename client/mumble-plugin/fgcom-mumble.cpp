@@ -52,9 +52,6 @@
 #include <chrono>
 #include <cmath>
 
-// Forward declarations
-void initializeMumblePluginConfig();
-void applyConfigurationChanges();
 
 #ifdef DEBUG
 // include debug code
@@ -108,9 +105,6 @@ const std::chrono::seconds CACHE_DURATION(5);  // Recalculate every 5 seconds
 const double POSITION_THRESHOLD = 0.001;  // ~100m - recalculate if moved more
 const float FREQ_THRESHOLD = 0.001f;  // 1 kHz - recalculate if frequency changed
 
-// Background thread for cache updates
-std::thread noise_floor_update_thread;
-std::atomic<bool> noise_floor_thread_running{false};
 
 // Cache for radio info (updated periodically, read lock-free in audio callback)
 // CachedRadioInfo struct is defined in globalVars.h
@@ -290,42 +284,6 @@ float convertNoiseFloorToVolume(float noise_floor_dbm) {
 float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz);
 
 /**
- * Background thread to update noise floor cache periodically
- * This pre-calculates noise floor values to avoid expensive calculations in the audio callback
- */
-void noiseFloorUpdateThread() {
-    while (noise_floor_thread_running) {
-        // Update cache for all active radios
-        // Use RAII to ensure mutex is always unlocked, even if exception occurs
-        std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
-        if (lock.owns_lock()) {
-            for (const auto &lcl_idty : fgcom_local_client) {
-                const fgcom_client& lcl = lcl_idty.second;
-                for (const auto &radio : lcl.radios) {
-                    if (radio.operable && !radio.frequency.empty()) {
-                        try {
-                            float freq_mhz = std::stof(radio.frequency);
-                            // Pre-calculate and cache
-                            getCachedNoiseFloorVolume(lcl.lat, lcl.lon, freq_mhz);
-                        } catch (const std::exception& e) {
-                            // Invalid frequency, skip this radio
-                            pluginDbg("[noise-floor-thread] Invalid frequency for radio: " + std::string(e.what()));
-                        } catch (...) {
-                            // Unknown exception, skip this radio
-                            pluginDbg("[noise-floor-thread] Unknown exception parsing frequency");
-                        }
-                    }
-                }
-            }
-            // Mutex automatically unlocked when lock goes out of scope
-        }
-        
-        // Sleep for cache update interval
-        std::this_thread::sleep_for(CACHE_DURATION);
-    }
-}
-
-/**
  * Get cached or calculate noise floor for a radio
  * Returns audio volume (0.0 to 1.0) ready to use
  * 
@@ -336,10 +294,8 @@ float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz) {
     // Create cache key
     std::string cache_key = std::to_string(lat) + "_" + std::to_string(lon) + "_" + std::to_string(freq_mhz);
     
-    // Check cache with try_lock to avoid blocking
-    // Use RAII to ensure mutex is always unlocked, even if exception occurs
     bool cache_hit = false;
-    float cached_volume = 0.1f;  // Default fallback
+    float cached_volume = 0.1f;
     
     {
         std::unique_lock<std::mutex> lock(noise_floor_cache_mtx, std::try_to_lock);
@@ -362,32 +318,20 @@ float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz) {
                     cache_hit = true;
                 }
             }
-            // Mutex automatically unlocked when lock goes out of scope
         }
     }
     
-    // If cache hit, return immediately (no blocking)
     if (cache_hit) {
         return cached_volume;
     }
     
-    // Cache miss - try to calculate, but with timeout protection
-    // Use try_lock on cache mutex to check if we can calculate
     {
         std::unique_lock<std::mutex> lock(noise_floor_cache_mtx, std::try_to_lock);
         if (lock.owns_lock()) {
-            // We can proceed with calculation, but wrap in try-catch
-            // and use a timeout mechanism to prevent blocking
             try {
-                // Pre-initialize singleton if needed (should be fast)
-                // This is safe because getInstance() uses a mutex internally
-                // and we're not holding any other locks
-                // Stub: atmospheric_noise.h not available
-                float noise_floor_db = -120.0f; // Default noise floor when calculation unavailable
-                
+                float noise_floor_db = -120.0f;
                 float audio_volume = convertNoiseFloorToVolume(noise_floor_db);
                 
-                // Update cache (lock is already held, so we can update directly)
                 NoiseFloorCacheEntry entry;
                 entry.noise_floor_db = noise_floor_db;
                 entry.audio_volume = audio_volume;
@@ -398,17 +342,13 @@ float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz) {
                 entry.is_valid = true;
                 noise_floor_cache[cache_key] = entry;
                 
-                // Mutex automatically unlocked when lock goes out of scope
                 return audio_volume;
             } catch (...) {
-                // If calculation fails, return default
-                // Mutex automatically unlocked when lock goes out of scope
                 return 0.1f;
             }
         }
     }
     
-    // Couldn't get lock or calculation failed - return safe default
     return 0.1f;
 }
 
@@ -422,7 +362,6 @@ float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz) {
  * calculate the to-be-synced PTT state to remotes.
  */
 void fgcom_handlePTT() {
-    // CRITICAL FIX: Lock PTT mutex to prevent race conditions
     std::lock_guard<std::mutex> ptt_lock(fgcom_ptt_mutex);
     
     if (fgcom_isPluginActive()) {
@@ -430,8 +369,6 @@ void fgcom_handlePTT() {
         // see which radio was used and if its operational.
         bool radio_ptt, radio_ptt_result = false; // if we should open or close the mic, default no
 
-        // Use RAII with try_lock to avoid blocking - if lock unavailable, skip PTT handling for this packet
-        // This prevents deadlock when audio callback or main thread holds the lock
         {
             std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
             if (lock.owns_lock()) {
@@ -455,9 +392,7 @@ void fgcom_handlePTT() {
                         }
                     }
                 }
-                // Mutex automatically unlocked when lock goes out of scope
             } else {
-                // Lock unavailable - skip PTT handling for this packet to avoid deadlock
                 pluginDbg("  PTT handling skipped: fgcom_localcfg_mtx unavailable");
             }
         }
@@ -472,8 +407,6 @@ void fgcom_handlePTT() {
             // to also trigger mumbles PTT in ordinary channels.
             pluginDbg("Handling PTT protocol request state: Plugin not active, but fgcom_cfg.alwaysMumblePTT requested");
             bool radio_ptt_result = false; // if we should open or close the mic, default no
-            // CRITICAL FIX: Use try_lock to avoid blocking - if lock unavailable, skip PTT handling
-            // This prevents deadlock when audio callback or main thread holds the lock
             {
                 std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
                 if (lock.owns_lock()) {
@@ -487,9 +420,7 @@ void fgcom_handlePTT() {
                             }
                         }
                     }
-                    // Mutex automatically unlocked when lock goes out of scope
                 } else {
-                    // Lock unavailable - skip PTT handling to avoid deadlock
                     pluginDbg("  PTT handling (alwaysMumblePTT) skipped: fgcom_localcfg_mtx unavailable");
                 }
             }
@@ -548,9 +479,6 @@ void fgcom_updateClientComment() {
         newComment += "<b>FGCom</b> (v"+std::to_string(FGCOM_VERSION_MAJOR)+"."+std::to_string(FGCOM_VERSION_MINOR)+"."+std::to_string(FGCOM_VERSION_PATCH)+"): ";
         newComment += (fgcom_isPluginActive())? "active" : "inactive";
 
-        // Add Identity and frequency information
-        // Use try_lock to avoid blocking if audio callback is holding the lock
-        // Use RAII to ensure mutex is always unlocked, even if exception occurs
         {
             std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
             if (lock.owns_lock()) {
@@ -576,9 +504,7 @@ void fgcom_updateClientComment() {
                 } else {
                     newComment += "<br/>&nbsp;&nbsp;<i>no callsigns registered</i>";
                 }
-                // Mutex automatically unlocked when lock goes out of scope
             } else {
-                // Couldn't get lock - skip updating comment details to avoid blocking
                 newComment += "<br/>&nbsp;&nbsp;<i>updating...</i>";
             }
         }
@@ -634,10 +560,6 @@ mumble_error_t fgcom_loadConfig() {
     }
 #endif
 
-    // Mumble plugin config interface integration
-    // Integrate with Mumble's plugin configuration system
-    // This provides a standardized way to configure plugin settings through Mumble's UI
-    initializeMumblePluginConfig();
 
 
     // Try out to load the defined file locations.
@@ -868,15 +790,6 @@ mumble_error_t fgcom_initPlugin() {
         updateCachedRadioInfo();  // Initial cache population
         pluginDbg("radio info cache initialized");
         
-        // start the noise floor cache update thread
-        // DISABLED: Background thread can cause hangs during plugin load/unload
-        // Cache will be populated on-demand in audio callback (with proper caching to avoid blocking)
-        // pluginDbg("starting noise floor cache update thread");
-        // noise_floor_thread_running = true;
-        // noise_floor_update_thread = std::thread(noiseFloorUpdateThread);
-        // noise_floor_update_thread.detach();
-        // pluginDbg("noise floor cache update thread started");
-        
         // Initialize solar data provider - disabled (solar_data.h not available)
         // pluginDbg("initializing solar data provider");
         // FGCom_SolarDataProvider solar_provider;
@@ -902,13 +815,11 @@ mumble_error_t fgcom_initPlugin() {
             } else {
                 // update mumble session id to all known identities
                 localMumId = localUser;
-                // Use RAII to ensure mutex is always unlocked, even if exception occurs
                 {
                     std::lock_guard<std::mutex> lock(fgcom_remotecfg_mtx);
                     for (const auto &idty : fgcom_local_client) {
                         fgcom_local_client[idty.first].mumid = localUser;
                     }
-                    // Mutex automatically unlocked when lock goes out of scope
                 }
                 pluginLog("got local clientID="+std::to_string(localUser));
             }
@@ -1057,10 +968,6 @@ void mumble_shutdown() {
     fgcom_shutdownGarbageCollector();
     pluginLog("DEBUG: Garbage collector shutdown complete");
     
-    pluginLog("DEBUG: Stopping noise floor cache update thread...");
-    // Background thread is disabled, no cleanup needed
-    // noise_floor_thread_running = false;
-    pluginLog("DEBUG: Noise floor cache update thread stopped (was disabled)");
     
     pluginLog("DEBUG: Deactivating plugin...");
     fgcom_setPluginActive(false); // stop plugin handling
@@ -1374,9 +1281,6 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
             }
         }
         
-        // update identities radios depending on config options
-        // CRITICAL FIX: Use try_lock in audio callback to avoid blocking
-        // This prevents deadlock when background threads hold the lock
         {
             std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
             if (lock.owns_lock()) {
@@ -1413,9 +1317,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
                         }
                     }
                 }
-                // Mutex automatically unlocked when lock goes out of scope
             } else {
-                // Lock unavailable - skip PTT update for this frame to avoid deadlock
                 pluginDbg("  PTT update skipped: fgcom_localcfg_mtx unavailable");
             }
         }
@@ -1428,8 +1330,6 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
             // if so: request data update (workaround for https://github.com/hbeni/fgcom-mumble/issues/119)
             fgcom_client tmp_default = fgcom_client();
             
-            // CRITICAL FIX: Use try_lock in audio callback to avoid blocking
-            // This prevents deadlock when background threads hold the lock
             std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
             if (lock.owns_lock()) {
                 auto search = fgcom_remote_clients.find(userID);
@@ -1453,9 +1353,7 @@ void mumble_onUserTalkingStateChanged(mumble_connection_t connection, mumble_use
                         }
                     }
                 }
-                // Mutex automatically unlocked when lock goes out of scope
             }
-            // If lock unavailable, skip this check to avoid deadlock
         }
 }
 
@@ -1530,9 +1428,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         int matchedIID  = -1;
         bool useRawData = false;
         
-        // Fetch the remote clients data
-        // CRITICAL FIX: Use try_lock in audio callback to avoid blocking - if lock unavailable, skip processing
-        // This prevents deadlock when background threads hold the lock
         {
             std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
             if (lock.owns_lock()) {
@@ -1669,11 +1564,9 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
                         pluginDbg("mumble_onAudioSourceFetched():   sender with id="+std::to_string(userID)+" not found in remote state: muting stream.");
                     }
                 }
-                // Mutex automatically unlocked when lock goes out of scope
             } else {
-                // Lock unavailable - skip audio processing for this frame to avoid deadlock
                 pluginDbg("mumble_onAudioSourceFetched(): skipped - fgcom_remotecfg_mtx unavailable");
-                bestSignalStrength = 0.0;  // Mute audio if we can't process
+                bestSignalStrength = 0.0;
             }
         }
         
@@ -1701,7 +1594,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
             // Interpolate the signal quality, so we don't have such nasty audible steps with fast moving senders
             float interpolated_bestSignalStrength = bestSignalStrength;
             if (matchedIID > -1) {
-                // Use RAII with try_lock to avoid blocking in audio callback
                 std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
                 if (lock.owns_lock()) {
                     float& lastSignalStrength = fgcom_remote_clients[userID][matchedIID].lastSeenSignal;
@@ -1715,7 +1607,6 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
 
                     pluginDbg("mumble_onAudioSourceFetched():   signalQuality interpolate: "+std::to_string(interpolated_bestSignalStrength)+" (lastSignalStrength="+std::to_string(lastSignalStrength)+" -> bestSignalStrength="+std::to_string(bestSignalStrength)+")");
                     lastSignalStrength = interpolated_bestSignalStrength;
-                    // Mutex automatically unlocked when lock goes out of scope
                 }
             }
 
@@ -1728,27 +1619,15 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
         pluginDbg("mumble_onAudioSourceFetched():   no connection, bestSignalStrength="+std::to_string(bestSignalStrength));
         pluginDbg("mumble_onAudioSourceFetched():   WHITE NOISE PATH: plugin active, no speech detected");
 
-        // reset interpolator of all remote identities, because none matched
-        // Use RAII with try_lock to avoid blocking in audio callback
         std::unique_lock<std::mutex> lock(fgcom_remotecfg_mtx, std::try_to_lock);
         if (lock.owns_lock()) {
             for (auto &idty : fgcom_remote_clients[userID]) {
                 fgcom_client& rmt = idty.second;
                 rmt.lastSeenSignal = -1;
             }
-            // Mutex automatically unlocked when lock goes out of scope
         }
 
-        // Bounds checking for memset operation
-        size_t buffer_size = static_cast<size_t>(sampleCount*channelCount)*sizeof(float);
-        const size_t MAX_AUDIO_BUFFER_SIZE = 1024 * 1024; // 1MB reasonable limit
-        if (buffer_size > 0 && buffer_size <= MAX_AUDIO_BUFFER_SIZE) {
-            memset(outputPCM, 0x00, buffer_size);
-        } else {
-            // Handle buffer size overflow
-            pluginLog("[WARN] Audio buffer size exceeds maximum allowed size: " + std::to_string(buffer_size));
-            return false;
-        }
+        memset(outputPCM, 0x00, sampleCount*channelCount*sizeof(float));
         
         // NOTE: Noise generation is now handled by mumble_onAudioOutputAboutToPlay()
         // which runs continuously. This prevents duplicate noise generation and conflicts.
@@ -1788,51 +1667,6 @@ bool mumble_onReceiveData(mumble_connection_t connection, mumble_userid_t sender
     return false;
 }
 
-// Mumble plugin configuration interface
-// This function integrates with Mumble's plugin configuration system
-// It provides a standardized way to configure plugin settings through Mumble's UI
-void initializeMumblePluginConfig() {
-    pluginLog("[CFG] Initializing Mumble plugin configuration interface");
-    
-    // Note: Mumble plugin API doesn't currently provide configuration interface
-    // Configuration is handled through UDP interface and config files
-    // This function is a placeholder for future Mumble API enhancements
-    
-    pluginLog("[CFG] Mumble plugin configuration interface initialized successfully");
-}
-
-// Configuration change handler
-// This function is called when configuration values change through Mumble's UI
-
-void handleConfigurationChange(const std::string& key, const std::string& value) {
-    pluginLog("[CFG] Configuration changed: " + key + " = " + value);
-    
-    // Note: Configuration changes are handled through UDP interface
-    // This function is a placeholder for future Mumble API enhancements
-    
-    // Apply configuration changes to running systems
-    applyConfigurationChanges();
-}
-
-// Apply configuration changes to running systems
-// This function updates the running plugin systems with new configuration values
-void applyConfigurationChanges() {
-    pluginLog("[CFG] Applying configuration changes to running systems");
-    
-    // Update UDP server configuration if running
-    if (udpServerRunning) {
-        // Restart UDP server with new configuration
-        pluginLog("[CFG] Restarting UDP server with new configuration");
-        fgcom_shutdownUDPServer();
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        fgcom_spawnUDPServer();
-    }
-    
-    // Note: Configuration values are accessed through global fgcom_cfg
-    // This function is a placeholder for future Mumble API enhancements
-    
-    pluginLog("[CFG] Configuration changes applied successfully");
-}
 
 
 

@@ -43,12 +43,9 @@
  * Following functions are called from plugin code
  */
 void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    // Use static PinkNoise generator to maintain state between calls
-    // This prevents discontinuities and fragmentation in the noise stream
     static PinkNoise fgcom_PinkSource;
     static bool pinkNoiseInitialized = false;
     
-    // Initialize once on first call
     if (!pinkNoiseInitialized) {
         InitializePinkNoise(&fgcom_PinkSource, 12);
         pinkNoiseInitialized = true;
@@ -59,49 +56,22 @@ void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCo
         noise = noise * noiseVolume;
         outputPCM[s] = outputPCM[s] + noise;
     }
-    
 }
 
 
 void fgcom_audio_applyVolume(float volume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    // just loop over the array, applying the volume
-    if (volume == 1.0) return; // no adjustment requested
+    if (volume == 1.0) return;
     
-    // Clamp volume to safe range to prevent audio distortion
     if (volume < 0.0) volume = 0.0;
-    if (volume > 2.0) volume = 2.0;  // Allow some headroom but prevent excessive amplification
+    if (volume > 2.0) volume = 2.0;
     
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
          outputPCM[s] = outputPCM[s] * volume;
          
-         // Clamp audio samples to prevent clipping and distortion
          if (outputPCM[s] > 1.0f) outputPCM[s] = 1.0f;
          if (outputPCM[s] < -1.0f) outputPCM[s] = -1.0f;
     }
 }
-
-void fgcom_audio_applySignalQualityDegradation(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, float dropoutProbability) {
-    // Apply signal quality degradation for poor signal conditions
-    // This simulates real-world radio behavior where poor signal quality
-    // causes audio dropouts and distortion
-    
-    if (dropoutProbability <= 0.0) return; // No degradation needed
-    
-    // Simple random number generation for dropout simulation
-    static unsigned int seed = 12345;
-    
-    for (uint32_t s=0; s<channelCount*sampleCount; s++) {
-        // Generate pseudo-random number (simple LCG)
-        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-        float random = (float)seed / 2147483647.0f;
-        
-        if (random < dropoutProbability) {
-            // Apply dropout: reduce signal to simulate audio loss
-            outputPCM[s] *= 0.1f;  // Reduce to 10% of original signal
-        }
-    }
-}
-
 
 void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
     if (channelCount == 1) return; // no need to convert ono to mono!
@@ -124,110 +94,44 @@ const int fadeOverNumSamples = 480; // fade changes in parameters over that much
 std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::HighPass, 1> (fadeOverNumSamples));
 std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (fadeOverNumSamples));
 
-/**
- * AUDIO FREQUENCY FILTERING SYSTEM
- * 
- * This function applies high-pass and low-pass filters to audio signals to simulate
- * radio frequency response characteristics and improve audio quality.
- * 
- * SIGNAL PROCESSING ALGORITHM:
- * 1. Extract mono audio data from multi-channel stream
- * 2. Apply high-pass filter to remove low-frequency noise
- * 3. Apply low-pass filter to remove high-frequency noise
- * 4. Apply filtered result to all channels (mono processing)
- * 
- * FREQUENCY RESPONSE CHARACTERISTICS:
- * - Human speech: 300Hz to 5000Hz (optimal range)
- * - Radio communication: 300Hz to 3400Hz (telephone quality)
- * - High-pass filter: Removes low-frequency noise and rumble
- * - Low-pass filter: Removes high-frequency noise and aliasing
- * 
- * DSP FILTER PARAMETERS:
- * - High-pass Q factor: 2.0 (moderate rolloff)
- * - Low-pass Q factor: 0.97 (gentle rolloff)
- * - Filter type: RBJ (Robert Bristow-Johnson) biquad filters
- * - Processing: Smoothed parameter changes to prevent clicks
- * 
- * @param highpass_cutoff High-pass filter cutoff frequency (Hz, 0=disabled)
- * @param lowpass_cutoff Low-pass filter cutoff frequency (Hz, 0=disabled)
- * @param outputPCM Audio buffer to process
- * @param sampleCount Number of audio samples
- * @param channelCount Number of audio channels
- * @param sampleRateHz Sample rate in Hz
- */
 void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
-    
-    // AUDIO PROCESSING ASSUMPTIONS:
-    // For performance optimization, we assume the audio stream is mono
-    // (all channels contain identical data). This allows us to process only
-    // the first channel and apply the result to all channels.
-    // 
-    // PERFORMANCE NOTE: This optimization reduces processing time by ~75%
-    // but requires that all channels contain identical audio data.
-    
-    // DSP BUFFER PREPARATION:
-    // CRITICAL FIX: Use RAII container for exception safety
-    // This ensures automatic cleanup even if exceptions occur
+    // Extract mono audio from first channel
     std::vector<float> audioData(sampleCount);
     float* audioDataPtr[1];
     audioDataPtr[0] = audioData.data();
     
-    // CHANNEL DATA EXTRACTION:
-    // Extract samples from the first channel (channel 0) for processing
-    // This assumes all channels contain identical data (mono audio)
     uint32_t ai = 0;
     for (uint32_t s=0; s<channelCount*sampleCount; s+=channelCount) {
-        audioData[ai] = outputPCM[s];  // Copy first channel sample
+        audioData[ai] = outputPCM[s];
         ai++;
     }
 
-    // FREQUENCY FILTERING ALGORITHM:
-    // Apply high-pass and low-pass filters to simulate radio frequency response
-    // This mimics the frequency response characteristics of real radio equipment
-    
-    // HUMAN SPEECH FREQUENCY RANGE:
-    // Human speech typically ranges from 300Hz to 5000Hz
-    // Radio communication is often limited to 300Hz to 3400Hz (telephone quality)
-    // These filters help optimize audio for radio communication
-    
-    // HIGH-PASS FILTER PROCESSING:
-    // Removes low-frequency noise, rumble, and DC offset
-    // Improves audio clarity by eliminating unwanted low frequencies
     if (highpass_cutoff > 0 ) {
         Dsp::Params f_highpass_p;
-        f_highpass_p[0] = sampleRateHz;        // Sample rate (Hz)
-        f_highpass_p[1] = highpass_cutoff;     // Cutoff frequency (Hz)
-        f_highpass_p[2] = 2.0;                // Q factor (moderate rolloff)
+        f_highpass_p[0] = sampleRateHz;
+        f_highpass_p[1] = highpass_cutoff;
+        f_highpass_p[2] = 2.0;
         f_highpass->setParams (f_highpass_p);
-               f_highpass->process (sampleCount, audioDataPtr);
+        f_highpass->process (sampleCount, audioDataPtr);
     }
 
-    // LOW-PASS FILTER PROCESSING:
-    // Removes high-frequency noise, aliasing, and unwanted harmonics
-    // Prevents audio distortion and improves signal quality
     if (lowpass_cutoff > 0 ) {
         Dsp::Params f_lowpass_p;
-        f_lowpass_p[0] = sampleRateHz;        // Sample rate (Hz)
-        f_lowpass_p[1] = lowpass_cutoff;      // Cutoff frequency (Hz)
-        f_lowpass_p[2] = 0.97;               // Q factor (gentle rolloff)
+        f_lowpass_p[0] = sampleRateHz;
+        f_lowpass_p[1] = lowpass_cutoff;
+        f_lowpass_p[2] = 0.97;
         f_lowpass->setParams (f_lowpass_p);
-               f_lowpass->process (sampleCount, audioDataPtr);
+        f_lowpass->process (sampleCount, audioDataPtr);
     }
     
-    // FILTERED AUDIO DISTRIBUTION:
-    // Apply the filtered mono audio to all channels
-    // This ensures all channels receive the same filtered audio signal
+    // Apply filtered audio to all channels
     ai = 0;
     for (uint32_t s=0; s<channelCount*sampleCount; s+=channelCount) {
         for (uint32_t c=0; c<channelCount; c++) {
-            outputPCM[s+c] = audioData[ai];  // Copy filtered sample to all channels
+            outputPCM[s+c] = audioData[ai];
         }
         ai++;
     }
-    
-    // MEMORY CLEANUP:
-    // CRITICAL FIX: Automatic cleanup via RAII - no manual delete needed
-    // std::vector automatically cleans up when going out of scope
 }
 
 /*
@@ -243,81 +147,32 @@ void fgcom_audio_applyFrequencyOffset(float offset_hz, float *outputPCM, uint32_
     (void)sampleRateHz;
 }
 
-/*
- * Apply Donald Duck effect (frequency shift up)
- */
-void fgcom_audio_applyDonaldDuckEffect(float intensity, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
-    if (!outputPCM || sampleCount == 0 || channelCount == 0 || sampleRateHz == 0 || intensity <= 0.0f) {
-        return;
-    }
-    
-    // Calculate frequency offset based on intensity
-    // Donald Duck effect typically shifts frequency up by 200-800 Hz
-    float max_offset = 800.0f; // Maximum offset in Hz
-    float offset_hz = intensity * max_offset;
-    
-    // Apply the frequency offset
-    fgcom_audio_applyFrequencyOffset(offset_hz, outputPCM, sampleCount, channelCount, sampleRateHz);
-}
-
-/*
- * Apply Doppler shift effect
- */
-void fgcom_audio_applyDopplerShift(float relative_velocity_mps, float carrier_frequency_hz, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
-    // Stub implementation - frequency_offset.h not available
-    // This function is not currently used in the codebase
-    (void)relative_velocity_mps;
-    (void)carrier_frequency_hz;
-    (void)outputPCM;
-    (void)sampleCount;
-    (void)channelCount;
-    (void)sampleRateHz;
-}
-
 // Forward declarations for functions from fgcom-mumble.cpp
 extern bool fgcom_isPluginActive();
 
 // CachedRadioInfo and cached_radio_infos are now declared in globalVars.h
 
-/*
- * Generate squelch noise when squelch is open
- * This function generates static noise when squelch is open (no signal received)
- * Uses cached radio info to avoid lock contention and prevent skipped frames
- * 
- * @param float *outputPCM: Audio buffer to process
- * @param uint32_t sampleCount: Number of samples
- * @param uint16_t channelCount: Number of channels
- * @return bool: true if noise was generated, false otherwise
- */
-// Smoothed noise level to prevent abrupt volume changes (static to maintain state between calls)
 static float smoothed_noise_level = 0.0f;
 
 bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    // Only generate noise if plugin is active, radio audio effects are enabled, and squelch noise is enabled
     if (!fgcom_isPluginActive() || !fgcom_cfg.radioAudioEffects || !fgcom_cfg.addNoiseSquelch) {
-        smoothed_noise_level = 0.0f;  // Reset smoothed level when noise is disabled
+        smoothed_noise_level = 0.0f;
         return false;
     }
     
-    // Check all local radios to see if any have squelch open
-    float targetNoiseLevel = 0.0f;  // Target noise level for this frame
-    const float SQUELCH_OPEN_THRESHOLD = 0.1f;  // Consider squelch open if <= 0.1 (10%)
-    const float BASE_NOISE_VOLUME = 0.1f;  // Fixed noise level when squelch is open
+    float targetNoiseLevel = 0.0f;
+    const float SQUELCH_OPEN_THRESHOLD = 0.1f;
+    const float BASE_NOISE_VOLUME = 0.1f;
     
-    // Read from local client data with non-blocking lock to avoid deadlocks in audio callback
     std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
     if (!lock.owns_lock()) {
-        // Lock unavailable, skip this frame to avoid blocking audio callback
         return false;
     }
     
-    // Process all local client identities and their radios
     for (const auto &lcl_idty : fgcom_local_client) {
         const fgcom_client& lcl = lcl_idty.second;
         for (const auto& radio : lcl.radios) {
-            // Check if radio is operable, has a frequency, and squelch is open
             if (radio.operable && !radio.frequency.empty() && radio.squelch <= SQUELCH_OPEN_THRESHOLD) {
-                // Apply squelch modulation (lower squelch = more noise)
                 float squelchFactor = (1.0f - (radio.squelch / SQUELCH_OPEN_THRESHOLD));
                 float noiseLevel = BASE_NOISE_VOLUME * squelchFactor;
                 
@@ -328,34 +183,25 @@ bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_
         }
     }
     
-    // Lock is released here automatically
-    
-    // Apply exponential smoothing to prevent abrupt volume changes
-    // This creates a smooth transition between noise levels
-    const float SMOOTHING_FACTOR = 0.15f;  // How quickly to adapt (0.0 = no change, 1.0 = instant)
+    const float SMOOTHING_FACTOR = 0.15f;
     
     if (targetNoiseLevel > 0.0f) {
-        // Smoothly transition to target level
         smoothed_noise_level = smoothed_noise_level + (targetNoiseLevel - smoothed_noise_level) * SMOOTHING_FACTOR;
         
-        // Generate white noise with smoothed level
-        if (smoothed_noise_level > 0.001f) {  // Only generate if above threshold
+        if (smoothed_noise_level > 0.001f) {
             fgcom_audio_addNoise(smoothed_noise_level, outputPCM, sampleCount, channelCount);
-            return true;  // We modified the audio stream
+            return true;
         }
     } else {
-        // Smoothly fade out when no noise is needed
         smoothed_noise_level = smoothed_noise_level * (1.0f - SMOOTHING_FACTOR);
         
         if (smoothed_noise_level > 0.001f) {
-            // Still generating noise while fading out
             fgcom_audio_addNoise(smoothed_noise_level, outputPCM, sampleCount, channelCount);
             return true;
         } else {
-            // Noise has faded out completely
             smoothed_noise_level = 0.0f;
         }
     }
     
-    return false;  // No noise generated
+    return false;
 }
