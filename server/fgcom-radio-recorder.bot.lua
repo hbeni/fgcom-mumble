@@ -38,7 +38,7 @@ Installation of this plugin is described in the projects readme: https://github.
 ]]
 
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion  = "1.8.4"
+fgcom.botversion  = "1.8.5"
 local botname     = "FGCOM-Recorder"
 fgcom.callsign    = "FGCOM-REC"
 local voiceBuffer = Queue:new()
@@ -71,6 +71,9 @@ printhelp = function()
     --print("    --spawn    Spawn playback bots after recording")
     print("    --debug    print debug messages             (default=no)")
     print("    --version  print version and exit")
+    print("\nNotice:")
+    print("  * If connecting to a legacy 1.4 mumble server, set env variable LUA_MUMBLE_CLIENT_VER=\"1.4.0\",")
+    print("    otherwise the bot might not be able to record audio data.") -- see: https://github.com/bkacjios/lua-mumble/issues/32#issuecomment-3496949595
     os.exit(0)
 end
 
@@ -129,7 +132,15 @@ end
 -- Connect to server, so we get the API
 fgcom.log(botname..": "..fgcom.getVersion())
 fgcom.log("connecting as '"..botname.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = mumble.client()
+local client
+local mumbleClientVer = fgcom.util.getLuaMumbleClientEnvVer()
+if mumbleClientVer == nil then
+    fgcom.log("Connecting with default client version") -- defined in lua-mumble/mumble/defines.h
+    client = mumble.client()
+else
+    fgcom.log("Connecting with client version "..table.concat(mumbleClientVer, ".", 1))
+    client = mumble.client(mumbleClientVer[1], mumbleClientVer[2], mumbleClientVer[3])
+end
 assert(client:connect(host, port, cert, key))
 
 client:hook("OnConnect", function(client)
@@ -252,6 +263,17 @@ updateAllChannelUsersforSend = function(cl)
     playback_targets = ch:getUsers()
 end
 
+
+client:hook("OnServerVersion", function(client, event)
+    -- check client version against server version; comlain when problems are suspected
+    if string.match(event.release, "^1.4.")
+      and mumbleClientVer == nil
+    then
+        fgcom.log("WARNING: Server greeted with legacy mumble version "..event.release..";")
+        fgcom.log("         but no LUA_MUMBLE_CLIENT_VER environment variable was set.")
+        fgcom.log("         The bot might not send/receive voice packets!")
+    end
+end)
 
 -- Called when the bot successfully connected to the server
 -- and has received all current channel and client data

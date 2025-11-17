@@ -34,7 +34,7 @@ Installation of this plugin is described in the projects readme: https://github.
 
 ]]
 dofile("fgcom-sharedFunctions.inc.lua")  -- include shared functions
-fgcom.botversion = "1.9.1"
+fgcom.botversion = "1.9.2"
 
 -- init random generator using /dev/random, if poosible (=linux)
 fgcom.rng.initialize()
@@ -100,6 +100,8 @@ local printhelp = function()
     print("  * OGG sample type implies --nodel (files are never deleted from disk by the bot).")
     print("  * --ttl=0 (loop) has precedence over --oneshot.")
     print("  * --ttl=n overwrites the FGCS stored timestamp, so that ttl gives the remaining new validity from 'now'.")
+    print("  * If connecting to a legacy 1.4 mumble server, set env variable LUA_MUMBLE_CLIENT_VER=\"1.4.0\",")
+    print("    otherwise the bot might not be able to send audio data.") -- see: https://github.com/bkacjios/lua-mumble/issues/32#issuecomment-3496949595
     os.exit(0)
 end
 
@@ -329,7 +331,15 @@ end
 -- Connect to server, so we get the API
 fgcom.callsign = string.format( callsignPattern, math.random(1, 99999) )
 fgcom.log("connecting as '"..fgcom.callsign.."' to "..host.." on port "..port.." (cert: "..cert.."; key: "..key.."), joining: '"..fgcom.channel.."'")
-local client = mumble.client()
+local client
+local mumbleClientVer = fgcom.util.getLuaMumbleClientEnvVer()
+if mumbleClientVer == nil then
+    fgcom.log("Connecting with default client version") -- defined in lua-mumble/mumble/defines.h
+    client = mumble.client()
+else
+    fgcom.log("Connecting with client version "..table.concat(mumbleClientVer, ".", 1))
+    client = mumble.client(mumbleClientVer[1], mumbleClientVer[2], mumbleClientVer[3])
+end
 assert(client:connect(host, port, cert, key))
 
 client:hook("OnConnect", function(client)
@@ -774,6 +784,17 @@ movementTimer_func = function()
         if not movementTimer:isPaused() then movementTimer:pause() end
     end
 end
+
+client:hook("OnServerVersion", function(client, event)
+    -- check client version against server version; comlain when problems are suspected
+    if string.match(event.release, "^1.4.")
+      and mumbleClientVer == nil
+    then
+        fgcom.log("WARNING: Server greeted with legacy mumble version "..event.release..";")
+        fgcom.log("         but no LUA_MUMBLE_CLIENT_VER environment variable was set.")
+        fgcom.log("         The bot might not send/receive voice packets!")
+    end
+end)
 
 client:hook("OnServerSync", function(client, event)
     if (event.welcome_text == nil) then event.welcome_text = "-" end
