@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2025-10-06T13:42:39.046" name="AllTests">
-  <testsuite name="AGCConfigTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2025-10-06T13:42:39.046">
-    <testcase name="EnableDisableFunctionality" file="/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_agc_config.cpp" line="16" status="run" result="completed" time="0." timestamp="2025-10-06T13:42:39.046" classname="AGCConfigTest" />
-  </testsuite>
-  <testsuite name="SquelchConfigTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2025-10-06T13:42:39.047">
-    <testcase name="EnableDisableFunctionality" file="/home/haaken/github-projects/fgcom-mumble/test/agc_squelch_tests/test_squelch_config.cpp" line="12" status="run" result="completed" time="0." timestamp="2025-10-06T13:42:39.047" classname="SquelchConfigTest" />
-  </testsuite>
-</testsuites>

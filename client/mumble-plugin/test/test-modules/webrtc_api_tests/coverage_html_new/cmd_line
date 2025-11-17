@@ -1,1 +1,0 @@
-genhtml coverage_new_filtered.info --output-directory coverage_html_new

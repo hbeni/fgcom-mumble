@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  cpp-tests:
+    name: C++ Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential g++ libcurl4-openssl-dev libssl-dev
+      
+      - name: Build plugin
+        working-directory: client/mumble-plugin
+        run: make libs plugin
+      
+      - name: Build test tools
+        working-directory: client/mumble-plugin
+        run: make tools
+      
+      - name: Run Catch2 unit tests
+        working-directory: client/mumble-plugin
+        run: make test
+
+  java-tests:
+    name: Java Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      
+      - name: Build with Maven
+        working-directory: client/radioGUI
+        run: mvn clean compile
+      
+      - name: Run tests
+        working-directory: client/radioGUI
+        run: mvn test
+
+  lua-tests:
+    name: Lua Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Lua
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.3
+      
+      - name: Run Lua tests
+        working-directory: server
+        run: |
+          if [ -f "test/run_tests.lua" ]; then
+            lua5.3 test/run_tests.lua
+          else
+            echo "No Lua tests found, skipping"
+          fi
+
+  php-tests:
+    name: PHP Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      
+      - name: Run PHP tests
+        working-directory: server
+        run: |
+          if [ -f "test/run_tests.php" ]; then
+            php test/run_tests.php
+          else
+            echo "No PHP tests found, skipping"
+          fi
+

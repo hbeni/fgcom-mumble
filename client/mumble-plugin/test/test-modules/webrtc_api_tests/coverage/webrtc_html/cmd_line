@@ -1,1 +1,0 @@
-genhtml coverage/webrtc_coverage_filtered.info --output-directory coverage/webrtc_html
