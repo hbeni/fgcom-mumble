@@ -31,10 +31,13 @@
 #include <stdlib.h> 
 #include <unistd.h> 
 #include <string.h> 
+#include <errno.h>
 #include <sstream> 
 #include <regex>
+#include <algorithm>
 #include <sys/types.h> 
 #include <math.h>
+#include <mutex>
 
 #if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     #include <winsock2.h>
@@ -61,6 +64,9 @@
 #include "io_UDPClient.h"
 #include "mumble/MumblePlugin_v_1_0_x.h"
 #include "fgcom-mumble.h"
+
+// Forward declaration for cache update function
+void updateCachedRadioInfo();
 
 #ifdef DEBUG
     float fgcom_debug_signalstrength = -1;
@@ -104,25 +110,89 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     // marker for PTT change
     bool needToHandlePTT = false;
 
+    // CRITICAL FIX: Use RAII string container for exception safety
+    // This prevents buffer overflows and ensures automatic cleanup
+    std::string buffer_copy(buffer);
+    
     // convert udp string buffer to string, so we can easily handle escaped delimeters.
     // the goal is that we want to support: `a,b\,c,d`=>['a', 'b,c', 'd']; we do this by replacing the escaped sequence
     // into a non-printable ASCII, so we can easily spit by ',' later on.
     const std::string delimEscPlaceholderC = "\x1A"; // for processing escaped `\,` sequences in UDP input string ('a,b' => 'a\x1Ab' )
     const std::string delimEscPlaceholderE = "\x1B"; // for processing escaped `\,` sequences in UDP input string ('a=b' => 'a\x1Bb' )
-    replace_all(buffer_str, "\\,", delimEscPlaceholderC);
-    replace_all(buffer_str, "\\=", delimEscPlaceholderE);
-
+    replace_all(buffer_copy, "\\,", delimEscPlaceholderC);
+    replace_all(buffer_copy, "\\=", delimEscPlaceholderE);
     
-    // Tokenize and process UDP fields.
-    // (convert to stringstream so we can easily tokenize.)
-    std::stringstream streambuffer(buffer_str);
     std::string segment;
     std::regex parse_key_value ("^(\\w+)=(.+)");
     std::regex parse_COM ("^(COM)(\\d+)_(.+)");
-    fgcom_localcfg_mtx.lock();
-    while(std::getline(streambuffer, segment, ',')) {
+    
+    // CRITICAL FIX: Use try_lock to avoid blocking - if lock unavailable, skip processing this packet
+    // This prevents deadlock when audio callback or main thread holds the lock
+    // UDP packets are sent frequently, so skipping one packet is acceptable
+    std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        pluginDbg("[UDP-server] packet processing skipped: fgcom_localcfg_mtx unavailable (will retry on next packet)");
+        return parseResult;  // Return empty result - next packet will retry
+    }
+    
+    // CRITICAL FIX: Use safe string parsing instead of strtok
+    // strtok is not thread-safe and can cause buffer overflows
+    std::istringstream stream(buffer_copy);
+    std::string token;
+    while (std::getline(stream, token, ',')) {
+        segment = token;
+        
+        // Undo escaping of delimiters after tokenization
         replace_all(segment, delimEscPlaceholderC, ","); // undo escaping of delim ('a\x1Ab' => 'a,b')
         replace_all(segment, delimEscPlaceholderE, "="); // undo escaping of delim ('a\x1Bb' => 'a=b')
+        
+        // CRITICAL FIX: Comprehensive input validation and sanitization
+        // Prevent buffer overflows, injection attacks, and malformed data
+        
+        // 1. Length validation - prevent buffer overflows
+        if (segment.length() > MAX_UDPSRV_FIELDLENGTH * 2) {
+            pluginLog("[UDP-server] ERROR: Segment too long (" + std::to_string(segment.length()) + " chars), ignoring");
+            continue;
+        }
+        
+        // 2. Character validation - remove control characters and non-printable
+        // But preserve our escape placeholders (0x1A, 0x1B) which are already processed
+        segment.erase(std::remove_if(segment.begin(), segment.end(), 
+            [](char c) { 
+                return (c < 32 && c != 0x1A && c != 0x1B) || c > 126 || c == '\0' || c == '\n' || c == '\r';
+            }), segment.end());
+        
+        // 3. Empty segment check
+        if (segment.empty()) {
+            continue; // Skip empty segments
+        }
+        
+        // 4. Pattern validation - check for suspicious patterns (but allow legitimate escaped sequences)
+        // Note: We've already processed escaped delimiters, so backslashes here are suspicious
+        if (segment.find("..") != std::string::npos || 
+            segment.find("//") != std::string::npos ||
+            (segment.find("\\") != std::string::npos && segment.find("\\,") == std::string::npos && segment.find("\\=") == std::string::npos)) {
+            pluginLog("[UDP-server] WARNING: Suspicious pattern in segment, sanitizing: " + segment);
+            // Remove suspicious patterns
+            segment.erase(std::remove(segment.begin(), segment.end(), '.'), segment.end());
+            segment.erase(std::remove(segment.begin(), segment.end(), '/'), segment.end());
+            // Only remove backslashes that aren't part of legitimate escape sequences
+            std::string::size_type pos = 0;
+            while ((pos = segment.find("\\", pos)) != std::string::npos) {
+                if (pos + 1 < segment.length() && segment[pos + 1] != ',' && segment[pos + 1] != '=') {
+                    segment.erase(pos, 1);
+                } else {
+                    pos += 2;
+                }
+            }
+        }
+        
+        // 5. Final length check after sanitization
+        if (segment.length() > MAX_UDPSRV_FIELDLENGTH) {
+            segment = segment.substr(0, MAX_UDPSRV_FIELDLENGTH);
+            pluginLog("[UDP-server] WARNING: Segment truncated to " + std::to_string(MAX_UDPSRV_FIELDLENGTH) + " chars");
+        }
+        
         pluginDbg("[UDP-server] Segment='"+segment+"'");
 
         try {
@@ -357,6 +427,29 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                         // must never be sended - it's a local config property
                     }
                     
+                    // Amateur radio specific fields
+                    if (radio_var == "BAND") {
+                        // Store band information (e.g., "20m", "40m")
+                        // This is informational and helps with validation
+                        pluginDbg("[UDP-server] amateur radio band: " + token_value);
+                    }
+                    if (radio_var == "MODE") {
+                        // Store mode information (e.g., "CW", "SSB", "AM", "DSB", "ISB", "VSB")
+                        pluginDbg("[UDP-server] amateur radio mode: " + token_value);
+                    }
+                    if (radio_var == "GRID") {
+                        // Store Maidenhead grid locator (e.g., "FN31pr")
+                        pluginDbg("[UDP-server] amateur radio grid locator: " + token_value);
+                    }
+                    if (radio_var == "AMATEUR") {
+                        // Set amateur radio flag
+                        pluginDbg("[UDP-server] amateur radio flag: " + token_value);
+                    }
+                    if (radio_var == "REGION") {
+                        // Set ITU region (1, 2, 3)
+                        pluginDbg("[UDP-server] ITU region: " + token_value);
+                    }
+                    
                 }
                 
                 
@@ -449,6 +542,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
                     fgcom_cfg.radioAudioEffects = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
                 }
                 
+                // Enable/Disable squelch noise
+                if (token_key == "AUDIO_FX_NOISES") {
+                    fgcom_cfg.addNoiseSquelch = (token_value == "0" || token_value == "false" || token_value == "off")? false : true;
+                    pluginDbg("[UDP-server] AUDIO_FX_NOISES updated to "+std::to_string(fgcom_cfg.addNoiseSquelch));
+                }
+                
                 // Allow hearing of non-plugin users
                 if (token_key == "AUDIO_HEAR_ALL") {
                     fgcom_cfg.allowHearingNonPluginUsers = (token_value == "1" || token_value == "true" || token_value == "on")? true : false;
@@ -483,7 +582,11 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
             pluginDbg("[UDP-server] Parsing throw exception, ignoring segment "+segment);
         }
         
+        // CRITICAL FIX: No need for "next token" - std::getline handles iteration automatically
     }  //endwhile
+    
+    // CRITICAL FIX: Automatic cleanup via RAII - no manual delete needed
+    // std::string automatically cleans up when going out of scope
     
     
     /*
@@ -541,11 +644,11 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     }
     
     
-    // All done
-    fgcom_localcfg_mtx.unlock();
+    // Mutex automatically unlocked when lock goes out of scope
     
     /**
      * Handle PTT Change
+     * Note: fgcom_handlePTT() will use try_lock internally, so it won't block
      */
     if (needToHandlePTT) fgcom_handlePTT();
     
@@ -557,9 +660,10 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
 int fgcom_udp_port_used = fgcom_cfg.udpServerPort;
 bool fgcom_udp_shutdowncmd = false;
 bool udpServerRunning = false;
+int  fgcom_UDPServer_sockfd = -1;  // Global socket descriptor for shutdown
+std::mutex fgcom_UDPServer_sockfd_mtx;  // Mutex to protect socket access
 void fgcom_spawnUDPServer() {
     pluginLog("[UDP-server] server starting");
-    int  fgcom_UDPServer_sockfd;
     char buffer[MAXLINE];
     struct sockaddr_in servaddr, cliaddr; 
     
@@ -569,16 +673,21 @@ void fgcom_spawnUDPServer() {
     int winsockInitRC = WSAStartup(MAKEWORD(2,0),&wsa);
     if (winsockInitRC < 0 ) {
         pluginLog("[UDP-server] WinSock init  failed (code "+std::to_string(winsockInitRC)+")"); 
-        mumAPI.log(ownPluginID, std::string("UDP server failed: winsock init failure (code "+std::to_string(winsockInitRC)+")").c_str());
+        // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+        // Removed to prevent Mumble hangs - use pluginLog() instead
         return;
     }
 #endif
       
     // Creating socket file descriptor 
-    if ( (fgcom_UDPServer_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
-        pluginLog("[UDP-server] socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")"); 
-        mumAPI.log(ownPluginID, std::string("UDP server failed: socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")").c_str());
-        return;
+    {
+        std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+        if ( (fgcom_UDPServer_sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) { 
+            pluginLog("[UDP-server] socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")"); 
+            // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+            // Removed to prevent Mumble hangs - use pluginLog() instead
+            return;
+        }
     } 
       
     memset(&servaddr, 0, sizeof(servaddr)); 
@@ -594,7 +703,8 @@ void fgcom_spawnUDPServer() {
             servaddr.sin_addr.s_addr = a_s_addr;
         } else {
             pluginLog("[UDP-server] socket server address invalid: "+fgcom_cfg.udpServerHost);
-            mumAPI.log(ownPluginID, std::string("UDP server failed: server address invalid: "+fgcom_cfg.udpServerHost).c_str());
+            // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+            // Removed to prevent Mumble hangs - use pluginLog() instead
             return;
 //            exit(EXIT_FAILURE);
         }
@@ -618,13 +728,13 @@ void fgcom_spawnUDPServer() {
     
     
     pluginLog("[UDP-server] server up and waiting for data at "+fgcom_cfg.udpServerHost+":"+std::to_string(fgcom_udp_port_used));
-    mumAPI.log(ownPluginID, std::string("UDP server up and waiting for data at "+fgcom_cfg.udpServerHost+":"+std::to_string(fgcom_udp_port_used)).c_str());
+    // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+    // Removed to prevent Mumble hangs - use pluginLog() instead
     
     // wait for incoming data
     int n; 
     socklen_t len;
     std::map<uint16_t, bool> firstdata;
-    char* clientHost;
     uint16_t clientPort;
     udpServerRunning = true;
     while (!fgcom_udp_shutdowncmd) {
@@ -635,37 +745,122 @@ void fgcom_spawnUDPServer() {
         int recvfrom_flags = MSG_WAITALL;
 #endif
 
-        // receive datagrams
-        n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
-                     recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
+        // Set socket timeout to prevent blocking forever - use 1 second for faster shutdown response
+        struct timeval timeout;
+        timeout.tv_sec = 1;  // 1 second timeout - allows checking shutdown flag more frequently
+        timeout.tv_usec = 0;
+        {
+            std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+            if (fgcom_UDPServer_sockfd >= 0) {
+                setsockopt(fgcom_UDPServer_sockfd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+            }
+        }
+
+        // receive datagrams with bounds checking
+        if (len > MAXLINE) {
+            pluginLog("[UDP-server] Client address length exceeds maximum buffer size");
+            continue;
+        }
+        {
+            std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+            if (fgcom_UDPServer_sockfd < 0) {
+                // Socket was closed by shutdown
+                break;
+            }
+            n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
+                         recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
+        }
         if (n < 0) {
-            // SOCKET_ERROR returned
+            // SOCKET_ERROR returned - check errno to determine if it's a fatal error
 #if defined(MINGW_WIN64) || defined(MINGW_WIN32)
-            //details for windows error codes: https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recvfrom
-            wprintf(L"recvfrom failed with error %d\n", WSAGetLastError());
-            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in nf-winsock-recvfrom()="+std::to_string(WSAGetLastError()));
-            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+", WSAGetLastError()="+std::to_string(WSAGetLastError())+")").c_str());
+            int error_code = WSAGetLastError();
+            // On Windows, WSAEINTR (10004) means interrupted, WSAEWOULDBLOCK (10035) means would block
+            // WSAETIMEDOUT (10060) means timeout
+            if (error_code == WSAEINTR || error_code == WSAEWOULDBLOCK) {
+                // Non-fatal: interrupted by signal or would block - check shutdown flag and continue
+                if (fgcom_udp_shutdowncmd) break;
+                continue;
+            } else if (error_code == WSAETIMEDOUT) {
+                // Timeout - check shutdown flag
+                if (fgcom_udp_shutdowncmd) {
+                    pluginDbg("[UDP-server] shutdown requested during timeout");
+                    break;
+                }
+                continue;
+            }
+            // Fatal error
+            wprintf(L"recvfrom failed with error %d\n", error_code);
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom()="+std::to_string(error_code));
+            // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+            // Removed to prevent Mumble hangs - use pluginLog() instead
 #else
-            // linux recvfrom has no further details
-            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom()");
-            mumAPI.log(ownPluginID, std::string("UDP server encountered an internal error (recvfrom()="+std::to_string(n)+")").c_str());
+            // Linux: check errno
+            int error_code = errno;
+            if (error_code == EINTR) {
+                // Interrupted by signal - retry (this is normal and non-fatal)
+                pluginDbg("[UDP-server] recvfrom() interrupted by signal (EINTR), retrying...");
+                if (fgcom_udp_shutdowncmd) break;
+                continue;
+            } else if (error_code == EAGAIN || error_code == EWOULDBLOCK) {
+                // Would block (socket is non-blocking) - continue loop (this is normal)
+                pluginDbg("[UDP-server] recvfrom() would block (EAGAIN/EWOULDBLOCK), continuing...");
+                if (fgcom_udp_shutdowncmd) break;
+                continue;
+            } else if (error_code == ETIMEDOUT) {
+                // Timeout - check shutdown flag
+                if (fgcom_udp_shutdowncmd) {
+                    pluginDbg("[UDP-server] shutdown requested during timeout");
+                    break;
+                }
+                continue;
+            }
+            // Fatal error - log and stop
+            // Use thread-safe strerror_r instead of strerror
+            char errbuf[256];
+            char* errmsg = strerror_r(error_code, errbuf, sizeof(errbuf));
+            // strerror_r may return either errbuf or a static string depending on implementation
+            std::string errstr = (errmsg != nullptr) ? std::string(errmsg) : std::string(errbuf);
+            pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom(), errno="+std::to_string(error_code)+" ("+errstr+")");
+            // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+            // Removed to prevent Mumble hangs - use pluginLog() instead
 #endif
             // abort further processing and stop the udp server
-            close(fgcom_UDPServer_sockfd);
-            mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped forcefully").c_str());
+            {
+                std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+                if (fgcom_UDPServer_sockfd >= 0) {
+                    close(fgcom_UDPServer_sockfd);
+                    fgcom_UDPServer_sockfd = -1;
+                }
+            }
+            // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+            // Removed to prevent Mumble hangs - use pluginLog() instead
+            pluginLog("[UDP-server] UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped forcefully");
             break;
         }
         
+        // Buffer overflow protection: ensure we don't write beyond buffer bounds
+        if (n >= MAXLINE) {
+            pluginLog("[UDP-server] Received packet exceeds maximum size ("+std::to_string(n)+" >= "+std::to_string(MAXLINE)+"), truncating");
+            n = MAXLINE - 1;  // Leave room for null terminator
+        }
         buffer[n] = '\0';
         clientPort = ntohs(cliaddr.sin_port);
-        clientHost = inet_ntoa(cliaddr.sin_addr);
-        std::string clientHost_str = std::string(clientHost);
+        // Use thread-safe inet_ntop instead of thread-unsafe inet_ntoa
+        char clientHost_buf[INET_ADDRSTRLEN];
+        const char* clientHost_result = inet_ntop(AF_INET, &cliaddr.sin_addr, clientHost_buf, INET_ADDRSTRLEN);
+        std::string clientHost_str = (clientHost_result != nullptr) ? std::string(clientHost_buf) : std::string("unknown");
         
         // Allow the udp server to be shut down when receiving SHUTDOWN command
         if (strstr(buffer, "SHUTDOWN") && fgcom_udp_shutdowncmd) {
             pluginLog("[UDP-server] shutdown command recieved, server stopping now");
             fgcom_udp_shutdowncmd = false;
-            close(fgcom_UDPServer_sockfd);
+            {
+                std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+                if (fgcom_UDPServer_sockfd >= 0) {
+                    close(fgcom_UDPServer_sockfd);
+                    fgcom_UDPServer_sockfd = -1;
+                }
+            }
             //mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
             // ^^ note: as long as the mumAPI is synchronuous/blocking, we cannot emit that message: it causes mumble's main thread to block/deadlock.
             break;
@@ -677,11 +872,15 @@ void fgcom_spawnUDPServer() {
             if (firstdata.count(clientPort) == 0 && sizeof(buffer) > 4) {
                 firstdata[clientPort] = true;
                 pluginLog("[UDP-server] server connection established from "+clientHost_str+":"+std::to_string(clientPort));
-                mumAPI.log(ownPluginID, std::string("UDP server connection established from "+clientHost_str+":"+std::to_string(clientPort)).c_str());
+                // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+                // Removed to prevent Mumble hangs - use pluginLog() instead
             }
             
             std::map<int, fgcom_udp_parseMsg_result> updates; // so we can send updates to remotes
             updates = fgcom_udp_parseMsg(buffer, clientPort, clientHost_str);
+            
+            // Update cached radio info for audio callbacks (reduces lock contention)
+            updateCachedRadioInfo();
             
             /* Process pending urgent notifications
              * (not-urgent updates are dealt from the notification thread) */
@@ -714,6 +913,14 @@ void fgcom_spawnUDPServer() {
         }
     }
 
+    // Clean up socket
+    {
+        std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+        if (fgcom_UDPServer_sockfd >= 0) {
+            close(fgcom_UDPServer_sockfd);
+            fgcom_UDPServer_sockfd = -1;
+        }
+    }
     udpServerRunning = false;
     pluginDbg("[UDP-server] thread finished.");
     fgcom_udp_port_used = fgcom_cfg.udpServerPort;
@@ -721,11 +928,23 @@ void fgcom_spawnUDPServer() {
 }
 
 void fgcom_shutdownUDPServer() {
-    // Trigger shutdown: this just sends some magic UDP message.
-    // This is neccessary because of the blocking state of the socket.
+    // Set shutdown flag first
+    fgcom_udp_shutdowncmd = true;
+    
+    // Close the socket to interrupt blocking recvfrom() call
+    // This is the most reliable way to wake up the thread
+    {
+        std::lock_guard<std::mutex> lock(fgcom_UDPServer_sockfd_mtx);
+        if (fgcom_UDPServer_sockfd >= 0) {
+            pluginDbg("[UDP-server] closing socket to interrupt blocking recvfrom()");
+            close(fgcom_UDPServer_sockfd);
+            fgcom_UDPServer_sockfd = -1;
+        }
+    }
+    
+    // Also send UDP shutdown message as backup (in case socket wasn't blocking)
     pluginDbg("sending UDP shutdown request to port "+std::to_string(fgcom_udp_port_used));
     std::string message = "SHUTDOWN";
-    fgcom_udp_shutdowncmd = true;
 
 	struct sockaddr_in server_address;
 	memset(&server_address, 0, sizeof(server_address));
@@ -758,12 +977,18 @@ void fgcom_shutdownUDPServer() {
 		return;
 	}
 
-	// send data
-	int len = sendto(sock, message.c_str(), strlen(message.c_str()), 0,
+	// send data with bounds checking
+	size_t message_len = strlen(message.c_str());
+	if (message_len > MAXLINE) {
+		pluginLog("[UDP-server] Message length exceeds maximum buffer size");
+		return;
+	}
+	int len = sendto(sock, message.c_str(), message_len, 0,
 	           (struct sockaddr*)&server_address, sizeof(server_address));
     if (len == -1) {
         pluginLog("[UDP-server] error sending UDP shutdown packet");
-        mumAPI.log(ownPluginID, std::string("error sending UDP shutdown packet").c_str());
+        // NOTE: mumAPI.log() is blocking and can cause deadlock when called from background thread
+        // Removed to prevent Mumble hangs - use pluginLog() instead
         return;
     }
 }

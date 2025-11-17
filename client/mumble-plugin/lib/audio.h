@@ -17,6 +17,7 @@
 #ifndef FGCOM_AUDIO_H
 #define FGCOM_AUDIO_H
 #include "mumble/PluginComponents_v_1_0_x.h"
+#include "frequency_offset.h"
 
 /*
  * Add static noise to the signal
@@ -24,6 +25,16 @@
  * @param float noiseVolume 0.0 to 1.0 for normalized volume
  */
 void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
+
+/*
+ * Apply signal quality degradation for poor signal conditions
+ * 
+ * @param float* outputPCM Audio buffer to process
+ * @param uint32_t sampleCount Number of samples
+ * @param uint16_t channelCount Number of channels
+ * @param float dropoutProbability Probability of audio dropout (0.0 to 1.0)
+ */
+void fgcom_audio_applySignalQualityDegradation(float *outputPCM, uint32_t sampleCount, uint16_t channelCount, float dropoutProbability);
 
 
 /*
@@ -46,5 +57,50 @@ void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t chann
  * If highpass_cutoff / lowpass_cutoff == 0, then the respective filter is skipped
  */
 void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
+
+/*
+ * Apply frequency offset (Donald Duck Effect) using complex exponential method
+ * 
+ * @param float offset_hz: Frequency offset in Hz (positive = higher pitch, negative = lower pitch)
+ * @param float *outputPCM: Audio buffer to process
+ * @param uint32_t sampleCount: Number of samples
+ * @param uint16_t channelCount: Number of channels
+ * @param uint32_t sampleRateHz: Sample rate in Hz
+ */
+void fgcom_audio_applyFrequencyOffset(float offset_hz, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
+
+/*
+ * Apply Donald Duck effect (frequency shift up)
+ * 
+ * @param float intensity: Effect intensity (0.0-1.0)
+ * @param float *outputPCM: Audio buffer to process
+ * @param uint32_t sampleCount: Number of samples
+ * @param uint16_t channelCount: Number of channels
+ * @param uint32_t sampleRateHz: Sample rate in Hz
+ */
+void fgcom_audio_applyDonaldDuckEffect(float intensity, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
+
+/*
+ * Apply Doppler shift effect
+ * 
+ * @param float relative_velocity_mps: Relative velocity in m/s
+ * @param float carrier_frequency_hz: Carrier frequency in Hz
+ * @param float *outputPCM: Audio buffer to process
+ * @param uint32_t sampleCount: Number of samples
+ * @param uint16_t channelCount: Number of channels
+ * @param uint32_t sampleRateHz: Sample rate in Hz
+ */
+void fgcom_audio_applyDopplerShift(float relative_velocity_mps, float carrier_frequency_hz, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
+
+/*
+ * Generate squelch noise when squelch is open
+ * This function generates static noise when squelch is open (no signal received)
+ * 
+ * @param float *outputPCM: Audio buffer to process
+ * @param uint32_t sampleCount: Number of samples
+ * @param uint16_t channelCount: Number of channels
+ * @return bool: true if noise was generated, false otherwise
+ */
+bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
 #endif
