@@ -7,13 +7,10 @@ Integrates Piper TTS with existing FGcom-Mumble ATIS system
 
 import os
 import sys
-import json
 import subprocess
 import random
-import time
 import configparser
 from datetime import datetime
-from pathlib import Path
 
 class ATISTTSGenerator:
     def __init__(self, config_file=None):
@@ -200,9 +197,6 @@ class ATISTTSGenerator:
     def create_fgcs_file(self, audio_file, airport_code, frequency):
         """Create FGCS format file for FGcom-Mumble server"""
         fgcs_file = audio_file.replace('.wav', '.fgcs')
-        
-        # Get file size
-        file_size = os.path.getsize(audio_file) if os.path.exists(audio_file) else 0
         
         # Create FGCS header
         header = {

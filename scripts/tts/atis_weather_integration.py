@@ -19,10 +19,9 @@ import time
 import logging
 import requests
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from dataclasses import dataclass
 from pathlib import Path
-import hashlib
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

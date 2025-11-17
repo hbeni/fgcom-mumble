@@ -7,14 +7,11 @@ This service runs continuously in the background, monitoring weather conditions
 and automatically updating ATIS recordings when significant changes are detected.
 """
 
-import os
 import sys
 import signal
 import logging
-import time
 from pathlib import Path
 from datetime import datetime
-import json
 
 # Add the scripts directory to Python path
 sys.path.insert(0, str(Path(__file__).parent))

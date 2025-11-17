@@ -170,7 +170,7 @@ void fgcom_getLatestReleaseFrom_Github_Web() {
 
     pluginLog("[UPDATER] fetching update information from: '"+url+"' (Github_Web)");
     pluginDbg("[UPDATER] user_agent="+user_agent);
-    if (auto res = cli.Get(path.c_str(), headers)) {
+    if (auto res = cli.Get(path, headers)) {
         pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res->status));
         if (res->status == 200) {
             //std::cout << res->body << std::endl;
@@ -188,7 +188,7 @@ void fgcom_getLatestReleaseFrom_Github_Web() {
                 //https://github.com/hbeni/fgcom-mumble/blob/v.0.14.0/client/mumble-plugin/fgcom-mumble.h
                 std::string header_url(scheme + host + "/" + proj + "/blob/" + tag_name + "/client/mumble-plugin/fgcom-mumble.h");
                 pluginDbg("[UPDATER] fetching version information from: '"+header_url+"'");
-                if (auto res_hdr = cli.Get(header_url.c_str(), headers)) {
+                if (auto res_hdr = cli.Get(header_url, headers)) {
                     pluginDbg("[UPDATER] fetch OK; resultCode="+std::to_string(res_hdr->status));
                     if (res_hdr->status == 200) {
                         // parse version info name from HTML body

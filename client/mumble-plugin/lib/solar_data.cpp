@@ -292,7 +292,7 @@ std::string FGCom_SolarDataProvider::makeHTTPRequest(const std::string& url) {
     client.set_connection_timeout(10, 0); // 10 seconds timeout
     client.set_read_timeout(10, 0);
     
-    auto res = client.Get(path.c_str());
+    auto res = client.Get(path);
     if (res && res->status == 200) {
         return res->body;
     } else {

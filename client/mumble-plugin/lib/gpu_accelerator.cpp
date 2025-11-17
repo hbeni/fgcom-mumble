@@ -275,7 +275,7 @@ bool FGCom_GPUAccelerator::accelerateFilterApplication(float* audio_buffer, size
 }
 
 void FGCom_GPUAccelerator::accelerateAntennaPatternsAsync(std::vector<AntennaGainPoint>& patterns, 
-                                                         std::function<void(bool, const std::string&)> callback,
+                                                         const std::function<void(bool, const std::string&)>& callback,
                                                          const std::string& operation_id) {
     if (acceleration_mode == GPUAccelerationMode::DISABLED || !gpu_available) {
         if (callback) callback(false, "GPU acceleration disabled or unavailable");
@@ -384,7 +384,7 @@ float FGCom_GPUAccelerator::calculateClientScore(const std::string& client_id, c
     // GPU capability score (0-40 points)
     if (!capability.available_gpus.empty()) {
         const GPUDeviceInfo& gpu = capability.available_gpus[0];
-        score += std::min(40.0f, gpu.total_memory_mb / 100.0f); // Memory score
+        score += std::min(40.0f, static_cast<float>(gpu.total_memory_mb) / 100.0f); // Memory score
         score += std::min(20.0f, gpu.utilization_percent / 5.0f); // Utilization score
     }
     
@@ -398,7 +398,7 @@ float FGCom_GPUAccelerator::calculateClientScore(const std::string& client_id, c
     if (request.estimated_memory_usage <= capability.max_memory_allocation) {
         score += 20.0f;
     } else {
-        score += 20.0f * (capability.max_memory_allocation / request.estimated_memory_usage);
+        score += 20.0f * (static_cast<float>(capability.max_memory_allocation) / static_cast<float>(request.estimated_memory_usage));
     }
     
     return score;

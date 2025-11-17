@@ -67,9 +67,11 @@ libs:  $(lib_OBJS)
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(THREADS_UNIX)
 
 # Compile testing tools
+# Note: tools need stub symbols from fgcom-mumble-tools-stub.cpp for audio.cpp dependencies
 tools: libs
-	$(CC) -o test/geotest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o test/geotest.cpp $(CFLAGS) -lcurl
-	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o test/frqtest.cpp $(CFLAGS) -lcurl
+	$(CC) -fPIC -c -o fgcom-mumble-tools-stub.o fgcom-mumble-tools-stub.cpp $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -o test/geotest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o fgcom-mumble-tools-stub.o test/geotest.cpp $(CFLAGS) -lcurl
+	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o fgcom-mumble-tools-stub.o test/frqtest.cpp $(CFLAGS) -lcurl
 	$(CC) -o test/updater-test test/updater-test.cpp $(CFLAGS)
 	
 
@@ -83,7 +85,7 @@ test: libs test/catch2/tests-main.o test/catch2/radioModelTest.o
 
 # clean compile results
 clean:
-	rm -f *.o *.rc lib/*.o test/catch2/*.catch2 test/catch2/*.o fgcom-mumble-test.o
+	rm -f *.o *.rc lib/*.o test/catch2/*.catch2 test/catch2/*.o fgcom-mumble-test.o fgcom-mumble-tools-stub.o
 
 # clean compile results and binarys
 clean-all: clean

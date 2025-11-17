@@ -164,7 +164,7 @@ private:
     
     // Client management (for hybrid mode)
     std::map<std::string, ClientGPUCapability> client_capabilities;
-    std::mutex client_mutex;
+    mutable std::mutex client_mutex;
     
     // Private constructor for singleton
     FGCom_GPUAccelerator();
@@ -201,7 +201,7 @@ public:
     
     // Asynchronous operations
     void accelerateAntennaPatternsAsync(std::vector<AntennaGainPoint>& patterns, 
-                                       std::function<void(bool, const std::string&)> callback,
+                                       const std::function<void(bool, const std::string&)>& callback,
                                        const std::string& operation_id = "");
     void acceleratePropagationCalculationsAsync(const std::vector<PropagationPath>& paths,
                                                std::function<void(bool, const std::string&)> callback,

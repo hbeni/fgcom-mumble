@@ -11,11 +11,8 @@ Date: 2025
 """
 
 import requests
-import json
-import time
 import base64
-import math
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 class FakeMoonAPI:
     """Client for the Fake Moon Placement API"""

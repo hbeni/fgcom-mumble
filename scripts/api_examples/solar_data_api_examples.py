@@ -7,9 +7,6 @@ It includes examples for single submission, batch submission, and updates.
 """
 
 import requests
-import json
-import time
-from datetime import datetime, timezone
 
 class SolarDataAPIClient:
     def __init__(self, base_url="http://localhost:8080"):

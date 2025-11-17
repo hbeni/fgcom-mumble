@@ -8,9 +8,9 @@ import unittest
 import json
 import tempfile
 import shutil
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 # Add the scripts directory to Python path
 import sys

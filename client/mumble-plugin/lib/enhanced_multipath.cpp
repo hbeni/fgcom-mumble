@@ -242,8 +242,6 @@ MultipathChannel FGCom_EnhancedMultipath::createMultipathChannel(const std::vect
     channel.coherence_bandwidth_hz = 0.0f;
     channel.coherence_time_ms = 0.0f;
     channel.doppler_spread_hz = 0.0f;
-    channel.is_wideband = false;
-    channel.is_fast_fading = false;
     channel.channel_type = "mixed";
     
     // Calculate total power

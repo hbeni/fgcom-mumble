@@ -24,7 +24,7 @@ import time
 import argparse
 import logging
 from datetime import datetime, timezone
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
 import random
@@ -882,7 +882,7 @@ def main():
         if response.status_code != 200:
             print(f"Error: API server returned status {response.status_code}")
             sys.exit(1)
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException:
         print(f"Error: Cannot connect to API server at {args.base_url}")
         print("Please ensure the FGCom-mumble plugin is running with API server enabled")
         sys.exit(1)
@@ -919,7 +919,7 @@ def main():
             print(f"{status} {test.name}")
     else:
         # Run all tests
-        summary = tester.run_all_tests()
+        tester.run_all_tests()
     
     # Generate report
     report = tester.generate_report(args.output_file)

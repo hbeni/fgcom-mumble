@@ -8,10 +8,7 @@ on radio propagation.
 """
 
 import requests
-import json
-import time
 import random
-from datetime import datetime, timezone
 
 class WeatherLightningAPIClient:
     def __init__(self, base_url="http://localhost:8080"):

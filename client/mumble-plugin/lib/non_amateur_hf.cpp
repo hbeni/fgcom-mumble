@@ -348,10 +348,6 @@ void FGCom_NonAmateurHF::setupMaritimeChannels() {
             channel.notes = "USCG Calling";
         } else if (i == 821) {
             channel.notes = "Calling";
-        } else if (i == 833) {
-            channel.coast_freq = 8291.0;
-            channel.ship_freq = 8291.0;
-            channel.is_simplex = true;
         }
         
         maritime_channels.push_back(channel);

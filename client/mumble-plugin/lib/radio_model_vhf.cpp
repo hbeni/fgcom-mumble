@@ -459,8 +459,25 @@ float FGCom_radiowaveModel_VHF::getFrqMatch(fgcom_radio r1, fgcom_radio r2) {
         width_kHz = 8.33f;
         channel_core = 8.33f; // For 8.33kHz channels, core equals width (exact channel match)
         
-        // For 8.33kHz channels, use standard channel alignment
-        // The getChannelAlignment function will handle matching based on channel width
+        // For 8.33kHz channels, frequencies that convert to the same channel should match
+        // Convert both frequencies to their canonical 8.33kHz channel representation
+        // This matches the logic in conv_chan2freq
+        float base1_25khz = std::floor(frq1_f * 1000.0f / 25.0f) * 25.0f / 1000.0f;
+        float base2_25khz = std::floor(frq2_f * 1000.0f / 25.0f) * 25.0f / 1000.0f;
+        
+        if (base1_25khz == base2_25khz) {
+            // Same 25kHz base - check if they're on the same 8.33kHz channel
+            float offset1 = (frq1_f - base1_25khz) * 1000.0f;
+            float offset2 = (frq2_f - base2_25khz) * 1000.0f;
+            
+            // Round to nearest 8.33kHz slot
+            int slot1 = (int)std::round(offset1 / 8.333333333f);
+            int slot2 = (int)std::round(offset2 / 8.333333333f);
+            
+            if (slot1 == slot2) {
+                return 1.0f; // Same 8.33kHz channel - perfect match
+            }
+        }
     }
     
     float filter = getChannelAlignment(frq1_f, frq2_f, width_kHz, channel_core);

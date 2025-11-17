@@ -7,15 +7,11 @@ Requires NASA Earthdata account and credentials
 
 import os
 import sys
-import json
 import requests
 import argparse
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
-import xml.etree.ElementTree as ET
-from urllib.parse import urljoin, urlparse
-import time
+from typing import Dict, List
 
 class ASTERGDEMDownloader:
     """Advanced ASTER GDEM data downloader with NASA Earthdata API integration"""
