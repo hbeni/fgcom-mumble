@@ -1007,5 +1007,4 @@ end)
 
 -- Finally start the bot
 mumble.loop()
-shutdownBot()
 fgcom.log(botname.." with callsign "..fgcom.callsign.." completed.")
