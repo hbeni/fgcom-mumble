@@ -110,8 +110,6 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     // marker for PTT change
     bool needToHandlePTT = false;
 
-    // CRITICAL FIX: Use RAII string container for exception safety
-    // This prevents buffer overflows and ensures automatic cleanup
     std::string buffer_copy(buffer);
     
     // convert udp string buffer to string, so we can easily handle escaped delimeters.
@@ -126,17 +124,12 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     std::regex parse_key_value ("^(\\w+)=(.+)");
     std::regex parse_COM ("^(COM)(\\d+)_(.+)");
     
-    // CRITICAL FIX: Use try_lock to avoid blocking - if lock unavailable, skip processing this packet
-    // This prevents deadlock when audio callback or main thread holds the lock
-    // UDP packets are sent frequently, so skipping one packet is acceptable
     std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
     if (!lock.owns_lock()) {
         pluginDbg("[UDP-server] packet processing skipped: fgcom_localcfg_mtx unavailable (will retry on next packet)");
         return parseResult;  // Return empty result - next packet will retry
     }
     
-    // CRITICAL FIX: Use safe string parsing instead of strtok
-    // strtok is not thread-safe and can cause buffer overflows
     std::istringstream stream(buffer_copy);
     std::string token;
     while (std::getline(stream, token, ',')) {
@@ -146,10 +139,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
         replace_all(segment, delimEscPlaceholderC, ","); // undo escaping of delim ('a\x1Ab' => 'a,b')
         replace_all(segment, delimEscPlaceholderE, "="); // undo escaping of delim ('a\x1Bb' => 'a=b')
         
-        // CRITICAL FIX: Comprehensive input validation and sanitization
-        // Prevent buffer overflows, injection attacks, and malformed data
-        
-        // 1. Length validation - prevent buffer overflows
+        // Length validation
         if (segment.length() > MAX_UDPSRV_FIELDLENGTH * 2) {
             pluginLog("[UDP-server] ERROR: Segment too long (" + std::to_string(segment.length()) + " chars), ignoring");
             continue;
@@ -582,11 +572,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
             pluginDbg("[UDP-server] Parsing throw exception, ignoring segment "+segment);
         }
         
-        // CRITICAL FIX: No need for "next token" - std::getline handles iteration automatically
-    }  //endwhile
-    
-    // CRITICAL FIX: Automatic cleanup via RAII - no manual delete needed
-    // std::string automatically cleans up when going out of scope
+    }
     
     
     /*
@@ -817,7 +803,15 @@ void fgcom_spawnUDPServer() {
             // Fatal error - log and stop
             // Use thread-safe strerror_r instead of strerror
             char errbuf[256];
-            char* errmsg = strerror_r(error_code, errbuf, sizeof(errbuf));
+            char* errmsg;
+#if defined(__GLIBC__) && defined(_GNU_SOURCE)
+            // GNU-specific: returns char*
+            errmsg = strerror_r(error_code, errbuf, sizeof(errbuf));
+#else
+            // POSIX: returns int, fills errbuf
+            int ret = strerror_r(error_code, errbuf, sizeof(errbuf));
+            errmsg = (ret == 0) ? errbuf : (char*)"Unknown error";
+#endif
             // strerror_r may return either errbuf or a static string depending on implementation
             std::string errstr = (errmsg != nullptr) ? std::string(errmsg) : std::string(errbuf);
             pluginLog("[UDP-server] SOCKET_ERROR="+std::to_string(n)+" in recvfrom(), errno="+std::to_string(error_code)+" ("+errstr+")");
