@@ -227,4 +227,12 @@ void fgcom_notifyThread();
 bool fgcom_isConnectedToServer();
 
 
+/*
+ * Escape UDP field
+ * 
+ * @return escaped udp data
+ */
+std::string fgcom_udp_escape(std::string s);
+
+
 #endif

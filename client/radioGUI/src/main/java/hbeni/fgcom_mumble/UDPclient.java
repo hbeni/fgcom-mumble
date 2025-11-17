@@ -71,25 +71,45 @@ public class UDPclient {
     }
     
     /**
+     * Escape UDP field
+     * @param field
+     * @return escaped Field ('a,b' => 'a\,b')
+     */
+    public static String escapeUDP(String field) {
+        return field
+                .replace(",", "\\,")
+                .replace("=", "\\=");
+    }
+    public static String escapeUDP(double field) {
+        String fieldstr = Double.toString(field);
+        return(escapeUDP(fieldstr));
+    }
+    public static String escapeUDP(float field) {
+        String fieldstr = Float.toString(field);
+        return(escapeUDP(fieldstr));
+    }
+    
+    
+    /**
      * Update and compose state
      */
     public String prepare() {
         String msg = new String();
         // if (socket != null) msg += "[ownPort=" + socket.getLocalPort() + "]";
-        msg += "CALLSIGN=" + state.getCallsign();
-        msg += ",LAT=" + state.getLatitutde();
-        msg += ",LON=" + state.getLongitude();
-        msg += ",HGT=" + state.getHeight();
+        msg += "CALLSIGN=" + escapeUDP(state.getCallsign());
+        msg += ",LAT=" + escapeUDP(state.getLatitutde());
+        msg += ",LON=" + escapeUDP(state.getLongitude());
+        msg += ",HGT=" + escapeUDP(state.getHeight());
         
         int i = 1;
         for (Radio r : state.getRadios()) {
             String ptt_str = r.getPTT()? "1" : "0";
             msg += ",COM"+i+"_PTT="+ptt_str;
-            msg += ",COM"+i+"_FRQ="+r.getFrequency();
-            msg += ",COM"+i+"_VOL="+r.getVolume();
-            msg += ",COM"+i+"_PWR="+r.getPower();
-            msg += ",COM"+i+"_SQC="+r.getSquelch();
-            msg += ",COM"+i+"_CWKHZ="+r.getChannelWidth();
+            msg += ",COM"+i+"_FRQ="+escapeUDP(r.getFrequency());
+            msg += ",COM"+i+"_VOL="+escapeUDP(r.getVolume());
+            msg += ",COM"+i+"_PWR="+escapeUDP(r.getPower());
+            msg += ",COM"+i+"_SQC="+escapeUDP(r.getSquelch());
+            msg += ",COM"+i+"_CWKHZ="+escapeUDP(r.getChannelWidth());
             
             String pbtn = (r.getPwrBtn())? "1" : "0";
             msg += ",COM"+i+"_PBT="+pbtn;
@@ -98,8 +118,8 @@ public class UDPclient {
             msg += ",COM"+i+"_RDF="+rdf;
             
             // TODO: implement VLT, SRV
-            //msg += ",COM"+i+"_VLT="+r.getVolts();
-            //msg += ",COM"+i+"_SRQ="+r.isServiceable();
+            //msg += ",COM"+i+"_VLT="+escapeUDP(r.getVolts();
+            //msg += ",COM"+i+"_SRV="+r.isServiceable();
             
             i++;
         }

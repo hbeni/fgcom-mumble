@@ -101,7 +101,7 @@
     <name>callsign</name>
     <type>string</type>
     <format>CALLSIGN=%s</format>
-    <node>/sim/multiplay/callsign</node>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/output/callsign</node>
    </chunk>
 
 
@@ -145,37 +145,11 @@
 
   <input>
     <line_separator>newline</line_separator>
-    <var_separator>,</var_separator>
     <!-- RDF info format is this: "RDF:CS_TX=Test,FRQ=123.45,DIR=180.5,VRT=12.5,QLY=0.98,ID_RX=1" -->
     <chunk>
-        <name>RDF data: Callsign</name>
+        <name>data</name>
         <type>string</type>
-        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/callsign</node>
-    </chunk>
-    <chunk>
-        <name>RDF data: Frequency</name>
-        <type>string</type>
-        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/frequency</node>
-    </chunk>
-    <chunk>
-        <name>RDF data: Direction</name>
-        <type>string</type>
-        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/direction</node>
-    </chunk>
-    <chunk>
-        <name>RDF data: vertical angle</name>
-        <type>string</type>
-        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/angle</node>
-    </chunk>
-    <chunk>
-        <name>RDF data: Quality</name>
-        <type>string</type>
-        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/quality</node>
-    </chunk>
-    <chunk>
-        <name>RDF data: Radio index</name>
-        <type>string</type>
-        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/rdfinput/radio</node>
+        <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/input</node>
     </chunk>
   </input>
 

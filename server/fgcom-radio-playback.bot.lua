@@ -359,9 +359,9 @@ shutdownBot = function()
 
     -- send update to mute our radio
     -- TODO: send deregister request, once implemented
-    local msg = "FRQ="..lastHeader.frequency
-             ..",CHN="..lastHeader.dialedFRQ
-             ..",PWR="..lastHeader.txpower
+    local msg = "FRQ="..fgcom.data.escape(lastHeader.frequency)
+             ..",CHN="..fgcom.data.escape(lastHeader.dialedFRQ)
+             ..",PWR="..fgcom.data.escape(lastHeader.txpower)
              ..",PTT=0"
     client:sendPluginData("FGCOM:UPD_COM:0:0", msg, playback_targets)
     fgcom.log("shutdownBot(): COM0 deactiated")
@@ -659,7 +659,7 @@ end
 
 notifyUserdata = function(tgts)
     if overwriteHeader.callsign then lastHeader.callsign = overwriteHeader.callsign end
-    local msg = "CALLSIGN="..lastHeader.callsign
+    local msg = "CALLSIGN="..fgcom.data.escape(lastHeader.callsign)
     fgcom.dbg("Bot sets userdata: "..msg)
     client:sendPluginData("FGCOM:UPD_USR:0", msg, tgts)
 end
@@ -681,9 +681,9 @@ notifyRadio = function(tgts)
     if overwriteHeader.frequency then lastHeader.frequency = overwriteHeader.frequency end
     if overwriteHeader.dialedFRQ then lastHeader.dialedFRQ = overwriteHeader.dialedFRQ end
     if overwriteHeader.txpower   then lastHeader.txpower   = overwriteHeader.txpower end
-    local msg = "FRQ="..lastHeader.frequency
-             ..",CHN="..lastHeader.dialedFRQ
-             ..",PWR="..lastHeader.txpower
+    local msg = "FRQ="..fgcom.data.escape(lastHeader.frequency)
+             ..",CHN="..fgcom.data.escape(lastHeader.dialedFRQ)
+             ..",PWR="..fgcom.data.escape(lastHeader.txpower)
              ..",PTT=1"
     fgcom.dbg("Bot sets radio: "..msg)
     client:sendPluginData("FGCOM:UPD_COM:0:0", msg, tgts)

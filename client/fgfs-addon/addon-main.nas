@@ -163,6 +163,9 @@ var FGComMumble = {
     
     # Generic UDP output root tree, to be used by individual radio instances
     me.rootNodeOutput = me.rootNode.getNode("output", 1);
+
+    # Callsing UDP output node
+    me.NodeOutputCallsign = me.rootNodeOutput.getNode("callsign", 1)
   },
   
   fgcom3_compatInit: func() {
@@ -252,6 +255,20 @@ var FGComMumble = {
       props.globals.getNode(menuTgt).addChild("item").setValues(menudata);
       fgcommand("gui-redraw");
     }
+  },
+  
+  # Escape protocol field value
+  escapeUDP: func(s) {
+    s = string.replace(s, ",", "\\,");
+    s = string.replace(s, "=", "\\=");
+    return s;
+  },
+  
+  # Unescape protocol field value
+  unescapeUDP: func(s) {
+    s = string.replace(s, "\\,", ",");
+    s = string.replace(s, "\\=", "=");
+    return s;
   },
 
   # Udpate checks
@@ -351,13 +368,16 @@ var main = func( addon ) {
     FGComMumble.logger.log("core", 2, "initializing radios...");
     io.load_nasal(root~"/radios.nas", "FGComMumble_radios");
     FGComMumble_radios.FGComMumble = FGComMumble;
-    var rdfinputNode = props.globals.getNode(mySettingsRootPath ~ "/rdfinput/",1);
+    var udpinputNode = props.globals.getNode(mySettingsRootPath ~ "/input",1);
     FGComMumble_radios.create_radios();
-    FGComMumble_radios.start_rdf(rdfinputNode);
+    FGComMumble_radios.start_rdf(udpinputNode);
 
-    # Show error message, if no radios could be found
+    # Show error message, if no radios could be found.
+    # We offer a compatibility mode, so the user should be able to run radio comms nonetheless.
+    # (The dialog code can add the needed properties)
     if (size(FGComMumble_radios.get_com_radios_usable()) == 0) {
-      FGComMumble.logger.log("core", 1, "WARNING: no usable COM radios where found! This should be reported to the aircraft devs (They need to include a <comm-radio> node in instrumentation.xml).");
+      FGComMumble.logger.log("core", 1, "WARNING: no usable COM radios where found! This should be reported to the aircraft devs "~
+                                        "(They need to include a <comm-radio> node in instrumentation.xml).");
       fgcommand("dialog-show", {"dialog-name" : "fgcom-mumble-comoverride"});
     }
 
@@ -375,7 +395,7 @@ var main = func( addon ) {
     FGComMumble_combar.FGComMumble = FGComMumble;
 
     # Build the final UDP output string transmitted by the protocol file out of the individual radios udp string
-    # (note: the generic protocl handler can only process ~256 chars; to prevent truncation,
+    # (note: the generic protocol handler can only process ~256 chars; to prevent truncation,
     #        we need to multiplex into several chunks. The plugin currently supports MAXLINE=1024 chars)
     var out_prop = [
       props.globals.getNode(mySettingsRootPath ~ "/output/udp[0]",1),
@@ -437,9 +457,7 @@ var main = func( addon ) {
             "name":"fgcom-mumble-in"
           }));
           
-          foreach(var p; rdfinputNode.getChildren()) {
-            p.setValue("");
-          }
+          udpinputNode.setValue(""); # clean/init to string
           
           # Register a listener to each initialized radios output node
           var r_out_l_idx = 0;
@@ -449,6 +467,12 @@ var main = func( addon ) {
             r_out_l_idx = r_out_l_idx + 1;
           }
           
+          # Register and execute a listener to escape callsign
+          FGComMumble.logger.log("udp", 3, "  add listener for udp callsign field");
+          fgcom_listeners["upd_com_out:callsign"] = _setlistener("/sim/multiplay/callsign", func() {
+            FGComMumble.logger.log("udp", 5, "  updating udp callsign field");
+            FGComMumble.NodeOutputCallsign.setValue(FGComMumble.escapeUDP(getprop("/sim/multiplay/callsign")));
+          }, 1, 0);
           
           update_udp_output();
           

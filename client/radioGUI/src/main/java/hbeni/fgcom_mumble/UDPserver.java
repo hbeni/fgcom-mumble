@@ -159,6 +159,17 @@ public class UDPserver extends Thread {
     }
     
     /**
+     * Unescape UDP field
+     * @param field
+     * @return escaped Field ('a\,b\=c' => 'a,b=c')
+     */
+    public static String unescapeUDP(String field) {
+        return field
+                .replace("\\,", ",")
+                .replace("\\=", "=");
+    }
+    
+    /**
      * Parses RDF data received from UDP.
      * 
      * The actual format is described in plugin.spec.md.

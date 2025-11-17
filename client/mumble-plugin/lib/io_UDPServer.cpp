@@ -90,7 +90,8 @@ std::map<int, fgcom_client> fgcom_local_client;
 std::map<std::pair<std::string,uint16_t>, int> fgcom_udp_portMap; // host,port2iid
 bool fgcom_com_ptt_compatmode = false;
 std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE], uint16_t clientPort, std::string clientHost) {
-    pluginDbg("[UDP-server] received message (client="+clientHost+":"+std::to_string(clientPort)+"): "+std::string(buffer));
+    std::string buffer_str(buffer);
+    pluginDbg("[UDP-server] received message (client="+clientHost+":"+std::to_string(clientPort)+"): "+buffer_str);
     //std::cout << "DBG: Stored local userID=" << localMumId <<std::endl;
     setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
     
@@ -113,6 +114,14 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     // This prevents buffer overflows and ensures automatic cleanup
     std::string buffer_copy(buffer);
     
+    // convert udp string buffer to string, so we can easily handle escaped delimeters.
+    // the goal is that we want to support: `a,b\,c,d`=>['a', 'b,c', 'd']; we do this by replacing the escaped sequence
+    // into a non-printable ASCII, so we can easily spit by ',' later on.
+    const std::string delimEscPlaceholderC = "\x1A"; // for processing escaped `\,` sequences in UDP input string ('a,b' => 'a\x1Ab' )
+    const std::string delimEscPlaceholderE = "\x1B"; // for processing escaped `\,` sequences in UDP input string ('a=b' => 'a\x1Bb' )
+    replace_all(buffer_copy, "\\,", delimEscPlaceholderC);
+    replace_all(buffer_copy, "\\=", delimEscPlaceholderE);
+    
     std::string segment;
     std::regex parse_key_value ("^(\\w+)=(.+)");
     std::regex parse_COM ("^(COM)(\\d+)_(.+)");
@@ -133,6 +142,10 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
     while (std::getline(stream, token, ',')) {
         segment = token;
         
+        // Undo escaping of delimiters after tokenization
+        replace_all(segment, delimEscPlaceholderC, ","); // undo escaping of delim ('a\x1Ab' => 'a,b')
+        replace_all(segment, delimEscPlaceholderE, "="); // undo escaping of delim ('a\x1Bb' => 'a=b')
+        
         // CRITICAL FIX: Comprehensive input validation and sanitization
         // Prevent buffer overflows, injection attacks, and malformed data
         
@@ -143,9 +156,10 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
         }
         
         // 2. Character validation - remove control characters and non-printable
+        // But preserve our escape placeholders (0x1A, 0x1B) which are already processed
         segment.erase(std::remove_if(segment.begin(), segment.end(), 
             [](char c) { 
-                return c < 32 || c > 126 || c == '\0' || c == '\n' || c == '\r';
+                return (c < 32 && c != 0x1A && c != 0x1B) || c > 126 || c == '\0' || c == '\n' || c == '\r';
             }), segment.end());
         
         // 3. Empty segment check
@@ -153,15 +167,24 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
             continue; // Skip empty segments
         }
         
-        // 4. Pattern validation - check for suspicious patterns
+        // 4. Pattern validation - check for suspicious patterns (but allow legitimate escaped sequences)
+        // Note: We've already processed escaped delimiters, so backslashes here are suspicious
         if (segment.find("..") != std::string::npos || 
             segment.find("//") != std::string::npos ||
-            segment.find("\\") != std::string::npos) {
+            (segment.find("\\") != std::string::npos && segment.find("\\,") == std::string::npos && segment.find("\\=") == std::string::npos)) {
             pluginLog("[UDP-server] WARNING: Suspicious pattern in segment, sanitizing: " + segment);
             // Remove suspicious patterns
             segment.erase(std::remove(segment.begin(), segment.end(), '.'), segment.end());
             segment.erase(std::remove(segment.begin(), segment.end(), '/'), segment.end());
-            segment.erase(std::remove(segment.begin(), segment.end(), '\\'), segment.end());
+            // Only remove backslashes that aren't part of legitimate escape sequences
+            std::string::size_type pos = 0;
+            while ((pos = segment.find("\\", pos)) != std::string::npos) {
+                if (pos + 1 < segment.length() && segment[pos + 1] != ',' && segment[pos + 1] != '=') {
+                    segment.erase(pos, 1);
+                } else {
+                    pos += 2;
+                }
+            }
         }
         
         // 5. Final length check after sanitization

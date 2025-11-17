@@ -124,7 +124,9 @@ public class Radio {
     }
     
     /**
-    * Parses RDF strig data
+    * Parses RDF string data
+    * 
+    * @param data is ecpected to have escaped delimiters: 'a,b\,c,d' => ['a', 'b,c', 'd']
     */
     public void parseRDF(String data) {
         if (!rdf || data == null) {
@@ -139,31 +141,32 @@ public class Radio {
         
 //        System.out.println("Radio: got RDF data: "+data);
         
-        String fields[] = data.split(",");
+        String[] fields = data.split("(?<!\\\\),");  // split on non-escaped commas
 //        System.out.println("  fields: "+fields.length);
         for (int i=0; i<fields.length; i++) {
             Matcher match = pattern_udp_fields.matcher(fields[i]);
             try {
                 if (match.find()) {
+                    String unescapedValue = UDPserver.unescapeUDP(match.group(2));
 //                    System.out.println("Radio: parsed field="+match.group(1)+"; value="+match.group(2));
                     switch (match.group(1)) {
                         case "FRQ":
-                            rdf_frq = Float.parseFloat(match.group(2));
+                            rdf_frq = Float.parseFloat(unescapedValue);
                             break;
                         case "DIR":
-                            rdf_dir = Float.parseFloat(match.group(2));
+                            rdf_dir = Float.parseFloat(unescapedValue);
                             break;
                         case "VRT":
-                            rdf_vrt = Float.parseFloat(match.group(2));
+                            rdf_vrt = Float.parseFloat(unescapedValue);
                             break;
                         case "QLY":
-                            rdf_qly = Float.parseFloat(match.group(2));
+                            rdf_qly = Float.parseFloat(unescapedValue);
                             break;
                         case "CS_TX":
-                            rdf_cs_tx = match.group(2);
+                            rdf_cs_tx = unescapedValue;
                             break;
                         case "ID_RX":
-                            rdf_id_rx = Integer.parseInt(match.group(2));
+                            rdf_id_rx = Integer.parseInt(unescapedValue);
                             break;
                     }
                 }
