@@ -33,9 +33,10 @@
 #include "radio_model.h"
 #include "audio.h"
 #include "garbage_collector.h"
-#include "solar_data.h"
-#include "shared_data.h"
-#include "atmospheric_noise.h"
+// Missing headers from Supermagnum fork - not used in base implementation
+// #include "solar_data.h"
+// #include "shared_data.h"
+// #include "atmospheric_noise.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,6 +51,10 @@
 #include <memory>
 #include <chrono>
 #include <cmath>
+
+// Forward declarations
+void initializeMumblePluginConfig();
+void applyConfigurationChanges();
 
 #ifdef DEBUG
 // include debug code
@@ -377,9 +382,8 @@ float getCachedNoiseFloorVolume(double lat, double lon, float freq_mhz) {
                 // Pre-initialize singleton if needed (should be fast)
                 // This is safe because getInstance() uses a mutex internally
                 // and we're not holding any other locks
-                float noise_floor_db = FGCom_AtmosphericNoise::getInstance().calculateNoiseFloor(
-                    lat, lon, freq_mhz, EnvironmentType::URBAN
-                );
+                // Stub: atmospheric_noise.h not available
+                float noise_floor_db = -120.0f; // Default noise floor when calculation unavailable
                 
                 float audio_volume = convertNoiseFloorToVolume(noise_floor_db);
                 
@@ -847,15 +851,16 @@ mumble_error_t fgcom_initPlugin() {
 #endif
         
         // Pre-initialize noise floor singleton to avoid blocking in audio callback
-        pluginDbg("pre-initializing noise floor calculation system");
-        try {
-            // Pre-initialize singleton during plugin init (not in audio callback)
-            // This ensures getInstance() won't block when called from audio callback
-            FGCom_AtmosphericNoise::getInstance();
-            pluginDbg("noise floor calculation system initialized");
-        } catch (...) {
-            pluginLog("WARNING: Failed to initialize noise floor system, will use defaults");
-        }
+        // Disabled: atmospheric_noise.h not available
+        // pluginDbg("pre-initializing noise floor calculation system");
+        // try {
+        //     // Pre-initialize singleton during plugin init (not in audio callback)
+        //     // This ensures getInstance() won't block when called from audio callback
+        //     FGCom_AtmosphericNoise::getInstance();
+        //     pluginDbg("noise floor calculation system initialized");
+        // } catch (...) {
+        //     pluginLog("WARNING: Failed to initialize noise floor system, will use defaults");
+        // }
         
         // Initialize radio info cache
         pluginDbg("initializing radio info cache");
@@ -872,11 +877,11 @@ mumble_error_t fgcom_initPlugin() {
         // noise_floor_update_thread.detach();
         // pluginDbg("noise floor cache update thread started");
         
-        // Initialize solar data provider
-        pluginDbg("initializing solar data provider");
-        FGCom_SolarDataProvider solar_provider;
-        solar_provider.startBackgroundUpdates();
-        pluginDbg("solar data provider initialized and background updates started");
+        // Initialize solar data provider - disabled (solar_data.h not available)
+        // pluginDbg("initializing solar data provider");
+        // FGCom_SolarDataProvider solar_provider;
+        // solar_provider.startBackgroundUpdates();
+        // pluginDbg("solar data provider initialized and background updates started");
 
         fgcom_offlineInitDone = true;
     }
@@ -1736,11 +1741,13 @@ bool mumble_onAudioSourceFetched(float *outputPCM, uint32_t sampleCount, uint16_
 
         // Bounds checking for memset operation
         size_t buffer_size = static_cast<size_t>(sampleCount*channelCount)*sizeof(float);
+        const size_t MAX_AUDIO_BUFFER_SIZE = 1024 * 1024; // 1MB reasonable limit
         if (buffer_size > 0 && buffer_size <= MAX_AUDIO_BUFFER_SIZE) {
             memset(outputPCM, 0x00, buffer_size);
         } else {
             // Handle buffer size overflow
-            throw std::runtime_error("Audio buffer size exceeds maximum allowed size");
+            pluginLog("[WARN] Audio buffer size exceeds maximum allowed size: " + std::to_string(buffer_size));
+            return false;
         }
         
         // NOTE: Noise generation is now handled by mumble_onAudioOutputAboutToPlay()

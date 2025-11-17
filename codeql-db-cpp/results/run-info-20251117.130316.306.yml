@@ -1,0 +1,2958 @@
+---
+queries:
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Critical/DoubleFree.ql
+  relativeBqrsPath: codeql/cpp-queries/Critical/DoubleFree.bqrs
+  metadata:
+    name: Potential double free
+    description: Freeing a resource more than once can lead to undefined behavior
+      and cause memory corruption.
+    kind: path-problem
+    precision: high
+    id: cpp/double-free
+    problem.severity: warning
+    security-severity: 9.3
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-415
+  queryHelp: "# Potential double free\nDeallocating memory more than once can lead\
+    \ to a double-free vulnerability. This can be exploited to corrupt the allocator's\
+    \ internal data structures, which can lead to denial-of-service attacks by crashing\
+    \ the program, or security vulnerabilities, by allowing an attacker to overwrite\
+    \ arbitrary memory locations.\n\n\n## Recommendation\nEnsure that all execution\
+    \ paths deallocate the allocated memory at most once. In complex cases it may\
+    \ help to reassign a pointer to a null value after deallocating it. This will\
+    \ prevent double-free vulnerabilities since most deallocation functions will perform\
+    \ a null-pointer check before attempting to deallocate memory.\n\n\n## Example\n\
+    In the following example, `buff` is allocated and then freed twice:\n\n\n```cpp\n\
+    int* f() {\n\tint *buff = malloc(SIZE*sizeof(int));\n\tdo_stuff(buff);\n\tfree(buff);\n\
+    \tint *new_buffer = malloc(SIZE*sizeof(int));\n\tfree(buff); // BAD: If new_buffer\
+    \ is assigned the same address as buff,\n              // the memory allocator\
+    \ will free the new buffer memory region,\n              // leading to use-after-free\
+    \ problems and memory corruption.\n\treturn new_buffer;\n}\n\n```\nReviewing the\
+    \ code above, the issue can be fixed by simply deleting the additional call to\
+    \ `free(buff)`.\n\n\n```cpp\nint* f() {\n\tint *buff = malloc(SIZE*sizeof(int));\n\
+    \tdo_stuff(buff);\n\tfree(buff); // GOOD: buff is only freed once.\n\tint *new_buffer\
+    \ = malloc(SIZE*sizeof(int));\n\treturn new_buffer;\n}\n\n```\nIn the next example,\
+    \ `task` may be deleted twice, if an exception occurs inside the `try` block after\
+    \ the first `delete`:\n\n\n```cpp\nvoid g() {\n\tMyTask *task = nullptr;\n\n\t\
+    try\n\t{\n\t\ttask = new MyTask;\n\n\t\t...\n\n\t\tdelete task;\n\n\t\t...\n\t\
+    } catch (...) {\n\t\tdelete task; // BAD: potential double-free\n\t}\n}\n\n```\n\
+    The problem can be solved by assigning a null value to the pointer after the first\
+    \ `delete`, as calling `delete` a second time on the null pointer is harmless.\n\
+    \n\n```cpp\nvoid g() {\n\tMyTask *task = nullptr;\n\n\ttry\n\t{\n\t\ttask = new\
+    \ MyTask;\n\n\t\t...\n\n\t\tdelete task;\n\t\ttask = nullptr;\n\n\t\t...\n\t}\
+    \ catch (...) {\n\t\tdelete task; // GOOD: harmless if task is NULL\n\t}\n}\n\n\
+    ```\n\n## References\n* OWASP: [Doubly freeing memory](https://owasp.org/www-community/vulnerabilities/Doubly_freeing_memory).\n\
+    * Common Weakness Enumeration: [CWE-415](https://cwe.mitre.org/data/definitions/415.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Critical/IncorrectCheckScanf.ql
+  relativeBqrsPath: codeql/cpp-queries/Critical/IncorrectCheckScanf.bqrs
+  metadata:
+    name: Incorrect return-value check for a 'scanf'-like function
+    description: |-
+      Failing to account for EOF in a call to a scanf-like function can lead to
+                   undefined behavior.
+    kind: problem
+    problem.severity: warning
+    security-severity: 7.5
+    precision: high
+    id: cpp/incorrectly-checked-scanf
+    tags: |-
+      security
+             correctness
+             external/cwe/cwe-253
+  queryHelp: "# Incorrect return-value check for a 'scanf'-like function\nThis query\
+    \ finds calls of `scanf`-like functions with improper return-value checking. Specifically,\
+    \ it flags uses of `scanf` where the return value is only checked against zero.\n\
+    \nFunctions in the `scanf` family return either `EOF` (a negative value) in case\
+    \ of IO failure, or the number of items successfully read from the input. Consequently,\
+    \ a simple check that the return value is nonzero is not enough.\n\n\n## Recommendation\n\
+    Ensure that all uses of `scanf` check the return value against the expected number\
+    \ of arguments rather than just against zero.\n\n\n## Example\nThe following examples\
+    \ show different ways of guarding a `scanf` output. In the BAD examples, the results\
+    \ are only checked against zero. In the GOOD examples, the results are checked\
+    \ against the expected number of matches instead.\n\n\n```cpp\n{\n  int i, j;\n\
+    \n  // BAD: The result is only checked against zero\n  if (scanf(\"%d %d\", &i,\
+    \ &j)) { \n      use(i);\n      use(j);\n  }\n\n  // BAD: The result is only checked\
+    \ against zero\n  if (scanf(\"%d %d\", &i, &j) == 0) { \n    i = 0;\n    j = 0;\n\
+    \  }\n  use(i);\n  use(j);\n\n  if (scanf(\"%d %d\", &i, &j) == 2) { \n      //\
+    \ GOOD: the result is checked against 2\n  }\n\n  // GOOD: the result is compared\
+    \ directly\n  int r = scanf(\"%d %d\", &i, &j);\n  if (r < 2) {\n    return;\n\
+    \  }\n  if (r == 1) { \n    j = 0;\n  }\n}\n\n```\n\n## References\n* SEI CERT\
+    \ C++ Coding Standard: [ERR62-CPP. Detect errors when converting a string to a\
+    \ number](https://wiki.sei.cmu.edu/confluence/display/cplusplus/ERR62-CPP.+Detect+errors+when+converting+a+string+to+a+number).\n\
+    * SEI CERT C Coding Standard: [ERR33-C. Detect and handle standard library errors](https://wiki.sei.cmu.edu/confluence/display/c/ERR33-C.+Detect+and+handle+standard+library+errors).\n\
+    * cppreference.com: [scanf, fscanf, sscanf, scanf_s, fscanf_s, sscanf_s](https://en.cppreference.com/w/c/io/fscanf).\n\
+    * Common Weakness Enumeration: [CWE-253](https://cwe.mitre.org/data/definitions/253.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Critical/NewFreeMismatch.ql
+  relativeBqrsPath: codeql/cpp-queries/Critical/NewFreeMismatch.bqrs
+  metadata:
+    name: Mismatching new/free or malloc/delete
+    description: An object that was allocated with 'malloc' or 'new' is being freed
+      using a mismatching 'free' or 'delete'.
+    kind: problem
+    problem.severity: warning
+    security-severity: 7.5
+    precision: high
+    id: cpp/new-free-mismatch
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-401
+  queryHelp: |
+    # Mismatching new/free or malloc/delete
+    This rule finds `delete` expressions whose argument is a pointer that points to memory allocated using the `malloc` function, and calls to `free` whose argument is a pointer that points to memory allocated using the `new` operator. Behavior in such cases is undefined and should be avoided.
+
+
+    ## Recommendation
+    Use the `delete` operator when freeing memory allocated with `new`, and the `free` function when freeing memory allocated with `malloc`.
+
+
+    ## Example
+
+    ```cpp
+    Record *ptr = new Record(...);
+
+    ...
+
+    free(ptr); // BAD: ptr was created using 'new', but is being freed using 'free'
+
+    ```
+
+    ## References
+    * isocpp.org 'Standard C++', "[Can I free() pointers allocated with new? Can I delete pointers allocated with malloc()?](https://isocpp.org/wiki/faq/freestore-mgmt#mixing-malloc-and-delete)"
+    * Wikipedia, "[Relation to malloc and free](https://en.wikipedia.org/wiki/New_and_delete_(C%2B%2B)#Relation_to_malloc_and_free)" in *new and delete (C++)*.
+    * Common Weakness Enumeration: [CWE-401](https://cwe.mitre.org/data/definitions/401.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Critical/OverflowStatic.ql
+  relativeBqrsPath: codeql/cpp-queries/Critical/OverflowStatic.bqrs
+  metadata:
+    name: Static array access may cause overflow
+    description: |-
+      Exceeding the size of a static array during write or access operations
+                    may result in a buffer overflow.
+    kind: problem
+    problem.severity: warning
+    security-severity: 9.3
+    precision: high
+    id: cpp/static-buffer-overflow
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-119
+             external/cwe/cwe-131
+  queryHelp: "# Static array access may cause overflow\nWhen you use static arrays\
+    \ you must ensure that you do not exceed the size of the array during write and\
+    \ access operations. If an operation attempts to write to or access an element\
+    \ that is outside the range of the array then this results in a buffer overflow.\
+    \ Buffer overflows can lead to anything from a segmentation fault to a security\
+    \ vulnerability.\n\n\n## Recommendation\nCheck the offsets and sizes used in the\
+    \ highlighted operations to ensure that a buffer overflow will not occur.\n\n\n\
+    ## Example\n\n```cpp\n#define SIZE 30\n\nint f(char * s) {\n\tchar buf[20]; //buf\
+    \ not set to use SIZE macro\n\n\tstrncpy(buf, s, SIZE); //wrong: copy may exceed\
+    \ size of buf\n\n\tfor (int i = 0; i < SIZE; i++) { //wrong: upper limit that\
+    \ is higher than array size\n\t\tcout << array[i];\n\t}\n}\n\n```\n\n## References\n\
+    * I. Gerg. *An Overview and Example of the Buffer-Overflow Exploit*. IANewsletter\
+    \ vol 7 no 4. 2005.\n* M. Donaldson. *Inside the Buffer Overflow Attack: Mechanism,\
+    \ Method &amp; Prevention*. SANS Institute InfoSec Reading Room. 2002.\n* Common\
+    \ Weakness Enumeration: [CWE-119](https://cwe.mitre.org/data/definitions/119.html).\n\
+    * Common Weakness Enumeration: [CWE-131](https://cwe.mitre.org/data/definitions/131.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Critical/UseAfterFree.ql
+  relativeBqrsPath: codeql/cpp-queries/Critical/UseAfterFree.bqrs
+  metadata:
+    name: Potential use after free
+    description: An allocated memory block is used after it has been freed. Behavior
+      in such cases is undefined and can cause memory corruption.
+    kind: path-problem
+    precision: high
+    id: cpp/use-after-free
+    problem.severity: warning
+    security-severity: 9.3
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-416
+  queryHelp: "# Potential use after free\nThis rule finds accesses through a pointer\
+    \ of a memory location that has already been freed (i.e. through a dangling pointer).\
+    \ Such memory blocks have already been released to the dynamic memory manager,\
+    \ and modifying them can lead to anything from a segfault to memory corruption\
+    \ that would cause subsequent calls to the dynamic memory manager to behave erratically,\
+    \ to a possible security vulnerability.\n\n> WARNING: This check is an approximation,\
+    \ so some results may not be actual defects in the program. It is not possible\
+    \ in general to compute the values of pointers without running the program with\
+    \ all input data.\n\n## Recommendation\nEnsure that all execution paths that access\
+    \ memory through a pointer never access that pointer after it is freed.\n\n\n\
+    ## Example\n\n```cpp\nvoid f() {\n\tchar* buf = new char[SIZE];\n\t...\n\tif (error)\
+    \ {\n\t\tdelete buf; //error handling has freed the buffer\n\t}\n\t...\n\tlog_contents(buf);\
+    \ //but it is still used here for logging\n\t...\n}\n\n```\n\n## References\n\
+    * I. Gerg. *An Overview and Example of the Buffer-Overflow Exploit*. IANewsletter\
+    \ vol 7 no 4. 2005.\n* M. Donaldson. *Inside the Buffer Overflow Attack: Mechanism,\
+    \ Method &amp; Prevention*. SANS Institute InfoSec Reading Room. 2002.\n* Common\
+    \ Weakness Enumeration: [CWE-416](https://cwe.mitre.org/data/definitions/416.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Diagnostics/ExtractedFiles.ql
+  relativeBqrsPath: codeql/cpp-queries/Diagnostics/ExtractedFiles.bqrs
+  metadata:
+    name: Extracted files
+    description: Lists all files in the source code directory that were extracted.
+    kind: diagnostic
+    id: cpp/diagnostics/successfully-extracted-files
+    tags: successfully-extracted-files
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Diagnostics/ExtractionWarnings.ql
+  relativeBqrsPath: codeql/cpp-queries/Diagnostics/ExtractionWarnings.bqrs
+  metadata:
+    name: Extraction warnings
+    description: List all extraction warnings for files in the source code directory.
+    kind: diagnostic
+    id: cpp/diagnostics/extraction-warnings
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Diagnostics/FailedExtractorInvocations.ql
+  relativeBqrsPath: codeql/cpp-queries/Diagnostics/FailedExtractorInvocations.bqrs
+  metadata:
+    name: Failed extractor invocations
+    description: Gives the command line of compilations for which extraction did not
+      run to completion.
+    kind: diagnostic
+    id: cpp/diagnostics/failed-extractor-invocations
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Arithmetic/BadAdditionOverflowCheck.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Arithmetic/BadAdditionOverflowCheck.bqrs
+  metadata:
+    name: Bad check for overflow of integer addition
+    description: |-
+      Checking for overflow of integer addition by comparing
+                    against one of the arguments of the addition does not work
+                    when the result of the addition is automatically promoted
+                    to a larger type.
+    kind: problem
+    problem.severity: error
+    security-severity: 8.1
+    precision: very-high
+    id: cpp/bad-addition-overflow-check
+    tags: |-
+      reliability
+             correctness
+             security
+             external/cwe/cwe-190
+             external/cwe/cwe-192
+  queryHelp: "# Bad check for overflow of integer addition\nChecking for overflow\
+    \ of integer addition needs to be done with care, because automatic type promotion\
+    \ can prevent the check from working as intended, with the same value (`true`\
+    \ or `false`) always being returned.\n\n\n## Recommendation\nUse an explicit cast\
+    \ to make sure that the result of the addition is not implicitly converted to\
+    \ a larger type.\n\n\n## Example\n\n```cpp\nbool checkOverflow(unsigned short\
+    \ x, unsigned short y) {\n  // BAD: comparison is always false due to type promotion\n\
+    \  return (x + y < x);  \n}\n\n```\nOn a typical architecture where `short` is\
+    \ 16 bits and `int` is 32 bits, the operands of the addition are automatically\
+    \ promoted to `int`, so it cannot overflow and the result of the comparison is\
+    \ always false.\n\nThe code below implements the check correctly, by using an\
+    \ explicit cast to make sure that the result of the addition is `unsigned short`\
+    \ (which may overflow, in which case the comparison would evaluate to `true`).\n\
+    \n\n```cpp\nbool checkOverflow(unsigned short x, unsigned short y) {\n  return\
+    \ ((unsigned short)(x + y) < x);  // GOOD: explicit cast\n}\n\n```\n\n## References\n\
+    * [Preserving Rules](http://c-faq.com/expr/preservingrules.html)\n* [Understand\
+    \ integer conversion rules](https://www.securecoding.cert.org/confluence/plugins/servlet/mobile#content/view/20086942)\n\
+    * Common Weakness Enumeration: [CWE-190](https://cwe.mitre.org/data/definitions/190.html).\n\
+    * Common Weakness Enumeration: [CWE-192](https://cwe.mitre.org/data/definitions/192.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Arithmetic/SignedOverflowCheck.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Arithmetic/SignedOverflowCheck.bqrs
+  metadata:
+    name: Signed overflow check
+    description: |-
+      Testing for overflow by adding a value to a variable
+                    to see if it "wraps around" works only for
+                    unsigned integer values.
+    kind: problem
+    problem.severity: warning
+    security-severity: 8.1
+    precision: high
+    id: cpp/signed-overflow-check
+    tags: |-
+      correctness
+             security
+             external/cwe/cwe-128
+             external/cwe/cwe-190
+  queryHelp: |
+    # Signed overflow check
+    When checking for integer overflow, you may often write tests like `a + b < a`. This works fine if `a` or `b` are unsigned integers, since any overflow in the addition will cause the value to simply "wrap around." However, using *signed* integers is problematic because signed overflow has undefined behavior according to the C and C++ standards. If the addition overflows and has an undefined result, the comparison will likewise be undefined; it may produce an unintended result, or may be deleted entirely by an optimizing compiler.
+
+
+    ## Recommendation
+    Solutions to this problem can be thought of as falling into one of two categories:
+
+    1. Rewrite the signed expression so that overflow cannot occur but the signedness remains.
+    1. Change the variables and all their uses to be unsigned.
+    The following cases all fall into the first category.
+
+    1. Given `unsigned short n1, delta` and `n1 + delta < n1`, it is possible to rewrite it as `(unsigned short)(n1 + delta)&nbsp;<&nbsp;n1`. Note that `n1 + delta` does not actually overflow, due to `int` promotion.
+    1. Given `unsigned short n1, delta` and `n1 + delta < n1`, it is also possible to rewrite it as `n1 > USHORT_MAX - delta`. The `limits.h` or `climits` header must then be included.
+    1. Given `int n1, delta` and `n1 + delta < n1`, it is possible to rewrite it as `n1 > INT_MAX - delta`. It must be true that `delta >= 0` and the `limits.h` or `climits` header has been included.
+
+    ## Example
+    In the following example, even though `delta` has been declared `unsigned short`, C/C++ type promotion rules require that its type is promoted to the larger type used in the addition and comparison, namely a `signed int`. Addition is performed on signed integers, and may have undefined behavior if an overflow occurs. As a result, the entire (comparison) expression may also have an undefined result.
+
+
+    ```cpp
+    bool foo(int n1, unsigned short delta) {
+        return n1 + delta < n1; // BAD
+    }
+
+    ```
+    The following example builds upon the previous one. Instead of performing an addition (which could overflow), we have re-framed the solution so that a subtraction is used instead. Since `delta` is promoted to a `signed int` and `INT_MAX` denotes the largest possible positive value for an `signed int`, the expression `INT_MAX - delta` can never be less than zero or more than `INT_MAX`. Hence, any overflow and underflow are avoided.
+
+
+    ```cpp
+    #include <limits.h>
+    bool foo(int n1, unsigned short delta) {
+        return n1 > INT_MAX - delta; // GOOD
+    }
+
+    ```
+    In the following example, even though both `n` and `delta` have been declared `unsigned short`, both are promoted to `signed int` prior to addition. Because we started out with the narrower `short` type, the addition is guaranteed not to overflow and is therefore defined. But the fact that `n1 + delta` never overflows means that the condition `n1 + delta < n1` will never hold true, which likely is not what the programmer intended. (see also the `cpp/bad-addition-overflow-check` query).
+
+
+    ```cpp
+    bool bar(unsigned short n1, unsigned short delta) {
+        // NB: Comparison is always false
+        return n1 + delta < n1; // GOOD (but misleading)
+    }
+
+    ```
+    The next example provides a solution to the previous one. Even though `n1 + delta` does not overflow, casting it to an `unsigned short` truncates the addition modulo 2^16, so that `unsigned short` "wrap around" may now be observed. Furthermore, since the left-hand side is now of type `unsigned short`, the right-hand side does not need to be promoted to a `signed int`.
+
+
+    ```cpp
+    bool bar(unsigned short n1, unsigned short delta) {
+        return (unsigned short)(n1 + delta) < n1; // GOOD
+    }
+
+    ```
+
+    ## References
+    * [comp.lang.c FAQ list · Question 3.19 (Preserving rules)](http://c-faq.com/expr/preservingrules.html)
+    * [INT31-C. Ensure that integer conversions do not result in lost or misinterpreted data](https://wiki.sei.cmu.edu/confluence/display/c/INT31-C.+Ensure+that+integer+conversions+do+not+result+in+lost+or+misinterpreted+data)
+    * W. Dietz, P. Li, J. Regehr, V. Adve. [Understanding Integer Overflow in C/C++](https://www.cs.utah.edu/~regehr/papers/overflow12.pdf)
+    * Common Weakness Enumeration: [CWE-128](https://cwe.mitre.org/data/definitions/128.html).
+    * Common Weakness Enumeration: [CWE-190](https://cwe.mitre.org/data/definitions/190.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Conversion/CastArrayPointerArithmetic.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Conversion/CastArrayPointerArithmetic.bqrs
+  metadata:
+    name: Upcast array used in pointer arithmetic
+    description: |-
+      An array with elements of a derived struct type is cast to a
+                    pointer to the base type of the struct. If pointer arithmetic or
+                    an array dereference is done on the resulting pointer, it will
+                    use the width of the base type, leading to misaligned reads.
+    kind: path-problem
+    problem.severity: warning
+    security-severity: 9.3
+    precision: high
+    id: cpp/upcast-array-pointer-arithmetic
+    tags: |-
+      correctness
+             reliability
+             security
+             external/cwe/cwe-119
+             external/cwe/cwe-843
+  queryHelp: "# Upcast array used in pointer arithmetic\nA pointer to a derived class\
+    \ may be implicitly converted to a pointer to its base type when passed as an\
+    \ argument to a function expecting a pointer to the base type. If pointer arithmetic\
+    \ or an array dereference is then used, it will be performed using the size of\
+    \ the base type. This can lead to reading data from unexpected fields in the derived\
+    \ type.\n\n\n## Recommendation\nOnly convert pointers to single objects. If you\
+    \ must work with a sequence of objects that are converted to a base type, use\
+    \ an array of pointers rather than a pointer to an array.\n\n\n## Example\n\n\
+    ```cpp\nclass Base {\npublic:\n\tint x;\n}\n\nclass Derived: public Base {\npublic:\n\
+    \tint y;\n};\n\nvoid dereference_base(Base *b) {\n\tb[2].x;\n}\n\nvoid dereference_derived(Derived\
+    \ *d) {\n\td[2].x;\n}\n\nvoid test () {\n\tDerived[4] d;\n\tdereference_base(d);\
+    \ // BAD: implicit conversion to Base*\n\n\tdereference_derived(d); // GOOD: implicit\
+    \ conversion to Derived*, which will be the right size\n}\n\n```\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Format/SnprintfOverflow.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Format/SnprintfOverflow.bqrs
+  metadata:
+    name: Potentially overflowing call to snprintf
+    description: Using the return value from snprintf without proper checks can cause
+      overflow.
+    kind: problem
+    problem.severity: warning
+    security-severity: 8.1
+    precision: high
+    id: cpp/overflowing-snprintf
+    tags: |-
+      reliability
+             correctness
+             security
+             external/cwe/cwe-190
+             external/cwe/cwe-253
+  queryHelp: "# Potentially overflowing call to snprintf\nThe return value of a call\
+    \ to `snprintf` is the number of characters that *would have* been written to\
+    \ the buffer assuming there was sufficient space. In the event that the operation\
+    \ reaches the end of the buffer and more than one character is discarded, the\
+    \ return value will be greater than the buffer size. This can cause incorrect\
+    \ behavior, for example:\n\n\n## Example\n\n```cpp\n#define BUF_SIZE (32)\n\n\
+    int main(int argc, char *argv[])\n{\n\tchar buffer[BUF_SIZE];\n\tsize_t pos =\
+    \ 0;\n\tint i;\n\n\tfor (i = 0; i < argc; i++)\n\t{\n\t\tpos += snprintf(buffer\
+    \ + pos, BUF_SIZE - pos, \"%s\", argv[i]);\n\t\t\t// BUF_SIZE - pos may overflow\n\
+    \t}\n}\n\n```\n\n## Recommendation\nThe return value of `snprintf` should always\
+    \ be checked if it is used, and values larger than the buffer size should be accounted\
+    \ for.\n\n\n## Example\n\n```cpp\n#define BUF_SIZE (32)\n\nint main(int argc,\
+    \ char *argv[])\n{\n\tchar buffer[BUF_SIZE];\n\tsize_t pos = 0;\n\tint i;\n\n\t\
+    for (i = 0; i < argc; i++)\n\t{\n\t\tint n = snprintf(buffer + pos, BUF_SIZE -\
+    \ pos, \"%s\", argv[i]);\n\t\tif (n < 0 || n >= BUF_SIZE - pos)\n\t\t{\n\t\t\t\
+    break;\n\t\t}\n\t\tpos += n;\n\t}\n}\n\n```\n\n## References\n* cplusplus.com:\
+    \ [snprintf](http://www.cplusplus.com/reference/cstdio/snprintf/).\n* Red Hat\
+    \ Customer Portal: [The trouble with snprintf](https://access.redhat.com/blogs/766093/posts/1976193).\n\
+    * Common Weakness Enumeration: [CWE-190](https://cwe.mitre.org/data/definitions/190.html).\n\
+    * Common Weakness Enumeration: [CWE-253](https://cwe.mitre.org/data/definitions/253.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Format/WrongNumberOfFormatArguments.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Format/WrongNumberOfFormatArguments.bqrs
+  metadata:
+    name: Too few arguments to formatting function
+    description: |-
+      Calling a printf-like function with too few arguments can be
+                    a source of security issues.
+    kind: problem
+    problem.severity: error
+    security-severity: 5.0
+    precision: high
+    id: cpp/wrong-number-format-arguments
+    tags: |-
+      reliability
+             correctness
+             security
+             external/cwe/cwe-234
+             external/cwe/cwe-685
+  queryHelp: |
+    # Too few arguments to formatting function
+    Each call to the `printf` function, or a related function, should include the number of arguments defined by the format. Passing the function more arguments than required is harmless (although it may be indicative of other defects). However, passing the function fewer arguments than are defined by the format can be a security vulnerability since the function will process the next item on the stack as the missing arguments.
+
+    This might lead to an information leak if a sensitive value from the stack is printed. It might cause a crash if a value on the stack is interpreted as a pointer and leads to accessing unmapped memory. Finally, it may lead to a follow-on vulnerability if an attacker can use this problem to cause the output string to be too long or have unexpected contents.
+
+
+    ## Recommendation
+    Review the format and arguments expected by the highlighted function calls. Update either the format or the arguments so that the expected number of arguments are passed to the function.
+
+
+    ## Example
+
+    ```cpp
+    int main() {
+      printf("%d, %s\n", 42); // Will crash or print garbage
+      return 0;
+    }
+
+    ```
+
+    ## References
+    * CERT C Coding Standard: [FIO47-C. Use valid format strings](https://wiki.sei.cmu.edu/confluence/display/c/FIO47-C.+Use+valid+format+strings).
+    * Microsoft C Runtime Library Reference: [printf, wprintf](https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/printf-printf-l-wprintf-wprintf-l).
+    * Common Weakness Enumeration: [CWE-234](https://cwe.mitre.org/data/definitions/234.html).
+    * Common Weakness Enumeration: [CWE-685](https://cwe.mitre.org/data/definitions/685.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Memory Management/AllocaInLoop.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Memory Management/AllocaInLoop.bqrs
+  metadata:
+    name: Call to alloca in a loop
+    description: Using alloca in a loop can lead to a stack overflow
+    kind: problem
+    problem.severity: warning
+    security-severity: 7.5
+    precision: high
+    id: cpp/alloca-in-loop
+    tags: |-
+      reliability
+             correctness
+             security
+             external/cwe/cwe-770
+  queryHelp: |
+    # Call to alloca in a loop
+    The `alloca` macro allocates memory by expanding the current stack frame. Invoking `alloca` within a loop may lead to a stack overflow because the memory is not released until the function returns.
+
+
+    ## Recommendation
+    Consider invoking `alloca` once outside the loop, or using `malloc` or `new` to allocate memory on the heap if the allocation must be done inside the loop.
+
+
+    ## Example
+    The variable `path` is allocated inside a loop with `alloca`. Consequently, storage for all copies of the path is present in the stack frame until the end of the function.
+
+
+    ```cpp
+    char *dir_path;
+    char **dir_entries;
+    int count;
+
+    for (int i = 0; i < count; i++) {
+      char *path = (char*)alloca(strlen(dir_path) + strlen(dir_entry[i]) + 2);
+      // use path
+    }
+
+    ```
+    In the revised example, `path` is allocated with `malloc` and freed at the end of the loop.
+
+
+    ```cpp
+    char *dir_path;
+    char **dir_entries;
+    int count;
+
+    for (int i = 0; i < count; i++) {
+      char *path = (char*)malloc(strlen(dir_path) + strlen(dir_entry[i]) + 2);
+      // use path
+      free(path);
+    }
+
+    ```
+
+    ## References
+    * Linux Programmer's Manual: [ALLOCA(3)](http://man7.org/linux/man-pages/man3/alloca.3.html).
+    * Common Weakness Enumeration: [CWE-770](https://cwe.mitre.org/data/definitions/770.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Memory Management/PointerOverflow.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Memory Management/PointerOverflow.bqrs
+  metadata:
+    name: Pointer overflow check
+    description: |-
+      Adding a value to a pointer to check if it overflows relies
+                    on undefined behavior and may lead to memory corruption.
+    kind: problem
+    problem.severity: error
+    security-severity: 2.1
+    precision: high
+    id: cpp/pointer-overflow-check
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-758
+  queryHelp: |
+    # Pointer overflow check
+    When checking for integer overflow, you may often write tests like `p + i < p`. This works fine if `p` and `i` are unsigned integers, since any overflow in the addition will cause the value to simply "wrap around." However, using this pattern when `p` is a pointer is problematic because pointer overflow has undefined behavior according to the C and C++ standards. If the addition overflows and has an undefined result, the comparison will likewise be undefined; it may produce an unintended result, or may be deleted entirely by an optimizing compiler.
+
+
+    ## Recommendation
+    To check whether an index `i` is less than the length of an array, simply compare these two numbers as unsigned integers: `i < ARRAY_LENGTH`. If the length of the array is defined as the difference between two pointers `ptr` and `p_end`, write `i < p_end - ptr`. If `i` is signed, cast it to unsigned in order to guard against negative `i`. For example, write `(size_t)i < p_end - ptr`.
+
+
+    ## Example
+    An invalid check for pointer overflow is most often seen as part of checking whether a number `a` is too large by checking first if adding the number to `ptr` goes past the end of an allocation and then checking if adding it to `ptr` creates a pointer so large that it overflows and wraps around.
+
+
+    ```cpp
+    bool not_in_range(T *ptr, T *ptr_end, size_t i) {
+        return ptr + i >= ptr_end || ptr + i < ptr; // BAD
+    }
+
+    ```
+    In both of these checks, the operations are performed in the wrong order. First, an expression that may cause undefined behavior is evaluated (`ptr + i`), and then the result is checked for being in range. But once undefined behavior has happened in the pointer addition, it cannot be recovered from: it's too late to perform the range check after a possible pointer overflow.
+
+    While it's not the subject of this query, the expression `ptr + i < ptr_end` is also an invalid range check. It's undefined behavior in C/C++ to create a pointer that points more than one past the end of an allocation.
+
+    The next example shows how to portably check whether an unsigned number is outside the range of an allocation between `ptr` and `ptr_end`.
+
+
+    ```cpp
+    bool not_in_range(T *ptr, T *ptr_end, size_t i) {
+        return i >= ptr_end - ptr; // GOOD
+    }
+    ```
+
+    ## References
+    * Embedded in Academia: [Pointer Overflow Checking](https://blog.regehr.org/archives/1395).
+    * LWN: [GCC and pointer overflows](https://lwn.net/Articles/278137/).
+    * Common Weakness Enumeration: [CWE-758](https://cwe.mitre.org/data/definitions/758.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Memory Management/ReturnStackAllocatedMemory.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Memory Management/ReturnStackAllocatedMemory.bqrs
+  metadata:
+    name: Returning stack-allocated memory
+    description: |-
+      A function returns a pointer to a stack-allocated region of
+                    memory. This memory is deallocated at the end of the function,
+                    which may lead the caller to dereference a dangling pointer.
+    kind: path-problem
+    id: cpp/return-stack-allocated-memory
+    problem.severity: warning
+    security-severity: 9.3
+    precision: high
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-825
+  queryHelp: "# Returning stack-allocated memory\nThis rule finds return statements\
+    \ that return pointers to an object allocated on the stack. The lifetime of a\
+    \ stack allocated memory location only lasts until the function returns, and the\
+    \ contents of that memory become undefined after that. Clearly, using a pointer\
+    \ to stack memory after the function has already returned will have undefined\
+    \ results.\n\n\n## Recommendation\nUse the functions of the `malloc` family, or\
+    \ `new`, to dynamically allocate memory on the heap for data that is used across\
+    \ function calls.\n\n\n## Example\nThe following example allocates an object on\
+    \ the stack and returns a pointer to it. This is incorrect because the object\
+    \ is deallocated when the function returns, and the pointer becomes invalid.\n\
+    \n\n```cpp\nRecord *mkRecord(int value) {\n\tRecord myRecord(value);\n\n\treturn\
+    \ &myRecord; // BAD: returns a pointer to `myRecord`, which is a stack-allocated\
+    \ object.\n}\n\n```\nTo fix this, allocate the object on the heap using `new`\
+    \ and return a pointer to the heap-allocated object.\n\n\n```cpp\nRecord *mkRecord(int\
+    \ value) {\n\tRecord *myRecord = new Record(value);\n\n\treturn myRecord; // GOOD:\
+    \ returns a pointer to a `myRecord`, which is a heap-allocated object.\n}\n\n\
+    ```\n\n## References\n* Common Weakness Enumeration: [CWE-825](https://cwe.mitre.org/data/definitions/825.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Memory Management/SuspiciousCallToStrncat.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Memory Management/SuspiciousCallToStrncat.bqrs
+  metadata:
+    name: Potentially unsafe call to strncat
+    description: Calling 'strncat' with an incorrect size argument may result in a
+      buffer overflow.
+    kind: problem
+    problem.severity: warning
+    security-severity: 9.3
+    precision: high
+    id: cpp/unsafe-strncat
+    tags: |-
+      reliability
+             correctness
+             security
+             external/cwe/cwe-788
+             external/cwe/cwe-676
+             external/cwe/cwe-119
+             external/cwe/cwe-251
+  queryHelp: "# Potentially unsafe call to strncat\nThe standard library function\
+    \ `strncat` appends a source string to a target string. The third argument defines\
+    \ the maximum number of characters to append and should be less than or equal\
+    \ to the remaining space in the destination buffer.\n\nCalls of the form `strncat(dest,\
+    \ src, strlen(dest))` or `strncat(dest, src, sizeof(dest))` set the third argument\
+    \ to the entire size of the destination buffer. Executing a call of this type\
+    \ may cause a buffer overflow unless the buffer is known to be empty.\n\nSimilarly,\
+    \ calls of the form `strncat(dest, src, sizeof (dest) - strlen (dest))` allow\
+    \ one byte to be written outside the `dest` buffer.\n\nBuffer overflows can lead\
+    \ to anything from a segmentation fault to a security vulnerability.\n\n\n## Recommendation\n\
+    Check the highlighted function calls carefully to ensure that no buffer overflow\
+    \ is possible. For a more robust solution, consider updating the function call\
+    \ to include the remaining space in the destination buffer.\n\n\n## Example\n\n\
+    ```cpp\nstrncat(dest, src, strlen(dest)); //wrong: should use remaining size of\
+    \ dest\n\nstrncat(dest, src, sizeof(dest)); //wrong: should use remaining size\
+    \ of dest. \n                                  //Also fails if dest is a pointer\
+    \ and not an array.\n \nstrncat(dest, source, sizeof(dest) - strlen(dest)); //\
+    \ wrong: writes a zero byte past the `dest` buffer.\n\nstrncat(dest, source, sizeof(dest)\
+    \ - strlen(dest) - 1); // correct: reserves space for the zero byte.\n\n```\n\n\
+    ## References\n* cplusplus.com: [strncat](http://www.cplusplus.com/reference/clibrary/cstring/strncat/),\
+    \ [strncpy](http://www.cplusplus.com/reference/clibrary/cstring/strncpy/).\n*\
+    \ I. Gerg, *An Overview and Example of the Buffer-Overflow Exploit*. IANewsletter\
+    \ vol 7 no 4, 2005.\n* M. Donaldson, *Inside the Buffer Overflow Attack: Mechanism,\
+    \ Method &amp; Prevention*. SANS Institute InfoSec Reading Room, 2002.\n* CERT\
+    \ C Coding Standard: [STR31-C. Guarantee that storage for strings has sufficient\
+    \ space for character data and the null terminator](https://wiki.sei.cmu.edu/confluence/display/c/STR31-C.+Guarantee+that+storage+for+strings+has+sufficient+space+for+character+data+and+the+null+terminator).\n\
+    * Common Weakness Enumeration: [CWE-788](https://cwe.mitre.org/data/definitions/788.html).\n\
+    * Common Weakness Enumeration: [CWE-676](https://cwe.mitre.org/data/definitions/676.html).\n\
+    * Common Weakness Enumeration: [CWE-119](https://cwe.mitre.org/data/definitions/119.html).\n\
+    * Common Weakness Enumeration: [CWE-251](https://cwe.mitre.org/data/definitions/251.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Memory Management/UsingExpiredStackAddress.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Memory Management/UsingExpiredStackAddress.bqrs
+  metadata:
+    name: Use of expired stack-address
+    description: |-
+      Accessing the stack-allocated memory of a function
+                    after it has returned can lead to memory corruption.
+    kind: path-problem
+    problem.severity: error
+    security-severity: 9.3
+    precision: high
+    id: cpp/using-expired-stack-address
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-825
+  queryHelp: |
+    # Use of expired stack-address
+    This rule finds uses of pointers that likely point to local variables in expired stack frames. A pointer to a local variable is only valid until the function returns, after which it becomes a dangling pointer.
+
+
+    ## Recommendation
+    1. If it is necessary to take the address of a local variable, then make sure that the address is only stored in memory that does not outlive the local variable. For example, it is safe to store the address in another local variable. Similarly, it is also safe to pass the address of a local variable to another function provided that the other function only uses it locally and does not store it in non-local memory.
+    1. If it is necessary to store an address which will outlive the current function scope, then it should be allocated on the heap. Care should be taken to make sure that the memory is deallocated when it is no longer needed, particularly when using low-level memory management routines such as `malloc`/`free` or `new`/`delete`. Modern C++ applications often use smart pointers, such as `std::shared_ptr`, to reduce the chance of a memory leak.
+
+    ## Example
+
+    ```cpp
+    static const int* xptr;
+
+    void localAddressEscapes() {
+      int x = 0;
+      xptr = &x;
+    }
+
+    void example1() {
+      localAddressEscapes();
+      const int* x = xptr; // BAD: This pointer points to expired stack allocated memory.
+    }
+
+    void localAddressDoesNotEscape() {
+      int x = 0;
+      xptr = &x;
+      // ...
+      // use `xptr`
+      // ...
+      xptr = nullptr;
+    }
+
+    void example2() {
+      localAddressDoesNotEscape();
+      const int* x = xptr; // GOOD: This pointer does not point to expired memory.
+    }
+
+    ```
+
+    ## References
+    * Wikipedia: [Dangling pointer](https://en.wikipedia.org/wiki/Dangling_pointer).
+    * Common Weakness Enumeration: [CWE-825](https://cwe.mitre.org/data/definitions/825.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/OO/UnsafeUseOfThis.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/OO/UnsafeUseOfThis.bqrs
+  metadata:
+    name: Unsafe use of this in constructor
+    description: |-
+      A call to a pure virtual function using a 'this'
+                    pointer of an object that is under construction
+                    may lead to undefined behavior.
+    kind: path-problem
+    id: cpp/unsafe-use-of-this
+    problem.severity: error
+    security-severity: 7.5
+    precision: very-high
+    tags: |-
+      correctness
+             language-features
+             security
+             external/cwe/cwe-670
+  queryHelp: |
+    # Unsafe use of this in constructor
+    This rule finds calls to pure virtual member functions in constructors and destructors. When executing the body of a constructor of class `T`, the virtual table of `T` refers to the virtual table of one of `T`'s base classes. This can produce unexpected behavior, including program abort that can lead to denial of service attacks. The same problem exists during destruction of an object.
+
+
+    ## Recommendation
+    Do not rely on virtual dispatch in constructors and destructors. Instead, each class should be responsible for acquiring and releasing its resources. If a base class needs to refer to a derived class during initialization, use the Dynamic Binding During Initialization idiom.
+
+
+    ## Example
+
+    ```cpp
+    class Base {
+    private:
+        // pure virtual member function used for initialization of derived classes.
+        virtual void construct() = 0;
+    public:
+        Base() {
+            // wrong: the virtual table of `Derived` has not been initialized yet. So this
+            // call will resolve to `Base::construct`, which cannot be called as it is a pure
+            // virtual function.
+            construct();
+        }
+    };
+
+    class Derived : public Base {
+        int field;
+
+        void construct() override {
+            field = 1;
+        }
+    };
+
+    ```
+
+    ## References
+    * ISO C++ FAQ: [When my base class's constructor calls a virtual function on its this object, why doesn't my derived class's override of that virtual function get invoked?](https://isocpp.org/wiki/faq/strange-inheritance#calling-virtuals-from-ctors)
+    * SEI CERT C++ Coding Standard [OOP50-CPP. Do not invoke virtual functions from constructors or destructors](https://wiki.sei.cmu.edu/confluence/display/cplusplus/OOP50-CPP.+Do+not+invoke+virtual+functions+from+constructors+or+destructors)
+    * ISO C++ FAQ: [Okay, but is there a way to simulate that behavior as if dynamic binding worked on the this object within my base class's constructor?](https://isocpp.org/wiki/faq/strange-inheritance#calling-virtuals-from-ctor-idiom)
+    * Common Weakness Enumeration: [CWE-670](https://cwe.mitre.org/data/definitions/670.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/RedundantNullCheckSimple.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/RedundantNullCheckSimple.bqrs
+  metadata:
+    name: Redundant null check due to previous dereference
+    description: |-
+      Checking a pointer for nullness after dereferencing it is
+                    likely to be a sign that either the check can be removed, or
+                    it should be moved before the dereference.
+    kind: path-problem
+    problem.severity: error
+    security-severity: 7.5
+    precision: high
+    id: cpp/redundant-null-check-simple
+    tags: |-
+      reliability
+             correctness
+             security
+             external/cwe/cwe-476
+  queryHelp: "# Redundant null check due to previous dereference\nThis rule finds\
+    \ comparisons of a pointer to null that occur after a reference of that pointer.\
+    \ It's likely either the check is not required and can be removed, or it should\
+    \ be moved to before the dereference so that a null pointer dereference does not\
+    \ occur.\n\n\n## Recommendation\nThe check should be moved to before the dereference,\
+    \ in a way that prevents a null pointer value from being dereferenced. If it's\
+    \ clear that the pointer cannot be null, consider removing the check instead.\n\
+    \n\n## Example\n\n```cpp\nint f(MyList *list) {\n\tlist->append(1);\n\n\t// ...\n\
+    \n\tif (list != NULL)\n\t{\n\t\tlist->append(2);\n\t}\n}\n\n```\n\n## References\n\
+    * [ Null Dereference ](https://www.owasp.org/index.php/Null_Dereference)\n* Common\
+    \ Weakness Enumeration: [CWE-476](https://cwe.mitre.org/data/definitions/476.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Likely Bugs/Underspecified Functions/TooFewArguments.ql
+  relativeBqrsPath: codeql/cpp-queries/Likely Bugs/Underspecified Functions/TooFewArguments.bqrs
+  metadata:
+    name: Call to function with fewer arguments than declared parameters
+    description: |-
+      A function call is passing fewer arguments than the number of
+                    declared parameters of the function. This may indicate
+                    that the code does not follow the author's intent. It is also
+                    a vulnerability, since the function is likely to operate on
+                    undefined data.
+    kind: problem
+    problem.severity: error
+    security-severity: 5.0
+    precision: very-high
+    id: cpp/too-few-arguments
+    tags: |-
+      correctness
+             maintainability
+             security
+             external/cwe/cwe-234
+             external/cwe/cwe-685
+  queryHelp: "# Call to function with fewer arguments than declared parameters\nA\
+    \ function is called with fewer arguments than there are parameters of the function.\n\
+    \nThis may indicate that an incorrect function is being called, or that the signature\
+    \ (parameter list) of the called function is not known to the author.\n\nIn C,\
+    \ function calls generally need to provide the same number of arguments as there\
+    \ are arguments to the function. (Variadic functions can accept additional arguments.)\
+    \ Providing fewer arguments than there are parameters is extremely dangerous,\
+    \ as the called function will nevertheless try to obtain the missing arguments'\
+    \ values, either from the stack or from machine registers. As a result, the function\
+    \ may behave unpredictably.\n\nIf the called function *modifies* a parameter corresponding\
+    \ to a missing argument, it may alter the state of the program upon its return.\
+    \ An attacker could use this to, for example, alter the control flow of the program\
+    \ to access forbidden resources.\n\n\n## Recommendation\nCall the function with\
+    \ the correct number of arguments.\n\n\n## Example\n\n```c\nvoid one_argument();\n\
+    \nvoid calls() {\n\tone_argument(1); // GOOD: `one_argument` will accept and use\
+    \ the argument\n\t\n\tone_argument(); // BAD: `one_argument` will receive an undefined\
+    \ value\n}\n\nvoid one_argument(int x);\n\n```\n\n## References\n* SEI CERT C\
+    \ Coding Standard: [ DCL20-C. Explicitly specify void when a function accepts\
+    \ no arguments ](https://wiki.sei.cmu.edu/confluence/display/c/DCL20-C.+Explicitly+specify+void+when+a+function+accepts+no+arguments)\n\
+    * Common Weakness Enumeration: [CWE-234](https://cwe.mitre.org/data/definitions/234.html).\n\
+    * Common Weakness Enumeration: [CWE-685](https://cwe.mitre.org/data/definitions/685.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-014/MemsetMayBeDeleted.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-014/MemsetMayBeDeleted.bqrs
+  metadata:
+    name: Call to `memset` may be deleted
+    description: |-
+      Using the `memset` function to clear private data in a variable that has no subsequent use
+                    can make information-leak vulnerabilities easier to exploit because the compiler can remove the call.
+    kind: problem
+    id: cpp/memset-may-be-deleted
+    problem.severity: warning
+    security-severity: 7.8
+    precision: high
+    tags: |-
+      security
+             external/cwe/cwe-014
+  queryHelp: |
+    # Call to `memset` may be deleted
+    Calling `memset` or `bzero` on a buffer to clear its contents may get optimized away by the compiler if the buffer is not subsequently used. This is not desirable behavior if the buffer contains sensitive data that could somehow be retrieved by an attacker.
+
+
+    ## Recommendation
+    Use `memset_s` (from C11) instead of `memset`, as `memset_s` will not get optimized away. Alternatively use platform-supplied functions such as `SecureZeroMemory` or `bzero_explicit` that make the same guarantee. Passing the `-fno-builtin-memset` option to the GCC/Clang compiler usually also prevents the optimization. Finally, you can use the public-domain `secure_memzero` function (see references below). This function, however, is not guaranteed to work on all platforms and compilers.
+
+
+    ## Example
+    The following program fragment uses `memset` to erase sensitive information after it is no longer needed:
+
+
+    ```c
+    char password[MAX_PASSWORD_LENGTH];
+    // read and verify password
+    memset(password, 0, MAX_PASSWORD_LENGTH);
+
+    ```
+    Because of dead store elimination, the call to `memset` may be removed by the compiler (since the buffer is not subsequently used), resulting in potentially sensitive data remaining in memory.
+
+    The best solution to this problem is to use the `memset_s` function instead of `memset`:
+
+
+    ```c
+    char password[MAX_PASSWORD_LENGTH];
+    // read and verify password
+    memset_s(password, MAX_PASSWORD_LENGTH, 0, MAX_PASSWORD_LENGTH);
+
+    ```
+
+    ## References
+    * CERT C Coding Standard: [MSC06-C. Beware of compiler optimizations](https://wiki.sei.cmu.edu/confluence/display/c/MSC06-C.+Beware+of+compiler+optimizations).
+    * USENIX: The Advanced Computing Systems Association: [Dead Store Elimination (Still) Considered Harmfuls](https://www.usenix.org/system/files/conference/usenixsecurity17/sec17-yang.pdf)
+    * Common Weakness Enumeration: [CWE-14](https://cwe.mitre.org/data/definitions/14.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-078/ExecTainted.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-078/ExecTainted.bqrs
+  metadata:
+    name: Uncontrolled data used in OS command
+    description: |-
+      Using user-supplied data in an OS command, without
+                    neutralizing special elements, can make code vulnerable
+                    to command injection.
+    kind: path-problem
+    problem.severity: error
+    security-severity: 9.8
+    precision: high
+    id: cpp/command-line-injection
+    tags: |-
+      security
+             external/cwe/cwe-078
+             external/cwe/cwe-088
+  queryHelp: "# Uncontrolled data used in OS command\nThe code passes user input as\
+    \ part of a call to `system` or `popen` without escaping special elements. It\
+    \ generates a command line using `sprintf`, with the user-supplied data directly\
+    \ passed as a formatting argument. This leaves the code vulnerable to attack by\
+    \ command injection.\n\n\n## Recommendation\nUse a library routine to escape characters\
+    \ in the user-supplied string before passing it to a command shell.\n\n\n## Example\n\
+    The following example runs an external command in two ways. The first way uses\
+    \ `sprintf` to build a command directly out of a user-supplied argument. As such,\
+    \ it is vulnerable to command injection. The second way quotes the user-provided\
+    \ value before embedding it in the command; assuming the `encodeShellString` utility\
+    \ is correct, this code should be safe against command injection.\n\n\n```c\n\
+    int main(int argc, char** argv) {\n  char *userName = argv[2];\n  \n  {\n    //\
+    \ BAD: a string from the user is injected directly into\n    // a command line.\n\
+    \    char command1[1000] = {0};\n    sprintf(command1, \"userinfo -v \\\"%s\\\"\
+    \", userName);\n    system(command1);\n  }\n\n  {\n    // GOOD: the user string\
+    \ is encoded by a library routine.\n    char userNameQuoted[1000] = {0};\n   \
+    \ encodeShellString(userNameQuoted, 1000, userName); \n    char command2[1000]\
+    \ = {0};\n    sprintf(command2, \"userinfo -v %s\", userNameQuoted);\n    system(command2);\n\
+    \  }\n}\n\n```\n\n## References\n* CERT C Coding Standard: [STR02-C. Sanitize\
+    \ data passed to complex subsystems](https://www.securecoding.cert.org/confluence/display/c/STR02-C.+Sanitize+data+passed+to+complex+subsystems).\n\
+    * OWASP: [Command Injection](https://www.owasp.org/index.php/Command_Injection).\n\
+    * Common Weakness Enumeration: [CWE-78](https://cwe.mitre.org/data/definitions/78.html).\n\
+    * Common Weakness Enumeration: [CWE-88](https://cwe.mitre.org/data/definitions/88.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-079/CgiXss.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-079/CgiXss.bqrs
+  metadata:
+    name: CGI script vulnerable to cross-site scripting
+    description: |-
+      Writing user input directly to a web page
+                    allows for a cross-site scripting vulnerability.
+    kind: path-problem
+    problem.severity: error
+    security-severity: 6.1
+    precision: high
+    id: cpp/cgi-xss
+    tags: |-
+      security
+             external/cwe/cwe-079
+  queryHelp: |
+    # CGI script vulnerable to cross-site scripting
+    Directly writing an HTTP request parameter back to a web page allows for a cross-site scripting vulnerability. The data is displayed in a user's web browser as belonging to one site, but it is provided by some other site that the user browses to. In effect, such an attack allows one web site to insert content in the other one.
+
+    For web servers implemented with the Common Gateway Interface (CGI), HTTP parameters are supplied via the `QUERY_STRING` environment variable.
+
+
+    ## Recommendation
+    To guard against cross-site scripting, consider escaping special characters before writing the HTTP parameter back to the page.
+
+
+    ## Example
+    In the following example, the `bad_server` writes a parameter directly back to the HTML page that the user will see. The `good_server` first escapes any HTML special characters before writing to the HTML page.
+
+
+    ```c
+    void bad_server() {
+      char* query = getenv("QUERY_STRING");
+      puts("<p>Query results for ");
+      // BAD: Printing out an HTTP parameter with no escaping
+      puts(query);
+      puts("\n<p>\n");
+      puts(do_search(query));
+    }
+
+    void good_server() {
+      char* query = getenv("QUERY_STRING");
+      puts("<p>Query results for ");
+      // GOOD: Escape HTML characters before adding to a page
+      char* query_escaped = escape_html(query);
+      puts(query_escaped);
+      free(query_escaped);
+
+      puts("\n<p>\n");
+      puts(do_search(query));
+    }
+
+    ```
+
+    ## References
+    * OWASP: [XSS (Cross Site Scripting) Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html).
+    * Wikipedia: [Cross-site scripting](http://en.wikipedia.org/wiki/Cross-site_scripting).
+    * IETF Tools: [The Common Gateway Specification (CGI)](http://tools.ietf.org/html/draft-robinson-www-interface-00).
+    * Common Weakness Enumeration: [CWE-79](https://cwe.mitre.org/data/definitions/79.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-089/SqlTainted.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-089/SqlTainted.bqrs
+  metadata:
+    name: Uncontrolled data in SQL query
+    description: |-
+      Including user-supplied data in a SQL query without
+                    neutralizing special elements can make code vulnerable
+                    to SQL Injection.
+    kind: path-problem
+    problem.severity: error
+    security-severity: 8.8
+    precision: high
+    id: cpp/sql-injection
+    tags: |-
+      security
+             external/cwe/cwe-089
+  queryHelp: "# Uncontrolled data in SQL query\nThe code passes user input as part\
+    \ of a SQL query without escaping special elements. It generates a SQL query using\
+    \ `sprintf`, with the user-supplied data directly passed as an argument to `sprintf`.\
+    \ This leaves the code vulnerable to attack by SQL Injection.\n\n\n## Recommendation\n\
+    Use a library routine to escape characters in the user-supplied string before\
+    \ converting it to SQL.\n\n\n## Example\n\n```c\nint main(int argc, char** argv)\
+    \ {\n  char *userName = argv[2];\n  \n  // BAD\n  char query1[1000] = {0};\n \
+    \ sprintf(query1, \"SELECT UID FROM USERS where name = \\\"%s\\\"\", userName);\n\
+    \  runSql(query1);\n  \n  // GOOD\n  char userNameSql[1000] = {0};\n  encodeSqlString(userNameSql,\
+    \ 1000, userName); \n  char query2[1000] = {0};\n  sprintf(query2, \"SELECT UID\
+    \ FROM USERS where name = \\\"%s\\\"\", userNameSql);\n  runSql(query2);\n}\n\n\
+    ```\n\n## References\n* MSDN Library: [SQL Injection](https://docs.microsoft.com/en-us/sql/relational-databases/security/sql-injection).\n\
+    * Common Weakness Enumeration: [CWE-89](https://cwe.mitre.org/data/definitions/89.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-120/BadlyBoundedWrite.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-120/BadlyBoundedWrite.bqrs
+  metadata:
+    name: Badly bounded write
+    description: |-
+      Buffer write operations with a length parameter that
+                    does not match the size of the destination buffer may
+                    overflow.
+    kind: problem
+    problem.severity: error
+    security-severity: 9.3
+    precision: high
+    id: cpp/badly-bounded-write
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-120
+             external/cwe/cwe-787
+             external/cwe/cwe-805
+  queryHelp: "# Badly bounded write\nThe program performs a buffer copy or write operation\
+    \ with an incorrect upper limit on the size of the copy. A sufficiently long input\
+    \ will overflow the target buffer. In addition to causing program instability,\
+    \ techniques exist which may allow an attacker to use this vulnerability to execute\
+    \ arbitrary code.\n\n\n## Recommendation\nUse preprocessor defines to specify\
+    \ the size of buffers, and use the same defines as arguments to `strncpy`, `snprintf`\
+    \ etc. This technique will ensure that buffer sizes are always specified correctly\
+    \ so that no overflow occurs.\n\n\n## Example\n\n```c\nvoid congratulateUser(const\
+    \ char *userName)\n{\n\tchar buffer[80];\n\n\t// BAD: even though snprintf is\
+    \ used, this could overflow the buffer\n\t// because the size specified is too\
+    \ large.\n\tsnprintf(buffer, 256, \"Congratulations, %s!\", userName);\n\n\tMessageBox(hWnd,\
+    \ buffer, \"New Message\", MB_OK);\n}\n```\nIn this example, the developer has\
+    \ used `snprintf` to control the maximum number of characters that can be written\
+    \ to `buffer`. Unfortunately, perhaps due to modifications since the code was\
+    \ first written, a limited buffer overrun can still occur because the size argument\
+    \ to `snprintf` is larger than the actual size of the buffer.\n\nTo fix the problem,\
+    \ either the second argument to `snprintf` should be changed to 80, or the buffer\
+    \ extended to 256 characters. A further improvement is to use a preprocessor define\
+    \ so that the size is only specified in one place, potentially preventing future\
+    \ recurrence of this issue.\n\n\n## References\n* CERT C Coding Standard: [STR31-C.\
+    \ Guarantee that storage for strings has sufficient space for character data and\
+    \ the null terminator](https://www.securecoding.cert.org/confluence/display/c/STR31-C.+Guarantee+that+storage+for+strings+has+sufficient+space+for+character+data+and+the+null+terminator).\n\
+    * CERT C++ Coding Standard: [STR50-CPP. Guarantee that storage for strings has\
+    \ sufficient space for character data and the null terminator](https://www.securecoding.cert.org/confluence/display/cplusplus/STR50-CPP.+Guarantee+that+storage+for+strings+has+sufficient+space+for+character+data+and+the+null+terminator).\n\
+    * Common Weakness Enumeration: [CWE-120](https://cwe.mitre.org/data/definitions/120.html).\n\
+    * Common Weakness Enumeration: [CWE-787](https://cwe.mitre.org/data/definitions/787.html).\n\
+    * Common Weakness Enumeration: [CWE-805](https://cwe.mitre.org/data/definitions/805.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-120/VeryLikelyOverrunWrite.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-120/VeryLikelyOverrunWrite.bqrs
+  metadata:
+    name: Likely overrunning write
+    description: |-
+      Buffer write operations that do not control the length
+                    of data written may overflow
+    kind: problem
+    problem.severity: error
+    security-severity: 9.3
+    precision: high
+    id: cpp/very-likely-overrunning-write
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-120
+             external/cwe/cwe-787
+             external/cwe/cwe-805
+  queryHelp: "# Likely overrunning write\nThe program performs a buffer copy or write\
+    \ operation with no upper limit on the size of the copy. By analyzing the bounds\
+    \ of the expressions involved, it appears that certain inputs will cause a buffer\
+    \ overflow to occur in this case. In addition to causing program instability,\
+    \ techniques exist which may allow an attacker to use this vulnerability to execute\
+    \ arbitrary code.\n\n\n## Recommendation\nAlways control the length of buffer\
+    \ copy and buffer write operations. `strncpy` should be used over `strcpy`, `snprintf`\
+    \ over `sprintf`, and in other cases 'n-variant' functions should be preferred.\n\
+    \n\n## Example\n\n```c\nint sayHello(uint32_t userId)\n{\n\tchar buffer[17];\n\
+    \n\tif (userId > 9999) return USER_ID_OUT_OF_BOUNDS;\n\n\t// BAD: this message\
+    \ overflows the buffer if userId >= 1000,\n\t// as no space for the null terminator\
+    \ was accounted for\n\tsprintf(buffer, \"Hello, user %d!\", userId);\n\n\tMessageBox(hWnd,\
+    \ buffer, \"New Message\", MB_OK);\n\t\n\treturn SUCCESS;\n}\n```\nIn this example,\
+    \ the call to `sprintf` writes a message of 14 characters (including the terminating\
+    \ null) plus the length of the string conversion of \\`userId\\` into a buffer\
+    \ with space for just 17 characters. While \\`userId\\` is checked to occupy no\
+    \ more than 4 characters when converted, there is no space in the buffer for the\
+    \ terminating null character if \\`userId &gt;= 1000\\`. In this case, the null\
+    \ character overflows the buffer resulting in undefined behavior.\n\nTo fix this\
+    \ issue these changes should be made:\n\n* Control the size of the buffer by declaring\
+    \ it with a compile time constant.\n* Preferably, replace the call to `sprintf`\
+    \ with `snprintf`, using the defined constant size of the buffer or \\`sizeof(buffer)\\\
+    ` as maximum length to write. This will prevent the buffer overflow.\n* Increasing\
+    \ the buffer size to account for the full range of \\`userId\\` and the terminating\
+    \ null character.\n\n## References\n* CERT C Coding Standard: [STR31-C. Guarantee\
+    \ that storage for strings has sufficient space for character data and the null\
+    \ terminator](https://www.securecoding.cert.org/confluence/display/c/STR31-C.+Guarantee+that+storage+for+strings+has+sufficient+space+for+character+data+and+the+null+terminator).\n\
+    * CERT C++ Coding Standard: [STR50-CPP. Guarantee that storage for strings has\
+    \ sufficient space for character data and the null terminator](https://www.securecoding.cert.org/confluence/display/cplusplus/STR50-CPP.+Guarantee+that+storage+for+strings+has+sufficient+space+for+character+data+and+the+null+terminator).\n\
+    * Common Weakness Enumeration: [CWE-120](https://cwe.mitre.org/data/definitions/120.html).\n\
+    * Common Weakness Enumeration: [CWE-787](https://cwe.mitre.org/data/definitions/787.html).\n\
+    * Common Weakness Enumeration: [CWE-805](https://cwe.mitre.org/data/definitions/805.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-131/NoSpaceForZeroTerminator.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-131/NoSpaceForZeroTerminator.bqrs
+  metadata:
+    name: No space for zero terminator
+    description: |-
+      Allocating a buffer using 'malloc' without ensuring that
+                    there is always space for the entire string and a zero
+                    terminator can cause a buffer overrun.
+    kind: problem
+    problem.severity: error
+    security-severity: 9.8
+    precision: high
+    id: cpp/no-space-for-terminator
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-131
+             external/cwe/cwe-120
+             external/cwe/cwe-122
+  queryHelp: "# No space for zero terminator\nThis rule identifies calls to `malloc`\
+    \ that call `strlen` to determine the required buffer size, but do not allocate\
+    \ space for the zero terminator.\n\n\n## Recommendation\nThe highlighted code\
+    \ segment creates a buffer without ensuring it's large enough to accommodate the\
+    \ copied data. This leaves the code susceptible to a buffer overflow attack, which\
+    \ could lead to anything from program crashes to malicious code execution.\n\n\
+    Increase the size of the buffer being allocated by one or replace `malloc`, `strcpy`\
+    \ pairs with a call to `strdup`\n\n\n## Example\n\n```c\n\nvoid flawed_strdup(const\
+    \ char *input)\n{\n\tchar *copy;\n\n\t/* Fail to allocate space for terminating\
+    \ '\\0' */\n\tcopy = (char *)malloc(strlen(input));\n\tstrcpy(copy, input);\n\t\
+    return copy;\n}\n\n\n```\n\n## References\n* CERT C Coding Standard: [MEM35-C.\
+    \ Allocate sufficient memory for an object](https://www.securecoding.cert.org/confluence/display/c/MEM35-C.+Allocate+sufficient+memory+for+an+object).\n\
+    * Common Weakness Enumeration: [CWE-131](https://cwe.mitre.org/data/definitions/131.html).\n\
+    * Common Weakness Enumeration: [CWE-120](https://cwe.mitre.org/data/definitions/120.html).\n\
+    * Common Weakness Enumeration: [CWE-122](https://cwe.mitre.org/data/definitions/122.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-134/UncontrolledFormatString.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-134/UncontrolledFormatString.bqrs
+  metadata:
+    name: Uncontrolled format string
+    description: |-
+      Using externally-controlled format strings in
+                    printf-style functions can lead to buffer overflows
+                    or data representation problems.
+    kind: path-problem
+    problem.severity: warning
+    security-severity: 9.3
+    precision: high
+    id: cpp/tainted-format-string
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-134
+  queryHelp: "# Uncontrolled format string\nThe program uses input from the user as\
+    \ a format string for `printf` style functions. This can lead to buffer overflows\
+    \ or data representation problems. An attacker can exploit this weakness to crash\
+    \ the program, disclose information or even execute arbitrary code.\n\nThe results\
+    \ of this rule do not include inputs from the user that are transferred through\
+    \ global variables. Those can be found in the related rule \"Uncontrolled format\
+    \ string (through global variable)\".\n\n\n## Recommendation\nUse constant expressions\
+    \ as the format strings. If you need to print a value from the user, use `printf(\"\
+    %s\", value_from_user)`.\n\n\n## Example\n\n```c\n#include <stdio.h>\n\nvoid printWrapper(char\
+    \ *str) {\n\tprintf(str);\n}\n\nint main(int argc, char **argv) {\n\t// This should\
+    \ be avoided\n\tprintf(argv[1]);\n\n\t// This should be avoided too, because it\
+    \ has the same effect\n\tprintWrapper(argv[1]);\n\n\t// This is fine\n\tprintf(\"\
+    %s\", argv[1]);\n}\n```\n\n## References\n* CERT C Coding Standard: [FIO30-C.\
+    \ Exclude user input from format strings](https://www.securecoding.cert.org/confluence/display/c/FIO30-C.+Exclude+user+input+from+format+strings).\n\
+    * Common Weakness Enumeration: [CWE-134](https://cwe.mitre.org/data/definitions/134.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-190/ArithmeticUncontrolled.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-190/ArithmeticUncontrolled.bqrs
+  metadata:
+    name: Uncontrolled data in arithmetic expression
+    description: |-
+      Arithmetic operations on uncontrolled data that is not
+                    validated can cause overflows.
+    kind: path-problem
+    problem.severity: warning
+    security-severity: 8.6
+    precision: high
+    id: cpp/uncontrolled-arithmetic
+    tags: |-
+      security
+             external/cwe/cwe-190
+             external/cwe/cwe-191
+  queryHelp: "# Uncontrolled data in arithmetic expression\nPerforming calculations\
+    \ on uncontrolled data can result in integer overflows unless the input is validated.\n\
+    \nIf the data is not under your control, and can take extremely large values,\
+    \ even arithmetic operations that would usually result in a small change in magnitude\
+    \ may result in overflows.\n\n\n## Recommendation\nAlways guard against overflow\
+    \ in arithmetic operations on uncontrolled data by doing one of the following:\n\
+    \n* Validate the data.\n* Define a guard on the arithmetic expression, so that\
+    \ the operation is performed only if the result can be known to be less than,\
+    \ or equal to, the maximum value for the type, for example `INT_MAX`.\n* Use a\
+    \ wider type, so that larger input values do not cause overflow.\n\n## Example\n\
+    In this example, a random integer is generated. Because the value is not controlled\
+    \ by the programmer, it could be extremely large. Performing arithmetic operations\
+    \ on this value could therefore cause an overflow. To avoid this happening, the\
+    \ example shows how to perform a check before performing an arithmetic operation.\n\
+    \n\n```c\nint main(int argc, char** argv) {\n\tint i = rand();\n\t// BAD: potential\
+    \ overflow\n\tint j = i + 1000;\n\n\t// ...\n\n\tint n = rand();\n\tint k;\n\t\
+    // GOOD: use a guard to prevent overflow\n\tif (n < INT_MAX-1000)\n\t\tk = n +\
+    \ 1000;\n\telse\n\t\tk = INT_MAX;\n}\n\n```\n\n## References\n* Common Weakness\
+    \ Enumeration: [CWE-190](https://cwe.mitre.org/data/definitions/190.html).\n*\
+    \ Common Weakness Enumeration: [CWE-191](https://cwe.mitre.org/data/definitions/191.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-191/UnsignedDifferenceExpressionComparedZero.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-191/UnsignedDifferenceExpressionComparedZero.bqrs
+  metadata:
+    name: Unsigned difference expression compared to zero
+    description: A subtraction with an unsigned result can never be negative. Using
+      such an expression in a relational comparison with `0` is likely to be wrong.
+    kind: problem
+    id: cpp/unsigned-difference-expression-compared-zero
+    problem.severity: warning
+    security-severity: 9.8
+    precision: high
+    tags: |-
+      security
+             correctness
+             external/cwe/cwe-191
+  queryHelp: |
+    # Unsigned difference expression compared to zero
+    This rule finds relational comparisons between the result of an unsigned subtraction and the value `0`. Such comparisons are likely to be wrong as the value of an unsigned subtraction can never be negative. So the relational comparison ends up checking whether the result of the subtraction is equal to `0`. This is probably not what the programmer intended.
+
+
+    ## Recommendation
+    If a relational comparison is intended, consider casting the result of the subtraction to a signed type. If the intention was to test for equality, consider replacing the relational comparison with an equality test.
+
+
+    ## Example
+
+    ```c
+    uint32_t limit = get_limit();
+    uint32_t total = 0;
+
+    while (limit - total > 0) { // BAD: if `total` is greater than `limit` this will underflow and continue executing the loop.
+      total += get_data();
+    }
+
+    while (total < limit) { // GOOD: never underflows here because there is no arithmetic.
+      total += get_data();
+    }
+
+    while ((int64_t)limit - total > 0) { // GOOD: never underflows here because the result always fits in an `int64_t`.
+      total += get_data();
+    }
+
+    ```
+
+    ## References
+    * SEI CERT C Coding Standard: [INT02-C. Understand integer conversion rules](https://wiki.sei.cmu.edu/confluence/display/c/INT02-C.+Understand+integer+conversion+rules).
+    * Common Weakness Enumeration: [CWE-191](https://cwe.mitre.org/data/definitions/191.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-253/HResultBooleanConversion.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-253/HResultBooleanConversion.bqrs
+  metadata:
+    name: Cast between HRESULT and a Boolean type
+    description: Casting an HRESULT to/from a Boolean type and then using it in a
+      test expression will yield an incorrect result because success (S_OK) in HRESULT
+      is indicated by a value of 0.
+    kind: problem
+    id: cpp/hresult-boolean-conversion
+    problem.severity: error
+    security-severity: 7.5
+    precision: high
+    tags: |-
+      security
+             external/cwe/cwe-253
+  queryHelp: |
+    # Cast between HRESULT and a Boolean type
+    This query indicates that an `HRESULT` is being cast to a Boolean type or vice versa.
+
+    The typical success value (`S_OK`) of an `HRESULT` equals 0. However, 0 indicates failure for a Boolean type.
+
+    Casting an `HRESULT` to a Boolean type and then using it in a test expression will yield an incorrect result.
+
+
+    ## Recommendation
+    To check if a call that returns an `HRESULT` succeeded use the `FAILED` macro.
+
+
+    ## Example
+    In the following example, `HRESULT` is used in a test expression incorrectly as it may yield an incorrect result.
+
+
+    ```cpp
+    LPMALLOC pMalloc;
+    HRESULT hr = CoGetMalloc(1, &pMalloc);
+
+    if (!hr)
+    {
+        // code ...
+    }
+
+    ```
+    To fix this issue, use the `FAILED` macro in the test expression.
+
+
+    ## References
+    * Common Weakness Enumeration: [CWE-253](https://cwe.mitre.org/data/definitions/253.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-311/CleartextFileWrite.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-311/CleartextFileWrite.bqrs
+  metadata:
+    name: Cleartext storage of sensitive information in file
+    description: |-
+      Storing sensitive information in cleartext can expose it
+                    to an attacker.
+    kind: path-problem
+    problem.severity: warning
+    security-severity: 7.5
+    precision: high
+    id: cpp/cleartext-storage-file
+    tags: |-
+      security
+             external/cwe/cwe-260
+             external/cwe/cwe-313
+  queryHelp: |
+    # Cleartext storage of sensitive information in file
+    Sensitive information that is stored unencrypted is accessible to an attacker who gains access to the storage.
+
+
+    ## Recommendation
+    Ensure that sensitive information is always encrypted before being stored to a file or transmitted over the network. It may be wise to encrypt information before it is put into a buffer that may be readable in memory.
+
+    In general, decrypt sensitive information only at the point where it is necessary for it to be used in cleartext.
+
+
+    ## Example
+    The following example shows two ways of storing user credentials in a file. In the 'BAD' case, the credentials are simply stored in cleartext. In the 'GOOD' case, the credentials are encrypted before storing them.
+
+
+    ```c
+    #include <sodium.h>
+    #include <stdio.h>
+    #include <string.h>
+
+    void writeCredentialsBad(FILE *file, const char *cleartextCredentials) {
+      // BAD: write password to disk in cleartext
+      fputs(cleartextCredentials, file);
+    }
+
+    int writeCredentialsGood(FILE *file, const char *cleartextCredentials, const unsigned char *key, const unsigned char *nonce) {
+      size_t credentialsLen = strlen(cleartextCredentials);
+      size_t ciphertext_len = crypto_secretbox_MACBYTES + credentialsLen;
+      unsigned char *ciphertext = malloc(ciphertext_len);
+      if (!ciphertext) {
+        logError();
+        return -1;
+      }
+
+      // encrypt the password first
+      if (crypto_secretbox_easy(ciphertext, (const unsigned char *)cleartextCredentials, credentialsLen, nonce, key) != 0) {
+        free(ciphertext);
+        logError();
+        return -1;
+      }
+
+      // GOOD: write encrypted password to disk
+      fwrite(ciphertext, 1, ciphertext_len, file);
+
+      free(ciphertext);
+      return 0;
+    }
+
+    ```
+    Note that for the 'GOOD' example to work we need to link against an encryption library (in this case libsodium), initialize it with a call to `sodium_init`, and create the key and nonce with `crypto_secretbox_keygen` and `randombytes_buf` respectively. We also need to store those details securely so they can be used for decryption.
+
+
+    ## References
+    * M. Dowd, J. McDonald and J. Schuhm, *The Art of Software Security Assessment*, 1st Edition, Chapter 2 - 'Common Vulnerabilities of Encryption', p. 43. Addison Wesley, 2006.
+    * M. Howard and D. LeBlanc, *Writing Secure Code*, 2nd Edition, Chapter 9 - 'Protecting Secret Data', p. 299. Microsoft, 2002.
+    * Common Weakness Enumeration: [CWE-260](https://cwe.mitre.org/data/definitions/260.html).
+    * Common Weakness Enumeration: [CWE-313](https://cwe.mitre.org/data/definitions/313.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-311/CleartextTransmission.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-311/CleartextTransmission.bqrs
+  metadata:
+    name: Cleartext transmission of sensitive information
+    description: |-
+      Transmitting sensitive information across a network in
+                    cleartext can expose it to an attacker.
+    kind: path-problem
+    problem.severity: warning
+    security-severity: 7.5
+    precision: high
+    id: cpp/cleartext-transmission
+    tags: |-
+      security
+             external/cwe/cwe-319
+             external/cwe/cwe-359
+  queryHelp: |
+    # Cleartext transmission of sensitive information
+    Sensitive information that is stored unencrypted is accessible to an attacker who gains access to the storage.
+
+
+    ## Recommendation
+    Ensure that sensitive information is always encrypted before being stored to a file or transmitted over the network. It may be wise to encrypt information before it is put into a buffer that may be readable in memory.
+
+    In general, decrypt sensitive information only at the point where it is necessary for it to be used in cleartext.
+
+
+    ## Example
+    The following example shows two ways of storing user credentials in a file. In the 'BAD' case, the credentials are simply stored in cleartext. In the 'GOOD' case, the credentials are encrypted before storing them.
+
+
+    ```c
+    #include <sodium.h>
+    #include <stdio.h>
+    #include <string.h>
+
+    void writeCredentialsBad(FILE *file, const char *cleartextCredentials) {
+      // BAD: write password to disk in cleartext
+      fputs(cleartextCredentials, file);
+    }
+
+    int writeCredentialsGood(FILE *file, const char *cleartextCredentials, const unsigned char *key, const unsigned char *nonce) {
+      size_t credentialsLen = strlen(cleartextCredentials);
+      size_t ciphertext_len = crypto_secretbox_MACBYTES + credentialsLen;
+      unsigned char *ciphertext = malloc(ciphertext_len);
+      if (!ciphertext) {
+        logError();
+        return -1;
+      }
+
+      // encrypt the password first
+      if (crypto_secretbox_easy(ciphertext, (const unsigned char *)cleartextCredentials, credentialsLen, nonce, key) != 0) {
+        free(ciphertext);
+        logError();
+        return -1;
+      }
+
+      // GOOD: write encrypted password to disk
+      fwrite(ciphertext, 1, ciphertext_len, file);
+
+      free(ciphertext);
+      return 0;
+    }
+
+    ```
+    Note that for the 'GOOD' example to work we need to link against an encryption library (in this case libsodium), initialize it with a call to `sodium_init`, and create the key and nonce with `crypto_secretbox_keygen` and `randombytes_buf` respectively. We also need to store those details securely so they can be used for decryption.
+
+
+    ## References
+    * M. Dowd, J. McDonald and J. Schuhm, *The Art of Software Security Assessment*, 1st Edition, Chapter 2 - 'Common Vulnerabilities of Encryption', p. 43. Addison Wesley, 2006.
+    * M. Howard and D. LeBlanc, *Writing Secure Code*, 2nd Edition, Chapter 9 - 'Protecting Secret Data', p. 299. Microsoft, 2002.
+    * Common Weakness Enumeration: [CWE-319](https://cwe.mitre.org/data/definitions/319.html).
+    * Common Weakness Enumeration: [CWE-359](https://cwe.mitre.org/data/definitions/359.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-319/UseOfHttp.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-319/UseOfHttp.bqrs
+  metadata:
+    name: Failure to use HTTPS URLs
+    description: Non-HTTPS connections can be intercepted by third parties.
+    kind: path-problem
+    problem.severity: warning
+    security-severity: 8.1
+    precision: high
+    id: cpp/non-https-url
+    tags: |-
+      security
+             external/cwe/cwe-319
+             external/cwe/cwe-345
+  queryHelp: "# Failure to use HTTPS URLs\nConstructing URLs with the HTTP protocol\
+    \ can lead to unsecured connections.\n\n\n## Recommendation\nWhen you construct\
+    \ a URL, ensure that you use an HTTPS URL rather than an HTTP URL. Then, any connections\
+    \ that are made using that URL are secure SSL connections.\n\n\n## Example\nThe\
+    \ following example shows two ways of opening a connection using a URL. When the\
+    \ connection is opened using an HTTP URL rather than an HTTPS URL, the connection\
+    \ is unsecured. When the connection is opened using an HTTPS URL, the connection\
+    \ is a secure SSL connection.\n\n\n```cpp\n\nvoid openUrl(char *url)\n{\n\t//\
+    \ ...\n}\n\nopenUrl(\"http://example.com\"); // BAD\n\nopenUrl(\"https://example.com\"\
+    ); // GOOD: Opening a connection to a URL using HTTPS enforces SSL.\n\n```\n\n\
+    ## References\n* OWASP: [Transport Layer Protection Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html).\n\
+    * OWASP Top 10: [A08:2021 - Software and Data Integrity Failures](https://owasp.org/Top10/A08_2021-Software_and_Data_Integrity_Failures/).\n\
+    * Common Weakness Enumeration: [CWE-319](https://cwe.mitre.org/data/definitions/319.html).\n\
+    * Common Weakness Enumeration: [CWE-345](https://cwe.mitre.org/data/definitions/345.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-326/InsufficientKeySize.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-326/InsufficientKeySize.bqrs
+  metadata:
+    name: Use of a cryptographic algorithm with insufficient key size
+    description: |-
+      Using cryptographic algorithms with too small a key size can
+                    allow an attacker to compromise security.
+    kind: path-problem
+    problem.severity: error
+    security-severity: 7.5
+    precision: high
+    id: cpp/insufficient-key-size
+    tags: |-
+      security
+             external/cwe/cwe-326
+  queryHelp: |
+    # Use of a cryptographic algorithm with insufficient key size
+    Using cryptographic algorithms with a small key size can leave data vulnerable to being decrypted.
+
+    Many cryptographic algorithms provided by cryptography libraries can be configured with key sizes that are vulnerable to brute force attacks. Using such a key size means that an attacker may be able to easily decrypt the encrypted data.
+
+
+    ## Recommendation
+    Ensure that you use a strong, modern cryptographic algorithm. Use at least AES-128 or RSA-2048.
+
+
+    ## Example
+    The following code shows an example of using the `openssl` library to generate an RSA key. When creating a key, you must specify which key size to use. The first example uses 1024 bits, which is not considered sufficient. The second example uses 2048 bits, which is currently considered sufficient.
+
+
+    ```c
+    void encrypt_with_openssl(EVP_PKEY_CTX *ctx) {
+
+      // BAD: only 1024 bits for an RSA key
+      EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 1024);
+
+      // GOOD: 2048 bits for an RSA key
+      EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 2048);
+    }
+    ```
+
+    ## References
+    * NIST, FIPS 140 Annex a: [ Approved Security Functions](http://csrc.nist.gov/publications/fips/fips140-2/fips1402annexa.pdf).
+    * NIST, SP 800-131A: [ Transitions: Recommendation for Transitioning the Use of Cryptographic Algorithms and Key Lengths](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar2.pdf).
+    * Common Weakness Enumeration: [CWE-326](https://cwe.mitre.org/data/definitions/326.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-327/BrokenCryptoAlgorithm.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-327/BrokenCryptoAlgorithm.bqrs
+  metadata:
+    name: Use of a broken or risky cryptographic algorithm
+    description: |-
+      Using broken or weak cryptographic algorithms can allow
+                    an attacker to compromise security.
+    kind: problem
+    problem.severity: error
+    security-severity: 7.5
+    precision: high
+    id: cpp/weak-cryptographic-algorithm
+    tags: |-
+      security
+             external/cwe/cwe-327
+  queryHelp: |
+    # Use of a broken or risky cryptographic algorithm
+    Using broken or weak cryptographic algorithms may compromise security guarantees such as confidentiality, integrity, and authenticity.
+
+    Many cryptographic algorithms are known to be weak or flawed. The security guarantees of a system often rely on the underlying cryptography, so using a weak algorithm can have severe consequences. For example:
+
+    * If a weak encryption algorithm is used, an attacker may be able to decrypt sensitive data.
+    * If a weak hashing algorithm is used to protect data integrity, an attacker may be able to craft a malicious input that has the same hash as a benign one.
+    * If a weak algorithm is used for digital signatures, an attacker may be able to forge signatures and impersonate legitimate users.
+
+    ## Recommendation
+    Ensure that you use a strong, modern cryptographic algorithm. Use at least AES-128 or RSA-2048.
+
+
+    ## Example
+    The following code shows an example of using the `advapi` windows API to decrypt some data. When creating a key, you must specify which algorithm to use. The first example uses DES which is an older algorithm that is now considered weak. The second example uses AES, which is a strong modern algorithm.
+
+
+    ```c
+    void advapi() {
+      HCRYPTPROV hCryptProv;
+      HCRYPTKEY hKey;
+      HCRYPTHASH hHash;
+      // other preparation goes here
+
+      // BAD: use 3DES for key
+      CryptDeriveKey(hCryptProv, CALG_3DES, hHash, 0, &hKey);
+
+      // GOOD: use AES
+      CryptDeriveKey(hCryptProv, CALG_AES_256, hHash, 0, &hKey);
+    }
+
+
+    ```
+
+    ## References
+    * NIST, FIPS 140 Annex a: [ Approved Security Functions](http://csrc.nist.gov/publications/fips/fips140-2/fips1402annexa.pdf).
+    * NIST, SP 800-131A: [ Transitions: Recommendation for Transitioning the Use of Cryptographic Algorithms and Key Lengths](http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-131Ar1.pdf).
+    * Common Weakness Enumeration: [CWE-327](https://cwe.mitre.org/data/definitions/327.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-327/OpenSslHeartbleed.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-327/OpenSslHeartbleed.bqrs
+  metadata:
+    name: Use of a version of OpenSSL with Heartbleed
+    description: |-
+      Using an old version of OpenSSL can allow remote
+                    attackers to retrieve portions of memory.
+    kind: problem
+    problem.severity: error
+    security-severity: 7.5
+    precision: very-high
+    id: cpp/openssl-heartbleed
+    tags: |-
+      security
+             external/cwe/cwe-327
+             external/cwe/cwe-788
+  queryHelp: "# Use of a version of OpenSSL with Heartbleed\nEarlier versions of the\
+    \ popular OpenSSL library suffer from a buffer overflow in its \"heartbeat\" code.\
+    \ Because of the location of the problematic code, this vulnerability is often\
+    \ called \"Heartbleed\".\n\nSoftware that includes a copy of OpenSSL should be\
+    \ sure to use a current version of the library. If it uses an older version, it\
+    \ will be vulnerable to any network site it connects with.\n\n\n## Recommendation\n\
+    Upgrade to the latest version of OpenSSL. This problem was fixed in version 1.0.1g.\n\
+    \n\n## Example\nThe following code is present in earlier versions of OpenSSL.\
+    \ The `payload` variable is the number of bytes that should be copied from the\
+    \ request back into the response. The call to `memcpy` does this copy. The problem\
+    \ is that `payload` is supplied as part of the remote request, and there is no\
+    \ code that checks the size of it. If the caller supplies a very large value,\
+    \ then the `memcpy` call will copy memory that is outside the request packet.\n\
+    \n\n```c\nint\ntls1_process_heartbeat(SSL *s)\n    {\n    unsigned char *p = &s->s3->rrec.data[0],\
+    \ *pl;\n    unsigned short hbtype;\n    unsigned int payload;\n \n    /* ... */\n\
+    \ \n    hbtype = *p++;\n    n2s(p, payload);\n    pl = p;\n \n    /* ... */\n\
+    \ \n    if (hbtype == TLS1_HB_REQUEST)\n            {\n            /* ... */\n\
+    \            memcpy(bp, pl, payload);  // BAD: overflow here\n            /* ...\
+    \ */\n            }\n \n \n    /* ... */\n \n    }\n\n```\n\n## References\n*\
+    \ Common Vulnerabilities and Exposures: [CVE-2014-0160](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160).\n\
+    * OpenSSL News: [OpenSSL Security Advisory \\[07 Apr 2014\\]](https://www.openssl.org/news/secadv_20140407.txt).\n\
+    * Common Weakness Enumeration: [CWE-327](https://cwe.mitre.org/data/definitions/327.html).\n\
+    * Common Weakness Enumeration: [CWE-788](https://cwe.mitre.org/data/definitions/788.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-367/TOCTOUFilesystemRace.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-367/TOCTOUFilesystemRace.bqrs
+  metadata:
+    name: Time-of-check time-of-use filesystem race condition
+    description: |-
+      Separately checking the state of a file before operating
+                    on it may allow an attacker to modify the file between
+                    the two operations.
+    kind: problem
+    problem.severity: warning
+    security-severity: 7.7
+    precision: high
+    id: cpp/toctou-race-condition
+    tags: |-
+      security
+             external/cwe/cwe-367
+  queryHelp: |
+    # Time-of-check time-of-use filesystem race condition
+    Often it is necessary to check the state of a file before using it. These checks usually take a file name to be checked, and if the check returns positively, then the file is opened or otherwise operated upon.
+
+    However, in the time between the check and the operation, the underlying file referenced by the file name could be changed by an attacker, causing unexpected behavior.
+
+
+    ## Recommendation
+    Wherever possible, use functions that operate on file descriptors rather than file names (for example, `fchmod` rather than `chmod`).
+
+    For access checks, you can temporarily change the UID and GID to that of the user whose permissions are being checked, and then perform the operation. This has the effect of "atomically" combining a permissions check with the operation.
+
+    If file-system locking tools are available on your platform, then locking the file before the check can prevent an unexpected update. However, note that on some platforms (for example, Unix) file-system locks are typically *advisory*, and so can be ignored by an attacker.
+
+
+    ## Example
+    The following example shows a case where a file is opened and then, if the opening was successful, its permissions are changed with `chmod`. However, an attacker might change the target of the file name between the initial opening and the permissions change, potentially changing the permissions of a different file.
+
+
+    ```c
+    char *file_name;
+    FILE *f_ptr;
+
+    /* Initialize file_name */
+
+    f_ptr = fopen(file_name, "w");
+    if (f_ptr == NULL)  {
+      /* Handle error */
+    }
+
+    /* ... */
+
+    if (chmod(file_name, S_IRUSR) == -1) {
+      /* Handle error */
+    }
+
+    fclose(f_ptr);
+
+    ```
+    This can be avoided by using `fchmod` with the file descriptor that was received from opening the file. This ensures that the permissions change is applied to the very same file that was opened.
+
+
+    ```c
+    char *file_name;
+    int fd;
+
+    /* Initialize file_name */
+
+    fd = open(
+      file_name,
+      O_WRONLY | O_CREAT | O_EXCL,
+      S_IRWXU
+    );
+    if (fd == -1) {
+      /* Handle error */
+    }
+
+    /* ... */
+
+    if (fchmod(fd, S_IRUSR) == -1) {
+      /* Handle error */
+    }
+
+    close(fd);
+
+    ```
+
+    ## References
+    * The CERT Oracle Secure Coding Standard for C: [ FIO01-C. Be careful using functions that use file names for identification ](https://www.securecoding.cert.org/confluence/display/c/FIO01-C.+Be+careful+using+functions+that+use+file+names+for+identification).
+    * Common Weakness Enumeration: [CWE-367](https://cwe.mitre.org/data/definitions/367.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-416/IteratorToExpiredContainer.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-416/IteratorToExpiredContainer.bqrs
+  metadata:
+    name: Iterator to expired container
+    description: Using an iterator owned by a container whose lifetime has expired
+      may lead to unexpected behavior.
+    kind: problem
+    precision: high
+    id: cpp/iterator-to-expired-container
+    problem.severity: warning
+    security-severity: 8.8
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-416
+             external/cwe/cwe-664
+  queryHelp: |
+    # Iterator to expired container
+    Using an iterator owned by a container after the lifetime of the container has expired can lead to undefined behavior. This is because the iterator may be invalidated when the container is destroyed, and dereferencing an invalidated iterator is undefined behavior. These problems can be hard to spot due to C++'s complex rules for temporary object lifetimes and their extensions.
+
+
+    ## Recommendation
+    Never create an iterator to a temporary container when the iterator is expected to be used after the container's lifetime has expired.
+
+
+    ## Example
+
+
+    The rules for lifetime extension ensures that the code in `lifetime_of_temp_extended` is well-defined. This is because the lifetime of the temporary container returned by `get_vector` is extended to the end of the loop. However, prior to C++23, the lifetime extension rules do not ensure that the container returned by `get_vector` is extended in `lifetime_of_temp_not_extended`. This is because the temporary container is not bound to a rvalue reference.
+
+
+    ```cpp
+    #include <vector>
+
+    std::vector<int> get_vector();
+
+    void use(int);
+
+    void lifetime_of_temp_extended() {
+      for(auto x : get_vector()) {
+        use(x); // GOOD: The lifetime of the vector returned by `get_vector()` is extended until the end of the loop.
+      }
+    }
+
+    // Writes the the values of `v` to an external log and returns it unchanged.
+    const std::vector<int>& log_and_return_argument(const std::vector<int>& v);
+
+    void lifetime_of_temp_not_extended() {
+      for(auto x : log_and_return_argument(get_vector())) {
+        use(x); // BAD: The lifetime of the vector returned by `get_vector()` is not extended, and the behavior is undefined.
+      }
+    }
+
+    ```
+    To fix `lifetime_of_temp_not_extended`, consider rewriting the code so that the lifetime of the temporary object is extended. In `fixed_lifetime_of_temp_not_extended`, the lifetime of the temporary object has been extended by storing it in an rvalue reference.
+
+
+    ```cpp
+    void fixed_lifetime_of_temp_not_extended() {
+      auto&& v = get_vector();
+      for(auto x : log_and_return_argument(v)) {
+        use(x); // GOOD: The lifetime of the container returned by `get_vector()` has been extended to the lifetime of `v`.
+      }
+    }
+
+    ```
+
+    ## References
+    * CERT C Coding Standard: [MEM30-C. Do not access freed memory](https://wiki.sei.cmu.edu/confluence/display/c/MEM30-C.+Do+not+access+freed+memory).
+    * OWASP: [Using freed memory](https://owasp.org/www-community/vulnerabilities/Using_freed_memory).
+    * [Lifetime safety: Preventing common dangling](https://github.com/isocpp/CppCoreGuidelines/blob/master/docs/Lifetime.pdf)
+    * [Containers library](https://en.cppreference.com/w/cpp/container)
+    * [Range-based for loop (since C++11)](https://en.cppreference.com/w/cpp/language/range-for)
+    * Common Weakness Enumeration: [CWE-416](https://cwe.mitre.org/data/definitions/416.html).
+    * Common Weakness Enumeration: [CWE-664](https://cwe.mitre.org/data/definitions/664.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-416/UseOfStringAfterLifetimeEnds.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-416/UseOfStringAfterLifetimeEnds.bqrs
+  metadata:
+    name: Use of string after lifetime ends
+    description: If the value of a call to 'c_str' outlives the underlying object
+      it may lead to unexpected behavior.
+    kind: problem
+    precision: high
+    id: cpp/use-of-string-after-lifetime-ends
+    problem.severity: warning
+    security-severity: 8.8
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-416
+             external/cwe/cwe-664
+  queryHelp: |
+    # Use of string after lifetime ends
+    Calling `c_str` on a `std::string` object returns a pointer to the underlying character array. When the `std::string` object is destroyed, the pointer returned by `c_str` is no longer valid. If the pointer is used after the `std::string` object is destroyed, then the behavior is undefined.
+
+    Typically, this problem occurs when a `std::string` is returned by a function call (or overloaded operator) by value, and the result is not immediately stored in a variable by value or reference in a way that extends the lifetime of the temporary object. The resulting temporary `std::string` object is destroyed at the end of the containing expression statement, along with any memory returned by a call to `c_str`.
+
+
+    ## Recommendation
+    Ensure that the pointer returned by `c_str` does not outlive the underlying `std::string` object.
+
+
+    ## Example
+    The following example concatenates two `std::string` objects, and then converts the resulting string to a C string using `c_str` so that it can be passed to the `work` function. However, the underlying `std::string` object that represents the concatenated string is destroyed as soon as the call to `c_str` returns. This means that `work` is given a pointer to invalid memory.
+
+
+    ```cpp
+    #include <string>
+    void work(const char*);
+
+    // BAD: the concatenated string is deallocated when `c_str` returns. So `work`
+    // is given a pointer to invalid memory.
+    void work_with_combined_string_bad(std::string s1, std::string s2) {
+      const char* combined_string = (s1 + s2).c_str();
+      work(combined_string);
+    }
+    ```
+    The following example fixes the above code by ensuring that the pointer returned by the call to `c_str` does not outlive the underlying `std::string` objects. This ensures that the pointer passed to `work` points to valid memory.
+
+
+    ```cpp
+    #include <string>
+    void work(const char*);
+
+    // GOOD: the concatenated string outlives the call to `work`. So the pointer
+    // obtainted from `c_str` is valid.
+    void work_with_combined_string_good(std::string s1, std::string s2) {
+      auto combined_string = s1 + s2;
+      work(combined_string.c_str());
+    }
+    ```
+
+    ## References
+    * [MEM50-CPP. Do not access freed memory](https://wiki.sei.cmu.edu/confluence/display/cplusplus/MEM50-CPP.+Do+not+access+freed+memory).
+    * Microsoft Learn: [Temporary objects](https://learn.microsoft.com/en-us/cpp/cpp/temporary-objects?view=msvc-170).
+    * cppreference.com: [Lifetime of a temporary](https://en.cppreference.com/w/cpp/language/reference_initialization#Lifetime_of_a_temporary).
+    * Common Weakness Enumeration: [CWE-416](https://cwe.mitre.org/data/definitions/416.html).
+    * Common Weakness Enumeration: [CWE-664](https://cwe.mitre.org/data/definitions/664.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-416/UseOfUniquePointerAfterLifetimeEnds.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-416/UseOfUniquePointerAfterLifetimeEnds.bqrs
+  metadata:
+    name: Use of unique pointer after lifetime ends
+    description: Referencing the contents of a unique pointer after the underlying
+      object has expired may lead to unexpected behavior.
+    kind: problem
+    precision: high
+    id: cpp/use-of-unique-pointer-after-lifetime-ends
+    problem.severity: warning
+    security-severity: 8.8
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-416
+             external/cwe/cwe-664
+  queryHelp: |
+    # Use of unique pointer after lifetime ends
+    Calling `get` on a `std::unique_ptr` object returns a pointer to the underlying allocations. When the `std::unique_ptr` object is destroyed, the pointer returned by `get` is no longer valid. If the pointer is used after the `std::unique_ptr` object is destroyed, then the behavior is undefined.
+
+
+    ## Recommendation
+    Ensure that the pointer returned by `get` does not outlive the underlying `std::unique_ptr` object.
+
+
+    ## Example
+    The following example gets a `std::unique_ptr` object, and then converts the resulting unique pointer to a pointer using `get` so that it can be passed to the `work` function. However, the `std::unique_ptr` object is destroyed as soon as the call to `get` returns. This means that `work` is given a pointer to invalid memory.
+
+
+    ```cpp
+    #include <memory>
+    std::unique_ptr<T> getUniquePointer();
+    void work(const T*);
+
+    // BAD: the unique pointer is deallocated when `get` returns. So `work`
+    // is given a pointer to invalid memory.
+    void work_with_unique_ptr_bad() {
+      const T* combined_string = getUniquePointer().get();
+      work(combined_string);
+    }
+    ```
+    The following example fixes the above code by ensuring that the pointer returned by the call to `get` does not outlive the underlying `std::unique_ptr` objects. This ensures that the pointer passed to `work` points to valid memory.
+
+
+    ```cpp
+    #include <memory>
+    std::unique_ptr<T> getUniquePointer();
+    void work(const T*);
+
+    // GOOD: the unique pointer outlives the call to `work`. So the pointer
+    // obtainted from `get` is valid.
+    void work_with_unique_ptr_good() {
+      auto combined_string = getUniquePointer();
+      work(combined_string.get());
+    }
+    ```
+
+    ## References
+    * [MEM50-CPP. Do not access freed memory](https://wiki.sei.cmu.edu/confluence/display/cplusplus/MEM50-CPP.+Do+not+access+freed+memory).
+    * Common Weakness Enumeration: [CWE-416](https://cwe.mitre.org/data/definitions/416.html).
+    * Common Weakness Enumeration: [CWE-664](https://cwe.mitre.org/data/definitions/664.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-497/ExposedSystemData.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-497/ExposedSystemData.bqrs
+  metadata:
+    name: Exposure of system data to an unauthorized control sphere
+    description: |-
+      Exposing system data or debugging information helps
+                    a malicious user learn about the system and form an
+                    attack plan.
+    kind: path-problem
+    problem.severity: warning
+    security-severity: 6.5
+    precision: high
+    id: cpp/system-data-exposure
+    tags: |-
+      security
+             external/cwe/cwe-497
+  queryHelp: |
+    # Exposure of system data to an unauthorized control sphere
+    Exposing system data or debugging information may help a malicious user learn about the system and form an attack plan. An attacker can use error messages that reveal technologies, operating systems, and product versions to tune their attack against known vulnerabilities in the software.
+
+    This query finds locations where system configuration information might be revealed to a remote user.
+
+
+    ## Recommendation
+    Do not expose system configuration information to remote users. Be wary of the difference between information that could be helpful to users, and unnecessary details that could be useful to a malicious user.
+
+
+    ## Example
+    In this example the value of the `PATH` environment variable is revealed in full to the user when a particular error occurs. This might reveal information such as the software installed on your system to a malicious user who does not have legitimate access to that information.
+
+
+    ```cpp
+    char* path = getenv("PATH");
+
+    //...
+
+    sprintf(buffer, "Cannot find exe on path: %s", path);
+    send(socket, buffer, strlen(buffer), 0);
+
+    ```
+    The message should be rephrased without this information, for example:
+
+
+    ```cpp
+    char* path = getenv("PATH");
+
+    //...
+
+    message = "An internal error has occurred. Please try again or contact a system administrator.\n";
+    send(socket, message, strlen(message), 0);
+    ```
+
+    ## References
+    * Common Weakness Enumeration: [CWE-497](https://cwe.mitre.org/data/definitions/497.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-611/XXE.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-611/XXE.bqrs
+  metadata:
+    name: XML external entity expansion
+    description: |-
+      Parsing user-controlled XML documents and allowing expansion of
+                    external entity references may lead to disclosure of
+                    confidential data or denial of service.
+    kind: path-problem
+    id: cpp/external-entity-expansion
+    problem.severity: warning
+    security-severity: 9.1
+    precision: high
+    tags: |-
+      security
+             external/cwe/cwe-611
+  queryHelp: |
+    # XML external entity expansion
+    Parsing untrusted XML files with a weakly configured XML parser may lead to an XML external entity (XXE) attack. This type of attack uses external entity references to access arbitrary files on a system, carry out denial-of-service (DoS) attacks, or server-side request forgery. Even when the result of parsing is not returned to the user, DoS attacks are still possible and out-of-band data retrieval techniques may allow attackers to steal sensitive data.
+
+
+    ## Recommendation
+    The easiest way to prevent XXE attacks is to disable external entity handling when parsing untrusted data. How this is done depends on the library being used. Note that some libraries, such as recent versions of `libxml`, disable entity expansion by default, so unless you have explicitly enabled entity expansion, no further action needs to be taken.
+
+
+    ## Example
+    The following example uses the `Xerces-C++` XML parser to parse a string `data`. If that string is from an untrusted source, this code may be vulnerable to an XXE attack, since the parser is constructed in its default state with `setDisableDefaultEntityResolution` set to `false`:
+
+
+    ```cpp
+
+    XercesDOMParser *parser = new XercesDOMParser();
+
+    parser->parse(data); // BAD (parser is not correctly configured, may expand external entity references)
+
+    ```
+    To guard against XXE attacks, the `setDisableDefaultEntityResolution` option should be set to `true`.
+
+
+    ```cpp
+
+    XercesDOMParser *parser = new XercesDOMParser();
+
+    parser->setDisableDefaultEntityResolution(true);
+    parser->parse(data);
+
+    ```
+
+    ## References
+    * OWASP: [XML External Entity (XXE) Processing](https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Processing).
+    * OWASP: [XML External Entity Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html).
+    * Timothy Morgen: [XML Schema, DTD, and Entity Attacks](https://research.nccgroup.com/2014/05/19/xml-schema-dtd-and-entity-attacks-a-compendium-of-known-techniques/).
+    * Timur Yunusov, Alexey Osipov: [XML Out-Of-Band Data Retrieval](https://www.slideshare.net/qqlan/bh-ready-v4).
+    * Common Weakness Enumeration: [CWE-611](https://cwe.mitre.org/data/definitions/611.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-676/DangerousFunctionOverflow.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-676/DangerousFunctionOverflow.bqrs
+  metadata:
+    name: Use of dangerous function
+    description: Use of a standard library function that does not guard against buffer
+      overflow.
+    kind: problem
+    problem.severity: error
+    security-severity: 10.0
+    precision: very-high
+    id: cpp/dangerous-function-overflow
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-242
+             external/cwe/cwe-676
+  queryHelp: |
+    # Use of dangerous function
+    This rule finds calls to the `gets` function, which is dangerous and should not be used. See **Related rules** below for rules that identify other dangerous functions.
+
+    The `gets` function is one of the vulnerabilities exploited by the Internet Worm of 1988, one of the first computer worms to spread through the Internet. The `gets` function provides no way to limit the amount of data that is read and stored, so without prior knowledge of the input it is impossible to use it safely with any size of buffer.
+
+
+    ## Recommendation
+    Replace calls to `gets` with `fgets`, specifying the maximum length to copy. This will prevent the buffer overflow.
+
+
+    ## Example
+    The following example gets a string from standard input in two ways:
+
+
+    ```c
+    #define BUFFERSIZE (1024)
+
+    // BAD: using gets
+    void echo_bad() {
+        char buffer[BUFFERSIZE];
+        gets(buffer);
+        printf("Input was: '%s'\n", buffer);
+    }
+
+    // GOOD: using fgets
+    void echo_good() {
+        char buffer[BUFFERSIZE];
+        fgets(buffer, BUFFERSIZE, stdin);
+        printf("Input was: '%s'\n", buffer);
+    }
+
+    ```
+    The first version uses `gets` and will overflow if the input is longer than the buffer. The second version of the code uses `fgets` and will not overflow, because the amount of data written is limited by the length parameter.
+
+
+    ## Related rules
+    Other dangerous functions identified by CWE-676 ("Use of Potentially Dangerous Function") include `strcpy` and `strcat`. Use of these functions is highlighted by rules for the following CWEs:
+
+    * [CWE-120 Classic Buffer Overflow](https://cwe.mitre.org/data/definitions/120.html).
+    * [CWE-131 Incorrect Calculation of Buffer Size](https://cwe.mitre.org/data/definitions/131.html).
+
+    ## References
+    * Wikipedia: [Morris worm](http://en.wikipedia.org/wiki/Morris_worm).
+    * E. Spafford. *The Internet Worm Program: An Analysis*. Purdue Technical Report CSD-TR-823, [(online)](http://www.textfiles.com/100/tr823.txt), 1988.
+    * Common Weakness Enumeration: [CWE-242](https://cwe.mitre.org/data/definitions/242.html).
+    * Common Weakness Enumeration: [CWE-676](https://cwe.mitre.org/data/definitions/676.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-676/DangerousUseOfCin.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-676/DangerousUseOfCin.bqrs
+  metadata:
+    name: Dangerous use of 'cin'
+    description: |-
+      Using `cin` without specifying the length of the input
+                    may be dangerous.
+    kind: problem
+    problem.severity: error
+    security-severity: 10.0
+    precision: high
+    id: cpp/dangerous-cin
+    tags: |-
+      reliability
+             security
+             external/cwe/cwe-676
+  queryHelp: "# Dangerous use of 'cin'\nThis rule finds calls to `std::istream::operator>>`\
+    \ on `std::cin` without a preceding call to `cin.width`. Consuming input from\
+    \ `cin` without specifying the length of the input is dangerous due to the possibility\
+    \ of buffer overflows.\n\n\n## Recommendation\nAlways specify the length of any\
+    \ input expected from `cin` by calling `cin.width` before consuming the input.\n\
+    \n\n## Example\nThe following example shows both a dangerous and a safe way to\
+    \ consume input from `cin`.\n\n\n```cpp\n#define BUFFER_SIZE 20\n\nvoid bad()\n\
+    {\n\tchar buffer[BUFFER_SIZE];\n\t// BAD: Use of 'cin' without specifying the\
+    \ length of the input.\n\tcin >> buffer;\n\tbuffer[BUFFER_SIZE-1] = '\\0';\n}\n\
+    \nvoid good()\n{\n\tchar buffer[BUFFER_SIZE];\n\t// GOOD: Specifying the length\
+    \ of the input before using 'cin'.\n\tcin.width(BUFFER_SIZE);\n\tcin >> buffer;\n\
+    \tbuffer[BUFFER_SIZE-1] = '\\0';\n}\n\n```\n\n## References\n* Common Weakness\
+    \ Enumeration: [CWE-676](https://cwe.mitre.org/data/definitions/676.html).\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-704/WcharCharConversion.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-704/WcharCharConversion.bqrs
+  metadata:
+    name: Cast from char* to wchar_t*
+    description: |-
+      Casting a byte string to a wide-character string is likely
+                    to yield a string that is incorrectly terminated or aligned.
+                    This can lead to undefined behavior, including buffer overruns.
+    kind: problem
+    id: cpp/incorrect-string-type-conversion
+    problem.severity: error
+    security-severity: 8.8
+    precision: high
+    tags: |-
+      security
+             external/cwe/cwe-704
+  queryHelp: |
+    # Cast from char* to wchar_t*
+    This rule indicates a potentially incorrect cast from an byte string (`char *`) to a wide-character string (`wchar_t *`).
+
+    This cast might yield strings that are not correctly terminated; including potential buffer overruns when using such strings with some dangerous APIs.
+
+
+    ## Recommendation
+    Do not explicitly cast byte strings to wide-character strings.
+
+    For string literals, prepend the literal string with the letter "L" to indicate that the string is a wide-character string (`wchar_t *`).
+
+    For converting a byte literal to a wide-character string literal, you would need to use the appropriate conversion function for the platform you are using. Please see the references section for options according to your platform.
+
+
+    ## Example
+    In the following example, an byte string literal (`"a"`) is cast to a wide-character string.
+
+
+    ```cpp
+    wchar_t* pSrc;
+
+    pSrc = (wchar_t*)"a"; // casting a byte-string literal "a" to a wide-character string
+    ```
+    To fix this issue, prepend the literal with the letter "L" (`L"a"`) to define it as a wide-character string.
+
+
+    ## References
+    * General resources: [std::mbstowcs](https://en.cppreference.com/w/cpp/string/multibyte/mbstowcs)
+    * Microsoft specific resources: [Security Considerations: International Features](https://docs.microsoft.com/en-us/windows/desktop/Intl/security-considerations--international-features)
+    * Common Weakness Enumeration: [CWE-704](https://cwe.mitre.org/data/definitions/704.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-732/OpenCallMissingModeArgument.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-732/OpenCallMissingModeArgument.bqrs
+  metadata:
+    name: File opened with O_CREAT flag but without mode argument
+    description: Opening a file with the O_CREAT flag but without mode argument reads
+      arbitrary bytes from the stack.
+    kind: problem
+    problem.severity: error
+    security-severity: 7.8
+    precision: high
+    id: cpp/open-call-with-mode-argument
+    tags: |-
+      security
+             external/cwe/cwe-732
+  queryHelp: "# File opened with O_CREAT flag but without mode argument\nWhen opening\
+    \ a file with the `O_CREAT` or `O_TMPFILE` flag, the `mode` must be supplied.\
+    \ If the `mode` argument is omitted, some arbitrary bytes from the stack will\
+    \ be used as the file mode. This leaks some bits from the stack into the permissions\
+    \ of the file.\n\n\n## Recommendation\nThe `mode` must be supplied when `O_CREAT`\
+    \ or `O_TMPFILE` is specified.\n\n\n## Example\nThe first example opens a file\
+    \ with the `O_CREAT` flag without supplying the `mode` argument. In this case\
+    \ arbitrary bytes from the stack will be used as `mode` argument. The second example\
+    \ correctly supplies the `mode` argument and creates a file that is user readable\
+    \ and writable.\n\n\n```c\nint open_file_bad() {\n\t// BAD - this uses arbitrary\
+    \ bytes from the stack as mode argument\n        return open(FILE, O_CREAT)\n\
+    }\n\nint open_file_good() {\n\t// GOOD - the mode argument is supplied\n     \
+    \   return open(FILE, O_CREAT, S_IRUSR | S_IWUSR)\n}\n\n```\n"
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Security/CWE/CWE-732/UnsafeDaclSecurityDescriptor.ql
+  relativeBqrsPath: codeql/cpp-queries/Security/CWE/CWE-732/UnsafeDaclSecurityDescriptor.bqrs
+  metadata:
+    name: Setting a DACL to NULL in a SECURITY_DESCRIPTOR
+    description: |-
+      Setting a DACL to NULL in a SECURITY_DESCRIPTOR will result in an unprotected object.
+                    If the DACL that belongs to the security descriptor of an object is set to NULL, a null DACL is created.
+                    A null DACL grants full access to any user who requests it;
+                    normal security checking is not performed with respect to the object.
+    id: cpp/unsafe-dacl-security-descriptor
+    kind: problem
+    problem.severity: error
+    security-severity: 7.8
+    precision: high
+    tags: |-
+      security
+             external/cwe/cwe-732
+  queryHelp: |
+    # Setting a DACL to NULL in a SECURITY_DESCRIPTOR
+    This query indicates that a call is setting the DACL field in a `SECURITY_DESCRIPTOR` to null.
+
+    When using `SetSecurityDescriptorDacl` to set a discretionary access control (DACL), setting the `bDaclPresent` argument to `TRUE` indicates the presence of a DACL in the security description in the argument `pDacl`.
+
+    When the `pDacl` parameter does not point to a DACL (i.e. it is `NULL`) and the `bDaclPresent` flag is `TRUE`, a `NULL DACL` is specified.
+
+    A `NULL DACL` grants full access to any user who requests it; normal security checking is not performed with respect to the object.
+
+
+    ## Recommendation
+    You should not use a `NULL DACL` with an object because any user can change the DACL and owner of the security descriptor.
+
+
+    ## Example
+    In the following example, the call to `SetSecurityDescriptorDacl` is setting an unsafe DACL (`NULL DACL`) to the security descriptor.
+
+
+    ```cpp
+    SECURITY_DESCRIPTOR  pSD;
+    SECURITY_ATTRIBUTES  SA;
+
+    if (!InitializeSecurityDescriptor(&pSD, SECURITY_DESCRIPTOR_REVISION))
+    {
+        // error handling
+    }
+    if (!SetSecurityDescriptorDacl(&pSD,
+        TRUE,   // bDaclPresent - this value indicates the presence of a DACL in the security descriptor
+        NULL,   // pDacl - the pDacl parameter does not point to a DACL. All access will be allowed
+        FALSE))
+    {
+        // error handling
+    }
+
+    ```
+    To fix this issue, `pDacl` argument should be a pointer to an `ACL` structure that specifies the DACL for the security descriptor.
+
+
+    ## References
+    * [SetSecurityDescriptorDacl function (Microsoft documentation).](https://docs.microsoft.com/en-us/windows/desktop/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptordacl)
+    * Common Weakness Enumeration: [CWE-732](https://cwe.mitre.org/data/definitions/732.html).
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Summary/LinesOfCode.ql
+  relativeBqrsPath: codeql/cpp-queries/Summary/LinesOfCode.bqrs
+  metadata:
+    id: cpp/summary/lines-of-code
+    name: Total lines of C/C++ code in the database
+    description: "The total number of lines of C/C++ code across all files, including\
+      \ system headers, libraries, and auto-generated files. This is a useful metric\
+      \ of the size of a database. For all files that were seen during the build,\
+      \ this query counts the lines of code, excluding whitespace or comments."
+    kind: metric
+    tags: |-
+      summary
+             telemetry
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Summary/LinesOfUserCode.ql
+  relativeBqrsPath: codeql/cpp-queries/Summary/LinesOfUserCode.bqrs
+  metadata:
+    name: Total lines of user written C/C++ code in the database
+    description: "The total number of lines of C/C++ code from the source code directory,\
+      \ excluding auto-generated files. This query counts the lines of code, excluding\
+      \ whitespace or comments. Note: If external libraries are included in the codebase\
+      \ either in a checked-in virtual environment or as vendored code, that will\
+      \ currently be counted as user written code."
+    kind: metric
+    tags: |-
+      summary
+             lines-of-code
+             debug
+    id: cpp/summary/lines-of-user-code
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Telemetry/CompilerErrors.ql
+  relativeBqrsPath: codeql/cpp-queries/Telemetry/CompilerErrors.bqrs
+  metadata:
+    name: Compiler errors
+    description: "A count of all compiler errors, grouped by error text."
+    kind: metric
+    tags: summary telemetry
+    id: cpp/telemetry/compiler-errors
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Telemetry/DatabaseQuality.ql
+  relativeBqrsPath: codeql/cpp-queries/Telemetry/DatabaseQuality.bqrs
+  metadata:
+    name: Database quality
+    description: Metrics that indicate the quality of the database.
+    kind: metric
+    tags: summary telemetry
+    id: cpp/telemetry/database-quality
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Telemetry/ExtractionMetrics.ql
+  relativeBqrsPath: codeql/cpp-queries/Telemetry/ExtractionMetrics.bqrs
+  metadata:
+    name: Extraction metrics
+    description: Raw metrics relating to extraction.
+    kind: metric
+    tags: summary telemetry
+    id: cpp/telemetry/extraction-metrics
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Telemetry/MissingIncludes.ql
+  relativeBqrsPath: codeql/cpp-queries/Telemetry/MissingIncludes.bqrs
+  metadata:
+    name: Failed to include header file
+    description: "A count of all failed includes, grouped by filename."
+    kind: metric
+    tags: summary telemetry
+    id: cpp/telemetry/failed-includes
+ -
+  pack: codeql/cpp-queries#0
+  relativeQueryPath: Telemetry/SucceededIncludes.ql
+  relativeBqrsPath: codeql/cpp-queries/Telemetry/SucceededIncludes.bqrs
+  metadata:
+    name: Successfully included header files
+    description: "A count of all succeeded includes, grouped by filename."
+    kind: metric
+    tags: summary telemetry
+    id: cpp/telemetry/succeeded-includes
+extensionPacks: []
+packs:
+  codeql/util#2:
+    name: codeql/util
+    version: 2.0.21
+    isLibrary: true
+    isExtensionPack: false
+    localPath: file:///tmp/codeql-bundle/codeql/qlpacks/codeql/cpp-queries/1.5.3/.codeql/libraries/codeql/util/2.0.21/
+    localPackDefinitionFile: file:///tmp/codeql-bundle/codeql/qlpacks/codeql/cpp-queries/1.5.3/.codeql/libraries/codeql/util/2.0.21/qlpack.yml
+    headSha: e5fa4a6dcad7a0a34e90ca661888e17a2530422c
+    runDataExtensions: []
+  codeql/cpp-queries#0:
+    name: codeql/cpp-queries
+    version: 1.5.3
+    isLibrary: false
+    isExtensionPack: false
+    localPath: file:///tmp/codeql-bundle/codeql/qlpacks/codeql/cpp-queries/1.5.3/
+    localPackDefinitionFile: file:///tmp/codeql-bundle/codeql/qlpacks/codeql/cpp-queries/1.5.3/qlpack.yml
+    headSha: e5fa4a6dcad7a0a34e90ca661888e17a2530422c
+    runDataExtensions:
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/Boost.Asio.model.yml
+      index: 0
+      firstRowId: 0
+      rowCount: 6
+      locations:
+        lineNumbers: A=7+1*5
+        columnNumbers: A=9*6
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/Boost.Asio.model.yml
+      index: 1
+      firstRowId: 6
+      rowCount: 4
+      locations:
+        lineNumbers: A=17+1*3
+        columnNumbers: A=9*4
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/Boost.Asio.model.yml
+      index: 2
+      firstRowId: 10
+      rowCount: 1
+      locations:
+        lineNumbers: A=25
+        columnNumbers: A=9
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CA2CAEX.model.yml
+      index: 0
+      firstRowId: 11
+      rowCount: 13
+      locations:
+        lineNumbers: A=6+1*12
+        columnNumbers: A=9*13
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CAtlArray.model.yml
+      index: 0
+      firstRowId: 24
+      rowCount: 10
+      locations:
+        lineNumbers: A=6+1*9
+        columnNumbers: A=9*10
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CAtlFile.model.yml
+      index: 0
+      firstRowId: 34
+      rowCount: 4
+      locations:
+        lineNumbers: A=6+1*3
+        columnNumbers: A=9*4
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CAtlFileMappingBase.model.yml
+      index: 0
+      firstRowId: 38
+      rowCount: 9
+      locations:
+        lineNumbers: A=6+1*8
+        columnNumbers: A=9*9
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CAtlList.model.yml
+      index: 0
+      firstRowId: 47
+      rowCount: 10
+      locations:
+        lineNumbers: A=6+1*9
+        columnNumbers: A=9*10
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CAtlTemporaryFile.model.yml
+      index: 0
+      firstRowId: 57
+      rowCount: 3
+      locations:
+        lineNumbers: A=6+1*2
+        columnNumbers: A=9*3
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CComBSTR.model.yml
+      index: 0
+      firstRowId: 60
+      rowCount: 28
+      locations:
+        lineNumbers: A=6+1*27
+        columnNumbers: A=9*28
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CComSafeArray.model.yml
+      index: 0
+      firstRowId: 88
+      rowCount: 21
+      locations:
+        lineNumbers: A=6+1*20
+        columnNumbers: A=9*21
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CPathT.model.yml
+      index: 0
+      firstRowId: 109
+      rowCount: 15
+      locations:
+        lineNumbers: A=6+1*10+4+1*3
+        columnNumbers: A=9*15
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CRegKey.model.yml
+      index: 0
+      firstRowId: 124
+      rowCount: 15
+      locations:
+        lineNumbers: A=6+1*14
+        columnNumbers: A=9*15
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CSimpleArray.model.yml
+      index: 0
+      firstRowId: 139
+      rowCount: 7
+      locations:
+        lineNumbers: A=6+1*6
+        columnNumbers: A=9*7
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CSimpleMap.model.yml
+      index: 0
+      firstRowId: 146
+      rowCount: 8
+      locations:
+        lineNumbers: A=6+1*7
+        columnNumbers: A=9*8
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CSimpleStringT.model.yml
+      index: 0
+      firstRowId: 154
+      rowCount: 37
+      locations:
+        lineNumbers: A=6+1*36
+        columnNumbers: A=9*37
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CStrBufT.model.yml
+      index: 0
+      firstRowId: 191
+      rowCount: 3
+      locations:
+        lineNumbers: A=6+1*2
+        columnNumbers: A=9*3
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CStringData.model.yml
+      index: 0
+      firstRowId: 194
+      rowCount: 1
+      locations:
+        lineNumbers: A=6
+        columnNumbers: A=9
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CStringT.model.yml
+      index: 0
+      firstRowId: 195
+      rowCount: 113
+      locations:
+        lineNumbers: A=6+1*112
+        columnNumbers: A=9*113
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/CUrl.model.yml
+      index: 0
+      firstRowId: 308
+      rowCount: 17
+      locations:
+        lineNumbers: A=6+1*16
+        columnNumbers: A=9*17
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/ComPtr.model.yml
+      index: 0
+      firstRowId: 325
+      rowCount: 26
+      locations:
+        lineNumbers: A=6+1*25
+        columnNumbers: A=9*26
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/ComPtrRef.model.yml
+      index: 0
+      firstRowId: 351
+      rowCount: 5
+      locations:
+        lineNumbers: A=6+1+2*2+1
+        columnNumbers: A=9*5
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/Oracle.oci.model.yml
+      index: 0
+      firstRowId: 356
+      rowCount: 2
+      locations:
+        lineNumbers: A=7+1
+        columnNumbers: A=9*2
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/Windows.model.yml
+      index: 0
+      firstRowId: 358
+      rowCount: 16
+      locations:
+        lineNumbers: A=8+1*5+2+1+2+1*6+2
+        columnNumbers: A=9*16
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/Windows.model.yml
+      index: 1
+      firstRowId: 374
+      rowCount: 14
+      locations:
+        lineNumbers: A=32+1+2*2+1*2+2+1*6+2
+        columnNumbers: A=9*14
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/allocation/Bsd.allocation.model.yml
+      index: 0
+      firstRowId: 388
+      rowCount: 2
+      locations:
+        lineNumbers: A=6+1
+        columnNumbers: A=9*2
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/allocation/Glibc.allocation.model.yml
+      index: 0
+      firstRowId: 390
+      rowCount: 2
+      locations:
+        lineNumbers: A=6+1
+        columnNumbers: A=9*2
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/allocation/OpenSSL.allocation.model.yml
+      index: 0
+      firstRowId: 392
+      rowCount: 4
+      locations:
+        lineNumbers: A=6+1*3
+        columnNumbers: A=9*4
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/allocation/Std.allocation.model.yml
+      index: 0
+      firstRowId: 396
+      rowCount: 10
+      locations:
+        lineNumbers: A=6+1*9
+        columnNumbers: A=9*10
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/allocation/Windows.allocation.model.yml
+      index: 0
+      firstRowId: 406
+      rowCount: 24
+      locations:
+        lineNumbers: A=6+1*23
+        columnNumbers: A=9*24
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/bsl.array.model.yml
+      index: 0
+      firstRowId: 430
+      rowCount: 9
+      locations:
+        lineNumbers: A=6+1*8
+        columnNumbers: A=9*9
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/bsl.deque.model.yml
+      index: 0
+      firstRowId: 439
+      rowCount: 69
+      locations:
+        lineNumbers: A=6+1*68
+        columnNumbers: A=9*69
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/bsl.forward_list.model.yml
+      index: 0
+      firstRowId: 508
+      rowCount: 52
+      locations:
+        lineNumbers: A=6+1*51
+        columnNumbers: A=9*52
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/bsl.list.model.yml
+      index: 0
+      firstRowId: 560
+      rowCount: 67
+      locations:
+        lineNumbers: A=6+1*66
+        columnNumbers: A=9*67
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/bsl.vector.model.yml
+      index: 0
+      firstRowId: 627
+      rowCount: 56
+      locations:
+        lineNumbers: A=6+1*55
+        columnNumbers: A=9*56
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/deallocation/Bsd.deallocation.model.yml
+      index: 0
+      firstRowId: 683
+      rowCount: 3
+      locations:
+        lineNumbers: A=6+1*2
+        columnNumbers: A=9*3
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/deallocation/Std.deallocation.model.yml
+      index: 0
+      firstRowId: 686
+      rowCount: 37
+      locations:
+        lineNumbers: A=6+1*36
+        columnNumbers: A=9*37
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/deallocation/Windows.deallocation.model.yml
+      index: 0
+      firstRowId: 723
+      rowCount: 36
+      locations:
+        lineNumbers: A=6+1*35
+        columnNumbers: A=9*36
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/brotli/brotli.model.yml
+      index: 0
+      firstRowId: 759
+      rowCount: 474
+      locations:
+        lineNumbers: A=7+1*473
+        columnNumbers: A=9*474
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/curl/curl.model.yml
+      index: 0
+      firstRowId: 1233
+      rowCount: 953
+      locations:
+        lineNumbers: A=7+1*952
+        columnNumbers: A=9*953
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/glibc/glibc.model.yml
+      index: 0
+      firstRowId: 2186
+      rowCount: 5488
+      locations:
+        lineNumbers: A=7+1*5487
+        columnNumbers: A=9*5488
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/libidn2/libidn2.model.yml
+      index: 0
+      firstRowId: 7674
+      rowCount: 142
+      locations:
+        lineNumbers: A=7+1*141
+        columnNumbers: A=9*142
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/libssh2/libssh2.model.yml
+      index: 0
+      firstRowId: 7816
+      rowCount: 511
+      locations:
+        lineNumbers: A=7+1*510
+        columnNumbers: A=9*511
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/libuv/libuv.model.yml
+      index: 0
+      firstRowId: 8327
+      rowCount: 640
+      locations:
+        lineNumbers: A=7+1*639
+        columnNumbers: A=9*640
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/nghttp2/nghttp2.model.yml
+      index: 0
+      firstRowId: 8967
+      rowCount: 565
+      locations:
+        lineNumbers: A=7+1*564
+        columnNumbers: A=9*565
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/openssl/openssl.model.yml
+      index: 0
+      firstRowId: 9532
+      rowCount: 21578
+      locations:
+        lineNumbers: A=7+1*21577
+        columnNumbers: A=9*21578
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/sqlite/sqlite.model.yml
+      index: 0
+      firstRowId: 31110
+      rowCount: 942
+      locations:
+        lineNumbers: A=7+1*941
+        columnNumbers: A=9*942
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/generated/zlib/zlib.model.yml
+      index: 0
+      firstRowId: 32052
+      rowCount: 162
+      locations:
+        lineNumbers: A=7+1*161
+        columnNumbers: A=9*162
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/oleauto.model.yml
+      index: 0
+      firstRowId: 32214
+      rowCount: 3
+      locations:
+        lineNumbers: A=6+1*2
+        columnNumbers: A=9*3
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/pthread.model.yml
+      index: 0
+      firstRowId: 32217
+      rowCount: 1
+      locations:
+        lineNumbers: A=6
+        columnNumbers: A=9
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.array.model.yml
+      index: 0
+      firstRowId: 32218
+      rowCount: 9
+      locations:
+        lineNumbers: A=6+1*8
+        columnNumbers: A=9*9
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.deque.model.yml
+      index: 0
+      firstRowId: 32227
+      rowCount: 69
+      locations:
+        lineNumbers: A=6+1*68
+        columnNumbers: A=9*69
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.format.model.yml
+      index: 0
+      firstRowId: 32296
+      rowCount: 9
+      locations:
+        lineNumbers: A=6+1*8
+        columnNumbers: A=9*9
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.forward_list.model.yml
+      index: 0
+      firstRowId: 32305
+      rowCount: 52
+      locations:
+        lineNumbers: A=6+1*51
+        columnNumbers: A=9*52
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.iterator.model.yml
+      index: 0
+      firstRowId: 32357
+      rowCount: 6
+      locations:
+        lineNumbers: A=6+1*5
+        columnNumbers: A=9*6
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.list.model.yml
+      index: 0
+      firstRowId: 32363
+      rowCount: 67
+      locations:
+        lineNumbers: A=6+1*66
+        columnNumbers: A=9*67
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.thread.model.yml
+      index: 0
+      firstRowId: 32430
+      rowCount: 5
+      locations:
+        lineNumbers: A=6+1*4
+        columnNumbers: A=9*5
+     -
+      pack: codeql/cpp-all#1
+      relativePath: ext/std.vector.model.yml
+      index: 0
+      firstRowId: 32435
+      rowCount: 56
+      locations:
+        lineNumbers: A=6+1*55
+        columnNumbers: A=9*56
+  codeql/cpp-all#1:
+    name: codeql/cpp-all
+    version: 6.0.1
+    isLibrary: true
+    isExtensionPack: false
+    localPath: file:///tmp/codeql-bundle/codeql/qlpacks/codeql/cpp-queries/1.5.3/.codeql/libraries/codeql/cpp-all/6.0.1/
+    localPackDefinitionFile: file:///tmp/codeql-bundle/codeql/qlpacks/codeql/cpp-queries/1.5.3/.codeql/libraries/codeql/cpp-all/6.0.1/qlpack.yml
+    headSha: e5fa4a6dcad7a0a34e90ca661888e17a2530422c
+    runDataExtensions: []

@@ -17,7 +17,6 @@
 #ifndef FGCOM_AUDIO_H
 #define FGCOM_AUDIO_H
 #include "mumble/PluginComponents_v_1_0_x.h"
-#include "frequency_offset.h"
 
 /*
  * Add static noise to the signal
