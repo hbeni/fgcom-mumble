@@ -1,0 +1,1 @@
+This is {{AIRPORT_CODE}} information {{ATIS_LETTER}}. Emergency conditions in effect. Wind {{WIND_DIRECTION}} at {{WIND_SPEED}} knots. Visibility {{VISIBILITY}} miles. {{WEATHER_CONDITIONS}}. Temperature {{TEMPERATURE}} degrees Celsius. Altimeter {{ALTIMETER}}. Emergency services standing by. Advise on initial contact you have information {{ATIS_LETTER}}.

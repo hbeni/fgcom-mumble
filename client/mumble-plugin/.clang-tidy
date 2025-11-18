@@ -1,0 +1,36 @@
+---
+# FGCom-Mumble Client Plugin Clang-Tidy Configuration
+# Focused on finding real bugs, not style violations
+
+Checks: >
+  -*,
+  # Critical bug detection
+  bugprone-*,
+  clang-analyzer-*,
+  performance-*,
+  # Security issues
+  cert-*,
+  # Exclude noisy checks
+  -bugprone-easily-swappable-parameters,
+  -bugprone-narrowing-conversions,
+  -bugprone-exception-escape,
+  -performance-avoid-endl,
+  -performance-unnecessary-copy-initialization
+
+# CRITICAL: Only analyze YOUR source code, not headers
+HeaderFilterRegex: '.*/fgcom-mumble/client/mumble-plugin/(lib|src)/[^/]+\.(cpp|c)$'
+
+# Don't analyze system headers or third-party code
+SystemHeaders: false
+
+# Exclude third-party and generated code
+# ExcludeHeaderFilterRegex: '.*/(mumble|external|third[_-]party|boost|openssl|json|httplib|DspFilters|test|generated|build|cmake)/.*'  # This key is not supported in this clang-tidy version
+
+# Focus on actual bugs, not style
+WarningsAsErrors: ''
+
+# Don't analyze temporary destructors (reduces noise)
+# AnalyzeTemporaryDtors: false  # This key is not supported in this clang-tidy version
+
+# Suppress warnings from non-user code
+# SuppressWarnings: false  # This key is not supported in this clang-tidy version

@@ -61,4 +61,91 @@ fgcom-mumble_LOCAL.ini
 server/statuspage/config.ini
 *.stats
 *.db
+
+# Maven build directories
 /client/radioGUI/target/
+/client/radioGUI/lib/jsimconnect/target/
+
+# Java compiled files
+*.class
+
+# Maven dependencies (if installed locally)
+.m2/
+test/fuzzing_tests/mull/
+test/rapidcheck_tests/lib/rapidcheck/
+
+# Test logs and results
+test/test-logs/
+test/*/test_results/
+test/*/coverage/
+test/*/sanitizer_results/
+test/*/test_output.log
+**/test_results/
+**/coverage/
+**/coverage_html*/
+**/coverage_new/
+**/*.info
+**/*.gcov
+**/*.gcno
+**/*.gcda
+**/*.func*.html
+**/*.gcov.html
+**/index-sort*.html
+**/cmd_line
+
+# Security and Environment Files
+.env
+.env.local
+.env.production
+.env.staging
+*.key
+*.pem
+*.crt
+*.csr
+secrets/
+credentials/
+config/secrets/
+
+# Fuzzing artifacts
+test/fuzzing_outputs/
+test/fuzzing_inputs/
+#corpus/
+afl_output/
+mull_output/
+
+# Build artifacts
+build/
+**/build/
+cmake-build-*/
+*.cmake
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+results/
+
+# Node.js dependencies
+node_modules/
+**/node_modules/
+package-lock.json
+yarn.lock
+
+# Test executables and temporary files
+**/test
+**/test-*
+*.test

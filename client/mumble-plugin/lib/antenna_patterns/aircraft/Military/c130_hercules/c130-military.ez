@@ -1,0 +1,145 @@
+EZNEC ver. 7.0
+
+; Lockheed C-130 "Hercules" NATO Transport Aircraft - MILITARY CONFIGURATION
+; HF + Military VHF + Military UHF Communications
+; Standard NATO tactical transport with full military radio suite
+; Cruising altitude 7,600m - free space conditions
+
+; GEOMETRY
+; C-130 fuselage (29.8m length, 3.76m diameter)
+W001 -14.9  0.0   0.0   14.9  0.0   0.0   1.88  60
+W002 -14.9  1.2   0.0   14.9  1.2   0.0   1.5   60
+W003 -14.9 -1.2   0.0   14.9 -1.2   0.0   1.5   60
+W004 -14.9  0.0   1.2   14.9  0.0   1.2   1.5   60
+W005 -14.9  0.0  -1.2   14.9  0.0  -1.2   1.5   60
+
+; Fuselage cross-sections
+W006 -12.0 -1.8   0.0  -12.0  1.8   0.0   0.06  7
+W007 -8.0  -1.8   0.0  -8.0   1.8   0.0   0.06  7
+W008 -4.0  -1.8   0.0  -4.0   1.8   0.0   0.06  7
+W009   0.0  -1.8   0.0   0.0   1.8   0.0   0.06  7
+W010   4.0  -1.8   0.0   4.0   1.8   0.0   0.06  7
+W011   8.0  -1.8   0.0   8.0   1.8   0.0   0.06  7
+W012 12.0  -1.8   0.0  12.0   1.8   0.0   0.06  7
+
+; High wing (40.4m wingspan)
+W013 -3.0  -1.8   2.7  -3.0 -20.2   3.2   1.5   37
+W014 -1.5  -1.8   2.7  -1.5 -20.2   3.2   1.2   37
+W015 -3.0   1.8   2.7  -3.0  20.2   3.2   1.5   37
+W016 -1.5   1.8   2.7  -1.5  20.2   3.2   1.2   37
+
+; Wing connections
+W017 -3.0  -1.8   2.7  -1.5  -1.8   2.7   0.8    3
+W018 -3.0   1.8   2.7  -1.5   1.8   2.7   0.8    3
+W019 -3.0 -20.2   3.2  -1.5 -20.2   3.2   0.6    3
+W020 -3.0  20.2   3.2  -1.5  20.2   3.2   0.6    3
+
+; Engine nacelles
+W021 -4.5  -6.0   1.8  -4.5  -6.0   2.5   0.3    4
+W022 -4.5  -2.0   1.8  -4.5  -2.0   2.5   0.3    4
+W023 -4.5   2.0   1.8  -4.5   2.0   2.5   0.3    4
+W024 -4.5   6.0   1.8  -4.5   6.0   2.5   0.3    4
+
+; Vertical stabilizer
+W025 11.0   0.0   0.0  11.0   0.0   11.8  0.4   24
+W026 13.0   0.0   0.0  13.0   0.0   11.8  0.35  24
+W027 11.0   0.0  11.8  13.0   0.0   11.8  0.3    4
+
+; Horizontal stabilizers
+W028 11.5  -5.3   3.0  11.5   5.3   3.0   0.4   21
+W029 12.5  -5.3   3.0  12.5   5.3   3.0   0.35  21
+W030 11.5  -5.3   3.0  12.5  -5.3   3.0   0.25   4
+W031 11.5   5.3   3.0  12.5   5.3   3.0   0.25   4
+
+; MILITARY ANTENNA SYSTEM
+; HF trailing wire antenna (7.15 MHz - tactical HF)
+W032   6.0   0.0  -0.4  28.0   0.0  -6.0   0.003  22
+
+; Military VHF antenna (40.0 MHz - NATO tactical VHF)
+; Blade antenna on vertical stabilizer (common military position)
+W033  12.0   0.0   8.0  12.0   0.0  10.5   0.008  12
+
+; Military UHF antenna (243.0 MHz - emergency/guard frequency)
+; Blade antenna on fuselage top (emergency communications)
+W034   0.0   0.0   2.5   0.0   0.0   3.2   0.006   8
+
+; Wing-tip coupling elements (small)
+W035 -2.25 -19.8  3.2  -2.25 -20.2  3.5   0.004   4
+W036 -2.25  19.8  3.2  -2.25  20.2  3.5   0.004   4
+
+; SOURCES - Feed all military antennas
+SY SRC  W032  1  1  ; HF trailing wire (tactical HF)
+SY SRC  W033  6  1  ; Military VHF (NATO tactical)
+SY SRC  W034  4  1  ; Military UHF (emergency/guard)
+
+; GROUND - Free space at altitude
+GD -1 0 0 0 0 0
+
+; LOADS
+; Aircraft aluminum structure
+LD 5 1 31 0 3.7E+07 0    ; Aluminum structure
+LD 5 35 36 0 3.7E+07 0   ; Wing tip elements
+; Military antenna matching networks
+LD 4 32 32 0 50.0 0.020  ; HF: 50Ω + 20mH matching network
+LD 4 33 33 0 50.0 0.0    ; VHF: 50Ω military standard
+LD 4 34 34 0 50.0 0.0    ; UHF: 50Ω military standard
+
+; FREQUENCY - Military VHF band (40.0 MHz)
+FR 0 1 0 0 40.0 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; C-130 MILITARY CONFIGURATION
+; Full military radio suite for NATO tactical operations
+;
+; Military Antenna System:
+; 1. HF trailing wire (W032): 22m wire for 7.15 MHz tactical HF
+; 2. Military VHF (W033): 2.5m blade on vertical stabilizer for 40.0 MHz
+; 3. Military UHF (W034): 0.7m blade on fuselage for 243.0 MHz
+;
+; Military VHF Antenna (W033) Details:
+; - Position: Vertical stabilizer (12.0m, 0.0m, 8.0m to 10.5m)
+; - Type: 2.5m blade antenna (quarter-wave at 40 MHz)
+; - Frequency: 30-88 MHz NATO military VHF band
+; - Feed: Center-fed monopole (segment 6 of 12)
+; - Mounting: Vertical stabilizer (standard military position)
+; - Purpose: Tactical ground-to-air and air-to-air communication
+;
+; Military UHF Antenna (W034) Details:
+; - Position: Fuselage top (0.0m, 0.0m, 2.5m to 3.2m)
+; - Type: 0.7m blade antenna (quarter-wave at 243 MHz)
+; - Frequency: 243.0 MHz (emergency/guard frequency)
+; - Feed: Center-fed monopole (segment 4 of 8)
+; - Mounting: Fuselage top (emergency communications position)
+; - Purpose: Emergency/guard frequency, search and rescue
+;
+; Military Communication Frequencies:
+; - HF (7.15 MHz): Long-range tactical communication
+; - VHF (40.0 MHz): NATO tactical VHF band (30-88 MHz)
+; - UHF (243.0 MHz): Emergency/guard frequency
+;
+; Expected Military Performance:
+; - HF: 2-8 dBi gain, 300-800 km range
+; - VHF: 0-4 dBi gain, 50-150 km range
+; - UHF: 0-3 dBi gain, 20-80 km range
+; - All antennas: <2:1 VSWR with proper matching
+;
+; NATO Military Standards:
+; - VHF: 30-88 MHz tactical band coverage
+; - UHF: 225-400 MHz military UHF band
+; - Emergency: 243.0 MHz international guard frequency
+; - Power: 25-100W typical military radio power
+;
+; C-130 Military Operations:
+; - Tactical transport and cargo operations
+; - Air-to-ground communication (VHF)
+; - Long-range strategic communication (HF)
+; - Emergency and search/rescue operations (UHF)
+; - Multi-role military aircraft with full radio suite
+;
+; This configuration represents a realistic C-130
+; with complete military communication capability
+; for NATO tactical transport operations.
+EN

@@ -1,0 +1,76 @@
+{
+  "weather_api_key": "YOUR_AVIATION_WEATHER_API_KEY_HERE",
+  "airports": [
+    "KJFK",
+    "KLAX", 
+    "ENGM",
+    "EGLL",
+    "KORD",
+    "KDFW",
+    "KATL",
+    "KPHX",
+    "KLAS",
+    "KMIA"
+  ],
+  "thresholds": {
+    "wind_direction_change_deg": 10,
+    "wind_speed_change_kts": 5,
+    "gust_threshold_kts": 10,
+    "temperature_change_celsius": 2.0,
+    "pressure_change_hpa": 0.68,
+    "visibility_change_km": 1.0,
+    "cloud_cover_change_percent": 10
+  },
+  "update_interval_minutes": 60,
+  "max_age_hours": 12,
+  "output_directory": "atis_recordings",
+  "tts_config": {
+    "voice": "en_US-lessac-medium",
+    "speed": 1.0,
+    "pitch": 1.0
+  },
+  "weather_sources": {
+    "primary": "aviationweather.gov",
+    "fallback": "openweathermap.org",
+    "backup": "weather.gov"
+  },
+  "airport_elevations": {
+    "KJFK": 4.3,
+    "KLAX": 38.4,
+    "ENGM": 207.0,
+    "EGLL": 25.0,
+    "KORD": 201.0,
+    "KDFW": 148.0,
+    "KATL": 312.0,
+    "KPHX": 346.0,
+    "KLAS": 664.0,
+    "KMIA": 2.0
+  },
+  "runway_configurations": {
+    "KJFK": {
+      "primary": "04L/22R",
+      "secondary": "04R/22L",
+      "crosswind_limit": 15
+    },
+    "KLAX": {
+      "primary": "06L/24R",
+      "secondary": "06R/24L", 
+      "crosswind_limit": 15
+    },
+    "ENGM": {
+      "primary": "01L/19R",
+      "secondary": "01R/19L",
+      "crosswind_limit": 20
+    },
+    "EGLL": {
+      "primary": "09L/27R",
+      "secondary": "09R/27L",
+      "crosswind_limit": 15
+    }
+  },
+  "notification_settings": {
+    "email_notifications": false,
+    "webhook_url": "",
+    "log_level": "INFO"
+  }
+}

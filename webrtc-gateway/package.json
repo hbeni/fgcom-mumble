@@ -1,0 +1,59 @@
+{
+  "name": "fgcom-mumble-webrtc-gateway",
+  "version": "1.0.0",
+  "description": "WebRTC Gateway Server for FGCom-mumble - Enables web browser clients to connect to FGCom-mumble servers",
+  "main": "server/gateway.js",
+  "scripts": {
+    "start": "node server/gateway.js",
+    "dev": "nodemon server/gateway.js",
+    "test": "jest",
+    "build": "npm run build:client",
+    "build:client": "webpack --mode production",
+    "install-deps": "npm install && npm run build:client"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4",
+    "node-opus": "^0.3.3",
+    "ws": "^8.14.2",
+    "express-session": "^1.17.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "morgan": "^1.10.0",
+    "uuid": "^9.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "node-cron": "^3.0.3",
+    "dgram": "^1.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "css-loader": "^6.8.1",
+    "style-loader": "^3.3.3",
+    "file-loader": "^6.2.0"
+  },
+  "keywords": [
+    "webrtc",
+    "mumble",
+    "fgcom",
+    "radio",
+    "simulation",
+    "aviation",
+    "flightgear"
+  ],
+  "author": "FGCom-mumble Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Supermagnum/fgcom-mumble.git"
+  },
+  "homepage": "https://github.com/Supermagnum/fgcom-mumble#webrtc-browser-client-support"
+}

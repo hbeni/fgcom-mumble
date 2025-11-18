@@ -1,0 +1,683 @@
+{
+  "description": "Comprehensive amateur radio band plan for FGCom-mumble with international allocations",
+  "version": "2.0",
+  "itu_regions": {
+    "1": "Europe, Africa, Middle East",
+    "2": "Americas", 
+    "3": "Asia, Pacific"
+  },
+  "license_classes": {
+    "UK": ["Full", "Intermediate", "Foundation"],
+    "Germany": ["Class A", "Class E"],
+    "USA": ["Extra", "Advanced", "General", "Technician"],
+    "Canada": ["Advanced", "Basic"],
+    "Australia": ["Advanced", "Standard", "Foundation"],
+    "Norway": ["Special"],
+    "Switzerland": ["HB9"],
+    "Belgium": ["HAREC"],
+    "Italy": ["Class A", "Class B", "Class C"],
+    "New Zealand": ["General", "Limited"],
+    "Japan": ["Class 1", "Class 2", "Class 3", "Class 4"]
+  },
+  "bands": [
+    {
+      "name": "2200m",
+      "start_freq": 135.7,
+      "end_freq": 137.8,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 135.7,
+          "end_freq": 137.8,
+          "channel_spacing": 100.0,
+          "power_limit": 1500.0,
+          "notes": "1500W TX to antenna, 1W EIRP max, LF band"
+        },
+        {
+          "name": "Digital",
+          "start_freq": 135.7,
+          "end_freq": 137.8,
+          "channel_spacing": 100.0,
+          "power_limit": 1500.0,
+          "notes": "1500W TX to antenna, 1W EIRP max, LF band"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 1500.0,
+      "antenna_height_limit": 200.0,
+      "notes": "LF band - very long wavelength, excellent for local contacts"
+    },
+    {
+      "name": "630m",
+      "start_freq": 472.0,
+      "end_freq": 479.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 472.0,
+          "end_freq": 479.0,
+          "channel_spacing": 100.0,
+          "power_limit": 1500.0,
+          "notes": "1500W TX to antenna, 5W EIRP max, MF band"
+        },
+        {
+          "name": "Digital",
+          "start_freq": 472.0,
+          "end_freq": 479.0,
+          "channel_spacing": 100.0,
+          "power_limit": 1500.0,
+          "notes": "1500W TX to antenna, 5W EIRP max, MF band"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 1500.0,
+      "antenna_height_limit": 200.0,
+      "notes": "MF band - medium frequency, good for regional contacts"
+    },
+    {
+      "name": "160m",
+      "start_freq": 1800.0,
+      "end_freq": 2000.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 1800.0,
+          "end_freq": 1838.0,
+          "channel_spacing": 500.0,
+          "power_limit": 1000.0,
+          "notes": "CW only below 1838 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 1838.0,
+          "end_freq": 2000.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 1000.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 1000.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Top band - excellent for local and regional contacts, especially at night",
+      "regional_variations": {
+        "1": {
+          "UK": {
+            "Full": {"power_limit": 1000.0, "notes": "CW only below 1838 kHz"},
+            "Intermediate": {"power_limit": 50.0, "notes": "CW only below 1838 kHz"},
+            "Foundation": {"power_limit": 10.0, "notes": "CW only below 1838 kHz"}
+          },
+          "Germany": {
+            "Class A": {"power_limit": 750.0, "notes": "CW only below 1838 kHz"},
+            "Class E": {"power_limit": 75.0, "notes": "CW only below 1838 kHz"}
+          },
+          "Norway": {
+            "Special": {"power_limit": 10.0, "notes": "1850-2000 kHz, 10W TX to antenna"}
+          }
+        },
+        "2": {
+          "USA": {
+            "Extra": {"power_limit": 1500.0, "notes": "CW only below 1840 kHz"},
+            "Advanced": {"power_limit": 1500.0, "notes": "CW only below 1840 kHz"},
+            "General": {"power_limit": 1500.0, "notes": "CW only below 1840 kHz"},
+            "Technician": {"power_limit": 200.0, "notes": "CW only below 1840 kHz, limited sub-bands"}
+          },
+          "Canada": {
+            "Advanced": {"power_limit": 2250.0, "notes": "CW only below 1840 kHz"},
+            "Basic": {"power_limit": 1000.0, "notes": "CW only below 1840 kHz"}
+          }
+        }
+      }
+    },
+    {
+      "name": "80m",
+      "start_freq": 3500.0,
+      "end_freq": 4000.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 3500.0,
+          "end_freq": 3580.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 3580 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 3580.0,
+          "end_freq": 4000.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Popular for regional contacts, good day and night"
+    },
+    {
+      "name": "60m",
+      "start_freq": 5351.5,
+      "end_freq": 5366.5,
+      "modes": [
+        {
+          "name": "USB",
+          "start_freq": 5351.5,
+          "end_freq": 5366.5,
+          "channel_spacing": 3000.0,
+          "power_limit": 100.0,
+          "notes": "USB only, 5 specific channels"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 100.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Limited to 5 specific channels, USB only, lower power limit"
+    },
+    {
+      "name": "40m",
+      "start_freq": 7000.0,
+      "end_freq": 7300.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 7000.0,
+          "end_freq": 7040.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 7040 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 7040.0,
+          "end_freq": 7300.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Excellent for worldwide contacts, good day and night"
+    },
+    {
+      "name": "30m",
+      "start_freq": 10100.0,
+      "end_freq": 10150.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 10100.0,
+          "end_freq": 10150.0,
+          "channel_spacing": 500.0,
+          "power_limit": 200.0,
+          "notes": "CW and digital modes only, no voice"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 200.0,
+      "antenna_height_limit": 200.0,
+      "notes": "CW and digital modes only, no voice transmissions"
+    },
+    {
+      "name": "20m",
+      "start_freq": 14000.0,
+      "end_freq": 14350.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 14000.0,
+          "end_freq": 14070.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 14070 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 14070.0,
+          "end_freq": 14350.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Most popular HF band, excellent for worldwide contacts"
+    },
+    {
+      "name": "17m",
+      "start_freq": 18068.0,
+      "end_freq": 18168.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 18068.0,
+          "end_freq": 18110.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 18110 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 18110.0,
+          "end_freq": 18168.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "WARC band, good for worldwide contacts"
+    },
+    {
+      "name": "15m",
+      "start_freq": 21000.0,
+      "end_freq": 21450.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 21000.0,
+          "end_freq": 21070.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 21070 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 21070.0,
+          "end_freq": 21450.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Good for worldwide contacts during daylight hours"
+    },
+    {
+      "name": "12m",
+      "start_freq": 24890.0,
+      "end_freq": 24990.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 24890.0,
+          "end_freq": 24930.0,
+          "channel_spacing": 500.0,
+          "power_limit": 400.0,
+          "notes": "CW only below 24930 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 24930.0,
+          "end_freq": 24990.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 400.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 400.0,
+      "antenna_height_limit": 200.0,
+      "notes": "WARC band, good for worldwide contacts"
+    },
+    {
+      "name": "10m",
+      "start_freq": 28000.0,
+      "end_freq": 29700.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 28000.0,
+          "end_freq": 28070.0,
+          "channel_spacing": 500.0,
+          "power_limit": 1500.0,
+          "notes": "CW only below 28070 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 28070.0,
+          "end_freq": 29700.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 1500.0,
+          "notes": "SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 1500.0,
+      "antenna_height_limit": 200.0,
+      "notes": "Excellent for worldwide contacts during solar maximum"
+    },
+    {
+      "name": "4m",
+      "start_freq": 69900.0,
+      "end_freq": 70500.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 69900.0,
+          "end_freq": 70500.0,
+          "channel_spacing": 500.0,
+          "power_limit": 100.0,
+          "notes": "VHF band, normal usage 100W"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 69900.0,
+          "end_freq": 70500.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 100.0,
+          "notes": "VHF band, normal usage 100W"
+        },
+        {
+          "name": "EME",
+          "start_freq": 69900.0,
+          "end_freq": 70500.0,
+          "channel_spacing": 1000.0,
+          "power_limit": 1000.0,
+          "notes": "EME operations, 1000W max"
+        },
+        {
+          "name": "MS",
+          "start_freq": 69900.0,
+          "end_freq": 70500.0,
+          "channel_spacing": 1000.0,
+          "power_limit": 1000.0,
+          "notes": "Meteor scatter operations, 1000W max"
+        }
+      ],
+      "regions": [1],
+      "power_limit": 100.0,
+      "antenna_height_limit": 200.0,
+      "notes": "4m band - Norwegian allocation, good for regional contacts",
+      "regional_variations": {
+        "1": {
+          "Norway": {
+            "Special": {
+              "normal_usage": {"power_limit": 100.0, "notes": "Normal usage 100W"},
+              "eme_ms": {"power_limit": 1000.0, "notes": "EME and MS operations 1000W"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "6m",
+      "start_freq": 50000.0,
+      "end_freq": 54000.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 50000.0,
+          "end_freq": 50100.0,
+          "channel_spacing": 500.0,
+          "power_limit": 1500.0,
+          "notes": "VHF band, CW only below 50100 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 50100.0,
+          "end_freq": 54000.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 1500.0,
+          "notes": "VHF band, SSB and digital modes"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 1500.0,
+      "antenna_height_limit": 200.0,
+      "notes": "VHF band - good for regional contacts, excellent for sporadic E propagation"
+    },
+    {
+      "name": "2m",
+      "start_freq": 144000.0,
+      "end_freq": 146000.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 144000.0,
+          "end_freq": 144200.0,
+          "channel_spacing": 500.0,
+          "power_limit": 1500.0,
+          "notes": "VHF band, CW only below 144200 kHz"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 144200.0,
+          "end_freq": 146000.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 1500.0,
+          "notes": "VHF band, SSB and digital modes"
+        },
+        {
+          "name": "EME",
+          "start_freq": 144000.0,
+          "end_freq": 146000.0,
+          "channel_spacing": 1000.0,
+          "power_limit": 1000.0,
+          "notes": "EME operations, directional antenna required, logging mandatory"
+        },
+        {
+          "name": "MS",
+          "start_freq": 144000.0,
+          "end_freq": 146000.0,
+          "channel_spacing": 1000.0,
+          "power_limit": 1000.0,
+          "notes": "Meteor scatter operations, directional antenna required, logging mandatory"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 1500.0,
+      "antenna_height_limit": 200.0,
+      "notes": "VHF band - excellent for local and regional contacts, good for weak signal work",
+      "regional_variations": {
+        "1": {
+          "Norway": {
+            "Special": {
+              "normal_usage": {"power_limit": 300.0, "notes": "Normal usage 300W"},
+              "eme_ms": {"power_limit": 1000.0, "notes": "EME and MS operations 1000W"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "70cm",
+      "start_freq": 432000.0,
+      "end_freq": 438000.0,
+      "modes": [
+        {
+          "name": "CW",
+          "start_freq": 432000.0,
+          "end_freq": 438000.0,
+          "channel_spacing": 500.0,
+          "power_limit": 1500.0,
+          "notes": "UHF band, CW and digital modes"
+        },
+        {
+          "name": "SSB",
+          "start_freq": 432000.0,
+          "end_freq": 438000.0,
+          "channel_spacing": 3000.0,
+          "power_limit": 1500.0,
+          "notes": "UHF band, SSB and digital modes"
+        },
+        {
+          "name": "EME",
+          "start_freq": 432000.0,
+          "end_freq": 438000.0,
+          "channel_spacing": 1000.0,
+          "power_limit": 1000.0,
+          "notes": "EME operations, directional antenna required, logging mandatory"
+        },
+        {
+          "name": "MS",
+          "start_freq": 432000.0,
+          "end_freq": 438000.0,
+          "channel_spacing": 1000.0,
+          "power_limit": 1000.0,
+          "notes": "Meteor scatter operations, directional antenna required, logging mandatory"
+        }
+      ],
+      "regions": [1, 2, 3],
+      "power_limit": 1500.0,
+      "antenna_height_limit": 200.0,
+      "notes": "UHF band - excellent for EME and weak signal work",
+      "regional_variations": {
+        "1": {
+          "Norway": {
+            "Special": {
+              "normal_usage": {"power_limit": 300.0, "notes": "Normal usage 300W"},
+              "eme_ms": {"power_limit": 1000.0, "notes": "EME and MS operations 1000W"}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "special_allocations": [
+    {
+      "name": "Beacon Frequencies",
+      "frequencies": [
+        {
+          "freq": 14099.5,
+          "band": "20m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 18110.0,
+          "band": "17m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 21099.5,
+          "band": "15m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 24929.0,
+          "band": "12m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        },
+        {
+          "freq": 28099.5,
+          "band": "10m",
+          "mode": "CW",
+          "notes": "International beacon network"
+        }
+      ]
+    },
+    {
+      "name": "Emergency Frequencies",
+      "frequencies": [
+        {
+          "freq": 14300.0,
+          "band": "20m",
+          "mode": "USB",
+          "notes": "Emergency and disaster relief"
+        },
+        {
+          "freq": 18160.0,
+          "band": "17m",
+          "mode": "USB",
+          "notes": "Emergency and disaster relief"
+        },
+        {
+          "freq": 21360.0,
+          "band": "15m",
+          "mode": "USB",
+          "notes": "Emergency and disaster relief"
+        }
+      ]
+    }
+  ],
+  "regional_variations": {
+    "1": {
+      "description": "Europe, Africa, Middle East",
+      "notes": "Standard ITU Region 1 allocations"
+    },
+    "2": {
+      "description": "Americas",
+      "notes": "Standard ITU Region 2 allocations"
+    },
+    "3": {
+      "description": "Asia, Pacific",
+      "notes": "Standard ITU Region 3 allocations"
+    }
+  },
+  "usage_guidelines": [
+    "Always check current band conditions before operating",
+    "Use appropriate power levels for the band and mode",
+    "Follow proper operating procedures and etiquette",
+    "Respect other users and avoid interference",
+    "Use clear, concise communications",
+    "Monitor emergency frequencies when appropriate"
+  ],
+  "propagation_notes": {
+    "2200m": "LF band - very long wavelength, excellent for local contacts, requires large antennas",
+    "630m": "MF band - medium frequency, good for regional contacts, requires large antennas",
+    "160m": "Best at night, excellent for local and regional contacts",
+    "80m": "Good day and night, popular for regional contacts",
+    "60m": "Limited to 5 channels, USB only, good for regional contacts",
+    "40m": "Excellent worldwide band, good day and night",
+    "30m": "CW and digital only, good for worldwide contacts",
+    "20m": "Most popular HF band, excellent worldwide coverage",
+    "17m": "WARC band, good worldwide coverage",
+    "15m": "Good worldwide coverage during daylight hours",
+    "12m": "WARC band, good worldwide coverage",
+    "10m": "Excellent worldwide coverage during solar maximum",
+    "6m": "VHF band - good for regional contacts, excellent for sporadic E propagation",
+    "4m": "VHF band - Norwegian allocation, good for regional contacts",
+    "2m": "VHF band - excellent for local and regional contacts, good for weak signal work",
+    "70cm": "UHF band - excellent for EME and weak signal work"
+  },
+  "regional_power_limits": {
+    "UK": {
+      "Full": 1500.0,
+      "Intermediate": 400.0,
+      "Foundation": 10.0
+    },
+    "Germany": {
+      "Class A": 750.0,
+      "Class E": 75.0
+    },
+    "USA": {
+      "Extra": 1500.0,
+      "Advanced": 1500.0,
+      "General": 1500.0,
+      "Technician": 200.0
+    },
+    "Canada": {
+      "Advanced": 2250.0,
+      "Basic": 1000.0
+    },
+    "Australia": {
+      "Advanced": 400.0,
+      "Standard": 120.0,
+      "Foundation": 10.0
+    },
+    "Norway": {
+      "Special": {
+        "4m_normal": 100.0,
+        "4m_eme_ms": 1000.0,
+        "2m_normal": 300.0,
+        "2m_eme_ms": 1000.0,
+        "70cm_normal": 300.0,
+        "70cm_eme_ms": 1000.0,
+        "other_bands": 200.0
+      }
+    }
+  }
+}

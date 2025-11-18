@@ -1,0 +1,45 @@
+# 70cm Vertical Antenna Specifications
+
+## Antenna Type
+- **Model**: 70cm Vertical Dipole
+- **Frequency Range**: 430-440 MHz (70cm amateur band)
+- **Height**: 10m above ground
+- **Polarization**: Vertical
+- **Pattern**: Omnidirectional
+
+## Technical Specifications
+- **Elements**: 2 (lower and upper λ/4 elements)
+- **Total Length**: 0.35m (0.175m each element)
+- **Ground Radials**: 4 × 0.35m
+- **Impedance**: ~50Ω
+- **SWR**: <2:1 across band
+- **Gain**: ~2-3 dBi
+
+## Applications
+- UHF amateur radio operations
+- Repeater access
+- APRS and digital modes
+- Local communication
+
+## Pattern Files Generated
+- 70cm_vertical_433.5MHz_0m_pattern.txt
+- 70cm_vertical_433.0MHz_0m_pattern.txt
+- 70cm_vertical_438.0MHz_0m_pattern.txt
+- 70cm_vertical_436.0MHz_0m_pattern.txt
+- 70cm_vertical_435.0MHz_0m_pattern.txt
+- 70cm_vertical_432.0MHz_0m_pattern.txt
+- 70cm_vertical_431.0MHz_0m_pattern.txt
+- 70cm_vertical_434.5MHz_0m_pattern.txt
+- 70cm_vertical_431.5MHz_0m_pattern.txt
+- 70cm_vertical_432.5MHz_0m_pattern.txt
+- 70cm_vertical_430.5MHz_0m_pattern.txt
+- 70cm_vertical_439.5MHz_0m_pattern.txt
+- 70cm_vertical_430.0MHz_0m_pattern.txt
+- 70cm_vertical_439.0MHz_0m_pattern.txt
+- 70cm_vertical_436.5MHz_0m_pattern.txt
+- 70cm_vertical_438.5MHz_0m_pattern.txt
+- 70cm_vertical_437.5MHz_0m_pattern.txt
+- 70cm_vertical_437.0MHz_0m_pattern.txt
+- 70cm_vertical_434.0MHz_0m_pattern.txt
+- 70cm_vertical_435.5MHz_0m_pattern.txt
+- 70cm_vertical_440.0MHz_0m_pattern.txt

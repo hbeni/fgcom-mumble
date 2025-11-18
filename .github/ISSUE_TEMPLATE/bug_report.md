@@ -22,7 +22,7 @@ A clear and concise description of what you expected to happen.
 
 **Logfiles**
 If the bug affects the mumble plugin, please attach a logfile.
-You must enable log writing in the [`fgcom-mumble.ini`](client/mumble-plugin/fgcom-mumble.ini) an place it in your home durectory.
+You must enable log writing in the [`fgcom-mumble.ini`](configs/fgcom-mumble.ini) and place it in your home directory.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem (mostly useful with the statuspage etc).

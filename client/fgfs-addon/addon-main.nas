@@ -23,6 +23,7 @@ var FGComMumble = {
     rdfport:             19991,
     checkForUpdates:     1,
     audioEffectsEnabled: 1,
+    audioNoiseSquelch:   0,
     comRDFEnabled:       1,
     audioHearAll:        0,
     forceEchoTestFRQ:    0,
@@ -135,6 +136,11 @@ var FGComMumble = {
     me.configNodes.audioEffectsEnableNode.setAttribute("userarchive", "y");
     if (me.configNodes.audioEffectsEnableNode.getValue() == nil) {
       me.configNodes.audioEffectsEnableNode.setBoolValue(me.defaults.audioEffectsEnabled);
+    }
+    me.configNodes.audioNoiseSquelchNode = configRootNode.getNode("audio-noise-squelch", 1);
+    me.configNodes.audioNoiseSquelchNode.setAttribute("userarchive", "y");
+    if (me.configNodes.audioNoiseSquelchNode.getValue() == nil) {
+      me.configNodes.audioNoiseSquelchNode.setBoolValue(me.defaults.audioNoiseSquelch);
     }
     me.configNodes.enableCOMRDF = configRootNode.getNode("com-rdf-enabled", 1);
     me.configNodes.enableCOMRDF.setAttribute("userarchive", "y");

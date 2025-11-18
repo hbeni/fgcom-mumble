@@ -1,0 +1,45 @@
+# 2m Vertical Antenna Specifications
+
+## Antenna Type
+- **Model**: 2m Vertical Dipole
+- **Frequency Range**: 144-146 MHz (2m amateur band)
+- **Height**: 10m above ground
+- **Polarization**: Vertical
+- **Pattern**: Omnidirectional
+
+## Technical Specifications
+- **Elements**: 2 (lower and upper λ/4 elements)
+- **Total Length**: 1.0m (0.5m each element)
+- **Ground Radials**: 4 × 1.0m
+- **Impedance**: ~50Ω
+- **SWR**: <2:1 across band
+- **Gain**: ~2-3 dBi
+
+## Applications
+- VHF amateur radio operations
+- Repeater access
+- APRS and digital modes
+- Local communication
+
+## Pattern Files Generated
+- 2m_vertical_144.5MHz_0m_pattern.txt
+- 2m_vertical_144.4MHz_0m_pattern.txt
+- 2m_vertical_145.1MHz_0m_pattern.txt
+- 2m_vertical_145.2MHz_0m_pattern.txt
+- 2m_vertical_146.0MHz_0m_pattern.txt
+- 2m_vertical_144.7MHz_0m_pattern.txt
+- 2m_vertical_144.9MHz_0m_pattern.txt
+- 2m_vertical_144.3MHz_0m_pattern.txt
+- 2m_vertical_145.6MHz_0m_pattern.txt
+- 2m_vertical_145.7MHz_0m_pattern.txt
+- 2m_vertical_145.0MHz_0m_pattern.txt
+- 2m_vertical_145.4MHz_0m_pattern.txt
+- 2m_vertical_145.8MHz_0m_pattern.txt
+- 2m_vertical_144.6MHz_0m_pattern.txt
+- 2m_vertical_144.1MHz_0m_pattern.txt
+- 2m_vertical_144.2MHz_0m_pattern.txt
+- 2m_vertical_145.3MHz_0m_pattern.txt
+- 2m_vertical_144.8MHz_0m_pattern.txt
+- 2m_vertical_145.9MHz_0m_pattern.txt
+- 2m_vertical_145.5MHz_0m_pattern.txt
+- 2m_vertical_144.0MHz_0m_pattern.txt

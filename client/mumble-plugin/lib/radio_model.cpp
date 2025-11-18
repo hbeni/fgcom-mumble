@@ -25,12 +25,16 @@
 
 // include base implementation
 #include "radio_model.h"
+#include "radio_config.h"
 
 // include concrete implementations
-#include "radio_model_vhf.cpp"
-#include "radio_model_hf.cpp"
-#include "radio_model_uhf.cpp"
-#include "radio_model_string.cpp"
+#include "radio_model_vhf.h"
+#include "radio_model_hf.h"
+#include "radio_model_uhf.h"
+#include "radio_model_string.h"
+#include "radio_model_amateur.h"
+#include "non_amateur_hf.h"
+#include "advanced_modulation.h"
 
 
 /*
@@ -65,22 +69,70 @@ bool fgcom_radio_updateOperable(fgcom_radio &r){
 * @return FGCom_radiowaveModel instance that handles the frequency
 */
 std::unique_ptr<FGCom_radiowaveModel> FGCom_radiowaveModel::selectModel(std::string freq) {
+    // Parse frequency string to extract numeric value and determine if it's a valid frequency
     fgcom_radiowave_freqConvRes freq_p = FGCom_radiowaveModel::splitFreqString(freq);
     if (freq_p.isNumeric) {
-        // Select model based on frequency band.
-        // Models, that say they are compatible to each other may implement frequency band overlapping.
+        // FREQUENCY BAND SELECTION LOGIC:
+        // This factory method selects the appropriate radio model based on frequency.
+        // Models may have overlapping frequency ranges, so order of checking is critical.
+        // Priority: Special cases → Aviation → Maritime → Amateur → Standard bands
         
         float frq_num = std::stof(freq_p.frequency);
-        if (frq_num == 910.00) return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());  // echo test frequency (it is UHF, but needs to be treatened as VHF)
         
-        if (frq_num <=  30.0)                    return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_HF());
-        if (frq_num >  30.0 && frq_num <= 300.0) return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
-        if (frq_num > 300.0)                     return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_UHF());
+        // CRITICAL FIX: Use configuration system instead of hardcoded values
+        // This allows runtime configuration and eliminates magic numbers
+        float echo_test_freq = FGCom_RadioConfig::getFloat(FGCom_RadioConfig::ECHO_TEST_FREQUENCY, 910.0f);
+        if (frq_num == echo_test_freq) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
+        }
         
-        // every other case = frequency not handled specially yet: use VHF (line-of-sight) model
+        // AVIATION HF FREQUENCIES (3-30 MHz)
+        // Commercial aviation uses specific HF frequencies for long-range communication
+        // These frequencies have different propagation characteristics than amateur HF
+        FGCom_NonAmateurHF::initialize();
+        if (FGCom_NonAmateurHF::isAviationFrequency(frq_num)) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_AviationHF(35000.0, "COMMERCIAL"));
+        }
+        
+        // MARITIME HF FREQUENCIES (2-30 MHz)
+        // International maritime communication uses specific HF frequencies
+        // These have different power limits and usage patterns than amateur HF
+        if (FGCom_NonAmateurHF::isMaritimeFrequency(frq_num)) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_MaritimeHF("COMMERCIAL", true));
+        }
+        
+        // AMATEUR RADIO FREQUENCIES (1.8-54 MHz)
+        // Amateur radio has specific frequency allocations in the HF and VHF bands
+        // These frequencies have different power limits and operating procedures
+        if (frq_num >= 1800.0 && frq_num <= 54000.0) {
+            // Initialize amateur radio data to check if this is a valid amateur frequency
+            FGCom_AmateurRadio::initialize();
+            // For now, use region 1 (can be made configurable later)
+            if (FGCom_AmateurRadio::isAmateurFrequency(frq_num, 1)) {
+                return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_Amateur(1));
+            }
+        }
+        
+        // STANDARD FREQUENCY BAND SELECTION:
+        // HF: 0-30 MHz (long-range, sky wave propagation)
+        // VHF: 30-300 MHz (line-of-sight, ground wave propagation)  
+        // UHF: 300+ MHz (line-of-sight, very short range)
+        if (frq_num <=  30.0) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_HF());
+        }
+        if (frq_num >  30.0 && frq_num <= 300.0) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
+        }
+        if (frq_num > 300.0) {
+            return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_UHF());
+        }
+        
+        // FALLBACK: Use VHF model for any unhandled frequency
+        // VHF model provides line-of-sight propagation which is safe for most cases
         return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_VHF());
     } else {
-        // non-numeric: use string model
+        // NON-NUMERIC FREQUENCY: Use string model for special frequency names
+        // This handles cases like "GUARD", "EMERGENCY", "TAC", etc.
         return std::unique_ptr<FGCom_radiowaveModel>(new FGCom_radiowaveModel_String());
     }
 }
@@ -157,8 +209,12 @@ double FGCom_radiowaveModel::degreeAboveHorizon(double surfacedist, double hah) 
     double distM = surfacedist * 1000; // in m because hah is also in m
     double hypo  = sqrt( pow(distM, 2) + pow(hah, 2) ); 
     
-    if (hah == 0)  return 0; // in case of horizontal alignment
-    if (hypo == 0) return (hah >=0)? 90: -90; // in case the tgt point lies directly above/below
+    if (hah == 0) {
+        return 0; // in case of horizontal alignment
+    }
+    if (hypo == 0) {
+        return (hah >=0)? 90: -90; // in case the tgt point lies directly above/below
+    }
     double sinA = hah / hypo;
     double angle = (sinA != 0)? asin(sinA) * (180.0 / M_PI) : 0;
     return angle;
@@ -170,17 +226,27 @@ double FGCom_radiowaveModel::getDirection(double lat1, double lon1, double lat2,
     // earth (wgs84 cells are only regularly shaped near the equator: size depends on location)
     double dLat = FGCom_radiowaveModel::getSurfaceDistance(lat1, lon1, lat2, lon1); // y distance in km
     double dLon = FGCom_radiowaveModel::getSurfaceDistance(lat1, lon1, lat1, lon2); // x distance in km
-    if (lat2 < lat1) dLat *= -1; // apply sign (down is negative vector)
-    if (lon2 < lon1) dLon *= -1; // apply sign (left is negative vector)
+    if (lat2 < lat1) {
+        dLat *= -1; // apply sign (down is negative vector)
+    }
+    if (lon2 < lon1) {
+        dLon *= -1; // apply sign (left is negative vector)
+    }
 
     double brng = atan2(dLat, dLon) * (180.0 / M_PI);  // 0°=east, 90°=north, etc; lat=y, lon=x
     brng = 360 - brng; // count degrees clockwise
     brng += 90; // atan returns with east=0°, so we need to rotate right (atan counts counter-clockwise)
     
     // normalize values from -180/+180 to range 0/360
-    if (brng < 360) brng += 360;
-    if (brng > 360) brng -= 360;
-    if (brng == 360) brng = 0;
+    if (brng < 360) {
+        brng += 360;
+    }
+    if (brng > 360) {
+        brng -= 360;
+    }
+    if (brng == 360) {
+        brng = 0;
+    }
 
     return brng;
 }
@@ -216,29 +282,78 @@ double FGCom_radiowaveModel::getSurfaceDistance(double lat1, double lon1,
 }
 
 
-//Generic channel width/spacing detection; may be used from the getFrqMatch() implementations
+/**
+ * FREQUENCY CHANNEL ALIGNMENT CALCULATION
+ * 
+ * This method calculates how well two radio frequencies match within a channel.
+ * It implements a realistic frequency response curve that matches actual radio behavior.
+ * 
+ * MATHEMATICAL MODEL:
+ * - Channel has a "core" region (perfect match) and "width" region (partial match)
+ * - Inside core: 90-100% match with linear rolloff
+ * - Outside core but within width: exponential decay from 90% to 0%
+ * - Outside width: 0% match (no communication possible)
+ * 
+ * @param frq1_real First frequency in MHz
+ * @param frq2_real Second frequency in MHz  
+ * @param width_kHz Total channel width in kHz
+ * @param core_kHz Channel core width in kHz (typically half of total width)
+ * @return Match quality (0.0 = no match, 1.0 = perfect match)
+ */
 float FGCom_radiowaveModel::getChannelAlignment(float frq1_real, float frq2_real, float width_kHz, float core_kHz) {
-    //std::cout << "DBG: FGCom_radiowaveModel::getChannelAlignment() called with:  frq1_real="<<frq1_real<<"; frq2_real="<<frq2_real<<"; width_kHZ="<<width_kHZ<<"; core_kHz=" << core_kHz << std::endl;
+    // PARAMETER VALIDATION:
+    // Channel width and core must be positive values for valid calculation
+    if (width_kHz < 0) {
+        throw "FGCom_radiowaveModel::getFrqMatch() calling error: width_kHz not defined!";
+    }
+    if (core_kHz  < 0) {
+        throw "FGCom_radiowaveModel::getFrqMatch() calling error: core_kHz not defined!";
+    }
     
-    // param checks: those need to be defined with concrete values
-    if (width_kHz < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: width_kHz not defined!";
-    if (core_kHz  < 0) throw "FGCom_radiowaveModel::getFrqMatch() calling error: core_kHz not defined!";
+    // LOCALE SETTING:
+    // Ensure decimal points are always "." not "," for consistent parsing
+    setlocale(LC_NUMERIC,"C");
+    float filter = 0.0; // Default: no match in case of errors
     
-    setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","
-    float filter = 0.0; // no match in case of errors
+    // FREQUENCY DIFFERENCE CALCULATION:
+    // Calculate absolute difference between frequencies in kHz
+    // This determines how far apart the frequencies are
+    float diff_kHz = std::fabs(frq1_real - frq2_real) * 1000; // Convert MHz to kHz
     
-    // TODO: currently a naive linear function, maybe adjust to curve:
-    //       We make the difference absolute, so just looking at the half channel (it's mirrored on the left side of the center).
-    //       If inside the core, we have 100% match. Outside, we decline linearly to zero.
-    float diff_kHz     = std::fabs(frq1_real - frq2_real) * 1000; // difference in kHz
-    float widthKhz_eff = (width_kHz) / 2;  // half band
-    float corekHz_eff  = core_kHz  / 2;  // half band
+    // CHANNEL BOUNDARY CALCULATIONS:
+    // Calculate effective channel boundaries for comparison
+    float widthKhz_eff = (width_kHz) / 2;  // Half channel width (from center to edge)
+    float corekHz_eff  = core_kHz  / 2;    // Half channel core (from center to core edge)
 
-    filter = 1 - diff_kHz + corekHz_eff;
-    filter = 1 - (1/(widthKhz_eff-corekHz_eff)) * diff_kHz + corekHz_eff*1/(widthKhz_eff-corekHz_eff);  // 1-(1/(6-2.5))*x+2.5*1/(6-2.5)
-    //std::cout << "DBG: FGCom_radiowaveModel::getChannelAlignment(): calc result="<<filter<<"; params: diff_kHz=" << diff_kHz << "; widthKhZ_eff="<< widthKhz_eff << "; corekHz_eff="<<corekHz_eff  <<std::endl;
-    if (filter > 1.0) filter = 1.0;
-    if (filter < 0.0) filter = 0.0;
+    // FREQUENCY RESPONSE CURVE CALCULATION:
+    // This implements a realistic radio frequency response curve
+    // that matches actual radio behavior with three distinct regions:
+    
+    if (diff_kHz <= corekHz_eff) {
+        // REGION 1: INSIDE CHANNEL CORE (Perfect Match Zone)
+        // Frequencies are very close - excellent communication quality
+        // Linear rolloff from 100% to 90% match within core region
+        filter = 1.0 - (diff_kHz / corekHz_eff) * 0.1;  // 90-100% match quality
+    } else if (diff_kHz <= widthKhz_eff) {
+        // REGION 2: OUTSIDE CORE BUT WITHIN CHANNEL (Partial Match Zone)
+        // Frequencies are within channel but outside core - degraded quality
+        // Exponential decay from 90% to 0% match as frequency difference increases
+        float normalized_diff = (diff_kHz - corekHz_eff) / (widthKhz_eff - corekHz_eff);
+        filter = 0.9 * std::exp(-3.0 * normalized_diff);  // Exponential decay curve
+    } else {
+        // REGION 3: OUTSIDE CHANNEL (No Match Zone)
+        // Frequencies are too far apart - no communication possible
+        filter = 0.0;
+    }
+    
+    // BOUNDS CHECKING:
+    // Ensure result is within valid range [0.0, 1.0]
+    if (filter > 1.0) {
+        filter = 1.0;
+    }
+    if (filter < 0.0) {
+        filter = 0.0;
+    }
 
     return filter;
 }

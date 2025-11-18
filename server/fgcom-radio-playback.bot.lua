@@ -354,7 +354,12 @@ end)
 updateAllChannelUsersforSend = function(cl)
     --fgcom.dbg("udpate channelusers")
     local ch = cl:getChannel(fgcom.channel)
-    playback_targets = ch:getUsers()
+    if ch then
+        playback_targets = ch:getUsers()
+    else
+        fgcom.log("ERROR: Channel '"..fgcom.channel.."' not found in updateAllChannelUsersforSend!")
+        playback_targets = {}
+    end
 end
 
 -- function to disconnect the bot
@@ -802,8 +807,17 @@ client:hook("OnServerSync", function(client, event)
     
     -- try to join fgcom-mumble channel
     local ch = client:getChannel(fgcom.channel)
-    event.user:move(ch)
-    fgcom.log("joined channel "..fgcom.channel)
+    if ch then
+        event.user:move(ch)
+        fgcom.log("joined channel "..fgcom.channel)
+    else
+        fgcom.log("ERROR: Channel '"..fgcom.channel.."' not found!")
+        -- Try to list all available channels
+        local channels = client:getChannels()
+        for id, channel in pairs(channels) do
+            fgcom.log("  Available channel ID " .. id .. ": " .. channel:getName())
+        end
+    end
 
     -- update current users of channel
     updateAllChannelUsersforSend(client)

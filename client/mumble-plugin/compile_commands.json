@@ -1,0 +1,40 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-fPIC",
+      "-c",
+      "-Wall",
+      "-O3",
+      "-I.",
+      "-I./lib",
+      "-DENABLE_OPENINFRAMAP",
+      "-pthread",
+      "-o",
+      "lib/radio_model.o",
+      "lib/radio_model.cpp"
+    ],
+    "directory": "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin",
+    "file": "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.cpp",
+    "output": "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/radio_model.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-fPIC",
+      "-c",
+      "-Wall",
+      "-O3",
+      "-I.",
+      "-I./lib",
+      "-DENABLE_OPENINFRAMAP",
+      "-pthread",
+      "-o",
+      "lib/audio.o",
+      "lib/audio.cpp"
+    ],
+    "directory": "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin",
+    "file": "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.cpp",
+    "output": "/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/lib/audio.o"
+  }
+]

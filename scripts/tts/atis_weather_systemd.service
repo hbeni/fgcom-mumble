@@ -1,0 +1,35 @@
+[Unit]
+Description=FGCom-Mumble ATIS Weather Integration Service
+Documentation=https://github.com/Supermagnum/fgcom-mumble
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=fgcom
+Group=fgcom
+WorkingDirectory=/opt/fgcom-mumble/scripts/tts
+ExecStart=/usr/bin/python3 /opt/fgcom-mumble/scripts/tts/atis_weather_service.py --daemon
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=atis-weather
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/fgcom-mumble/scripts/tts/atis_recordings
+ReadWritePaths=/opt/fgcom-mumble/scripts/tts/logs
+ReadWritePaths=/opt/fgcom-mumble/scripts/tts/atis_letters.json
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=512M
+CPUQuota=50%
+
+[Install]
+WantedBy=multi-user.target

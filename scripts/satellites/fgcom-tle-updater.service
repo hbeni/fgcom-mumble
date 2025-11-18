@@ -1,0 +1,37 @@
+[Unit]
+Description=FGcom-Mumble TLE Automatic Updater (24-hour cycle)
+Documentation=https://github.com/Supermagnum/fgcom-mumble
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+User=haaken
+Group=haaken
+WorkingDirectory=/home/haaken/fgcom-mumble
+ExecStart=/home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --force
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables
+Environment=HOME=/home/haaken/fgcom-mumble
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+Environment=TLE_CONFIG_FILE=/home/haaken/fgcom-mumble/voice-encryption/systems/satellites/config/tle_update_config.conf
+Environment=TLE_UPDATE_DIR=/home/haaken/fgcom-mumble/tle_data
+Environment=LOG_DIR=/home/haaken/fgcom-mumble/logs
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/home/haaken/fgcom-mumble/tle_data
+ReadWritePaths=/home/haaken/fgcom-mumble/logs
+ReadOnlyPaths=/home/haaken/fgcom-mumble/voice-encryption
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument

@@ -123,6 +123,12 @@
     <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-effects-enabled</node>
    </chunk>
    <chunk>
+    <name>audio-noise-squelch</name>
+    <type>bool</type>
+    <format>AUDIO_FX_NOISES=%d</format>
+    <node>/addons/by-id/org.hallinger.flightgear.FGCom-mumble/audio-noise-squelch</node>
+   </chunk>
+   <chunk>
     <name>audio-hear-all</name>
     <type>bool</type>
     <format>AUDIO_HEAR_ALL=%d</format>

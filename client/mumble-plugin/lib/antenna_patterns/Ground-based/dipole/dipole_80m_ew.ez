@@ -1,0 +1,9 @@
+CM 80m Dipole Antenna - East-West Orientation
+CM Center-fed dipole, 10m above ground
+CM Resonant at 3.5 MHz (80m band)
+CE
+GW 1 1 0 0 10 0 0 20 0.001
+FR 0 1 0 0 3.5 0
+GN 1 0 0 0 13 0.005
+EX 0 1 1 0 1 0
+EN

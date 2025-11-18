@@ -1,0 +1,141 @@
+EZNEC ver. 7.0
+
+; Modern Ford Transit Camper Van with Hi-Q Loaded HF Antenna
+; Typical vanlife/overlanding setup with rear fender-mounted HF antenna
+; HF coverage for amateur radio long-distance communication
+; Large vehicle ground plane with modern construction
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Ford Transit main body (6.0m length, 2.0m width, 2.8m height)
+; Lower body/chassis
+W001 -3.0   -1.0   0.0   3.0   -1.0   0.0   0.06  24
+W002 -3.0    1.0   0.0   3.0    1.0   0.0   0.06  24
+W003 -3.0   -1.0   0.0  -3.0    1.0   0.0   0.06   8
+W004   3.0   -1.0   0.0   3.0    1.0   0.0   0.06   8
+
+; Engine compartment/cab area
+W005 -3.0   -0.8   0.0  -1.8   -0.8   0.0   0.05   6
+W006 -3.0    0.8   0.0  -1.8    0.8   0.0   0.05   6
+W007 -3.0   -0.8   0.0  -3.0    0.8   0.0   0.05   6
+
+; Van roof (large flat surface - excellent for ground plane)
+W008 -2.8   -0.95  2.8   2.8   -0.95  2.8   0.04  28
+W009 -2.8    0.95  2.8   2.8    0.95  2.8   0.04  28
+W010 -2.8   -0.95  2.8  -2.8    0.95  2.8   0.04   9
+W011   2.8   -0.95  2.8   2.8    0.95  2.8   0.04   9
+
+; Roof cross-bracing (structural support and RF grounding)
+W012 -2.0   -0.95  2.8  -2.0    0.95  2.8   0.03   9
+W013 -1.0   -0.95  2.8  -1.0    0.95  2.8   0.03   9
+W014   0.0   -0.95  2.8   0.0    0.95  2.8   0.03   9
+W015   1.0   -0.95  2.8   1.0    0.95  2.8   0.03   9
+W016   2.0   -0.95  2.8   2.0    0.95  2.8   0.03   9
+
+; Side panels (modern van construction)
+W017 -2.8   -0.95  0.0  -2.8   -0.95  2.8   0.03  14
+W018 -2.8    0.95  0.0  -2.8    0.95  2.8   0.03  14
+W019   2.8   -0.95  0.0   2.8   -0.95  2.8   0.03  14
+W020   2.8    0.95  0.0   2.8    0.95  2.8   0.03  14
+
+; Solar panel framework (common on camper vans)
+W021 -1.5   -0.8   2.85  1.5   -0.8   2.85  0.02  15
+W022 -1.5    0.8   2.85  1.5    0.8   2.85  0.02  15
+W023 -1.5   -0.8   2.85 -1.5    0.8   2.85  0.02   8
+W024   1.5   -0.8   2.85  1.5    0.8   2.85  0.02   8
+
+; HI-Q STYLE LOADED HF ANTENNA - SINGLE ACTIVE ANTENNA
+; Hi-Q style loaded HF antenna mounted on rear fender
+; Base coil section (loading coil for HF resonance)
+W025   2.5   -0.9   0.2   2.5   -0.9   0.5   0.08   8  ; Loading coil housing (rear fender)
+
+; Whip section (adjustable length for different HF bands)
+W026   2.5   -0.9   0.5   2.5   -0.9   2.5   0.004  20  ; HF whip (rear fender mount)
+
+; Antenna mount/base (fender-mounted for best ground plane)
+W027   2.5   -0.9   0.1   2.5   -0.9   0.2   0.01   1  ; Mount base
+
+; Ground plane radials (fender mount typically has small radials)
+W028   2.5   -0.9   0.1   2.7   -0.9   0.1   0.002  1
+W029   2.5   -0.9   0.1   2.3   -0.9   0.1   0.002  1
+W030   2.5   -0.9   0.1   2.5   -1.1   0.1   0.002  1
+W031   2.5   -0.9   0.1   2.5   -0.7   0.1   0.002  1
+
+; SOURCE
+SY SRC  W026  10  1  ; Hi-Q HF antenna only
+
+; GROUND
+; Variable ground (parking lots, campsites, desert, etc.)
+GD 0 0 0 0 0.01 0.013  ; Average camping ground conditions
+
+; LOADS
+; Modern van body - steel with some aluminum panels
+LD 5 1 24 0 2E+07 0    ; Excellent conductor for main body and roof
+; Solar panel frame - aluminum
+LD 5 21 24 0 3.5E+07 0 ; Aluminum solar frame
+; HF loading coil (high-Q inductor)
+LD 4 25 25 0 0 12.0    ; Loading inductance for HF resonance
+
+; FREQUENCY
+FR 0 1 0 0 7.050 0     ; 40m amateur band (HF)
+
+; FREQUENCY SWEEP - Multi-band coverage
+; Uncomment for full analysis:
+; FR 0 50 0 0 28.0 4.0   ; 28-200 MHz sweep (10m-VHF)
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; NEAR FIELD
+NE 0 12 12 12 -6 6 0 6 -6 6
+
+; COMMENTS
+; Modern Ford Transit camper van whip antenna model - VERTICAL CONFIGURATION
+; Typical vanlife/overlanding amateur radio setup
+;
+; Antenna specifications:
+; - Multi-band whip (Comet SBB-5NMO, Diamond NR770HB, etc.)
+; - 5-foot length for HF/VHF/UHF coverage
+; - NMO mount on roof corner - VERTICAL for optimal performance
+; - Covers: 10m, 6m, 2m, 70cm amateur bands
+; - Also works for CB, GMRS, marine VHF
+;
+; Vehicle characteristics:
+; - Length: 6.0m (Transit standard)
+; - Width: 2.0m  
+; - Height: 2.8m to roof
+; - Large roof area = excellent ground plane (~11 m²)
+; - Modern steel/aluminum construction
+; - Solar panels common (modeled as aluminum frame)
+;
+; VERTICAL configuration advantages:
+; - Optimal radiation pattern (omnidirectional)
+; - Best efficiency for mobile communications
+; - No clearance issues (civilian use)
+; - Maximum performance for amateur radio
+; - Standard practice for civilian vehicles
+;
+; Expected performance (vertical):
+; - Excellent efficiency on VHF/UHF (roof ground plane)
+; - Good HF performance with antenna tuner
+; - 6-10 dB better than handheld radios
+; - Near-omnidirectional pattern
+; - Optimal for amateur radio operations
+;
+; Common frequency bands for van travel:
+; - CB: 27 MHz (channels 1-40)
+; - 10m: 28-29 MHz amateur
+; - 6m: 50-54 MHz amateur  
+; - 2m: 144-148 MHz amateur
+; - GMRS: 462-467 MHz
+; - 70cm: 420-450 MHz amateur
+;
+; Installation notes:
+; - Roof mount preferred for best performance
+; - Large ground plane helps all frequencies
+; - Avoid mounting near solar panels if possible
+; - Use quality coax (LMR-400 or equivalent)
+; - Consider antenna tuner for HF bands
+; - VERTICAL configuration for optimal performance
+EN

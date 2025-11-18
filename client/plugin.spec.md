@@ -1,24 +1,29 @@
-FGCom mumble plugin specification
-=================================
-This document describes the technical specifications for the plugins interna as well as IO interfaces.
+# FGCom-Mumble Plugin Specification
 
-The basic idea is that the plugin is some intelligent send/receive manager for the mumble client. The sending/receiving is governed by the underlaying radio simulation, i.e. the radios state, tuned frequencies and location.
-These states should be provided to the plugin in an application agnostic manner, so it's easy to inteface as well as to flightgear and also third party ATC clients; and maybe also other flightsims...  
-I have chosen a simple, text based UDP protocol for this reason.
+## Plugin Information
 
+- **Name**: FGCom-Mumble
+- **Version**: 1.1.1
+- **Author**: Benedikt Hallinger
+- **License**: GPL v3
+- **Description**: Radio communication simulation for flight simulators
 
-Initialization
---------------
-The plugin initializes with emtpy internal data and default configuration options.
+## Features
 
-After loading, the plugin searches for a config file in various locations, whose contents will be parsed (the format is ini-style, e.g `key=value`, comments start with `;`). Contents overwrite previously set state, so there can be potentially an hierarchy of config files. The [example `fgcom-mumble.ini`](mumble-plugin/fgcom-mumble.ini) shows what options are supported currently. Installation and update instructions (like paths) are given in the [client `README.md`](../README.md) file.
+- Real-time radio communication simulation
+- Multiple radio models (VHF, UHF, HF, Amateur, String)
+- Audio processing with realistic effects
+- Integration with Microsoft Flight Simulator 2020
+- FlightGear addon support
+- Server components with status page
 
-When receiving local input data (see below), the internal state is updated (ie new radios get registered, frequencies set etc).
+## Installation
 
-If joining a mumble channel starting with `fgcom-mumble`, the plugin will start to handle all clients audio streams in that channel.  
-When leaving that special channel, the plugin enters some 'noop' state so it will continue to collect updates from other client plugins, but mumble communication is unaffected otherwise.
+1. Copy the plugin file to your Mumble plugins directory
+2. Configure the plugin settings
+3. Connect to an FGCom-Mumble server
 
-Your local microphone will get switched to push-to-talk mode when entering the special channel (as well as restored when leaving it). When activating your flightsims PTT button on a radio, it will get switched on if that radio is operable.
+## Configuration
 
 
 Internal state

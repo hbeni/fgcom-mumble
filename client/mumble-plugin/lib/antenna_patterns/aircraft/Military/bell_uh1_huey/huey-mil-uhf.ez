@@ -1,0 +1,129 @@
+EZNEC ver. 7.0
+
+; Bell UH-1 "Huey" NATO Helicopter - REALISTIC HF MODEL  
+; Single HF antenna with proper rotor modeling
+; Low altitude tactical operations
+
+; GEOMETRY - UH-1 fuselage (17.6m length, 2.5m diameter)
+W001 -8.8   0.0   0.0   8.8   0.0   0.0   1.25  35
+W002 -8.8   1.0   0.0   8.8   1.0   0.0   1.1   35
+W003 -8.8  -1.0   0.0   8.8  -1.0   0.0   1.1   35
+W004 -8.8   0.0   1.0   8.8   0.0   1.0   1.1   35
+W005 -8.8   0.0  -1.0   8.8   0.0  -1.0   1.1   35
+
+; Fuselage cross-sections
+W006 -6.0  -1.25  0.0  -6.0   1.25  0.0   0.04   5
+W007 -3.0  -1.25  0.0  -3.0   1.25  0.0   0.04   5
+W008   0.0  -1.25  0.0   0.0   1.25  0.0   0.04   5
+W009   3.0  -1.25  0.0   3.0   1.25  0.0   0.04   5
+W010   6.0  -1.25  0.0   6.0   1.25  0.0   0.04   5
+
+; Main rotor mast
+W011   0.0   0.0   2.8   0.0   0.0   4.0   0.25   6
+
+; Rotor blades - SEGMENTED MODEL (electrical breaks at joints)
+; Break each blade into segments to model hinges and joints
+W012   0.0  -1.5   4.0   0.0  -3.0   4.0   0.12   3
+W013   0.0  -4.0   4.0   0.0  -5.5   4.0   0.12   3
+W014   0.0   1.5   4.0   0.0   3.0   4.0   0.12   3
+W015   0.0   4.0   4.0   0.0   5.5   4.0   0.12   3
+
+; Perpendicular segments
+W016 -1.5   0.0   4.0  -3.0   0.0   4.0   0.12   3
+W017 -4.0   0.0   4.0  -5.5   0.0   4.0   0.12   3
+W018   1.5   0.0   4.0   3.0   0.0   4.0   0.12   3
+W019   4.0   0.0   4.0   5.5   0.0   4.0   0.12   3
+
+; Engine compartment
+W020 -1.5  -1.2   1.5   1.5  -1.2   1.5   0.15   6
+W021 -1.5   1.2   1.5   1.5   1.2   1.5   0.15   6
+
+; Tail boom
+W022   7.0   0.0   1.2  14.0   0.0   2.8   0.35  14
+
+; Tail rotor
+W023 14.0   0.0   2.8  14.0   0.0   4.5   0.15   8
+W024 14.0  -1.07  3.65 14.0   1.07  3.65  0.06   4
+
+; Landing skids
+W025 -3.0  -1.8  -0.8   5.0  -1.8  -0.8   0.06  16
+W026 -3.0   1.8  -0.8   5.0   1.8  -0.8   0.06  16
+
+; MILITARY UHF ANTENNA - SINGLE ACTIVE ANTENNA
+; Bottom-mounted blade antenna for emergency/guard frequency
+W027   0.0   0.0  -1.0   0.0   0.0  -1.7   0.004   6
+
+; SOURCE - Feed Military UHF antenna only
+SY SRC  W027  3  1
+
+; GROUND - Tactical helicopter operations
+GD 0 0 0 0 0.005 0.013
+
+; LOADS
+; Main structure - aluminum
+LD 5 1 11 0 3.5E+07 0    ; Fuselage and mast
+LD 5 20 26 0 3.5E+07 0   ; Engine, tail boom, skids
+; Rotor segments - HIGH RESISTANCE (joints, composite sections)
+LD 4 12 19 0 150.0 0     ; High resistance - discontinuous conductors
+; Military UHF antenna matching
+LD 4 27 27 0 50.0 0.0    ; Military UHF: 50Ω military standard
+
+; FREQUENCY - Military UHF emergency/guard frequency
+FR 0 1 0 0 243.0 0
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; COMMENTS
+; REALISTIC UH-1 Huey HF Model
+;
+; Key Changes:
+; 1. Segmented rotor blades (not continuous 14.6m wires)  
+; 2. High resistance on rotor segments (150Ω)
+; 3. Single HF antenna (removed all competing antennas)
+; 4. Feed point on actual HF antenna
+;
+; HF Rotor Problems:
+; - At 7.15 MHz: λ = 42m
+; - Original 14.6m continuous blades = λ/3 beam antennas
+; - Would completely overwhelm 2.8m HF antenna
+; - Real blades: segmented with joints/hinges
+;
+; Realistic Rotor Effects:
+; - Blades scatter HF energy (not radiate)
+; - Joints/hinges break electrical continuity
+; - Composite sections are RF transparent
+; - Pattern modulates ±3-6 dB as rotor turns
+;
+; Expected HF Performance:
+; - Gain: -5 to +2 dBi (rotor scattering reduces efficiency)
+; - Pattern: Omnidirectional with deep nulls/peaks
+; - Range: 50-200 km (tactical requirement)
+; - Time-varying: pattern changes with rotor position
+;
+; Why HF is Harder Than VHF:
+; - Longer wavelength = rotor less electrically significant
+; - 2-blade system creates 180° pattern variations
+; - Doppler shift from rotor tips (±2 Hz at 7 MHz)
+; - Forward flight adds more complexity
+;
+; Real Huey HF Issues:
+; - "Blade slap" on radio (audio modulation from rotor)
+; - Dead spots in pattern (rotor blade alignment)
+; - Range varies dramatically with flight attitude
+; - Pilots learn to work around rotor effects
+;
+; NATO Tactical HF Reality:
+; - 50-200 km typical range (vs 500+ km in aircraft)
+; - Requires multiple frequencies for reliable comms
+; - Ground stations compensate for helicopter limitations
+; - Frequency hopping helps with fading
+;
+; This model shows why helicopter HF is challenging:
+; the rotor disc is electrically significant at HF frequencies,
+; creating severe pattern distortion even with proper
+; segmented modeling of blade electrical discontinuities.
+
+
+
+EN

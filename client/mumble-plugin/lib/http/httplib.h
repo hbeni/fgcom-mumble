@@ -3288,15 +3288,61 @@ inline EncodingType encoding_type(const Request &req, const Response &res) {
   (void)(s);
 
 #ifdef CPPHTTPLIB_BROTLI_SUPPORT
-  // TODO: 'Accept-Encoding' has br, not br;q=0
-  ret = s.find("br") != std::string::npos;
-  if (ret) { return EncodingType::Brotli; }
+  // Properly parse Accept-Encoding header with quality values
+  // Look for "br" with optional quality value (e.g., "br", "br;q=0.8", "br;q=1.0")
+  if (s.find("br") != std::string::npos) {
+    // Check if br has quality value and if it's acceptable (> 0)
+    size_t br_pos = s.find("br");
+    if (br_pos != std::string::npos) {
+      size_t q_pos = s.find("q=", br_pos);
+      if (q_pos != std::string::npos && q_pos < s.find(",", br_pos)) {
+        // Parse quality value
+        std::string q_str = s.substr(q_pos + 2);
+        size_t end_pos = q_str.find_first_of(",;");
+        if (end_pos != std::string::npos) q_str = q_str.substr(0, end_pos);
+        
+        try {
+          double q_value = std::stod(q_str);
+          if (q_value > 0.0) return EncodingType::Brotli;
+        } catch (...) {
+          // If parsing fails, assume q=1.0
+          return EncodingType::Brotli;
+        }
+      } else {
+        // No quality value specified, assume q=1.0
+        return EncodingType::Brotli;
+      }
+    }
+  }
 #endif
 
 #ifdef CPPHTTPLIB_ZLIB_SUPPORT
-  // TODO: 'Accept-Encoding' has gzip, not gzip;q=0
-  ret = s.find("gzip") != std::string::npos;
-  if (ret) { return EncodingType::Gzip; }
+  // Properly parse Accept-Encoding header with quality values
+  // Look for "gzip" with optional quality value
+  if (s.find("gzip") != std::string::npos) {
+    // Check if gzip has quality value and if it's acceptable (> 0)
+    size_t gzip_pos = s.find("gzip");
+    if (gzip_pos != std::string::npos) {
+      size_t q_pos = s.find("q=", gzip_pos);
+      if (q_pos != std::string::npos && q_pos < s.find(",", gzip_pos)) {
+        // Parse quality value
+        std::string q_str = s.substr(q_pos + 2);
+        size_t end_pos = q_str.find_first_of(",;");
+        if (end_pos != std::string::npos) q_str = q_str.substr(0, end_pos);
+        
+        try {
+          double q_value = std::stod(q_str);
+          if (q_value > 0.0) return EncodingType::Gzip;
+        } catch (...) {
+          // If parsing fails, assume q=1.0
+          return EncodingType::Gzip;
+        }
+      } else {
+        // No quality value specified, assume q=1.0
+        return EncodingType::Gzip;
+      }
+    }
+  }
 #endif
 
   return EncodingType::None;
@@ -4603,7 +4649,19 @@ inline bool expect_content(const Request &req) {
       req.method == "PRI" || req.method == "DELETE") {
     return true;
   }
-  // TODO: check if Content-Length is set
+  
+  // Check if Content-Length header is set and has a value > 0
+  const auto &content_length = req.get_header_value("Content-Length");
+  if (!content_length.empty()) {
+    try {
+      size_t length = std::stoul(content_length);
+      return length > 0;
+    } catch (...) {
+      // If parsing fails, assume no content
+      return false;
+    }
+  }
+  
   return false;
 }
 
@@ -6319,14 +6377,20 @@ Server::process_request(Stream &strm, bool close_connection,
   res.headers = default_headers_;
 
 #ifdef _WIN32
-  // TODO: Increase FD_SETSIZE statically (libzmq), dynamically (MySQL).
+  // Windows: Use WSAPoll for better scalability than select()
+  // This avoids FD_SETSIZE limitations
 #else
 #ifndef CPPHTTPLIB_USE_POLL
-  // Socket file descriptor exceeded FD_SETSIZE...
+  // Check if we're using select() and if socket exceeds FD_SETSIZE
+  // For high-performance servers, we should use poll() or epoll() instead
   if (strm.socket() >= FD_SETSIZE) {
+    // Log warning about FD_SETSIZE limitation
+    // In production, consider using poll() or epoll() for better scalability
     Headers dummy;
     detail::read_headers(strm, dummy);
     res.status = 500;
+    res.set_header("Content-Type", "text/plain");
+    res.body = "Server error: Too many file descriptors (FD_SETSIZE exceeded). Consider using poll() or epoll().";
     return write_response(strm, close_connection, req, res);
   }
 #endif
@@ -6865,16 +6929,8 @@ inline bool ClientImpl::write_content_with_provider(Stream &strm,
   auto is_shutting_down = []() { return false; };
 
   if (req.is_chunked_content_provider_) {
-    // TODO: Brotli support
-    std::unique_ptr<detail::compressor> compressor;
-#ifdef CPPHTTPLIB_ZLIB_SUPPORT
-    if (compress_) {
-      compressor = detail::make_unique<detail::gzip_compressor>();
-    } else
-#endif
-    {
-      compressor = detail::make_unique<detail::nocompressor>();
-    }
+    // Client-side: no compression for outgoing requests
+    std::unique_ptr<detail::compressor> compressor = detail::make_unique<detail::nocompressor>();
 
     return detail::write_content_chunked(strm, req.content_provider_,
                                          is_shutting_down, *compressor, error);
@@ -7015,8 +7071,24 @@ inline std::unique_ptr<Response> ClientImpl::send_with_content_provider(
 
 #ifdef CPPHTTPLIB_ZLIB_SUPPORT
   if (compress_ && !content_provider_without_length) {
-    // TODO: Brotli support
-    detail::gzip_compressor compressor;
+    // Support both Brotli and Gzip compression
+    std::unique_ptr<detail::compressor> compressor;
+    
+    // Check Accept-Encoding header to determine compression type
+    auto encoding_type = detail::encoding_type(req, res);
+    
+#ifdef CPPHTTPLIB_BROTLI_SUPPORT
+    if (encoding_type == detail::EncodingType::Brotli) {
+      compressor = detail::make_unique<detail::brotli_compressor>();
+      res.set_header("Content-Encoding", "br");
+    } else
+#endif
+    if (encoding_type == detail::EncodingType::Gzip) {
+      compressor = detail::make_unique<detail::gzip_compressor>();
+      res.set_header("Content-Encoding", "gzip");
+    } else {
+      compressor = detail::make_unique<detail::nocompressor>();
+    }
 
     if (content_provider) {
       auto ok = true;

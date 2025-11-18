@@ -1,0 +1,354 @@
+[New LWP 45587]
+[New LWP 45586]
+[New LWP 45585]
+[New LWP 45583]
+[New LWP 45582]
+[New LWP 45552]
+[New LWP 45551]
+[New LWP 45530]
+[New LWP 45529]
+[New LWP 45451]
+[New LWP 45450]
+[New LWP 45449]
+[New LWP 45448]
+[New LWP 45447]
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libQt5Network.so.5
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libQt5Svg.so.5
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libQt5Gui.so.5
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libglib-2.0.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libbrotlidec.so.1
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libcap.so.2
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libbrotlicommon.so.1
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/libqxcb.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libQt5XcbQpa.so.5
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libgdk-3.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libgobject-2.0.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libgmodule-2.0.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libgio-2.0.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/gtk-3.0/modules/libxapp-gtk3-module.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libxapp.so.1
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libgnomekbdui.so.8
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libgnomekbd.so.8
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/gio/modules/libgvfsdbus.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/gvfs/libgvfscommon.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/platforminputcontexts/libcomposeplatforminputcontextplugin.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats/libqgif.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats/libqico.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats/libqjpeg.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/imageformats/libqsvg.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/xcbglintegrations/libqxcb-glx-integration.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libjack.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/spa-0.2/support/libspa-support.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/spa-0.2/support/libspa-journal.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_jack.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_oss.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_pipewire.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_pulse.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libpulse.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_a52.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libzvbi.so.0
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libtheoraenc.so.1
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libtheoradec.so.1
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libvpl.so.2
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libvdpau.so.1
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_speex.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_upmix.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_vdownmix.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/alsa-lib/libasound_module_pcm_usb_stream.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/bearer/libqconnmanbearer.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/bearer/libqgenericbearer.so
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/bearer/libqnmbearer.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/liblber.so.2
+
+warning: could not find '.gnu_debugaltlink' file for /usr/lib/x86_64-linux-gnu/qt5/plugins/iconengines/libqsvgicon.so
+
+warning: could not find '.gnu_debugaltlink' file for /lib/x86_64-linux-gnu/libnss_mdns4_minimal.so.2
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+
+warning: 146	../sysdeps/nptl/futex-internal.h: Fila eller mappa finnes ikke
+  Id   Target Id                                           Frame 
+* 1    Thread 0x76237e7c6900 (LWP 45446) "mumble"          futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+  2    Thread 0x76233e6486c0 (LWP 45587) "PulseAudioOutpu" 0x0000762381698d71 in __futex_abstimed_wait_common64 (private=30243, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0x5ae38bea6950) at ./nptl/futex-internal.c:57
+  3    Thread 0x76233de476c0 (LWP 45586) "PulseAudioInput" 0x0000762381698d71 in __futex_abstimed_wait_common64 (private=30243, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0x5ae38a3fa210) at ./nptl/futex-internal.c:57
+  4    Thread 0x7622d1ffb6c0 (LWP 45585) "mumble"          futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+  5    Thread 0x762365bff6c0 (LWP 45583) "mumble"          futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+  6    Thread 0x76234d0616c0 (LWP 45582) "mumble"          futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+  7    Thread 0x76233d6466c0 (LWP 45552) "mumble"          futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+  8    Thread 0x76233ce456c0 (LWP 45551) "ServerHandler"   0x000076238171b4fd in __GI___poll (fds=0x7623180013c0, nfds=3, timeout=4995) at ../sysdeps/unix/sysv/linux/poll.c:29
+  9    Thread 0x7623748c16c0 (LWP 45530) "Qt bearer threa" 0x000076238171b4fd in __GI___poll (fds=0x7623480013b0, nfds=1, timeout=9989) at ../sysdeps/unix/sysv/linux/poll.c:29
+  10   Thread 0x7623751bb6c0 (LWP 45529) "threaded-ml"     0x000076238171b4fd in __GI___poll (fds=0x762354007d30, nfds=2, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+  11   Thread 0x76237669d6c0 (LWP 45451) "QDBusConnection" 0x000076238171b4fd in __GI___poll (fds=0x762360040000, nfds=17, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+  12   Thread 0x762376f626c0 (LWP 45450) "gdbus"           0x000076238171b4fd in __GI___poll (fds=0x76236c000b90, nfds=2, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+  13   Thread 0x7623777636c0 (LWP 45449) "gmain"           0x000076238171b4fd in __GI___poll (fds=0x5ae389ef8990, nfds=1, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+  14   Thread 0x762377f646c0 (LWP 45448) "pool-spawner"    syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+  15   Thread 0x76237dc3d6c0 (LWP 45447) "QXcbEventQueue"  0x000076238171b4fd in __GI___poll (fds=0x76237dc3cb68, nfds=1, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+
+Thread 15 (Thread 0x76237dc3d6c0 (LWP 45447) "QXcbEventQueue"):
+#0  0x000076238171b4fd in __GI___poll (fds=0x76237dc3cb68, nfds=1, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x000076238144f8ca in ??? () at /lib/x86_64-linux-gnu/libxcb.so.1
+#2  0x000076238145128c in xcb_wait_for_event () at /lib/x86_64-linux-gnu/libxcb.so.1
+#3  0x000076237dcfbba0 in ??? () at /lib/x86_64-linux-gnu/libQt5XcbQpa.so.5
+#4  0x0000762381edb674 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#5  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#6  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 14 (Thread 0x762377f646c0 (LWP 45448) "pool-spawner"):
+#0  syscall () at ../sysdeps/unix/sysv/linux/x86_64/syscall.S:38
+#1  0x00007623813b04ad in g_cond_wait () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#2  0x000076238132153b in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#3  0x0000762381386b73 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#4  0x0000762381385d92 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#5  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#6  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 13 (Thread 0x7623777636c0 (LWP 45449) "gmain"):
+#0  0x000076238171b4fd in __GI___poll (fds=0x5ae389ef8990, nfds=1, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007623813b668e in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#2  0x0000762381356a63 in g_main_context_iteration () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#3  0x0000762381356ab9 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#4  0x0000762381385d92 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#5  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#6  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 12 (Thread 0x762376f626c0 (LWP 45450) "gdbus"):
+#0  0x000076238171b4fd in __GI___poll (fds=0x76236c000b90, nfds=2, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007623813b668e in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#2  0x0000762381357f87 in g_main_loop_run () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#3  0x000076237c981542 in ??? () at /lib/x86_64-linux-gnu/libgio-2.0.so.0
+#4  0x0000762381385d92 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#5  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#6  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 11 (Thread 0x76237669d6c0 (LWP 45451) "QDBusConnection"):
+#0  0x000076238171b4fd in __GI___poll (fds=0x762360040000, nfds=17, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007623813b668e in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#2  0x0000762381356a63 in g_main_context_iteration () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#3  0x0000762382135279 in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#4  0x00007623820d6a7b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#5  0x0000762381eda36b in QThread::exec() () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#6  0x00007623834da15b in ??? () at /lib/x86_64-linux-gnu/libQt5DBus.so.5
+#7  0x0000762381edb674 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#8  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#9  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 10 (Thread 0x7623751bb6c0 (LWP 45529) "threaded-ml"):
+#0  0x000076238171b4fd in __GI___poll (fds=0x762354007d30, nfds=2, timeout=-1) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x000076237496d596 in ??? () at /lib/x86_64-linux-gnu/libpulse.so.0
+#2  0x00007623749566e4 in pa_mainloop_poll () at /lib/x86_64-linux-gnu/libpulse.so.0
+#3  0x00007623749611b3 in pa_mainloop_iterate () at /lib/x86_64-linux-gnu/libpulse.so.0
+#4  0x0000762374961278 in pa_mainloop_run () at /lib/x86_64-linux-gnu/libpulse.so.0
+#5  0x00007623749717c1 in ??? () at /lib/x86_64-linux-gnu/libpulse.so.0
+#6  0x000076237409e67b in ??? () at /usr/lib/x86_64-linux-gnu/pulseaudio/libpulsecommon-16.1.so
+#7  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#8  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 9 (Thread 0x7623748c16c0 (LWP 45530) "Qt bearer threa"):
+#0  0x000076238171b4fd in __GI___poll (fds=0x7623480013b0, nfds=1, timeout=9989) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007623813b668e in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#2  0x0000762381356a63 in g_main_context_iteration () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#3  0x0000762382135279 in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#4  0x00007623820d6a7b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#5  0x0000762381eda36b in QThread::exec() () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#6  0x0000762381edb674 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#7  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#8  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 8 (Thread 0x76233ce456c0 (LWP 45551) "ServerHandler"):
+#0  0x000076238171b4fd in __GI___poll (fds=0x7623180013c0, nfds=3, timeout=4995) at ../sysdeps/unix/sysv/linux/poll.c:29
+#1  0x00007623813b668e in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#2  0x0000762381356a63 in g_main_context_iteration () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#3  0x0000762382135279 in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#4  0x00007623820d6a7b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#5  0x0000762381eda36b in QThread::exec() () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#6  0x00005ae3684f0384 in ??? ()
+#7  0x0000762381edb674 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#8  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#9  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 7 (Thread 0x76233d6466c0 (LWP 45552) "mumble"):
+#0  futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+#1  __GI___lll_lock_wait (futex=futex@entry=0x762358483380 <fgcom_localcfg_mtx>, private=0) at ./nptl/lowlevellock.c:49
+#2  0x00007623816a0101 in lll_mutex_lock_optimized (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:48
+#3  ___pthread_mutex_lock (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:93
+#4  0x00007623582b6edd in fgcom_notifyThread() () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#5  0x0000762381aecdb4 in ??? () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#6  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#7  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 6 (Thread 0x76234d0616c0 (LWP 45582) "mumble"):
+#0  futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+#1  __GI___lll_lock_wait (futex=futex@entry=0x762358483380 <fgcom_localcfg_mtx>, private=0) at ./nptl/lowlevellock.c:49
+#2  0x00007623816a0101 in lll_mutex_lock_optimized (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:48
+#3  ___pthread_mutex_lock (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:93
+#4  0x000076235840475f in fgcom_handlePTT() () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#5  0x00007623582c50ec in fgcom_udp_parseMsg(char*, unsigned short, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >) () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#6  0x00007623582c7c5e in fgcom_spawnUDPServer() () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#7  0x0000762381aecdb4 in ??? () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#8  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#9  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 5 (Thread 0x762365bff6c0 (LWP 45583) "mumble"):
+#0  futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+#1  __GI___lll_lock_wait (futex=futex@entry=0x762358483380 <fgcom_localcfg_mtx>, private=0) at ./nptl/lowlevellock.c:49
+#2  0x00007623816a0101 in lll_mutex_lock_optimized (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:48
+#3  ___pthread_mutex_lock (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:93
+#4  0x00007623582d49f4 in fgcom_gc_clean_lcl() () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#5  0x00007623582da6ad in fgcom_spawnGarbageCollector() () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#6  0x0000762381aecdb4 in ??? () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#7  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#8  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 4 (Thread 0x7622d1ffb6c0 (LWP 45585) "mumble"):
+#0  futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+#1  __GI___lll_lock_wait (futex=futex@entry=0x762358483380 <fgcom_localcfg_mtx>, private=0) at ./nptl/lowlevellock.c:49
+#2  0x00007623816a0101 in lll_mutex_lock_optimized (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:48
+#3  ___pthread_mutex_lock (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:93
+#4  0x00007623582b6edd in fgcom_notifyThread() () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#5  0x0000762381aecdb4 in ??? () at /lib/x86_64-linux-gnu/libstdc++.so.6
+#6  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#7  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 3 (Thread 0x76233de476c0 (LWP 45586) "PulseAudioInput"):
+#0  0x0000762381698d71 in __futex_abstimed_wait_common64 (private=30243, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0x5ae38a3fa210) at ./nptl/futex-internal.c:57
+#1  __futex_abstimed_wait_common (cancel=true, private=30243, abstime=0x0, clockid=0, expected=0, futex_word=0x5ae38a3fa210) at ./nptl/futex-internal.c:87
+#2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0x5ae38a3fa210, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=private@entry=0) at ./nptl/futex-internal.c:139
+#3  0x000076238169b7ed in __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x5ae38a3fa1c0, cond=0x5ae38a3fa1e8) at ./nptl/pthread_cond_wait.c:503
+#4  ___pthread_cond_wait (cond=0x5ae38a3fa1e8, mutex=0x5ae38a3fa1c0) at ./nptl/pthread_cond_wait.c:627
+#5  0x0000762381ee178c in QWaitCondition::wait(QMutex*, QDeadlineTimer) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#6  0x00005ae36857d621 in ??? ()
+#7  0x0000762381edb674 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#8  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#9  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 2 (Thread 0x76233e6486c0 (LWP 45587) "PulseAudioOutpu"):
+#0  0x0000762381698d71 in __futex_abstimed_wait_common64 (private=30243, cancel=true, abstime=0x0, op=393, expected=0, futex_word=0x5ae38bea6950) at ./nptl/futex-internal.c:57
+#1  __futex_abstimed_wait_common (cancel=true, private=30243, abstime=0x0, clockid=0, expected=0, futex_word=0x5ae38bea6950) at ./nptl/futex-internal.c:87
+#2  __GI___futex_abstimed_wait_cancelable64 (futex_word=futex_word@entry=0x5ae38bea6950, expected=expected@entry=0, clockid=clockid@entry=0, abstime=abstime@entry=0x0, private=private@entry=0) at ./nptl/futex-internal.c:139
+#3  0x000076238169b7ed in __pthread_cond_wait_common (abstime=0x0, clockid=0, mutex=0x5ae38bea6900, cond=0x5ae38bea6928) at ./nptl/pthread_cond_wait.c:503
+#4  ___pthread_cond_wait (cond=0x5ae38bea6928, mutex=0x5ae38bea6900) at ./nptl/pthread_cond_wait.c:627
+#5  0x0000762381ee178c in QWaitCondition::wait(QMutex*, QDeadlineTimer) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#6  0x00005ae36857d6a9 in ??? ()
+#7  0x0000762381edb674 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#8  0x000076238169caa4 in start_thread (arg=<optimized out>) at ./nptl/pthread_create.c:447
+#9  0x0000762381729c6c in clone3 () at ../sysdeps/unix/sysv/linux/x86_64/clone3.S:78
+
+Thread 1 (Thread 0x76237e7c6900 (LWP 45446) "mumble"):
+#0  futex_wait (private=0, expected=2, futex_word=0x762358483380 <fgcom_localcfg_mtx>) at ../sysdeps/nptl/futex-internal.h:146
+#1  __GI___lll_lock_wait (futex=futex@entry=0x762358483380 <fgcom_localcfg_mtx>, private=0) at ./nptl/lowlevellock.c:49
+#2  0x00007623816a0101 in lll_mutex_lock_optimized (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:48
+#3  ___pthread_mutex_lock (mutex=0x762358483380 <fgcom_localcfg_mtx>) at ./nptl/pthread_mutex_lock.c:93
+#4  0x0000762358411bbe in fgcom_updateClientComment() () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#5  0x00007623584121d2 in fgcom_setPluginActive(bool) () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#6  0x0000762358412566 in mumble_shutdown () at /home/haaken/.local/share/Mumble/Mumble/Plugins/fgcom-mumble.so
+#7  0x00005ae3684b2e55 in ??? ()
+#8  0x00005ae3684b3df8 in ??? ()
+#9  0x00005ae3684b52e6 in ??? ()
+#10 0x00005ae3683a8c83 in ??? ()
+#11 0x00005ae36839bef0 in ??? ()
+#12 0x0000762382112d19 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#13 0x00007623830676e4 in QAbstractButton::clicked(bool) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#14 0x000076238306796f in ??? () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#15 0x00007623830695b0 in ??? () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#16 0x00007623830697b8 in QAbstractButton::mouseReleaseEvent(QMouseEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#17 0x0000762382fb0df8 in QWidget::event(QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#18 0x0000762382f6bd45 in QApplicationPrivate::notify_helper(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#19 0x0000762382f746b0 in QApplication::notify(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#20 0x00007623820d8118 in QCoreApplication::notifyInternal2(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#21 0x0000762382f72874 in QApplicationPrivate::sendMouseEvent(QWidget*, QMouseEvent*, QWidget*, QWidget*, QWidget**, QPointer<QWidget>&, bool, bool) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#22 0x0000762382fcaa39 in ??? () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#23 0x0000762382fcdfbf in ??? () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#24 0x0000762382f6bd45 in QApplicationPrivate::notify_helper(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#25 0x00007623820d8118 in QCoreApplication::notifyInternal2(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#26 0x0000762382745a3b in QGuiApplicationPrivate::processMouseEvent(QWindowSystemInterfacePrivate::MouseEvent*) () at /lib/x86_64-linux-gnu/libQt5Gui.so.5
+#27 0x0000762382717bfc in QWindowSystemInterface::sendWindowSystemEvents(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Gui.so.5
+#28 0x000076237dcfcd06 in ??? () at /lib/x86_64-linux-gnu/libQt5XcbQpa.so.5
+#29 0x00007623813575c5 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#30 0x00007623813b6737 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#31 0x0000762381356a63 in g_main_context_iteration () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#32 0x0000762382135279 in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#33 0x00007623820d6a7b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#34 0x000076238318aebb in QDialog::exec() () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#35 0x00005ae368494992 in ??? ()
+#36 0x00005ae368395c82 in ??? ()
+#37 0x0000762382112d19 in ??? () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#38 0x0000762382f64f94 in QAction::triggered(bool) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#39 0x0000762382f67eab in QAction::activate(QAction::ActionEvent) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#40 0x000076238306967a in ??? () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#41 0x00007623830697b8 in QAbstractButton::mouseReleaseEvent(QMouseEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#42 0x000076238316d446 in QToolButton::mouseReleaseEvent(QMouseEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#43 0x0000762382fb0df8 in QWidget::event(QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#44 0x0000762382f6bd45 in QApplicationPrivate::notify_helper(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#45 0x0000762382f746b0 in QApplication::notify(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#46 0x00007623820d8118 in QCoreApplication::notifyInternal2(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#47 0x0000762382f72874 in QApplicationPrivate::sendMouseEvent(QWidget*, QMouseEvent*, QWidget*, QWidget*, QWidget**, QPointer<QWidget>&, bool, bool) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#48 0x0000762382fcaa39 in ??? () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#49 0x0000762382fcdfbf in ??? () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#50 0x0000762382f6bd45 in QApplicationPrivate::notify_helper(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Widgets.so.5
+#51 0x00007623820d8118 in QCoreApplication::notifyInternal2(QObject*, QEvent*) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#52 0x0000762382745a3b in QGuiApplicationPrivate::processMouseEvent(QWindowSystemInterfacePrivate::MouseEvent*) () at /lib/x86_64-linux-gnu/libQt5Gui.so.5
+#53 0x0000762382717bfc in QWindowSystemInterface::sendWindowSystemEvents(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Gui.so.5
+#54 0x000076237dcfcd06 in ??? () at /lib/x86_64-linux-gnu/libQt5XcbQpa.so.5
+#55 0x00007623813575c5 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#56 0x00007623813b6737 in ??? () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#57 0x0000762381356a63 in g_main_context_iteration () at /lib/x86_64-linux-gnu/libglib-2.0.so.0
+#58 0x0000762382135279 in QEventDispatcherGlib::processEvents(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#59 0x00007623820d6a7b in QEventLoop::exec(QFlags<QEventLoop::ProcessEventsFlag>) () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#60 0x00007623820df3e8 in QCoreApplication::exec() () at /lib/x86_64-linux-gnu/libQt5Core.so.5
+#61 0x00005ae368362576 in ??? ()
+#62 0x000076238162a1ca in __libc_start_call_main (main=main@entry=0x5ae36835e920, argc=argc@entry=3, argv=argv@entry=0x7ffee1dc6538) at ../sysdeps/nptl/libc_start_call_main.h:58
+#63 0x000076238162a28b in __libc_start_main_impl (main=0x5ae36835e920, argc=3, argv=0x7ffee1dc6538, init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7ffee1dc6528) at ../csu/libc-start.c:360
+#64 0x00005ae368372405 in ??? ()
+[Inferior 1 (process 45446) detached]

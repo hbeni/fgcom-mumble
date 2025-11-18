@@ -1,15 +1,19 @@
 .PHONY : all debug all-debug plugin-debug plugin libs test tools clean clean-all debug-on
 CC=g++
-DEBUG=
+DEBUG=-g
 THREADS_UNIX=-pthread
 THREADS_WIN=-Wl,-Bstatic -lstdc++ -lpthread -lws2_32
-override CFLAGS+=-Wall -O3 -I. -I./lib $(DEBUG)
+override CFLAGS+=-Wall -O3 -I. -I./lib -DENABLE_OPENINFRAMAP $(DEBUG)
+
+# DSP IIR Realtime C++ filter library support
+# Professional audio processing is now built-in using modern DSP algorithms
+$(info Professional audio processing enabled - Using DSP IIR Realtime C++ filter library)
 override CFLAGS_WIN+=-Wl,--subsystem,windows -static-libgcc -static-libstdc++ $(CFLAGS)
 SSLFLAGS+=-I./lib/openssl/include/ -L./lib/openssl/ -lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32
 # Note on flags: -D_WIN32 is needed by httplib on Windows
 
-lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
+lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/agc_squelch.o lib/agc_squelch_api.o lib/ctcss_system.o lib/terrain_elevation.o lib/preset_channel_api.o lib/soviet_vhf_equipment.o lib/nato_vhf_equipment.o lib/preset_channel_config_loader.o lib/radio_model_config_loader.o lib/gpu_resource_limiting.o lib/terrain_state_machine.o lib/terrain_data_access.o lib/terrain_cache.o lib/terrain_statistics.o lib/terrain_environmental_api.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o
 
 # Notice: Special calls
 #
@@ -54,7 +58,7 @@ plugin-debug:
 # make the plugin
 plugin: outname=fgcom-mumble.so
 plugin: libs
-	$(CC) -shared -fPIC -o $(outname) $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -shared -fPIC -o $(outname) $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS) $(CFLAGS) $(THREADS_UNIX) -lcurl
 
 # make all the libs
 libs:  $(lib_OBJS)
@@ -63,21 +67,25 @@ libs:  $(lib_OBJS)
 	$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(THREADS_UNIX)
 
 # Compile testing tools
+# Note: tools need stub symbols from fgcom-mumble-tools-stub.cpp for audio.cpp dependencies
 tools: libs
-	$(CC) -o test/geotest lib/radio_model.o lib/audio.o test/geotest.cpp $(CFLAGS)
-	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o test/frqtest.cpp $(CFLAGS)
+	$(CC) -fPIC -c -o fgcom-mumble-tools-stub.o fgcom-mumble-tools-stub.cpp $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -o test/geotest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o fgcom-mumble-tools-stub.o test/geotest.cpp $(CFLAGS) -lcurl
+	$(CC) -o test/frqtest lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o fgcom-mumble-tools-stub.o test/frqtest.cpp $(CFLAGS) -lcurl
 	$(CC) -o test/updater-test test/updater-test.cpp $(CFLAGS)
 	
 
 
 # catch2 unit tests linking against main
-test: libs test/catch2/tests-main.o test/catch2/tests-main.o test/catch2/radioModelTest.o
-	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o lib/radio_model.o lib/audio.o test/catch2/radioModelTest.o $(CFLAGS) && test/catch2/radioModelTest.catch2
+# Note: test needs fgcom-mumble.cpp for audio.cpp dependencies (cached_radio_infos_mtx, fgcom_cfg, etc.)
+test: libs test/catch2/tests-main.o test/catch2/radioModelTest.o
+	$(CC) -fPIC -c -o fgcom-mumble-test.o fgcom-mumble.cpp $(CFLAGS) $(THREADS_UNIX)
+	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o test/catch2/radioModelTest.o $(lib_OBJS) fgcom-mumble-test.o $(CFLAGS) $(THREADS_UNIX) -lcurl && test/catch2/radioModelTest.catch2
 # ^ add more
 
 # clean compile results
 clean:
-	rm -f *.o *.rc lib/*.o test/catch2/*.catch2 test/catch2/*.o
+	rm -f *.o *.rc lib/*.o test/catch2/*.catch2 test/catch2/*.o fgcom-mumble-test.o fgcom-mumble-tools-stub.o
 
 # clean compile results and binarys
 clean-all: clean
@@ -217,3 +225,19 @@ ifdef SSLFLAGS
 else
 	@echo "Skipping building OpenSSL"
 endif
+
+# Test band segments CSV loading
+test-band-segments: test/test_band_segments_csv.cpp lib/amateur_radio.o
+	$(CC) $(CFLAGS) -o test_band_segments_csv test/test_band_segments_csv.cpp lib/amateur_radio.o
+	./test_band_segments_csv
+	rm -f test_band_segments_csv
+
+test-preset-channels: test/test_preset_channels_simple.cpp lib/preset_channel_api.o lib/nato_vhf_equipment.o
+	$(CC) $(CFLAGS) -o test_preset_channels test/test_preset_channels_simple.cpp lib/preset_channel_api.o lib/nato_vhf_equipment.o
+	./test_preset_channels
+	rm -f test_preset_channels
+
+test-terrain-compliance: test/test_terrain_api_compliance.cpp lib/terrain_state_machine.o lib/terrain_data_access.o lib/terrain_cache.o lib/terrain_statistics.o lib/terrain_environmental_api.o
+	$(CC) $(CFLAGS) -o test_terrain_compliance test/test_terrain_api_compliance.cpp lib/terrain_state_machine.o lib/terrain_data_access.o lib/terrain_cache.o lib/terrain_statistics.o lib/terrain_environmental_api.o $(THREADS_UNIX)
+	./test_terrain_compliance
+	rm -f test_terrain_compliance

@@ -1,0 +1,263 @@
+body {
+    background-color: #ececec;
+}
+
+body div.header {
+    position:relative;
+    float:none;
+    width:95%;
+    margin: auto;
+}
+
+body div.body {
+    position:relative;
+    float:none;
+    width:95%;
+    margin: 1em auto 1em auto;
+}
+
+body div.footer {
+    position:relative;
+    float:none;
+    width:100%;
+    margin:3em auto auto auto;
+    clear: both;
+    
+    font-size:10pt;
+    text-align:center;
+    padding:5px;
+    border-top: 1px solid black;
+}
+
+/* Flexible wrapping of elements for responsive design on smaller screens */
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+.flex > * {
+    flex: 1 1 250px;
+}
+
+/* Page title */
+.title {
+    position:relative;
+    border: 1px solid black;
+    background-color: #fafafa;
+    background-image: url("fgcom_logo.png");
+    background-repeat: no-repeat;
+    /*background-size: 5.5em, 5.5em;*/
+    background-size: contain;
+    padding-left: 2.2em;
+    padding-top: -1em;
+    min-height: 4em;
+    /*width: 60%;*/
+    text-align: center;
+    vertical-align: top;
+    margin: auto;
+    box-shadow:2px 2px 4px #000000;
+}
+.title h1 {
+    margin:0; padding:0 0em;
+    color: yellow;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.title span { /* Udpate text*/
+    margin:0; padding:0;
+    font-style: italic;
+}
+.title span.stale { /* Udpate text stale*/
+    color:red;
+}
+.title .userinfo {
+}
+.title .lastdbupdate {
+    font-size:10pt;
+}
+.title .mumbleinfo{
+    display: block;
+    font-size:10pt;
+    font-style: normal;
+}
+
+.hide{
+    visibility: hidden;
+}
+
+/* Message block */
+.message {
+    border: 1px solid black;
+    background-color: #fafafa;
+    background-size: 2em, 2em;
+    padding: 0.2em;
+    height: 2em;
+    width: 50%;
+    margin: auto;
+    margin-top:1em;
+    box-shadow:2px 2px 4px #000000;
+}
+
+.s_users { /* Users section block */
+    width:49%;
+    float:left;
+}
+
+.s_playbacks { /* Playbacks block */
+    width:49%;
+    float:right;
+}
+
+
+.section h2 { /* Headings in sections */
+    font-size:12pt;
+    font-style: italic;
+    color: black;
+    margin:0;
+    margin-bottom:0.2em;
+    /*padding-top: -1em;
+    margin-top: -0.1em;*/
+    text-align: left;
+}
+
+#s_refresh { /* auto refresh box */
+    position:absolute;
+    bottom:0;
+    right:0;
+    
+    border:1px solid black;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 8pt;
+    background-color: #fafafa;
+    border-radius: 3px;
+    outline: none;
+}
+
+#donate_box {  /* donation link */
+    position:absolute;
+    top:0;
+    right:0;
+    text-align:right;
+    line-height: 1px;
+}
+
+#highscore {  /* highscore box */
+    font-family: 'Open Sans', sans-serif;
+    font-size:10pt;
+    text-align: center;
+    display:inline;
+}
+
+#usagelink {
+    display:inline;
+    border-left:1px solid black;
+    padding-left:5px;
+}
+
+.section table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid black;
+}
+.section th, .section td {
+  text-align: left;
+  padding: 4px;
+  font-size:10pt;
+}
+tr:nth-child(odd){background-color: #f2f2f2}
+.section th {
+    font-size:10pt;
+    font-weight:bold;
+    background-color: #2C80BD;
+    color: white;
+}
+
+/* Stale table row tr entries */
+.stale {
+    color:#C3C3C3;
+}
+
+/* radio frequency which is receiving */
+.radio_ok {
+}
+
+/* radio frequency which is unable to receive (not operable) */
+.radio_err {
+    color:#C3C3C3;
+}
+
+/* Section blocks and map container */
+.section, #mapid {
+    border: 1px solid black;
+    background-color: #fafafa;
+    background-size: 2em, 2em;
+    padding: 0.2em;
+    margin-top:1em;
+    margin-bottom:1em;
+    text-align: center;
+    box-shadow:2px 2px 4px #000000;
+}
+.section h2 {  /* heading */
+}
+
+/* leaflet map container */
+#mapid {
+    margin:auto;
+    margin-top:1em;
+    height: 50em;
+}
+.map_popup{
+    color:black;
+    border-collapse: collapse;
+    border: none;
+}
+.map_popup th{
+    font-size:10pt;
+    font-weight:bold;
+    background-color: white;
+    color: black;
+    margin:0;
+    padding:0;
+}
+.map_popup td{
+    text-align: left;
+    padding: 4px;
+    font-size:10pt;
+    background-color: white;
+    margin:0;
+    padding:0;
+    padding-left:0.9em;
+}
+
+/* Styles for tablesort */
+th[role=columnheader]:not(.no-sort) {
+	cursor: pointer;
+}
+
+th[role=columnheader]:not(.no-sort):after {
+	content: '';
+	float: right;
+	margin-top: 7px;
+	border-width: 0 4px 4px;
+	border-style: solid;
+	border-color: #404040 transparent;
+	visibility: hidden;
+	opacity: 0;
+	-ms-user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+th[aria-sort=ascending]:not(.no-sort):after {
+	border-bottom: none;
+	border-width: 4px 4px 0;
+}
+
+th[aria-sort]:not(.no-sort):after {
+	visibility: visible;
+	opacity: 0.4;
+}
+
+th[role=columnheader]:not(.no-sort):hover:after {
+	visibility: visible;
+	opacity: 1;
+} 

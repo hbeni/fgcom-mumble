@@ -1,0 +1,628 @@
+# FGCom-mumble Configuration File
+# This is an example configuration file showing all available options
+# Copy this file to fgcom-mumble.conf and modify as needed
+
+# =============================================================================
+# AMATEUR RADIO CONFIGURATION
+# =============================================================================
+[amateur_radio]
+# Enable/disable amateur radio functionality
+enabled = true
+
+# ITU Region (1, 2, or 3) - set to "auto" for automatic detection
+itu_region = auto
+
+# Strict band compliance checking
+strict_band_compliance = true
+
+# Default transmit power in Watts
+default_power = 100
+
+# Default antenna height in meters
+antenna_height = 10
+
+# Enable Maidenhead grid locator support
+enable_grid_locator = true
+
+# Enable mode validation (CW vs SSB frequency separation)
+enable_mode_validation = true
+
+# Enable frequency validation
+enable_frequency_validation = true
+
+# Band plan file (CSV format)
+band_plan_file = band_segments.csv
+
+# Custom band plan (JSON format) - overrides band_plan_file if set
+custom_band_plan = 
+
+# Enable solar effects on propagation
+enable_solar_effects = true
+
+# Enable advanced propagation modeling
+enable_propagation_modeling = true
+
+# Enable antenna pattern effects
+enable_antenna_patterns = true
+
+# Enable ground system effects
+enable_ground_system_effects = true
+
+# Advanced amateur radio settings
+min_signal_quality = 0.1
+max_propagation_distance = 10000.0
+enable_muf_luf_calculations = true
+enable_skip_zone_modeling = true
+enable_tropospheric_ducting = false
+enable_sporadic_e = false
+enable_aurora_propagation = false
+
+# =============================================================================
+# TERRAIN ELEVATION CONFIGURATION
+# =============================================================================
+[terrain_elevation]
+# Enable/disable terrain elevation functionality
+enabled = false
+
+# Elevation data source (aster_gdem, srtm, openelevation_api, google_elevation_api)
+elevation_source = aster_gdem
+
+# ASTER GDEM configuration
+[aster_gdem]
+# Enable ASTER GDEM terrain data
+enabled = false
+
+# Path to ASTER GDEM data directory
+data_path = /usr/share/fgcom-mumble/aster_gdem
+
+# Enable automatic tile downloading
+auto_download = false
+
+# Download URL for ASTER GDEM tiles
+download_url = https://e4ftl01.cr.usgs.gov/ASTT/ASTGTM.003/2000.03.01/
+
+# Cache size in MB (0 = unlimited)
+cache_size_mb = 1000
+
+# Enable terrain obstruction detection
+enable_obstruction_detection = true
+
+# Terrain resolution in meters (30m for ASTER GDEM)
+terrain_resolution_m = 30
+
+# Enable Fresnel zone calculations
+enable_fresnel_zone = true
+
+# Fresnel zone clearance percentage (0.6 = 60% clearance)
+fresnel_clearance_percent = 0.6
+
+# Enable diffraction effects
+enable_diffraction = true
+
+# Maximum terrain profile distance in km
+max_profile_distance_km = 100.0
+
+# Enable terrain profile caching
+enable_profile_caching = true
+
+# Profile cache size in MB
+profile_cache_size_mb = 500
+
+# =============================================================================
+# SOLAR DATA CONFIGURATION
+# =============================================================================
+[solar_data]
+# Enable/disable solar data functionality
+enabled = true
+
+# NOAA API base URL
+noaa_api_url = https://services.swpc.noaa.gov/json/
+
+# Update interval in seconds (15 minutes = 900 seconds)
+update_interval = 900
+
+# Fallback data file path
+fallback_data_path = /usr/share/fgcom-mumble/solar_fallback.json
+
+# Enable background updates
+enable_background_updates = true
+
+# Enable offline mode when API is unavailable
+enable_offline_mode = true
+
+# Enable forecast data
+enable_forecast_data = false
+
+# Forecast hours ahead
+forecast_hours = 24
+
+# Enable historical data
+enable_historical_data = true
+
+# Historical data retention in days
+historical_days = 7
+
+# NOAA API endpoints
+sfi_endpoint = f107cm.json
+k_index_endpoint = k_index_1m.json
+a_index_endpoint = a_index_1m.json
+ap_index_endpoint = ap_index_1m.json
+solar_wind_endpoint = solar_wind.json
+geomagnetic_endpoint = geomagnetic_field.json
+
+# Fallback values when API is unavailable
+fallback_sfi = 70.0
+fallback_k_index = 0.0
+fallback_a_index = 0.0
+
+# =============================================================================
+# PROPAGATION CONFIGURATION
+# =============================================================================
+[propagation]
+# Enable MUF/LUF calculations
+enable_muf_luf = true
+
+# Enable solar effects on propagation
+enable_solar_effects = true
+
+# Enable seasonal variations
+enable_seasonal_variations = true
+
+# Enable day/night effects
+enable_day_night_effects = true
+
+# Enable geomagnetic storm effects
+enable_geomagnetic_storm_effects = true
+
+# Cache propagation results
+cache_propagation_results = true
+
+# Cache size (number of results)
+cache_size = 1000
+
+# Cache time-to-live in seconds
+cache_ttl = 3600
+
+# Enable GPU acceleration
+enable_gpu_acceleration = false
+
+# Enable parallel processing
+enable_parallel_processing = true
+
+# Maximum number of threads
+max_threads = 4
+
+# Propagation models
+enable_skywave_propagation = true
+enable_groundwave_propagation = true
+enable_line_of_sight = true
+enable_tropospheric_scatter = false
+enable_meteor_scatter = false
+enable_moonbounce = false
+
+# Advanced propagation features
+enable_ray_tracing = false
+enable_3d_propagation = false
+enable_atmospheric_modeling = false
+atmospheric_model = standard
+
+# =============================================================================
+# ANTENNA SYSTEM CONFIGURATION
+# =============================================================================
+[antenna_system]
+# Enable 4NEC2 antenna pattern support
+enable_4nec2_patterns = true
+
+# Enable GPU acceleration for antenna calculations
+enable_gpu_acceleration = false
+
+# Antenna pattern cache size
+antenna_pattern_cache_size = 1000
+
+# Default ground system type
+default_ground_type = average
+
+# Antenna pattern directory
+pattern_directory = /usr/share/fgcom-mumble/antenna_patterns/
+
+# Default antenna type
+default_antenna_type = vertical
+
+# Default antenna height in meters
+default_height = 10.0
+
+# Default antenna efficiency (0.0 to 1.0)
+default_efficiency = 0.8
+
+# Default SWR (Standing Wave Ratio)
+default_swr = 1.5
+
+# Default feedpoint impedance in ohms
+default_impedance = 50.0
+
+# Ground system effects
+enable_ground_system_effects = true
+enable_star_network_modeling = true
+enable_copper_plate_modeling = true
+enable_fuselage_modeling = true
+enable_vehicle_ground_modeling = true
+
+# Antenna types
+enable_dipole_antennas = true
+enable_yagi_antennas = true
+enable_vertical_antennas = true
+enable_whip_antennas = true
+enable_custom_antennas = true
+
+# =============================================================================
+# API SERVER CONFIGURATION
+# =============================================================================
+[api_server]
+# Enable/disable API server
+enabled = true
+
+# Server port
+port = 8080
+
+# Server host (0.0.0.0 for all interfaces)
+host = 0.0.0.0
+
+# Enable WebSocket support
+enable_websocket = true
+
+# Enable CORS (Cross-Origin Resource Sharing)
+enable_cors = true
+
+# CORS origin (use * for all origins)
+cors_origin = *
+
+# Enable rate limiting
+enable_rate_limiting = true
+
+# Rate limit: requests per minute per IP
+# Increased for UHF/GHz support (200-500 Hz = 12,000-30,000 req/min)
+rate_limit_requests_per_minute = 50000
+
+# Enable API key authentication
+enable_api_key_auth = false
+
+# API key (generate a secure key for production)
+# SECURITY WARNING: Use environment variables for production!
+# Set FGCOM_API_KEY environment variable instead of hardcoding here
+# Example: export FGCOM_API_KEY="your_secure_api_key_here"
+api_key = ${FGCOM_API_KEY}
+
+# Enable SSL/TLS
+enable_ssl = false
+
+# SSL certificate file
+ssl_cert_file = 
+
+# SSL private key file
+ssl_key_file = 
+
+# Logging
+enable_request_logging = true
+enable_error_logging = true
+log_level = info
+log_file = /var/log/fgcom-mumble/api.log
+
+# Security
+enable_ip_whitelist = false
+allowed_ips = 127.0.0.1,192.168.1.0/24
+enable_https_redirect = false
+https_redirect_port = 443
+
+# =============================================================================
+# NON-AMATEUR HF CONFIGURATION
+# =============================================================================
+[non_amateur_hf]
+# Enable aviation HF communications
+enable_aviation_hf = true
+
+# Enable maritime HF communications
+enable_maritime_hf = true
+
+# Enable MWARA (Major World Air Route Area) frequencies
+enable_mwara_frequencies = true
+
+# Enable USCG maritime channels
+enable_uscg_channels = true
+
+# Enable emergency frequencies
+enable_emergency_frequencies = true
+
+# Enable VOLMET weather broadcasts
+enable_volmet_broadcasts = true
+
+# Aviation HF settings
+enable_aircraft_fuselage_modeling = true
+enable_high_altitude_effects = true
+enable_whip_antenna_modeling = true
+enable_selcal_system = true
+
+# Maritime HF settings
+enable_ship_hull_modeling = true
+enable_sea_path_effects = true
+enable_duplex_operation = true
+enable_distress_frequencies = true
+
+# Data sources
+mwara_data_source = builtin
+uscg_data_source = builtin
+enable_external_data_sources = false
+external_data_url = 
+external_data_update_interval = 3600
+
+# =============================================================================
+# HISTORICAL MARITIME HF BANDS CONFIGURATION
+# =============================================================================
+[historical_maritime_bands]
+# Enable historical maritime HF bands (472 kHz, 136 kHz, 500 kHz, 2 MHz)
+# These bands were historically used for maritime distress and communication
+# before being allocated to amateur radio operators
+enable_historical_maritime_bands = true
+
+# 500 kHz band - International distress and calling frequency
+enable_500khz_band = true
+500khz_power_limit_watts = 500
+500khz_mode = CW
+500khz_historical_use = "International distress and calling frequency"
+500khz_primary_until_gmdss = true
+
+# 2 MHz band (1.6-4 MHz) - Marine MF/HF-SSB radios
+enable_2mhz_band = true
+2mhz_power_limit_watts = 1000
+2mhz_mode = SSB
+2mhz_frequency_range = "1.6-4.0 MHz"
+2mhz_historical_use = "Marine MF/HF-SSB radios"
+
+# 630 meter band (472-479 kHz) - Historical maritime distress frequency
+enable_630m_band = true
+630m_power_limit_watts = 100
+630m_mode = CW
+630m_secondary_allocation = true
+
+# 2200 meter band (135.7-137.8 kHz) - Historical maritime navigation
+enable_2200m_band = true
+2200m_power_limit_watts = 200
+2200m_mode = CW
+2200m_secondary_allocation = true
+
+# Interference protection settings
+protect_primary_services = true
+automatic_power_reduction = true
+interference_monitoring = true
+
+# =============================================================================
+# AUDIO CONFIGURATION
+# =============================================================================
+[audio]
+# Enable audio processing
+enable_audio_processing = true
+
+# Enable noise reduction
+enable_noise_reduction = true
+
+# Enable audio compression
+enable_audio_compression = true
+
+# Enable audio effects
+enable_audio_effects = false
+
+# Audio quality settings
+sample_rate = 48000
+bit_depth = 16
+channels = 1
+enable_stereo = false
+
+# Audio effects
+enable_reverb = false
+enable_echo = false
+enable_distortion = false
+enable_filtering = true
+
+# Noise reduction
+enable_adaptive_noise_reduction = true
+enable_spectral_subtraction = true
+noise_reduction_level = 0.5
+
+# =============================================================================
+# LOGGING CONFIGURATION
+# =============================================================================
+[logging]
+# Enable file logging
+enable_file_logging = true
+
+# Enable console logging
+enable_console_logging = true
+
+# Log level (debug, info, warn, error)
+log_level = info
+
+# Log file path
+log_file = /var/log/fgcom-mumble/fgcom-mumble.log
+
+# Maximum log file size in bytes (10MB)
+max_log_file_size = 10485760
+
+# Maximum number of log files to keep
+max_log_files = 5
+
+# Enable log rotation
+enable_rotation = true
+
+# Component-specific logging
+enable_udp_logging = true
+enable_propagation_logging = true
+enable_solar_logging = true
+enable_antenna_logging = true
+enable_api_logging = true
+enable_debug_logging = false
+
+# =============================================================================
+# PERFORMANCE CONFIGURATION
+# =============================================================================
+[performance]
+# Enable multithreading
+enable_multithreading = true
+
+# Maximum number of threads
+max_threads = 4
+
+# Enable thread pool
+enable_thread_pool = true
+
+# Thread pool size
+thread_pool_size = 8
+
+# Enable memory pool
+enable_memory_pool = true
+
+# Memory pool size in bytes (1MB)
+memory_pool_size = 1000000
+
+# Caching settings
+enable_propagation_cache = true
+propagation_cache_size = 1000
+propagation_cache_ttl = 3600
+enable_antenna_cache = true
+antenna_cache_size = 100
+antenna_cache_ttl = 7200
+enable_solar_cache = true
+solar_cache_ttl = 900
+
+# GPU acceleration
+enable_gpu_acceleration = false
+enable_cuda = false
+enable_opencl = false
+gpu_memory_limit = 512
+enable_gpu_propagation = false
+enable_gpu_antenna_patterns = false
+
+# GPU Resource Limiting (Client-Only and Hybrid modes)
+# =============================================================================
+[gpu_resource_limiting]
+# Enable GPU resource limiting for client-side calculations
+enable_gpu_resource_limiting = true
+
+# GPU usage percentage limit (0-100)
+# Set to 0 to disable GPU usage, 100 for full usage
+gpu_usage_percentage_limit = 30
+
+# GPU memory usage limit in MB
+gpu_memory_limit_mb = 256
+
+# GPU priority levels (1-10, where 10 is highest priority)
+# Lower values give more priority to game rendering
+gpu_priority_level = 3
+
+# Enable adaptive GPU usage based on system load
+enable_adaptive_gpu_usage = true
+
+# Minimum GPU usage percentage (when adaptive is enabled)
+min_gpu_usage_percentage = 10
+
+# Maximum GPU usage percentage (when adaptive is enabled)
+max_gpu_usage_percentage = 50
+
+# GPU usage reduction when game is detected as running
+# Percentage reduction when game is detected (0-100)
+game_detection_reduction = 50
+
+# GPU usage reduction during high system load
+# Percentage reduction when system load is high (0-100)
+high_load_reduction = 30
+
+# GPU usage reduction during low battery (laptops)
+# Percentage reduction when battery is low (0-100)
+low_battery_reduction = 40
+
+# Enable GPU usage monitoring and enforcement
+enable_gpu_monitoring = true
+
+# GPU usage check interval in milliseconds
+gpu_check_interval_ms = 1000
+
+# GPU usage enforcement strictness (1-5)
+# 1 = lenient, 5 = strict enforcement
+enforcement_strictness = 3
+
+# Enable GPU usage logging
+enable_gpu_usage_logging = false
+
+# GPU usage log file
+gpu_usage_log_file = gpu_usage.log
+
+# GPU usage statistics collection
+enable_gpu_statistics = true
+
+# GPU statistics collection interval in seconds
+gpu_statistics_interval = 60
+
+# GPU usage alerts
+enable_gpu_alerts = true
+
+# GPU usage alert threshold percentage
+gpu_alert_threshold = 80
+
+# GPU usage alert cooldown in seconds
+gpu_alert_cooldown = 300
+
+# =============================================================================
+# FEATURE FLAGS
+# =============================================================================
+# These flags can be used to enable/disable specific features
+# without modifying the main configuration sections
+
+[features]
+# Core features
+propagation = true
+solar_data = true
+amateur_radio = true
+antenna_patterns = true
+ground_systems = true
+
+# API features
+api_server = true
+websocket = true
+rate_limiting = true
+cors = true
+
+# Advanced features
+gpu_acceleration = false
+parallel_processing = true
+caching = true
+logging = true
+
+# Experimental features
+ray_tracing = false
+3d_propagation = false
+atmospheric_modeling = false
+meteor_scatter = false
+moonbounce = false
+
+# =============================================================================
+# CUSTOM BAND PLAN EXAMPLE
+# =============================================================================
+# To use a custom band plan, set custom_band_plan in the [amateur_radio] section
+# to a JSON string containing your custom band definitions:
+#
+# custom_band_plan = {
+#   "bands": [
+#     {
+#       "name": "160m",
+#       "start_freq": 1800.0,
+#       "end_freq": 2000.0,
+#       "modes": [
+#         {"name": "CW", "start_freq": 1800.0, "end_freq": 1838.0},
+#         {"name": "SSB", "start_freq": 1838.0, "end_freq": 2000.0}
+#       ],
+#       "regions": [1, 2, 3],
+#       "power_limit": 400.0,
+#       "notes": "Top band - excellent for local and regional contacts"
+#     }
+#   ]
+# }
+#
+# This allows you to easily modify band plans without changing the source code.

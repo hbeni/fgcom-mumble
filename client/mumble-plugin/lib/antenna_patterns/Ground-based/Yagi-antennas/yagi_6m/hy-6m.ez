@@ -1,0 +1,91 @@
+EZNEC ver. 7.0
+
+; Hy-Gain VB-64FM 6-Meter Yagi Antenna Model
+; 4-element Yagi for 6m band (50-54 MHz)
+; Gain: 8-9 dBi, Boom Length: 8-10 ft
+; Popular commercial 4-element 6m Yagi design
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; Boom (10 ft = 3.05m)
+W001 -1.525  0.0   0.0   1.525  0.0   0.0   0.01  12
+
+; Reflector (longest element, behind driven element)
+W002 -1.525 -0.36  0.0  -1.525  0.36  0.0   0.001  7
+
+; Driven Element (center, fed element)
+W003   0.0   -0.35  0.0   0.0    0.35  0.0   0.001  7
+
+; Director 1 (first director)
+W004   0.8   -0.34  0.0   0.8    0.34  0.0   0.001  7
+
+; Director 2 (second director, shortest)
+W005   1.6   -0.33  0.0   1.6    0.33  0.0   0.001  7
+
+; SOURCE
+SY SRC  W003  1  1  ; Driven element feed point
+
+; GROUND
+; Average ground conditions
+GD 0 0 0 0 0.005 0.013  ; Average soil: conductivity=0.005 S/m, permittivity=13
+
+; LOADS
+; Boom - aluminum
+LD 5 1 1 0 3.7E+07 0    ; Aluminum boom
+
+; FREQUENCY
+FR 0 1 0 0 52.000 0     ; 6m band center frequency
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; FREQUENCY SWEEP - 6m amateur band
+; FR 0 20 0 0 50.000 0.2  ; 6m band sweep 50-54 MHz
+
+; COMMENTS
+; Hy-Gain VB-64FM 6-Meter Yagi Antenna
+; Popular commercial 4-element Yagi for 6m band
+;
+; Specifications:
+; - Elements: 4 (reflector, driven, 2 directors)
+; - Gain: 8-9 dBi
+; - Boom length: 10 ft (3.05m)
+; - Frequency: 50-54 MHz (6m amateur band)
+; - Impedance: ~50 ohms
+;
+; Element lengths (approximate):
+; - Reflector: 0.72m (longest)
+; - Driven: 0.70m (center, fed)
+; - Director 1: 0.68m
+; - Director 2: 0.66m (shortest)
+;
+; Spacing:
+; - Reflector to driven: 1.525m
+; - Driven to director 1: 0.8m
+; - Director 1 to director 2: 0.8m
+; - Total boom: 3.05m
+;
+; Performance characteristics:
+; - Front-to-back ratio: 20-25 dB
+; - SWR: <1.5:1 across band
+; - Beamwidth: ~45° horizontal, ~35° vertical
+; - Polarization: Horizontal
+;
+; Installation considerations:
+; - Height: Minimum 1/2 wavelength (3m) for best performance
+; - Ground: Average soil conditions assumed
+; - Wind loading: Light (4 elements, short boom)
+; - Rotor: Required for directional operation
+;
+; Typical applications:
+; - DX communication on 6m
+; - Contest operation
+; - Long-distance amateur radio
+; - Emergency communication
+; - FM repeater work
+; - VHF contesting
+;
+; This model represents the typical performance
+; of a well-designed 4-element 6m Yagi antenna
+EN

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "admin",
+    "username": "admin",
+    "email": "admin@fgcom-mumble.local",
+    "password": "$2a$10$b1Y8nONhU8u0Nib3kNqzrepHCrSqTT4xRdPf9C1NBoV6SZWlOeQj.",
+    "role": "admin",
+    "createdAt": "2025-10-03T14:59:44.517Z",
+    "lastLogin": null
+  },
+  {
+    "id": "user_plhcrimasmgaz20gj",
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "$2a$10$GLCGCPYy3v.yUI3u8kYog.gxSGHblk5pcPPWKNLMX1R1dGkZTsY1O",
+    "role": "user",
+    "createdAt": "2025-10-03T15:01:09.790Z",
+    "lastLogin": null
+  },
+  {
+    "id": "user_niefgzldamgaz2h87",
+    "username": "newuser123",
+    "email": "newuser@example.com",
+    "password": "$2a$10$UVzJnxVjkhjDH4zwtvjaJulUDJ1BBJ4lFvOYDjRPTGa4nr4D8OaIK",
+    "role": "user",
+    "createdAt": "2025-10-03T15:01:31.544Z",
+    "lastLogin": null
+  }
+]

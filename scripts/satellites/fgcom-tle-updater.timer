@@ -1,0 +1,17 @@
+[Unit]
+Description=FGcom-Mumble TLE Automatic Updater Timer (24-hour cycle)
+Documentation=https://github.com/Supermagnum/fgcom-mumble
+Requires=fgcom-tle-updater.service
+
+[Timer]
+# Run every 24 hours at 6:00 AM
+OnCalendar=*-*-* 06:00:00
+# Run immediately if missed
+Persistent=true
+# Random delay to avoid system load spikes
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target
+
+

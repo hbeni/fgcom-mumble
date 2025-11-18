@@ -1,0 +1,72 @@
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+/home/haaken/github-projects/fgcom-mumble/.clang-tidy:42:1: error: duplicated mapping key 'SourceFilterRegex'
+SourceFilterRegex: '^(?!.*(?:generated|build|cmake)).*$'
+^~~~~~~~~~~~~~~~~
+Error parsing /home/haaken/github-projects/fgcom-mumble/.clang-tidy: Invalid argument
+108998 warnings generated.
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:76:21: warning: initialization of 'fgcom_cfg' with static storage duration may throw an exception that cannot be caught [cert-err58-cpp]
+   76 | struct fgcom_config fgcom_cfg;
+      |                     ^
+./lib/globalVars.h:49:5: note: possibly throwing constructor declared here
+   49 |     fgcom_config()  {
+      |     ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1043:76: warning: narrowing conversion from 'unsigned long' to signed type 'key_type' (aka 'int') is implementation-defined [bugprone-narrowing-conversions]
+ 1043 |                 auto radio_mapmumbleptt_srch = fgcom_cfg.mapMumblePTT.find(radio_id);
+      |                                                                            ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1066:50: warning: narrowing conversion from 'unsigned long' to signed type 'int' is implementation-defined [bugprone-narrowing-conversions]
+ 1066 |                     notifyRemotes(iid, NTFY_COM, radio_id);
+      |                                                  ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1107:43: warning: 2 adjacent parameters of 'mumble_onAudioInput' of convertible types are easily swapped by mistake [bugprone-easily-swappable-parameters]
+ 1107 | bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
+      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1107:52: note: the first parameter in the range is 'sampleCount'
+ 1107 | bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
+      |                                                    ^~~~~~~~~~~
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1107:74: note: the last parameter in the range is 'channelCount'
+ 1107 | bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
+      |                                                                          ^~~~~~~~~~~~
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1107:43: note: 
+ 1107 | bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
+      |                                           ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1107:65: note: 'uint32_t' and 'uint16_t' may be implicitly converted: 'uint32_t' (as 'unsigned int') -> 'uint16_t' (as 'unsigned short'), 'uint16_t' (as 'unsigned short') -> 'uint32_t' (as 'unsigned int')
+ 1107 | bool mumble_onAudioInput(short *inputPCM, uint32_t sampleCount, uint16_t channelCount, bool isSpeech) {
+      |                                                                 ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1253:62: warning: narrowing conversion from 'unsigned long' to signed type 'int' is implementation-defined [bugprone-narrowing-conversions]
+ 1253 |                                         rdfInfo.rxRadioId  = lri+1;  // Radios indices start at 0, names start at 1.
+      |                                                              ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1360:38: warning: performing an implicit widening conversion to type 'unsigned long' of a multiplication performed in type 'uint32_t' (aka 'unsigned int') [bugprone-implicit-widening-of-multiplication-result]
+ 1360 |             memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(float) );
+      |                                      ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1360:38: note: make conversion explicit to silence this warning
+   40 |             memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(float) );
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~
+      |                                      static_cast<unsigned long>( )
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1360:38: note: perform multiplication in a wider type
+ 1360 |             memset(outputPCM, 0x00, (sampleCount*channelCount)*sizeof(float) );
+      |                                      ^~~~~~~~~~~
+      |                                      static_cast<unsigned long>( )
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1438:11: warning: suspicious #include of file with '.cpp' extension [bugprone-suspicious-include]
+ 1438 | #include "updater.cpp"
+      |           ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/unique_ptr.h:99:2: warning: delete called on 'FGCom_radiowaveModel' that is abstract but has non-virtual destructor [clang-diagnostic-delete-abstract-non-virtual-dtor]
+   99 |         delete __ptr;
+      |         ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/unique_ptr.h:404:4: note: in instantiation of member function 'std::default_delete<FGCom_radiowaveModel>::operator()' requested here
+  404 |           get_deleter()(std::move(__ptr));
+      |           ^
+/home/haaken/github-projects/fgcom-mumble/client/mumble-plugin/fgcom-mumble.cpp:1187:75: note: in instantiation of member function 'std::unique_ptr<FGCom_radiowaveModel>::~unique_ptr' requested here
+ 1187 |                     std::unique_ptr<FGCom_radiowaveModel> radio_model_rmt(FGCom_radiowaveModel::selectModel(rmt.radios[ri].frequency));
+      |                                                                           ^
+Suppressed 108990 warnings (108990 in non-user code).
+Use -header-filter=.* to display errors from all non-system headers. Use -system-headers to display errors from system headers as well.

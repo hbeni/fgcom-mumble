@@ -43,6 +43,7 @@ public class radioGUI {
         public static String  simConnectHost      = "localhost";
         public static int     simConnectPort      = 500; // 500=MSFS2020
         public static boolean enableAudioEffecs   = true;
+        public static boolean audioNoiseSquelch   = true;
         public static boolean allowHearingNonPluginUsers = false;
         public static boolean alwaysMumblePTT     = false;
     }
@@ -94,7 +95,7 @@ public class radioGUI {
         
         /* start the main loop */
         udpClient = new UDPclient(state);
-        SimConnectBridge simconnect_client = null;
+        Object simconnect_client = null;
         while (mainWindow.isVisible()) {
             
             /* Boot simConnect if it was requested */
@@ -196,19 +197,20 @@ public class radioGUI {
      * 
      * @return established bridge
      */
-    public static SimConnectBridge invokeSimConnect() {
-
-        // Invoke the simConnect brigde
-        SimConnectBridge fgcom_simconnectbridge = null;
+    public static Object invokeSimConnect() {
         try {
-            fgcom_simconnectbridge = new SimConnectBridge();
-        } catch (java.net.ConnectException e) {
-            // connection failure. will be handled in the main loop already.
-            // we just return null here.
+            // Try to create the real SimConnectBridge first
+            Class<?> simConnectClass = Class.forName("hbeni.fgcom_mumble.SimConnectBridge");
+            return simConnectClass.getDeclaredConstructor().newInstance();
+        } catch (ClassNotFoundException e) {
+            // SimConnectBridge not available, use stub
+            System.out.println("SimConnect not available, using stub implementation");
+            return new SimConnectBridgeStub();
         } catch (Exception e) {
-            e.printStackTrace();
+            // Other errors, use stub
+            System.err.println("SimConnect error: " + e.getMessage() + ", using stub");
+            return new SimConnectBridgeStub();
         }
-        return fgcom_simconnectbridge;
     }
 
     public static void checkForUpdates() {
