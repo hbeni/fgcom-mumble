@@ -214,6 +214,7 @@ var FGComMumble = {
   },
   
   initMenu: func() {
+    FGComMumble.logger.log("core", 2, "initializing menu...");
     # We search the old FGCOM menu bar item to disable it, so nobody accidentally
     # opens the old FGCom dialoge which will reenable itself.
     # We do this by overwriting the classic menu entry, if possible.
@@ -223,7 +224,7 @@ var FGComMumble = {
       foreach (menu_item; menu_entry.getChildren("item")) {
         if (menu_item.getValue("name") == "fgcom-settings") {
           legacy_fgcom_menuDisabled = 1;
-          FGComMumble.logger.log("core", 2, "overwriting legacy FGCom menu entry ("~menu_item.getPath()~")" );
+          FGComMumble.logger.log("core", 3, "overwriting legacy FGCom menu entry ("~menu_item.getPath()~")" );
           #menu_item.setBoolValue("enabled", 0);
 
           # overwrite the entry with our menu
@@ -239,7 +240,7 @@ var FGComMumble = {
 
     # Init GUI menu entry, in case we could't overwrite the classic FGCom one
     if (!legacy_fgcom_menuDisabled) {
-      FGComMumble.logger.log("core", 2, "adding FGCom-mumble menu entry" );
+      FGComMumble.logger.log("core", 3, "adding FGCom-mumble menu entry" );
       var menuTgt = "/sim/menubar/default/menu[7]";  # 7=multiplayer
       var menudata = {
           label   : "FGCom-mumble",
