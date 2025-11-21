@@ -1,0 +1,31 @@
+{
+    "attributes": {
+        "cache-hits": 0,
+        "cache-misses": 7,
+        "compilers": [
+            {
+                "program": "gcc",
+                "version": "x86_64-linux-gnu-g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0"
+            },
+            {
+                "program": "gcc-cc1"
+            }
+        ],
+        "extractor-failures": 0,
+        "extractor-successes": 7,
+        "trap-caching": "disabled"
+    },
+    "markdownMessage": "Internal telemetry for the C++ extractor.\n\nNo action needed.",
+    "severity": "note",
+    "source": {
+        "extractorName": "cpp",
+        "id": "cpp/extractor/summary",
+        "name": "C++ extractor telemetry"
+    },
+    "timestamp": "2025-11-17T13:02:49.123595+0000",
+    "visibility": {
+        "cliSummaryTable": false,
+        "statusPage": false,
+        "telemetry": true
+    }
+}

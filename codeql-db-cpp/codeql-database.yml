@@ -1,0 +1,13 @@
+---
+sourceLocationPrefix: /home/haaken/github-projects/fgcom-dev/fgcom-mumble
+baselineLinesOfCode: 53342
+unicodeNewlines: false
+columnKind: utf8
+primaryLanguage: cpp
+creationMetadata:
+  sha: b528b3d8ff98e3f6ba6a3b70277fc718824a6e97
+  cliVersion: 2.23.5
+  creationTime: 2025-11-17T13:02:10.630889610Z
+overlayBaseDatabase: false
+overlayDatabase: false
+finalised: true

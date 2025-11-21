@@ -42,8 +42,8 @@ void debug_out_internal_state() {
             std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(lcl.lastUpdate);
             std::string lastUpdate_str(30, '\0');
             std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%H:%M:%S", std::localtime(&lastUpdate_t));
-            std::string lastUpdate_str_f(lastUpdate_str.c_str());
-            state_str += lcl_prefix + "lastUpdate="+lastUpdate_str_f+"\n";
+            lastUpdate_str.resize(strlen(lastUpdate_str.c_str()));
+            state_str += lcl_prefix + "lastUpdate="+lastUpdate_str+"\n";
             
             state_str += lcl_prefix + std::to_string(lcl.radios.size()) + " radios registered\n";
             for (unsigned long int i=0; i<lcl.radios.size(); i++) {
@@ -78,14 +78,14 @@ void debug_out_internal_state() {
                 std::time_t lastUpdate_t = std::chrono::system_clock::to_time_t(rmt.lastUpdate);
                 std::string lastUpdate_str(30, '\0');
                 std::strftime(&lastUpdate_str[0], lastUpdate_str.size(), "%H:%M:%S", std::localtime(&lastUpdate_t));
-                std::string lastUpdate_str_f(lastUpdate_str.c_str());
-                state_str += rmt_prefix + "lastUpdate="+lastUpdate_str_f+"\n";
+                lastUpdate_str.resize(strlen(lastUpdate_str.c_str()));
+                state_str += rmt_prefix + "lastUpdate="+lastUpdate_str+"\n";
                 
                 std::time_t lastNotify_t = std::chrono::system_clock::to_time_t(rmt.lastNotification);
                 std::string lastNotify_str(30, '\0');
                 std::strftime(&lastNotify_str[0], lastNotify_str.size(), "%T", std::localtime(&lastNotify_t));
-                std::string lastNotify_str_f(lastNotify_str.c_str());
-                state_str += rmt_prefix + "lastNotify="+lastNotify_str_f+"\n";
+                lastNotify_str.resize(strlen(lastNotify_str.c_str()));
+                state_str += rmt_prefix + "lastNotify="+lastNotify_str+"\n";
             
                 state_str += rmt_prefix + std::to_string(rmt.radios.size()) + " radios registered\n";
                 for (unsigned long int i=0; i<rmt.radios.size(); i++) {

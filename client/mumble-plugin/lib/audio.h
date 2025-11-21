@@ -25,7 +25,6 @@
  */
 void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
-
 /*
  * Apply volume modificator to samples
  * 
@@ -46,5 +45,27 @@ void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t chann
  * If highpass_cutoff / lowpass_cutoff == 0, then the respective filter is skipped
  */
 void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
+
+/*
+ * Apply frequency offset (Donald Duck Effect) using complex exponential method
+ * 
+ * @param float offset_hz: Frequency offset in Hz (positive = higher pitch, negative = lower pitch)
+ * @param float *outputPCM: Audio buffer to process
+ * @param uint32_t sampleCount: Number of samples
+ * @param uint16_t channelCount: Number of channels
+ * @param uint32_t sampleRateHz: Sample rate in Hz
+ */
+void fgcom_audio_applyFrequencyOffset(float offset_hz, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz);
+
+/*
+ * Generate squelch noise when squelch is open
+ * This function generates static noise when squelch is open (no signal received)
+ * 
+ * @param float *outputPCM: Audio buffer to process
+ * @param uint32_t sampleCount: Number of samples
+ * @param uint16_t channelCount: Number of channels
+ * @return bool: true if noise was generated, false otherwise
+ */
+bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_t channelCount);
 
 #endif

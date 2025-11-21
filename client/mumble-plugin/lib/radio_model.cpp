@@ -234,7 +234,6 @@ float FGCom_radiowaveModel::getChannelAlignment(float frq1_real, float frq2_real
     float widthKhz_eff = (width_kHz) / 2;  // half band
     float corekHz_eff  = core_kHz  / 2;  // half band
 
-    filter = 1 - diff_kHz + corekHz_eff;
     filter = 1 - (1/(widthKhz_eff-corekHz_eff)) * diff_kHz + corekHz_eff*1/(widthKhz_eff-corekHz_eff);  // 1-(1/(6-2.5))*x+2.5*1/(6-2.5)
     //std::cout << "DBG: FGCom_radiowaveModel::getChannelAlignment(): calc result="<<filter<<"; params: diff_kHz=" << diff_kHz << "; widthKhZ_eff="<< widthKhz_eff << "; corekHz_eff="<<corekHz_eff  <<std::endl;
     if (filter > 1.0) filter = 1.0;

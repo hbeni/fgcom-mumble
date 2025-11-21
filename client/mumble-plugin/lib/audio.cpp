@@ -16,6 +16,11 @@
  */
 #include "audio.h"
 #include "noise/phil_burk_19990905_patest_pink.c"  // pink noise generator from  Phil Burk, http://www.softsynth.com
+#include "globalVars.h"
+#include <mutex>
+#include <vector>
+#include <string>
+#include <cmath>
 
 // DSP Filter framework; i want it statically in audio.o without adjusting makefile (so we can swap easily later if needed)
 #include "DspFilters/Dsp.h"
@@ -38,26 +43,35 @@
  * Following functions are called from plugin code
  */
 void fgcom_audio_addNoise(float noiseVolume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    PinkNoise fgcom_PinkSource;
-    InitializePinkNoise(&fgcom_PinkSource, 12);     // Init new PinkNoise source with num of rows
+    static PinkNoise fgcom_PinkSource;
+    static bool pinkNoiseInitialized = false;
+    
+    if (!pinkNoiseInitialized) {
+        InitializePinkNoise(&fgcom_PinkSource, 12);
+        pinkNoiseInitialized = true;
+    }
+    
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
         float noise = GeneratePinkNoise( &fgcom_PinkSource );
         noise = noise * noiseVolume;
         outputPCM[s] = outputPCM[s] + noise;
     }
-    
 }
 
 
 void fgcom_audio_applyVolume(float volume, float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
-    // just loop over the array, applying the volume
-    if (volume == 1.0) return; // no adjustment requested
-    // TODO: Make sure we are not going off limits
+    if (volume == 1.0) return;
+    
+    if (volume < 0.0) volume = 0.0;
+    if (volume > 2.0) volume = 2.0;
+    
     for (uint32_t s=0; s<channelCount*sampleCount; s++) {
          outputPCM[s] = outputPCM[s] * volume;
+         
+         if (outputPCM[s] > 1.0f) outputPCM[s] = 1.0f;
+         if (outputPCM[s] < -1.0f) outputPCM[s] = -1.0f;
     }
 }
-
 
 void fgcom_audio_makeMono(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
     if (channelCount == 1) return; // no need to convert ono to mono!
@@ -81,61 +95,113 @@ std::unique_ptr<Dsp::Filter> f_highpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ:
 std::unique_ptr<Dsp::Filter> f_lowpass(new Dsp::SmoothedFilterDesign <Dsp::RBJ::Design::LowPass, 1> (fadeOverNumSamples));
 
 void fgcom_audio_filter(int highpass_cutoff, int lowpass_cutoff, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+    // Extract mono audio from first channel
+    std::vector<float> audioData(sampleCount);
+    float* audioDataPtr[1];
+    audioDataPtr[0] = audioData.data();
     
-    // Ok, first some assupmtions to save runtime:
-    //  - we are assuming a mono stream, ie. all channels contain the same float values already!
-    //  - therefore we need just to use the first channels data.
-    //  - if this is not true, we will overwrite all subsequent channels with the first ones filtered values.
-    
-    /*
-     * Prepare a DSP data buffer and populate it with the first channels values
-     */
-    float* audioData[1];
-    audioData[0] = new float[sampleCount];
-    // Loop over the samples of channel=0 and copy it to the DSP audio buffer
     uint32_t ai = 0;
     for (uint32_t s=0; s<channelCount*sampleCount; s+=channelCount) {
-        audioData[0][ai] = outputPCM[s];
+        audioData[ai] = outputPCM[s];
         ai++;
     }
 
-    
-    /*
-     * Apply filtering
-     */
-    
-    // Human speak frequencies range roughly from about 300Hz to 5000Hz.
-    // Playing with audacitys filter courve effect allows for testing results.
-    
-    // HighPass filter cuts away lower frequency ranges and let higher ones pass
     if (highpass_cutoff > 0 ) {
         Dsp::Params f_highpass_p;
-        f_highpass_p[0] = sampleRateHz; // sample rate
-        f_highpass_p[1] = highpass_cutoff; // cutoff frequency
-        f_highpass_p[2] = 2.0; // Q
+        f_highpass_p[0] = sampleRateHz;
+        f_highpass_p[1] = highpass_cutoff;
+        f_highpass_p[2] = 2.0;
         f_highpass->setParams (f_highpass_p);
-        f_highpass->process (sampleCount, audioData);
+        f_highpass->process (sampleCount, audioDataPtr);
     }
 
-    // LowPass filter cuts away higher frequency ranges and lets lower ones pass
     if (lowpass_cutoff > 0 ) {
         Dsp::Params f_lowpass_p;
-        f_lowpass_p[0] = sampleRateHz; // sample rate
-        f_lowpass_p[1] = lowpass_cutoff; // cutoff frequency
-        f_lowpass_p[2] = 0.97; // Q
+        f_lowpass_p[0] = sampleRateHz;
+        f_lowpass_p[1] = lowpass_cutoff;
+        f_lowpass_p[2] = 0.97;
         f_lowpass->setParams (f_lowpass_p);
-        f_lowpass->process (sampleCount, audioData);
+        f_lowpass->process (sampleCount, audioDataPtr);
     }
     
-    /*
-     * Apply filtered result to all channels (treats audio as mono!)
-     */
+    // Apply filtered audio to all channels
     ai = 0;
-    for (uint32_t s=0; s<channelCount*sampleCount; s+=channelCount) { // each sample of channel=0
+    for (uint32_t s=0; s<channelCount*sampleCount; s+=channelCount) {
         for (uint32_t c=0; c<channelCount; c++) {
-            outputPCM[s+c] = audioData[0][ai];
+            outputPCM[s+c] = audioData[ai];
         }
         ai++;
     }
+}
+
+/*
+ * Apply frequency offset (Donald Duck Effect) using complex exponential method
+ */
+void fgcom_audio_applyFrequencyOffset(float offset_hz, float *outputPCM, uint32_t sampleCount, uint16_t channelCount, uint32_t sampleRateHz) {
+    // Stub implementation - frequency_offset.h not available
+    // This function is not currently used in the codebase
+    (void)offset_hz;
+    (void)outputPCM;
+    (void)sampleCount;
+    (void)channelCount;
+    (void)sampleRateHz;
+}
+
+// Forward declarations for functions from fgcom-mumble.cpp
+extern bool fgcom_isPluginActive();
+
+// CachedRadioInfo and cached_radio_infos are now declared in globalVars.h
+
+static float smoothed_noise_level = 0.0f;
+
+bool fgcom_audio_addSquelchNoise(float *outputPCM, uint32_t sampleCount, uint16_t channelCount) {
+    if (!fgcom_isPluginActive() || !fgcom_cfg.radioAudioEffects || !fgcom_cfg.addNoiseSquelch) {
+        smoothed_noise_level = 0.0f;
+        return false;
+    }
     
+    float targetNoiseLevel = 0.0f;
+    const float SQUELCH_OPEN_THRESHOLD = 0.1f;
+    const float BASE_NOISE_VOLUME = 0.1f;
+    
+    std::unique_lock<std::mutex> lock(fgcom_localcfg_mtx, std::try_to_lock);
+    if (!lock.owns_lock()) {
+        return false;
+    }
+    
+    for (const auto &lcl_idty : fgcom_local_client) {
+        const fgcom_client& lcl = lcl_idty.second;
+        for (const auto& radio : lcl.radios) {
+            if (radio.operable && !radio.frequency.empty() && radio.squelch <= SQUELCH_OPEN_THRESHOLD) {
+                float squelchFactor = (1.0f - (radio.squelch / SQUELCH_OPEN_THRESHOLD));
+                float noiseLevel = BASE_NOISE_VOLUME * squelchFactor;
+                
+                if (noiseLevel > targetNoiseLevel) {
+                    targetNoiseLevel = noiseLevel;
+                }
+            }
+        }
+    }
+    
+    const float SMOOTHING_FACTOR = 0.15f;
+    
+    if (targetNoiseLevel > 0.0f) {
+        smoothed_noise_level = smoothed_noise_level + (targetNoiseLevel - smoothed_noise_level) * SMOOTHING_FACTOR;
+        
+        if (smoothed_noise_level > 0.001f) {
+            fgcom_audio_addNoise(smoothed_noise_level, outputPCM, sampleCount, channelCount);
+            return true;
+        }
+    } else {
+        smoothed_noise_level = smoothed_noise_level * (1.0f - SMOOTHING_FACTOR);
+        
+        if (smoothed_noise_level > 0.001f) {
+            fgcom_audio_addNoise(smoothed_noise_level, outputPCM, sampleCount, channelCount);
+            return true;
+        } else {
+            smoothed_noise_level = 0.0f;
+        }
+    }
+    
+    return false;
 }
