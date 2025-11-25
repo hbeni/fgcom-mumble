@@ -24,7 +24,7 @@
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 1
 #define FGCOM_VERSION_MINOR 1
-#define FGCOM_VERSION_PATCH 1
+#define FGCOM_VERSION_PATCH 2
 
 
 #define SIGNAL_INTERPOLATE_MS  500  // timeframe for signal quality interpolation
