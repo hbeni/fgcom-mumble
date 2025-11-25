@@ -74,12 +74,9 @@ mumble_connection_t activeConnection;
 mumble_plugin_id_t ownPluginID;
 
 // Thread-safe global plugin state
-std::vector<mumble_channelid_t> fgcom_specialChannelID;
 std::atomic<bool> fgcom_inSpecialChannel{false}; // Thread-safe atomic boolean
 std::mutex fgcom_state_mutex; // Mutex for state changes
 std::mutex fgcom_channel_mutex; // Mutex for channel operations
-
-struct fgcom_config fgcom_cfg;
 std::mutex fgcom_config_mutex; // Mutex for configuration access
 
 // Noise floor cache for performance optimization
@@ -108,8 +105,7 @@ const float FREQ_THRESHOLD = 0.001f;  // 1 kHz - recalculate if frequency change
 
 // Cache for radio info (updated periodically, read lock-free in audio callback)
 // CachedRadioInfo struct is defined in globalVars.h
-std::vector<CachedRadioInfo> cached_radio_infos;
-std::mutex cached_radio_infos_mtx;
+// cached_radio_infos and cached_radio_infos_mtx are defined in globalVars.cpp
 const std::chrono::milliseconds RADIO_INFO_CACHE_UPDATE_INTERVAL(50);  // Update every 50ms
 std::chrono::system_clock::time_point last_radio_info_update;
 

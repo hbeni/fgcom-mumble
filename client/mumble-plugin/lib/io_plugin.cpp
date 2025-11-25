@@ -332,8 +332,7 @@ void notifyRemotes(int iid, FGCOM_NOTIFY_T what, int selector, mumble_userid_t t
 
 }
 
-std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
-std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
+// fgcom_remotecfg_mtx and fgcom_remote_clients are now defined in globalVars.cpp
 bool handlePluginDataReceived(mumble_userid_t senderID, std::string dataID, std::string data) {
     // Handle the incoming data (if it belongs to us)
     setlocale(LC_NUMERIC,"C"); // decimal points always ".", not ","

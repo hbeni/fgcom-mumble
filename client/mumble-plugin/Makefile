@@ -72,7 +72,7 @@ tools: libs
 
 # catch2 unit tests linking against main
 test: libs test/catch2/tests-main.o test/catch2/tests-main.o test/catch2/radioModelTest.o
-	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o lib/radio_model.o lib/audio.o test/catch2/radioModelTest.o $(CFLAGS) && test/catch2/radioModelTest.catch2
+	$(CC) -o test/catch2/radioModelTest.catch2 test/catch2/tests-main.o lib/globalVars.o lib/radio_model.o lib/audio.o test/catch2/radioModelTest.o $(CFLAGS) && test/catch2/radioModelTest.catch2
 # ^ add more
 
 # clean compile results

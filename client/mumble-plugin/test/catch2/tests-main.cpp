@@ -22,3 +22,8 @@
 #define CATCH_CONFIG_MAIN
 #include "test/catch2/catch_amalgamated.cpp"
 using namespace Catch;
+
+// Stub functions for tests that link against lib/audio.o
+bool fgcom_isPluginActive() {
+    return false;
+}

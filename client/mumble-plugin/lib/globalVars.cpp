@@ -16,12 +16,16 @@
  */
 
 #include "globalVars.h"
+#include <mutex>
+#include <map>
+#include <vector>
 
-// Global mutex for read/write access to fgcom_local_client
+struct fgcom_config fgcom_cfg;
 std::mutex fgcom_localcfg_mtx;
-
-// Local plugin datastore
-// this is written from by the udp server and read by the plugin
-// Note: Some data is only stored at the default identity: mumid
-std::map<int, struct fgcom_client> fgcom_local_client;
+std::map<int, fgcom_client> fgcom_local_client;
+std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients;
+std::mutex fgcom_remotecfg_mtx;
+std::vector<mumble_channelid_t> fgcom_specialChannelID;
+std::vector<CachedRadioInfo> cached_radio_infos;
+std::mutex cached_radio_infos_mtx;
 
