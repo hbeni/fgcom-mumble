@@ -9,7 +9,7 @@ SSLFLAGS+=-I./lib/openssl/include/ -L./lib/openssl/ -lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32
 # Note on flags: -D_WIN32 is needed by httplib on Windows
 
-lib_OBJS := lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
+lib_OBJS := lib/globalVars.o lib/radio_model.o lib/audio.o lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o
 
 # Notice: Special calls
 #
@@ -109,14 +109,14 @@ plugin-win64-only: mingwprefix=x86_64-w64-mingw32-
 plugin-win64-only: CC=$(mingwprefix)g++-posix
 plugin-win64-only: plugin-win-dllresource
 	# Build plugin win64
-	$(CC) -fPIC --shared -DMINGW_WIN64 -o $(outname) dllResource.o lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC) -fPIC --shared -DMINGW_WIN64 -o $(outname) dllResource.o lib/globalVars.cpp lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 plugin-win32-only: outname=fgcom-mumble-x86_32.dll
 plugin-win32-only: mingwprefix=i686-w64-mingw32-
 plugin-win32-only: CC=$(mingwprefix)g++-posix
 plugin-win32-only: plugin-win-dllresource
 	# Build plugin win32
-	$(CC) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) dllResource.o lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+	$(CC) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) dllResource.o lib/globalVars.cpp lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
 
 GITVER:=$(shell git log -1 --pretty=format:"%h")
 GITDATE:=$(shell git log -1 --pretty=format:"%cd" --date=short)
