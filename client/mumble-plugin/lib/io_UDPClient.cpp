@@ -219,7 +219,11 @@ void fgcom_spawnUDPClient() {
                     sizeof (remoteServAddr));
                 if (rc < 0) {
                     pluginLog("[UDP-client] client ERROR ("+std::to_string(rc)+") sending "+std::to_string(strlen(udpdata.c_str()))+" bytes of data");
-                    close (fgcom_UDPClient_sockfd);
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
+                    closesocket(fgcom_UDPClient_sockfd);
+#else
+                    close(fgcom_UDPClient_sockfd);
+#endif
                     return;
                 }
                 
@@ -234,7 +238,11 @@ void fgcom_spawnUDPClient() {
     }
     
     
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
+    closesocket(fgcom_UDPClient_sockfd);
+#else
     close(fgcom_UDPClient_sockfd);
+#endif
     udpClientRunning = false;
     udpClientTerminate = false;
     pluginLog("[UDP-client] thread finished.");

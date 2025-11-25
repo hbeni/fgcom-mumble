@@ -621,6 +621,10 @@ void fgcom_spawnUDPServer() {
             pluginLog("[UDP-server] udp socket bind succeeded");
             bind_ok = true;
             break;
+        } else {
+            int bind_err = errno;
+            std::string bind_errmsg(strerror(bind_err));
+            pluginDbg("[UDP-server] udp socket bind try failed (port="+std::to_string(fgcom_udp_port_used)+"; error="+std::to_string(bind_err)+" "+bind_errmsg+")");
         }
     }
     if (!bind_ok) {
@@ -723,7 +727,12 @@ void fgcom_spawnUDPServer() {
     }
 
     // UDP server terminates
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
+    closesocket(fgcom_UDPServer_sockfd);
+    WSACleanup();
+#else
     close(fgcom_UDPServer_sockfd);
+#endif
     fgcom_udp_port_used = fgcom_cfg.udpServerPort;
     udpServerRunning = false;
     fgcom_udp_shutdowncmd = false;
