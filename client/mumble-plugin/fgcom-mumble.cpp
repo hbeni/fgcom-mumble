@@ -594,13 +594,13 @@ mumble_error_t mumble_init(uint32_t id) {
 
 void mumble_shutdown() {
 	pluginLog("Shutdown plugin");
+    
+    fgcom_setPluginActive(false); // stop plugin handling
 
     pluginDbg("stopping threads");
     fgcom_shutdownUDPServer();
     fgcom_stopUDPClient();
     fgcom_shutdownGarbageCollector();
-    
-    fgcom_setPluginActive(false); // stop plugin handling
     
 #ifdef DEBUG
     fgcom_debugthread_shutdown = true;
