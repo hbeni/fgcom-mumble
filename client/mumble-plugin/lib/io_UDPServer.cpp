@@ -41,8 +41,10 @@
 
 #if defined(MINGW_WIN64) || defined(MINGW_WIN32)
     #include <winsock2.h>
-    //#include <windows.h>
-    //#include <ws2tcpip.h>
+    #include <ws2tcpip.h>
+    #ifndef INET_ADDRSTRLEN
+        #define INET_ADDRSTRLEN 16
+    #endif
     typedef int socklen_t;
 #else
     #include <sys/socket.h> 
