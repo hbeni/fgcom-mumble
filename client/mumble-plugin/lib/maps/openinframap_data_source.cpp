@@ -1,5 +1,5 @@
 #include "openinframap_data_source.h"
-#include "atmospheric_noise.h"
+#include "../noise/atmospheric_noise.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>

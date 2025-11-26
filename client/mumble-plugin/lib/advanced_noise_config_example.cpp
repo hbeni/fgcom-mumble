@@ -5,7 +5,7 @@
  * that are OFF BY DEFAULT to avoid complexity and external dependencies.
  */
 
-#include "atmospheric_noise.h"
+#include "noise/atmospheric_noise.h"
 #include <iostream>
 #include <iomanip>
 

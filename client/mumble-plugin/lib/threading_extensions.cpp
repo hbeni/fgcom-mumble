@@ -1,6 +1,6 @@
 #include "threading_extensions.h"
 #include "threading_types.h"
-#include "solar_data.h"
+#include "propagation/weather/solar_data.h"
 #include "gpu_accelerator.h"
 #include <algorithm>
 #include <fstream>

@@ -14,7 +14,7 @@ Total execution time is only 16.75 minutes for the full test suite
 
 CI/CD adds overhead that is not needed, and all test results are easy to reproduce. 
 
-From now on i will aboslutely not do any more fiddling with  CI/CD issues on master,- because the test results that is documented is better, and more torough that any CI/CD test line can repeat. 
+From now on I will absolutely not do any more fiddling with CI/CD issues on master, because the test results that are documented are better, and more thorough than any CI/CD test line can repeat. 
 
 Period!
 

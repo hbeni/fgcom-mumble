@@ -5,7 +5,7 @@
  * with all features OFF BY DEFAULT and accessible via API.
  */
 
-#include "atmospheric_noise.h"
+#include "noise/atmospheric_noise.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>

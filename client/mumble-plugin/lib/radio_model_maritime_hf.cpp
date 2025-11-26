@@ -16,8 +16,8 @@
  */
 
 #include "radio_model_maritime_hf.h"
-#include "audio.h"
-#include "solar_data.h"
+#include "audio/audio.h"
+#include "propagation/weather/solar_data.h"
 
 // Constructor with parameters
 FGCom_radiowaveModel_MaritimeHF::FGCom_radiowaveModel_MaritimeHF(const std::string& name, bool emergency) 

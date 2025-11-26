@@ -16,11 +16,11 @@
  */
 
 #include "radio_model_uhf.h"
-#include "audio.h"
+#include "audio/audio.h"
 #include "pattern_interpolation.h"
 #include "antenna_ground_system.h"
 #include "antenna_pattern_mapping.h"
-#include "propagation_physics.h"
+#include "propagation/core/propagation_physics.h"
 #include <cmath>
 
 // Constructor

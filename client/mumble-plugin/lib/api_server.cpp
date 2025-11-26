@@ -20,7 +20,7 @@
 #include "work_unit_distributor.h"
 #include <mutex>
 #include "work_unit_security.h"
-#include "terrain_elevation.h"
+#include "propagation/terrain/terrain_elevation.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -38,15 +38,15 @@
 #include "json/json.hpp"
 #include "http/httplib.h"
 #include "radio_model.h"
-#include "solar_data.h"
+#include "propagation/weather/solar_data.h"
 #include "vehicle_dynamics.h"
 #include "power_management.h"
 #include "agc_squelch_api.h"
 #include "frequency_offset.h"
 #include "threading_types.h"
-#include "weather_data.h"
+#include "propagation/weather/weather_data.h"
 #include "lightning_data.h"
-#include "noise_floor.h"
+#include "noise/noise_floor.h"
 #include "antenna_pattern_mapping.h"
 #include "band_segments.h"
 #include "radio_model_config_loader.h"
@@ -54,8 +54,8 @@
 #include "feature_toggles.h"
 #include "debugging_system.h"
 #include "gpu_acceleration.h"
-#include "atmospheric_ducting.h"
-#include "enhanced_multipath.h"
+#include "propagation/core/atmospheric_ducting.h"
+#include "propagation/core/enhanced_multipath.h"
 
 // Global API server instance
 std::unique_ptr<FGCom_APIServer> g_api_server;

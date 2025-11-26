@@ -17,7 +17,7 @@
 
 #include "radio_model_string.h"
 #include "radio_model_vhf.h"
-#include "audio.h"
+#include "audio/audio.h"
 
 // Constructor and destructor are defined in header
 

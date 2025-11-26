@@ -16,10 +16,10 @@
  */
 
 #include "radio_model_hf.h"
-#include "audio.h"
-#include "solar_data.h"
+#include "audio/audio.h"
+#include "propagation/weather/solar_data.h"
 #include "power_management.h"
-#include "propagation_physics.h"
+#include "propagation/core/propagation_physics.h"
 #include <cmath>
 
 // Static member is defined in the original radio_model_hf.cpp file

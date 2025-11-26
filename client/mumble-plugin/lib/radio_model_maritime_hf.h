@@ -19,8 +19,8 @@
 #define RADIO_MODEL_MARITIME_HF_H
 
 #include "radio_model.h"
-#include "audio.h"
-#include "solar_data.h"
+#include "audio/audio.h"
+#include "propagation/weather/solar_data.h"
 
 /**
  * Maritime HF radio model for the FGCom-mumble plugin

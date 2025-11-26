@@ -19,7 +19,7 @@
 
 #include "threading_extensions.h"
 #include "globalVars_extensions.h"
-#include "solar_data.h"
+#include "propagation/weather/solar_data.h"
 #include "gpu_accelerator.h"
 #include "api_server.h"
 #include <thread>

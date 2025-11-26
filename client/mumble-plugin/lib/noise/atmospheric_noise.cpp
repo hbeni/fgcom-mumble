@@ -1,7 +1,7 @@
 #include "atmospheric_noise.h"
 #include "threading_types.h"
 #ifdef ENABLE_OPENINFRAMAP
-#include "openinframap_data_source.h"
+#include "../maps/openinframap_data_source.h"
 #endif
 #include <cmath>
 #include <algorithm>

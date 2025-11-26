@@ -6,7 +6,7 @@
  */
 
 #include "frequency_offset.h"
-#include "audio.h"
+#include "audio/audio.h"
 #include <iostream>
 #include <vector>
 #include <cmath>

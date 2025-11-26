@@ -17,8 +17,8 @@
 
 #include "radio_model_amateur.h"
 #include "amateur_radio.h"
-#include "audio.h"
-#include "solar_data.h"
+#include "audio/audio.h"
+#include "propagation/weather/solar_data.h"
 
 // Static member is defined in the original radio_model_amateur.cpp file
 

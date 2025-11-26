@@ -28,7 +28,7 @@
 #include <functional>
 #include "http/httplib.h"
 #include "lib/json/json.hpp"
-#include "solar_data.h"
+#include "propagation/weather/solar_data.h"
 #include "amateur_radio.h"
 #include "antenna_ground_system.h"
 #include "non_amateur_hf.h"

@@ -18,7 +18,7 @@
 #include <cmath>
 #include <regex>
 #include "radio_model_vhf.h"
-#include "audio.h"
+#include "audio/audio.h"
 
 // Constructor
 FGCom_radiowaveModel_VHF::FGCom_radiowaveModel_VHF() 

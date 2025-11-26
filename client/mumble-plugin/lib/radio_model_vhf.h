@@ -22,9 +22,9 @@
 #include "pattern_interpolation.h"
 #include "antenna_ground_system.h"
 #include "antenna_pattern_mapping.h"
-#include "propagation_physics.h"
-#include "atmospheric_ducting.h"
-#include "enhanced_multipath.h"
+#include "propagation/core/propagation_physics.h"
+#include "propagation/core/atmospheric_ducting.h"
+#include "propagation/core/enhanced_multipath.h"
 
 /**
  * A VHF based radio model for the FGCom-mumble plugin

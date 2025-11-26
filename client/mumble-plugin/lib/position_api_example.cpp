@@ -5,7 +5,7 @@
  * using either GPS coordinates or Maidenhead locators via API.
  */
 
-#include "atmospheric_noise.h"
+#include "noise/atmospheric_noise.h"
 #include <iostream>
 #include <iomanip>
 #include <vector>

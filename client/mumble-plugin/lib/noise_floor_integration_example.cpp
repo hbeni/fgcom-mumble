@@ -3,7 +3,7 @@
  * into the existing FGCom-Mumble propagation model
  */
 
-#include "atmospheric_noise.h"
+#include "noise/atmospheric_noise.h"
 #include "radio_model.h"  // Assuming this exists in the codebase
 #include <iostream>
 

@@ -22,8 +22,8 @@
 #include <cmath>
 #include <regex>
 #include "radio_model.h"
-#include "audio.h"
-#include "solar_data.h"
+#include "audio/audio.h"
+#include "propagation/weather/solar_data.h"
 #include "power_management.h"
 
 /**

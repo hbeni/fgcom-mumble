@@ -23,7 +23,7 @@
 #include <regex>
 #include "radio_model.h"
 #include "radio_model_vhf.h"
-#include "audio.h"
+#include "audio/audio.h"
 
 /**
  * A string based radio model for the FGCom-mumble plugin

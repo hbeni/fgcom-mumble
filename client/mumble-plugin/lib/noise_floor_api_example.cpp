@@ -6,7 +6,7 @@
  * automatic environment detection is uncertain.
  */
 
-#include "atmospheric_noise.h"
+#include "noise/atmospheric_noise.h"
 #include <iostream>
 #include <iomanip>
 

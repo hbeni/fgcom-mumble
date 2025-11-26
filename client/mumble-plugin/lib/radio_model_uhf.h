@@ -22,7 +22,7 @@
 #include "pattern_interpolation.h"
 #include "antenna_ground_system.h"
 #include "antenna_pattern_mapping.h"
-#include "propagation_physics.h"
+#include "propagation/core/propagation_physics.h"
 
 /**
  * A UHF based radio model for the FGCom-mumble plugin.

@@ -31,11 +31,11 @@
 #include "io_UDPServer.h"
 #include "io_UDPClient.h"
 #include "radio_model.h"
-#include "audio.h"
+#include "audio/audio.h"
 #include "garbage_collector.h"
-#include "solar_data.h"
+#include "propagation/weather/solar_data.h"
 #include "shared_data.h"
-#include "atmospheric_noise.h"
+#include "lib/noise/atmospheric_noise.h"
 
 #include <stdio.h>
 #include <stdlib.h>

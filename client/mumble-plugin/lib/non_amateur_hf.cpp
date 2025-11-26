@@ -16,7 +16,7 @@
  */
 
 #include "non_amateur_hf.h"
-#include "solar_data.h"
+#include "propagation/weather/solar_data.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>

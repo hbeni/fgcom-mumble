@@ -23,8 +23,8 @@
 #include <regex>
 #include "radio_model.h"
 #include "amateur_radio.h"
-#include "audio.h"
-#include "solar_data.h"
+#include "audio/audio.h"
+#include "propagation/weather/solar_data.h"
 
 /**
  * An amateur radio model for the FGCom-mumble plugin
