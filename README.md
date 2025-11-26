@@ -245,7 +245,8 @@ For details on current plugin issues, see [Plugin Issues Documentation](docs/plu
 ### For Developers
 | Guide | Purpose |
 |-------|---------|
-| **[Compilation Guide](docs/COMPILATION_GUIDE.md)** | Build from source code |
+| **[Build Guide](client/mumble-plugin/BUILD.md)** | Cross-platform build instructions (Windows, macOS, Linux) |
+| **[Compilation Guide](docs/COMPILATION_GUIDE.md)** | Build from source code (if exists) |
 | **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** | Integrate with your game or simulator |
 | **[API Documentation](docs/API_REFERENCE_COMPLETE.md)** | RESTful API and WebSocket interfaces |
 | **[Technical Documentation](docs/TECHNICAL_DOCUMENTATION.md)** | Deep technical details |

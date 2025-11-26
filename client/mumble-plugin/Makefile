@@ -63,8 +63,18 @@ plugin: libs
 # make all the libs
 libs:  $(lib_OBJS)
 
+# Object file compilation rules
+# Unix/Linux/macOS (default)
 %.o : %.cpp
-	$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(THREADS_UNIX)
+	@if echo "$(CC)" | grep -q "mingw"; then \
+		if echo "$(CC)" | grep -q "i686"; then \
+			$(CC) -fPIC -c -o $@ $< $(CFLAGS_WIN) -m32 -DMINGW_WIN32; \
+		else \
+			$(CC) -fPIC -c -o $@ $< $(CFLAGS_WIN) -DMINGW_WIN64; \
+		fi; \
+	else \
+		$(CC) -fPIC -c -o $@ $< $(CFLAGS) $(THREADS_UNIX); \
+	fi
 
 # Compile testing tools
 # Note: tools need stub symbols from fgcom-mumble-tools-stub.cpp for audio.cpp dependencies
@@ -101,10 +111,20 @@ clean-all: clean
 all-win: plugin-win64 tools-win64 clean
 
 # build win64 test tools
+# Note: tools need stub symbols from fgcom-mumble-tools-stub.cpp for audio.cpp dependencies
 tools-win64: CC=x86_64-w64-mingw32-g++-posix
-tools-win64:
-	$(CC) -o test/geotest.exe lib/radio_model.cpp lib/audio.cpp test/geotest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
-	$(CC) -o test/frqtest.exe lib/radio_model.cpp lib/audio.cpp test/frqtest.cpp -static-libgcc -static-libstdc++ $(CFLAGS)
+tools-win64: libs-win64 tools-win64-stub
+	$(CC) -o test/geotest.exe lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o fgcom-mumble-tools-stub.o test/geotest.cpp $(CFLAGS_WIN) -static-libgcc -static-libstdc++ -lcurl
+	$(CC) -o test/frqtest.exe lib/radio_model.o lib/audio.o lib/amateur_radio.o lib/solar_data.o lib/power_management.o lib/frequency_offset.o lib/atmospheric_noise.o lib/noise_floor_utils.o lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/propagation_physics.o lib/radio_config.o lib/atmospheric_ducting.o lib/enhanced_multipath.o lib/openinframap_data_source.o lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o fgcom-mumble-tools-stub.o test/frqtest.cpp $(CFLAGS_WIN) -static-libgcc -static-libstdc++ -lcurl
+
+# Build Windows object files
+libs-win64: CC=x86_64-w64-mingw32-g++-posix
+libs-win64: $(lib_OBJS)
+
+# Build Windows stub
+tools-win64-stub: CC=x86_64-w64-mingw32-g++-posix
+tools-win64-stub:
+	$(CC) -fPIC -c -o fgcom-mumble-tools-stub.o fgcom-mumble-tools-stub.cpp $(CFLAGS_WIN) -DMINGW_WIN64
 
 # build win64 plugin-dll and openssl
 plugin-win64: openssl-win plugin-win64-only
@@ -115,16 +135,20 @@ plugin-win32: openssl-win32 plugin-win32-only
 plugin-win64-only: outname=fgcom-mumble.dll
 plugin-win64-only: mingwprefix=x86_64-w64-mingw32-
 plugin-win64-only: CC=$(mingwprefix)g++-posix
-plugin-win64-only: plugin-win-dllresource
-	# Build plugin win64
-	$(CC) -fPIC --shared -DMINGW_WIN64 -o $(outname) dllResource.o lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+plugin-win64-only: plugin-win-dllresource libs-win64
+	# Build plugin win64 with all library object files
+	$(CC) -fPIC --shared -DMINGW_WIN64 -o $(outname) dllResource.o $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN) -lcurl
 
 plugin-win32-only: outname=fgcom-mumble-x86_32.dll
 plugin-win32-only: mingwprefix=i686-w64-mingw32-
 plugin-win32-only: CC=$(mingwprefix)g++-posix
-plugin-win32-only: plugin-win-dllresource
-	# Build plugin win32
-	$(CC) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) dllResource.o lib/io_plugin.cpp lib/radio_model.cpp lib/audio.cpp lib/io_UDPServer.cpp lib/io_UDPClient.cpp lib/garbage_collector.cpp fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN)
+plugin-win32-only: plugin-win-dllresource libs-win32
+	# Build plugin win32 with all library object files
+	$(CC) -m32 -fPIC --shared -DMINGW_WIN32 -o $(outname) dllResource.o $(lib_OBJS) fgcom-mumble.cpp $(SSLFLAGS_WIN) $(CFLAGS_WIN) $(THREADS_WIN) -lcurl
+
+# Build Windows 32-bit object files
+libs-win32: CC=i686-w64-mingw32-g++-posix
+libs-win32: $(lib_OBJS)
 
 GITVER:=$(shell git log -1 --pretty=format:"%h")
 GITDATE:=$(shell git log -1 --pretty=format:"%cd" --date=short)
