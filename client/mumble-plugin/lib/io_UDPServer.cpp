@@ -39,7 +39,7 @@
 #include <math.h>
 #include <mutex>
 
-#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
+#ifdef _WIN32
     #include <winsock2.h>
     #include <ws2tcpip.h>
     #ifndef INET_ADDRSTRLEN
@@ -841,7 +841,17 @@ void fgcom_spawnUDPServer() {
         clientPort = ntohs(cliaddr.sin_port);
         // Use thread-safe inet_ntop instead of thread-unsafe inet_ntoa
         char clientHost_buf[INET_ADDRSTRLEN];
+#ifdef _WIN32
+        const char* clientHost_result = inet_ntoa(cliaddr.sin_addr);
+        if (clientHost_result != nullptr) {
+            strncpy(clientHost_buf, clientHost_result, INET_ADDRSTRLEN);
+            clientHost_buf[INET_ADDRSTRLEN - 1] = '\0';
+        } else {
+            clientHost_buf[0] = '\0';
+        }
+#else
         const char* clientHost_result = inet_ntop(AF_INET, &cliaddr.sin_addr, clientHost_buf, INET_ADDRSTRLEN);
+#endif
         std::string clientHost_str = (clientHost_result != nullptr) ? std::string(clientHost_buf) : std::string("unknown");
         
         // Allow the udp server to be shut down when receiving SHUTDOWN command
