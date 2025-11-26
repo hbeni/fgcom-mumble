@@ -3,6 +3,10 @@
 #   note: set this to the releases package version (at least version of the most recent subcomponent)
 BUNDLE_VER:=1.4.0
 
+# Build configuration options
+# Set to 'false' to skip jsimconnect dependency (useful for clients that don't need MSFS2020 integration)
+ENABLE_JSIMCONNECT:=true
+
 
 # The subpackages versions are sourced from there
 GITVER:=$(shell git log -1 --pretty=format:"%h")
@@ -26,8 +30,14 @@ release:
 # build the binary stuff
 build: build-plugin build-server build-radioGUI build-fgcom-addon
 
+# build for headless server (no GUI components)
+build-headless: build-plugin build-server build-fgcom-addon
+
 # bundle component's zip packages
 bundle: bundle-plugin bundle-server bundle-radioGUI bundle-fgcom-addon
+
+# bundle for headless server (no GUI components)
+bundle-headless: bundle-plugin bundle-server bundle-fgcom-addon
 
 # package up everything already built into a single release client zip
 package:
@@ -36,13 +46,13 @@ package:
 	mkdir fgcom-mumble-$(BUNDLE_VER)/
 	
 	# Add docs
-	cp LICENSE Readme.architecture.md fgcom-mumble-$(BUNDLE_VER)/
-	head -n 1 README.md > fgcom-mumble-$(BUNDLE_VER)/README.md
+	cp LICENSE config/Readme.architecture.md fgcom-mumble-$(BUNDLE_VER)/
+	head -n 1 config/README.md > fgcom-mumble-$(BUNDLE_VER)/README.md
 	@echo Version: $(BUNDLE_VER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(BUNDLE_VER)/README.md
-	tail +2 README.md >> fgcom-mumble-$(BUNDLE_VER)/README.md
-	head -n 1 README-de_DE.md > fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
+	tail +2 config/README.md >> fgcom-mumble-$(BUNDLE_VER)/README.md
+	head -n 1 config/README-de_DE.md > fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
 	@echo Version: $(BUNDLE_VER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
-	tail +2 README-de_DE.md >> fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
+	tail +2 config/README-de_DE.md >> fgcom-mumble-$(BUNDLE_VER)/README-de_DE.md
 	
 	# Adjust markdown links in readmes
 	sed -i 's?](client/?](?' fgcom-mumble-$(BUNDLE_VER)/Readme.architecture.md
@@ -58,7 +68,7 @@ package:
 	# Add mumble plugin bundle
 	mkdir fgcom-mumble-$(BUNDLE_VER)/mumble-plugin
 	cp fgcom-mumble-$(PLUGIN_VER).mumble_plugin fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/
-	cp client/mumble-plugin/fgcom-mumble.ini fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/
+	cp configs/fgcom-mumble.ini fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/
 	head -n 1 client/plugin.spec.md > fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/plugin.spec.md
 	@echo Version: $(PLUGIN_VER) \($(GITVER) $(GITDATE)\) >> fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/plugin.spec.md
 	tail +2 client/plugin.spec.md >> fgcom-mumble-$(BUNDLE_VER)/mumble-plugin/plugin.spec.md
@@ -181,7 +191,7 @@ bundle-fgcom-addon:
 
 build-plugin:
 	# Plugin: delegate build
-	$(MAKE) -C client/mumble-plugin/ clean plugin
+	$(MAKE) -C client/mumble-plugin/ libs plugin
 	
 build-server:
 	# Server: nothing to build so far
@@ -196,14 +206,26 @@ build-radioGUI:
 		-DartifactId=jmapviewer \
 		-Dversion=2.14 \
 		-Dpackaging=jar
+ifeq ($(ENABLE_JSIMCONNECT),true)
+	# Build and install jsimconnect if enabled
 	cd client/radioGUI/lib/jsimconnect && mvn clean package
 	mvn install:install-file -Dfile=client/radioGUI/lib/jsimconnect/target/jsimconnect-0.8.0.jar \
 		-DgroupId=flightsim \
 		-DartifactId=jsimconnect \
 		-Dversion=0.8.0 \
 		-Dpackaging=jar
-	cd client/radioGUI/ && mvn clean animal-sniffer:check package
+	@echo "Building radioGUI with jsimconnect support..."
+else
+	@echo "Building radioGUI without jsimconnect (MSFS2020 integration disabled)..."
+endif
+	cd client/radioGUI/ && mvn clean animal-sniffer:check package -Denable.jsimconnect=$(ENABLE_JSIMCONNECT)
 
+# Convenience targets for building with/without jsimconnect
+build-radioGUI-with-jsimconnect:
+	$(MAKE) build-radioGUI ENABLE_JSIMCONNECT=true
+
+build-radioGUI-without-jsimconnect:
+	$(MAKE) build-radioGUI ENABLE_JSIMCONNECT=false
 
 showVer:
 	@echo "GITCOMMIT:$(GITVER)"
@@ -217,6 +239,83 @@ showVer:
 clean:
 	# cleanup packaging
 	$(MAKE) -C client/mumble-plugin/ $@
+
+install: build
+	@echo "Installing FGCom-mumble components..."
+	@mkdir -p $(DESTDIR)/usr/lib/mumble/plugins
+	@mkdir -p $(DESTDIR)/usr/share/fgcom-mumble
+	@mkdir -p $(DESTDIR)/usr/bin
+	@mkdir -p $(DESTDIR)/etc/fgcom-mumble
+	# Install mumble plugin
+	@if [ -f client/mumble-plugin/fgcom-mumble.so ]; then \
+		cp client/mumble-plugin/fgcom-mumble.so $(DESTDIR)/usr/lib/mumble/plugins/; \
+		echo "Installed mumble plugin to $(DESTDIR)/usr/lib/mumble/plugins/"; \
+	fi
+	# Install radio GUI
+	@if [ -f client/radioGUI/target/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar ]; then \
+		cp client/radioGUI/target/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed radio GUI to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Install configuration files
+	@if [ -d configs ]; then \
+		cp -r configs/* $(DESTDIR)/etc/fgcom-mumble/; \
+		echo "Installed configuration files to $(DESTDIR)/etc/fgcom-mumble/"; \
+	fi
+	# Install documentation
+	@if [ -d docs ]; then \
+		cp -r docs $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed documentation to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Install server components
+	@if [ -d server ]; then \
+		cp -r server $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed server components to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Install scripts
+	@if [ -d scripts ]; then \
+		cp -r scripts $(DESTDIR)/usr/share/fgcom-mumble/; \
+		echo "Installed scripts to $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	@echo "Installation completed successfully!"
+
+uninstall:
+	@echo "Uninstalling FGCom-mumble components..."
+	# Remove mumble plugin
+	@if [ -f $(DESTDIR)/usr/lib/mumble/plugins/fgcom-mumble.so ]; then \
+		rm -f $(DESTDIR)/usr/lib/mumble/plugins/fgcom-mumble.so; \
+		echo "Removed mumble plugin from $(DESTDIR)/usr/lib/mumble/plugins/"; \
+	fi
+	# Remove radio GUI
+	@if [ -f $(DESTDIR)/usr/share/fgcom-mumble/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar ]; then \
+		rm -f $(DESTDIR)/usr/share/fgcom-mumble/fgcom-mumble-radioGUI-$(RADIOGUI_VER).jar; \
+		echo "Removed radio GUI from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove configuration files
+	@if [ -d $(DESTDIR)/etc/fgcom-mumble ]; then \
+		rm -rf $(DESTDIR)/etc/fgcom-mumble; \
+		echo "Removed configuration files from $(DESTDIR)/etc/fgcom-mumble/"; \
+	fi
+	# Remove documentation
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble/docs ]; then \
+		rm -rf $(DESTDIR)/usr/share/fgcom-mumble/docs; \
+		echo "Removed documentation from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove server components
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble/server ]; then \
+		rm -rf $(DESTDIR)/usr/share/fgcom-mumble/server; \
+		echo "Removed server components from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove scripts
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble/scripts ]; then \
+		rm -rf $(DESTDIR)/usr/share/fgcom-mumble/scripts; \
+		echo "Removed scripts from $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	# Remove main share directory if empty
+	@if [ -d $(DESTDIR)/usr/share/fgcom-mumble ] && [ -z "$$(ls -A $(DESTDIR)/usr/share/fgcom-mumble 2>/dev/null)" ]; then \
+		rmdir $(DESTDIR)/usr/share/fgcom-mumble; \
+		echo "Removed empty share directory $(DESTDIR)/usr/share/fgcom-mumble/"; \
+	fi
+	@echo "Uninstallation completed successfully!"
 
 # relay everything else to the mumble-plugin makefile
 .DEFAULT:

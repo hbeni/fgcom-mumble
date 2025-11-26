@@ -1,0 +1,202 @@
+EZNEC ver. 7.0
+
+; Bell UH-1 "Huey" NATO Military Transport Helicopter
+; Standard NATO helicopter HF/VHF/UHF antenna configuration
+; Low altitude tactical operations (0-3000m typical)
+; Most widely used Western military helicopter
+
+; GEOMETRY
+; Wire coordinates: x1, y1, z1, x2, y2, z2, radius, segments
+
+; UH-1 main fuselage (17.6m length, 2.5m diameter - sleeker than Mi-4)
+; Main fuselage structure
+W001  -8.8   0.0   0.0   8.8   0.0   0.0   1.25  35
+W002  -8.8   1.0   0.0   8.8   1.0   0.0   1.1   35
+W003  -8.8  -1.0   0.0   8.8  -1.0   0.0   1.1   35
+W004  -8.8   0.0   1.0   8.8   0.0   1.0   1.1   35
+W005  -8.8   0.0  -1.0   8.8   0.0  -1.0   1.1   35
+
+; Fuselage cross-sections
+W006  -6.0  -1.25  0.0  -6.0   1.25  0.0   0.04   5
+W007  -3.0  -1.25  0.0  -3.0   1.25  0.0   0.04   5
+W008   0.0  -1.25  0.0   0.0   1.25  0.0   0.04   5
+W009   3.0  -1.25  0.0   3.0   1.25  0.0   0.04   5
+W010   6.0  -1.25  0.0   6.0   1.25  0.0   0.04   5
+
+; Main rotor hub and mast
+W011   0.0   0.0   2.8   0.0   0.0   4.0   0.25   6
+
+; Main rotor blades (2-blade teetering system - 14.6m diameter)
+; Simpler than Mi-4's 4-blade system
+W012   0.0  -7.3   4.0   0.0   7.3   4.0   0.12  29
+W013  -7.3   0.0   4.0   7.3   0.0   4.0   0.12  29
+
+; Engine compartment (more compact than Mi-4)
+W014  -1.5  -1.2   1.5   1.5  -1.2   1.5   0.15   6
+W015  -1.5   1.2   1.5   1.5   1.2   1.5   0.15   6
+W016  -1.5  -1.2   1.5  -1.5   1.2   1.5   0.15   5
+W017   1.5  -1.2   1.5   1.5   1.2   1.5   0.15   5
+
+; Tail boom (characteristic UH-1 long tail boom)
+W018   7.0   0.0   1.2  14.0   0.0   2.8   0.35  14
+
+; Tail rotor assembly
+W019  14.0   0.0   2.8  14.0   0.0   4.5   0.15   8
+W020  14.0  -1.07  3.65 14.0   1.07  3.65  0.06   4
+
+; Landing skids (characteristic UH-1 design)
+W021  -3.0  -1.8  -0.8   5.0  -1.8  -0.8   0.06  16
+W022  -3.0   1.8  -0.8   5.0   1.8  -0.8   0.06  16
+
+; Skid cross-bracing
+W023  -2.0  -1.8  -0.8  -2.0   1.8  -0.8   0.04   7
+W024   0.0  -1.8  -0.8   0.0   1.8  -0.8   0.04   7
+W025   2.0  -1.8  -0.8   2.0   1.8  -0.8   0.04   7
+W026   4.0  -1.8  -0.8   4.0   1.8  -0.8   0.04   7
+
+; NATO HELICOPTER ANTENNA SYSTEMS
+
+; VHF-FM antenna (primary tactical - NATO standard)
+; Blade antenna on fuselage side
+W027   3.5   1.3   1.0   3.5   1.3   2.2   0.006  12
+
+; UHF antenna (ATC and military - NATO requirement)
+; Short blade on fuselage top
+W028   1.0   0.0   2.0   1.0   0.0   2.6   0.005   6
+
+; HF antenna (long-range communication)
+; Belly-mounted whip to avoid rotor interference
+W029   2.5   0.0  -1.0   2.5   0.0  -3.8   0.007  14
+
+; VHF-AM antenna (aviation - civil frequencies)
+; Fuselage top blade (shorter than VHF-FM)
+W030  -2.0   0.0   2.0  -2.0   0.0   2.8   0.005   8
+
+; IFF/Transponder antenna (belly-mounted)
+W031   4.5   0.0  -0.8   4.5   0.0  -1.2   0.004   4
+
+; GPS/SATCOM antenna (modern retrofits)
+W032  -4.0   0.0   2.2  -4.0   0.0   2.4   0.05    2
+
+; Tail boom VHF antenna (backup/auxiliary)
+W033  10.0   0.0   2.4  10.0   0.0   3.2   0.004   8
+
+; Landing light (doubles as antenna mount point)
+W034  -8.5   0.0  -0.5  -8.5   0.0  -0.8   0.02    3
+
+; SOURCE
+SY SRC  W027  6  1  ; VHF-FM antenna (primary tactical communication)
+
+; GROUND
+; NATO helicopter operations - varied terrain
+GD 0 0 0 0 0.001 0.010  ; Medium-low altitude - reduced ground effects
+
+; LOADS
+; Helicopter structure - aluminum construction (NATO standard)
+LD 5 1 26 0 3.5E+07 0   ; Aluminum fuselage and tail boom
+; Rotor system - improved materials vs Soviet
+LD 5 12 13 0 2E+06 0    ; Composite/aluminum rotor blades
+
+; FREQUENCY
+FR 0 1 0 0 41.500 0     ; NATO VHF-FM tactical frequency
+
+; RADIATION PATTERN
+RP 0 37 73 1000 0 0 5 10 0 0
+
+; FREQUENCY SWEEP - NATO helicopter bands
+; FR 0 30 0 0 30.0 2.0   ; VHF-FM tactical 30-88 MHz
+; FR 0 50 0 0 225.0 3.5  ; UHF military/ATC 225-400 MHz
+
+; COMMENTS
+; Bell UH-1 "Huey" NATO Military Transport Helicopter
+; Most widely used Western military helicopter (16,000+ built)
+; Standard NATO tactical helicopter antenna configuration
+;
+; Aircraft specifications:
+; - Length: 17.6m (including rotors)
+; - Main rotor diameter: 14.6m (smaller than Mi-4)
+; - Typical altitude: 0-3000m (higher ceiling than Mi-4)
+; - Crew: 2 pilots plus up to 14 troops
+; - First flight: 1956, extensive NATO service
+;
+; NATO vs Soviet Design Differences:
+; - 2-blade rotor vs 4-blade (Mi-4) - less interference
+; - Sleeker fuselage design - better aerodynamics
+; - Skid landing gear vs wheels - different ground effects
+; - More sophisticated avionics integration
+; - Higher service ceiling and speed
+;
+; NATO Helicopter Radio Systems:
+; - AN/ARC-131: VHF-FM tactical (30-88 MHz)
+; - AN/ARC-186: VHF-AM aviation (118-156 MHz)  
+; - AN/ARC-164: UHF military (225-400 MHz)
+; - AN/ARC-190: HF transceiver (2-30 MHz)
+; - SINCGARS: Advanced VHF with frequency hopping
+;
+; Antenna Systems:
+; - VHF-FM tactical: Primary combat communication
+; - UHF: Air traffic control and military coordination
+; - HF: Long-range strategic communication
+; - VHF-AM: Civil aviation frequencies
+; - IFF/Transponder: Identification systems
+; - GPS/SATCOM: Modern navigation/communication
+;
+; NATO Frequency Allocations:
+; - VHF-FM tactical: 30-88 MHz (vs Soviet 20-52 MHz)
+; - VHF-AM aviation: 118-137 MHz (international)
+; - UHF military: 225-400 MHz (NATO standard)
+; - HF military: 2-30 MHz (similar to Soviet)
+; - GPS: L-band (1575 MHz)
+;
+; Rotor System Advantages (vs Mi-4):
+; - 2-blade system simpler, less RF interference
+; - Teetering hub design - predictable dynamics
+; - Composite blades in later versions - RF transparent
+; - Higher disc loading - less hover time near antennas
+; - Better vibration isolation - more reliable connections
+;
+; NATO Operational Advantages:
+; - Standardized frequencies across alliance
+; - Better EW resistance (frequency hopping)
+; - Integrated avionics suites
+; - Common spare parts/maintenance across NATO
+; - Better pilot training standardization
+;
+; Antenna Performance Improvements:
+; - Less rotor interference than 4-blade systems
+; - Better materials - lower loss antenna elements
+; - Improved impedance matching networks
+; - Better integration with avionics
+; - More reliable in harsh environments
+;
+; Ground Effects (NATO Operations):
+; - Higher operational altitudes than Soviet doctrine
+; - More varied terrain (mountains, forests, urban)
+; - Better terrain-following capability
+; - Different tactical employment (air mobility vs transport)
+; - Advanced navigation reduces low-altitude requirements
+;
+; Modern Upgrades:
+; - GPS/WAAS navigation
+; - SATCOM capability  
+; - Digital data links
+; - Improved EW protection
+; - Software-defined radios
+;
+; Expected Performance vs Mi-4:
+; - Better VHF/UHF efficiency (less rotor interference)
+; - Similar HF performance (both use belly antennas)
+; - More reliable operation (better materials)
+; - Higher operational altitude capability
+; - Better pattern stability (2-blade vs 4-blade)
+;
+; The UH-1 represents NATO helicopter communication philosophy:
+; - Standardization across alliance
+; - Integration with broader C4I systems  
+; - Reliability over raw performance
+; - Multi-mission capability
+; - Technological superiority through better materials/design
+; Altitude: 2100m
+; Ground effects: Moderate
+Minimal
+; Pattern characteristics: Sky wave dominant, pattern stabilizing

@@ -1,0 +1,143 @@
+{
+  "weather_api_key": "YOUR_AVIATION_WEATHER_API_KEY_HERE",
+  "airports": [
+    "KJFK",
+    "KLAX", 
+    "ENGM",
+    "EGLL",
+    "KORD",
+    "KDFW",
+    "KATL",
+    "KPHX",
+    "KLAS",
+    "KMIA"
+  ],
+  "thresholds": {
+    "wind_direction_change_deg": 10,
+    "wind_speed_change_kts": 5,
+    "gust_threshold_kts": 10,
+    "temperature_change_celsius": 2.0,
+    "pressure_change_hpa": 0.68,
+    "visibility_change_km": 1.0,
+    "cloud_cover_change_percent": 10
+  },
+  "update_interval_minutes": 60,
+  "max_age_hours": 12,
+  "output_directory": "atis_recordings",
+  "tts_config": {
+    "voice": "en_US-lessac-medium",
+    "speed": 1.0,
+    "pitch": 1.0
+  },
+  "weather_sources": {
+    "primary": "aviationweather.gov",
+    "fallback": "openweathermap.org",
+    "backup": "weather.gov"
+  },
+  "api_endpoints": {
+    "aviationweather": {
+      "base_url": "https://api.aviationweather.gov",
+      "metar_endpoint": "/metar/taf",
+      "timeout": 10,
+      "retry_attempts": 3,
+      "retry_delay": 5
+    },
+    "openweathermap": {
+      "base_url": "https://api.openweathermap.org",
+      "current_weather": "/data/2.5/weather",
+      "timeout": 10,
+      "retry_attempts": 3,
+      "retry_delay": 5
+    },
+    "weather_gov": {
+      "base_url": "https://api.weather.gov",
+      "stations_endpoint": "/stations",
+      "timeout": 10,
+      "retry_attempts": 3,
+      "retry_delay": 5
+    }
+  },
+  "api_keys": {
+    "aviationweather": "YOUR_AVIATION_WEATHER_API_KEY_HERE",
+    "openweathermap": "YOUR_OPENWEATHERMAP_API_KEY_HERE",
+    "weather_gov": "YOUR_WEATHER_GOV_API_KEY_HERE"
+  },
+  "switches": {
+    "enable_weather_monitoring": true,
+    "enable_automatic_atis_generation": true,
+    "enable_letter_system": true,
+    "enable_pressure_correction": true,
+    "enable_runway_detection": true,
+    "enable_gust_detection": true,
+    "enable_visibility_monitoring": true,
+    "enable_cloud_cover_monitoring": true,
+    "enable_temperature_monitoring": true,
+    "enable_wind_monitoring": true,
+    "enable_dew_point_monitoring": true,
+    "enable_qnh_monitoring": true,
+    "enable_qfe_monitoring": true,
+    "enable_notifications": false,
+    "enable_webhook_notifications": false,
+    "enable_email_notifications": false,
+    "enable_debug_logging": false,
+    "enable_verbose_logging": false,
+    "enable_performance_monitoring": true,
+    "enable_error_recovery": true,
+    "enable_fallback_apis": true,
+    "enable_caching": true,
+    "enable_persistence": true
+  },
+  "airport_elevations": {
+    "KJFK": 4.3,
+    "KLAX": 38.4,
+    "ENGM": 207.0,
+    "EGLL": 25.0,
+    "KORD": 201.0,
+    "KDFW": 148.0,
+    "KATL": 312.0,
+    "KPHX": 346.0,
+    "KLAS": 664.0,
+    "KMIA": 2.0
+  },
+  "runway_configurations": {
+    "KJFK": {
+      "primary": "04L/22R",
+      "secondary": "04R/22L",
+      "crosswind_limit": 15
+    },
+    "KLAX": {
+      "primary": "06L/24R",
+      "secondary": "06R/24L", 
+      "crosswind_limit": 15
+    },
+    "ENGM": {
+      "primary": "01L/19R",
+      "secondary": "01R/19L",
+      "crosswind_limit": 20
+    },
+    "EGLL": {
+      "primary": "09L/27R",
+      "secondary": "09R/27L",
+      "crosswind_limit": 15
+    }
+  },
+  "notification_settings": {
+    "email_notifications": false,
+    "webhook_url": "",
+    "log_level": "INFO"
+  },
+  "performance_settings": {
+    "max_concurrent_requests": 5,
+    "request_timeout": 10,
+    "cache_ttl_seconds": 300,
+    "max_cache_size_mb": 100,
+    "cleanup_interval_minutes": 60
+  },
+  "security_settings": {
+    "api_key_encryption": false,
+    "secure_connections_only": true,
+    "validate_ssl_certificates": true,
+    "rate_limiting_enabled": true,
+    "max_requests_per_minute": 60
+  }
+}

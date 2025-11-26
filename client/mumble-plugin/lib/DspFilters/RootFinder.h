@@ -52,14 +52,19 @@ public:
   struct Array
   {
     Array (int max, complex_t* values)
-     // : m_max (max)
-     // , m_values (values)
+        : m_max (max)
+        , m_values (values)
     {
     }
 
-    //complex_t& operator[] (int index)
-    //{
-    //};
+    complex_t& operator[] (int index)
+    {
+      return m_values[index];
+    }
+
+  private:
+    int m_max;
+    complex_t* m_values;
   };
 
   //

@@ -27,6 +27,9 @@
 #ifndef FGCOM_RADIOMODEL_H
 #define FGCOM_RADIOMODEL_H
 
+// Forward declarations
+class FGCom_radiowaveModel_VHF;
+
 
 #define EARTH_RADIUS_CONST 3.57  // earth radius factor constant for m/km
 #define EARTH_RADIUS_AVG   6371  // earth radius constant in km
@@ -49,6 +52,15 @@ struct fgcom_radio {
 	float channelWidth;  // channel width in kHz
 	bool  publish;       // if set to false, radio will not be broadcast to other plugins (implies receive-only)
 	
+	// Power management integration
+	std::string antenna_type;      // Type of antenna (vertical, yagi, loop, etc.)
+	std::string frequency_band;    // Frequency band for regulatory compliance
+	float power_efficiency;        // Current power efficiency (0.0-1.0)
+	bool power_limiting_enabled;   // Whether automatic power limiting is enabled
+	float swr;                     // Standing Wave Ratio
+	float temperature;             // Antenna temperature in Celsius
+	float battery_level;           // Battery level (0.0-1.0)
+	
 	fgcom_radio()  {
         frequency   = "";
         dialedFRQ   = "";
@@ -64,6 +76,34 @@ struct fgcom_radio {
         rdfEnabled  = false;
         channelWidth = -1;   // let the selected radio model decide on defaults
         publish     = true;
+        
+        // Power management defaults
+        antenna_type = "vertical";
+        frequency_band = "amateur";
+        power_efficiency = 0.8f;
+        power_limiting_enabled = true;
+        swr = 1.0f;
+        temperature = 25.0f;
+        battery_level = 1.0f;
+    };
+};
+
+// Amateur radio extension with band-specific characteristics
+struct fgcom_amateur_radio : public fgcom_radio {
+    std::string band;           // "160m", "80m", "40m", "20m", etc.
+    std::string mode;           // "CW", "LSB", "USB", "NFM", "AM"
+    std::string grid_locator;   // Maidenhead grid square
+    float power_watts;          // Transmit power (50W-1000W)
+    bool is_amateur;            // Amateur radio flag
+    int itu_region;             // ITU Region (1, 2, 3)
+    
+    fgcom_amateur_radio() : fgcom_radio() {
+        band = "";
+        mode = "USB";
+        grid_locator = "";
+        power_watts = 100.0;
+        is_amateur = false;
+        itu_region = 1;  // Default to Region 1
     };
 };
 
@@ -107,6 +147,8 @@ bool fgcom_radio_updateOperable(fgcom_radio &r);
  */
 class FGCom_radiowaveModel {
 public:
+    // Virtual destructor for proper cleanup of derived classes
+    virtual ~FGCom_radiowaveModel() = default;
          
     /*********************************************/
     /* Model dependendant methods, need to be    */

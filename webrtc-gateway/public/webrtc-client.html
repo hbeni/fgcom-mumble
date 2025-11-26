@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FGCom-mumble WebRTC Client</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="FGCom-mumble WebRTC Client - Connect to FGCom-mumble servers via web browser">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="logo">
+                    <img src="images/fgcom-logo.png" alt="FGCom-mumble" class="logo-img">
+                    <h1>FGCom-mumble WebRTC Client</h1>
+                </div>
+                <div class="header-controls">
+                    <div class="connection-status" id="connectionStatus">
+                        <span class="status-indicator offline"></span>
+                        <span class="status-text">Disconnected</span>
+                    </div>
+                    <button id="settingsBtn" class="btn btn-secondary">Settings</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Connection Setup -->
+                <section class="connection-setup">
+                    <h2>Connect to FGCom-mumble Server</h2>
+                    <div class="connection-form">
+                        <div class="form-group">
+                            <label for="serverUrl">Server URL</label>
+                            <input type="text" id="serverUrl" value="" placeholder="Server URL (auto-detected)">
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="Enter your username">
+                        </div>
+                        <button id="connectBtn" class="btn btn-primary">Connect</button>
+                    </div>
+                </section>
+
+                <!-- Radio Interface -->
+                <div id="radioInterface" class="radio-interface" style="display: none;">
+                    <!-- Radio Controls -->
+                    <section class="radio-controls">
+                        <h2>Radio Controls</h2>
+                        <div class="radio-panel">
+                            <div class="radio-channel active">
+                                <label>Channel 1</label>
+                                <div class="channel-controls">
+                                    <input type="number" id="freq1" placeholder="Frequency (MHz)" step="0.001" min="0" max="10000" value="121.500">
+                                    <input type="number" id="power1" placeholder="Power (W)" min="0" max="1000" value="25">
+                                    <input type="number" id="volume1" placeholder="Volume" min="0" max="100" value="50">
+                                    <input type="number" id="squelch1" placeholder="Squelch" min="0" max="100" value="30">
+                                    <button id="ptt1" class="btn btn-ptt">PTT</button>
+                                    <button id="testAudio1" class="btn btn-secondary">Test Audio</button>
+                                </div>
+                            </div>
+                            
+                            <div class="radio-channel">
+                                <label>Channel 2</label>
+                                <div class="channel-controls">
+                                    <input type="number" id="freq2" placeholder="Frequency (MHz)" step="0.001" min="0" max="10000">
+                                    <input type="number" id="power2" placeholder="Power (W)" min="0" max="1000" value="25">
+                                    <input type="number" id="volume2" placeholder="Volume" min="0" max="100" value="50">
+                                    <input type="number" id="squelch2" placeholder="Squelch" min="0" max="100" value="30">
+                                    <button id="ptt2" class="btn btn-ptt">PTT</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Position Controls -->
+                    <section class="position-controls">
+                        <h2>Position</h2>
+                        <div class="position-panel">
+                            <div class="form-group">
+                                <label for="callsign">Callsign</label>
+                                <input type="text" id="callsign" placeholder="Enter your callsign" value="WEBRTC">
+                            </div>
+                            <div class="form-group">
+                                <label for="latitude">Latitude</label>
+                                <input type="number" id="latitude" placeholder="Latitude" step="0.000001" min="-90" max="90" value="51.5074">
+                            </div>
+                            <div class="form-group">
+                                <label for="longitude">Longitude</label>
+                                <input type="number" id="longitude" placeholder="Longitude" step="0.000001" min="-180" max="180" value="-0.1278">
+                            </div>
+                            <div class="form-group">
+                                <label for="altitude">Altitude (ft)</label>
+                                <input type="number" id="altitude" placeholder="Altitude" min="0" max="100000" value="3000">
+                            </div>
+                            <button id="updatePosition" class="btn btn-primary">Update Position</button>
+                        </div>
+                    </section>
+
+                    <!-- Audio Controls -->
+                    <section class="audio-controls">
+                        <h2>Audio</h2>
+                        <div class="audio-panel">
+                            <div class="form-group">
+                                <label for="inputDevice">Input Device</label>
+                                <select id="inputDevice">
+                                    <option value="">Select microphone...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="outputDevice">Output Device</label>
+                                <select id="outputDevice">
+                                    <option value="">Select speaker...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="audioLevel">Audio Level</label>
+                                <input type="range" id="audioLevel" min="0" max="100" value="50">
+                                <span id="audioLevelValue">50%</span>
+                            </div>
+                            <div class="audio-status">
+                                <div class="audio-indicator">
+                                    <span class="indicator-label">Input Level:</span>
+                                    <div class="level-meter">
+                                        <div class="level-bar" id="inputLevelBar"></div>
+                                    </div>
+                                </div>
+                                <div class="audio-indicator">
+                                    <span class="indicator-label">Output Level:</span>
+                                    <div class="level-meter">
+                                        <div class="level-bar" id="outputLevelBar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Status Display -->
+                    <section class="status-display">
+                        <h2>Status</h2>
+                        <div class="status-panel">
+                            <div class="status-item">
+                                <span class="status-label">Connection:</span>
+                                <span class="status-value" id="connectionStatusValue">Disconnected</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Audio:</span>
+                                <span class="status-value" id="audioStatusValue">Not Available</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">PTT:</span>
+                                <span class="status-value" id="pttStatusValue">Released</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Frequency:</span>
+                                <span class="status-value" id="frequencyStatusValue">121.500 MHz</span>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 FGCom-mumble WebRTC Client. All rights reserved.</p>
+                <p>Version 1.0.0 | <a href="#" id="helpLink">Help</a> | <a href="#" id="aboutLink">About</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/webrtc-client.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

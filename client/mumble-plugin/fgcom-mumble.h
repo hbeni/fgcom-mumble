@@ -21,6 +21,9 @@
 #ifndef FGCOM_MUMBLE_H
 #define FGCOM_MUMBLE_H
 
+#include <string>
+#include "lib/radio_model.h"
+
 // Plugin Version
 #define FGCOM_VERSION_MAJOR 1
 #define FGCOM_VERSION_MINOR 1
@@ -28,6 +31,7 @@
 
 
 #define SIGNAL_INTERPOLATE_MS  500  // timeframe for signal quality interpolation
+#define MAX_AUDIO_BUFFER_SIZE   (1024 * 1024)  // Maximum audio buffer size (1MB)
 
 
 /*
@@ -57,5 +61,29 @@ bool fgcom_radio_isOperable(fgcom_radio r);
  * Update client comment
  */
 void fgcom_updateClientComment();
+
+/*
+ * Initialize Mumble plugin configuration interface
+ * 
+ * This function integrates with Mumble's plugin configuration system
+ * It provides a standardized way to configure plugin settings through Mumble's UI
+ */
+void initializeMumblePluginConfig();
+
+/*
+ * Handle configuration changes from Mumble's UI
+ * 
+ * This function is called when configuration values change through Mumble's UI
+ * @param key Configuration key that changed
+ * @param value New configuration value
+ */
+void handleConfigurationChange(const std::string& key, const std::string& value);
+
+/*
+ * Apply configuration changes to running systems
+ * 
+ * This function updates the running plugin systems with new configuration values
+ */
+void applyConfigurationChanges();
 
 #endif

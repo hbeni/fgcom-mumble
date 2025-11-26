@@ -1,0 +1,9 @@
+CM EZNEC Model Converted to NEC2
+CE
+GW 1 1 0 0 0 0 0 40 0.001
+GW 2 1 0 0 40 0 40 40 0.001
+GE 0
+EX 0 1 1 0 1 0
+GN 1 0 0 0 13 0.005
+FR 0 1 0 0 1.8 0
+EN

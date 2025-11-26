@@ -1,0 +1,25 @@
+# 2m Vertical Antenna Pattern Index
+# Generated: on. 24. sep. 19:35:23 +0200 2025
+# 
+# Format: antenna_name frequency_mhz altitude_m band pattern_file
+2m_vertical 144.5 0 144.5mhz patterns/144.5mhz/2m_vertical_144.5MHz_0m_pattern.txt
+2m_vertical 144.4 0 144.4mhz patterns/144.4mhz/2m_vertical_144.4MHz_0m_pattern.txt
+2m_vertical 145.1 0 145.1mhz patterns/145.1mhz/2m_vertical_145.1MHz_0m_pattern.txt
+2m_vertical 145.2 0 145.2mhz patterns/145.2mhz/2m_vertical_145.2MHz_0m_pattern.txt
+2m_vertical 146.0 0 146.0mhz patterns/146.0mhz/2m_vertical_146.0MHz_0m_pattern.txt
+2m_vertical 144.7 0 144.7mhz patterns/144.7mhz/2m_vertical_144.7MHz_0m_pattern.txt
+2m_vertical 144.9 0 144.9mhz patterns/144.9mhz/2m_vertical_144.9MHz_0m_pattern.txt
+2m_vertical 144.3 0 144.3mhz patterns/144.3mhz/2m_vertical_144.3MHz_0m_pattern.txt
+2m_vertical 145.6 0 145.6mhz patterns/145.6mhz/2m_vertical_145.6MHz_0m_pattern.txt
+2m_vertical 145.7 0 145.7mhz patterns/145.7mhz/2m_vertical_145.7MHz_0m_pattern.txt
+2m_vertical 145.0 0 145.0mhz patterns/145.0mhz/2m_vertical_145.0MHz_0m_pattern.txt
+2m_vertical 145.4 0 145.4mhz patterns/145.4mhz/2m_vertical_145.4MHz_0m_pattern.txt
+2m_vertical 145.8 0 145.8mhz patterns/145.8mhz/2m_vertical_145.8MHz_0m_pattern.txt
+2m_vertical 144.6 0 144.6mhz patterns/144.6mhz/2m_vertical_144.6MHz_0m_pattern.txt
+2m_vertical 144.1 0 144.1mhz patterns/144.1mhz/2m_vertical_144.1MHz_0m_pattern.txt
+2m_vertical 144.2 0 144.2mhz patterns/144.2mhz/2m_vertical_144.2MHz_0m_pattern.txt
+2m_vertical 145.3 0 145.3mhz patterns/145.3mhz/2m_vertical_145.3MHz_0m_pattern.txt
+2m_vertical 144.8 0 144.8mhz patterns/144.8mhz/2m_vertical_144.8MHz_0m_pattern.txt
+2m_vertical 145.9 0 145.9mhz patterns/145.9mhz/2m_vertical_145.9MHz_0m_pattern.txt
+2m_vertical 145.5 0 145.5mhz patterns/145.5mhz/2m_vertical_145.5MHz_0m_pattern.txt
+2m_vertical 144.0 0 144.0mhz patterns/144.0mhz/2m_vertical_144.0MHz_0m_pattern.txt

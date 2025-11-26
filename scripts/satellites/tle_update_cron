@@ -1,0 +1,35 @@
+# TLE Automatic Update Cron Jobs
+# This file contains cron job entries for automatic TLE updates
+# Copy this file to /etc/cron.d/fgcom-tle-updater or add to user's crontab
+
+# Environment variables
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+HOME=/home/haaken/github-projects/fgcom-mumble-dev
+
+# TLE Update Schedule - 24-Hour Automatic Updates
+# Update all TLE sources daily at 6:00 AM (24-hour cycle)
+0 6 * * * haaken /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --force >/dev/null 2>&1
+
+# Update ISS hourly (for critical tracking)
+0 * * * * haaken /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --source iss --force >/dev/null 2>&1
+
+# Clean up old log files monthly
+0 3 1 * * haaken find /home/haaken/fgcom-mumble/logs -name "*.log" -mtime +30 -delete >/dev/null 2>&1
+
+# Backup TLE files weekly on Sunday at 1:00 AM
+0 1 * * 0 haaken /home/haaken/fgcom-mumble/scripts/satellites/backup_tle_files.sh >/dev/null 2>&1
+
+# Alternative: User crontab entries (add to user's crontab with: crontab -e)
+# 
+# # TLE Updates - All sources daily at 6:00 AM (24-hour cycle)
+# 0 6 * * * /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --force
+# 
+# # TLE Updates - ISS hourly for critical tracking
+# 0 * * * * /home/haaken/fgcom-mumble/voice-encryption/systems/satellites/orbital/tle_updater --update-dir /home/haaken/fgcom-mumble/tle_data --log-dir /home/haaken/fgcom-mumble/logs --source iss --force
+# 
+# # Clean up old log files monthly
+# 0 3 1 * * find /home/haaken/fgcom-mumble/logs -name "*.log" -mtime +30 -delete
+# 
+# # Backup TLE files weekly
+# 0 1 * * 0 /home/haaken/fgcom-mumble/scripts/satellites/backup_tle_files.sh

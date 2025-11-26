@@ -52,6 +52,8 @@ public class OptionsWindow extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jCheckBox_EnableAudioEffects = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
+        jCheckBox_AudioNoiseSquelch = new javax.swing.JCheckBox();
+        jLabel21 = new javax.swing.JLabel();
         jCheckBox_HearAllUsers = new javax.swing.JCheckBox();
         jLabel11 = new javax.swing.JLabel();
         jTextField_udpHost = new javax.swing.JTextField();
@@ -107,6 +109,11 @@ public class OptionsWindow extends javax.swing.JFrame {
         jLabel10.setText("Enable audio effects");
         jLabel10.setToolTipText("If enabled, you will hear static and degraded signal quality based on signal reception");
 
+        jCheckBox_AudioNoiseSquelch.setToolTipText("If enabled, you will hear noise when squelch is open. FlightGear creates its own noise, so this can be disabled.");
+
+        jLabel21.setText("Add noise with open squelch");
+        jLabel21.setToolTipText("If enabled, you will hear noise when squelch is open. FlightGear creates its own noise, so this can be disabled.");
+
         jCheckBox_HearAllUsers.setToolTipText("When enabled, you will hear mumble users that do not use the plugin");
 
         jLabel11.setText("Plugin UDP Host");
@@ -159,6 +166,7 @@ public class OptionsWindow extends javax.swing.JFrame {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jCheckBox_alwaysMumblePTT)
                             .addComponent(jCheckBox_HearAllUsers)
+                            .addComponent(jCheckBox_AudioNoiseSquelch)
                             .addComponent(jCheckBox_EnableAudioEffects)
                             .addComponent(jTextField_udpSendRateHz, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField_udpPort, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -185,9 +193,13 @@ public class OptionsWindow extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel21)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel12))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jCheckBox_EnableAudioEffects)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jCheckBox_AudioNoiseSquelch)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jCheckBox_HearAllUsers)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -401,6 +413,7 @@ public class OptionsWindow extends javax.swing.JFrame {
         radioGUI.Options.udpPort = Integer.parseInt(jTextField_udpPort.getText());
         radioGUI.Options.udpSendRateHz = Float.parseFloat(jTextField_udpSendRateHz.getText());
         radioGUI.Options.enableAudioEffecs = jCheckBox_EnableAudioEffects.isSelected();
+        radioGUI.Options.audioNoiseSquelch = jCheckBox_AudioNoiseSquelch.isSelected();
         radioGUI.Options.simConnectHost = jTextField_simConnectHost.getText();
         radioGUI.Options.simConnectPort = Integer.parseInt(jTextField_simConnectPort.getText());
         radioGUI.Options.allowHearingNonPluginUsers = jCheckBox_HearAllUsers.isSelected();
@@ -425,11 +438,13 @@ public class OptionsWindow extends javax.swing.JFrame {
         jTextField_udpPort.setText(Integer.toString(radioGUI.Options.udpPort));
         jTextField_udpSendRateHz.setText(Float.toString(radioGUI.Options.udpSendRateHz));
         jCheckBox_EnableAudioEffects.setSelected(radioGUI.Options.enableAudioEffecs);
+        jCheckBox_AudioNoiseSquelch.setSelected(radioGUI.Options.audioNoiseSquelch);
         
         jTextField_simConnectHost.setText(radioGUI.Options.simConnectHost);
         jTextField_simConnectPort.setText(Integer.toString(radioGUI.Options.simConnectPort));
         
         jCheckBox_EnableAudioEffects.setSelected(radioGUI.Options.enableAudioEffecs);
+        jCheckBox_AudioNoiseSquelch.setSelected(radioGUI.Options.audioNoiseSquelch);
         jCheckBox_HearAllUsers.setSelected(radioGUI.Options.allowHearingNonPluginUsers);
     }//GEN-LAST:event_formComponentShown
 
@@ -487,6 +502,7 @@ public class OptionsWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButton_Cancel;
     private javax.swing.JButton jButton_OK;
     private javax.swing.JCheckBox jCheckBox_EnableAudioEffects;
+    private javax.swing.JCheckBox jCheckBox_AudioNoiseSquelch;
     private javax.swing.JCheckBox jCheckBox_HearAllUsers;
     private javax.swing.JCheckBox jCheckBox_alwaysMumblePTT;
     private javax.swing.JLabel jLabel1;
@@ -502,6 +518,7 @@ public class OptionsWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel_qlyvalue;
