@@ -246,6 +246,7 @@ var ADF = {
         me.mode              = me.root.getNode("mode", 1);
         me.freq_khz          = me.root.getNode("frequencies/selected-khz", 1);
         me.indicated_bearing = me.root.getNode("indicated-bearing-deg", 1);
+        me.plane_orientation = props.globals.getNode("/orientation/heading-deg");
 
         me.rdf_signal_flag_node = me.fgcom_root.getNode("receiving-flag", 1);
 
@@ -301,6 +302,11 @@ var ADF = {
                 # Has signal, and is in the correct mode: animate the needle
                 me.has_rdf_signal = 1;
                 me.rdf_signal_flag_node.setBoolValue(1);
+                
+                # direction must be made relative to the planes orientation
+                direction = direction - me.plane_orientation.getValue();
+                if (direction < 0) direction = direction + 360;
+                
                 #FGComMumble.logger.log("rdf", 5, me.name~" interpolate ADF needle at: "~me.indicated_bearing.getPath()~" (cur="~me.indicated_bearing.getValue()~"; tgt="~direction~")");
                 interpolate(me.indicated_bearing, direction, 1);
             } else {
