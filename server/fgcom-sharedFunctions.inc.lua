@@ -80,7 +80,7 @@ end
 -- FGCom functions
 fgcom = {
     botversion = "unknown",
-    libversion = "1.9.1",
+    libversion = "1.9.2",
     gitver     = "",   -- will be set from makefile when bundling
     channel    = "fgcom-mumble",
     callsign   = "FGCOM-someUnknownBot",
@@ -644,6 +644,22 @@ fgcom = {
         end,
         m2ft = function(m)
             return m * 3.28084
+        end,
+    },
+
+    -- Utilities
+    util = {
+        -- Get target lua-mumble client version from env
+        -- Looks into environment variable, and if present, vaidates format
+        -- then returns table with version or nil
+        getLuaMumbleClientEnvVer = function()
+            local envName = "LUA_MUMBLE_CLIENT_VER"
+            local lmv = os.getenv(envName)
+            if lmv == nil then return nil end
+            local lua_mumble_ver = fgcom.data.csplit(lmv, ".")
+            assert(#lua_mumble_ver==3, "ERROR: "..envName.." not in format 'n.n.n'")
+            fgcom.dbg("Detected lua-mumble target client version from "..envName..": "..table.concat(lua_mumble_ver, ".", 1))
+            return lua_mumble_ver
         end,
     },
 

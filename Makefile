@@ -1,7 +1,7 @@
 
 # Version ID for generated release bundles
 #   note: set this to the releases package version (at least version of the most recent subcomponent)
-BUNDLE_VER:=1.3.1
+BUNDLE_VER:=1.4.0
 
 # Build configuration options
 # Set to 'false' to skip jsimconnect dependency (useful for clients that don't need MSFS2020 integration)
