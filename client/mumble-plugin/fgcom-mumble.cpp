@@ -104,8 +104,7 @@ const float FREQ_THRESHOLD = 0.001f;  // 1 kHz - recalculate if frequency change
 
 
 // Cache for radio info (updated periodically, read lock-free in audio callback)
-// CachedRadioInfo struct is defined in globalVars.h
-// cached_radio_infos and cached_radio_infos_mtx are defined in globalVars.cpp
+// CachedRadioInfo struct, cached_radio_infos and cached_radio_infos_mtx are defined in globalVars.h
 const std::chrono::milliseconds RADIO_INFO_CACHE_UPDATE_INTERVAL(50);  // Update every 50ms
 std::chrono::system_clock::time_point last_radio_info_update;
 

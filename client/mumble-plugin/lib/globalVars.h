@@ -65,7 +65,8 @@ struct fgcom_config {
         autoJoinChannelPW = "";
     };
 };
-extern struct fgcom_config fgcom_cfg;
+// Plugin runtime configuration (header-only definition using C++17 inline)
+inline struct fgcom_config fgcom_cfg;
 
 
 // This represents a clients metadata
@@ -98,20 +99,20 @@ struct fgcom_client {
 // Global mutex for read/write access.
 // This needs to be locked everytime one wants to read/write
 // to the data to fgcom_local_client or fgcom_remote_clients
-extern std::mutex fgcom_localcfg_mtx;
+inline std::mutex fgcom_localcfg_mtx;
 
 // Local plugin datastore
 // this is written from by the udp server and read by the plugin
 // Note: Some data is only stored at the default identity: mumid
-extern std::map<int, struct fgcom_client> fgcom_local_client;   // local client data
+inline std::map<int, struct fgcom_client> fgcom_local_client;   // local client data
 
 // Remote plugin state
 // this is written to from the plugins receive data function and read from other plugin functions
-extern std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
-extern std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
+inline std::mutex fgcom_remotecfg_mtx;  // mutex lock for remote data
+inline std::map<mumble_userid_t, std::map<int, fgcom_client> > fgcom_remote_clients; // remote radio config
 
 // Global plugin state
-extern std::vector<mumble_channelid_t>  fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp
+inline std::vector<mumble_channelid_t>  fgcom_specialChannelID;  // filled from plugin init in fgcom-mumble.cpp
 
 // Thread-safe cache for radio info used in audio callbacks
 // This reduces lock contention and prevents skipped noise generation frames
@@ -129,8 +130,8 @@ struct CachedRadioInfo {
 };
 
 // Cache for radio info (updated periodically, read lock-free in audio callback)
-extern std::vector<CachedRadioInfo> cached_radio_infos;
-extern std::mutex cached_radio_infos_mtx;
+inline std::vector<CachedRadioInfo> cached_radio_infos;
+inline std::mutex cached_radio_infos_mtx;
 
 
 
