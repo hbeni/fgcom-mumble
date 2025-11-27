@@ -333,7 +333,7 @@ std::map<int, fgcom_udp_parseMsg_result> fgcom_udp_parseMsg(char buffer[MAXLINE]
 
                         // start new UDP client thread if requested
                         //pluginDbg("[UDP-server] UDP-client start thread check: registeredClientTgtPort="+std::to_string(fgcom_local_client[iid].clientTgtPort)+"; udpClientRunning="+std::to_string(udpClientRunning));
-                        if (fgcom_local_client[iid].clientTgtPort > 0 && !udpClientRunning) {
+                        if (fgcom_isPluginActive() && fgcom_local_client[iid].clientTgtPort > 0 && !udpClientRunning) {
                             pluginDbg("[UDP-server] UDP-client requested: "+std::to_string(fgcom_local_client[iid].clientTgtPort));
 #ifndef NO_UDPCLIENT
                             std::thread udpClientThread(fgcom_spawnUDPClient);
@@ -579,7 +579,19 @@ void fgcom_spawnUDPServer() {
         pluginLog("[UDP-server] socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")"); 
         mumAPI.log(ownPluginID, std::string("UDP server failed: socket creation failed (code "+std::to_string(fgcom_UDPServer_sockfd)+")").c_str());
         return;
-    } 
+    }
+    
+    // Set socket options.
+    // we set a timeout, so the udp server can check shutdown fast.
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
+    int timeoutMs = 500;   // 500 ms timeout so shutdown is fast
+    setsockopt(fgcom_UDPServer_sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeoutMs, sizeof(timeoutMs));
+#else
+    struct timeval tv;
+    tv.tv_sec = 0;
+    tv.tv_usec = 500000;   // 500 ms
+    setsockopt(fgcom_UDPServer_sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+#endif
       
     memset(&servaddr, 0, sizeof(servaddr)); 
     memset(&cliaddr, 0, sizeof(cliaddr)); 
@@ -609,6 +621,10 @@ void fgcom_spawnUDPServer() {
             pluginLog("[UDP-server] udp socket bind succeeded");
             bind_ok = true;
             break;
+        } else {
+            int bind_err = errno;
+            std::string bind_errmsg(strerror(bind_err));
+            pluginDbg("[UDP-server] udp socket bind try failed (port="+std::to_string(fgcom_udp_port_used)+"; error="+std::to_string(bind_err)+" "+bind_errmsg+")");
         }
     }
     if (!bind_ok) {
@@ -629,17 +645,23 @@ void fgcom_spawnUDPServer() {
     udpServerRunning = true;
     while (!fgcom_udp_shutdowncmd) {
         len = sizeof(cliaddr);  //len is value/result
-#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
-        int recvfrom_flags = 0;  //MSG_WAITALL not supported with UDP on windows (gives error 10045 WSAEOPNOTSUPP)
-#else
-        int recvfrom_flags = MSG_WAITALL;
-#endif
 
+        //
         // receive datagrams
+        //
         n = recvfrom(fgcom_UDPServer_sockfd, (char *)buffer, MAXLINE,
-                     recvfrom_flags, ( struct sockaddr *) &cliaddr, &len);
+                     0, ( struct sockaddr *) &cliaddr, &len);
         if (n < 0) {
             // SOCKET_ERROR returned
+            
+            // Ignore timeout error: we got no data, so we just continue to wait for it
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
+            if (WSAGetLastError() == WSAETIMEDOUT) continue;
+#else
+            if (errno == EAGAIN || errno == EWOULDBLOCK) continue;
+#endif
+            
+            // True error occured:
 #if defined(MINGW_WIN64) || defined(MINGW_WIN32)
             //details for windows error codes: https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-recvfrom
             wprintf(L"recvfrom failed with error %d\n", WSAGetLastError());
@@ -656,114 +678,68 @@ void fgcom_spawnUDPServer() {
             break;
         }
         
-        buffer[n] = '\0';
+        buffer[n] = '\0'; // Null-terminate received data
         clientPort = ntohs(cliaddr.sin_port);
         clientHost = inet_ntoa(cliaddr.sin_addr);
         std::string clientHost_str = std::string(clientHost);
         
-        // Allow the udp server to be shut down when receiving SHUTDOWN command
-        if (strstr(buffer, "SHUTDOWN") && fgcom_udp_shutdowncmd) {
-            pluginLog("[UDP-server] shutdown command recieved, server stopping now");
-            fgcom_udp_shutdowncmd = false;
-            close(fgcom_UDPServer_sockfd);
-            //mumAPI.log(ownPluginID, std::string("UDP server at port "+std::to_string(fgcom_udp_port_used)+" stopped").c_str());
-            // ^^ note: as long as the mumAPI is synchronuous/blocking, we cannot emit that message: it causes mumble's main thread to block/deadlock.
-            break;
+        
+        //
+        // let the incoming data be handled
+        //
+        
+        // Print info to client, so we know what ports are in use
+        if (firstdata.count(clientPort) == 0 && sizeof(buffer) > 4) {
+            firstdata[clientPort] = true;
+            pluginLog("[UDP-server] server connection established from "+clientHost_str+":"+std::to_string(clientPort));
+            mumAPI.log(ownPluginID, std::string("UDP server connection established from "+clientHost_str+":"+std::to_string(clientPort)).c_str());
+        }
+        
+        std::map<int, fgcom_udp_parseMsg_result> updates; // so we can send updates to remotes
+        updates = fgcom_udp_parseMsg(buffer, clientPort, clientHost_str);
+        
+        /* Process pending urgent notifications
+            * (not-urgent updates are dealt from the notification thread) */
+        for (const auto &p : updates) {
+            int iid = p.first;
+            fgcom_udp_parseMsg_result ures = p.second;
             
-        } else {
-            // let the incoming data be handled
-            
-            // Print info to client, so we know what ports are in use
-            if (firstdata.count(clientPort) == 0 && sizeof(buffer) > 4) {
-                firstdata[clientPort] = true;
-                pluginLog("[UDP-server] server connection established from "+clientHost_str+":"+std::to_string(clientPort));
-                mumAPI.log(ownPluginID, std::string("UDP server connection established from "+clientHost_str+":"+std::to_string(clientPort)).c_str());
+            // If we got userdata changed, notify immediately.
+            if (ures.userData) {
+                pluginDbg("[UDP-server] userData for iid='"+std::to_string(iid)+"' has changed, notifying other clients");
+                notifyRemotes(iid, NTFY_USR);
+                fgcom_updateClientComment();
             }
-            
-            std::map<int, fgcom_udp_parseMsg_result> updates; // so we can send updates to remotes
-            updates = fgcom_udp_parseMsg(buffer, clientPort, clientHost_str);
-            
-            /* Process pending urgent notifications
-             * (not-urgent updates are dealt from the notification thread) */
-            for (const auto &p : updates) {
-                int iid = p.first;
-                fgcom_udp_parseMsg_result ures = p.second;
-                
-                // If we got userdata changed, notify immediately.
-                if (ures.userData) {
-                    pluginDbg("[UDP-server] userData for iid='"+std::to_string(iid)+"' has changed, notifying other clients");
-                    notifyRemotes(iid, NTFY_USR);
-                    fgcom_updateClientComment();
-                }
-                // See if we had a radio update. This is an "urgent" update: we must inform other clients instantly!
-                for (std::set<int>::iterator it=ures.radioData.begin(); it!=ures.radioData.end(); ++it) {
-                    // iterate trough changed radio instances
-                    //std::cout << "ITERATOR: " << ' ' << *it;
-                    pluginDbg("[UDP-server] radioData for iid='"+std::to_string(iid)+"', radio_id="+std::to_string(*it)+" has changed, notifying other clients");
-                    notifyRemotes(iid, NTFY_COM, *it);
-                    fgcom_updateClientComment();
-                }
-                // If we got locationdata changed, do NOT notify. This is handled asynchronusly from the notify thread.
-                /*if (ures.locationData) {
-                    pluginDbg("[UDP-server] locationData for iid='"+std::to_string(iid)+"' has changed, notifying other clients");
-                    notifyRemotes(iid, 1);
-                }*/
+            // See if we had a radio update. This is an "urgent" update: we must inform other clients instantly!
+            for (std::set<int>::iterator it=ures.radioData.begin(); it!=ures.radioData.end(); ++it) {
+                // iterate trough changed radio instances
+                //std::cout << "ITERATOR: " << ' ' << *it;
+                pluginDbg("[UDP-server] radioData for iid='"+std::to_string(iid)+"', radio_id="+std::to_string(*it)+" has changed, notifying other clients");
+                notifyRemotes(iid, NTFY_COM, *it);
+                fgcom_updateClientComment();
             }
-            
-            
+            // If we got locationdata changed, do NOT notify. This is handled asynchronusly from the notify thread.
+            /*if (ures.locationData) {
+                pluginDbg("[UDP-server] locationData for iid='"+std::to_string(iid)+"' has changed, notifying other clients");
+                notifyRemotes(iid, 1);
+            }*/
         }
     }
 
-    udpServerRunning = false;
-    pluginDbg("[UDP-server] thread finished.");
+    // UDP server terminates
+#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
+    closesocket(fgcom_UDPServer_sockfd);
+    WSACleanup();
+#else
+    close(fgcom_UDPServer_sockfd);
+#endif
     fgcom_udp_port_used = fgcom_cfg.udpServerPort;
+    udpServerRunning = false;
+    fgcom_udp_shutdowncmd = false;
+    pluginDbg("[UDP-server] thread finished.");
     return;
 }
 
 void fgcom_shutdownUDPServer() {
-    // Trigger shutdown: this just sends some magic UDP message.
-    // This is neccessary because of the blocking state of the socket.
-    pluginDbg("sending UDP shutdown request to port "+std::to_string(fgcom_udp_port_used));
-    std::string message = "SHUTDOWN";
     fgcom_udp_shutdowncmd = true;
-
-	struct sockaddr_in server_address;
-	memset(&server_address, 0, sizeof(server_address));
-	server_address.sin_family = AF_INET;
-
-	// creates binary representation of server name
-	// and stores it as sin_addr
-	// see: https://beej.us/guide/bgnet/html/
-    if (fgcom_cfg.udpServerHost == "*") {
-#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
-        server_address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-#else
-        inet_pton(AF_INET, "127.0.0.1", &server_address.sin_addr);
-#endif
-    } else {
-#if defined(MINGW_WIN64) || defined(MINGW_WIN32)
-        server_address.sin_addr.s_addr = inet_addr(fgcom_cfg.udpServerHost.c_str());
-#else
-        inet_pton(AF_INET, fgcom_cfg.udpServerHost.c_str(), &server_address.sin_addr);
-#endif
-    }
-
-	// htons: port in network order format
-	server_address.sin_port = htons(fgcom_udp_port_used);
-
-	// open socket
-	int sock;
-	if ((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0) {
-		pluginLog("could not create udp cliet socket");
-		return;
-	}
-
-	// send data
-	int len = sendto(sock, message.c_str(), strlen(message.c_str()), 0,
-	           (struct sockaddr*)&server_address, sizeof(server_address));
-    if (len == -1) {
-        pluginLog("[UDP-server] error sending UDP shutdown packet");
-        mumAPI.log(ownPluginID, std::string("error sending UDP shutdown packet").c_str());
-        return;
-    }
 }
