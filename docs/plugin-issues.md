@@ -696,4 +696,12 @@ This guide includes step-by-step instructions for diagnosing threading issues an
 ---
 
 **Implementation Note:**
-Multiple deadlock fixes have been applied to prevent Mumble from freezing when reloading the plugin. All blocking mutex operations in background threads and audio callbacks have been replaced with non-blocking `std::unique_lock` with `std::try_to_lock` to prevent deadlocks. However, reloading the plugin while RadioGUI is sending UDP data can still cause Mumble to become unresponsive. The white noise generation issue at 0% squelch is currently under investigation with extensive debug logging added to diagnose the problem.
+Multiple deadlock fixes have been applied to prevent Mumble from freezing when reloading the plugin. All blocking mutex operations in background threads and audio callbacks have been replaced with non-blocking `std::unique_lock` with `std::try_to_lock` to prevent deadlocks. However, reloading the plugin while RadioGUI is sending UDP data can still cause Mumble to become unresponsive.
+
+**White Noise Issue - RESOLVED:**
+The white noise generation issue at 0% squelch has been resolved. White noise is now properly generated through the `mumble_onAudioOutputAboutToPlay()` callback, which runs continuously and calls `fgcom_audio_addSquelchNoise()`. This implementation:
+- Generates white noise when squelch is open (<= 10%), even when no one is speaking
+- Supports location-based noise floor calculations for realistic noise levels
+- Uses exponential smoothing to prevent abrupt volume changes
+- Properly handles all edge cases (plugin inactive, audio effects disabled, etc.)
+- Uses non-blocking locks to prevent deadlocks in the audio callback

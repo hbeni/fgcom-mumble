@@ -13,7 +13,7 @@ SSLFLAGS+=-I./lib/openssl/include/ -L./lib/openssl/ -lssl -lcrypto -DSSLFLAGS
 SSLFLAGS_WIN+=-I./lib/openssl/include/ -L./lib/openssl/ -static -lssl -lcrypto -lws2_32 -lcrypt32 -DSSLFLAGS -D_WIN32
 # Note on flags: -D_WIN32 is needed by httplib on Windows
 
-# Modular structure: propagation, noise, audio, maps
+# Modular structure: propagation, noise, audio, maps, security
 # Each module can be built and tested independently
 PROPAGATION_CORE_OBJS := lib/propagation/core/propagation_physics.o lib/propagation/core/atmospheric_ducting.o lib/propagation/core/enhanced_multipath.o
 PROPAGATION_TERRAIN_OBJS := lib/propagation/terrain/terrain_elevation.o lib/propagation/terrain/terrain_cache.o lib/propagation/terrain/terrain_data_access.o lib/propagation/terrain/terrain_state_machine.o lib/propagation/terrain/terrain_statistics.o lib/propagation/terrain/terrain_environmental_api.o
@@ -23,11 +23,14 @@ MAPS_OBJS := lib/maps/openinframap_data_source.o
 NOISE_OBJS := lib/noise/atmospheric_noise.o lib/noise/noise_floor_utils.o
 AUDIO_OBJS := lib/audio/audio.o lib/audio/audio_professional.o
 # Note: audio_modern.cpp is an alternative implementation - include only if needed
+SECURITY_CORE_OBJS := lib/security/core/security.o
+SECURITY_WORK_UNIT_OBJS := lib/security/work_unit/work_unit_security.o
+SECURITY_OBJS := $(SECURITY_CORE_OBJS) $(SECURITY_WORK_UNIT_OBJS)
 
 lib_OBJS := lib/radio_model.o $(AUDIO_OBJS) lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o lib/amateur_radio.o $(PROPAGATION_OBJS) lib/power_management.o lib/frequency_offset.o $(NOISE_OBJS) lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/agc_squelch.o lib/agc_squelch_api.o lib/ctcss_system.o lib/preset_channel_api.o lib/soviet_vhf_equipment.o lib/nato_vhf_equipment.o lib/preset_channel_config_loader.o lib/radio_model_config_loader.o lib/gpu_resource_limiting.o lib/radio_config.o $(MAPS_OBJS) lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o
 
 # Module-level build targets for incremental development and testing
-.PHONY: module-propagation module-noise module-audio module-maps test-module-propagation test-module-noise test-module-audio
+.PHONY: module-propagation module-noise module-audio module-maps module-security test-module-propagation test-module-noise test-module-audio test-module-security
 
 # Build individual modules
 module-propagation: $(PROPAGATION_OBJS)
@@ -41,6 +44,9 @@ module-audio: $(AUDIO_OBJS)
 
 module-maps: $(MAPS_OBJS)
 	@echo "Maps module built: $(MAPS_OBJS)"
+
+module-security: $(SECURITY_OBJS)
+	@echo "Security module built: $(SECURITY_OBJS)"
 
 # Test individual modules (placeholder - can be extended with module-specific tests)
 test-module-propagation: module-propagation
@@ -60,6 +66,12 @@ test-module-audio: module-audio
 	@echo "Testing audio module..."
 	@echo "  - Core: audio, audio_professional"
 	@echo "Run: make module-audio && make plugin (to test integration)"
+
+test-module-security: module-security
+	@echo "Testing security module..."
+	@echo "  - Core: security (encryption, hashing, authentication)"
+	@echo "  - Work Unit: work_unit_security (AES256, RSA, digital signatures)"
+	@echo "Run: make module-security && make plugin (to test integration)"
 
 # Notice: Special calls
 #

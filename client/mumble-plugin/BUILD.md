@@ -50,6 +50,24 @@ Build in debug mode:
 make debug
 ```
 
+### Building Individual Modules
+
+The codebase is organized into independent modules that can be built and tested separately:
+
+```bash
+# Build individual modules
+make module-propagation    # Propagation physics, terrain, weather
+make module-noise          # Atmospheric noise and noise floor
+make module-audio         # Audio processing
+make module-maps          # OpenInfraMap data source
+make module-security      # Security and encryption (core + work unit)
+
+# Test module integration
+make plugin  # Builds everything together
+```
+
+For detailed information on the modular structure and incremental development workflow, see [MODULE_DEVELOPMENT.md](MODULE_DEVELOPMENT.md).
+
 ### macOS (Native)
 
 Build universal binary (x86_64 + arm64):

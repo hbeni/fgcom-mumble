@@ -6,7 +6,7 @@
  * digital signatures, and threat detection.
  */
 
-#include "work_unit_security.h"
+#include "security/work_unit/work_unit_security.h"
 #include <algorithm>
 #include <random>
 #include <sstream>

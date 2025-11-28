@@ -87,7 +87,7 @@ A mumble-based modular radio simulation framework that provides realistic radio 
 - **Satellite Communication**: Real-time satellite tracking and communication simulation
 - **Advanced Fuzzing**: Comprehensive testing framework with AFL++ and MULL integration
 - **ATIS Weather Integration**: Automatic weather data integration for realistic ATIS generation
-- **Modular Design**: Extensible architecture for custom integrations
+- **Modular Design**: Extensible architecture with independent modules (propagation, noise, audio, maps, security) for custom integrations and incremental development
 
 ---
 
@@ -246,6 +246,7 @@ For details on current plugin issues, see [Plugin Issues Documentation](docs/plu
 | Guide | Purpose |
 |-------|---------|
 | **[Build Guide](client/mumble-plugin/BUILD.md)** | Cross-platform build instructions (Windows, macOS, Linux) |
+| **[Module Development Guide](client/mumble-plugin/MODULE_DEVELOPMENT.md)** | Modular codebase structure and incremental development workflow |
 | **[Compilation Guide](docs/COMPILATION_GUIDE.md)** | Build from source code (if exists) |
 | **[Game Developer Integration Guide](docs/GAME_DEVELOPER_INTEGRATION_GUIDE.md)** | Integrate with your game or simulator |
 | **[API Documentation](docs/API_REFERENCE_COMPLETE.md)** | RESTful API and WebSocket interfaces |

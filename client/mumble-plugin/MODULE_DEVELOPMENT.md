@@ -14,7 +14,10 @@ lib/
 │   └── weather/        # Solar data and weather APIs
 ├── noise/              # Atmospheric noise and noise floor
 ├── audio/              # Audio processing
-└── maps/               # OpenInfraMap data source (shared)
+├── maps/               # OpenInfraMap data source (shared)
+└── security/
+    ├── core/           # Core security utilities (encryption, hashing, authentication)
+    └── work_unit/      # Work unit security (AES256, RSA, digital signatures)
 ```
 
 ## Building Individual Modules
@@ -33,6 +36,9 @@ make module-audio
 
 # Build maps module only
 make module-maps
+
+# Build security module only
+make module-security
 ```
 
 ## Incremental Development Workflow
@@ -78,6 +84,10 @@ audio/
 
 maps/
   └── (shared between propagation and noise)
+
+security/
+  ├── core/            (depends on OpenSSL for encryption/hashing)
+  └── work_unit/        (depends on core/, OpenSSL, work_unit_distributor)
 ```
 
 ## Testing Strategy
@@ -114,6 +124,7 @@ Recommended order for implementing modules:
 4. **propagation/weather/** - Weather data
 5. **noise/** - Noise calculations (uses maps)
 6. **audio/** - Audio processing (uses noise)
+7. **security/** - Security and encryption (optional, for voice encryption and work unit security)
 
 ## Making Changes to a Module
 
@@ -150,6 +161,8 @@ Each module exposes its functionality through header files:
 - **noise/**: `atmospheric_noise.h`, `noise_floor.h`
 - **audio/**: `audio.h`
 - **maps/**: `openinframap_data_source.h`
+- **security/core/**: `security.h` (encryption, hashing, authentication)
+- **security/work_unit/**: `work_unit_security.h` (AES256, RSA, digital signatures)
 
 ## Benefits of This Structure
 

@@ -19,7 +19,7 @@
 #include "fgcom_config.h"
 #include "work_unit_distributor.h"
 #include <mutex>
-#include "work_unit_security.h"
+#include "security/work_unit/work_unit_security.h"
 #include "propagation/terrain/terrain_elevation.h"
 #include <iostream>
 #include <fstream>

@@ -1,4 +1,4 @@
-#include "security.h"
+#include "security/core/security.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -11,7 +11,11 @@
 #include <openssl/md5.h>
 #include <openssl/rand.h>
 #include <openssl/evp.h>
+#ifdef HAVE_UUID_UUID_H
 #include <uuid/uuid.h>
+#else
+// Fallback: Use OpenSSL for UUID generation if uuid library is not available
+#endif
 
 namespace Security {
 
@@ -652,6 +656,7 @@ std::string Encryption::generateKey(size_t length) {
 }
 
 std::string Encryption::generateUUID() {
+#ifdef HAVE_UUID_UUID_H
     uuid_t uuid;
     uuid_generate(uuid);
     
@@ -659,6 +664,39 @@ std::string Encryption::generateUUID() {
     uuid_unparse(uuid, uuid_str);
     
     return std::string(uuid_str);
+#else
+    // Fallback: Generate UUID-like string using OpenSSL random bytes
+    // Format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx (RFC 4122 variant 1)
+    unsigned char random_bytes[16];
+    if (RAND_bytes(random_bytes, 16) != 1) {
+        // If RAND_bytes fails, use a timestamp-based fallback
+        auto now = std::chrono::system_clock::now();
+        auto time_since_epoch = now.time_since_epoch();
+        auto nanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(time_since_epoch).count();
+        std::stringstream ss;
+        ss << std::hex << std::setfill('0');
+        ss << std::setw(8) << (nanoseconds & 0xFFFFFFFF) << "-";
+        ss << std::setw(4) << ((nanoseconds >> 32) & 0xFFFF) << "-4";
+        ss << std::setw(3) << ((nanoseconds >> 48) & 0xFFF) << "-";
+        ss << std::setw(4) << (((nanoseconds >> 60) & 0x3FFF) | 0x8000) << "-";
+        ss << std::setw(12) << (nanoseconds & 0xFFFFFFFFFFFF);
+        return ss.str();
+    }
+    
+    // Set version (4) and variant bits
+    random_bytes[6] = (random_bytes[6] & 0x0F) | 0x40; // Version 4
+    random_bytes[8] = (random_bytes[8] & 0x3F) | 0x80; // Variant 1
+    
+    std::stringstream ss;
+    ss << std::hex << std::setfill('0');
+    for (int i = 0; i < 16; i++) {
+        if (i == 4 || i == 6 || i == 8 || i == 10) {
+            ss << "-";
+        }
+        ss << std::setw(2) << (int)random_bytes[i];
+    }
+    return ss.str();
+#endif
 }
 
 // Global security manager instance
