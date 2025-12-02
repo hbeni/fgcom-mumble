@@ -15,9 +15,13 @@ lib/
 ├── noise/              # Atmospheric noise and noise floor
 ├── audio/              # Audio processing
 ├── maps/               # OpenInfraMap data source (shared)
-└── security/
-    ├── core/           # Core security utilities (encryption, hashing, authentication)
-    └── work_unit/      # Work unit security (AES256, RSA, digital signatures)
+├── security/
+│   ├── core/           # Core security utilities (encryption, hashing, authentication)
+│   └── work_unit/      # Work unit security (AES256, RSA, digital signatures)
+├── work_unit/           # Work unit distribution and sharing (modular work unit management)
+└── space/
+    ├── moon/           # Moon position tracking for EME communication
+    └── satellites/     # Satellite tracking for satellite communication
 ```
 
 ## Building Individual Modules
@@ -39,6 +43,12 @@ make module-maps
 
 # Build security module only
 make module-security
+
+# Build work unit module only
+make module-work-unit
+
+# Build space module only
+make module-space
 ```
 
 ## Incremental Development Workflow
@@ -88,6 +98,13 @@ maps/
 security/
   ├── core/            (depends on OpenSSL for encryption/hashing)
   └── work_unit/        (depends on core/, OpenSSL, work_unit_distributor)
+
+work_unit/
+  └── (depends on work_unit_distributor, client_work_unit_coordinator)
+
+space/
+  ├── moon/            (no dependencies)
+  └── satellites/      (no dependencies)
 ```
 
 ## Testing Strategy
@@ -125,6 +142,8 @@ Recommended order for implementing modules:
 5. **noise/** - Noise calculations (uses maps)
 6. **audio/** - Audio processing (uses noise)
 7. **security/** - Security and encryption (optional, for voice encryption and work unit security)
+8. **work_unit/** - Work unit distribution and sharing (for distributed propagation calculations)
+9. **space/** - Space-based propagation (moon tracking for EME, satellite tracking)
 
 ## Making Changes to a Module
 
@@ -163,6 +182,9 @@ Each module exposes its functionality through header files:
 - **maps/**: `openinframap_data_source.h`
 - **security/core/**: `security.h` (encryption, hashing, authentication)
 - **security/work_unit/**: `work_unit_security.h` (AES256, RSA, digital signatures)
+- **work_unit/**: `work_unit_sharing.h` (modular work unit sharing strategies)
+- **space/moon/**: `moon_position_tracker.h` (EME communication, moon tracking)
+- **space/satellites/**: `satellite_tracker.h` (satellite tracking, visibility, Doppler)
 
 ## Benefits of This Structure
 

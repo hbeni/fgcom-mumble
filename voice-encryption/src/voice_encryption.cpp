@@ -20,6 +20,7 @@
  */
 
 #include "voice_encryption.h"
+#include "encryption_system_registry.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -47,14 +48,13 @@ namespace voice_encryption {
 VoiceEncryptionManager::VoiceEncryptionManager()
     : current_system_(EncryptionSystem::YACHTA_T219)
     , initialized_(false)
+    , current_system_instance_(nullptr)
+    , factory_(&EncryptionSystemFactory::getInstance())
     , sample_rate_(44100.0f)
     , channels_(1) {
     
-    // Create system instances
-    yachta_t219_ = std::make_unique<yachta::YachtaT219>();
-    vinson_ky57_ = std::make_unique<vinson::VinsonKY57>();
-    granit_ = std::make_unique<granit::Granit>();
-    stanag_4197_ = std::make_unique<stanag4197::Stanag4197>();
+    // Register all built-in encryption systems
+    registerBuiltInEncryptionSystems();
 }
 
 /**
@@ -86,13 +86,13 @@ bool VoiceEncryptionManager::initialize(float sample_rate, uint32_t channels) {
     sample_rate_ = sample_rate;
     channels_ = channels;
     
-    // Initialize all systems
-    bool yachta_init = yachta_t219_->initialize(sample_rate, channels);
-    bool vinson_init = vinson_ky57_->initialize(sample_rate, channels);
-    bool granit_init = granit_->initialize(sample_rate, channels);
-    bool stanag_init = stanag_4197_->initialize(sample_rate, channels);
+    // Create and initialize current system
+    current_system_instance_ = factory_->createSystem(current_system_);
+    if (!current_system_instance_) {
+        return false;
+    }
     
-    if (!yachta_init || !vinson_init || !granit_init || !stanag_init) {
+    if (!current_system_instance_->initialize(sample_rate, channels)) {
         return false;
     }
     
@@ -110,11 +110,32 @@ bool VoiceEncryptionManager::initialize(float sample_rate, uint32_t channels) {
  * Sets the active encryption system for voice encryption.
  */
 bool VoiceEncryptionManager::setEncryptionSystem(EncryptionSystem system) {
-    if (!initialized_) {
+    if (!factory_->isSystemRegistered(system)) {
         return false;
     }
     
+    // Create new system instance
+    auto new_system = factory_->createSystem(system);
+    if (!new_system) {
+        return false;
+    }
+    
+    // Initialize if manager is already initialized
+    if (initialized_) {
+        if (!new_system->initialize(sample_rate_, channels_)) {
+            return false;
+        }
+    }
+    
+    // Shutdown old system
+    if (current_system_instance_) {
+        current_system_instance_->shutdown();
+    }
+    
+    // Switch to new system
+    current_system_instance_ = std::move(new_system);
     current_system_ = system;
+    
     return true;
 }
 
@@ -141,22 +162,11 @@ EncryptionSystem VoiceEncryptionManager::getCurrentSystem() const {
  * encryption system.
  */
 std::vector<float> VoiceEncryptionManager::encrypt(const std::vector<float>& input) {
-    if (!initialized_ || input.empty()) {
+    if (!initialized_ || input.empty() || !current_system_instance_) {
         return input;
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->encrypt(input);
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->encrypt(input);
-        case EncryptionSystem::GRANIT:
-            return granit_->encrypt(input);
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->encrypt(input);
-        default:
-            return input;
-    }
+    return current_system_instance_->encrypt(input);
 }
 
 /**
@@ -170,22 +180,11 @@ std::vector<float> VoiceEncryptionManager::encrypt(const std::vector<float>& inp
  * encryption system.
  */
 std::vector<float> VoiceEncryptionManager::decrypt(const std::vector<float>& input) {
-    if (!initialized_ || input.empty()) {
+    if (!initialized_ || input.empty() || !current_system_instance_) {
         return input;
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->decrypt(input);
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->decrypt(input);
-        case EncryptionSystem::GRANIT:
-            return granit_->decrypt(input);
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->decrypt(input);
-        default:
-            return input;
-    }
+    return current_system_instance_->decrypt(input);
 }
 
 /**
@@ -199,22 +198,11 @@ std::vector<float> VoiceEncryptionManager::decrypt(const std::vector<float>& inp
  * Sets the encryption key for the currently active system.
  */
 bool VoiceEncryptionManager::setKey(uint32_t key_id, const std::string& key_data) {
-    if (!initialized_) {
+    if (!initialized_ || !current_system_instance_) {
         return false;
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->setKey(key_id, key_data);
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->setKey(key_id, key_data);
-        case EncryptionSystem::GRANIT:
-            return granit_->setKey(key_id, key_data);
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->setKey(key_id, key_data);
-        default:
-            return false;
-    }
+    return current_system_instance_->setKey(key_id, key_data);
 }
 
 /**
@@ -227,28 +215,11 @@ bool VoiceEncryptionManager::setKey(uint32_t key_id, const std::string& key_data
  * Loads encryption key from a file for the currently active system.
  */
 bool VoiceEncryptionManager::loadKeyFromFile(const std::string& filename) {
-    if (!initialized_) {
+    if (!initialized_ || !current_system_instance_) {
         return false;
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219: {
-            // Yachta system doesn't have loadKeyFromFile, use setKeyCardData instead
-            std::ifstream file(filename);
-            if (!file.is_open()) return false;
-            std::string key_data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-            yachta_t219_->setKeyCardData(key_data);
-            return true;
-        }
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->loadKeyFromFile(filename);
-        case EncryptionSystem::GRANIT:
-            return granit_->loadKeyFromFile(filename);
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->loadKeyFromFile(filename);
-        default:
-            return false;
-    }
+    return current_system_instance_->loadKeyFromFile(filename);
 }
 
 /**
@@ -261,27 +232,11 @@ bool VoiceEncryptionManager::loadKeyFromFile(const std::string& filename) {
  * Saves encryption key to a file for the currently active system.
  */
 bool VoiceEncryptionManager::saveKeyToFile(const std::string& filename) {
-    if (!initialized_) {
+    if (!initialized_ || !current_system_instance_) {
         return false;
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219: {
-            // Yachta system doesn't have saveKeyToFile, use getKeyCardData instead
-            std::ofstream file(filename);
-            if (!file.is_open()) return false;
-            file << yachta_t219_->getKeyCardData();
-            return true;
-        }
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->saveKeyToFile(filename);
-        case EncryptionSystem::GRANIT:
-            return granit_->saveKeyToFile(filename);
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->saveKeyToFile(filename);
-        default:
-            return false;
-    }
+    return current_system_instance_->saveKeyToFile(filename);
 }
 
 /**
@@ -295,22 +250,11 @@ bool VoiceEncryptionManager::saveKeyToFile(const std::string& filename) {
  * currently active system.
  */
 bool VoiceEncryptionManager::validateKey(const std::string& key_data) {
-    if (!initialized_) {
+    if (!initialized_ || !current_system_instance_) {
         return false;
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta::YachtaUtils::validateKeyCardFormat(key_data);
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->validateKey(key_data);
-        case EncryptionSystem::GRANIT:
-            return granit_->validateKey(key_data);
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->validateKey(key_data);
-        default:
-            return false;
-    }
+    return current_system_instance_->validateKey(key_data);
 }
 
 /**
@@ -414,22 +358,11 @@ bool VoiceEncryptionManager::isInitialized() const {
  * Returns the encryption status of the currently active system.
  */
 bool VoiceEncryptionManager::isEncryptionActive() const {
-    if (!initialized_) {
+    if (!initialized_ || !current_system_instance_) {
         return false;
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->isActive();
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->isEncryptionActive();
-        case EncryptionSystem::GRANIT:
-            return granit_->isScramblingActive();
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->isEncryptionActive();
-        default:
-            return false;
-    }
+    return current_system_instance_->isEncryptionActive();
 }
 
 /**
@@ -460,22 +393,11 @@ std::string VoiceEncryptionManager::getStatus() const {
  * of the currently active system.
  */
 std::string VoiceEncryptionManager::getKeyInfo() const {
-    if (!initialized_) {
+    if (!initialized_ || !current_system_instance_) {
         return "System not initialized";
     }
     
-    switch (current_system_) {
-        case EncryptionSystem::YACHTA_T219:
-            return yachta_t219_->getEncryptionStatus();
-        case EncryptionSystem::VINSON_KY57:
-            return vinson_ky57_->getKeyInfo();
-        case EncryptionSystem::GRANIT:
-            return granit_->getKeyInfo();
-        case EncryptionSystem::STANAG_4197:
-            return stanag_4197_->getKeyInfo();
-        default:
-            return "Unknown system";
-    }
+    return current_system_instance_->getKeyInfo();
 }
 
 /**
@@ -487,12 +409,7 @@ std::string VoiceEncryptionManager::getKeyInfo() const {
  * Returns a list of all available encryption systems.
  */
 std::vector<EncryptionSystem> VoiceEncryptionManager::getAvailableSystems() const {
-    return {
-        EncryptionSystem::YACHTA_T219,
-        EncryptionSystem::VINSON_KY57,
-        EncryptionSystem::GRANIT,
-        EncryptionSystem::STANAG_4197
-    };
+    return factory_->getRegisteredSystems();
 }
 
 /**

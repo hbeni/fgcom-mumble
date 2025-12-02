@@ -29,13 +29,8 @@
 #include <string>
 #include <cstdint>
 
-// Include all voice encryption systems
-#include "../systems/yachta-t219/include/yachta_t219.h"
-#include "../systems/vinson-ky57/include/vinson_ky57.h"
-#include "../systems/granit/include/granit.h"
-#include "../systems/stanag-4197/include/stanag_4197.h"
-#include "../systems/freedv/include/freedv.h"
-#include "../systems/melpe/include/melpe.h"
+// Include modular encryption system interface
+#include "encryption_system_interface.h"
 
 namespace fgcom {
 namespace voice_encryption {
@@ -96,11 +91,11 @@ private:
     EncryptionSystem current_system_;           ///< Current encryption system
     bool initialized_;                         ///< System initialization status
     
-    // System instances
-    std::unique_ptr<yachta::YachtaT219> yachta_t219_;
-    std::unique_ptr<vinson::VinsonKY57> vinson_ky57_;
-    std::unique_ptr<granit::Granit> granit_;
-    std::unique_ptr<stanag4197::Stanag4197> stanag_4197_;
+    // Modular encryption system (uses interface)
+    std::unique_ptr<IEncryptionSystem> current_system_instance_;
+    
+    // Encryption system factory (for creating systems)
+    EncryptionSystemFactory* factory_;
     
     // Audio parameters
     float sample_rate_;                       ///< Audio sample rate

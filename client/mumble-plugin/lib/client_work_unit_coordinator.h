@@ -19,9 +19,15 @@
 // Forward declarations
 #include "work_unit_distributor.h"
 #include "gpu_types.h"
+#include "json/json.hpp"
 
 // Client work unit coordinator
 class FGCom_ClientWorkUnitCoordinator {
+public:
+    // Constructor and destructor
+    FGCom_ClientWorkUnitCoordinator();
+    ~FGCom_ClientWorkUnitCoordinator();
+    
 private:
     static std::unique_ptr<FGCom_ClientWorkUnitCoordinator> instance;
     static std::mutex instance_mutex;
@@ -46,7 +52,7 @@ private:
     std::map<std::string, std::future<void>> processing_futures;
     
     // Threading and synchronization
-    std::mutex work_units_mutex;
+    mutable std::mutex work_units_mutex;
     std::mutex processing_mutex;
     std::condition_variable work_available;
     std::vector<std::thread> worker_threads;
@@ -87,7 +93,7 @@ public:
     // Client capability management
     void setClientCapability(const ClientWorkUnitCapability& capability);
     void updateCapability(const std::string& capability_type, const std::string& value);
-    ClientWorkUnitCapability getClientCapability() const;
+    const ClientWorkUnitCapability& getClientCapability() const;
     
     // Work unit processing
     bool enableAutoWorkUnitRequests(bool enable);

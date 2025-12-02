@@ -13,7 +13,7 @@
 #include <chrono>
 #include <thread>
 #include <curl/curl.h>
-#include <nlohmann/json.hpp>
+#include "json/json.hpp"
 
 // Static member definitions
 std::unique_ptr<FGCom_ClientWorkUnitCoordinator> FGCom_ClientWorkUnitCoordinator::instance = nullptr;
@@ -162,9 +162,24 @@ void FGCom_ClientWorkUnitCoordinator::setConfiguration(const std::map<std::strin
 // Client capability management
 void FGCom_ClientWorkUnitCoordinator::setClientCapability(const ClientWorkUnitCapability& capability) {
     std::lock_guard<std::mutex> lock(work_units_mutex);
-    client_capability = capability;
+    // Manually copy members to avoid atomic copy assignment issues
     client_capability.client_id = client_id;
+    client_capability.supported_types = capability.supported_types;
+    client_capability.max_concurrent_units = capability.max_concurrent_units;
+    client_capability.processing_speed_multiplier = capability.processing_speed_multiplier;
+    client_capability.max_memory_mb = capability.max_memory_mb;
+    client_capability.supports_gpu = capability.supports_gpu;
+    client_capability.supports_double_precision = capability.supports_double_precision;
+    client_capability.network_bandwidth_mbps = capability.network_bandwidth_mbps;
+    client_capability.processing_latency_ms = capability.processing_latency_ms;
     client_capability.is_online = true;
+    client_capability.last_heartbeat = capability.last_heartbeat;
+    // Copy atomic values
+    client_capability.active_units.store(capability.active_units.load());
+    client_capability.pending_units.store(capability.pending_units.load());
+    client_capability.memory_usage_mb.store(capability.memory_usage_mb.load());
+    client_capability.cpu_utilization_percent.store(capability.cpu_utilization_percent.load());
+    client_capability.gpu_utilization_percent.store(capability.gpu_utilization_percent.load());
 }
 
 void FGCom_ClientWorkUnitCoordinator::updateCapability(const std::string& capability_type, const std::string& value) {
@@ -181,7 +196,10 @@ void FGCom_ClientWorkUnitCoordinator::updateCapability(const std::string& capabi
     }
 }
 
-ClientWorkUnitCapability FGCom_ClientWorkUnitCoordinator::getClientCapability() const {
+// Static empty capability for return when needed
+static ClientWorkUnitCapability empty_capability;
+
+const ClientWorkUnitCapability& FGCom_ClientWorkUnitCoordinator::getClientCapability() const {
     std::lock_guard<std::mutex> lock(work_units_mutex);
     return client_capability;
 }
@@ -340,7 +358,7 @@ void FGCom_ClientWorkUnitCoordinator::workerThreadFunction() {
         
         // Process each unit
         for (const std::string& unit_id : units_to_process) {
-            if (processing_futures.size() < max_concurrent_work_units) {
+            if (processing_futures.size() < static_cast<size_t>(max_concurrent_work_units)) {
                 processing_futures[unit_id] = std::async(std::launch::async, 
                     &FGCom_ClientWorkUnitCoordinator::processWorkUnit, this, unit_id);
             }

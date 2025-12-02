@@ -17,6 +17,7 @@
 
 // Forward declarations
 #include "gpu_types.h"
+#include "work_unit/work_unit_sharing.h"
 
 // Work unit types for propagation calculations
 enum class WorkUnitType {
@@ -188,7 +189,7 @@ public:
     void recordWorkUnitTimeout();
     void updateProcessingTime(double time_ms);
     void updateQueueWaitTime(double time_ms);
-    WorkUnitDistributionStats getStatistics();
+    const WorkUnitDistributionStats& getStatistics();
     void resetStatistics();
 };
 
@@ -208,6 +209,11 @@ public:
 
 // Main work unit distributor class - coordinates all components
 class FGCom_WorkUnitDistributor {
+public:
+    // Constructor and destructor
+    FGCom_WorkUnitDistributor();
+    ~FGCom_WorkUnitDistributor();
+    
 private:
     static std::unique_ptr<FGCom_WorkUnitDistributor> instance;
     static std::mutex instance_mutex;
@@ -218,6 +224,22 @@ private:
     std::unique_ptr<QueueManager> queue_manager;
     std::unique_ptr<StatisticsCollector> statistics_collector;
     std::unique_ptr<ThreadManager> thread_manager;
+    
+    // Work unit sharing manager (modular sharing interface)
+    FGCom_WorkUnitSharingManager* sharing_manager;
+    
+    // Internal data structures (for direct access in implementation)
+    std::map<std::string, WorkUnit> work_units;
+    std::mutex units_mutex;
+    std::map<std::string, ClientWorkUnitCapability> client_capabilities;
+    std::mutex clients_mutex;
+    std::queue<std::string> pending_units_queue;
+    std::map<std::string, std::vector<std::string>> client_assigned_units;
+    std::mutex queue_mutex;
+    std::condition_variable queue_condition;
+    WorkUnitDistributionStats stats;
+    std::vector<std::thread> worker_threads;
+    std::atomic<bool> workers_running;
     
     // Configuration
     std::atomic<bool> distribution_enabled;
@@ -237,6 +259,10 @@ private:
     void handleWorkUnitTimeout(const std::string& unit_id);
     void retryFailedWorkUnit(const std::string& unit_id);
     void cleanupCompletedUnits();
+    void checkTimeouts();
+    
+    // Work unit sharing (modular)
+    WorkUnitSharingResult shareWorkUnitWithClient(const std::string& unit_id, const std::string& client_id);
     
 public:
     // Singleton access
@@ -247,6 +273,12 @@ public:
     bool initialize();
     void shutdown();
     void setConfiguration(const std::map<std::string, std::string>& config);
+    
+    // Work unit sharing configuration
+    bool setSharingStrategy(const std::string& strategy_name);
+    std::string getSharingStrategy() const;
+    std::vector<std::string> getAvailableSharingStrategies() const;
+    WorkUnitSharingStats getSharingStatistics() const;
     
     // Work unit management
     std::string createWorkUnit(WorkUnitType type, const std::vector<double>& input_data, 
@@ -261,7 +293,7 @@ public:
     bool unregisterClient(const std::string& client_id);
     bool updateClientCapability(const std::string& client_id, const ClientWorkUnitCapability& capability);
     std::vector<std::string> getAvailableClients();
-    ClientWorkUnitCapability getClientCapability(const std::string& client_id);
+    const ClientWorkUnitCapability& getClientCapability(const std::string& client_id);
     
     // Work unit distribution
     bool distributeWorkUnit(const std::string& unit_id);
@@ -279,7 +311,7 @@ public:
     std::vector<std::string> getFailedUnits();
     
     // Statistics and monitoring
-    WorkUnitDistributionStats getStatistics();
+    const WorkUnitDistributionStats& getStatistics();
     void resetStatistics();
     std::map<std::string, double> getClientPerformanceMetrics();
     std::map<WorkUnitType, uint64_t> getWorkUnitTypeStatistics();

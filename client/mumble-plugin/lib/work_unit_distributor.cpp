@@ -7,10 +7,12 @@
  */
 
 #include "work_unit_distributor.h"
+#include "work_unit/work_unit_sharing.h"
 #include <algorithm>
 #include <random>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 #include <chrono>
 #include <thread>
 
@@ -44,7 +46,8 @@ FGCom_WorkUnitDistributor::FGCom_WorkUnitDistributor()
     , enable_retry(true)
     , max_retries(3)
     , retry_delay_ms(1000)
-    , workers_running(false) {
+    , workers_running(false)
+    , sharing_manager(nullptr) {
     
     // Initialize statistics
     stats.total_units_created = 0;
@@ -75,6 +78,14 @@ bool FGCom_WorkUnitDistributor::initialize() {
         queue_manager = std::make_unique<QueueManager>();
         statistics_collector = std::make_unique<StatisticsCollector>();
         thread_manager = std::make_unique<ThreadManager>();
+        
+        // Initialize work unit sharing manager (modular sharing interface)
+        sharing_manager = &FGCom_WorkUnitSharingManager::getInstance();
+        if (!sharing_manager->initialize("direct")) {
+            std::cerr << "[WorkUnitDistributor] Failed to initialize sharing manager" << std::endl;
+            distribution_enabled = false;
+            return false;
+        }
         
         // Start worker threads with proper error handling
         int num_threads = std::min(4, static_cast<int>(std::thread::hardware_concurrency()));
@@ -269,7 +280,25 @@ bool FGCom_WorkUnitDistributor::registerClient(const std::string& client_id,
                                               const ClientWorkUnitCapability& capability) {
     std::lock_guard<std::mutex> lock(clients_mutex);
     
-    client_capabilities[client_id] = capability;
+    // Use operator[] to get or create entry, then update values manually
+    ClientWorkUnitCapability& cap = client_capabilities[client_id];
+    cap.client_id = capability.client_id;
+    cap.supported_types = capability.supported_types;
+    cap.max_concurrent_units = capability.max_concurrent_units;
+    cap.processing_speed_multiplier = capability.processing_speed_multiplier;
+    cap.max_memory_mb = capability.max_memory_mb;
+    cap.supports_gpu = capability.supports_gpu;
+    cap.supports_double_precision = capability.supports_double_precision;
+    cap.network_bandwidth_mbps = capability.network_bandwidth_mbps;
+    cap.processing_latency_ms = capability.processing_latency_ms;
+    cap.is_online = capability.is_online;
+    cap.last_heartbeat = capability.last_heartbeat;
+    // Atomic members - update values
+    cap.active_units.store(capability.active_units.load());
+    cap.pending_units.store(capability.pending_units.load());
+    cap.memory_usage_mb.store(capability.memory_usage_mb.load());
+    cap.cpu_utilization_percent.store(capability.cpu_utilization_percent.load());
+    cap.gpu_utilization_percent.store(capability.gpu_utilization_percent.load());
     client_assigned_units[client_id] = std::vector<std::string>();
     
     return true;
@@ -311,7 +340,25 @@ bool FGCom_WorkUnitDistributor::updateClientCapability(const std::string& client
         return false;
     }
     
-    it->second = capability;
+    // Update capability - copy non-atomic members manually
+    it->second.client_id = capability.client_id;
+    it->second.supported_types = capability.supported_types;
+    it->second.max_concurrent_units = capability.max_concurrent_units;
+    it->second.processing_speed_multiplier = capability.processing_speed_multiplier;
+    it->second.max_memory_mb = capability.max_memory_mb;
+    it->second.supports_gpu = capability.supports_gpu;
+    it->second.supports_double_precision = capability.supports_double_precision;
+    it->second.network_bandwidth_mbps = capability.network_bandwidth_mbps;
+    it->second.processing_latency_ms = capability.processing_latency_ms;
+    it->second.is_online = capability.is_online;
+    it->second.last_heartbeat = capability.last_heartbeat;
+    // Atomic members - update values
+    it->second.active_units.store(capability.active_units.load());
+    it->second.pending_units.store(capability.pending_units.load());
+    it->second.memory_usage_mb.store(capability.memory_usage_mb.load());
+    it->second.cpu_utilization_percent.store(capability.cpu_utilization_percent.load());
+    it->second.gpu_utilization_percent.store(capability.gpu_utilization_percent.load());
+    
     return true;
 }
 
@@ -328,12 +375,15 @@ std::vector<std::string> FGCom_WorkUnitDistributor::getAvailableClients() {
     return available_clients;
 }
 
-ClientWorkUnitCapability FGCom_WorkUnitDistributor::getClientCapability(const std::string& client_id) {
+// Static empty capability for return when not found
+static ClientWorkUnitCapability empty_capability;
+
+const ClientWorkUnitCapability& FGCom_WorkUnitDistributor::getClientCapability(const std::string& client_id) {
     std::lock_guard<std::mutex> lock(clients_mutex);
     
     auto it = client_capabilities.find(client_id);
     if (it == client_capabilities.end()) {
-        return ClientWorkUnitCapability(); // Return empty capability
+        return empty_capability;
     }
     
     return it->second;
@@ -492,7 +542,7 @@ std::vector<std::string> FGCom_WorkUnitDistributor::getFailedUnits() {
 }
 
 // Statistics and monitoring
-WorkUnitDistributionStats FGCom_WorkUnitDistributor::getStatistics() {
+const WorkUnitDistributionStats& FGCom_WorkUnitDistributor::getStatistics() {
     return stats;
 }
 
@@ -624,7 +674,7 @@ void FGCom_WorkUnitDistributor::workerThreadFunction() {
         {
             std::lock_guard<std::mutex> units_lock(units_mutex);
             
-            while (!pending_units_queue.empty() && units_to_process.size() < max_concurrent_units) {
+            while (!pending_units_queue.empty() && units_to_process.size() < static_cast<size_t>(max_concurrent_units)) {
                 std::string unit_id = pending_units_queue.front();
                 pending_units_queue.pop();
                 
@@ -733,6 +783,22 @@ bool FGCom_WorkUnitDistributor::assignWorkUnit(const std::string& unit_id, const
     }
     
     WorkUnit& unit = it->second;
+    
+    // Get client capability
+    std::lock_guard<std::mutex> clients_lock(clients_mutex);
+    auto client_it = client_capabilities.find(client_id);
+    if (client_it == client_capabilities.end()) {
+        return false;
+    }
+    
+    // Use modular sharing interface to share the work unit
+    if (sharing_manager) {
+        WorkUnitSharingResult share_result = shareWorkUnitWithClient(unit_id, client_id);
+        if (share_result != WorkUnitSharingResult::SUCCESS) {
+            return false;
+        }
+    }
+    
     unit.status = WorkUnitStatus::ASSIGNED;
     unit.assigned_client_id = client_id;
     unit.assigned_time = std::chrono::system_clock::now();
@@ -823,6 +889,63 @@ void FGCom_WorkUnitDistributor::checkTimeouts() {
             }
         }
     }
+}
+
+// Work unit sharing implementation (modular)
+WorkUnitSharingResult FGCom_WorkUnitDistributor::shareWorkUnitWithClient(
+    const std::string& unit_id, 
+    const std::string& client_id) {
+    
+    if (!sharing_manager) {
+        return WorkUnitSharingResult::SHARING_DISABLED;
+    }
+    
+    std::lock_guard<std::mutex> units_lock(units_mutex);
+    std::lock_guard<std::mutex> clients_lock(clients_mutex);
+    
+    auto unit_it = work_units.find(unit_id);
+    if (unit_it == work_units.end()) {
+        return WorkUnitSharingResult::INVALID_UNIT;
+    }
+    
+    auto client_it = client_capabilities.find(client_id);
+    if (client_it == client_capabilities.end()) {
+        return WorkUnitSharingResult::CLIENT_NOT_AVAILABLE;
+    }
+    
+    const WorkUnit& unit = unit_it->second;
+    const ClientWorkUnitCapability& capability = client_it->second;
+    
+    return sharing_manager->shareWithClient(unit_id, unit, client_id, capability);
+}
+
+// Work unit sharing configuration methods
+bool FGCom_WorkUnitDistributor::setSharingStrategy(const std::string& strategy_name) {
+    if (!sharing_manager) {
+        return false;
+    }
+    return sharing_manager->setStrategy(strategy_name);
+}
+
+std::string FGCom_WorkUnitDistributor::getSharingStrategy() const {
+    if (!sharing_manager) {
+        return "";
+    }
+    return sharing_manager->getCurrentStrategyName();
+}
+
+std::vector<std::string> FGCom_WorkUnitDistributor::getAvailableSharingStrategies() const {
+    if (!sharing_manager) {
+        return std::vector<std::string>();
+    }
+    return sharing_manager->getAvailableStrategies();
+}
+
+WorkUnitSharingStats FGCom_WorkUnitDistributor::getSharingStatistics() const {
+    if (!sharing_manager) {
+        return WorkUnitSharingStats();
+    }
+    return sharing_manager->getStatistics();
 }
 
 // Work unit factory implementation

@@ -4,11 +4,15 @@
  * Comprehensive moon position tracking for EME communication
  */
 
-#include "moon_position_tracker.h"
+#include "space/moon/moon_position_tracker.h"
 #include <cmath>
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace FGCom {
 
@@ -18,8 +22,8 @@ MoonPositionTracker::MoonPositionTracker(MoonCalculationMethod calculation_metho
     , last_update_(std::chrono::system_clock::now())
     , manual_override_enabled_(false)
     , manual_distance_override_(false)
-    , manual_delay_override_(false)
     , manual_distance_km_(384400.0)
+    , manual_delay_override_(false)
     , manual_delay_seconds_(2.565)
 {
     updatePosition();
@@ -349,7 +353,7 @@ void MoonPositionTracker::setCalculationMethod(MoonCalculationMethod method) {
     calculation_method_ = method;
 }
 
-MoonPositionTracker::MoonCalculationMethod MoonPositionTracker::getCalculationMethod() const {
+MoonCalculationMethod MoonPositionTracker::getCalculationMethod() const {
     return calculation_method_;
 }
 

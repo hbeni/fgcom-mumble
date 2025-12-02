@@ -26,11 +26,16 @@ AUDIO_OBJS := lib/audio/audio.o lib/audio/audio_professional.o
 SECURITY_CORE_OBJS := lib/security/core/security.o
 SECURITY_WORK_UNIT_OBJS := lib/security/work_unit/work_unit_security.o
 SECURITY_OBJS := $(SECURITY_CORE_OBJS) $(SECURITY_WORK_UNIT_OBJS)
+WORK_UNIT_SHARING_OBJS := lib/work_unit/work_unit_sharing.o
+WORK_UNIT_OBJS := lib/work_unit_distributor.o lib/client_work_unit_coordinator.o $(WORK_UNIT_SHARING_OBJS)
+SPACE_MOON_OBJS := lib/space/moon/moon_position_tracker.o
+SPACE_SATELLITES_OBJS := lib/space/satellites/satellite_tracker.o
+SPACE_OBJS := $(SPACE_MOON_OBJS) $(SPACE_SATELLITES_OBJS)
 
-lib_OBJS := lib/radio_model.o $(AUDIO_OBJS) lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o lib/amateur_radio.o $(PROPAGATION_OBJS) lib/power_management.o lib/frequency_offset.o $(NOISE_OBJS) lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/agc_squelch.o lib/agc_squelch_api.o lib/ctcss_system.o lib/preset_channel_api.o lib/soviet_vhf_equipment.o lib/nato_vhf_equipment.o lib/preset_channel_config_loader.o lib/radio_model_config_loader.o lib/gpu_resource_limiting.o lib/radio_config.o $(MAPS_OBJS) lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o
+lib_OBJS := lib/radio_model.o $(AUDIO_OBJS) lib/io_plugin.o lib/io_UDPServer.o lib/io_UDPClient.o lib/garbage_collector.o lib/amateur_radio.o $(PROPAGATION_OBJS) lib/power_management.o lib/frequency_offset.o $(NOISE_OBJS) lib/pattern_interpolation.o lib/antenna_pattern_mapping.o lib/agc_squelch.o lib/agc_squelch_api.o lib/ctcss_system.o lib/preset_channel_api.o lib/soviet_vhf_equipment.o lib/nato_vhf_equipment.o lib/preset_channel_config_loader.o lib/radio_model_config_loader.o lib/gpu_resource_limiting.o lib/radio_config.o $(MAPS_OBJS) lib/radio_model_vhf.o lib/radio_model_uhf.o lib/radio_model_aviation_hf.o lib/radio_model_maritime_hf.o lib/radio_model_config.o lib/non_amateur_hf.o lib/radio_model_string_impl.o lib/radio_model_hf_impl.o lib/radio_model_amateur_impl.o lib/radio_model_uhf_impl.o $(WORK_UNIT_OBJS) $(SPACE_OBJS)
 
 # Module-level build targets for incremental development and testing
-.PHONY: module-propagation module-noise module-audio module-maps module-security test-module-propagation test-module-noise test-module-audio test-module-security
+.PHONY: module-propagation module-noise module-audio module-maps module-security module-work-unit module-space test-module-propagation test-module-noise test-module-audio test-module-security test-module-work-unit test-module-space
 
 # Build individual modules
 module-propagation: $(PROPAGATION_OBJS)
@@ -47,6 +52,12 @@ module-maps: $(MAPS_OBJS)
 
 module-security: $(SECURITY_OBJS)
 	@echo "Security module built: $(SECURITY_OBJS)"
+
+module-work-unit: $(WORK_UNIT_OBJS)
+	@echo "Work Unit module built: $(WORK_UNIT_OBJS)"
+
+module-space: $(SPACE_OBJS)
+	@echo "Space module built: $(SPACE_OBJS)"
 
 # Test individual modules (placeholder - can be extended with module-specific tests)
 test-module-propagation: module-propagation
@@ -72,6 +83,19 @@ test-module-security: module-security
 	@echo "  - Core: security (encryption, hashing, authentication)"
 	@echo "  - Work Unit: work_unit_security (AES256, RSA, digital signatures)"
 	@echo "Run: make module-security && make plugin (to test integration)"
+
+test-module-work-unit: module-work-unit
+	@echo "Testing work unit module..."
+	@echo "  - Distributor: work_unit_distributor (work unit distribution)"
+	@echo "  - Coordinator: client_work_unit_coordinator (client coordination)"
+	@echo "  - Sharing: work_unit_sharing (modular sharing strategies)"
+	@echo "Run: make module-work-unit && make plugin (to test integration)"
+
+test-module-space: module-space
+	@echo "Testing space module..."
+	@echo "  - Moon: moon_position_tracker (EME communication, moon tracking)"
+	@echo "  - Satellites: satellite_tracker (satellite tracking, visibility, Doppler)"
+	@echo "Run: make module-space && make plugin (to test integration)"
 
 # Notice: Special calls
 #
