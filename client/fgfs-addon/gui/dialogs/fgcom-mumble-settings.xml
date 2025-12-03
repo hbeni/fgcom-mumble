@@ -74,6 +74,7 @@
         <![CDATA[
             validate_input(0);
             ptt_test_string_timer.stop();
+            setprop("/addons/by-id/org.hallinger.flightgear.FGCom-mumble/force-echotest-frq", 0);
         ]]>
         </close>
     </nasal>
