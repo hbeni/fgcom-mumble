@@ -1,4 +1,4 @@
-FGCom-mumble - a flightsim radio simulation framework based on mumble
+FGCom-mumble - a (flightsim) radio simulation based on mumble
 =====================================================================
 
 <img src="server/statuspage/inc/fgcom_logo.png" width="100px" align="left" />
